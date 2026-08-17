@@ -49,12 +49,35 @@ interface TierStyle {
  * with multiple AI-generated variants pin to the chosen one explicitly. The
  * dart-art picker at `/test/dart-art` is the tool used to compare options.
  */
-function artFile(id: AbilityId): string {
+export function artFile(id: AbilityId): string {
   if (id === 'poison-dart') return 'poison-dart-2.webp';
   if (id === 'rabies-dart') return 'rabies-dart-2.webp';
   if (id === 'freeze-ray') return 'freeze-ray-2.webp';
   if (id === 'become-king') return 'become-king-2.webp';
   return `${id}-1.webp`;
+}
+
+/**
+ * Warm every ability's art into the browser cache so the offer modal paints
+ * instantly instead of fetching 3 images the moment it opens. ~450KB total
+ * WebP; runs once, off the critical path (idle callback). Safe to call often.
+ */
+let artPreloaded = false;
+export function preloadAbilityArt(ids: readonly AbilityId[]): void {
+  if (artPreloaded || typeof window === 'undefined') return;
+  artPreloaded = true;
+  const run = () => {
+    for (const id of ids) {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = `/abilities/${artFile(id)}`;
+    }
+  };
+  if ('requestIdleCallback' in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(run);
+  } else {
+    setTimeout(run, 300);
+  }
 }
 
 const TIER: Record<AbilityTier, TierStyle> = {
@@ -415,7 +438,7 @@ export function AbilityCardMini({
                 src={`/abilities/${artFile(ability.id)}`}
                 alt=""
                 className="w-full h-full object-cover"
-                loading="lazy"
+                loading="eager"
                 decoding="async"
                 draggable={false}
               />
@@ -614,7 +637,7 @@ export function AbilityCardFull({
             src={`/abilities/${artFile(id)}`}
             alt=""
             className="w-full h-full object-cover"
-            loading="lazy"
+            loading="eager"
             decoding="async"
             draggable={false}
           />

@@ -7,6 +7,7 @@ import { RunSummaryModal } from '@/components/run/RunSummaryModal';
 import { computeStats, readHistory, recordRun } from '@/lib/run/history';
 import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
+import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
 import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
@@ -163,6 +164,10 @@ export default function RookiesRunPage() {
     { attackerSquare: string; rookieSquare: string; id: number } | null
   >(null);
   const lastAegisIdRef = useRef<number | null>(null);
+  // Warm ability art at run start so the offer modal never shows blank cards.
+  useEffect(() => {
+    preloadAbilityArt(Object.keys(ABILITY_DEFS) as (keyof typeof ABILITY_DEFS)[]);
+  }, []);
   useEffect(() => {
     const sig = state.lastAegisIntercept;
     if (!sig) return;
