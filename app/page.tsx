@@ -9,6 +9,7 @@ import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
+import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
 import { RunPickerModal } from '@/components/run/RunPickerModal';
@@ -297,6 +298,15 @@ export default function RookiesRunPage() {
   }, []);
 
   const [showIntro, setShowIntro] = useState(false);
+
+  // First-run story onboarding — shown ONCE (localStorage), before the daily
+  // intro card. `?onboarding=1` forces it for testing.
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const forced = new URLSearchParams(window.location.search).get('onboarding') === '1';
+    if (forced || !localStorage.getItem(ONBOARDING_KEY)) setShowOnboarding(true);
+  }, []);
 
   // Show the MTG-style intro card once per (run date), keyed by ISO.
   // Past-day links (vault) get the intro too the first time they're opened.
@@ -876,6 +886,19 @@ export default function RookiesRunPage() {
   });
 
   void puzzle;
+
+  if (showOnboarding) {
+    return (
+      <div className="h-full overflow-auto">
+        <StoryOnboarding
+          onDone={() => {
+            ensureAudioWarm();
+            setShowOnboarding(false);
+          }}
+        />
+      </div>
+    );
+  }
 
   if (showIntro) {
     const dateLabel = (() => {
