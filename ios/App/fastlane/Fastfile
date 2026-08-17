@@ -37,7 +37,20 @@ platform :ios do
       UI.message("App record already exists")
     end
 
-    # 2. Distribution certificate into a dedicated unlocked keychain
+    # 2. Distribution certificate into a dedicated unlocked keychain.
+    # /tmp is wiped on reboot, so (re)create the keychain every run — cert
+    # errors with "Keychain not found" otherwise (bit us 2026-08-17).
+    unless File.exist?(KC_PATH)
+      create_keychain(
+        path: KC_PATH,
+        password: KC_PASS,
+        default_keychain: false,
+        unlock: true,
+        timeout: 3600,
+        add_to_search_list: true
+      )
+    end
+    unlock_keychain(path: KC_PATH, password: KC_PASS)
     cert(
       api_key: api_key,
       keychain_path: KC_PATH,
