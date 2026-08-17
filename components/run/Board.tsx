@@ -1,4 +1,5 @@
 'use client';
+import { ENEMY_CAPTURE_SLIDE_MS, PIECE_SLIDE_MS } from './timing';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
@@ -844,7 +845,7 @@ export function RunBoard({
             onPieceDrop: ({ sourceSquare, targetSquare }) =>
               targetSquare ? onPieceDrop(sourceSquare, targetSquare) : false,
             onSquareClick: ({ square }) => onSquareClick(square),
-            animationDurationInMs: 180,
+            animationDurationInMs: PIECE_SLIDE_MS,
           }}
         />
         {state.status === 'playing' && (
@@ -1477,7 +1478,7 @@ function EnemyCaptureSlide({
           top: `${fromY}%`,
           width: '12.5%',
           height: '12.5%',
-          animation: `rrEnemyCaptureSlide-${idKey} 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+          animation: `rrEnemyCaptureSlide-${idKey} ${ENEMY_CAPTURE_SLIDE_MS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
         }}
       >
         {PieceComp ? <PieceComp /> : null}

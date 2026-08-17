@@ -38,6 +38,7 @@ import {
   type AbilityOfferOption,
 } from '@/lib/run/abilities';
 import { applyRookieMove, stepAllyTurn, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
+import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } from '@/components/run/timing';
 import {
   DEFAULT_RUN_ID,
   getNextRunId,
@@ -245,7 +246,7 @@ export default function RookiesRunPage() {
   }, [state.lastEnemyCaptureFx]);
   useEffect(() => {
     if (!enemyCaptureFx) return;
-    const t = setTimeout(() => setEnemyCaptureFx(null), 320);
+    const t = setTimeout(() => setEnemyCaptureFx(null), ENEMY_CAPTURE_SLIDE_MS + 20);
     return () => clearTimeout(t);
   }, [enemyCaptureFx]);
 
@@ -338,7 +339,7 @@ export default function RookiesRunPage() {
     if (state.turn !== 'enemy' || state.status !== 'playing') return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'enemy' && s.status === 'playing' ? stepEnemyTurn(s) : s));
-    }, 220);
+    }, ENEMY_TICK_MS);
     return () => clearTimeout(t);
   }, [state.turn, state.status, state.enemyMovedSquares.length]);
 
@@ -347,7 +348,7 @@ export default function RookiesRunPage() {
     if (state.turn !== 'allies' || state.status !== 'playing') return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'allies' && s.status === 'playing' ? stepAllyTurn(s) : s));
-    }, 240);
+    }, ALLY_TICK_MS);
     return () => clearTimeout(t);
   }, [state.turn, state.status, state.allyTurnIndex]);
 
@@ -356,7 +357,7 @@ export default function RookiesRunPage() {
     if (state.turn !== 'drones' || state.status !== 'playing') return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'drones' && s.status === 'playing' ? stepDroneTurn(s) : s));
-    }, 320);
+    }, DRONE_TICK_MS);
     return () => clearTimeout(t);
   }, [state.turn, state.status, state.drones]);
 

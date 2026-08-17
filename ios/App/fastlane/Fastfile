@@ -228,3 +228,30 @@ platform :ios do
     UI.success("build v#{fresh.version} nonExemptEncryption=#{fresh.uses_non_exempt_encryption.inspect}")
   end
 end
+
+  desc "Debug: who can see the latest build"
+  lane :tf_debug do
+    token = Spaceship::ConnectAPI::Token.create(key_id: "767R5DY9P3", issuer_id: "ec78424a-d56e-4da4-ace6-cc4e91f8bb49", filepath: File.expand_path("~/Downloads/AuthKey_767R5DY9P3.p8"))
+    Spaceship::ConnectAPI.token = token
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    b = Spaceship::ConnectAPI::Build.all(app_id: app.id, sort: "-uploadedDate", limit: 1, includes: "buildBetaDetail").first
+    d = b.build_beta_detail
+    UI.message("build v#{b.version} #{b.processing_state} internal=#{d&.internal_build_state} external=#{d&.external_build_state}")
+    app.get_beta_groups.each do |g|
+      ts = Spaceship::ConnectAPI.get_beta_testers(filter: { betaGroups: g.id }).to_models
+      UI.message("group #{g.name} internal=#{g.is_internal_group} testers=#{ts.map { |t| "#{t.email} type=#{t.invite_type} attrs=#{t.attributes rescue {}}" }.join(' | ')}")
+    end
+    Spaceship::ConnectAPI::User.all.each { |u| UI.message("team user #{u.username} #{u.roles}") }
+  end
+
+  desc "Resend TestFlight invite email to Tyler"
+  lane :reinvite do
+    token = Spaceship::ConnectAPI::Token.create(key_id: "767R5DY9P3", issuer_id: "ec78424a-d56e-4da4-ace6-cc4e91f8bb49", filepath: File.expand_path("~/Downloads/AuthKey_767R5DY9P3.p8"))
+    Spaceship::ConnectAPI.token = token
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    tester = Spaceship::ConnectAPI.get_beta_testers(filter: { email: "tyler@tylervsnyc.com", apps: app.id }).to_models.first
+    tf = Spaceship::ConnectAPI::TestFlight::Client.new(token: token)
+    body = { data: { type: "betaTesterInvitations", relationships: { app: { data: { id: app.id, type: "apps" } }, betaTester: { data: { id: tester.id, type: "betaTesters" } } } } }
+    tf.post("v1/betaTesterInvitations", body)
+    UI.success("invite email resent to tyler@tylervsnyc.com")
+  end
