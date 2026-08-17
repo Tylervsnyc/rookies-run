@@ -3,7 +3,7 @@
 import { ROOK_BLOCKS, getMatteBackground, getMatteBoxShadow } from '@/lib/daily-rook-blocks';
 
 /**
- * Rookies Run logo — leaning 22-block rook + "Rookie's" wordmark over a
+ * Rookies Run logo — leaning 22-block rook + "Rookies" wordmark over a
  * blue "RUN" pill. Solid blocks / solid colors only — embroidery-safe.
  *
  * Pass `scale` to resize the whole lockup proportionally.
@@ -13,7 +13,7 @@ const COLS = 5;
 const ROWS = 6;
 
 interface RookiesRunLogoProps {
-  /** Visual scale. 1 = original (~22px blocks, 52px Rookie's, 60px RUN). */
+  /** Visual scale. 1 = original (~22px blocks, 52px Rookies, 60px RUN). */
   scale?: number;
   className?: string;
 }
@@ -66,7 +66,7 @@ export function RookiesRunLogo({ scale = 1, className }: RookiesRunLogoProps) {
           className="font-black tracking-tight text-chess-text leading-none"
           style={{ fontSize: rookieSize, marginTop: '-0.18em' }}
         >
-          Rookie&rsquo;s
+          Rookies
         </div>
         <div
           className="bg-chess-blue text-center"
