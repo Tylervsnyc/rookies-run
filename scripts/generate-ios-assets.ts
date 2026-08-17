@@ -11,7 +11,10 @@
  *   ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png  (1024²)
  *   ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732*.png  (2732², x3)
  *
- * The art is Rookie herself — the breathing rook, frozen. Geometry and shading
+ * The art is Rookie herself — the LEANING rook from the Rookie's Run logo
+ * (components/run/RookiesRunLogo.tsx: each row shifted LEAN = 5/22 of a block,
+ * so she leans forward toward the 8th rank). Tyler locked this as THE logo
+ * 2026-08-17. Block shading matches BreathingRook. Geometry and shading
  * mirror components/ui/BreathingRook.tsx exactly (gap = 0.15×block, radius =
  * 0.14×block, the getMatteBackground gradient, and the same inset top/bottom
  * edges), so the icon is the character players see on the board rather than a
@@ -38,6 +41,10 @@ const BG = '#eef6fc';
 
 const GRID_COLS = 5;
 const GRID_ROWS = 6;
+/** Lean per row, as a fraction of block size — mirrors RookiesRunLogo (LEAN 5 / BLOCK 22). */
+const LEAN_RATIO = 5 / 22;
+/** Gap as a fraction of block — RookiesRunLogo uses 3/22, not BreathingRook's 0.15. */
+const GAP_RATIO = 3 / 22;
 
 /** Block size per output, chosen so the rook sits comfortably inside the canvas. */
 const ICON = { canvas: 1024, block: 118 };
@@ -45,6 +52,9 @@ const ICON = { canvas: 1024, block: 118 };
 const SPLASH = { canvas: 2732, block: 112 };
 
 const ICON_DIR = join(process.cwd(), 'ios/App/App/Assets.xcassets/AppIcon.appiconset');
+/** Next.js file-convention icons (favicon + apple-touch) and the OG image. */
+const APP_DIR = join(process.cwd(), 'app');
+const OG_PATH = join(process.cwd(), 'public/og/run.png');
 const SPLASH_DIR = join(process.cwd(), 'ios/App/App/Assets.xcassets/Splash.imageset');
 const SPLASH_FILES = [
   'splash-2732x2732.png',
@@ -70,12 +80,14 @@ function blockSvg(px: number, py: number, size: number, radius: number, edge: nu
 
 function rookSvg(canvas: number, block: number): string {
   // Mirrors BreathingRook's derivation exactly.
-  const gap = Math.max(1, Math.round(block * 0.15));
+  const gap = Math.max(1, Math.round(block * GAP_RATIO));
+  const lean = block * LEAN_RATIO;
+  const leanTop = (GRID_ROWS - 1) * lean;
   const radius = Math.max(1, Math.round(block * 0.14));
   const scale = block / 14;
   const edge = Math.max(1, +(0.75 * scale).toFixed(2));
 
-  const gridW = GRID_COLS * block + (GRID_COLS - 1) * gap;
+  const gridW = GRID_COLS * block + (GRID_COLS - 1) * gap + leanTop;
   const gridH = GRID_ROWS * block + (GRID_ROWS - 1) * gap;
   const originX = (canvas - gridW) / 2;
   const originY = (canvas - gridH) / 2;
@@ -95,7 +107,8 @@ function rookSvg(canvas: number, block: number): string {
       `</linearGradient>`
     );
     cells.push(
-      blockSvg(originX + x * (block + gap), originY + y * (block + gap), block, radius, edge, id, color)
+      // Same offset rule as RookiesRunLogo: left += y * LEAN (base row shifted furthest).
+      blockSvg(originX + x * (block + gap) + y * lean, originY + y * (block + gap), block, radius, edge, id, color)
     );
   });
 
@@ -136,3 +149,37 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
+// ─── Web icons + OG (added 2026-08-17) ───────────────────────────────────────
+// Favicon / apple-touch: same leaning rook, transparent-safe PNGs.
+// OG: rook + "Rookie's RUN" wordmark on the page background, 1200×630.
+import { readFileSync } from 'fs';
+
+async function webAssets() {
+  // app/icon.png (favicon) + app/apple-icon.png — Next.js picks these up by filename.
+  const fav = await render(512, 512 / 8.2);
+  writeFileSync(join(APP_DIR, 'icon.png'), fav);
+  const apple = await render(180, 180 / 8.2);
+  writeFileSync(join(APP_DIR, 'apple-icon.png'), apple);
+  console.log('web     app/icon.png (512²)  app/apple-icon.png (180²)');
+
+  // OG: rook mark on the left, wordmark on the right, DM Sans embedded so
+  // librsvg doesn't fall back to a system font.
+  const font = readFileSync(join(process.cwd(), 'public/fonts/dm-sans.woff2')).toString('base64');
+  const rook = await render(630, 62); // square tile, rook centered
+  const rookB64 = rook.toString('base64');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="630">
+  <defs><style>@font-face{font-family:'DMS';src:url(data:font/woff2;base64,${font}) format('woff2');font-weight:100 900;}</style></defs>
+  <rect width="1200" height="630" fill="${BG}"/>
+  <image href="data:image/png;base64,${rookB64}" x="40" y="0" width="630" height="630"/>
+  <text x="640" y="290" font-family="DMS, 'DM Sans', sans-serif" font-weight="900" font-size="112" fill="#3c3c3c" letter-spacing="-4">Rookie’s</text>
+  <rect x="640" y="330" width="440" height="150" rx="34" fill="#1899D6"/>
+  <rect x="640" y="320" width="440" height="150" rx="34" fill="#1CB0F6"/>
+  <text x="860" y="428" text-anchor="middle" font-family="DMS, 'DM Sans', sans-serif" font-weight="900" font-size="104" fill="#fff" letter-spacing="6">RUN</text>
+  <text x="640" y="548" font-family="DMS, 'DM Sans', sans-serif" font-weight="600" font-size="30" textLength="520" lengthAdjust="spacingAndGlyphs" fill="#777">She’s got this. (She does not have this.)</text>
+</svg>`;
+  await sharp(Buffer.from(svg)).flatten({ background: BG }).png().toFile(OG_PATH);
+  console.log(`og      public/og/run.png (1200×630)`);
+}
+
+webAssets().catch((err) => { console.error(err); process.exit(1); });
