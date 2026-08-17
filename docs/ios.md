@@ -65,6 +65,13 @@ fastlane add_tester  # add tyler@tylervsnyc.com
 | `NSCameraUsageDescription` for a camera feature that isn't shipping | Removed |
 | `@capacitor/haptics` installed but never imported | Actually used — see `lib/haptics.ts` |
 
+## Traps hit on the first Mac build (2026-08-17)
+
+| Trap | Status |
+|---|---|
+| `cert` failed with "Keychain not found at /tmp/rookiesrun.keychain-db" — /tmp is wiped on reboot | Fixed — `fastlane beta` now creates + unlocks the keychain itself |
+| `xcodebuild -resolvePackageDependencies` hung forever (0% CPU) at "Checking out 8.5.0 of capacitor-swift-pm" — Xcode never finished downloading the 8.5.0 binary xcframeworks, even though curl fetched them fine | Worked around — Capacitor pinned to **8.4.2** (exact), the version Chess Boxing builds with. If you bump Capacitor, delete `Package.resolved` + `~/Library/Developer/Xcode/DerivedData/App-*` and re-resolve with a timeout before trusting it |
+
 ## Apple Guideline 4.2
 
 A WKWebView around a website is the classic "minimum functionality" rejection,
