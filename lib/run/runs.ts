@@ -204,7 +204,7 @@ const RUN_KNIGHT_ACADEMY: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [{ file: 4, rank: 5 }, { file: 5, rank: 5 }],
       },
     ),
@@ -345,7 +345,7 @@ const RUN_BISHOPS_PATH: RunDef = {
       {
         allowedForms: ['bishop', 'knight'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [{ file: 4, rank: 4 }, { file: 5, rank: 4 }],
       },
     ),
@@ -360,7 +360,7 @@ const RUN_BISHOPS_PATH: RunDef = {
       {
         allowedForms: ['bishop', 'knight'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 1, rank: 5 }, { file: 8, rank: 5 },
           { file: 4, rank: 6 }, { file: 5, rank: 6 },
@@ -675,7 +675,7 @@ const RUN_HAZARD_MAZE: RunDef = {
         ],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     make(
@@ -693,7 +693,7 @@ const RUN_HAZARD_MAZE: RunDef = {
         ],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     make(
@@ -731,7 +731,7 @@ const RUN_HAZARD_MAZE: RunDef = {
         ],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
   ],
@@ -794,7 +794,7 @@ const RUN_BOSS_GAUNTLET: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 2,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [{ file: 4, rank: 4 }, { file: 5, rank: 4 }],
       },
     ),
@@ -983,7 +983,7 @@ const RUN_IRON_CURTAIN: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 1, rank: 5 }, { file: 8, rank: 5 },
           { file: 4, rank: 5 }, { file: 5, rank: 5 },
@@ -1002,7 +1002,7 @@ const RUN_IRON_CURTAIN: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 2, rank: 5 }, { file: 7, rank: 5 },
           { file: 4, rank: 6 }, { file: 5, rank: 6 },
@@ -1160,7 +1160,7 @@ const RUN_CROSSFIRE: RunDef = {
       {
         allowedForms: ['bishop', 'knight'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 1, rank: 5 }, { file: 8, rank: 5 },
           { file: 1, rank: 6 }, { file: 8, rank: 6 },
@@ -1178,7 +1178,7 @@ const RUN_CROSSFIRE: RunDef = {
       {
         allowedForms: ['bishop', 'knight'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 3, rank: 5 }, { file: 6, rank: 5 },
           { file: 4, rank: 6 }, { file: 5, rank: 6 },
@@ -1338,7 +1338,7 @@ const RUN_HORNETS_NEST: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 1, rank: 5 }, { file: 8, rank: 5 },
           { file: 4, rank: 5 }, { file: 5, rank: 5 },
@@ -1356,7 +1356,7 @@ const RUN_HORNETS_NEST: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 1, rank: 5 }, { file: 8, rank: 5 },
           { file: 2, rank: 5 }, { file: 7, rank: 5 },
@@ -1514,7 +1514,7 @@ const RUN_ROYAL_COURT: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 2, rank: 6 }, { file: 7, rank: 6 },
           { file: 4, rank: 5 }, { file: 5, rank: 5 },
@@ -1532,7 +1532,7 @@ const RUN_ROYAL_COURT: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 1, rank: 5 }, { file: 8, rank: 5 },
           { file: 4, rank: 6 }, { file: 5, rank: 6 },
@@ -1664,7 +1664,7 @@ const RUN_GAUNTLET: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 4,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [
           { file: 2, rank: 5 }, { file: 7, rank: 5 },
           { file: 4, rank: 6 }, { file: 5, rank: 6 },
@@ -2500,7 +2500,7 @@ const RUN_CAVALRY_CHARGE: RunDef = {
         queen(4, 7), queen(5, 7),
       ],
       {
-        moveLimit: 16,
+        moveLimit: 18,
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 5,
         hazards: [{ file: 4, rank: 6 }, { file: 5, rank: 6 }],
@@ -2971,7 +2971,7 @@ const RUN_SURROUNDED: RunDef = {
         queen(3, 8), queen(4, 8), queen(5, 8), queen(6, 8),
       ],
       {
-        moveLimit: 16,
+        moveLimit: 18,
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 5,
         hazards: [{ file: 4, rank: 5 }, { file: 5, rank: 5 }],
@@ -3360,7 +3360,7 @@ const RUN_SWITCHBACK: RunDef = {
       {
         hazards: [...SWITCHBACK_WALLS],
         allowedForms: ['knight'],
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     make(
@@ -3373,7 +3373,7 @@ const RUN_SWITCHBACK: RunDef = {
       {
         hazards: [...SWITCHBACK_WALLS],
         allowedForms: ['knight'],
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     make(
@@ -3415,7 +3415,7 @@ const RUN_SWITCHBACK: RunDef = {
         hazards: [...SWITCHBACK_WALLS],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 2,
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     make(
@@ -3693,7 +3693,7 @@ const RUN_BRIDGE: RunDef = {
         hazards: [...BRIDGE_HAZARDS],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 2,
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     // L6 — twin queens at rank 8 corners
@@ -3888,7 +3888,7 @@ const RUN_PLUS: RunDef = {
         hazards: [...PLUS_HAZARDS],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 2,
-        moveLimit: 16,
+        moveLimit: 18,
       },
     ),
     make(
