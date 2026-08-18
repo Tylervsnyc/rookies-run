@@ -110,7 +110,7 @@ export function useProgress(state: BoardState) {
     if (state.allies.length > prev.allies.length) {
       const prevIds = new Set(prev.allies.map((x) => x.id));
       for (const ally of state.allies) {
-        if (!prevIds.has(ally.id) && ally.source === 'convert') emit({ type: 'convert', piece: ally.type });
+        if (!prevIds.has(ally.id) && ally.source === 'convert' && ally.type !== 'rook') emit({ type: 'convert', piece: ally.type });
       }
     }
 

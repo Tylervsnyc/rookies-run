@@ -16,9 +16,11 @@
 import {
   allyAttackedSquares,
   clearStatusOnSquare,
+  isSmoked,
   relocateStatusMarkers,
   stunKingAfterCapture,
   tryAegisIntercept,
+  withRewindSnapshot,
 } from './abilities';
 import { enemyAt, rookieLegalMoves } from './movement';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
@@ -284,6 +286,7 @@ function kingFleeMove(
  */
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
+  if (isSmoked(state)) return null; // Smoke: he can't see the threat
   const king = state.pieces.find((p) => p.type === 'king');
   if (!king) return null;
   const kingSq = toSquare(king);
@@ -545,17 +548,21 @@ function chooseEnemyActionAgainst(
     attackerThreat: number;
   };
   const capturers: Capturer[] = [];
+  const smoked = isSmoked(state); // Smoke: nobody can see Rookie
   for (const p of state.pieces) {
     if (!isNormallyEligible(p)) continue;
     const moves = pieceLegalMoves(p, state);
     let best: { coord: Coord; isRookie: boolean; value: number } | null = null;
     for (const m of moves) {
       const hitsRookie = m.file === state.rookie.file && m.rank === state.rookie.rank;
+      if (hitsRookie && smoked) continue;
       const hitAlly = state.allies.find((a) => a.file === m.file && a.rank === m.rank);
       if (!hitsRookie && !hitAlly) continue;
       const value = hitsRookie
         ? PIECE_THREAT.queen
-        : (PIECE_THREAT[hitAlly!.type] ?? 0);
+        : hitAlly!.type === 'rook'
+          ? 3 // bodyguard rook — a major piece, worth hunting
+          : (PIECE_THREAT[hitAlly!.type] ?? 0);
       if (!best || value > best.value) {
         best = { coord: m, isRookie: hitsRookie, value };
       }
@@ -615,6 +622,7 @@ function chooseEnemyActionAgainst(
         candidates.push({ mover: p, target, priority: -p.rank });
       }
     } else {
+      if (smoked) continue; // Smoke: hunters hold their posts
       const target = approachMove(p, state, rng);
       if (target) {
         // Closer to Rookie = higher priority (negative chebyshev).
@@ -713,9 +721,9 @@ type RabidAction =
 
 function rabidAction(piece: EnemyPiece, state: BoardState): RabidAction | null {
   const piecePos: Coord = { file: piece.file, rank: piece.rank };
-  const targets: Array<{ at: Coord; value: number; isRookie: boolean }> = [
-    { at: { ...state.rookie }, value: PIECE_THREAT.queen, isRookie: true },
-  ];
+  const targets: Array<{ at: Coord; value: number; isRookie: boolean }> = isSmoked(state)
+    ? [] // Smoke: even a rabid piece can't see her
+    : [{ at: { ...state.rookie }, value: PIECE_THREAT.queen, isRookie: true }];
   for (const p of state.pieces) {
     if (p === piece) continue;
     if (p.type === 'king') continue; // only Rookie may take the king
@@ -1006,11 +1014,22 @@ export function stepEnemyTurn(state: BoardState): BoardState {
               : Math.max(0, (s.kingStunTurns ?? 0) - 1),
           }
         : {};
-    return {
+    // Smoke ticks down at end of enemy turn.
+    const smokePatch =
+      (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
+    // Bodyguard allies dissolve when their turns run out.
+    const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined)
+      ? s.allies
+          .map((a) => (a.turnsLeft === undefined ? a : { ...a, turnsLeft: a.turnsLeft - 1 }))
+          .filter((a) => a.turnsLeft === undefined || a.turnsLeft > 0)
+      : s.allies;
+    return withRewindSnapshot({
       ...s,
       pieces,
       captures,
       tempo,
+      allies: nextAllies,
+      ...smokePatch,
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,
@@ -1029,7 +1048,7 @@ export function stepEnemyTurn(state: BoardState): BoardState {
         poisonDeaths.length > 0
           ? { deaths: poisonDeaths, id: Date.now() + Math.random() }
           : s.lastPoisonDeath,
-    };
+    });
   };
 
   if (state.enemyMovedSquares.length >= budget) return endTurn(state);

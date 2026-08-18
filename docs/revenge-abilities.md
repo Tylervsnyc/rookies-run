@@ -1,4 +1,4 @@
-# Rookie's Revenge — the 10 king-catching abilities (v2)
+# Rookie's Revenge — the king-catching abilities (v3: 15 in the pool)
 
 Hidden run `revenge-1` (`/?run=revenge-1`). Win condition: **capture the
 enemy king**. A lone rook can never catch a fleeing king — abilities are the point.
@@ -63,6 +63,18 @@ mental model. Bot win % is the T6 MCTS bot at **T1**, worst level in L3–L10
 | 8 | **Convert** | Flip a pawn / +minor / +queen / any / any; 1/1/2/2/2 uses | The converted piece is a rainbow ally: it blocks his squares, its attacks are squares he won't step on, and its captures stun him. Flip a room pawn = a wall inside his pen. | 77% (L10; 80% L9, ≥97% elsewhere) |
 | 9 | **Poison Dart** | Dies in 3 / 3 / 2 / 2 / 1 turns; 1/2/2/3/2 uses | Kill a defender or the key on his line without standing next to it; the death is a capture-stun — be on the line when it lands. | 47% (L10 — the weakest cell; 80% at T4; ≥87% elsewhere) |
 | 10 | **Decoy** | Mark 1 / 2 / 2 / 3 / ∞ turns; 1/1/2/2/1 uses | His own guards eat the mark: friendly fire is a capture-stun (2 turns) and it opens the pen from inside. | 97% |
+| 11 | **Boulder** | Drop a permanent hazard on an empty square; 2/2/3/3/∞ per level | Seal a pen exit so he has nowhere to flee, or wall off a hunter's line. Blocks everyone (her too — she can never wall herself in: squares that would leave her with no move are not offered). | 53% (L10; ≥87% L3–L9) |
+| 12 | **Smoke** | Invisible 1 / 2 / 2 / 3 / 3 enemy turns; 1/1/2/2/1 uses; her own capture ends it early (not at T5) | Nobody hunts her and the king does NOT react to her threats while smoked: walk onto his line in the open, take him next turn. | 70% (L10; ≥80% elsewhere) |
+| 13 | **Rewind** | Undo the last full turn (her move + the enemy reply); 1/1/2/2/3 uses; charges stay spent, tempo stays | A take-back for the flee you didn't see. Bots never cast it (harness has no "that went badly" signal) so its column = `none`. | n/a (bots skip it) |
+| 14 | **Magnet** | Pull an enemy on her current form's line 2 / 3 / 3 / any / any squares toward her; 1/1/2/2/2 uses; never the king | Yank the guard OFF the king's line (or into her range) without moving; a pulled piece next to her is not auto-captured — take it next move for the stun. | 40% (L10; 73–80% L6–L9; 97–100% L3–L5) |
+| 15 | **Bodyguard** | Rainbow ROOK ally beside her for 2 / 2 / 3 / 3 / level enemy turns; 1/1/2/2/1 uses | A real piece: blocks a hunter's line, its rook lines are squares the king won't step on, and it captures (capture-stun) — it holds her side and only moves to take something. | 53% (L10; ≥93% elsewhere) |
+
+The v3 five (2026-08-18) were tuned once from the first sweep: Boulder T1 1→2
+placements, Magnet T1 pull 1→2, Bodyguard T1 1→2 turns (each lifted L6–L9 by
+10–25 pts). **L10 stays the weak cell for every support ability** (Poison Dart
+sits at ~50% there too, `none` at 23–50% depending on the seed) — the bot's
+rollout policy force-explores casts and reads a bad Magnet pull / Boulder as
+progress; treat L10 support numbers as a bot floor, not a design ceiling.
 
 ### Dropped from the pool (and why)
 

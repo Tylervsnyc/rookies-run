@@ -8,7 +8,7 @@ import { RookieCell } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
 import { nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier } from '@/lib/run/abilities';
-import type { AllyPiece, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
+import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 
@@ -25,17 +25,7 @@ interface BoardProps {
   /** Transient Become-King impervious VFX — gold ring pulse + bounce flash. */
   imperviousFx?: { attackerSquare: string; rookieSquare: string; id: number } | null;
   /** Transient per-ability cast VFX (charge / phase / leap / dart casts). */
-  abilityFx?: {
-    kind:
-      | 'freeze-ray'
-      | 'poison-dart'
-      | 'rabies-dart'
-      | 'convert'
-      | 'drones';
-    from: string;
-    to: string;
-    id: number;
-  } | null;
+  abilityFx?: NonNullable<BoardState['lastAbilityFx']> | null;
   /** Transient poison-death VFX — green bubbles drowning each dying piece. */
   poisonDeathFx?: {
     deaths: { square: string; pieceType: PieceType }[];
@@ -406,6 +396,21 @@ export function RunBoard({
       };
     }
 
+    // Smoke — grey smoky wash on Rookie's square while she's invisible.
+    if ((state.smokeTurnsLeft ?? 0) > 0 && state.status === 'playing') {
+      const rookieSq = toSquare(state.rookie);
+      const prev = styles[rookieSq] ?? {};
+      styles[rookieSq] = {
+        ...prev,
+        backgroundColor: 'rgba(100, 116, 139, 0.55)',
+        backgroundImage:
+          'radial-gradient(circle at 30% 30%, rgba(226,232,240,0.7) 0%, transparent 45%), radial-gradient(circle at 70% 65%, rgba(148,163,184,0.75) 0%, transparent 50%)',
+        boxShadow: prev.boxShadow
+          ? `${prev.boxShadow}, inset 0 0 0 2px rgba(71, 85, 105, 0.85)`
+          : 'inset 0 0 0 2px rgba(71, 85, 105, 0.85)',
+      };
+    }
+
     // Decoy mark — pulsing violet ring + jester-magic wash on the marked
     // square. Teammates will treat this piece as Rookie.
     if (state.decoyTarget) {
@@ -679,6 +684,12 @@ export function RunBoard({
              }`,
           )
           .join('\n')}
+        ${(state.smokeTurnsLeft ?? 0) > 0 && state.status === 'playing'
+          ? `[data-square="${toSquare(state.rookie)}"] > div {
+               opacity: 0.55;
+               filter: grayscale(0.6) blur(0.4px) drop-shadow(0 0 6px rgba(148,163,184,0.9));
+             }`
+          : ''}
         ${rookieShieldSquare
           ? `[data-square="${rookieShieldSquare}"] > div > img,
              [data-square="${rookieShieldSquare}"] > div > svg {
@@ -974,6 +985,13 @@ export function RunBoard({
           >
             <RookieCell form={state.form} />
           </div>
+        )}
+        {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (
+          <SquareChip
+            square={toSquare(state.rookie)}
+            label={`Smoked · ${state.smokeTurnsLeft}`}
+            palette={{ color: '#1e293b', background: 'rgba(226,232,240,0.95)', border: 'rgba(71,85,105,0.9)' }}
+          />
         )}
         {state.allies.length > 0 && <AllyOverlay allies={state.allies} />}
         {state.drones.length > 0 && <DroneOverlay drones={state.drones} />}
@@ -1372,6 +1390,110 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
+  if (fx.kind === 'boulder') {
+    // A dark stone drops onto the target square: scale-in + dust ring.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxBoulderDrop-${k} {
+            0%   { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+            60%  { transform: translate(-50%, -50%) scale(0.9); opacity: 1; }
+            80%  { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+          }
+          @keyframes rrFxBoulderDust-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+            60%  { opacity: 0.85; }
+            100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '11%', height: '11%', borderRadius: '45% 55% 50% 50%', background: 'radial-gradient(circle at 35% 30%, #a8a29e 0%, #57534e 45%, #292524 100%)', boxShadow: '0 4px 8px rgba(0,0,0,0.5)', animation: `rrFxBoulderDrop-${k} 520ms cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards` }} />
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '14%', height: '14%', borderRadius: '50%', border: '3px solid rgba(168,162,158,0.8)', animation: `rrFxBoulderDust-${k} 520ms ease-out 240ms forwards`, opacity: 0 }} />
+      </div>
+    );
+  }
+
+  if (fx.kind === 'smoke') {
+    // Grey puffs bloom out of Rookie's square.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxSmokePuff-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.95; }
+            100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+          }
+        `}</style>
+        {[0, 120, 240].map((delay, i) => (
+          <div key={i} style={{ position: 'absolute', left: `${toX + (i - 1) * 2}%`, top: `${toY - i * 1.5}%`, width: '12%', height: '12%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(226,232,240,0.95) 0%, rgba(148,163,184,0.7) 45%, transparent 75%)', animation: `rrFxSmokePuff-${k} 700ms ease-out ${delay}ms forwards`, opacity: 0 }} />
+        ))}
+      </div>
+    );
+  }
+
+  if (fx.kind === 'rewind') {
+    // Violet time-wash over the board + a dashed ring spinning backward onto
+    // the square Rookie is standing on again.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxRewindWash-${k} {
+            0%   { opacity: 0; }
+            30%  { opacity: 0.55; }
+            100% { opacity: 0; }
+          }
+          @keyframes rrFxRewindRing-${k} {
+            0%   { transform: translate(-50%, -50%) scale(2.4) rotate(0deg); opacity: 0; }
+            40%  { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.6) rotate(-360deg); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(139,92,246,0.35), rgba(217,70,239,0.25))', animation: `rrFxRewindWash-${k} 800ms ease-out forwards` }} />
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '16%', height: '16%', borderRadius: '50%', border: '3px dashed rgba(233,213,255,0.95)', boxShadow: '0 0 14px rgba(168,85,247,0.9)', animation: `rrFxRewindRing-${k} 800ms ease-in-out forwards`, opacity: 0 }} />
+      </div>
+    );
+  }
+
+  if (fx.kind === 'magnet') {
+    // Crimson pull streak from where the enemy stood to where it landed.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxMagnetStreak-${k} {
+            0%   { transform: translate(0, -50%) rotate(${angleDeg}deg) scaleX(0); opacity: 1; }
+            50%  { transform: translate(0, -50%) rotate(${angleDeg}deg) scaleX(1); opacity: 1; }
+            100% { transform: translate(0, -50%) rotate(${angleDeg}deg) scaleX(1); opacity: 0; }
+          }
+          @keyframes rrFxMagnetSnap-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${fromX}%`, top: `${fromY}%`, width: `${Math.max(length, 4)}%`, height: '3%', transformOrigin: '0% 50%', borderRadius: 999, background: 'linear-gradient(90deg, rgba(248,113,113,0) 0%, rgba(239,68,68,0.9) 40%, rgba(255,255,255,1) 100%)', filter: 'drop-shadow(0 0 8px rgba(239,68,68,1))', animation: `rrFxMagnetStreak-${k} 500ms ease-out forwards` }} />
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '14%', height: '14%', borderRadius: '50%', border: '3px solid rgba(252,165,165,0.95)', animation: `rrFxMagnetSnap-${k} 400ms ease-out 250ms forwards`, opacity: 0 }} />
+      </div>
+    );
+  }
+
+  if (fx.kind === 'bodyguard') {
+    // Rainbow ring blooms on the spawn square.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxGuardBloom-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.3) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.2) rotate(180deg); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '12%', height: '12%', borderRadius: '50%', background: 'conic-gradient(from 0deg, #f87171, #fbbf24, #4ade80, #38bdf8, #a78bfa, #f472b6, #f87171)', WebkitMask: 'radial-gradient(circle, transparent 55%, #000 58%)', mask: 'radial-gradient(circle, transparent 55%, #000 58%)', animation: `rrFxGuardBloom-${k} 600ms ease-out forwards` }} />
+      </div>
+    );
+  }
+
   return null;
 }
 
@@ -1549,8 +1671,6 @@ function KingGoalLabel({
   square: string;
   status: 'stunned' | 'frozen' | null;
 }) {
-  const { file, rank } = fromSquare(square);
-  const below = rank > 1;
   const label =
     status === 'frozen' ? 'Frozen' : status === 'stunned' ? 'Stunned' : 'Capture the king';
   const palette =
@@ -1559,6 +1679,21 @@ function KingGoalLabel({
       : status === 'stunned'
         ? { color: '#4c1d95', background: 'rgba(233,213,255,0.95)', border: 'rgba(168,85,247,0.9)' }
         : { color: '#7a4a00', background: 'rgba(255,240,180,0.92)', border: 'rgba(232,156,26,0.8)' };
+  return <SquareChip square={square} label={label} palette={palette} />;
+}
+
+/** Tiny status chip pinned just below a square (above it on rank 1). */
+function SquareChip({
+  square,
+  label,
+  palette,
+}: {
+  square: string;
+  label: string;
+  palette: { color: string; background: string; border: string };
+}) {
+  const { file, rank } = fromSquare(square);
+  const below = rank > 1;
   return (
     <div
       aria-hidden
@@ -1597,10 +1732,11 @@ function KingGoalLabel({
   );
 }
 
-const ALLY_SPRITE: Record<PieceType, keyof typeof defaultPieces> = {
+const ALLY_SPRITE: Record<AllyPieceType, keyof typeof defaultPieces> = {
   pawn: 'wP',
   knight: 'wN',
   bishop: 'wB',
+  rook: 'wR',
   queen: 'wQ',
   king: 'wK',
 };

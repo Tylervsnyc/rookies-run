@@ -42,6 +42,7 @@ import {
   applyDismissOffer,
   applyOfferPick,
   convertTargets as computeConvertTargets,
+  magnetTargets as computeMagnetTargets,
   type AbilityId,
   type AbilityOfferOption,
 } from '@/lib/run/abilities';
@@ -235,6 +236,11 @@ export default function RookiesRunPage() {
       'rabies-dart': 900,
       convert: 500,
       drones: 800,
+      boulder: 600,
+      smoke: 900,
+      rewind: 800,
+      magnet: 700,
+      bodyguard: 600,
     };
     const t = setTimeout(() => setAbilityFx(null), durations[abilityFx.kind]);
     return () => clearTimeout(t);
@@ -613,9 +619,12 @@ export default function RookiesRunPage() {
 
   // Convert: while the ability is in pick-enemy mode, ring every eligible
   // enemy so the player can see which pieces are legal targets.
+  // Magnet reuses the same rings for pullable enemies (Boulder's drop squares
+  // come through legalAbilityMoves as dots).
   const convertTargets = useMemo(() => {
-    if (state.activeAbility?.id !== 'convert') return undefined;
-    return computeConvertTargets(state);
+    if (state.activeAbility?.id === 'convert') return computeConvertTargets(state);
+    if (state.activeAbility?.id === 'magnet') return computeMagnetTargets(state);
+    return undefined;
   }, [state]);
 
   const onActivateAbility = useCallback(
@@ -1119,9 +1128,11 @@ export default function RookiesRunPage() {
             <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 flex-1 leading-tight">
               {ABILITY_DEFS[state.activeAbility.id].name}:{' '}
               {state.activeAbility.step === 'pick-enemy'
-                ? 'tap an enemy'
+                ? state.activeAbility.id === 'magnet'
+                  ? 'tap an enemy on your line'
+                  : 'tap an enemy'
                 : ABILITY_DEFS[state.activeAbility.id].activation === 'targeted'
-                  ? 'tap any square'
+                  ? 'tap an empty square'
                   : 'tap a highlighted square'}
             </span>
             <button

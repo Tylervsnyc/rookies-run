@@ -1,7 +1,7 @@
 /**
  * Rookies Run — Ability progression system.
  *
- * 12 shipped abilities, each 5 tiers. Tempo fills → player picks new ability
+ * 18 shipped abilities, each 5 tiers. Tempo fills → player picks new ability
  * or upgrades an owned one. Abilities are permanent for the run.
  *
  * Tier shape: T1-T3 scale power, T4 doubles uses or adds a twist, T5 is
@@ -36,7 +36,12 @@ export type AbilityId =
   | 'squad'
   | 'surge'
   | 'aegis'
-  | 'decoy';
+  | 'decoy'
+  | 'boulder'
+  | 'smoke'
+  | 'rewind'
+  | 'magnet'
+  | 'bodyguard';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -164,6 +169,41 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Trick',
     description: 'Mark an enemy. Its teammates will attack it.',
   },
+  boulder: {
+    id: 'boulder',
+    name: 'Boulder',
+    activation: 'targeted',
+    typeLine: 'Targeted · Terrain',
+    description: 'Drop a boulder on an empty square. Nothing passes it.',
+  },
+  smoke: {
+    id: 'smoke',
+    name: 'Smoke',
+    activation: 'instant',
+    typeLine: 'Instant · Cover',
+    description: 'Vanish for a few turns. Enemies lose track of you.',
+  },
+  rewind: {
+    id: 'rewind',
+    name: 'Rewind',
+    activation: 'instant',
+    typeLine: 'Instant · Time',
+    description: 'Undo the last turn. Yours and theirs.',
+  },
+  magnet: {
+    id: 'magnet',
+    name: 'Magnet',
+    activation: 'targeted',
+    typeLine: 'Targeted · Pull',
+    description: 'Yank an enemy on your line toward you.',
+  },
+  bodyguard: {
+    id: 'bodyguard',
+    name: 'Bodyguard',
+    activation: 'instant',
+    typeLine: 'Instant · Ally',
+    description: 'Summon a rainbow rook at your side for a few turns.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -247,6 +287,28 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 3) return 2;
       if (tier === 4) return 2;
       return 1;
+    case 'boulder':
+      // 2/2/3/3/∞ placements per level (T1 tuned 1→2 — one stone never seals a pen).
+      if (tier <= 2) return 2;
+      if (tier <= 4) return 3;
+      return -1;
+    case 'smoke':
+      // 1/1/2/2/1 — T5 is one long cover.
+      if (tier === 3 || tier === 4) return 2;
+      return 1;
+    case 'rewind':
+      // 1/1/2/2/3
+      if (tier <= 2) return 1;
+      if (tier <= 4) return 2;
+      return 3;
+    case 'magnet':
+      // 1/1/2/2/2
+      if (tier <= 2) return 1;
+      return 2;
+    case 'bodyguard':
+      // 1/1/2/2/1 — T5 lasts the whole level.
+      if (tier === 3 || tier === 4) return 2;
+      return 1;
   }
 }
 
@@ -312,6 +374,11 @@ const HOW: Record<AbilityId, string> = {
   surge: 'Tap card. You get an extra move.',
   aegis: 'Tap card. Shield stays up until used.',
   decoy: 'Tap card, then tap an enemy.',
+  boulder: 'Tap card, then tap an empty square.',
+  smoke: 'Tap card. You vanish at once.',
+  rewind: 'Tap card. The last turn unhappens.',
+  magnet: 'Tap card, then tap an enemy on your line.',
+  bodyguard: 'Tap card. A rook appears beside you.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -403,6 +470,24 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
         return 'Mark an enemy for 3 turns. Whoever captures it freezes.';
       if (tier >= 2) return 'Mark an enemy for 2 turns. Its team will attack it.';
       return 'Mark an enemy for 1 turn. Its team will attack it.';
+    case 'boulder':
+      if (tier === 5) return 'Drop boulders anywhere, as many as you like.';
+      return 'Drop a boulder on an empty square. It blocks everyone, for good.';
+    case 'smoke':
+      if (tier === 5) return 'Vanish for 3 turns. Captures do not break cover.';
+      if (tier === 4) return 'Vanish for 3 turns. Enemies cannot see you.';
+      if (tier >= 2) return 'Vanish for 2 turns. Enemies cannot see you.';
+      return 'Vanish for 1 turn. Enemies cannot see you.';
+    case 'rewind':
+      return 'Undo the last turn: your move and their reply.';
+    case 'magnet':
+      if (tier >= 4) return 'Pull an enemy on your line all the way to you.';
+      if (tier >= 2) return 'Pull an enemy on your line up to 3 squares.';
+      return 'Pull an enemy on your line up to 2 squares.';
+    case 'bodyguard':
+      if (tier === 5) return 'A rainbow rook guards you for the rest of the level.';
+      if (tier >= 3) return 'A rainbow rook guards you for 3 turns.';
+      return 'A rainbow rook guards you for 2 turns.';
   }
 }
 
@@ -486,6 +571,31 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Mark for 2 turns. 2/level.';
       if (tier === 2) return 'Mark for 2 turns. 1/level.';
       return 'Mark an enemy for 1 turn. 1/level.';
+    case 'boulder':
+      if (tier === 5) return 'Unlimited boulders.';
+      if (tier >= 3) return 'Drop a boulder. 3/level.';
+      return 'Drop a boulder. 2/level.';
+    case 'smoke':
+      if (tier === 5) return 'Vanish 3 turns, captures keep cover. 1/level.';
+      if (tier === 4) return 'Vanish 3 turns. 2/level.';
+      if (tier === 3) return 'Vanish 2 turns. 2/level.';
+      if (tier === 2) return 'Vanish 2 turns. 1/level.';
+      return 'Vanish 1 turn. 1/level.';
+    case 'rewind':
+      if (tier === 5) return 'Undo last turn. 3/level.';
+      if (tier >= 3) return 'Undo last turn. 2/level.';
+      return 'Undo last turn. 1/level.';
+    case 'magnet':
+      if (tier >= 4) return 'Pull any distance. 2/level.';
+      if (tier === 3) return 'Pull up to 3. 2/level.';
+      if (tier === 2) return 'Pull up to 3. 1/level.';
+      return 'Pull up to 2. 1/level.';
+    case 'bodyguard':
+      if (tier === 5) return 'Rook ally, whole level. 1/level.';
+      if (tier === 4) return 'Rook ally, 3 turns. 2/level.';
+      if (tier === 3) return 'Rook ally, 3 turns. 2/level.';
+      if (tier === 2) return 'Rook ally, 2 turns. 1/level.';
+      return 'Rook ally, 2 turns. 1/level.';
   }
 }
 
@@ -693,8 +803,9 @@ export function abilityLegalMoves(
   abilityId: AbilityId,
 ): Coord[] {
   // v2: no movement abilities remain; convert/drones use other UI paths.
-  void state;
-  void abilityId;
+  // Boulder is a pick-square target — its drop squares render as the same
+  // tier-coloured dots a movement ability would (quieter than 60 rings).
+  if (abilityId === 'boulder') return boulderTargets(state);
   return [];
 }
 
@@ -777,11 +888,22 @@ export function applyAbilityActivate(
   if (abilityId === 'drones') {
     return applyDrones(state);
   }
+  if (abilityId === 'smoke') {
+    return applySmoke(state);
+  }
+  if (abilityId === 'rewind') {
+    return applyRewind(state);
+  }
+  if (abilityId === 'bodyguard') {
+    return applyBodyguard(state);
+  }
 
-  // All targeted abilities (freeze ray, poison dart, rabies dart, decoy)
-  // pick an enemy as their second tap.
+  // Targeted abilities pick an enemy as their second tap — except Boulder,
+  // which picks an EMPTY square.
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
-  if (def.activation === 'targeted') step = 'pick-enemy';
+  if (def.activation === 'targeted' && abilityId !== 'boulder') step = 'pick-enemy';
+  if (abilityId === 'boulder' && boulderTargets(state).length === 0) return state;
+  if (abilityId === 'magnet' && magnetTargets(state).length === 0) return state;
   return { ...state, activeAbility: { id: abilityId, step } };
 }
 
@@ -1084,6 +1206,63 @@ export function applyAbilityTargeted(
     };
   }
 
+  if (abilityId === 'boulder') {
+    const sq = toSquare(target);
+    if (!boulderTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) {
+      return state;
+    }
+    return {
+      ...state,
+      hazards: [...state.hazards, { file: target.file, rank: target.rank }],
+      abilities: decrementUse(state.abilities, abilityId),
+      activeAbility: null,
+      cancellableActivation: undefined,
+      lastAbilityFx: {
+        kind: 'boulder',
+        from: toSquare(state.rookie),
+        to: sq,
+        id: Date.now() + Math.random(),
+      },
+    };
+  }
+
+  if (abilityId === 'magnet') {
+    const pull = magnetPull(state, target, owned.tier);
+    if (!pull) return state;
+    const fromSq = toSquare(target);
+    const toSq = toSquare(pull.landing);
+    const relocated = relocateStatusMarkers(state, fromSq, toSq);
+    // Frozen markers follow too (a frozen piece can still be dragged).
+    let frozenSquares = state.frozenSquares;
+    let frozenTurnsLeft = state.frozenTurnsLeft;
+    if (frozenSquares.includes(fromSq)) {
+      const turns = frozenTurnsLeft[fromSq];
+      frozenSquares = [...frozenSquares.filter((x) => x !== fromSq), toSq];
+      frozenTurnsLeft = { ...frozenTurnsLeft };
+      delete frozenTurnsLeft[fromSq];
+      frozenTurnsLeft[toSq] = turns;
+    }
+    return {
+      ...state,
+      ...relocated,
+      frozenSquares,
+      frozenTurnsLeft,
+      pieces: state.pieces.map((p) =>
+        p === pull.piece ? { ...p, file: pull.landing.file, rank: pull.landing.rank } : p,
+      ),
+      decoyTarget: state.decoyTarget === fromSq ? toSq : state.decoyTarget,
+      abilities: decrementUse(state.abilities, abilityId),
+      activeAbility: null,
+      cancellableActivation: undefined,
+      lastAbilityFx: {
+        kind: 'magnet',
+        from: fromSq,
+        to: toSq,
+        id: Date.now() + Math.random(),
+      },
+    };
+  }
+
   if (abilityId === 'rabies-dart') {
     if (!isVisibleEnemy(state, target)) return state;
     const sq = toSquare(target);
@@ -1150,6 +1329,286 @@ function decoyTurns(tier: AbilityTier): number {
   if (tier === 2 || tier === 3) return 2;
   if (tier === 4) return 3;
   return 99;
+}
+
+// ---------------------------------------------------------------------------
+// Boulder — drop a permanent hazard on an empty square.
+// ---------------------------------------------------------------------------
+
+/**
+ * Empty squares the Boulder can land on: no piece, ally, drone, hazard, or
+ * Rookie — and never a square that would leave Rookie with NO legal move
+ * (she can't wall herself in; a stuck rook is a softlock).
+ */
+export function boulderTargets(state: BoardState): Coord[] {
+  const out: Coord[] = [];
+  for (let file = 1; file <= 8; file++) {
+    for (let rank = 1; rank <= 8; rank++) {
+      if (state.rookie.file === file && state.rookie.rank === rank) continue;
+      if (state.pieces.some((p) => p.file === file && p.rank === rank)) continue;
+      if ((state.allies ?? []).some((a) => a.file === file && a.rank === rank)) continue;
+      if ((state.drones ?? []).some((d) => d.alive && d.file === file && d.rank === rank)) continue;
+      if (state.hazards.some((h) => h.file === file && h.rank === rank)) continue;
+      const walled: BoardState = { ...state, hazards: [...state.hazards, { file, rank }] };
+      if (rookieLegalMoves(walled).length === 0) continue;
+      out.push({ file, rank });
+    }
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Smoke — Rookie is invisible for N enemy turns.
+// ---------------------------------------------------------------------------
+
+export function smokeTurns(tier: AbilityTier): number {
+  if (tier === 1) return 1;
+  if (tier === 2 || tier === 3) return 2;
+  return 3;
+}
+
+/** True while Rookie is under Smoke cover. */
+export function isSmoked(state: BoardState): boolean {
+  return (state.smokeTurnsLeft ?? 0) > 0;
+}
+
+function applySmoke(state: BoardState): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'smoke');
+  if (!owned) return state;
+  if (owned.usesLeftThisLevel === 0) return state;
+  if (isSmoked(state)) return state;
+  const rookieSq = toSquare(state.rookie);
+  return {
+    ...state,
+    smokeTurnsLeft: smokeTurns(owned.tier),
+    abilities: decrementUse(state.abilities, 'smoke'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'smoke',
+      from: rookieSq,
+      to: rookieSq,
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/**
+ * Smoke ends early when Rookie herself captures — except at T5. Returns the
+ * patch to spread onto the post-capture state (or {} when nothing changes).
+ */
+export function breakSmokeOnCapture(state: BoardState): Pick<BoardState, 'smokeTurnsLeft'> | Record<string, never> {
+  if (!isSmoked(state)) return {};
+  const owned = state.abilities.find((a) => a.id === 'smoke');
+  if (owned && owned.tier === 5) return {};
+  return { smokeTurnsLeft: 0 };
+}
+
+// ---------------------------------------------------------------------------
+// Rewind — undo the last full turn (Rookie's move + the enemy reply).
+// ---------------------------------------------------------------------------
+
+/** A copy of `state` with no rewind stack of its own (no nesting). */
+function rewindSnapshotOf(state: BoardState): BoardState {
+  const snap: BoardState = { ...state };
+  delete snap.rewindStack;
+  return snap;
+}
+
+/**
+ * Snapshot helper — called by the enemy-turn endTurn when control returns to
+ * Rookie. The turn that just finished started at `rewindStack[1]`; that
+ * becomes the undo target, and the handed-back board becomes the new
+ * current-turn start.
+ */
+export function withRewindSnapshot(state: BoardState): BoardState {
+  const prevTurnStart = state.rewindStack?.[1] ?? null;
+  return { ...state, rewindStack: [prevTurnStart, rewindSnapshotOf(state)] };
+}
+
+/**
+ * Lazy turn-start snapshot for the FIRST Rookie move of a level (seed builds
+ * states without a stack). Called by applyRookieMove on the pre-move state.
+ */
+export function ensureRewindTurnStart(state: BoardState): Pick<BoardState, 'rewindStack'> | Record<string, never> {
+  if (state.rewindStack) return {};
+  return { rewindStack: [null, rewindSnapshotOf(state)] };
+}
+
+function applyRewind(state: BoardState): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'rewind');
+  if (!owned) return state;
+  if (owned.usesLeftThisLevel === 0) return state;
+  if (state.moveCount === 0) return state;
+  const snap = state.rewindStack?.[0];
+  if (!snap) return state;
+  return {
+    ...snap,
+    // Charges are spent, tempo is kept — time moves back, the meter doesn't.
+    abilities: decrementUse(state.abilities, 'rewind'),
+    tempo: state.tempo,
+    activeAbility: null,
+    cancellableActivation: undefined,
+    // We're back at the start of that turn: no further undo, and this board
+    // is the new turn start.
+    rewindStack: [null, rewindSnapshotOf(snap)],
+    // Carry the CURRENT transient fx ids so restoring an older state can't
+    // re-fire an old animation.
+    lastAegisIntercept: state.lastAegisIntercept,
+    lastImperviousBounce: state.lastImperviousBounce,
+    lastPoisonDeath: state.lastPoisonDeath,
+    lastEnemyCaptureFx: state.lastEnemyCaptureFx,
+    lastAbilityFx: {
+      kind: 'rewind',
+      from: toSquare(state.rookie),
+      to: toSquare(snap.rookie),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Magnet — yank an enemy on Rookie's line toward her.
+// ---------------------------------------------------------------------------
+
+/** How many squares Magnet pulls at a tier. 99 = all the way. */
+export function magnetPullDistance(tier: AbilityTier): number {
+  // 2/3/3/any/any (T1 tuned 1→2 — a one-square tug rarely moves a guard off a line).
+  if (tier === 1) return 2;
+  if (tier <= 3) return 3;
+  return 99;
+}
+
+/** Directions Rookie's CURRENT form slides in (used for Magnet lines). */
+function magnetDirs(form: RookieForm): ReadonlyArray<[number, number]> {
+  if (form === 'bishop') return ALLY_BISHOP_DIRS;
+  if (form === 'queen') return ALLY_QUEEN_DIRS;
+  // Rook — and knight / king / pawn forms fall back to her home lines.
+  return ALLY_ROOK_DIRS;
+}
+
+/**
+ * Enemies Magnet can grab: the FIRST piece along each of Rookie's lines with
+ * nothing (piece, ally, hazard) between, at distance ≥ 2 (a piece already
+ * touching her can't be pulled closer). Never the king.
+ */
+export function magnetTargets(state: BoardState): Coord[] {
+  const out: Coord[] = [];
+  for (const [df, dr] of magnetDirs(state.form)) {
+    let f = state.rookie.file + df;
+    let r = state.rookie.rank + dr;
+    let dist = 1;
+    while (allyInBounds(f, r)) {
+      if (allyIsHazard(state, f, r)) break;
+      if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) break;
+      const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
+      if (enemy) {
+        if (enemy.type !== 'king' && dist >= 2) out.push({ file: f, rank: r });
+        break;
+      }
+      f += df;
+      r += dr;
+      dist += 1;
+    }
+  }
+  return out;
+}
+
+/** Resolve a Magnet pull: which piece, and where it lands. Null = illegal. */
+export function magnetPull(
+  state: BoardState,
+  target: Coord,
+  tier: AbilityTier,
+): { piece: EnemyPiece; landing: Coord } | null {
+  if (!magnetTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) {
+    return null;
+  }
+  const piece = state.pieces.find((p) => p.file === target.file && p.rank === target.rank);
+  if (!piece) return null;
+  const df = Math.sign(state.rookie.file - target.file);
+  const dr = Math.sign(state.rookie.rank - target.rank);
+  const max = magnetPullDistance(tier);
+  let f = target.file;
+  let r = target.rank;
+  let steps = 0;
+  while (steps < max) {
+    const nf = f + df;
+    const nr = r + dr;
+    // Stop before Rookie, another piece, an ally, or a hazard.
+    if (state.rookie.file === nf && state.rookie.rank === nr) break;
+    if (state.pieces.some((p) => p.file === nf && p.rank === nr)) break;
+    if ((state.allies ?? []).some((a) => a.file === nf && a.rank === nr)) break;
+    if (allyIsHazard(state, nf, nr)) break;
+    f = nf;
+    r = nr;
+    steps += 1;
+  }
+  if (steps === 0) return null;
+  return { piece, landing: { file: f, rank: r } };
+}
+
+// ---------------------------------------------------------------------------
+// Bodyguard — a rainbow rook ally spawns beside Rookie for N enemy turns.
+// ---------------------------------------------------------------------------
+
+export function bodyguardTurns(tier: AbilityTier): number {
+  // 2/2/3/3/level (T1 tuned 1→2 — a one-turn rook is gone before it matters).
+  if (tier <= 2) return 2;
+  if (tier <= 4) return 3;
+  return 999;
+}
+
+/** Free square adjacent to Rookie for the Bodyguard — prefers the square between her and the nearest enemy. */
+export function bodyguardSpawnSquare(state: BoardState): Coord | null {
+  const free: Coord[] = [];
+  for (const [df, dr] of ALLY_QUEEN_DIRS) {
+    const f = state.rookie.file + df;
+    const r = state.rookie.rank + dr;
+    if (!allyInBounds(f, r)) continue;
+    if (allyIsHazard(state, f, r)) continue;
+    if (state.pieces.some((p) => p.file === f && p.rank === r)) continue;
+    if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) continue;
+    free.push({ file: f, rank: r });
+  }
+  if (free.length === 0) return null;
+  const threats = state.pieces.filter((p) => p.type !== 'king');
+  const pool = threats.length > 0 ? threats : state.pieces;
+  if (pool.length === 0) return free[0];
+  const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+  let nearest = pool[0];
+  for (const p of pool) if (cheb(p, state.rookie) < cheb(nearest, state.rookie)) nearest = p;
+  let best = free[0];
+  for (const c of free) if (cheb(c, nearest) < cheb(best, nearest)) best = c;
+  return best;
+}
+
+function applyBodyguard(state: BoardState): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'bodyguard');
+  if (!owned) return state;
+  if (owned.usesLeftThisLevel === 0) return state;
+  const spot = bodyguardSpawnSquare(state);
+  if (!spot) return state;
+  const ally: AllyPiece = {
+    id: Date.now() + Math.random(),
+    type: 'rook',
+    file: spot.file,
+    rank: spot.rank,
+    source: 'bodyguard',
+    turnsLeft: bodyguardTurns(owned.tier),
+  };
+  return {
+    ...state,
+    allies: [...state.allies, ally],
+    abilities: decrementUse(state.abilities, 'bodyguard'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'bodyguard',
+      from: toSquare(state.rookie),
+      to: toSquare(spot),
+      id: Date.now() + Math.random(),
+    },
+  };
 }
 
 /**
@@ -1443,8 +1902,9 @@ export function allyAttackedSquares(state: BoardState): Set<string> {
         for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
         break;
       case 'bishop':
+      case 'rook':
       case 'queen': {
-        const dirs = a.type === 'queen' ? ALLY_QUEEN_DIRS : ALLY_BISHOP_DIRS;
+        const dirs = a.type === 'queen' ? ALLY_QUEEN_DIRS : a.type === 'rook' ? ALLY_ROOK_DIRS : ALLY_BISHOP_DIRS;
         for (const [df, dr] of dirs) {
           let f = a.file + df;
           let r = a.rank + dr;
@@ -1613,8 +2073,9 @@ function allyMoves(
       return out;
     }
     case 'bishop':
+    case 'rook':
     case 'queen': {
-      const dirs = ally.type === 'queen' ? ALLY_QUEEN_DIRS : ALLY_BISHOP_DIRS;
+      const dirs = ally.type === 'queen' ? ALLY_QUEEN_DIRS : ally.type === 'rook' ? ALLY_ROOK_DIRS : ALLY_BISHOP_DIRS;
       for (const [df, dr] of dirs) {
         let f = ally.file + df;
         let r = ally.rank + dr;
@@ -1724,7 +2185,10 @@ export function stepAllyTurn(state: BoardState): BoardState {
   if (!ally) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
-  const moves = allyMoves(state, ally);
+  let moves = allyMoves(state, ally);
+  // Bodyguard holds Rookie's side: it only moves to CAPTURE (then it's a
+  // capture-stun like any ally). No wandering off toward rank 8.
+  if (ally.source === 'bodyguard') moves = moves.filter((m) => !!m.capture);
   if (moves.length === 0) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
@@ -1749,7 +2213,7 @@ export function stepAllyTurn(state: BoardState): BoardState {
           ...a,
           file: pick.to.file,
           rank: pick.to.rank,
-          type: a.type === 'pawn' && pick.to.rank === 8 ? ('queen' as PieceType) : a.type,
+          type: a.type === 'pawn' && pick.to.rank === 8 ? ('queen' as AllyPiece['type']) : a.type,
         }
       : a,
   );
