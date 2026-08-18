@@ -1,6 +1,9 @@
 'use client';
 
-import { RookiesRunLogo } from './RookiesRunLogo';
+import { REVENGE_TAGLINE, RookiesRevengeLogo } from './RookiesRevengeLogo';
+import { TrophyGlyph } from './AchievementToast';
+import { ACHIEVEMENTS } from '@/lib/run/achievements';
+import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 
 interface RunLandingProps {
   onStart: () => void;
@@ -8,23 +11,29 @@ interface RunLandingProps {
   tagline?: string;
   /** Optional display date label (e.g. "May 26"). */
   dateLabel?: string;
+  /** Meta-progression readout + Trophy Room entry. */
+  profile?: PlayerProfile;
+  onTrophies?: () => void;
 }
 
 const VIDEO_SRC = '/run/landing-board.mp4';
 
 const RULES: { n: number; title: string; sub: string }[] = [
-  { n: 1, title: 'The goal.',    sub: 'Get Rookie to the other side.' },
-  { n: 2, title: 'The enemies.', sub: 'Dozens of them. They want her gone.' },
-  { n: 3, title: 'The morals.',  sub: 'Zero. Unlock abilities. Win ugly.' },
+  { n: 1, title: 'The goal.',    sub: 'Capture their king. He beat her. Nobody told her it was over.' },
+  { n: 2, title: 'The enemies.', sub: 'His whole army, between you and him.' },
+  { n: 3, title: 'The morals.',  sub: 'Zero. Earn powers. Win ugly.' },
 ];
 
-export function RunLanding({ onStart, tagline, dateLabel }: RunLandingProps) {
+export function RunLanding({ onStart, tagline, dateLabel, profile, onTrophies }: RunLandingProps) {
+  const abilitiesTotal = unlockableAbilityIds().length;
+  const abilitiesHave = profile ? profile.unlockedAbilities.length : 0;
+  const trophiesHave = profile ? Object.keys(profile.achievements).length : 0;
   return (
     <div className="h-full w-full bg-chess-page text-chess-text flex items-center justify-center px-3 py-2">
       <div className="w-full max-w-[360px] bg-white rounded-2xl p-3 shadow-sm border border-chess-text/10 flex flex-col gap-2.5">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <RookiesRunLogo scale={0.26} />
+          <RookiesRevengeLogo scale={0.4} />
           {dateLabel && (
             <span className="text-[10px] uppercase tracking-[0.2em] text-chess-text-muted font-bold">
               {dateLabel}
@@ -35,10 +44,10 @@ export function RunLanding({ onStart, tagline, dateLabel }: RunLandingProps) {
         {/* Headline */}
         <div>
           <p className="text-[16px] font-black text-chess-text leading-tight">
-            Get Rookie to the other side.
+            One rook. Their whole army. Take the king.
           </p>
           <p className="text-[11px] text-chess-text-muted italic leading-snug mt-0.5">
-            {tagline ?? 'By any means necessary.'}
+            {tagline ?? REVENGE_TAGLINE}
           </p>
         </div>
 
@@ -68,6 +77,27 @@ export function RunLanding({ onStart, tagline, dateLabel }: RunLandingProps) {
             </li>
           ))}
         </ol>
+
+        {profile && onTrophies && (
+          <button
+            type="button"
+            onClick={onTrophies}
+            className="w-full flex items-center justify-between gap-2 rounded-xl border border-chess-text/12 bg-chess-page px-3 py-2 active:scale-[0.99] transition-transform"
+            aria-label="Open trophy room"
+          >
+            <span className="flex items-center gap-2 min-w-0">
+              <span className="w-7 h-7 rounded-lg bg-chess-text flex items-center justify-center shrink-0">
+                <TrophyGlyph size={15} />
+              </span>
+              <span className="text-[11px] font-black text-chess-text truncate">
+                Powers <span className="tabular-nums">{abilitiesHave}/{abilitiesTotal}</span>
+                <span className="text-chess-text-faint mx-1.5">·</span>
+                Trophies <span className="tabular-nums">{trophiesHave}/{ACHIEVEMENTS.length}</span>
+              </span>
+            </span>
+            <span className="text-[11px] font-black text-chess-text-muted">Trophy Room →</span>
+          </button>
+        )}
 
         <button
           type="button"

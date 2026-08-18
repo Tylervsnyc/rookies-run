@@ -1,8 +1,10 @@
-import { RUNS, STC_RUN_IDS } from './runs';
+import { REVENGE_RUN_IDS, RUNS, STC_RUN_IDS } from './runs';
 
 const STC = new Set<string>(STC_RUN_IDS);
 
-const DAILY_POOL = RUNS.filter((r) => !STC.has(r.id));
+const REVENGE = new Set<string>(REVENGE_RUN_IDS);
+// Daily rotation = Rookie's Revenge runs only (classic rank-8 runs are picker-only).
+const DAILY_POOL = RUNS.filter((r) => REVENGE.has(r.id) && !STC.has(r.id));
 
 const EPOCH_DATE = '2026-01-01';
 

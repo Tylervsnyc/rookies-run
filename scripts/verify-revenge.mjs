@@ -1,4 +1,4 @@
-// Headless verification of the Rookie's Revenge prototype (/?run=revenge-proto).
+// Headless verification of the Rookie's Revenge prototype (/?run=revenge-1).
 // At 390px: the FREE level-1 offer appears before the first move (Rookie's copy,
 // 3 cards, no skip), picking a card closes it, the king square is tagged, and a
 // scripted L1 → L3 playthrough wins each level by capturing the king (the
@@ -123,7 +123,7 @@ async function main() {
     localStorage.setItem('rookies-run-onboarded', '1');
     localStorage.setItem(`rookies-run-intro-seen:${iso}`, '1');
   }, iso);
-  await page.goto(`${BASE}/?run=revenge-proto`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/?run=revenge-1`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
 
   // 1. Free offer before the first move.

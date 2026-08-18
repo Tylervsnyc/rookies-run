@@ -12,6 +12,7 @@
  */
 
 import type { AbilityId, AbilityOffer, OwnedAbility } from './abilities';
+import type { DifficultyId } from './difficulty';
 
 export type PieceType = 'pawn' | 'knight' | 'bishop' | 'queen' | 'king';
 
@@ -159,6 +160,13 @@ export interface BoardState {
   level: number;
   /** Which run this state belongs to — used to filter ability offers. */
   runId?: string;
+  /**
+   * Meta-progression: abilities this PLAYER has unlocked (from the profile).
+   * Offers only draw from this set. undefined = everything (playtest bots).
+   */
+  unlockedAbilities?: AbilityId[];
+  /** Difficulty mode this state was built under (see lib/run/difficulty.ts). */
+  difficulty?: DifficultyId;
   /**
    * Extra Rookie moves queued by Surge. While > 0, the turn stays with Rookie
    * after a move or ability instead of handing off to the enemy. Decremented

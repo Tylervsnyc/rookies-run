@@ -44,7 +44,7 @@ import { T5 } from './bots/t5';
 import type { Bot, BotAction, BotContext } from './types';
 import { rngFromString } from './utils/rng';
 
-const RUN_ID = 'revenge-proto';
+const RUN_ID = 'revenge-1';
 const ISO = '2026-08-18';
 const MAX_TURNS = 300;
 

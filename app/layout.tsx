@@ -7,9 +7,9 @@ import { RookieErrorBoundary } from '@/components/ui/RookieErrorBoundary';
 import { NativeSplash } from '@/components/run/NativeSplash';
 import { StatusBarSync } from '@/components/run/StatusBarSync';
 
-const TITLE = "Rookies Run";
+const TITLE = "Rookie's Revenge";
 const DESCRIPTION =
-  'A daily chess roguelike. Help Rookie cross the board: unlock powers, clear 10 levels, new board every day.';
+  'A daily chess roguelike. One rook against the whole army — earn powers, hunt the king, new board every day.';
 const SITE_URL = 'https://run.chesspath.app';
 const OG_IMAGE = `${SITE_URL}/og/run.png`;
 
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "Rookies Run — a daily chess roguelike",
+        alt: "Rookie's Revenge — a daily chess roguelike",
       },
     ],
     type: 'website',

@@ -137,6 +137,9 @@ export function puzzleToBoardState(
     aiRngSeed?: number;
     /** Run id — only STC mini-runs lock Rookie into a non-rook form. */
     runId?: string;
+    /** Player's unlocked abilities (profile). undefined = all. */
+    unlockedAbilities?: BoardState['unlockedAbilities'];
+    difficulty?: BoardState['difficulty'];
   } = {},
 ): BoardState {
   const abilities = refreshAbilityUses(carry.abilities ?? []);
@@ -183,6 +186,8 @@ export function puzzleToBoardState(
       return {};
     })(),
     runId: carry.runId,
+    ...(carry.unlockedAbilities ? { unlockedAbilities: [...carry.unlockedAbilities] } : {}),
+    ...(carry.difficulty ? { difficulty: carry.difficulty } : {}),
     moveLimit: puzzle.moveLimit ?? null,
     enemiesPerTurn: puzzle.enemiesPerTurn ?? 1,
     ...(puzzle.winCondition === 'king'

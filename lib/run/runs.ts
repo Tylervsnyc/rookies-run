@@ -3929,7 +3929,7 @@ const RUN_PLUS: RunDef = {
 // ─────────────────────────────────────────────────────────────────────────────
 // PROTOTYPE — Rookie's Revenge: win by CAPTURING THE KING, not reaching rank 8.
 // Hidden run (not in RUNS → not in the picker, daily rotation, or next-run
-// cycling). Reach it via /?run=revenge-proto.
+// cycling). Reach it via /?run=revenge-1.
 
 const KING_GOAL = { winCondition: 'king' as const };
 const STILL = { ...KING_GOAL, kingBehavior: 'still' as const };
@@ -3951,6 +3951,11 @@ export const REVENGE_ABILITIES: ReadonlyArray<string> = [
   'convert',
   'poison-dart',
   'decoy',
+  // Late unlocks (see lib/run/achievements.ts) — weaker in the harness but
+  // they're rewards, and an unlocked ability that never shows up is a bug.
+  'squad',
+  'rabies-dart',
+  'become-king',
 ];
 
 /**
@@ -3975,8 +3980,8 @@ export const REVENGE_CORE: ReadonlyArray<string> = [
  * playtest harness (scripts/run-playtest/revenge.ts) — see
  * docs/revenge-playtest.md before touching numbers.
  */
-const RUN_REVENGE_PROTO: RunDef = {
-  id: 'revenge-proto',
+const RUN_REVENGE_1: RunDef = {
+  id: 'revenge-1',
   name: "Rookie's Revenge",
   blurb: 'Rank 8 is just a row. Take the king.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -4129,7 +4134,14 @@ const RUN_REVENGE_PROTO: RunDef = {
 };
 
 /** Runs reachable ONLY by explicit id (/?run=...) — never listed anywhere. */
-const HIDDEN_RUNS: ReadonlyArray<RunDef> = [RUN_REVENGE_PROTO];
+const HIDDEN_RUNS: ReadonlyArray<RunDef> = [];
+
+/**
+ * Rookie's Revenge runs — THE game. Daily rotation cycles these only; the
+ * classic rank-8 runs below stay playable from the picker / ?run= as
+ * "Classic" but are not in the daily pool.
+ */
+export const REVENGE_RUN_IDS: ReadonlyArray<string> = ['revenge-1'];
 
 export const STC_RUN_IDS = [
   'stc-king',
@@ -4140,7 +4152,7 @@ export const STC_RUN_IDS = [
 ] as const;
 
 export const RUNS: ReadonlyArray<RunDef> = [
-
+  RUN_REVENGE_1,
   RUN_DAILY,
   RUN_ABILITIES_V2,
   RUN_KNIGHT_ACADEMY,

@@ -526,9 +526,19 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
         }
       })()
     : null;
-  const runAllowed = runDef?.allowedAbilities
+  const runAllowedRaw = runDef?.allowedAbilities
     ? new Set(runDef.allowedAbilities as string[])
     : null;
+  // Meta-progression: the player only sees abilities they've unlocked.
+  // Owned abilities always stay upgradable (they were unlocked when picked).
+  const unlocked = state.unlockedAbilities ? new Set<string>(state.unlockedAbilities) : null;
+  const runAllowed = (() => {
+    if (!runAllowedRaw && !unlocked) return null;
+    const ids = ALL_ABILITY_IDS.filter(
+      (id) => (!runAllowedRaw || runAllowedRaw.has(id)) && (!unlocked || unlocked.has(id) || owned.has(id)),
+    );
+    return new Set<string>(ids);
+  })();
   // Offer size — 2 by default; Rookie's Revenge shows 3.
   const size = Math.max(1, runDef?.offerSize ?? 2);
   // Core guarantee — at least `coreMin` slate entries are core ids.

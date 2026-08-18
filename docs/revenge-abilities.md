@@ -1,6 +1,6 @@
 # Rookie's Revenge — the 10 king-catching abilities (v2)
 
-Hidden run `revenge-proto` (`/?run=revenge-proto`). Win condition: **capture the
+Hidden run `revenge-1` (`/?run=revenge-1`). Win condition: **capture the
 enemy king**. A lone rook can never catch a fleeing king — abilities are the point.
 
 ## King rules (v2)

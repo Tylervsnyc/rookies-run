@@ -13,9 +13,14 @@ import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboardin
 import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
 import { RunPickerModal } from '@/components/run/RunPickerModal';
-import { RookiesRunLogo } from '@/components/run/RookiesRunLogo';
+import { RookiesRevengeLogo } from '@/components/run/RookiesRevengeLogo';
 import { StcRunLogo } from '@/components/run/StcRunLogo';
 import { TempoBar } from '@/components/run/TempoBar';
+import { AchievementToast, TrophyGlyph } from '@/components/run/AchievementToast';
+import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
+import { TrophyRoom } from '@/components/run/TrophyRoom';
+import { useProgress } from '@/hooks/useProgress';
+import { readProfile, recordBest } from '@/lib/run/profile';
 import { tempoMaxFor } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
@@ -43,6 +48,7 @@ import {
 import { applyRookieMove, stepAllyTurn, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } from '@/components/run/timing';
 import {
+  REVENGE_RUN_IDS,
   DEFAULT_RUN_ID,
   getNextRunId,
   getRunById,
@@ -101,7 +107,15 @@ function freshRun(
   startLevelIndex: number,
 ): { state: BoardState; puzzle: RunPuzzle } {
   const puzzle = puzzleForDate(iso, startLevelIndex, runId);
-  return { state: puzzleToBoardState(puzzle, { runId }), puzzle };
+  const profile = readProfile();
+  return {
+    state: puzzleToBoardState(puzzle, {
+      runId,
+      unlockedAbilities: profile.unlockedAbilities,
+      difficulty: profile.difficulty,
+    }),
+    puzzle,
+  };
 }
 
 export default function RookiesRunPage() {
@@ -122,6 +136,11 @@ export default function RookiesRunPage() {
       // Surface separation: a bare /run with no ?run= must never resolve to an
       // STC run from a stale localStorage entry — STC lives behind /run/stc only.
       if (!url.runId && runId.startsWith('stc-')) {
+        runId = dailyRunForDate;
+      }
+      // Rookie's Revenge is the game now: a stale classic-run id in
+      // localStorage must not keep a returning player on rank-8 runs.
+      if (!url.runId && !REVENGE_RUN_IDS.includes(runId)) {
         runId = dailyRunForDate;
       }
       if (
@@ -258,6 +277,10 @@ export default function RookiesRunPage() {
   }, [enemyCaptureFx]);
 
   const [levelsCleared, setLevelsCleared] = useState(0);
+  const [levelsLost, setLevelsLost] = useState(0);
+  const lossesByLevelRef = useRef<Record<number, number>>({});
+  const [showTrophies, setShowTrophies] = useState(false);
+  const progress = useProgress(state);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recorder — captures every Rookie / ally / drone / enemy event so we can
@@ -495,10 +518,33 @@ export default function RookiesRunPage() {
       captures: state.captures.length,
       tempo: state.tempo,
     });
+    progress.emit({
+      type: 'level-cleared',
+      level: levelIndex + 1,
+      moves: state.moveCount,
+      moveLimit: state.moveLimit,
+      captures: state.captures.length,
+      abilitiesOwned: state.abilities.length,
+      allTierFive: state.abilities.length > 0 && state.abilities.every((a) => a.tier === 5),
+      difficulty: state.difficulty ?? 'normal',
+      isKingLevel: state.winCondition === 'king',
+    });
 
     if (levelIndex >= totalLevels - 1) {
       setRunComplete(true);
       trackEvent('run_completed', { iso: meta.iso, run: meta.runId });
+      {
+        const streakNow = computeStats(readHistory()).currentStreak;
+        progress.emit({
+          type: 'run-completed',
+          levelsLost,
+          abilitiesOwned: state.abilities.length,
+          difficulty: state.difficulty ?? 'normal',
+          abilitiesUsed: progress.abilitiesUsedThisRun(),
+          streak: streakNow + 1,
+        });
+        recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
+      }
       // Record completion for streak (auth-only on the server; silent for anon).
       // Only record when this is the actual daily for that date — not, e.g.,
       // an STC run or a hand-picked non-daily run via ?run=.
@@ -518,6 +564,7 @@ export default function RookiesRunPage() {
     } else {
       setShowLevelCleared(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels]);
 
   const trackedLossRef = useRef(false);
@@ -532,7 +579,24 @@ export default function RookiesRunPage() {
         moves: state.moveCount,
         captures: state.captures.length,
       });
+      const lvl = levelIndex + 1;
+      lossesByLevelRef.current[lvl] = (lossesByLevelRef.current[lvl] ?? 0) + 1;
+      setLevelsLost((n) => n + 1);
+      const king = state.pieces.find((p) => p.type === 'king');
+      const kingDistance = king
+        ? Math.max(Math.abs(king.file - state.rookie.file), Math.abs(king.rank - state.rookie.rank))
+        : null;
+      progress.emit({
+        type: 'level-lost',
+        level: lvl,
+        onStartSquare: state.moveCount === 0,
+        movesLeft: state.moveLimit === null ? null : Math.max(0, state.moveLimit - state.moveCount),
+        kingDistance,
+        lossesThisLevel: lossesByLevelRef.current[lvl],
+        difficulty: state.difficulty ?? 'normal',
+      });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status, state.moveCount, state.captures, levelIndex, meta.iso]);
 
   // Ability legal-move highlights (for movement abilities).
@@ -742,11 +806,13 @@ export default function RookiesRunPage() {
         tempo: state.tempo,
         pendingOffer: state.pendingOffer,
         runId: meta.runId,
+        unlockedAbilities: state.unlockedAbilities,
+        difficulty: state.difficulty,
       }),
     );
     setSelectedSquare(null);
     setShowLevelCleared(false);
-  }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer]);
+  }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
     const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex);
@@ -755,6 +821,9 @@ export default function RookiesRunPage() {
     setState(fresh.state);
     setSelectedSquare(null);
     setLevelsCleared(0);
+    setLevelsLost(0);
+    lossesByLevelRef.current = {};
+    progress.resetRunScope();
     setDying(false);
     setDeathSettled(false);
     setShowLevelCleared(false);
@@ -766,6 +835,7 @@ export default function RookiesRunPage() {
     traceEventsRef.current = [];
     traceStartRef.current = Date.now();
     trackEvent('run_replayed', { iso: meta.iso, run: meta.runId });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta.iso, meta.runId, meta.startLevelIndex]);
 
   const goToNextRun = useCallback(() => {
@@ -916,7 +986,19 @@ export default function RookiesRunPage() {
           onStart={dismissIntro}
           tagline={isStc ? 'Powered by the Story Time Chess method' : undefined}
           dateLabel={dateLabel}
+          profile={progress.profile}
+          onTrophies={() => setShowTrophies(true)}
         />
+        {showTrophies && (
+          <TrophyRoom
+            profile={progress.profile}
+            onClose={() => setShowTrophies(false)}
+            onReplayTutorial={() => {
+              setShowTrophies(false);
+              setShowOnboarding(true);
+            }}
+          />
+        )}
       </div>
     );
   }
@@ -932,12 +1014,21 @@ export default function RookiesRunPage() {
               className="text-left active:opacity-70 transition-opacity shrink-0"
               aria-label="Switch run"
             >
-              {isStc ? <StcRunLogo scale={0.45} /> : <RookiesRunLogo scale={0.45} />}
+              {isStc ? <StcRunLogo scale={0.45} /> : <RookiesRevengeLogo scale={0.3} />}
             </button>
             <RulesInline winCondition={state.winCondition} />
           </div>
 
           <div className="flex flex-col items-end gap-1 shrink-0">
+            <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setShowTrophies(true)}
+              aria-label="Trophy room"
+              className="w-8 h-8 rounded-lg bg-chess-surface shadow-sm flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <TrophyGlyph size={16} color="#d9a520" />
+            </button>
             <div className="bg-chess-surface rounded-lg px-3 py-1.5 shadow-sm inline-flex items-center gap-1.5 leading-none">
               <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
                 Lvl
@@ -946,6 +1037,7 @@ export default function RookiesRunPage() {
                 {levelIndex + 1}
                 <span className="text-chess-text-faint">/{totalLevels}</span>
               </span>
+            </div>
             </div>
             {/* Rookie's Revenge: flee levels have a move budget — show it. */}
             {state.winCondition === 'king' && state.moveLimit !== null && (
@@ -1059,6 +1151,27 @@ export default function RookiesRunPage() {
       )}
 
       {showTempoHelp && <TempoHelpModal onClose={closeTempoHelp} />}
+      <AchievementToast
+        achievement={progress.queue.achievements[0]}
+        onDone={progress.shiftAchievement}
+      />
+      {/* Ability reveals wait until no offer/level modal is up so they never stack. */}
+      {!state.pendingOffer && !showLevelCleared && (
+        <AbilityUnlockModal
+          abilityId={progress.queue.unlocks[0]}
+          onClose={progress.shiftUnlock}
+        />
+      )}
+      {showTrophies && (
+        <TrophyRoom
+          profile={progress.profile}
+          onClose={() => setShowTrophies(false)}
+          onReplayTutorial={() => {
+            setShowTrophies(false);
+            setShowOnboarding(true);
+          }}
+        />
+      )}
 
       {showRunPicker && (
         <RunPickerModal
