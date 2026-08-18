@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RunBoard } from '@/components/run/Board';
 import { LevelClearedModal } from '@/components/run/LevelClearedModal';
+import { LevelLostModal } from '@/components/run/LevelLostModal';
 import { RunSummaryModal } from '@/components/run/RunSummaryModal';
 import { computeStats, readHistory, recordRun } from '@/lib/run/history';
 import { AbilityRack } from '@/components/run/AbilityRack';
@@ -20,7 +21,8 @@ import { AchievementToast, TrophyGlyph } from '@/components/run/AchievementToast
 import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
-import { readProfile, recordBest } from '@/lib/run/profile';
+import { readProfile, recordBest, setDifficulty as persistDifficulty } from '@/lib/run/profile';
+import { DIFFICULTIES, type DifficultyId } from '@/lib/run/difficulty';
 import { tempoMaxFor } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
@@ -45,7 +47,8 @@ import {
   type AbilityId,
   type AbilityOfferOption,
 } from '@/lib/run/abilities';
-import { applyRookieMove, stepAllyTurn, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
+import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
+import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
 import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
@@ -279,6 +282,20 @@ export default function RookiesRunPage() {
   const [levelsCleared, setLevelsCleared] = useState(0);
   const [levelsLost, setLevelsLost] = useState(0);
   const lossesByLevelRef = useRef<Record<number, number>>({});
+  // Difficulty mode — the landing picker edits this; the run is rebuilt on
+  // Play if it differs from what the current board was built under.
+  const [difficulty, setDifficultyState] = useState<DifficultyId>(
+    () => initial.state.difficulty ?? readProfile().difficulty,
+  );
+  const difficultyDef = DIFFICULTIES[state.difficulty ?? 'normal'];
+  // Retries used per level index (difficulty-gated). Reset by resetRun.
+  const retriesUsedRef = useRef<Record<number, number>>({});
+  const [gaveUp, setGaveUp] = useState(false);
+  const retriesLeft = Math.max(
+    0,
+    difficultyDef.retriesPerLevel - (retriesUsedRef.current[levelIndex] ?? 0),
+  );
+  const canRetry = retriesLeft > 0 && !gaveUp;
   const [showTrophies, setShowTrophies] = useState(false);
   const progress = useProgress(state);
 
@@ -342,14 +359,32 @@ export default function RookiesRunPage() {
     }
   }, [meta.iso]);
 
+  const resetRunRef = useRef<() => void>(() => {});
   const dismissIntro = useCallback(() => {
     ensureAudioWarm();
     if (typeof window !== 'undefined') {
       localStorage.setItem(`rookies-run-intro-seen:${meta.iso}`, '1');
     }
+    // The board was built at mount from the profile; if the picker changed
+    // the mode since, rebuild the run under the new difficulty.
+    if ((state.difficulty ?? 'normal') !== difficulty) resetRunRef.current();
     setShowIntro(false);
-    trackEvent('run_intro_dismissed', { iso: meta.iso });
-  }, [meta.iso, ensureAudioWarm]);
+    trackEvent('run_intro_dismissed', { iso: meta.iso, difficulty });
+  }, [meta.iso, ensureAudioWarm, state.difficulty, difficulty]);
+
+  const onDifficultyChange = useCallback(
+    (d: DifficultyId) => {
+      if (DIFFICULTIES[d].requiresAchievement && !progress.profile.achievements[DIFFICULTIES[d].requiresAchievement!]) {
+        return;
+      }
+      persistDifficulty(d);
+      setDifficultyState(d);
+      progress.setProfile(readProfile());
+      trackEvent('run_difficulty_picked', { iso: meta.iso, difficulty: d });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [meta.iso, progress.profile],
+  );
 
   const [showTempoHelp, setShowTempoHelp] = useState(false);
   const openTempoHelp = useCallback(() => {
@@ -823,6 +858,8 @@ export default function RookiesRunPage() {
     setLevelsCleared(0);
     setLevelsLost(0);
     lossesByLevelRef.current = {};
+    retriesUsedRef.current = {};
+    setGaveUp(false);
     progress.resetRunScope();
     setDying(false);
     setDeathSettled(false);
@@ -837,6 +874,38 @@ export default function RookiesRunPage() {
     trackEvent('run_replayed', { iso: meta.iso, run: meta.runId });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta.iso, meta.runId, meta.startLevelIndex]);
+  resetRunRef.current = resetRun;
+
+  // Difficulty retry: rebuild THIS level with the carried powers/tempo/offer
+  // (same carry pattern as goToNextLevel). Loss bookkeeping (lossesByLevelRef,
+  // level-lost event) already ran in the 'lost' effect; trackedLossRef is
+  // re-armed so the next loss counts again.
+  const retryLevel = useCallback(() => {
+    retriesUsedRef.current[levelIndex] = (retriesUsedRef.current[levelIndex] ?? 0) + 1;
+    const samePuzzle = puzzleForDate(meta.iso, levelIndex, meta.runId);
+    setPuzzle(samePuzzle);
+    setState(
+      puzzleToBoardState(samePuzzle, {
+        abilities: state.abilities,
+        tempo: state.tempo,
+        pendingOffer: state.pendingOffer,
+        runId: meta.runId,
+        unlockedAbilities: state.unlockedAbilities,
+        difficulty: state.difficulty,
+      }),
+    );
+    setSelectedSquare(null);
+    setDying(false);
+    setDeathSettled(false);
+    trackedLossRef.current = false;
+    tracePostedRef.current = false;
+    trackEvent('run_level_retried', {
+      iso: meta.iso,
+      level: levelIndex + 1,
+      difficulty: state.difficulty ?? 'normal',
+      retriesUsed: retriesUsedRef.current[levelIndex],
+    });
+  }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const goToNextRun = useCallback(() => {
     // STC and regular runs are separate cycles — never advance across the line.
@@ -933,7 +1002,7 @@ export default function RookiesRunPage() {
   const [historyVersion, setHistoryVersion] = useState(0);
   useEffect(() => {
     if (runRecordedRef.current) return;
-    const finished = runComplete || (state.status === 'lost' && deathSettled);
+    const finished = runComplete || (state.status === 'lost' && deathSettled && !canRetry);
     if (!finished) return;
     runRecordedRef.current = true;
     recordRun({
@@ -944,7 +1013,7 @@ export default function RookiesRunPage() {
       completed: runComplete,
     });
     setHistoryVersion((v) => v + 1);
-  }, [runComplete, state.status, deathSettled, meta.iso, meta.runId, levelReached, totalLevels]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, levelReached, totalLevels]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 
@@ -988,6 +1057,8 @@ export default function RookiesRunPage() {
           dateLabel={dateLabel}
           profile={progress.profile}
           onTrophies={() => setShowTrophies(true)}
+          difficulty={isStc ? undefined : difficulty}
+          onDifficultyChange={isStc ? undefined : onDifficultyChange}
         />
         {showTrophies && (
           <TrophyRoom
@@ -1039,6 +1110,18 @@ export default function RookiesRunPage() {
               </span>
             </div>
             </div>
+            <div className="flex items-center gap-1.5">
+            {!isStc && (
+              <div
+                className="bg-chess-surface rounded-lg px-2 py-1 shadow-sm inline-flex items-center leading-none"
+                data-testid="difficulty-chip"
+                title="Difficulty"
+              >
+                <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
+                  {difficultyDef.name}
+                </span>
+              </div>
+            )}
             {/* Rookie's Revenge: flee levels have a move budget — show it. */}
             {state.winCondition === 'king' && state.moveLimit !== null && (
               <div
@@ -1056,6 +1139,7 @@ export default function RookiesRunPage() {
                 </span>
               </div>
             )}
+            </div>
           </div>
         </header>
 
@@ -1197,8 +1281,20 @@ export default function RookiesRunPage() {
         />
       )}
 
-      {((state.status === 'lost' && deathSettled) || runComplete) && (
+      {state.status === 'lost' && deathSettled && canRetry && !runComplete && (
+        <LevelLostModal
+          level={levelIndex + 1}
+          totalLevels={totalLevels}
+          retriesLeft={retriesLeft}
+          difficultyLabel={isStc ? undefined : difficultyDef.name}
+          onRetry={retryLevel}
+          onGiveUp={() => setGaveUp(true)}
+        />
+      )}
+
+      {((state.status === 'lost' && deathSettled && !canRetry) || runComplete) && (
         <RunSummaryModal
+          difficultyLabel={isStc ? undefined : difficultyDef.name}
           iso={meta.iso}
           totalLevels={totalLevels}
           levelReached={levelReached}

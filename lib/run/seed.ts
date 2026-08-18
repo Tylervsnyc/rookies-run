@@ -12,6 +12,7 @@ import {
   rollOffer,
   squadSpawnFor,
 } from './abilities';
+import { applyDifficulty } from './apply-difficulty';
 import { DEFAULT_RUN_ID, getRunById } from './runs';
 import { tempoMaxFor } from './scoring';
 import type { BoardState, Coord, RunPuzzle } from './types';
@@ -129,7 +130,7 @@ function randomizedRookieStart(puzzle: RunPuzzle): { file: number; rank: number 
 }
 
 export function puzzleToBoardState(
-  puzzle: RunPuzzle,
+  authoredPuzzle: RunPuzzle,
   carry: {
     tempo?: number;
     abilities?: BoardState['abilities'];
@@ -142,6 +143,11 @@ export function puzzleToBoardState(
     difficulty?: BoardState['difficulty'];
   } = {},
 ): BoardState {
+  // Difficulty is applied exactly once, here. Downstream code reads the
+  // adjusted puzzle + `state.difficulty` — never re-apply.
+  const puzzle = carry.difficulty
+    ? applyDifficulty(authoredPuzzle, carry.difficulty)
+    : authoredPuzzle;
   const abilities = refreshAbilityUses(carry.abilities ?? []);
   // Forced offer at start of level 6: if no offer carried over and the player
   // hasn't hit one organically, force one so progression doesn't stall.

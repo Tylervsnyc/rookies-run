@@ -19,6 +19,7 @@
  * Score is never negative — we clamp at 0.
  */
 
+import { DIFFICULTIES, type DifficultyId } from './difficulty';
 import type { BoardState, PieceType, RunPuzzle } from './types';
 
 export const SCORE = {
@@ -54,12 +55,22 @@ export const TEMPO_MAX_KING = 12;
 
 /**
  * Per-level tempo cap. King levels (`winCondition === 'king'`) get the
- * longer meter; everything else keeps TEMPO_MAX. Live behavior unchanged.
+ * longer meter, sized by difficulty (normal = TEMPO_MAX_KING); everything
+ * else keeps TEMPO_MAX.
  */
 export function tempoMaxFor(
-  state: Pick<BoardState, 'winCondition'> | Pick<RunPuzzle, 'winCondition'>,
+  state:
+    | (Pick<BoardState, 'winCondition'> & { difficulty?: DifficultyId })
+    | Pick<RunPuzzle, 'winCondition'>,
 ): number {
-  return state.winCondition === 'king' ? TEMPO_MAX_KING : TEMPO_MAX;
+  if (state.winCondition !== 'king') return TEMPO_MAX;
+  const d = (state as { difficulty?: DifficultyId }).difficulty;
+  return d && DIFFICULTIES[d] ? DIFFICULTIES[d].tempoMaxKing : TEMPO_MAX_KING;
+}
+
+/** Difficulty score multiplier (1 when unset / unknown). */
+export function scoreMultFor(d: DifficultyId | undefined): number {
+  return d && DIFFICULTIES[d] ? DIFFICULTIES[d].scoreMult : 1;
 }
 
 export interface ScoreInput {

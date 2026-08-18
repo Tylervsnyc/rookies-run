@@ -16,6 +16,8 @@ interface RunSummaryModalProps {
   onReplay: () => void;
   nextRunName?: string;
   onNextRun?: () => void;
+  /** Difficulty mode name (e.g. "Hard") — shown as a small chip under the title. */
+  difficultyLabel?: string;
 }
 
 export function RunSummaryModal({
@@ -28,6 +30,7 @@ export function RunSummaryModal({
   onReplay,
   nextRunName,
   onNextRun,
+  difficultyLabel,
 }: RunSummaryModalProps) {
   const [shareCopied, setShareCopied] = useState(false);
 
@@ -109,6 +112,13 @@ export function RunSummaryModal({
         </div>
         <h2 className="mt-1 text-3xl font-black text-chess-text">{title}</h2>
         <p className="mt-1 text-sm text-chess-text-muted">{subtitle}</p>
+        {difficultyLabel && (
+          <div className="mt-2 flex justify-center">
+            <span className="rounded-full bg-chess-text/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
+              {difficultyLabel}
+            </span>
+          </div>
+        )}
 
         <div className="mt-5 grid grid-cols-4 gap-2">
           <Stat value={stats.played} label="Played" />

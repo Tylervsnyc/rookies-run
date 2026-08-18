@@ -4,6 +4,7 @@ import { REVENGE_TAGLINE, RookiesRevengeLogo } from './RookiesRevengeLogo';
 import { TrophyGlyph } from './AchievementToast';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
+import { DIFFICULTIES, DIFFICULTY_ORDER, type DifficultyId } from '@/lib/run/difficulty';
 
 interface RunLandingProps {
   onStart: () => void;
@@ -14,6 +15,9 @@ interface RunLandingProps {
   /** Meta-progression readout + Trophy Room entry. */
   profile?: PlayerProfile;
   onTrophies?: () => void;
+  /** Difficulty picker (Rookie's Revenge). Omit both to hide it. */
+  difficulty?: DifficultyId;
+  onDifficultyChange?: (d: DifficultyId) => void;
 }
 
 const VIDEO_SRC = '/run/landing-board.mp4';
@@ -24,8 +28,23 @@ const RULES: { n: number; title: string; sub: string }[] = [
   { n: 3, title: 'The morals.',  sub: 'Zero. Earn powers. Win ugly.' },
 ];
 
-export function RunLanding({ onStart, tagline, dateLabel, profile, onTrophies }: RunLandingProps) {
+export function RunLanding({
+  onStart,
+  tagline,
+  dateLabel,
+  profile,
+  onTrophies,
+  difficulty,
+  onDifficultyChange,
+}: RunLandingProps) {
   const abilitiesTotal = unlockableAbilityIds().length;
+  const showPicker = !!difficulty && !!onDifficultyChange;
+  const activeDef = difficulty ? DIFFICULTIES[difficulty] : null;
+  const isLocked = (id: DifficultyId): boolean => {
+    const req = DIFFICULTIES[id].requiresAchievement;
+    if (!req) return false;
+    return !profile?.achievements[req];
+  };
   const abilitiesHave = profile ? profile.unlockedAbilities.length : 0;
   const trophiesHave = profile ? Object.keys(profile.achievements).length : 0;
   return (
@@ -50,6 +69,61 @@ export function RunLanding({ onStart, tagline, dateLabel, profile, onTrophies }:
             {tagline ?? REVENGE_TAGLINE}
           </p>
         </div>
+
+        {/* Difficulty picker */}
+        {showPicker && activeDef && (
+          <div className="flex flex-col gap-1" data-testid="difficulty-picker">
+            <div
+              role="radiogroup"
+              aria-label="Difficulty"
+              className="grid grid-cols-4 gap-1 rounded-xl bg-chess-page p-1 border border-chess-text/10"
+            >
+              {DIFFICULTY_ORDER.map((id) => {
+                const def = DIFFICULTIES[id];
+                const active = id === difficulty;
+                const locked = isLocked(id);
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    aria-disabled={locked}
+                    data-difficulty={id}
+                    onClick={() => {
+                      if (locked) return;
+                      onDifficultyChange?.(id);
+                    }}
+                    className={`min-h-[40px] rounded-lg px-0.5 text-[10.5px] font-black leading-tight transition-colors flex items-center justify-center gap-0.5 ${
+                      active
+                        ? 'bg-chess-text text-white shadow-sm'
+                        : locked
+                          ? 'text-chess-text-faint'
+                          : 'text-chess-text-muted active:bg-chess-text/10'
+                    }`}
+                  >
+                    {locked && (
+                      <svg width="9" height="11" viewBox="0 0 9 11" aria-hidden className="shrink-0">
+                        <rect x="0.5" y="4.5" width="8" height="6" rx="1.2" fill="currentColor" />
+                        <path d="M2 4.5V3a2.5 2.5 0 0 1 5 0v1.5" fill="none" stroke="currentColor" strokeWidth="1.3" />
+                      </svg>
+                    )}
+                    <span className="truncate">{def.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] italic text-chess-text-muted leading-snug px-1 min-h-[14px]">
+              {activeDef.tagline}
+              {DIFFICULTY_ORDER.some((id) => isLocked(id)) && (
+                <span className="not-italic text-chess-text-faint">
+                  {' '}
+                  · Nightmare: finish a run on Hard.
+                </span>
+              )}
+            </p>
+          </div>
+        )}
 
         {/* Footage — capped height so the page fits a phone */}
         <div className="relative rounded-xl overflow-hidden border border-chess-text/15 bg-chess-page">

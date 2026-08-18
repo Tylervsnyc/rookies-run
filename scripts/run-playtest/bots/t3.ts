@@ -6,8 +6,8 @@
  * the bot itself is now factory-built.
  */
 
-import { stepAllyTurn, stepDroneTurn } from '../../../lib/run/abilities';
-import { stepEnemyTurn } from '../../../lib/run/pawn-ai';
+import { stepDroneTurn } from '../../../lib/run/abilities';
+import { stepAllyTurnReactive as stepAllyTurn, stepEnemyTurn } from '../../../lib/run/pawn-ai';
 import type { BoardState } from '../../../lib/run/types';
 import { createMctsBot } from './mcts';
 import type { Bot } from '../types';

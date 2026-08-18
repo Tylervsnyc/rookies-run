@@ -7,15 +7,19 @@ interface TempoHelpModalProps {
 const POINTS: { what: string; detail: string }[] = [
   {
     what: 'Capture pieces',
-    detail: 'Every piece you take fills the tempo bar. Bigger pieces fill more.',
+    detail: 'Every piece you take charges the tempo bar. Bigger pieces charge more.',
   },
   {
     what: 'Fill the bar',
-    detail: 'When tempo maxes out, you get to pick a new power or upgrade one you have.',
+    detail: 'When tempo maxes out, you pick a new power or upgrade one you have.',
   },
   {
-    what: 'Stack your powers',
-    detail: 'Powers stay for the whole run. Picking the same one again levels it up.',
+    what: 'Pick a power',
+    detail: 'Powers stay for the whole run and sit in your rack. Picking the same one again levels it up.',
+  },
+  {
+    what: 'Cast it from the rack',
+    detail: 'Tap the card. If it asks, tap a square. Then go take the king.',
   },
 ];
 
@@ -50,10 +54,10 @@ export function TempoHelpModal({ onClose }: TempoHelpModalProps) {
 
           <div className="px-5 pt-5 pb-3">
             <div className="text-[10px] uppercase tracking-[0.18em] font-black text-amber-500">
-              ★ Tempo
+              Tempo
             </div>
             <h2 className="text-base font-black text-chess-text uppercase tracking-wide mt-0.5">
-              How it works
+              Charge up. Take the king.
             </h2>
           </div>
 

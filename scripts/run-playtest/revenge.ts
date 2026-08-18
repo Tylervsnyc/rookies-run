@@ -1,7 +1,7 @@
 /**
  * Rookie's Revenge playtest harness.
  *
- *   npx tsx scripts/run-playtest/revenge.ts matrix [--trials=30] [--levels=1,2,3] [--loadouts=none,surge] [--tier=T5] [--realistic]
+ *   npx tsx scripts/run-playtest/revenge.ts matrix [--trials=30] [--levels=1,2,3] [--loadouts=none,surge] [--tier=T5] [--realistic] [--difficulty=rookie|normal|hard|nightmare]
  *   npx tsx scripts/run-playtest/revenge.ts runs   [--runs=100] [--tier=T5]     # full runs, random level pick
  *   npx tsx scripts/run-playtest/revenge.ts solve  [--levels=...] [--loadouts=...] [--depth=6] [--nodes=200000]
  *
@@ -33,6 +33,7 @@ import {
 import { rookieLegalMoves } from '../../lib/run/movement';
 import { REVENGE_ABILITIES, getRunById } from '../../lib/run/runs';
 import { puzzleForDate, puzzleToBoardState } from '../../lib/run/seed';
+import { isDifficultyId, type DifficultyId } from '../../lib/run/difficulty';
 import type { BoardState, RunPuzzle } from '../../lib/run/types';
 import { toSquare } from '../../lib/run/types';
 import { applyBotAction } from './bots/apply';
@@ -68,6 +69,11 @@ function arg(name: string, def?: string): string | undefined {
   return def;
 }
 const JSON_OUT = process.argv.includes('--json');
+/** Difficulty mode applied via puzzleToBoardState (undefined = authored/normal). */
+const DIFFICULTY: DifficultyId | undefined = (() => {
+  const d = arg('difficulty');
+  return d && isDifficultyId(d) ? d : undefined;
+})();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Level + loadout builders
@@ -96,6 +102,7 @@ function startState(level: number, abilities: OwnedAbility[], seed: string): Boa
     runId: RUN_ID,
     abilities,
     aiRngSeed: (Math.floor(rng() * 0xffffffff) >>> 0) || 1,
+    ...(DIFFICULTY ? { difficulty: DIFFICULTY } : {}),
   });
   return { ...s, abilities: refreshAbilityUses(s.abilities) };
 }
@@ -289,6 +296,7 @@ function matrixMain(): void {
               `--trials=${trials}`,
               `--tier=${tier}`,
               ...(realistic ? ['--realistic'] : []),
+              ...(DIFFICULTY ? [`--difficulty=${DIFFICULTY}`] : []),
             ],
             { stdio: ['ignore', 'pipe', 'inherit'] },
           );
@@ -313,7 +321,7 @@ function matrixMain(): void {
       return;
     }
     printMatrix(cells, loadouts, levels);
-    console.error(`[revenge matrix] ${cells.length} cells × ${trials} trials in ${dt}s (${tier}${realistic ? ', realistic tiers' : ''})`);
+    console.error(`[revenge matrix] ${cells.length} cells × ${trials} trials in ${dt}s (${tier}${realistic ? ', realistic tiers' : ''}${DIFFICULTY ? `, difficulty=${DIFFICULTY}` : ''})`);
   });
 }
 
@@ -378,6 +386,7 @@ function runsMain(): void {
         tempo,
         pendingOffer: pending,
         aiRngSeed: (Math.floor(rng() * 0xffffffff) >>> 0) || 1,
+        ...(DIFFICULTY ? { difficulty: DIFFICULTY } : {}),
       });
       const { result, final } = playGame(start, bot, seed, 'random', (id) => {
         pickCounts[id] = (pickCounts[id] ?? 0) + 1;

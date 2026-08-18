@@ -17,9 +17,11 @@ import {
   allyAttackedSquares,
   clearStatusOnSquare,
   relocateStatusMarkers,
+  stepAllyTurn,
   stunKingAfterCapture,
   tryAegisIntercept,
 } from './abilities';
+import { DIFFICULTIES } from './difficulty';
 import { enemyAt, rookieLegalMoves } from './movement';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { mulberry32 } from './seed';
@@ -218,13 +220,16 @@ function kingFleeMove(
   // Stunned (Rookie just captured something) — he can't flee this turn.
   if ((state.kingStunTurns ?? 0) > 0) return null;
   const kingPos: Coord = { file: king.file, rank: king.rank };
-  const threatened = rookieLegalMoves(state).some(
-    (m) => m.file === kingPos.file && m.rank === kingPos.rank,
-  );
+  const allyCover = state.allies.length > 0 ? allyAttackedSquares(state) : null;
+  const threatened =
+    rookieLegalMoves(state).some(
+      (m) => m.file === kingPos.file && m.rank === kingPos.rank,
+    ) ||
+    // Nightmare: he also reads the rainbow allies' lines as a threat.
+    (kingReactsToAllies(state) && !!allyCover && allyCover.has(toSquare(kingPos)));
   if (!threatened) return null;
   const vacated = vacatedSet(state);
   const pen = state.kingPen ? new Set(state.kingPen) : null;
-  const allyCover = state.allies.length > 0 ? allyAttackedSquares(state) : null;
   const safe: Coord[] = [];
   for (const [df, dr] of QUEEN_DIRS) {
     const c: Coord = { file: king.file + df, rank: king.rank + dr };
@@ -282,6 +287,28 @@ function kingFleeMove(
  * moves (a guard leaving its post can open a line — he sees it coming).
  * Returns the new state, or null when he doesn't move.
  */
+/** Difficulty flag: does the fleeing king react to ally moves (nightmare)? */
+function kingReactsToAllies(state: BoardState): boolean {
+  const d = state.difficulty;
+  return !!d && !!DIFFICULTIES[d]?.kingReactsToAllies;
+}
+
+/**
+ * Nightmare-aware ally step: advance one ally (lib/run/abilities.ts), then —
+ * only when the difficulty says `kingReactsToAllies` — let the fleeing king
+ * take his free sidestep immediately, mirroring how he reacts after each
+ * guard move. Every other difficulty is byte-identical to `stepAllyTurn`.
+ */
+export function stepAllyTurnReactive(state: BoardState): BoardState {
+  const next = stepAllyTurn(state);
+  if (next === state || next.status !== 'playing') return next;
+  if (!kingReactsToAllies(next)) return next;
+  const allyMoved = next.allyTurnIndex !== state.allyTurnIndex || next.turn !== state.turn;
+  if (!allyMoved) return next;
+  const reacted = kingReaction(next);
+  return reacted ?? next;
+}
+
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
   const king = state.pieces.find((p) => p.type === 'king');

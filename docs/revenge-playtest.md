@@ -172,3 +172,36 @@ npx tsx scripts/run-playtest/revenge.ts trace --level=8 --loadout=surge --tier=T
 npx tsx scripts/run-playtest/revenge.ts lint
 node scripts/verify-revenge.mjs http://localhost:3011
 ```
+
+## Difficulty modes (2026-08-18)
+
+Harness flag: `--difficulty=rookie|normal|hard|nightmare` (matrix + runs) — the
+mode is applied through `puzzleToBoardState` exactly like the app
+(`lib/run/apply-difficulty.ts`: enemies/turn delta, move-limit delta, king
+override; `tempoMaxFor` reads the mode's king cap; nightmare's king also
+reacts after ally moves via `stepAllyTurnReactive`). T5, **20 trials/cell**,
+T1 loadouts, offers dismissed; runs = 40 random-pick full runs.
+
+| Mode | Worst level, no ability | Worst level, any single ability | Full runs (random picks) |
+|---|---|---|---|
+| rookie | L9 **35%** (L10 45%, L6 40%) | L9 squad 5%; finishers all ≥ 70% (L10 knight-hop 70%) | 39/40 |
+| normal | L9 **15%** (L10 25%, L8 30%) | L10 freeze-ray 50%; surge/queen-pulse/aegis/drones/decoy 100% | 40/40 |
+| hard | L9 **0%** (L10 45%, L7 45%) | L10 freeze-ray 40%, knight-hop 55%; bishop-step/aegis/drones 95% | 37/40 (losses L7 c1, L8 c2) |
+| nightmare | L9 **15%** (L10 30%, L8 35%) | L10 freeze-ray 45%, poison 45%, convert 50%; become-king 95% | 39/40 |
+
+Reads:
+- Nothing is degenerate: no mode is 100% everywhere, and every hard/nightmare
+  level is ≥ 80% with the right finisher (hard L9 "none" 0% is fine — L9 is
+  the ability-check level by design, and every finisher clears it 85–100%).
+- The T5 bot flattens the modes: with random picks all four clear 37–40 of 40.
+  The spread lives in the **no-ability column** (what a beginner who ignores
+  powers feels): rookie 35% / normal 15% / hard 0% at L9.
+- Rookie's `enemiesPerTurnDelta: -1` is a no-op on every Revenge level authored
+  at 1 enemy/turn (floor is 1) — its real levers are +4 moves, the still king
+  on L1–4, the shorter 8-tempo meter (offers come sooner) and unlimited retries.
+  If rookie needs to feel softer, raise `moveLimitDelta` (6) or extend the
+  still-king band to L1–6 in `apply-difficulty.ts`; deltas were left as
+  authored this pass.
+- Hard vs nightmare differ mostly in the tempo cap (12 vs 14) and retries
+  (1 vs 0); nightmare's ally-reactive king barely moves the bot's numbers
+  because the bot rarely holds squad/convert.
