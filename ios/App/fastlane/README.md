@@ -13,6 +13,25 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### tf_debug
+
+```sh
+[bundle exec] fastlane tf_debug
+```
+
+Debug: who can see the latest build
+
+### reinvite
+
+```sh
+[bundle exec] fastlane reinvite
+```
+
+Resend TestFlight invite email to Tyler
+
+----
+
+
 ## iOS
 
 ### ios beta

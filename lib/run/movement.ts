@@ -182,3 +182,17 @@ export function transformCost(form: RookieForm): number {
 
 /** How many Rookie moves a transformation lasts before auto-revert. */
 export const FORM_DURATION = 3;
+
+/**
+ * Does landing on `target` (evaluated against the PRE-move state) win the
+ * level? Default = reach rank 8. Under the 'king' win condition (Rookie's
+ * Revenge) it's capturing the enemy king instead — rank 8 is just a row.
+ */
+export function isWinningMove(state: BoardState, target: Coord): boolean {
+  if (state.winCondition === 'king') {
+    return state.pieces.some(
+      (p) => p.type === 'king' && p.file === target.file && p.rank === target.rank,
+    );
+  }
+  return target.rank === 8;
+}

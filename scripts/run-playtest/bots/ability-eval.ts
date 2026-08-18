@@ -44,6 +44,7 @@ const PIECE_VALUE: Record<PieceType, number> = {
   knight: 3,
   bishop: 3,
   queen: 9,
+  king: 0, // Rookie's Revenge objective — never "material" to clear
 };
 
 export function strategicScale(tier: TierId): number {
@@ -178,7 +179,12 @@ function simulateRookieStep(state: BoardState, target: Coord): BoardState {
     ...state,
     rookie: { ...target },
     pieces,
-    status: target.rank === 8 ? 'won' : state.status,
+    status:
+      (state.winCondition === 'king'
+        ? captured?.type === 'king'
+        : target.rank === 8)
+        ? 'won'
+        : state.status,
   };
 }
 

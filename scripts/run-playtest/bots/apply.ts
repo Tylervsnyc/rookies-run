@@ -15,6 +15,7 @@ import {
   applyAbilityActivate,
   applyAbilityMove,
   applyAbilityTargeted,
+  stepDroneTurn,
 } from '../../../lib/run/abilities';
 import { applyRookieMove } from '../../../lib/run/engine';
 import { ABILITY_DEFS } from '../../../lib/run/abilities';
@@ -26,8 +27,17 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
     case 'move':
       return applyRookieMove(state, action.target);
 
-    case 'activate-ability':
-      return applyAbilityActivate(state, action.abilityId);
+    case 'activate-ability': {
+      let next = applyAbilityActivate(state, action.abilityId);
+      // Drones: the UI ticks the swarm one step at a time; headless, run the
+      // whole phase so control returns to Rookie before the bot decides again.
+      let guard = 0;
+      while (next.turn === 'drones' && next.status === 'playing' && guard < 64) {
+        next = stepDroneTurn(next);
+        guard++;
+      }
+      return next;
+    }
 
     case 'ability-target': {
       const activated = applyAbilityActivate(state, action.abilityId);

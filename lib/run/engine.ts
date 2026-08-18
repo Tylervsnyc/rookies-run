@@ -4,13 +4,14 @@
  * Public surface:
  *   applyRookieMove(state, target)        → new BoardState
  *
- *   - Captures grant tempo (capped at TEMPO_MAX).
+ *   - Captures grant tempo (capped at tempoMaxFor(state) — 8, or 12 on king levels).
  *   - When tempo fills, an ability offer is rolled (see lib/run/abilities).
  *   - moveLimit (if set) ends the run when exceeded.
  */
 
 import {
   isLegalRookieMove,
+  isWinningMove,
   rookieLegalMoves,
 } from './movement';
 import {
@@ -19,10 +20,11 @@ import {
   rollOffer,
   stepAllyTurn,
   stepDroneTurn,
+  stunKingAfterCapture,
 } from './abilities';
 import { stepEnemyTurn } from './pawn-ai';
 import { mulberry32 } from './seed';
-import { TEMPO_MAX, TEMPO_REWARD } from './scoring';
+import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { toSquare } from './types';
 import type { BoardState, Coord, RookieForm } from './types';
 
@@ -47,13 +49,14 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
   );
 
   const tempoGain = captured ? TEMPO_REWARD[captured.type] ?? 0 : 0;
+  const tempoMax = tempoMaxFor(state);
   const rawTempo = state.tempo + tempoGain;
   // Only captures can trigger an offer — prevents spurious offers on plain
   // moves when tempo is already at MAX.
   const filled =
-    tempoGain > 0 && rawTempo >= TEMPO_MAX && state.pendingOffer === null;
+    tempoGain > 0 && rawTempo >= tempoMax && state.pendingOffer === null;
   // When the meter fills, freeze it at MAX visually and queue the offer.
-  const nextTempo = filled ? TEMPO_MAX : Math.min(TEMPO_MAX, rawTempo);
+  const nextTempo = filled ? tempoMax : Math.min(tempoMax, rawTempo);
 
   // Form bookkeeping — decrement, revert to rook when expired.
   // formMovesLeft < 0 = locked form (STC mini-runs); no decrement, no revert.
@@ -112,6 +115,8 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
     cancellableActivation: undefined,
     decoyTarget: clearDecoy ? null : state.decoyTarget,
     decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
+    // Rookie's Revenge: a capture stuns the king for the next enemy turn.
+    ...(captured ? stunKingAfterCapture(state) : {}),
   };
 
   // When the meter fills, roll an offer — unless every ability is maxed, in
@@ -122,11 +127,11 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
     if (offerIsExhausted(afterMove)) {
       nextPendingOffer = null;
       // Keep tempo full as a visible "blessed" state.
-      postOfferTempo = TEMPO_MAX;
+      postOfferTempo = tempoMax;
     } else {
       const rolled = rollOffer(afterMove, offerRngFor(afterMove));
       nextPendingOffer = rolled.length > 0 ? rolled : null;
-      if (rolled.length === 0) postOfferTempo = TEMPO_MAX;
+      if (rolled.length === 0) postOfferTempo = tempoMax;
     }
   }
   const withOffer: BoardState = {
@@ -135,28 +140,11 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
     pendingOffer: nextPendingOffer,
   };
 
-  // Win check — reaching rank 8 wins the level. Capture tempo from a piece on
-  // rank 8 still counts (nextTempo includes it), THEN a flat +2 tempo finish
-  // bonus on top, capped at TEMPO_MAX.
-  if (target.rank === 8) {
-    const winTempoRaw = nextTempo + 2;
-    const winTempo = Math.min(TEMPO_MAX, winTempoRaw);
-    let winPendingOffer = state.pendingOffer ?? null;
-    if (filled) {
-      winPendingOffer = nextPendingOffer;
-    } else if (winPendingOffer === null && winTempoRaw >= TEMPO_MAX) {
-      if (!offerIsExhausted(afterMove)) {
-        const rolled = rollOffer(afterMove, offerRngFor(afterMove));
-        winPendingOffer = rolled.length > 0 ? rolled : null;
-      }
-    }
-    return {
-      ...withOffer,
-      status: 'won',
-      turn: 'rookie',
-      tempo: winPendingOffer ? TEMPO_MAX : winTempo,
-      pendingOffer: winPendingOffer,
-    };
+  // Win check — reaching rank 8 (or capturing the king under the 'king' win
+  // condition) wins the level. Evaluated against the pre-move state so the
+  // king is still on the target square.
+  if (isWinningMove(state, target)) {
+    return resolveWin({ state, afterMove, withOffer, nextTempo, filled, nextPendingOffer });
   }
 
   // Move-limit loss check — over budget = run ends.
@@ -179,6 +167,41 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
     };
   }
   return { ...withOffer, enemyMovedSquares: [], enemyVacatedSquares: [] };
+}
+
+/**
+ * Shared win bookkeeping for both win conditions. Capture tempo from the
+ * winning move still counts (nextTempo includes it), THEN a flat +2 tempo
+ * finish bonus on top, capped at the per-level max; roll an offer if that fills it.
+ */
+function resolveWin(args: {
+  state: BoardState;
+  afterMove: BoardState;
+  withOffer: BoardState;
+  nextTempo: number;
+  filled: boolean;
+  nextPendingOffer: BoardState['pendingOffer'];
+}): BoardState {
+  const { state, afterMove, withOffer, nextTempo, filled, nextPendingOffer } = args;
+  const tempoMax = tempoMaxFor(state);
+  const winTempoRaw = nextTempo + 2;
+  const winTempo = Math.min(tempoMax, winTempoRaw);
+  let winPendingOffer = state.pendingOffer ?? null;
+  if (filled) {
+    winPendingOffer = nextPendingOffer;
+  } else if (winPendingOffer === null && winTempoRaw >= tempoMax) {
+    if (!offerIsExhausted(afterMove)) {
+      const rolled = rollOffer(afterMove, offerRngFor(afterMove));
+      winPendingOffer = rolled.length > 0 ? rolled : null;
+    }
+  }
+  return {
+    ...withOffer,
+    status: 'won',
+    turn: 'rookie',
+    tempo: winPendingOffer ? tempoMax : winTempo,
+    pendingOffer: winPendingOffer,
+  };
 }
 
 /** Re-export the single-step enemy advance for the UI. */

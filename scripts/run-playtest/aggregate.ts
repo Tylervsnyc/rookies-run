@@ -31,6 +31,7 @@ export function aggregate(outcomes: Outcome[]): LevelTierStats[] {
       knight: 0,
       bishop: 0,
       queen: 0,
+      king: 0,
     };
     for (const a of fails) {
       if (a.capturedBy) killerCounts[a.capturedBy]++;

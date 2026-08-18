@@ -84,6 +84,11 @@ function decideMcts(
   const scoreSum = new Array(candidates.length).fill(0);
   const perCand = Math.max(1, Math.floor(opts.rolloutCount / candidates.length));
 
+  // 1-ply safety: a candidate whose settled enemy reply captures Rookie
+  // outright is a blunder — never pick it while any non-losing action exists.
+  // (Rollouts alone can't tell blunders from doomed positions when EVERY
+  // rollout dies — all scores tie at -100 and the first legal move wins.)
+  const doomed = new Array(candidates.length).fill(false);
   for (let ci = 0; ci < candidates.length; ci++) {
     const action = candidateToAction(candidates[ci]);
     const after = applyBotAction(state, action);
@@ -91,11 +96,29 @@ function decideMcts(
       wins[ci] = -1; // illegal
       continue;
     }
+    if (after.status === 'won') {
+      wins[ci] = perCand + 1; // immediate win — take it
+      scoreSum[ci] = 1e9;
+      continue;
+    }
+    if (after.turn !== 'rookie' && after.status === 'playing') {
+      const settled = settleEnemyTurns(after);
+      if (settled.status === 'lost') {
+        doomed[ci] = true;
+        scoreSum[ci] = -1e6;
+        continue;
+      }
+      // Tie-breaker for all-lose situations: how good is the settled state?
+      scoreSum[ci] += fastScore(settled) * 0.01;
+    }
     for (let r = 0; r < perCand; r++) {
       const result = playout(after, rng);
       if (result.win) wins[ci] += 1;
       scoreSum[ci] += result.score;
     }
+  }
+  if (doomed.some((d) => !d)) {
+    for (let ci = 0; ci < candidates.length; ci++) if (doomed[ci]) wins[ci] = -1;
   }
 
   let bestIdx = 0;
@@ -145,7 +168,7 @@ function playout(
       continue;
     }
 
-    if (state.turn === 'enemy') {
+    if (state.turn !== 'rookie') {
       state = settleEnemyTurns(state);
       continue;
     }
@@ -162,11 +185,16 @@ function playout(
   }
 
   // Settle any final enemy turns to get terminal status.
-  if (state.status === 'playing' && state.turn === 'enemy') {
+  if (state.status === 'playing' && state.turn !== 'rookie') {
     state = settleEnemyTurns(state);
   }
 
-  if (state.status === 'won') return { win: true, score: 100 };
+  // Rookie's Revenge ('king' win condition): a still king makes nearly every
+  // rollout a win, so ties between candidates are decided by score. Prefer
+  // FASTER wins there, otherwise the bot shuffles along rank 1 forever.
+  if (state.status === 'won') {
+    return { win: true, score: start.winCondition === 'king' ? 100 - depth : 100 };
+  }
   if (state.status === 'lost') return { win: false, score: -100 };
   // Depth-capped without resolution. Treat as half-win if rookie is alive
   // and near the goal, else loss. Returns a useful tiebreaker score.
@@ -285,7 +313,29 @@ function isStuckRook(state: BoardState): boolean {
 function fastScore(state: BoardState): number {
   if (state.status === 'won') return 10_000;
   if (state.status === 'lost') return -10_000;
-  let s = state.rookie.rank * 6; // advance toward goal
+  let s: number;
+  const kingGoal = state.winCondition === 'king';
+  if (kingGoal) {
+    // Rookie's Revenge: progress = closing on the enemy king, not rank, and
+    // above all HAVING A LINE ON HIM while he can't flee (stunned / frozen).
+    const k = state.pieces.find((p) => p.type === 'king');
+    const d = k
+      ? Math.max(Math.abs(k.file - state.rookie.file), Math.abs(k.rank - state.rookie.rank))
+      : 0;
+    s = (8 - d) * 3;
+    if (k) {
+      const kSq = toSquare(k);
+      const attacksKing = rookieLegalMoves(state).some(
+        (m) => m.file === k.file && m.rank === k.rank,
+      );
+      const pinned =
+        (state.kingStunTurns ?? 0) > 0 || state.frozenSquares.includes(kSq);
+      if (attacksKing) s += pinned ? 150 : 25;
+      else if (pinned) s += 6;
+    }
+  } else {
+    s = state.rookie.rank * 6; // advance toward goal
+  }
   // Cheap threat proxy: is any enemy pawn one diagonal step from rookie?
   // Skip pricey slide-attack projection in rollouts.
   const rf = state.rookie.file;
@@ -326,15 +376,17 @@ function fastScore(state: BoardState): number {
   // RIGHT NOW. This is what separates a bishop that can cross the X (reaches
   // rank 8) from a rook trapped on the same square (reaches nothing) — without
   // it, a transform that opens the path looks identical to standing still.
-  const reach = bestReachRank(state);
-  if (reach === 8) {
-    s += 40;
-  } else if (reach > rr) {
-    s += (reach - rr) * 2;
-  } else if (state.form === 'rook' && state.hazards.length >= 4) {
-    // A walled-in rook that can't gain a rank is going nowhere — discourage
-    // lingering in that state so rollouts favor transforming out of it.
-    s -= 12;
+  if (!kingGoal) {
+    const reach = bestReachRank(state);
+    if (reach === 8) {
+      s += 40;
+    } else if (reach > rr) {
+      s += (reach - rr) * 2;
+    } else if (state.form === 'rook' && state.hazards.length >= 4) {
+      // A walled-in rook that can't gain a rank is going nowhere — discourage
+      // lingering in that state so rollouts favor transforming out of it.
+      s -= 12;
+    }
   }
   return s;
 }

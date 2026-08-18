@@ -10,7 +10,14 @@
  */
 
 import { DAILY_LEVELS } from './daily-levels';
-import type { Coord, EnemyPiece, RookieForm, RunPuzzle } from './types';
+import type {
+  Coord,
+  EnemyPiece,
+  KingBehavior,
+  RookieForm,
+  RunPuzzle,
+  WinCondition,
+} from './types';
 
 export type LevelBuilder = (rookieStart: Coord) => RunPuzzle;
 
@@ -25,6 +32,26 @@ export interface RunDef {
    * passive and lives outside the offer pool).
    */
   allowedAbilities?: ReadonlyArray<string>;
+  /**
+   * Rookie's Revenge — grant a FREE ability offer at the start of every
+   * level (before the first move). Level offers never touch tempo and can't
+   * be skipped. Tempo offers still roll on top as usual.
+   */
+  offerEveryLevel?: boolean;
+  /**
+   * If set with offerEveryLevel, free level offers roll ONLY on these levels
+   * (Tyler 2026-08-18: every level was too much — starter at L1, refills at
+   * L3/L6/L9; tempo offers earn the rest).
+   */
+  offerOnLevels?: ReadonlyArray<number>;
+  /** How many options an offer shows (default 2). */
+  offerSize?: number;
+  /**
+   * If set, every slate carries at least `coreMin` options whose ability id
+   * is in this list (new picks or upgrades). Rookie's Revenge: finishers.
+   */
+  offerCore?: ReadonlyArray<string>;
+  offerCoreMin?: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,6 +81,12 @@ const queen = (file: number, rank: number): EnemyPiece => ({
   file,
   rank,
 });
+const king = (file: number, rank: number): EnemyPiece => ({
+  type: 'king',
+  color: 'black',
+  file,
+  rank,
+});
 
 function make(
   level: number,
@@ -63,6 +96,9 @@ function make(
     moveLimit?: number;
     allowedForms?: RookieForm[];
     enemiesPerTurn?: number;
+    winCondition?: WinCondition;
+    kingBehavior?: KingBehavior;
+    kingPen?: string[];
   } = {},
 ): LevelBuilder {
   return (rookieStart) => ({
@@ -73,6 +109,9 @@ function make(
     moveLimit: opts.moveLimit,
     allowedForms: opts.allowedForms,
     enemiesPerTurn: opts.enemiesPerTurn,
+    ...(opts.winCondition ? { winCondition: opts.winCondition } : {}),
+    ...(opts.kingBehavior ? { kingBehavior: opts.kingBehavior } : {}),
+    ...(opts.kingPen ? { kingPen: [...opts.kingPen] } : {}),
   });
 }
 
@@ -692,7 +731,7 @@ const RUN_HAZARD_MAZE: RunDef = {
         ],
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 18,
+        moveLimit: 16,
       },
     ),
   ],
@@ -770,7 +809,7 @@ const RUN_BOSS_GAUNTLET: RunDef = {
       {
         allowedForms: ['knight', 'bishop'],
         enemiesPerTurn: 3,
-        moveLimit: 16,
+        moveLimit: 18,
         hazards: [{ file: 1, rank: 5 }, { file: 8, rank: 5 }],
       },
     ),
@@ -3887,6 +3926,211 @@ const RUN_PLUS: RunDef = {
   ],
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PROTOTYPE — Rookie's Revenge: win by CAPTURING THE KING, not reaching rank 8.
+// Hidden run (not in RUNS → not in the picker, daily rotation, or next-run
+// cycling). Reach it via /?run=revenge-proto.
+
+const KING_GOAL = { winCondition: 'king' as const };
+const STILL = { ...KING_GOAL, kingBehavior: 'still' as const };
+const FLEE = { ...KING_GOAL, kingBehavior: 'flee' as const };
+const X = (file: number, rank: number): Coord => ({ file, rank });
+
+/**
+ * The 10 king-catching tools offered in Rookie's Revenge. See
+ * docs/revenge-abilities.md for the "why it catches kings" notes.
+ */
+export const REVENGE_ABILITIES: ReadonlyArray<string> = [
+  'surge',
+  'freeze-ray',
+  'knight-hop',
+  'bishop-step',
+  'queen-pulse',
+  'aegis',
+  'drones',
+  'convert',
+  'poison-dart',
+  'decoy',
+];
+
+/**
+ * The FINISHERS — abilities that take the king directly (extra move, pin,
+ * surprise geometry). Every offer slate in Rookie's Revenge carries at least
+ * two of these (as new picks or as upgrades of an owned one) so a random
+ * pick can never brick the run. The other five are SUPPORT (they open the
+ * pen / remove guards / cut escapes) and are the fun spice.
+ */
+export const REVENGE_CORE: ReadonlyArray<string> = [
+  'surge',
+  'freeze-ray',
+  'knight-hop',
+  'bishop-step',
+  'queen-pulse',
+];
+
+/**
+ * Rookie's Revenge v2 — 10 levels. L1–2 teach the idea (still king), L3+
+ * the king FLEES but is penned by walls + his own guards (`kingPen` is the
+ * hard guarantee — he never leaves it). Every level is tuned against the
+ * playtest harness (scripts/run-playtest/revenge.ts) — see
+ * docs/revenge-playtest.md before touching numbers.
+ */
+const RUN_REVENGE_PROTO: RunDef = {
+  id: 'revenge-proto',
+  name: "Rookie's Revenge",
+  blurb: 'Rank 8 is just a row. Take the king.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — king alone behind 3 pawns. Rank 8 doesn't win; the king does.
+    make(1, [pawn(4, 7), pawn(5, 7), pawn(6, 7), king(5, 8)], STILL),
+    // L2 — king in the corner with a bishop + pawn shell.
+    make(
+      2,
+      [
+        pawn(6, 7), pawn(7, 7), pawn(8, 7),
+        pawn(3, 4), pawn(6, 4),
+        bishop(6, 6),
+        king(8, 8),
+      ],
+      STILL,
+    ),
+    // L3 — THE HALLWAY. First fleeing king: pen d8-e8-f8 between two walls,
+    // two pawn doors, one knight watching both. Reach his row and he's out of
+    // sideways squares — teaches "corner him on his line".
+    make(
+      3,
+      [pawn(4, 7), pawn(6, 7), knight(5, 5), pawn(2, 5), pawn(7, 5), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8'],
+      },
+    ),
+    // L4 — CORNER OFFICE. 2x2 pen g7-h8, walled on the f-file. The h5 pawn
+    // is the KEY: take it and he's stunned on your line — teaches capture-stun.
+    make(
+      4,
+      [pawn(8, 5), knight(5, 6), bishop(3, 3), pawn(3, 4), pawn(6, 4), pawn(2, 6), king(8, 8)],
+      {
+        ...FLEE,
+        hazards: [X(6, 8), X(6, 7)],
+        kingPen: ['g8', 'h8', 'g7', 'h7'],
+      },
+    ),
+    // L5 — THRONE ROOM. 3x2 room c7-e8. The d5 key is defended by the c6
+    // pawn (pawns hold their posts; hunters roam). Knight + bishop hunt,
+    // marchers push for promotion.
+    make(
+      5,
+      [
+        pawn(4, 5), pawn(3, 6),
+        knight(3, 3), bishop(7, 5),
+        pawn(1, 4), pawn(8, 4), pawn(6, 3),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(2, 8), X(6, 8), X(2, 7), X(6, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L6 — THE BALCONY. King on rank 7; the e5 key has two pawn defenders
+    // (d6, f6). Knight, bishop and a queen hunt.
+    make(
+      6,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        knight(4, 3), bishop(2, 5), queen(8, 2),
+        pawn(2, 3), pawn(7, 4),
+        king(5, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(3, 8), X(7, 8), X(3, 7), X(7, 7)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L7 — DOUBLE DOOR. e5 key behind d6/f6 pawn defenders; the hunters are
+    // a queen, a bishop and a knight, plus two marchers.
+    make(
+      7,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        bishop(4, 4), queen(7, 4), knight(2, 3),
+        pawn(1, 4), pawn(8, 3),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(3, 8), X(7, 8), X(3, 7), X(7, 7)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L8 — THE KEEP. Corner 3x2 room f7-h8. h5 key defended by the g6 pawn.
+    // Rank 7 is the open flank. Queen on the long diagonal, bishop + knight.
+    make(
+      8,
+      [
+        pawn(8, 5), pawn(7, 6),
+        knight(7, 3), queen(4, 4), bishop(3, 6),
+        pawn(2, 3), pawn(4, 2), pawn(6, 4),
+        king(8, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(5, 8), X(5, 7)],
+        kingPen: ['f8', 'g8', 'h8', 'f7', 'g7', 'h7'],
+      },
+    ),
+    // L9 — CROSSFIRE. e5 key defended by d6 + f6 pawns; two queens, a
+    // bishop and a knight hunt.
+    make(
+      9,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        queen(2, 4), queen(8, 4), knight(7, 2), bishop(3, 3),
+        pawn(1, 3), pawn(8, 2),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(3, 8), X(7, 8), X(3, 7), X(7, 7)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L10 — THE COURT. 3x3 room c6-e8 (walls on b7/b8/f7/f8, rank 6 flanks
+    // open). d5 key defended by c6/e6 pawns. Queen, two bishops, two knights.
+    make(
+      10,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        queen(4, 3), bishop(7, 4), bishop(2, 2), knight(2, 4), knight(7, 2),
+        pawn(1, 3), pawn(8, 3), pawn(6, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 18,
+        hazards: [X(2, 8), X(6, 8), X(2, 7), X(6, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7', 'c6', 'd6', 'e6'],
+      },
+    ),
+  ],
+};
+
+/** Runs reachable ONLY by explicit id (/?run=...) — never listed anywhere. */
+const HIDDEN_RUNS: ReadonlyArray<RunDef> = [RUN_REVENGE_PROTO];
+
 export const STC_RUN_IDS = [
   'stc-king',
   'stc-bishop',
@@ -3938,7 +4182,16 @@ export const RUNS: ReadonlyArray<RunDef> = [
 export const DEFAULT_RUN_ID = RUNS[0].id;
 
 export function getRunById(id: string): RunDef {
-  return RUNS.find((r) => r.id === id) ?? RUNS[0];
+  return (
+    RUNS.find((r) => r.id === id) ??
+    HIDDEN_RUNS.find((r) => r.id === id) ??
+    RUNS[0]
+  );
+}
+
+/** True for any run id that can be loaded (listed OR hidden prototypes). */
+export function isKnownRunId(id: string): boolean {
+  return RUNS.some((r) => r.id === id) || HIDDEN_RUNS.some((r) => r.id === id);
 }
 
 export function getRunIndex(id: string): number {

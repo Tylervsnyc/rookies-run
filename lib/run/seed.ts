@@ -13,7 +13,7 @@ import {
   squadSpawnFor,
 } from './abilities';
 import { DEFAULT_RUN_ID, getRunById } from './runs';
-import { TEMPO_MAX } from './scoring';
+import { tempoMaxFor } from './scoring';
 import type { BoardState, Coord, RunPuzzle } from './types';
 
 /** Mulberry32 — tiny seeded PRNG. No external deps. */
@@ -150,8 +150,12 @@ export function puzzleToBoardState(
   // Squad is a passive: whenever Rookie owns the squad ability, her roster
   // spawns each level. Roster size scales with the owned tier.
   const ownedSquad = abilities.find((a) => a.id === 'squad');
+  // On king levels (Rookie's Revenge) the squad musters 3 ranks ahead so it
+  // reaches the pen in time to act as the second piece.
   const allies = ownedSquad
-    ? squadSpawnFor(ownedSquad.tier, rookieStart, piecesCopy, hazardsCopy)
+    ? squadSpawnFor(ownedSquad.tier, rookieStart, piecesCopy, hazardsCopy, {
+        ranksAhead: puzzle.winCondition === 'king' ? 3 : 1,
+      })
     : [];
   const base: BoardState = {
     rookie: rookieStart,
@@ -181,6 +185,14 @@ export function puzzleToBoardState(
     runId: carry.runId,
     moveLimit: puzzle.moveLimit ?? null,
     enemiesPerTurn: puzzle.enemiesPerTurn ?? 1,
+    ...(puzzle.winCondition === 'king'
+      ? {
+          winCondition: 'king' as const,
+          kingBehavior: puzzle.kingBehavior ?? 'still',
+          kingStunTurns: 0,
+          ...(puzzle.kingPen ? { kingPen: [...puzzle.kingPen] } : {}),
+        }
+      : {}),
     enemyMovedSquares: [],
     enemyVacatedSquares: [],
     frozenSquares: [],
@@ -199,11 +211,28 @@ export function puzzleToBoardState(
     shieldUp: false,
     aiRngSeed: carry.aiRngSeed ?? newAiRngSeed(),
   };
+  // Rookie's Revenge: a FREE offer at the start of every level (before the
+  // first move). A carried-over tempo offer counts — never stack two.
+  const runDef = carry.runId ? getRunById(carry.runId) : null;
+  const levelOfferDue =
+    !!runDef?.offerEveryLevel &&
+    (!runDef.offerOnLevels || runDef.offerOnLevels.includes(puzzle.level));
+  if (levelOfferDue && !pendingOffer && !offerIsExhausted(base)) {
+    // Seeded off the per-attempt AI seed so a retry can roll a different slate.
+    const rolled = rollOffer(
+      base,
+      mulberry32(((puzzle.level * 7919) ^ base.aiRngSeed) >>> 0),
+    );
+    if (rolled.length > 0) {
+      return { ...base, pendingOffer: rolled, offerReason: 'level' };
+    }
+    return base;
+  }
   if (puzzle.level === 6 && !pendingOffer && !offerIsExhausted(base)) {
     const rolled = rollOffer(base, mulberry32((puzzle.level * 7919) >>> 0));
     if (rolled.length > 0) {
       pendingOffer = rolled;
-      tempo = TEMPO_MAX;
+      tempo = tempoMaxFor(base);
       return { ...base, pendingOffer, tempo };
     }
   }

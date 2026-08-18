@@ -19,7 +19,7 @@
  * Score is never negative — we clamp at 0.
  */
 
-import type { PieceType } from './types';
+import type { BoardState, PieceType, RunPuzzle } from './types';
 
 export const SCORE = {
   BASE: 1000,
@@ -34,6 +34,7 @@ export const PIECE_VALUES: Record<PieceType, number> = {
   knight: 30,
   bishop: 30,
   queen: 90,
+  king: 100,
 };
 
 /** Tempo gained when Rookie captures a piece of the given type. */
@@ -42,10 +43,24 @@ export const TEMPO_REWARD: Record<PieceType, number> = {
   knight: 2,
   bishop: 2,
   queen: 4,
+  king: 4,
 };
 
-/** Maximum tempo Rookie can hold at once. */
+/** Maximum tempo Rookie can hold at once (default / rank8 levels). */
 export const TEMPO_MAX = 8;
+
+/** Tempo cap on king-capture levels (Rookie's Revenge) — a longer meter. */
+export const TEMPO_MAX_KING = 12;
+
+/**
+ * Per-level tempo cap. King levels (`winCondition === 'king'`) get the
+ * longer meter; everything else keeps TEMPO_MAX. Live behavior unchanged.
+ */
+export function tempoMaxFor(
+  state: Pick<BoardState, 'winCondition'> | Pick<RunPuzzle, 'winCondition'>,
+): number {
+  return state.winCondition === 'king' ? TEMPO_MAX_KING : TEMPO_MAX;
+}
 
 export interface ScoreInput {
   moves: number;

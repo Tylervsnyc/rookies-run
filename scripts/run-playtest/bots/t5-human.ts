@@ -37,7 +37,7 @@
  */
 
 import { rookieLegalMoves } from '../../../lib/run/movement';
-import { TEMPO_MAX } from '../../../lib/run/scoring';
+import { tempoMaxFor } from '../../../lib/run/scoring';
 import type {
   AbilityId,
   AbilityOfferOption,
@@ -88,6 +88,7 @@ const PIECE_VALUE: Record<PieceType, number> = {
   knight: 3,
   bishop: 3,
   queen: 9,
+  king: 0, // Rookie's Revenge objective — never "material" to clear
 };
 
 /** Threshold: boards with at least this many pieces count as "dense". */
@@ -234,7 +235,7 @@ function panicActivateBecomeKing(
  *
  *   - level ≤ HOARDING_LEVEL_CAP (5)
  *   - Rookie is not currently in threat
- *   - tempo < TEMPO_MAX (no point — meter is locked)
+ *   - tempo < tempoMaxFor(state) (no point — meter is locked)
  *   - move-budget slack ≥ FARM_BUDGET_SLACK (don't farm into a move-limit loss)
  *   - a safe capture move is available (we're actually banking something)
  *
@@ -245,7 +246,7 @@ function hoardingMove(state: BoardState, ctx: BotContext): BotAction | null {
   void ctx;
   if (state.level > HOARDING_LEVEL_CAP) return null;
   if (rookieInThreat(state)) return null;
-  if (state.tempo >= TEMPO_MAX) return null;
+  if (state.tempo >= tempoMaxFor(state)) return null;
   if (state.pendingOffer) return null;
 
   // Move-budget guard: don't farm if we're close to losing on move limit.

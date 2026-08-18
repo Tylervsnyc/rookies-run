@@ -16,6 +16,7 @@ import { RunPickerModal } from '@/components/run/RunPickerModal';
 import { RookiesRunLogo } from '@/components/run/RookiesRunLogo';
 import { StcRunLogo } from '@/components/run/StcRunLogo';
 import { TempoBar } from '@/components/run/TempoBar';
+import { tempoMaxFor } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
   playCaptureSound,
@@ -45,7 +46,7 @@ import {
   DEFAULT_RUN_ID,
   getNextRunId,
   getRunById,
-  RUNS,
+  isKnownRunId,
 } from '@/lib/run/runs';
 import {
   puzzleForDate,
@@ -115,7 +116,7 @@ export default function RookiesRunPage() {
     const dailyRunForDate = getRunIdForDate(iso);
     let runId: string;
     if (url.date) {
-      runId = url.runId && RUNS.some((r) => r.id === url.runId) ? url.runId : dailyRunForDate;
+      runId = url.runId && isKnownRunId(url.runId) ? url.runId : dailyRunForDate;
     } else {
       runId = url.runId || readSavedRunId();
       // Surface separation: a bare /run with no ?run= must never resolve to an
@@ -131,7 +132,7 @@ export default function RookiesRunPage() {
         runId = dailyRunForDate;
       }
     }
-    const validRunId = RUNS.some((r) => r.id === runId) ? runId : dailyRunForDate;
+    const validRunId = isKnownRunId(runId) ? runId : dailyRunForDate;
     if (typeof window !== 'undefined' && !url.date) {
       localStorage.setItem('rookies-run-current', validRunId);
     }
@@ -933,17 +934,36 @@ export default function RookiesRunPage() {
             >
               {isStc ? <StcRunLogo scale={0.45} /> : <RookiesRunLogo scale={0.45} />}
             </button>
-            <RulesInline />
+            <RulesInline winCondition={state.winCondition} />
           </div>
 
-          <div className="bg-chess-surface rounded-lg px-3 py-1.5 shadow-sm inline-flex items-center gap-1.5 leading-none shrink-0">
-            <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
-              Lvl
-            </span>
-            <span className="text-sm font-black text-chess-text tabular-nums">
-              {levelIndex + 1}
-              <span className="text-chess-text-faint">/{totalLevels}</span>
-            </span>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <div className="bg-chess-surface rounded-lg px-3 py-1.5 shadow-sm inline-flex items-center gap-1.5 leading-none">
+              <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
+                Lvl
+              </span>
+              <span className="text-sm font-black text-chess-text tabular-nums">
+                {levelIndex + 1}
+                <span className="text-chess-text-faint">/{totalLevels}</span>
+              </span>
+            </div>
+            {/* Rookie's Revenge: flee levels have a move budget — show it. */}
+            {state.winCondition === 'king' && state.moveLimit !== null && (
+              <div
+                className={`rounded-lg px-2 py-1 shadow-sm inline-flex items-center gap-1 leading-none ${
+                  state.moveLimit - state.moveCount <= 3
+                    ? 'bg-rose-100 text-rose-700'
+                    : 'bg-chess-surface text-chess-text'
+                }`}
+              >
+                <span className="text-sm font-black tabular-nums">
+                  {Math.max(0, state.moveLimit - state.moveCount)}
+                </span>
+                <span className="text-[9px] font-black uppercase tracking-[0.14em] opacity-70">
+                  moves
+                </span>
+              </div>
+            )}
           </div>
         </header>
 
@@ -951,6 +971,7 @@ export default function RookiesRunPage() {
           <div className="flex-1">
             <TempoBar
               tempo={state.tempo}
+              max={tempoMaxFor(state)}
               form={state.form}
               formMovesLeft={state.formMovesLeft}
             />
@@ -1033,6 +1054,7 @@ export default function RookiesRunPage() {
           offer={state.pendingOffer}
           onPick={onOfferPick}
           onSkip={onOfferSkip}
+          reason={state.offerReason ?? 'tempo'}
         />
       )}
 

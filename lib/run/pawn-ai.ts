@@ -14,12 +14,14 @@
  */
 
 import {
+  allyAttackedSquares,
   clearStatusOnSquare,
   relocateStatusMarkers,
+  stunKingAfterCapture,
   tryAegisIntercept,
 } from './abilities';
-import { enemyAt } from './movement';
-import { TEMPO_MAX, TEMPO_REWARD } from './scoring';
+import { enemyAt, rookieLegalMoves } from './movement';
+import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { mulberry32 } from './seed';
 import { fromSquare, toSquare } from './types';
 import type { BoardState, Coord, EnemyPiece, PieceType } from './types';
@@ -75,6 +77,7 @@ const PIECE_THREAT: Record<PieceType, number> = {
   bishop: 2,
   knight: 2,
   pawn: 1,
+  king: 0, // the enemy king never captures — he's the objective, not a threat
 };
 
 function inBounds(c: Coord): boolean {
@@ -193,7 +196,109 @@ function pieceLegalMovesRaw(piece: EnemyPiece, state: BoardState): Coord[] {
       const dirs = piece.type === 'queen' ? QUEEN_DIRS : BISHOP_DIRS;
       return slidingMoves(piece, state, dirs, vacated);
     }
+    case 'king':
+      // Kings never capture and never move through the generic path. A
+      // 'flee' king sidesteps via kingFleeMove() in the mover phase.
+      return [];
   }
+}
+
+/**
+ * Rookie's Revenge — 'flee' king. If Rookie could capture him next move, he
+ * steps to an adjacent empty square that Rookie's CURRENT form does not
+ * attack (re-evaluated with the king relocated, so vacating a blocking square
+ * doesn't walk him into a freshly opened ray). No safe square → stays put.
+ * Never captures anything.
+ */
+function kingFleeMove(
+  king: EnemyPiece,
+  state: BoardState,
+  rng: () => number,
+): Coord | null {
+  // Stunned (Rookie just captured something) — he can't flee this turn.
+  if ((state.kingStunTurns ?? 0) > 0) return null;
+  const kingPos: Coord = { file: king.file, rank: king.rank };
+  const threatened = rookieLegalMoves(state).some(
+    (m) => m.file === kingPos.file && m.rank === kingPos.rank,
+  );
+  if (!threatened) return null;
+  const vacated = vacatedSet(state);
+  const pen = state.kingPen ? new Set(state.kingPen) : null;
+  const allyCover = state.allies.length > 0 ? allyAttackedSquares(state) : null;
+  const safe: Coord[] = [];
+  for (const [df, dr] of QUEEN_DIRS) {
+    const c: Coord = { file: king.file + df, rank: king.rank + dr };
+    if (!inBounds(c)) continue;
+    if (pen && !pen.has(toSquare(c))) continue; // never leaves his pen
+    if (isHazard(state.hazards, c)) continue;
+    if (isVacated(vacated, c)) continue;
+    if (enemyAt(state.pieces, c)) continue;
+    if (isAllyAt(state, c)) continue;
+    if (state.rookie.file === c.file && state.rookie.rank === c.rank) continue;
+    if (allyCover && allyCover.has(toSquare(c))) continue; // allies cut off escapes
+    const moved: BoardState = {
+      ...state,
+      pieces: state.pieces.map((p) => (p === king ? { ...p, file: c.file, rank: c.rank } : p)),
+    };
+    const attacked = rookieLegalMoves(moved).some(
+      (m) => m.file === c.file && m.rank === c.rank,
+    );
+    if (!attacked) safe.push(c);
+  }
+  if (safe.length === 0) return null;
+  // He also knows about capture-stun: a square that shares an open file or
+  // rank with one of his own pieces Rookie can take RIGHT NOW is a trap
+  // (she takes it, he's stunned on her line). Prefer squares off those lines.
+  const captureTargets = rookieLegalMoves(state).filter((m) => !!enemyAt(state.pieces, m));
+  const risky = (c: Coord): boolean =>
+    captureTargets.some((t) => {
+      if (t.file !== c.file && t.rank !== c.rank) return false;
+      const df = Math.sign(c.file - t.file);
+      const dr = Math.sign(c.rank - t.rank);
+      let f = t.file + df;
+      let r = t.rank + dr;
+      while (f !== c.file || r !== c.rank) {
+        const blocker = enemyAt(state.pieces, { file: f, rank: r });
+        if (blocker && blocker !== king) return false;
+        if (isHazard(state.hazards, { file: f, rank: r })) return false;
+        if (isAllyAt(state, { file: f, rank: r })) return false;
+        f += df;
+        r += dr;
+      }
+      return true;
+    });
+  const calm = safe.filter((c) => !risky(c));
+  const pool = calm.length > 0 ? calm : safe;
+  // Prefer the square farthest from Rookie; random among ties.
+  let bestDist = -1;
+  for (const c of pool) bestDist = Math.max(bestDist, chebyshev(c, state.rookie));
+  return pickRandom(pool.filter((c) => chebyshev(c, state.rookie) === bestDist), rng);
+}
+
+/**
+ * Rookie's Revenge — the fleeing king's FREE reaction. If he's threatened
+ * (and not stunned / frozen) he sidesteps without spending the army's action
+ * budget: checked at the start of the enemy turn AND again after each guard
+ * moves (a guard leaving its post can open a line — he sees it coming).
+ * Returns the new state, or null when he doesn't move.
+ */
+function kingReaction(state: BoardState): BoardState | null {
+  if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
+  const king = state.pieces.find((p) => p.type === 'king');
+  if (!king) return null;
+  const kingSq = toSquare(king);
+  if (state.frozenSquares.includes(kingSq)) return null;
+  const target = kingFleeMove(king, state, aiRng(state));
+  if (!target) return null;
+  return {
+    ...state,
+    pieces: state.pieces.map((p) =>
+      p === king ? { ...p, file: target.file, rank: target.rank } : { ...p },
+    ),
+    // His old square is a ghost blocker for the rest of this turn, like any
+    // other vacated square.
+    enemyVacatedSquares: [...(state.enemyVacatedSquares ?? []), kingSq],
+  };
 }
 
 function slidingMoves(
@@ -242,8 +347,30 @@ function approachMove(
   state: BoardState,
   rng: () => number,
 ): Coord | null {
-  const moves = pieceLegalMoves(piece, state);
+  let moves = pieceLegalMoves(piece, state);
   if (moves.length === 0) return null;
+  // Rookie's Revenge: the king's guards are careful — they never step onto a
+  // square Rookie's current form attacks (unless it's a capture). Live runs
+  // keep the naive approach (this branch is gated to king levels).
+  if (state.winCondition === 'king') {
+    const view: BoardState = {
+      ...state,
+      pieces: state.pieces.filter((p) => p !== piece),
+    };
+    const fire = new Set(rookieLegalMoves(view).map((m) => coordKey(m)));
+    // ...and they never wander INTO the king's pen — that's his room, and a
+    // guard standing in it just hands Rookie a key next to him.
+    const pen = state.kingPen ? new Set(state.kingPen) : null;
+    moves = moves.filter((m) => {
+      const capture =
+        (state.rookie.file === m.file && state.rookie.rank === m.rank) || isAllyAt(state, m);
+      if (capture) return true;
+      if (fire.has(coordKey(m))) return false;
+      if (pen && pen.has(toSquare(m))) return false;
+      return true;
+    });
+    if (moves.length === 0) return null;
+  }
   const cur = chebyshev({ file: piece.file, rank: piece.rank }, state.rookie);
   let bestDist = Infinity;
   for (const m of moves) {
@@ -462,9 +589,20 @@ function chooseEnemyActionAgainst(
   const candidates: Candidate[] = [];
   for (const p of state.pieces) {
     if (!isNormallyEligible(p)) continue;
+    if (p.type === 'king') {
+      // Kings never take the army's action. A 'flee' king reacts for FREE —
+      // see kingReaction(), applied around the guard's move in stepEnemyTurn.
+      continue;
+    }
     if (p.type === 'pawn') {
       const target: Coord = { file: p.file, rank: p.rank + BLACK_FORWARD };
+      const intoPen =
+        state.winCondition === 'king' &&
+        !!state.kingPen &&
+        state.kingPen.includes(toSquare(target)) &&
+        !state.kingPen.includes(toSquare(p));
       if (
+        !intoPen &&
         inBounds(target) &&
         !isHazard(state.hazards, target) &&
         !enemyAt(state.pieces, target) &&
@@ -552,6 +690,8 @@ function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
       }
       return out;
     }
+    case 'king':
+      return []; // kings never capture, rabid or not
   }
 }
 
@@ -578,6 +718,7 @@ function rabidAction(piece: EnemyPiece, state: BoardState): RabidAction | null {
   ];
   for (const p of state.pieces) {
     if (p === piece) continue;
+    if (p.type === 'king') continue; // only Rookie may take the king
     targets.push({
       at: { file: p.file, rank: p.rank },
       value: PIECE_THREAT[p.type] ?? 0,
@@ -674,9 +815,10 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
       captures: capturedType
         ? [...state.captures, capturedType]
         : state.captures,
-      tempo: Math.min(TEMPO_MAX, state.tempo + tempoGain),
+      tempo: Math.min(tempoMaxFor(state), state.tempo + tempoGain),
       decoyTarget: null,
       decoyTurnsLeft: 0,
+      ...(capturedType ? stunKingAfterCapture(state, 2) : {}),
       lastEnemyCaptureFx: {
         fromSq,
         toSq,
@@ -709,7 +851,8 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
       captures: capturedType
         ? [...state.captures, capturedType]
         : state.captures,
-      tempo: Math.min(TEMPO_MAX, state.tempo + tempoGain),
+      tempo: Math.min(tempoMaxFor(state), state.tempo + tempoGain),
+      ...(capturedType ? stunKingAfterCapture(state, 2) : {}),
       lastEnemyCaptureFx: {
         fromSq,
         toSq,
@@ -827,7 +970,7 @@ export function stepEnemyTurn(state: BoardState): BoardState {
       }
       pieces = pieces.filter((p) => p !== victim);
       captures = [...captures, victim.type];
-      tempo = Math.min(TEMPO_MAX, tempo + (TEMPO_REWARD[victim.type] ?? 0));
+      tempo = Math.min(tempoMaxFor(state), tempo + (TEMPO_REWARD[victim.type] ?? 0));
       poisonDeaths.push({ square: sq, pieceType: victim.type });
       // Strip any other markers on the dying square.
       const ri = nextRabidSquares.indexOf(sq);
@@ -853,6 +996,16 @@ export function stepEnemyTurn(state: BoardState): BoardState {
         nextFormMovesLeft = 0;
       }
     }
+    // Rookie's Revenge: the king's stun ticks down at end of enemy turn; a
+    // poison death (credited to Rookie) stuns him for the NEXT enemy turn.
+    const kingStunPatch =
+      s.winCondition === 'king'
+        ? {
+            kingStunTurns: poisonDeaths.length > 0
+              ? 1
+              : Math.max(0, (s.kingStunTurns ?? 0) - 1),
+          }
+        : {};
     return {
       ...s,
       pieces,
@@ -861,6 +1014,7 @@ export function stepEnemyTurn(state: BoardState): BoardState {
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,
+      ...kingStunPatch,
       enemyMovedSquares: [],
       enemyVacatedSquares: [],
       frozenSquares: nextFrozenSquares,
@@ -879,6 +1033,11 @@ export function stepEnemyTurn(state: BoardState): BoardState {
   };
 
   if (state.enemyMovedSquares.length >= budget) return endTurn(state);
+
+  // Rookie's Revenge: the fleeing king reacts for free before the army acts.
+  // Returned as its own step so the UI animates his sidestep on its own.
+  const fled = kingReaction(state);
+  if (fled) return { ...fled, turn: 'enemy' };
 
   const action = chooseEnemyAction(state, exclude);
   if (!action) return endTurn(state);
@@ -938,18 +1097,18 @@ export function stepEnemyTurn(state: BoardState): BoardState {
   }
 
   const originSquare = toSquare({ file: action.mover.file, rank: action.mover.rank });
-  const after = applyAction(state, action);
+  let after = applyAction(state, action);
   if (after.status === 'lost') return endTurn(after);
 
   const nextMoved = [...state.enemyMovedSquares, coordKey(action.target)];
-  const nextVacated = [...(state.enemyVacatedSquares ?? []), originSquare];
+  const nextVacated = [...(after.enemyVacatedSquares ?? []), originSquare];
+  after = { ...after, enemyMovedSquares: nextMoved, enemyVacatedSquares: nextVacated };
+  // Rookie's Revenge: did that guard just open a line on the king? He
+  // sidesteps at once (free) — no "waiting behind a guard" cheese.
+  const reacted = kingReaction(after);
+  if (reacted) after = reacted;
   if (nextMoved.length >= budget) return endTurn(after);
-  return {
-    ...after,
-    turn: 'enemy',
-    enemyMovedSquares: nextMoved,
-    enemyVacatedSquares: nextVacated,
-  };
+  return { ...after, turn: 'enemy' };
 }
 
 /**

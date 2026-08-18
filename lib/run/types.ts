@@ -13,7 +13,17 @@
 
 import type { AbilityId, AbilityOffer, OwnedAbility } from './abilities';
 
-export type PieceType = 'pawn' | 'knight' | 'bishop' | 'queen';
+export type PieceType = 'pawn' | 'knight' | 'bishop' | 'queen' | 'king';
+
+/**
+ * Win condition for a level (Rookie's Revenge prototype).
+ *   'rank8' (default) — Rookie wins by reaching rank 8.
+ *   'king'            — Rookie wins by capturing the enemy king; rank 8 is
+ *                       just another row.
+ */
+export type WinCondition = 'rank8' | 'king';
+/** How an enemy king behaves. 'still' never moves; 'flee' sidesteps threats. */
+export type KingBehavior = 'still' | 'flee';
 export type PieceColor = 'black';
 
 /** Rookie's current movement form. She starts and reverts to 'rook'. */
@@ -77,7 +87,7 @@ export interface BoardState {
   status: GameStatus;
   moveCount: number; // counts Rookie's moves only
   captures: PieceType[]; // chronological list of piece types Rookie has captured
-  tempo: number; // current tempo (0..TEMPO_MAX)
+  tempo: number; // current tempo (0..tempoMaxFor(state): 8, or 12 on king levels)
   form: RookieForm; // Rookie's current movement form
   formMovesLeft: number; // remaining Rookie moves until auto-revert (0 when rook)
   moveLimit: number | null; // null = no limit; otherwise hard cap on Rookie moves
@@ -227,6 +237,28 @@ export interface BoardState {
    * every retry / level transition so the same strategy can't be memorized.
    */
   aiRngSeed: number;
+  /** Level win condition — absent/'rank8' = live behavior. */
+  winCondition?: WinCondition;
+  /** Enemy king behavior when winCondition === 'king' (default 'still'). */
+  kingBehavior?: KingBehavior;
+  /**
+   * Rookie's Revenge — enemy turns the king is STUNNED for (cannot flee).
+   * Set to 1 whenever a capture is credited to Rookie (her own move, a drone,
+   * an ally, friendly fire on a decoy, a poison death). Decremented at the
+   * end of each enemy turn. Absent/0 = not stunned.
+   */
+  kingStunTurns?: number;
+  /**
+   * Rookie's Revenge — squares (algebraic) the enemy king may stand on. A
+   * fleeing king never steps outside his pen. Absent = whole board.
+   */
+  kingPen?: string[];
+  /**
+   * Why the current `pendingOffer` exists. 'tempo' (default) = the meter
+   * filled; 'level' = the run grants a free pick at level start (Rookie's
+   * Revenge). Level offers never touch tempo and can't be skipped.
+   */
+  offerReason?: 'tempo' | 'level';
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {
@@ -249,6 +281,12 @@ export interface RunPuzzle {
   allowedForms?: RookieForm[];
   /** Enemies that act each enemy turn (default 1). */
   enemiesPerTurn?: number;
+  /** Win condition (default 'rank8'). 'king' = capture the enemy king. */
+  winCondition?: WinCondition;
+  /** Enemy king behavior for winCondition 'king' (default 'still'). */
+  kingBehavior?: KingBehavior;
+  /** Squares the enemy king may occupy (fleeing never leaves the pen). */
+  kingPen?: string[];
 }
 
 /** Convert (file, rank) to algebraic square string e.g. 'e1'. */

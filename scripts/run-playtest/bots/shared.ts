@@ -15,9 +15,13 @@
  */
 
 import type { AbilityId, OwnedAbility } from '../../../lib/run/abilities';
-import { abilityLegalMoves, visibleEnemySquares } from '../../../lib/run/abilities';
+import {
+  abilityLegalMoves,
+  convertTargets,
+  visibleEnemySquares,
+} from '../../../lib/run/abilities';
 import { rookieLegalMoves, enemyAt } from '../../../lib/run/movement';
-import { TEMPO_MAX, TEMPO_REWARD } from '../../../lib/run/scoring';
+import { TEMPO_REWARD, tempoMaxFor } from '../../../lib/run/scoring';
 import type {
   BoardState,
   Coord,
@@ -31,6 +35,7 @@ const PIECE_VALUE: Record<PieceType, number> = {
   knight: 3,
   bishop: 3,
   queen: 9,
+  king: 0, // Rookie's Revenge objective — never "material" to clear
 };
 
 /**
@@ -162,11 +167,16 @@ export function evalState(state: BoardState): number {
 
   let score = 0;
 
+  // Rookie's Revenge ('king' win condition) — the goal is the enemy king, not
+  // rank 8. Swap the rank/open-file heuristics for a king-proximity one.
+  const kingGoal = state.winCondition === 'king';
+  const enemyKing = kingGoal ? state.pieces.find((p) => p.type === 'king') : undefined;
+
   // Rank position is a small signal — a rook on rank 5 isn't meaningfully
   // closer to winning than a rook on rank 2 if both have clear paths up.
   // The dominant signal is OPEN PATHS, not raw rank. Keep this tiny so the
   // bot doesn't waste turns inching forward when a winning slide exists.
-  score += state.rookie.rank * 2;
+  if (!kingGoal) score += state.rookie.rank * 2;
 
   // Squares I can safely occupy (legal moves not attacked).
   const attacked = enemyAttackedSquares(state);
@@ -180,7 +190,9 @@ export function evalState(state: BoardState): number {
       if (m.rank > state.rookie.rank) advancingSafe++;
       // Rookie reaches rank 8 RIGHT NOW with a safe slide. Game over,
       // huge bonus so this dominates every other consideration.
-      if (m.rank === 8) winningReach++;
+      if (kingGoal) {
+        if (enemyKing && m.file === enemyKing.file && m.rank === enemyKing.rank) winningReach++;
+      } else if (m.rank === 8) winningReach++;
     }
   }
   score += Math.min(safeMoves, 6) * 1.5;
@@ -196,6 +208,29 @@ export function evalState(state: BoardState): number {
   // valuable than being on rank 7 of a blocked file.
   let openPathCount = 0;
   let rookieFileIsOpen = false;
+  if (kingGoal && enemyKing) {
+    // King proximity: closer (Chebyshev) is better; a clear rook line to the
+    // king's square (same file/rank, nothing between) is the "open path".
+    const dist = Math.max(
+      Math.abs(enemyKing.file - state.rookie.file),
+      Math.abs(enemyKing.rank - state.rookie.rank),
+    );
+    score += (8 - dist) * 3;
+    const sameFile = enemyKing.file === state.rookie.file;
+    const sameRank = enemyKing.rank === state.rookie.rank;
+    if (sameFile || sameRank) {
+      let clear = true;
+      const lo = sameFile ? Math.min(enemyKing.rank, state.rookie.rank) : Math.min(enemyKing.file, state.rookie.file);
+      const hi = sameFile ? Math.max(enemyKing.rank, state.rookie.rank) : Math.max(enemyKing.file, state.rookie.file);
+      for (let i = lo + 1; i < hi; i++) {
+        const f = sameFile ? state.rookie.file : i;
+        const r = sameFile ? i : state.rookie.rank;
+        if (state.pieces.some((p) => p.file === f && p.rank === r)) { clear = false; break; }
+        if (state.hazards.some((h) => h.file === f && h.rank === r)) { clear = false; break; }
+      }
+      if (clear) rookieFileIsOpen = true;
+    }
+  } else
   for (let f = 1; f <= 8; f++) {
     let clear = true;
     for (let r = state.rookie.rank + 1; r <= 7; r++) {
@@ -236,7 +271,8 @@ export function evalState(state: BoardState): number {
   // Human traces (Pincer L1-L3 declined 16/26 winning moves to keep capturing)
   // show offer-banking dominates rank-advancement on easy levels. Bumped to
   // max +14 so a near-full meter is competitive with a winning slide.
-  score += (state.tempo / TEMPO_MAX) * 14;
+  const tempoMax = tempoMaxFor(state);
+  score += (state.tempo / tempoMax) * 14;
   // A pending offer is a free ability pick next turn — strong incentive
   // to reach this state.
   if (state.pendingOffer && state.pendingOffer.length > 0) score += 22;
@@ -244,8 +280,8 @@ export function evalState(state: BoardState): number {
   // Weighted by how much headroom there is in the tempo meter — if 1 capture
   // would fill it, that's worth ~+15; if we'd need 8 tempo from 0 it's worth
   // proportionally less.
-  if (state.tempo < TEMPO_MAX && !state.pendingOffer) {
-    const headroom = TEMPO_MAX - state.tempo;
+  if (state.tempo < tempoMax && !state.pendingOffer) {
+    const headroom = tempoMax - state.tempo;
     let reachableCaptureTempo = 0;
     for (const m of legal) {
       if (attacked.has(toSquare(m))) continue;
@@ -358,6 +394,12 @@ function candidatesForAbility(
       const seen = visibleEnemySquares(state);
       for (const c of seen) {
         const sq = toSquare(c);
+        // Only Freeze Ray may target the enemy king (Rookie's Revenge).
+        if (
+          owned.id !== 'freeze-ray' &&
+          state.pieces.some((p) => p.type === 'king' && p.file === c.file && p.rank === c.rank)
+        )
+          continue;
         if (
           owned.id === 'freeze-ray' &&
           state.frozenSquares.includes(sq)
@@ -382,8 +424,9 @@ function candidatesForAbility(
       return out;
     }
     case 'decoy': {
-      // Target any enemy.
+      // Target any enemy (the engine refuses the king; skip him here too).
       for (const p of state.pieces) {
+        if (p.type === 'king') continue;
         out.push({
           kind: 'ability-target',
           abilityId: 'decoy',
@@ -392,6 +435,19 @@ function candidatesForAbility(
       }
       return out;
     }
+    case 'convert': {
+      // Flip an eligible enemy — one candidate per legal target.
+      for (const c of convertTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'convert', target: c });
+      }
+      return out;
+    }
+    case 'drones':
+      // Instant swarm — free action; the swarm resolves before Rookie moves.
+      out.push({ kind: 'activate-ability', abilityId: 'drones' });
+      return out;
+    case 'squad':
+      return out; // passive — nothing to cast
   }
   return out;
 }

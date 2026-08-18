@@ -72,6 +72,11 @@ interface BoardProps {
 const GOAL_GRADIENT =
   'linear-gradient(180deg, #fff1b8 0%, #ffd56a 45%, #e89c1a 100%)';
 const GOAL_INSET_RING = 'inset 0 0 0 1px rgba(255,245,200,0.5)';
+// Rookie's Revenge — the enemy king's square gets a gold ring + soft glow.
+const KING_GOAL_GLOW =
+  'radial-gradient(circle, rgba(255,214,90,0.55) 0%, rgba(255,214,90,0.18) 55%, transparent 72%)';
+const KING_GOAL_RING =
+  'inset 0 0 0 3px rgba(232,156,26,0.85), inset 0 0 10px rgba(255,214,90,0.6)';
 
 // Scattered mote positions for the goal-row overlay — non-uniform so the
 // magic doesn't read as a repeating tile pattern.
@@ -121,6 +126,7 @@ const ENEMY_SPRITE: Record<PieceType, string> = {
   knight: 'bN',
   bishop: 'bB',
   queen: 'bQ',
+  king: 'bK',
 };
 
 // Module-scoped guard against React StrictMode's double-mount in dev. The
@@ -291,15 +297,39 @@ export function RunBoard({
     return nextEnemyMovers(state).map((p) => toSquare(p));
   }, [state, introPlaying]);
 
+  // Rookie's Revenge — 'king' win condition: the enemy king IS the goal.
+  const kingGoal = state.winCondition === 'king';
+  const kingSquare = useMemo(() => {
+    if (!kingGoal) return null;
+    const k = state.pieces.find((p) => p.type === 'king');
+    return k ? toSquare({ file: k.file, rank: k.rank }) : null;
+  }, [kingGoal, state.pieces]);
+
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};
 
-    // Goal rank — "Enchanted Dawn" golden sunrise gradient.
-    for (let f = 1; f <= 8; f++) {
-      const sq = `${String.fromCharCode('a'.charCodeAt(0) + f - 1)}8`;
-      styles[sq] = {
-        backgroundImage: GOAL_GRADIENT,
-        boxShadow: GOAL_INSET_RING,
+    if (!kingGoal) {
+      // Goal rank — "Enchanted Dawn" golden sunrise gradient.
+      for (let f = 1; f <= 8; f++) {
+        const sq = `${String.fromCharCode('a'.charCodeAt(0) + f - 1)}8`;
+        styles[sq] = {
+          backgroundImage: GOAL_GRADIENT,
+          boxShadow: GOAL_INSET_RING,
+        };
+      }
+    } else if (kingSquare) {
+      // King's pen — faint gold wash so the throne room reads as a room.
+      for (const sq of state.kingPen ?? []) {
+        styles[sq] = {
+          backgroundImage:
+            'linear-gradient(180deg, rgba(255,214,90,0.16), rgba(232,156,26,0.16))',
+          boxShadow: 'inset 0 0 0 1px rgba(232,156,26,0.28)',
+        };
+      }
+      // King square — subtle gold ring + inner glow.
+      styles[kingSquare] = {
+        backgroundImage: KING_GOAL_GLOW,
+        boxShadow: KING_GOAL_RING,
       };
     }
 
@@ -439,7 +469,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, kingGoal, kingSquare]);
 
   const telekinesisSquare = telekinesisTarget
     ? toSquare({ file: telekinesisTarget.file, rank: telekinesisTarget.rank })
@@ -637,7 +667,9 @@ export function RunBoard({
           50%      { filter: drop-shadow(0 0 12px rgba(125, 211, 252, 1)) drop-shadow(0 0 22px rgba(56, 189, 248, 1)); }
         }
         ${state.status === 'won'
-          ? `[data-square$="8"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
+          ? kingGoal
+            ? `[data-square="${toSquare(state.rookie)}"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
+            : `[data-square$="8"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
           : ''}
         ${state.frozenSquares
           .map(
@@ -848,7 +880,19 @@ export function RunBoard({
             animationDurationInMs: PIECE_SLIDE_MS,
           }}
         />
-        {state.status === 'playing' && (
+        {state.status === 'playing' && kingGoal && kingSquare && (
+          <KingGoalLabel
+            square={kingSquare}
+            status={
+              state.frozenSquares.includes(kingSquare)
+                ? 'frozen'
+                : (state.kingStunTurns ?? 0) > 0
+                  ? 'stunned'
+                  : null
+            }
+          />
+        )}
+        {state.status === 'playing' && !kingGoal && (
           <div
             aria-hidden
             style={{
@@ -1493,11 +1537,72 @@ function EnemyCaptureSlide({
 // React tracks each ally across move ticks.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Rookie's Revenge — tiny "CAPTURE THE KING" tag pinned just below the king's
+ * square (above it when he's on rank 1). Swaps to "STUNNED" (Rookie just
+ * captured — he can't flee this turn) or "FROZEN" (Freeze Ray). Decorative.
+ */
+function KingGoalLabel({
+  square,
+  status,
+}: {
+  square: string;
+  status: 'stunned' | 'frozen' | null;
+}) {
+  const { file, rank } = fromSquare(square);
+  const below = rank > 1;
+  const label =
+    status === 'frozen' ? 'Frozen' : status === 'stunned' ? 'Stunned' : 'Capture the king';
+  const palette =
+    status === 'frozen'
+      ? { color: '#0c4a6e', background: 'rgba(186,230,253,0.95)', border: 'rgba(56,189,248,0.9)' }
+      : status === 'stunned'
+        ? { color: '#4c1d95', background: 'rgba(233,213,255,0.95)', border: 'rgba(168,85,247,0.9)' }
+        : { color: '#7a4a00', background: 'rgba(255,240,180,0.92)', border: 'rgba(232,156,26,0.8)' };
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: 'absolute',
+        left: `${(file - 1) * 12.5}%`,
+        top: `${(8 - rank) * 12.5 + (below ? 12.5 : -3.2)}%`,
+        width: '12.5%',
+        height: '3.2%',
+        display: 'flex',
+        alignItems: below ? 'flex-start' : 'flex-end',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+        zIndex: 2,
+      }}
+    >
+      <span
+        style={{
+          fontSize: 'clamp(5px, 1.2cqw, 8px)',
+          fontWeight: 900,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap',
+          color: palette.color,
+          background: palette.background,
+          border: `1px solid ${palette.border}`,
+          borderRadius: 4,
+          padding: '1px 4px',
+          lineHeight: 1.2,
+          userSelect: 'none',
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
 const ALLY_SPRITE: Record<PieceType, keyof typeof defaultPieces> = {
   pawn: 'wP',
   knight: 'wN',
   bishop: 'wB',
   queen: 'wQ',
+  king: 'wK',
 };
 
 function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {

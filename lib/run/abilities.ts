@@ -8,10 +8,10 @@
  * the permanent / unlimited payoff.
  */
 
-import { rookieLegalMoves } from './movement';
+import { isWinningMove, rookieLegalMoves } from './movement';
 import { getRunById } from './runs';
 import { mulberry32 } from './seed';
-import { TEMPO_MAX, TEMPO_REWARD } from './scoring';
+import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { toSquare } from './types';
 import type {
   AllyPiece,
@@ -517,16 +517,23 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
 
   // Per-run allowlist (e.g. abilities-v2 test run). When set, restrict both
   // new offers AND upgrade offers to listed ids.
-  const runAllowed = state.runId
+  const runDef = state.runId
     ? (() => {
         try {
-          const r = getRunById(state.runId);
-          return r.allowedAbilities ? new Set(r.allowedAbilities as string[]) : null;
+          return getRunById(state.runId);
         } catch {
           return null;
         }
       })()
     : null;
+  const runAllowed = runDef?.allowedAbilities
+    ? new Set(runDef.allowedAbilities as string[])
+    : null;
+  // Offer size — 2 by default; Rookie's Revenge shows 3.
+  const size = Math.max(1, runDef?.offerSize ?? 2);
+  // Core guarantee — at least `coreMin` slate entries are core ids.
+  const core = runDef?.offerCore ? new Set(runDef.offerCore as string[]) : null;
+  const coreMin = core ? Math.min(size, runDef?.offerCoreMin ?? 0) : 0;
 
   const newPool: AbilityOfferOption[] = ALL_ABILITY_IDS.filter(
     (id) => !owned.has(id) && (!runAllowed || runAllowed.has(id)),
@@ -557,37 +564,49 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
     arr.filter((x) => !match(x));
 
   const offer: AbilityOfferOption[] = [];
+  /** Draw up to `n` distinct-by-id options from `pool` into `offer`. */
+  const draw = (pool: AbilityOfferOption[], n: number): void => {
+    let rest = pool.filter((x) => !offer.some((o) => o.id === x.id));
+    for (let i = 0; i < n; i++) {
+      const pick = pickOne(rest);
+      if (!pick) return;
+      offer.push(pick);
+      rest = without(rest, (x) => x.id === pick.id);
+    }
+  };
+
+  const isCore = (o: AbilityOfferOption) => !!core && core.has(o.id);
+  const coreCount = () => offer.filter(isCore).length;
 
   if (atCap) {
     if (upgradePool.length === 0) return [];
-    const a = pickOne(upgradePool);
-    if (a) offer.push(a);
-    const b = pickOne(without(upgradePool, (x) => x.id === a?.id));
-    if (b) offer.push(b);
+    // Owned-only upgrades: seed the core guarantee first, then fill.
+    if (coreMin > 0) draw(upgradePool.filter(isCore), coreMin);
+    draw(upgradePool, size - offer.length);
     return offer;
   }
 
   if (ownedCount === 0) {
-    const a = pickOne(newPool);
-    if (a) offer.push(a);
-    const b = pickOne(without(newPool, (x) => x.id === a?.id));
-    if (b) offer.push(b);
+    if (coreMin > 0) draw(newPool.filter(isCore), coreMin);
+    draw(newPool, size - offer.length);
     return offer;
   }
 
   if (upgradePool.length > 0 && newPool.length > 0) {
-    const up = pickOne(upgradePool);
-    const nw = pickOne(newPool);
-    if (up) offer.push(up);
-    if (nw) offer.push(nw);
+    // One upgrade + the rest new (2-wide keeps the legacy 1+1 shape).
+    draw(upgradePool, 1);
+    // Core guarantee: the new picks must supply whatever core is missing.
+    const needCore = Math.max(0, coreMin - coreCount());
+    if (needCore > 0) draw(newPool.filter(isCore), Math.min(needCore, size - offer.length));
+    draw(newPool, size - offer.length);
+    // Top up from upgrades if the new pool ran dry.
+    if (offer.length < size) draw(upgradePool, size - offer.length);
     return offer;
   }
 
   const fallback = newPool.length > 0 ? newPool : upgradePool;
-  const a = pickOne(fallback);
-  if (a) offer.push(a);
-  const b = pickOne(without(fallback, (x) => x.id === a?.id));
-  if (b) offer.push(b);
+  if (coreMin > 0) draw(fallback.filter(isCore), coreMin);
+  draw(fallback, size - offer.length);
   return offer;
 }
 
@@ -630,15 +649,26 @@ export function applyOfferPick(
   // mid-level does NOT spawn a fresh squad on top of the current board; that
   // gave a confusing burst of pieces and let the player double-dip by picking
   // squad after killing existing allies.
-  return { ...state, abilities, pendingOffer: null, tempo: 0 };
+  // Level offers (Rookie's Revenge free pick) are a gift — the tempo meter
+  // is untouched. Tempo offers spend the full meter.
+  const isLevelOffer = state.offerReason === 'level';
+  return {
+    ...state,
+    abilities,
+    pendingOffer: null,
+    offerReason: undefined,
+    tempo: isLevelOffer ? state.tempo : 0,
+  };
 }
 
 export function applyDismissOffer(state: BoardState): BoardState {
   if (!state.pendingOffer) return state;
+  const isLevelOffer = state.offerReason === 'level';
   return {
     ...state,
     pendingOffer: null,
-    tempo: Math.floor(TEMPO_MAX / 2),
+    offerReason: undefined,
+    tempo: isLevelOffer ? state.tempo : Math.floor(tempoMaxFor(state) / 2),
   };
 }
 
@@ -912,13 +942,18 @@ export function applyAbilityMove(
       : state.lastAbilityFx,
   };
 
-  if (target.rank === 8) {
+  if (isWinningMove(state, target)) {
     return { ...afterMove, status: 'won', turn: 'rookie' };
   }
   if (afterMove.moveLimit !== null && nextMoveCount >= afterMove.moveLimit) {
     return { ...afterMove, status: 'lost', turn: 'rookie' };
   }
-  return { ...afterMove, enemyMovedSquares: [], enemyVacatedSquares: [] };
+  return {
+    ...afterMove,
+    enemyMovedSquares: [],
+    enemyVacatedSquares: [],
+    ...(captured ? stunKingAfterCapture(state) : {}),
+  };
 }
 
 export function applyAbilityTargeted(
@@ -929,6 +964,17 @@ export function applyAbilityTargeted(
   if (!state.activeAbility || state.activeAbility.id !== abilityId) return state;
   const owned = state.abilities.find((a) => a.id === abilityId);
   if (!owned) return state;
+  // The enemy king (Rookie's Revenge) is the objective — only Rookie herself
+  // may take him. No decoy / poison / rabies / convert on the king. Freeze
+  // Ray is the ONE exception: freezing the king pins him so he can't flee.
+  if (
+    abilityId !== 'freeze-ray' &&
+    state.pieces.some(
+      (p) => p.type === 'king' && p.file === target.file && p.rank === target.rank,
+    )
+  ) {
+    return state;
+  }
 
   if (abilityId === 'decoy') {
     const hit = state.pieces.find(
@@ -949,7 +995,12 @@ export function applyAbilityTargeted(
   if (abilityId === 'freeze-ray') {
     if (!isVisibleEnemy(state, target)) return state;
     const sq = toSquare(target);
-    const turns = freezeTurns(owned.tier);
+    // Rookie's Revenge: a frozen KING stays pinned one extra enemy turn —
+    // enough to freeze, get on his line, and take him even at T1.
+    const hitKing = state.pieces.some(
+      (p) => p.type === 'king' && p.file === target.file && p.rank === target.rank,
+    );
+    const turns = freezeTurns(owned.tier) + (hitKing ? 1 : 0);
     const frozenSquares = state.frozenSquares.includes(sq)
       ? state.frozenSquares
       : [...state.frozenSquares, sq];
@@ -1313,6 +1364,7 @@ export function stepDroneTurn(state: BoardState): BoardState {
     let r = d.rank + chosen[1];
     while (f >= 1 && f <= 8 && r >= 1 && r <= 8) {
       const enemy = pieces.find((p) => p.file === f && p.rank === r);
+      if (enemy && enemy.type === 'king') break; // king is a wall, not a snack
       if (enemy) {
         captured = enemy;
         nf = f;
@@ -1330,11 +1382,12 @@ export function stepDroneTurn(state: BoardState): BoardState {
       statusAccum = { ...statusAccum, ...overlay };
       pieces = pieces.filter((p) => p !== captured);
       captures = [...captures, captured.type];
-      tempo = Math.min(TEMPO_MAX, tempo + (TEMPO_REWARD[captured.type] ?? 0));
+      tempo = Math.min(tempoMaxFor(state), tempo + (TEMPO_REWARD[captured.type] ?? 0));
       return { ...d, file: nf, rank: nr, alive: false, steps: d.steps + 1 };
     }
     return { ...d, file: nf, rank: nr, steps: d.steps + 1 };
   });
+  const droneCaptured = captures.length > state.captures.length;
   return {
     ...state,
     ...statusAccum,
@@ -1342,7 +1395,66 @@ export function stepDroneTurn(state: BoardState): BoardState {
     pieces,
     captures,
     tempo,
+    ...(droneCaptured ? stunKingAfterCapture(state) : {}),
   };
+}
+
+/**
+ * Rookie's Revenge — any capture credited to Rookie stuns the enemy king for
+ * the next enemy turn (he can't flee). Returns the state patch, or {} when
+ * the level isn't a king level so live runs stay byte-identical.
+ */
+export function stunKingAfterCapture(
+  state: BoardState,
+  turns = 1,
+): Pick<BoardState, 'kingStunTurns'> | Record<string, never> {
+  if (state.winCondition !== 'king') return {};
+  return { kingStunTurns: Math.max(state.kingStunTurns ?? 0, turns) };
+}
+
+/**
+ * Squares attacked by Rookie's rainbow allies (pawns diagonally toward rank
+ * 8, knights, bishops/queens sliding until blocked). Used by the fleeing king
+ * — he treats an ally-covered square as unsafe even though only Rookie may
+ * take him, so allies act as the "second piece" that cuts off escapes.
+ */
+export function allyAttackedSquares(state: BoardState): Set<string> {
+  const out = new Set<string>();
+  const add = (f: number, r: number) => {
+    if (allyInBounds(f, r)) out.add(toSquare({ file: f, rank: r }));
+  };
+  for (const a of state.allies ?? []) {
+    switch (a.type) {
+      case 'pawn':
+        add(a.file - 1, a.rank + 1);
+        add(a.file + 1, a.rank + 1);
+        break;
+      case 'knight':
+        for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
+        break;
+      case 'bishop':
+      case 'queen': {
+        const dirs = a.type === 'queen' ? ALLY_QUEEN_DIRS : ALLY_BISHOP_DIRS;
+        for (const [df, dr] of dirs) {
+          let f = a.file + df;
+          let r = a.rank + dr;
+          while (allyInBounds(f, r)) {
+            add(f, r);
+            if (allyIsHazard(state, f, r)) break;
+            if (state.rookie.file === f && state.rookie.rank === r) break;
+            if (state.allies.some((o) => o !== a && o.file === f && o.rank === r)) break;
+            if (state.pieces.some((p) => p.file === f && p.rank === r)) break;
+            f += df;
+            r += dr;
+          }
+        }
+        break;
+      }
+      case 'king':
+        break;
+    }
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -1364,6 +1476,14 @@ export function squadSpawnFor(
   rookie: Coord,
   pieces: EnemyPiece[],
   hazards: Coord[],
+  opts: {
+    /**
+     * Rookie's Revenge: allies muster AHEAD of Rookie (up to this many ranks
+     * in front) so the squad reaches the king's room in time to cut off his
+     * escape squares. Default 1 = the live "right in front of her" spawn.
+     */
+    ranksAhead?: number;
+  } = {},
 ): AllyPiece[] {
   const out: AllyPiece[] = [];
   const taken = (file: number, rank: number): boolean => {
@@ -1387,8 +1507,9 @@ export function squadSpawnFor(
   };
   // Everything spawns in front of Rookie (rank+1 or rank+2) so her east/west
   // axes stay open and she always has a legal first move.
-  const front = rookie.rank + 1;
-  const front2 = rookie.rank + 2;
+  const ahead = Math.max(1, opts.ranksAhead ?? 1);
+  const front = Math.min(7, rookie.rank + ahead);
+  const front2 = Math.min(7, front + 1);
   const t = Math.max(1, tier);
   // T1: center pawn in front. Fallback to adjacent files if blocked.
   if (t >= 1) {
@@ -1459,6 +1580,7 @@ function allyMoves(
     if (allyIsHazard(state, f, r)) return null;
     if (allyOccupied(state, f, r, ally)) return null;
     const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
+    if (enemy && enemy.type === 'king') return null; // only Rookie takes the king
     return { to: { file: f, rank: r }, capture: enemy ?? null };
   };
   switch (ally.type) {
@@ -1490,6 +1612,7 @@ function allyMoves(
           if (allyIsHazard(state, f, r)) break;
           if (allyOccupied(state, f, r, ally)) break;
           const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
+          if (enemy && enemy.type === 'king') break; // only Rookie takes the king
           out.push({ to: { file: f, rank: r }, capture: enemy ?? null });
           if (enemy) break;
           f += df;
@@ -1498,6 +1621,8 @@ function allyMoves(
       }
       return out;
     }
+    case 'king':
+      return out; // allies are never kings
   }
 }
 
@@ -1513,7 +1638,7 @@ function allyScoreMove(
   ally: AllyPiece,
   move: { to: Coord; capture: EnemyPiece | null },
 ): number {
-  const VALUE: Record<PieceType, number> = { queen: 9, bishop: 3, knight: 3, pawn: 1 };
+  const VALUE: Record<PieceType, number> = { queen: 9, bishop: 3, knight: 3, pawn: 1, king: 0 };
   let score = 0;
   if (move.capture) score += 100 + VALUE[move.capture.type] * 10;
   score += move.to.rank * 2; // advance bonus
@@ -1545,6 +1670,7 @@ function squareAttackedByEnemy(
       }
       continue;
     }
+    if (e.type === 'king') continue; // kings never capture
     const dirs = e.type === 'queen' ? ALLY_QUEEN_DIRS : ALLY_BISHOP_DIRS;
     if (e.type === 'queen') {
       // queens cover all 8.
@@ -1627,7 +1753,7 @@ export function stepAllyTurn(state: BoardState): BoardState {
     nextPieces = nextPieces.filter((p) => p !== pick.capture);
     nextCaptures = [...nextCaptures, pick.capture.type];
     const gain = TEMPO_REWARD[pick.capture.type] ?? 0;
-    nextTempo = Math.min(TEMPO_MAX, state.tempo + gain);
+    nextTempo = Math.min(tempoMaxFor(state), state.tempo + gain);
   }
   return {
     ...state,
@@ -1637,6 +1763,7 @@ export function stepAllyTurn(state: BoardState): BoardState {
     captures: nextCaptures,
     tempo: nextTempo,
     allyTurnIndex: idx + 1,
+    ...(pick.capture ? stunKingAfterCapture(state) : {}),
   };
 }
 

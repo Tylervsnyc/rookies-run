@@ -38,6 +38,7 @@ const ENEMY_GLYPH: Record<PieceType, string> = {
   knight: '♞',  // ♞
   bishop: '♝',  // ♝
   queen: '♛',   // ♛
+  king: '♚',    // ♚
 };
 
 interface ReplayBoardProps {

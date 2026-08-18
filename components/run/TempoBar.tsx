@@ -5,6 +5,8 @@ import type { RookieForm } from '@/lib/run/types';
 
 interface TempoBarProps {
   tempo: number;
+  /** Segment count / cap for this level (defaults to TEMPO_MAX; 12 on king levels). */
+  max?: number;
   form: RookieForm;
   formMovesLeft: number;
 }
@@ -18,7 +20,7 @@ const FORM_LABEL: Record<RookieForm, string> = {
   pawn: 'Pawn',
 };
 
-export function TempoBar({ tempo, form, formMovesLeft }: TempoBarProps) {
+export function TempoBar({ tempo, max = TEMPO_MAX, form, formMovesLeft }: TempoBarProps) {
   return (
     <div className="bg-chess-surface rounded-lg px-2.5 py-1.5 shadow-sm flex items-center gap-2.5">
       <span className="text-[10px] font-black uppercase tracking-[0.14em] text-chess-text-muted leading-none">
@@ -29,12 +31,12 @@ export function TempoBar({ tempo, form, formMovesLeft }: TempoBarProps) {
           {tempo}
         </span>
         <span className="text-chess-text-faint text-[10px] font-bold leading-none">
-          /{TEMPO_MAX}
+          /{max}
         </span>
       </div>
 
       <div className="flex-1 flex gap-0.5">
-        {Array.from({ length: TEMPO_MAX }, (_, i) => (
+        {Array.from({ length: max }, (_, i) => (
           <div
             key={i}
             className={`flex-1 h-2 rounded-sm ${
