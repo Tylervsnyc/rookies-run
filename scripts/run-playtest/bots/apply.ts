@@ -9,6 +9,10 @@
  *
  * Returned state may still be on Rookie's turn if Surge was activated (no
  * turn handoff) or if an instant ability was tapped — callers should loop.
+ *
+ * Support v3 (boulder / smoke / magnet / bodyguard) needs no special casing:
+ * boulder + magnet are 'targeted' (activate → applyAbilityTargeted), smoke +
+ * bodyguard are 'instant'. Rewind is never emitted by `legalCandidates`.
  */
 
 import {

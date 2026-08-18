@@ -17,7 +17,11 @@
 import type { AbilityId, OwnedAbility } from '../../../lib/run/abilities';
 import {
   abilityLegalMoves,
+  bodyguardSpawnSquare,
+  boulderTargets,
   convertTargets,
+  isSmoked,
+  magnetTargets,
   visibleEnemySquares,
 } from '../../../lib/run/abilities';
 import { rookieLegalMoves, enemyAt } from '../../../lib/run/movement';
@@ -56,7 +60,7 @@ export function enemyAttackedSquares(state: BoardState): Set<string> {
   // captured. Treat her square as un-attackable so safety scoring stops
   // discounting it and bots stop "wasting tempo" on capture-of-Rookie moves
   // that will simply bounce.
-  if (state.form === 'king') {
+  if (state.form === 'king' || isSmoked(state)) {
     out.delete(toSquare(state.rookie));
   }
   return out;
@@ -299,6 +303,7 @@ export function evalState(state: BoardState): number {
     if (a.usesLeftThisLevel > 0 || a.usesLeftThisLevel === -1) score += 0.5;
   }
   if (state.shieldUp) score += 6;
+  if (isSmoked(state)) score += 6; // invisible = safe for now
   if (state.bonusMovesLeft > 0) score += state.bonusMovesLeft * 5;
 
   // Material penalty by chess piece value — removing a queen is worth ~7
@@ -448,6 +453,40 @@ function candidatesForAbility(
       return out;
     case 'squad':
       return out; // passive — nothing to cast
+    case 'boulder': {
+      // Drop on an empty square. Full board = 60+ candidates per turn, which
+      // would swamp the rollout budget — keep it to squares that MATTER:
+      // adjacent to the enemy king (seal his pen exits) or on a line between
+      // Rookie and a non-king enemy (block a hunter). Falls back to "near
+      // the king" on rank-8 levels.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      for (const c of boulderTargets(state)) {
+        const nearKing = king ? cheb(c, king) <= 1 : false;
+        const nearRookie = cheb(c, state.rookie) <= 2;
+        if (nearKing || nearRookie) {
+          out.push({ kind: 'ability-target', abilityId: 'boulder', target: c });
+        }
+      }
+      return out;
+    }
+    case 'smoke':
+      if (!isSmoked(state)) out.push({ kind: 'activate-ability', abilityId: 'smoke' });
+      return out;
+    case 'rewind':
+      // Bots never rewind — the harness has no notion of "that turn went
+      // badly", and undoing a rollout's own move just burns nodes. Skipped
+      // on purpose; documented in docs/revenge-abilities.md.
+      return out;
+    case 'magnet': {
+      for (const c of magnetTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'magnet', target: c });
+      }
+      return out;
+    }
+    case 'bodyguard':
+      if (bodyguardSpawnSquare(state)) out.push({ kind: 'activate-ability', abilityId: 'bodyguard' });
+      return out;
   }
   return out;
 }

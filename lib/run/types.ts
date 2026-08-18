@@ -46,12 +46,21 @@ export interface EnemyPiece {
  * Rainbow ally piece — spawned by Squad (passive) or Convert (active).
  * `source` lets Convert allies use slightly worse AI than Squad allies.
  */
+/** Ally piece kinds — allies can also be rooks (Bodyguard); enemies never are. */
+export type AllyPieceType = PieceType | 'rook';
+
 export interface AllyPiece {
   id: number;
-  type: PieceType;
+  type: AllyPieceType;
   file: number;
   rank: number;
-  source: 'squad' | 'convert';
+  source: 'squad' | 'convert' | 'bodyguard';
+  /**
+   * Bodyguard: enemy turns this ally stays on the board. Decremented at the
+   * end of each enemy turn; the ally dissolves when it hits 0. Absent =
+   * permanent (Squad / Convert allies).
+   */
+  turnsLeft?: number;
 }
 
 export type Turn = 'rookie' | 'allies' | 'drones' | 'enemy';
@@ -203,7 +212,12 @@ export interface BoardState {
       | 'poison-dart'
       | 'rabies-dart'
       | 'convert'
-      | 'drones';
+      | 'drones'
+      | 'boulder'
+      | 'smoke'
+      | 'rewind'
+      | 'magnet'
+      | 'bodyguard';
     from: string;
     to: string;
     id: number;
@@ -267,6 +281,22 @@ export interface BoardState {
    * Revenge). Level offers never touch tempo and can't be skipped.
    */
   offerReason?: 'tempo' | 'level';
+  /**
+   * Smoke — enemy turns Rookie stays invisible. While > 0 enemies neither
+   * capture nor hunt her (they hold posts / take other targets) and the
+   * fleeing king ignores her threats. Ticks down at the end of each enemy
+   * turn. Absent/0 = visible.
+   */
+  smokeTurnsLeft?: number;
+  /**
+   * Rewind — two board snapshots (each stored WITHOUT its own rewindStack):
+   *   [0] = the board at the start of the PREVIOUS Rookie turn (the undo
+   *         target: her last move + the enemy reply unhappen), or null;
+   *   [1] = the board at the start of the CURRENT Rookie turn.
+   * Written by the enemy-turn `endTurn` (and lazily by the first Rookie move
+   * of a level); consumed by the Rewind ability.
+   */
+  rewindStack?: Array<BoardState | null>;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {

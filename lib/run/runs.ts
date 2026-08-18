@@ -3956,6 +3956,12 @@ export const REVENGE_ABILITIES: ReadonlyArray<string> = [
   'squad',
   'rabies-dart',
   'become-king',
+  // Support v3 (2026-08-18): terrain, cover, undo, pull, a rook at her side.
+  'boulder',
+  'smoke',
+  'rewind',
+  'magnet',
+  'bodyguard',
 ];
 
 /**

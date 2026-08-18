@@ -251,6 +251,46 @@ function AbilityIcon({ id, size }: { id: AbilityId; size: number }) {
           <path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z" />
         </svg>
       );
+    case 'boulder':
+      // rounded stone
+      return (
+        <svg {...props}>
+          <path d="M6 18h12l2-5-3-6-5-2-6 3-2 5z" />
+          <path d="M9 12l3 2 4-3" />
+        </svg>
+      );
+    case 'smoke':
+      // three puffs
+      return (
+        <svg {...props}>
+          <circle cx="8" cy="15" r="3.5" />
+          <circle cx="14" cy="13" r="4.5" />
+          <circle cx="11" cy="7" r="3" />
+        </svg>
+      );
+    case 'rewind':
+      // counter-clockwise arrow
+      return (
+        <svg {...props}>
+          <path d="M3 12a9 9 0 1 0 3-6.7" />
+          <path d="M3 4v5h5" />
+        </svg>
+      );
+    case 'magnet':
+      // horseshoe magnet
+      return (
+        <svg {...props}>
+          <path d="M6 3v9a6 6 0 0 0 12 0V3" />
+          <path d="M6 3h4v6H6zM14 3h4v6h-4z" />
+        </svg>
+      );
+    case 'bodyguard':
+      // rook silhouette
+      return (
+        <svg {...props}>
+          <path d="M6 21h12M7 18h10l-1-8H8zM6 4v5h12V4h-3v2h-2V4h-2v2H9V4z" />
+        </svg>
+      );
     default:
       return null;
   }
