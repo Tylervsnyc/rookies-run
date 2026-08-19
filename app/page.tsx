@@ -17,7 +17,8 @@ import { RunPickerModal } from '@/components/run/RunPickerModal';
 import { RookiesRevengeLogo } from '@/components/run/RookiesRevengeLogo';
 import { StcRunLogo } from '@/components/run/StcRunLogo';
 import { TempoBar } from '@/components/run/TempoBar';
-import { AchievementToast, TrophyGlyph } from '@/components/run/AchievementToast';
+import { TrophyGlyph } from '@/components/run/AchievementToast';
+import { RunAchievementPop } from '@/components/achievements/RunAchievementPop';
 import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
@@ -1246,7 +1247,7 @@ export default function RookiesRunPage() {
       )}
 
       {showTempoHelp && <TempoHelpModal onClose={closeTempoHelp} />}
-      <AchievementToast
+      <RunAchievementPop
         achievement={progress.queue.achievements[0]}
         onDone={progress.shiftAchievement}
       />
