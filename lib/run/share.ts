@@ -1,7 +1,7 @@
 /**
- * Share string for Rookies Run (Wordle-style).
+ * Share string for Rookie's Revenge (Wordle-style).
  *
- * Format: `Rookies Run · YYYY-MM-DD · Level X/N · streak Y`
+ * Format: `Rookie's Revenge · YYYY-MM-DD · Level X/N · streak Y`
  */
 
 export interface ShareInput {
@@ -24,5 +24,5 @@ export function buildShareString({
     : `Level ${levelReached}/${totalLevels}`;
   const streakPart =
     currentStreak > 1 ? ` · streak ${currentStreak}` : '';
-  return `Rookies Run · ${iso} · ${result}${streakPart}`;
+  return `Rookie's Revenge · ${iso} · ${result}${streakPart}`;
 }
