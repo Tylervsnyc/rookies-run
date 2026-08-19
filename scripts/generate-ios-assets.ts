@@ -52,7 +52,7 @@ function framed(canvas: number, frac: number, bg: string): string {
 
 async function render(canvas: number, frac: number, bg: string): Promise<Buffer> {
   // App Store Connect rejects icons with an alpha channel → flatten.
-  return sharp(Buffer.from(framed(canvas, frac, bg)), { density: 300 }).flatten({ background: bg }).png().toBuffer();
+  return sharp(Buffer.from(framed(canvas, frac, bg)), { density: 300 }).resize(canvas, canvas).flatten({ background: bg }).png().toBuffer();
 }
 
 async function main() {
