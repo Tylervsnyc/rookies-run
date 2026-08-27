@@ -46,6 +46,10 @@ export function getSharedAudioContext(): AudioContext | null {
 // Preloaded audio buffers for move/capture sounds
 let moveBuffer: AudioBuffer | null = null;
 let captureBuffer: AudioBuffer | null = null;
+let transformBackBuffer: AudioBuffer | null = null;
+let transformIntoBuffer: AudioBuffer | null = null;
+let freezeBuffer: AudioBuffer | null = null;
+let surgeBuffer: AudioBuffer | null = null;
 let buffersLoading = false;
 let buffersLoaded = false;
 
@@ -91,13 +95,21 @@ async function preloadSounds(): Promise<void> {
   if (buffersLoaded || buffersLoading) return;
   buffersLoading = true;
 
-  const [move, capture] = await Promise.all([
+  const [move, capture, transformBack, transformInto, freeze, surge] = await Promise.all([
     loadBuffer('/sounds/move.mp3'),
     loadBuffer('/sounds/capture.mp3'),
+    loadBuffer('/sounds/transform-back.mp3'),
+    loadBuffer('/sounds/transform-into.mp3'),
+    loadBuffer('/sounds/freeze.mp3'),
+    loadBuffer('/sounds/surge.mp3'),
   ]);
+  freezeBuffer = freeze;
+  surgeBuffer = surge;
 
   moveBuffer = move;
   captureBuffer = capture;
+  transformBackBuffer = transformBack;
+  transformIntoBuffer = transformInto;
   buffersLoaded = true;
   buffersLoading = false;
 }
@@ -292,6 +304,30 @@ export async function playMoveSound(): Promise<void> {
 /** Play capture sound - uses preloaded mp3 file */
 export async function playCaptureSound(): Promise<void> {
   return playBuffer(captureBuffer);
+}
+
+/**
+ * "Poof" — Rookie turning BACK into a rook after a knight / queen / king
+ * form expires (Tyler's ElevenLabs SFX, 2026-08-27). Not for the
+ * transform-INTO; that's a separate cue.
+ */
+export async function playTransformBackSound(): Promise<void> {
+  return playBuffer(transformBackBuffer);
+}
+
+/** Dark whoosh — Surge activates (two moves in a row). */
+export async function playSurgeSound(): Promise<void> {
+  return playBuffer(surgeBuffer);
+}
+
+/** Magical freeze — Freeze Ray lands on a piece. */
+export async function playFreezeSound(): Promise<void> {
+  return playBuffer(freezeBuffer);
+}
+
+/** Arcane shimmer — Rookie transforming INTO a knight / queen / king. */
+export async function playTransformIntoSound(): Promise<void> {
+  return playBuffer(transformIntoBuffer);
 }
 
 /**

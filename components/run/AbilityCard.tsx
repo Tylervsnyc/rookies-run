@@ -350,6 +350,8 @@ interface MiniProps {
   active: boolean;
   flashing: boolean;
   onClick: () => void;
+  /** Force the card into its grayed, untappable state (tutorial gating). */
+  disabled?: boolean;
 }
 
 export function AbilityCardMini({
@@ -357,10 +359,12 @@ export function AbilityCardMini({
   active,
   flashing,
   onClick,
+  disabled: forceDisabled = false,
 }: MiniProps) {
   const def = ABILITY_DEFS[ability.id];
   const t = TIER[ability.tier];
-  const disabled = ability.usesLeftThisLevel === 0 && ability.tier !== 5;
+  const disabled =
+    forceDisabled || (ability.usesLeftThisLevel === 0 && ability.tier !== 5);
   const max = Math.max(1, maxUsesDisplay(ability));
   const blurb = blurbDetailForTier(ability.id, ability.tier);
 

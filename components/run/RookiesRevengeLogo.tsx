@@ -61,13 +61,32 @@ export function RevengeMarkSvg({ size = 200, ringColor = REVENGE_RED, className,
           strokeWidth={0.6}
         />
       ))}
-      {/* reticle */}
+      <RevengeReticle ringColor={ringColor} />
+    </svg>
+  );
+}
+
+/** The reticle alone (outer ring, faded inner ring, center dot, 4 ticks) — the mark's exact geometry, in a 200x200 viewBox. */
+export function RevengeReticle({ ringColor = REVENGE_RED }: { ringColor?: string }) {
+  return (
+    <g>
       <circle cx={C} cy={C} r={R_OUTER} fill="none" stroke={ringColor} strokeWidth={STROKE * 1.4} />
       <circle cx={C} cy={C} r={R_INNER} fill="none" stroke={ringColor} strokeWidth={STROKE * 0.9} opacity={0.55} />
       <circle cx={C} cy={C} r={VB * 0.035} fill={ringColor} />
       {[0, 90, 180, 270].map((deg) => (
         <line key={deg} x1={C} y1={0} x2={C} y2={TICK} stroke={ringColor} strokeWidth={STROKE * 1.4} transform={`rotate(${deg} ${C} ${C})`} />
       ))}
+    </g>
+  );
+}
+
+/** Standalone reticle SVG (no rook) — for lockups that place Rookie separately. */
+export function RevengeReticleSvg({ size = 200, ringColor = REVENGE_RED, className, style }: {
+  size?: number; ringColor?: string; className?: string; style?: React.CSSProperties;
+}) {
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${VB} ${VB}`} className={className} style={style} aria-hidden>
+      <RevengeReticle ringColor={ringColor} />
     </svg>
   );
 }

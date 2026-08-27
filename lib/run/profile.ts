@@ -20,8 +20,16 @@ import { DEFAULT_DIFFICULTY, isDifficultyId, type DifficultyId } from './difficu
 
 export const PROFILE_KEY = 'rookies-revenge-profile-v1';
 
-/** What a brand-new player holds. Two finishers + one fun support. */
-export const STARTER_ABILITIES: ReadonlyArray<AbilityId> = ['surge', 'freeze-ray', 'drones'];
+/**
+ * What a brand-new player holds. Knight Hop first — the tutorial teaches it:
+ * a rook alone usually can't reach the king, so she borrows the knight's legs.
+ * Surge + Freeze Ray are the other two ways to close the gap. (Drones was cut —
+ * a swarm doesn't fit a king-hunt.)
+ */
+export const STARTER_ABILITIES: ReadonlyArray<AbilityId> = ['knight-hop', 'surge', 'freeze-ray'];
+
+/** Cut from Revenge. Stripped from saved profiles on load so old kits lose them. */
+export const RETIRED_ABILITIES: ReadonlySet<string> = new Set(['drones']);
 
 export interface EarnedAchievement {
   unlockedAt: string; // ISO
@@ -61,7 +69,9 @@ function sanitize(raw: unknown): PlayerProfile {
   if (Array.isArray(r.unlockedAbilities)) {
     const set = new Set<AbilityId>(STARTER_ABILITIES);
     for (const id of r.unlockedAbilities) {
-      if (typeof id === 'string' && KNOWN_ABILITIES.has(id)) set.add(id as AbilityId);
+      if (typeof id === 'string' && KNOWN_ABILITIES.has(id) && !RETIRED_ABILITIES.has(id)) {
+        set.add(id as AbilityId);
+      }
     }
     p.unlockedAbilities = [...set];
   }

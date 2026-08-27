@@ -4,7 +4,14 @@ import { REVENGE_TAGLINE, RookiesRevengeLogo } from './RookiesRevengeLogo';
 import { TrophyGlyph } from './AchievementToast';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
-import { DIFFICULTIES, DIFFICULTY_ORDER, type DifficultyId } from '@/lib/run/difficulty';
+import { useEffect, useState } from 'react';
+import {
+  DIFFICULTIES,
+  DIFFICULTY_ORDER,
+  difficultyLockHint,
+  isDifficultyLocked,
+  type DifficultyId,
+} from '@/lib/run/difficulty';
 
 interface RunLandingProps {
   onStart: () => void;
@@ -40,11 +47,21 @@ export function RunLanding({
   const abilitiesTotal = unlockableAbilityIds().length;
   const showPicker = !!difficulty && !!onDifficultyChange;
   const activeDef = difficulty ? DIFFICULTIES[difficulty] : null;
-  const isLocked = (id: DifficultyId): boolean => {
-    const req = DIFFICULTIES[id].requiresAchievement;
-    if (!req) return false;
-    return !profile?.achievements[req];
-  };
+  const isLocked = (id: DifficultyId): boolean => isDifficultyLocked(id, profile);
+  const [lockHint, setLockHint] = useState<string | null>(null);
+  // If the saved pick is locked (e.g. an older profile defaulted to Normal
+  // before it was gated), fall back to the first open difficulty.
+  useEffect(() => {
+    if (!showPicker || !difficulty || !isLocked(difficulty)) return;
+    const open = DIFFICULTY_ORDER.find((id) => !isLocked(id));
+    if (open && open !== difficulty) onDifficultyChange?.(open);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showPicker, difficulty, profile]);
+  useEffect(() => {
+    if (!lockHint) return;
+    const t = setTimeout(() => setLockHint(null), 2200);
+    return () => clearTimeout(t);
+  }, [lockHint]);
   const abilitiesHave = profile ? profile.unlockedAbilities.length : 0;
   const trophiesHave = profile ? Object.keys(profile.achievements).length : 0;
   return (
@@ -91,14 +108,18 @@ export function RunLanding({
                     aria-disabled={locked}
                     data-difficulty={id}
                     onClick={() => {
-                      if (locked) return;
+                      if (locked) {
+                        setLockHint(difficultyLockHint(id));
+                        return;
+                      }
+                      setLockHint(null);
                       onDifficultyChange?.(id);
                     }}
-                    className={`min-h-[40px] rounded-lg px-0.5 text-[10.5px] font-black leading-tight transition-colors flex items-center justify-center gap-0.5 ${
+                    className={`min-h-[44px] rounded-lg px-0.5 text-[10.5px] font-black leading-tight transition-colors flex items-center justify-center gap-0.5 ${
                       active
                         ? 'bg-chess-text text-white shadow-sm'
                         : locked
-                          ? 'text-chess-text-faint'
+                          ? 'text-chess-text-faint opacity-60'
                           : 'text-chess-text-muted active:bg-chess-text/10'
                     }`}
                   >
@@ -113,13 +134,21 @@ export function RunLanding({
                 );
               })}
             </div>
-            <p className="text-[11px] italic text-chess-text-muted leading-snug px-1 min-h-[14px]">
-              {activeDef.tagline}
-              {DIFFICULTY_ORDER.some((id) => isLocked(id)) && (
-                <span className="not-italic text-chess-text-faint">
-                  {' '}
-                  · Nightmare: finish a run on Hard.
-                </span>
+            <p
+              className="text-[11px] italic text-chess-text-muted leading-snug px-1 min-h-[14px]"
+              aria-live="polite"
+            >
+              {lockHint ? (
+                <span className="not-italic font-bold text-chess-text">{lockHint}</span>
+              ) : (
+                <>
+                  {activeDef.tagline}
+                  {isLocked('normal') ? (
+                    <span className="not-italic text-chess-text-faint"> · Clear Rookie to unlock Normal and Hard.</span>
+                  ) : isLocked('nightmare') ? (
+                    <span className="not-italic text-chess-text-faint"> · Nightmare: finish a run on Hard.</span>
+                  ) : null}
+                </>
               )}
             </p>
           </div>

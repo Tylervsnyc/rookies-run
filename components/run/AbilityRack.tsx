@@ -13,12 +13,15 @@ interface AbilityRackProps {
   abilities: OwnedAbility[];
   activeId: AbilityId | null;
   onActivate: (id: AbilityId) => void;
+  /** Cards rendered grayed + untappable (tutorial: "only this one for now"). */
+  disabledIds?: AbilityId[];
 }
 
 export function AbilityRack({
   abilities,
   activeId,
   onActivate,
+  disabledIds,
 }: AbilityRackProps) {
   const emptySlots = Math.max(0, MAX_OWNED_ABILITIES - abilities.length);
 
@@ -44,6 +47,7 @@ export function AbilityRack({
               key={a.id}
               ability={a}
               active={activeId === a.id}
+              disabled={disabledIds?.includes(a.id) ?? false}
               onActivate={() => onActivate(a.id)}
             />
           ))}
@@ -78,10 +82,12 @@ function EmptySlot() {
 function RackEntry({
   ability,
   active,
+  disabled,
   onActivate,
 }: {
   ability: OwnedAbility;
   active: boolean;
+  disabled: boolean;
   onActivate: () => void;
 }) {
   const prevTierRef = useRef<AbilityTier>(ability.tier);
@@ -100,6 +106,7 @@ function RackEntry({
       ability={ability}
       active={active}
       flashing={flashing}
+      disabled={disabled}
       onClick={onActivate}
     />
   );

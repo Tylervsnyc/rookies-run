@@ -204,7 +204,7 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'The game was over. Nobody told me.',
     hint: 'Capture your first king.',
     group: 'firsts',
-    unlocks: 'knight-hop',
+    unlocks: 'magnet',
     ...count('cap.king', 1),
   },
   {
@@ -378,7 +378,6 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'Three abilities, all maxed. Overkill is a kind of love.',
     hint: 'Clear a level with three tier-5 abilities.',
     group: 'style',
-    unlocks: 'magnet',
     ...count('levels.cleared.maxed', 1),
   },
   {

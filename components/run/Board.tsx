@@ -10,6 +10,7 @@ import { nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
+import { REVENGE_RUN_IDS } from '@/lib/run/runs';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 
 interface BoardProps {
@@ -55,7 +56,15 @@ interface BoardProps {
    *  pixel-block RookieCell. Used by STC co-brand teaching runs where vanilla
    *  pieces are clearer. */
   vanillaPieces?: boolean;
+  /** Explicit override: never draw the golden rank-8 goal row. */
+  hideGoalRank?: boolean;
+  /** Piece slide duration override (ms) — e.g. a slow-motion tutorial capture. */
+  slideMs?: number;
 }
+
+// Runs whose win condition is always the king — the rank-8 goal row must
+// never draw for them even if a state arrives without `winCondition` set.
+const KING_RUN_IDS = new Set<string>([...REVENGE_RUN_IDS, 'onboarding']);
 
 // Goal-row "Enchanted Dawn" — soft golden sunrise gradient so rank 8 reads as
 // a magical finish-line. Animated motes/haze added via overlay in JSX.
@@ -145,6 +154,8 @@ export function RunBoard({
   onSquareClick,
   onPieceDrop,
   vanillaPieces = false,
+  hideGoalRank = false,
+  slideMs,
 }: BoardProps) {
   const rookieSprite = ROOKIE_SPRITE[state.form];
 
@@ -289,6 +300,14 @@ export function RunBoard({
 
   // Rookie's Revenge — 'king' win condition: the enemy king IS the goal.
   const kingGoal = state.winCondition === 'king';
+  // Golden rank-8 goal row — ONLY for the reach-the-rank win condition.
+  // `winCondition` defaults to 'rank8' when absent, so also refuse for
+  // king-only runs (Revenge, onboarding) and honour the explicit override.
+  const rankGoal =
+    !hideGoalRank &&
+    !kingGoal &&
+    (state.winCondition ?? 'rank8') === 'rank8' &&
+    !KING_RUN_IDS.has(state.runId ?? '');
   const kingSquare = useMemo(() => {
     if (!kingGoal) return null;
     const k = state.pieces.find((p) => p.type === 'king');
@@ -298,7 +317,7 @@ export function RunBoard({
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};
 
-    if (!kingGoal) {
+    if (rankGoal) {
       // Goal rank — "Enchanted Dawn" golden sunrise gradient.
       for (let f = 1; f <= 8; f++) {
         const sq = `${String.fromCharCode('a'.charCodeAt(0) + f - 1)}8`;
@@ -462,7 +481,7 @@ export function RunBoard({
     }
 
     // 8th-rank "level cleared" gold blaze.
-    if (state.status === 'won') {
+    if (state.status === 'won' && rankGoal) {
       for (let f = 1; f <= 8; f++) {
         const sq = `${String.fromCharCode('a'.charCodeAt(0) + f - 1)}8`;
         styles[sq] = {
@@ -474,7 +493,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, kingGoal, kingSquare]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
 
   const telekinesisSquare = telekinesisTarget
     ? toSquare({ file: telekinesisTarget.file, rank: telekinesisTarget.rank })
@@ -672,9 +691,9 @@ export function RunBoard({
           50%      { filter: drop-shadow(0 0 12px rgba(125, 211, 252, 1)) drop-shadow(0 0 22px rgba(56, 189, 248, 1)); }
         }
         ${state.status === 'won'
-          ? kingGoal
-            ? `[data-square="${toSquare(state.rookie)}"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
-            : `[data-square$="8"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
+          ? rankGoal
+            ? `[data-square$="8"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
+            : `[data-square="${toSquare(state.rookie)}"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
           : ''}
         ${state.frozenSquares
           .map(
@@ -880,7 +899,9 @@ export function RunBoard({
             squareStyles,
             showNotation: false,
             boardOrientation: 'white',
-            allowDragging: true,
+            // While an ability is waiting for its target, a piece tap must be
+            // a plain click — never a drag start that swallows the tap.
+            allowDragging: !state.activeAbility,
             canDragPiece: ({ piece }) =>
               piece?.pieceType === rookieSprite &&
               state.turn === 'rookie' &&
@@ -888,7 +909,7 @@ export function RunBoard({
             onPieceDrop: ({ sourceSquare, targetSquare }) =>
               targetSquare ? onPieceDrop(sourceSquare, targetSquare) : false,
             onSquareClick: ({ square }) => onSquareClick(square),
-            animationDurationInMs: PIECE_SLIDE_MS,
+            animationDurationInMs: slideMs ?? PIECE_SLIDE_MS,
           }}
         />
         {state.status === 'playing' && kingGoal && kingSquare && (
@@ -903,7 +924,7 @@ export function RunBoard({
             }
           />
         )}
-        {state.status === 'playing' && !kingGoal && (
+        {state.status === 'playing' && rankGoal && (
           <div
             aria-hidden
             style={{

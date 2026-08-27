@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BreathingRook } from '@/components/ui/BreathingRook';
+import { RevengeLoader } from '@/components/run/RevengeLoader';
 
 /**
  * NativeSplash — Rookie, breathing, shown ONLY inside the Capacitor native
@@ -40,11 +40,16 @@ const FADE_MS = 400;
 
 export function NativeSplash() {
   const [phase, setPhase] = useState<'hidden' | 'shown' | 'fading'>('hidden');
+  // Native launch image = the mark at 28% of a square canvas, scaleAspectFill
+  // (scripts/generate-ios-assets.ts). Match that so the static image hands
+  // off to the animated mark without a jump.
+  const [size, setSize] = useState(160);
 
   useEffect(() => {
     const isNative = window.Capacitor?.isNativePlatform?.() === true;
     const isDebug = new URLSearchParams(window.location.search).has('nativeSplash');
     if (!isNative && !isDebug) return;
+    setSize(Math.round(0.28 * Math.max(window.innerWidth, window.innerHeight)));
     setPhase('shown');
     const fadeTimer = setTimeout(() => setPhase('fading'), INTRO_MS);
     const doneTimer = setTimeout(() => setPhase('hidden'), INTRO_MS + FADE_MS);
@@ -72,15 +77,7 @@ export function NativeSplash() {
         pointerEvents: phase === 'fading' ? 'none' : 'auto',
       }}
     >
-      {/* `breathe`, not `powerOn`: powerOn layers infinite Morse-code flickers
-          on two blocks that spell CHESS and PATH — a Chess Path easter egg
-          that shouldn't ride along into a standalone app.
-
-          BreathingRook maxes out at blockSize 36 (`xl`); scale up so Rookie
-          reads at splash scale without inventing a second size token. */}
-      <div style={{ transform: 'scale(1.6)', transformOrigin: 'center' }}>
-        <BreathingRook size="xl" animate mood="neutral" />
-      </div>
+      <RevengeLoader size={size} />
     </div>
   );
 }

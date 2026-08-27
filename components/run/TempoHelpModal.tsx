@@ -4,7 +4,8 @@ interface TempoHelpModalProps {
   onClose: () => void;
 }
 
-const POINTS: { what: string; detail: string }[] = [
+/** Shared with StoryOnboarding's end screen — one source for the tempo copy. */
+export const TEMPO_POINTS: { what: string; detail: string }[] = [
   {
     what: 'Capture pieces',
     detail: 'Every piece you take charges the tempo bar. Bigger pieces charge more.',
@@ -62,7 +63,7 @@ export function TempoHelpModal({ onClose }: TempoHelpModalProps) {
           </div>
 
           <ul className="px-5 pb-5 flex flex-col gap-3">
-            {POINTS.map((p, i) => (
+            {TEMPO_POINTS.map((p, i) => (
               <li key={p.what} className="flex items-start gap-3">
                 <span className="w-6 h-6 rounded-full bg-amber-400 text-amber-950 text-xs font-black flex items-center justify-center shrink-0 leading-none">
                   {i + 1}

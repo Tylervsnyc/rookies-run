@@ -23,7 +23,7 @@ import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
 import { readProfile, recordBest, setDifficulty as persistDifficulty } from '@/lib/run/profile';
-import { DIFFICULTIES, type DifficultyId } from '@/lib/run/difficulty';
+import { DIFFICULTIES, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { tempoMaxFor } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
@@ -32,8 +32,7 @@ import {
   playCardPlaySound,
   playLevelClearSound,
   playMoveSound,
-  warmupAudio,
-} from '@/lib/sounds';
+  warmupAudio, playTransformBackSound, playTransformIntoSound, playFreezeSound, playSurgeSound } from '@/lib/sounds';
 import { haptic, hapticError, hapticSuccess } from '@/lib/haptics';
 import {
   ABILITY_DEFS,
@@ -384,9 +383,7 @@ export default function RookiesRunPage() {
 
   const onDifficultyChange = useCallback(
     (d: DifficultyId) => {
-      if (DIFFICULTIES[d].requiresAchievement && !progress.profile.achievements[DIFFICULTIES[d].requiresAchievement!]) {
-        return;
-      }
+      if (isDifficultyLocked(d, progress.profile)) return;
       persistDifficulty(d);
       setDifficultyState(d);
       progress.setProfile(readProfile());
@@ -413,7 +410,10 @@ export default function RookiesRunPage() {
 
   useEffect(() => {
     if (prevFormRef.current === state.form) return;
+    const revertedToRook = state.form === 'rook' && prevFormRef.current !== 'rook';
     prevFormRef.current = state.form;
+    if (revertedToRook) void playTransformBackSound();
+    else void playTransformIntoSound();
     setGlitching(true);
     const t = setTimeout(() => setGlitching(false), 440);
     return () => clearTimeout(t);
@@ -717,6 +717,7 @@ export default function RookiesRunPage() {
         });
         setSelectedSquare(null);
         setState(next);
+        if (id === 'surge') void playSurgeSound();
       }
     },
     [state, ensureAudioWarm, recordEvent],
@@ -766,7 +767,8 @@ export default function RookiesRunPage() {
             allyCount: state.allies.length,
           });
           setState(next);
-          playCardPlaySound();
+          if (state.activeAbility.id === 'freeze-ray') void playFreezeSound();
+          else playCardPlaySound();
           haptic('heavy');
           trackEvent('run_ability_used', {
             iso: meta.iso,

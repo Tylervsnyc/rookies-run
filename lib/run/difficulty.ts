@@ -33,6 +33,8 @@ export interface DifficultyDef {
   scoreMult: number;
   /** Locked until this achievement is earned (undefined = always open). */
   requiresAchievement?: string;
+  /** Locked until the player has finished a run on this difficulty. */
+  requiresClearOf?: DifficultyId;
 }
 
 export const DIFFICULTIES: Record<DifficultyId, DifficultyDef> = {
@@ -59,6 +61,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyDef> = {
     kingReactsToAllies: false,
     retriesPerLevel: 3,
     scoreMult: 1,
+    requiresClearOf: 'rookie',
   },
   hard: {
     id: 'hard',
@@ -71,6 +74,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyDef> = {
     kingReactsToAllies: false,
     retriesPerLevel: 1,
     scoreMult: 1.5,
+    requiresClearOf: 'rookie',
   },
   nightmare: {
     id: 'nightmare',
@@ -94,7 +98,46 @@ export const DIFFICULTY_ORDER: ReadonlyArray<DifficultyId> = [
   'nightmare',
 ];
 
-export const DEFAULT_DIFFICULTY: DifficultyId = 'normal';
+export const DEFAULT_DIFFICULTY: DifficultyId = 'rookie';
+
+/** The slice of the profile the lock rules read (kept structural so this file stays dependency-free). */
+export interface DifficultyLockSource {
+  achievements: Record<string, unknown>;
+  counters: Record<string, number>;
+  bestByDifficulty: Partial<Record<DifficultyId, unknown>>;
+}
+
+/**
+ * Has the player finished a run on `d`? Derived from existing completion data:
+ * the `runs.completed.<d>` counter (achievement reducer) or a recorded best
+ * (only written on run completion). No new counter.
+ */
+export function hasClearedDifficulty(profile: DifficultyLockSource | undefined, d: DifficultyId): boolean {
+  if (!profile) return false;
+  return (profile.counters?.[`runs.completed.${d}`] ?? 0) > 0 || !!profile.bestByDifficulty?.[d];
+}
+
+/** Any finished run at all (legacy players who never played Rookie still count). */
+function hasClearedAny(profile: DifficultyLockSource | undefined): boolean {
+  if (!profile) return false;
+  if ((profile.counters?.['runs.completed'] ?? 0) > 0) return true;
+  return (Object.keys(DIFFICULTIES) as DifficultyId[]).some((d) => hasClearedDifficulty(profile, d));
+}
+
+export function isDifficultyLocked(d: DifficultyId, profile: DifficultyLockSource | undefined): boolean {
+  const def = DIFFICULTIES[d];
+  if (def.requiresAchievement && !profile?.achievements?.[def.requiresAchievement]) return true;
+  if (def.requiresClearOf && !hasClearedDifficulty(profile, def.requiresClearOf) && !hasClearedAny(profile)) return true;
+  return false;
+}
+
+/** One-line hint for a locked difficulty. */
+export function difficultyLockHint(d: DifficultyId): string {
+  const def = DIFFICULTIES[d];
+  if (def.requiresClearOf) return `Clear ${DIFFICULTIES[def.requiresClearOf].name} first.`;
+  if (def.requiresAchievement === 'sore-winner') return 'Finish a run on Hard first.';
+  return 'Locked.';
+}
 
 export function isDifficultyId(x: unknown): x is DifficultyId {
   return typeof x === 'string' && x in DIFFICULTIES;
