@@ -51,6 +51,7 @@ import {
 } from '@/lib/run/abilities';
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
+import { isUnwinnable } from '@/lib/run/solver';
 import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
@@ -333,6 +334,8 @@ export default function RookiesRunPage() {
   // Phase flags.
   const [dying, setDying] = useState(false);
   const [deathSettled, setDeathSettled] = useState(false);
+  /** Why the level was lost — 'unwinnable' = the solver called it, not a capture / move limit. */
+  const [lossReason, setLossReason] = useState<'unwinnable' | null>(null);
   const [showLevelCleared, setShowLevelCleared] = useState(false);
   const [runComplete, setRunComplete] = useState(false);
   const [glitching, setGlitching] = useState(false);
@@ -416,13 +419,18 @@ export default function RookiesRunPage() {
     return () => clearTimeout(t);
   }, [state.form]);
 
+  // Re-arm on EVERY new board state while the enemy phase is open — not just
+  // when enemyMovedSquares grows. The fleeing king's free reaction step
+  // (Hard / Nightmare from L1) returns turn:'enemy' with the same moved
+  // count; keying on the count alone left the phase hanging forever, and a
+  // hung enemy phase means Rookie can't move and no ability can activate.
   useEffect(() => {
     if (state.turn !== 'enemy' || state.status !== 'playing') return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'enemy' && s.status === 'playing' ? stepEnemyTurn(s) : s));
     }, ENEMY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state.turn, state.status, state.enemyMovedSquares.length]);
+  }, [state]);
 
   // Ally phase — tick one ally at a time so each move animates.
   useEffect(() => {
@@ -441,6 +449,30 @@ export default function RookiesRunPage() {
     }, DRONE_TICK_MS);
     return () => clearTimeout(t);
   }, [state.turn, state.status, state.drones]);
+
+  // Unwinnable fail-safe — once control is back with Rookie (enemy / ally /
+  // drone phases fully resolved), ask the solver whether the king can still
+  // be caught in the moves left. Runs at most once per Rookie turn (keyed on
+  // move count + board), after a short beat so the king's sidestep animates.
+  // A proven dead position is lost through the same path as a move-limit
+  // loss, so retries / Deja Vu bookkeeping are untouched.
+  const unwinnableKeyRef = useRef<string>('');
+  useEffect(() => {
+    if (state.status !== 'playing' || state.turn !== 'rookie') return;
+    if (state.moveCount === 0 || state.activeAbility || state.pendingOffer) return;
+    const key = `${state.level}|${state.moveCount}|${state.captures.length}|${toSquare(state.rookie)}`;
+    if (key === unwinnableKeyRef.current) return;
+    const snapshot = state;
+    const t = setTimeout(() => {
+      // Stamp the key only when the check actually runs, so a re-render
+      // inside the beat (e.g. an ability cast) re-arms instead of skipping.
+      unwinnableKeyRef.current = key;
+      if (!isUnwinnable(snapshot)) return;
+      setLossReason('unwinnable');
+      setState((s) => (s === snapshot ? { ...s, status: 'lost', turn: 'rookie' } : s));
+    }, ENEMY_TICK_MS);
+    return () => clearTimeout(t);
+  }, [state]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recorder watchers — dedupe-aware ticks for ally / drone / enemy phases.
@@ -873,6 +905,7 @@ export default function RookiesRunPage() {
     progress.resetRunScope();
     setDying(false);
     setDeathSettled(false);
+    setLossReason(null);
     setShowLevelCleared(false);
     setRunComplete(false);
     trackedStartRef.current = false;
@@ -907,6 +940,7 @@ export default function RookiesRunPage() {
     setSelectedSquare(null);
     setDying(false);
     setDeathSettled(false);
+    setLossReason(null);
     trackedLossRef.current = false;
     tracePostedRef.current = false;
     trackEvent('run_level_retried', {
@@ -1298,6 +1332,7 @@ export default function RookiesRunPage() {
           level={levelIndex + 1}
           totalLevels={totalLevels}
           retriesLeft={retriesLeft}
+          reason={lossReason ?? undefined}
           difficultyLabel={isStc ? undefined : difficultyDef.name}
           onRetry={retryLevel}
           onGiveUp={() => setGaveUp(true)}

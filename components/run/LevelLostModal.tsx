@@ -10,6 +10,8 @@ interface LevelLostModalProps {
   totalLevels: number;
   /** Retries remaining for this level AFTER this loss. Infinity = unlimited. */
   retriesLeft: number;
+  /** 'unwinnable' = the solver proved the king was out of reach. */
+  reason?: 'unwinnable';
   difficultyLabel?: string;
   onRetry: () => void;
   onGiveUp: () => void;
@@ -19,6 +21,7 @@ export function LevelLostModal({
   level,
   totalLevels,
   retriesLeft,
+  reason,
   difficultyLabel,
   onRetry,
   onGiveUp,
@@ -47,9 +50,13 @@ export function LevelLostModal({
         <div className="text-xs uppercase tracking-widest text-chess-text-faint">
           Level {level} of {totalLevels}
         </div>
-        <h2 className="mt-1 text-4xl font-black text-chess-text">Captured.</h2>
+        <h2 className="mt-1 text-4xl font-black text-chess-text">
+          {reason === 'unwinnable' ? 'No way through.' : 'Captured.'}
+        </h2>
         <p className="mt-2 text-sm text-chess-text-muted">
-          Same level, same powers. She is not done.
+          {reason === 'unwinnable'
+            ? 'He is out of reach and we are out of moves. I am not okay about it, so we go again.'
+            : 'Same level, same powers. She is not done.'}
         </p>
 
         <div className="mt-3 flex items-center justify-center gap-1.5">
