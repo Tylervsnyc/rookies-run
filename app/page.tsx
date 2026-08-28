@@ -10,6 +10,10 @@ import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
+import { RunHome } from '@/components/run/RunHome';
+import { JourneyScreen } from '@/components/run/JourneyScreen';
+import { LeaderboardScreen } from '@/components/run/LeaderboardScreen';
+import { RevengeLoader } from '@/components/run/RevengeLoader';
 import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
@@ -104,6 +108,12 @@ interface RunMeta {
   iso: string;
   runId: string;
   startLevelIndex: number;
+  /**
+   * True when the URL asked for something specific (`?run=`, `?date=`, /stc).
+   * A deep link skips the home screen and goes straight to that run — only a
+   * bare `/` opens the front door.
+   */
+  deepLink: boolean;
 }
 
 function freshRun(
@@ -162,7 +172,12 @@ export default function RookiesRunPage() {
     }
     const maxLevel = totalLevelsForRun(validRunId) - 1;
     const startLevelIndex = Math.min(url.startLevelIndex, maxLevel);
-    return { iso, runId: validRunId, startLevelIndex };
+    return {
+      iso,
+      runId: validRunId,
+      startLevelIndex,
+      deepLink: !!url.date || !!url.runId,
+    };
   }, []);
 
   const runDef = useMemo(() => getRunById(meta.runId), [meta.runId]);
@@ -348,6 +363,23 @@ export default function RookiesRunPage() {
   }, []);
 
   const [showIntro, setShowIntro] = useState(false);
+
+  /**
+   * Which screen owns the viewport.
+   *
+   * 'boot' is the one frame before the URL is read — it renders the same
+   * loader as app/loading.tsx, so the server HTML and the first client render
+   * agree and nobody sees a flash of board before the home screen.
+   */
+  type Screen = 'boot' | 'home' | 'journey' | 'leaderboard' | 'run';
+  const [screen, setScreen] = useState<Screen>('boot');
+  useEffect(() => {
+    setScreen(meta.deepLink ? 'run' : 'home');
+  }, [meta.deepLink]);
+  const goHome = useCallback(() => {
+    setScreen('home');
+    trackEvent('run_home_opened', { iso: meta.iso });
+  }, [meta.iso]);
 
   // First-run story onboarding — shown ONCE (localStorage), before the daily
   // intro card. `?onboarding=1` forces it for testing.
@@ -1001,6 +1033,31 @@ export default function RookiesRunPage() {
     [meta.runId],
   );
 
+  // ── Home screen actions ──────────────────────────────────────────────────
+  // The board already loaded for `meta.runId`, so staying on that run is a
+  // state change; any other run needs the full `?run=` reload switchRun does.
+  const playDaily = useCallback(() => {
+    const dailyRunId = getRunIdForDate(meta.iso);
+    trackEvent('run_home_daily', { iso: meta.iso });
+    if (meta.runId === dailyRunId) {
+      setScreen('run');
+      return;
+    }
+    switchRun(dailyRunId);
+  }, [meta.iso, meta.runId, switchRun]);
+
+  const playJourneyMap = useCallback(
+    (runId: string, mapId: string) => {
+      trackEvent('run_journey_map_picked', { iso: meta.iso, map: mapId, runId });
+      if (runId === meta.runId) {
+        setScreen('run');
+        return;
+      }
+      switchRun(runId);
+    },
+    [meta.iso, meta.runId, switchRun],
+  );
+
   const levelReached = runComplete
     ? totalLevels
     : state.status === 'lost'
@@ -1061,7 +1118,11 @@ export default function RookiesRunPage() {
     setHistoryVersion((v) => v + 1);
   }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, levelReached, totalLevels]);
 
-  const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
+  // historyVersion is the invalidation signal — it bumps when a finished run
+  // is written, which is the only time localStorage changes under us.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const history = useMemo(() => readHistory(), [historyVersion]);
+  const stats = useMemo(() => computeStats(history), [history]);
 
   const shareString = buildShareString({
     iso: meta.iso,
@@ -1080,6 +1141,76 @@ export default function RookiesRunPage() {
           onDone={() => {
             ensureAudioWarm();
             setShowOnboarding(false);
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (screen === 'boot') {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-chess-page">
+        <RevengeLoader size={140} />
+      </div>
+    );
+  }
+
+  if (screen === 'home') {
+    return (
+      <div className="h-full overflow-hidden">
+        <RunHome
+          iso={meta.iso}
+          profile={progress.profile}
+          history={history}
+          stats={stats}
+          onDaily={() => {
+            ensureAudioWarm();
+            playDaily();
+          }}
+          onJourney={() => setScreen('journey')}
+          onLeaderboard={() => setScreen('leaderboard')}
+          onTrophies={() => setShowTrophies(true)}
+          onHowToPlay={() => setShowOnboarding(true)}
+        />
+        {showTrophies && (
+          <TrophyRoom
+            profile={progress.profile}
+            onClose={() => setShowTrophies(false)}
+            onReplayTutorial={() => {
+              setShowTrophies(false);
+              setShowOnboarding(true);
+            }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  if (screen === 'journey') {
+    return (
+      <div className="h-full overflow-hidden">
+        <JourneyScreen
+          history={history}
+          onPlay={(runId, mapId) => {
+            ensureAudioWarm();
+            playJourneyMap(runId, mapId);
+          }}
+          onBack={goHome}
+        />
+      </div>
+    );
+  }
+
+  if (screen === 'leaderboard') {
+    return (
+      <div className="h-full overflow-hidden">
+        <LeaderboardScreen
+          profile={progress.profile}
+          stats={stats}
+          onBack={goHome}
+          onPlay={() => {
+            ensureAudioWarm();
+            playDaily();
           }}
         />
       </div>
@@ -1105,6 +1236,12 @@ export default function RookiesRunPage() {
           onTrophies={() => setShowTrophies(true)}
           difficulty={isStc ? undefined : difficulty}
           onDifficultyChange={isStc ? undefined : onDifficultyChange}
+          onBack={isStc ? undefined : goHome}
+          ctaLabel={
+            isStc || meta.runId === getRunIdForDate(meta.iso)
+              ? undefined
+              : `Enter ${runDef.name}`
+          }
         />
         {showTrophies && (
           <TrophyRoom
@@ -1138,6 +1275,19 @@ export default function RookiesRunPage() {
 
           <div className="flex flex-col items-end gap-1 shrink-0">
             <div className="flex items-center gap-1.5">
+            {!isStc && (
+              <button
+                type="button"
+                onClick={goHome}
+                aria-label="Home"
+                className="w-8 h-8 rounded-lg bg-chess-surface shadow-sm flex items-center justify-center active:scale-90 transition-transform"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className="text-chess-text-muted">
+                  <path d="M3 10.5 12 3l9 7.5" />
+                  <path d="M5.5 9.5V21h13V9.5" />
+                </svg>
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setShowTrophies(true)}

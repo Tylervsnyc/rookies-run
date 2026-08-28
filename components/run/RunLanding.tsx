@@ -25,6 +25,10 @@ interface RunLandingProps {
   /** Difficulty picker (Rookie's Revenge). Omit both to hide it. */
   difficulty?: DifficultyId;
   onDifficultyChange?: (d: DifficultyId) => void;
+  /** Back to the home screen. Omitted on deep links that have no home to return to. */
+  onBack?: () => void;
+  /** Start-button label. Defaults to the daily wording. */
+  ctaLabel?: string;
 }
 
 const VIDEO_SRC = '/run/landing-board.mp4';
@@ -43,6 +47,8 @@ export function RunLanding({
   onTrophies,
   difficulty,
   onDifficultyChange,
+  onBack,
+  ctaLabel,
 }: RunLandingProps) {
   const abilitiesTotal = unlockableAbilityIds().length;
   const showPicker = !!difficulty && !!onDifficultyChange;
@@ -68,8 +74,22 @@ export function RunLanding({
     <div className="h-full w-full bg-chess-page text-chess-text flex items-center justify-center px-3 py-2">
       <div className="w-full max-w-[360px] bg-white rounded-2xl p-3 shadow-sm border border-chess-text/10 flex flex-col gap-2.5">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <RookiesRevengeLogo scale={0.4} />
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            {onBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                aria-label="Back to home"
+                className="w-9 h-9 -ml-1 rounded-lg flex items-center justify-center active:scale-90 transition-transform shrink-0"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-chess-text-muted">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+            <RookiesRevengeLogo scale={0.4} />
+          </div>
           {dateLabel && (
             <span className="text-[10px] uppercase tracking-[0.2em] text-chess-text-muted font-bold">
               {dateLabel}
@@ -208,7 +228,7 @@ export function RunLanding({
           className="w-full py-3 rounded-2xl bg-chess-text text-white font-black text-[14px] tracking-wide active:translate-y-px transition-transform"
           style={{ boxShadow: '0 4px 0 #1a2c33, 0 6px 12px rgba(0,0,0,0.12)' }}
         >
-          Play Today&apos;s Run <span className="opacity-80">→</span>
+          {ctaLabel ?? "Play Today's Run"} <span className="opacity-80">→</span>
         </button>
       </div>
     </div>
