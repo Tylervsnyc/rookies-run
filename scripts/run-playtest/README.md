@@ -1,5 +1,41 @@
 # Rookies Run — Playtest System
 
+## Rookie's Revenge (current)
+
+The game is now **Rookie's Revenge** (capture the king). The nightly pipeline for it:
+
+```bash
+npm run playtest:revenge            # full night: ~20-30 min on an M-series Mac
+npm run playtest:revenge -- --quick # smoke: < 2 min, none + finishers only, tiny trials
+scripts/run-revenge-nightly.sh      # cron wrapper: env, pull, run, Slack, commit digests (02:00)
+```
+
+For every run in `REVENGE_RUN_IDS` and `REVENGE_CANDIDATE_RUN_IDS` (`lib/run/runs.ts`) it runs:
+
+| Step | What | File |
+|---|---|---|
+| a | Matrix at realistic tiers: win % per level × loadout, loss modes, stall share | `revenge-core.ts` (`matrixParallel`) |
+| b | Full runs L1→L10 with random offer picks: reach / clear per level, authored + every mode | `revenge-core.ts` (`simulateRuns`) |
+| c | Matrix on each difficulty mode (rookie / normal / hard / nightmare), fewer trials | same |
+| d | AND-OR solver on the late levels, bounded depth + nodes | `revenge-core.ts` (`solveLevel`) |
+| e | Per-level feature vector centered on piece count (enemies, hunters vs marchers, keys on the king's lines, pawn-defended keys, pen size, walls, open sides, budget, sightline pressure, rook distance to key/king…) | `revenge-features.ts` |
+| f | Pearson + ridge regression of features vs no-ability win % and vs the finisher floor, plus plain-English threshold splits | `revenge-analysis.ts` |
+| g | Night-over-night deltas: any cell moving >15 pts, any new stall, any level leaving its band | `revenge-analysis.ts` (`compareNights`) |
+| h | Human traces from Supabase `run_traces` (reuses `pull-traces.ts`; creds from env) vs bot clear rate per level | `revenge-nightly.ts` |
+| i | 3 hypotheses per run (budget ±2, remove the nearest hunter, add a pawn defender / hunter), each with a predicted effect, each RUN tonight as an experiment; ledgered in `experiments.jsonl` | `revenge-analysis.ts` (`buildHypotheses`, `runExperiment`) |
+
+The morning report (`revenge-digest.ts`) goes to `data/run-playtest/revenge/digests/YYYY-MM-DD.md` (+ `latest.md`); raw JSON to `data/run-playtest/revenge/raw/YYYY-MM-DD/` (committed by the wrapper when under 2 MB); a ≤25-line Slack summary to `raw/<date>/slack.txt`.
+
+Band the report grades against (no-ability, realistic tiers): 100/100/100/100/90/50/55/50/30/30 ±15 across L1–L10, every finisher ≥ 80 %, zero stalls. Candidate runs get a PROMOTE / HOLD call on exactly that.
+
+One-off tools (same engine): `revenge.ts matrix|runs|solve|trace|lint` — `--run=<id>`, `--difficulty=<mode>`, `--json`. The hand-written v2 report is `docs/revenge-playtest.md`.
+
+---
+
+## Legacy — rank-8 "Rookies Run" pipeline
+
+Everything below is the ORIGINAL rank-8 pipeline (`nightly.ts`, `sweep.ts`, `ablation.ts`, `features.ts`, `digest.ts`, `hypothesis-queue.ts`, `model-version.ts`, …). It still runs against the classic rank-8 runs and is kept for reference; it is not the game any more.
+
 Automated headless playtesting + difficulty calibration. Linear project: [Rookies Run Playtest System](https://linear.app/chesspathapp/project/rookies-run-playtest-system-02df85b27f07).
 
 ## What it does

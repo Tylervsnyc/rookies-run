@@ -1,0 +1,22 @@
+Rookie's Revenge nightly — 2026-08-30 · 29 min
+IMPOSSIBLE: revenge-5 L10: IMPOSSIBLE — 0% with every loadout (19 tried), stall/move-limit 69%, solver: no line, app fail-safe would fire ("No way through")
+revenge-1: new player clears 100% Normal / 100% Rookie — TOO EASY · veteran 100% / 100% · powers +32 pts (none 67%) · finishers ok · stalls 0
+revenge-1 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S rabies-dart 100%, S surge 100% · bottom: B boulder 82%, B magnet 72%, D rewind 46%†
+revenge-2 (cand) tiers · top: S aegis 100%, S become-king 100%, S decoy 100%, S drones 100%, S knight-hop 100% · bottom: B smoke 79%, D magnet 49%, D rewind 39%†
+revenge-3 (cand) tiers · top: S become-king 100%, S bishop-step 100%, S decoy 100%, S drones 100%, S queen-pulse 100% · bottom: A boulder 91%, B magnet 70%, D rewind 32%†
+revenge-4 (cand) tiers · top: S become-king 100%, S bishop-step 100%, S decoy 100%, S rabies-dart 100%, S surge 100% · bottom: B boulder 79%, B magnet 75%, C rewind 56%†
+revenge-5 (cand) tiers · top: B drones 74%, B surge 74%, B become-king 73%, B aegis 72%, B decoy 71% · bottom: D boulder 48%, D magnet 40%, D rewind 17%†
+† = bot never casts it (floor, not a verdict)
+No previous night to compare — baseline.
+Experiments: L7 budget +2 38->53% (pred 46, confirmed) · L10 remove bishop g4 80->90% (pred 81, confirmed) · L5 add knight d3 80->78% (pred 73, confirmed) · L8 budget +2 21->18% (pred 23, confirmed) · L10 remove knight g5 92->100% (pred 93, confirmed) · L6 budget -2 67->35% (pred 57, falsified) · L9 remove queen c4 83->93% (pred 86, confirmed)
+Tonight's hypotheses:
+  - L7: raise the move budget by 2 → no-ability win goes 38% → about 46%
+  - L10: remove the bishop on g4 → freeze-ray win goes 80% → about 81%
+  - L5: add a knight on d3 → no-ability win goes 80% → about 73%
+Candidates:
+  revenge-2: HOLD — new player 100% Normal / 100% Rookie; TOO EASY — a new player clears 100% of runs on Normal (target 40-60%) (+1 more)
+  revenge-3: HOLD — new player 100% Normal / 100% Rookie; TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)
+  revenge-4: HOLD — new player 100% Normal / 100% Rookie; TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)
+  revenge-5: HOLD — new player 0% Normal / 0% Rookie; L10: IMPOSSIBLE — 0% with every loadout (19 tried), stall/move-limit 69%, solver: no line, app fail-safe would fire ("No way through") (+5 more)
+Humans: 19 runs on revenge-1, 9 won.
+Full report: data/run-playtest/revenge/digests/2026-08-30.md

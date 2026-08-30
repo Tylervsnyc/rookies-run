@@ -4139,8 +4139,676 @@ const RUN_REVENGE_1: RunDef = {
   ],
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Rookie's Revenge — CANDIDATE runs (2026-08-30). Hidden (HIDDEN_RUNS +
+// REVENGE_CANDIDATE_RUN_IDS) until Tyler signs off. Direction: difficulty
+// comes from the NUMBER OF PIECES (shells, defenders, hunters, marchers);
+// walls/pens are the secondary flavour. Every level was drafted by
+// scripts/run-playtest/revenge-generate.ts and then tuned by hand against
+// scripts/run-playtest/revenge.ts — tables in docs/revenge-runs.md.
+
+/**
+ * revenge-2 — PAWN STORM. The pawn shell thickens every level (3 -> 13
+ * pawns); hunters stay light (one knight, one bishop late). Lesson of the
+ * run: a chain is dismantled from the OUTSIDE IN, and every capture you
+ * make on his line is a stun.
+ */
+const RUN_REVENGE_2: RunDef = {
+  id: 'revenge-2',
+  name: 'Pawn Storm',
+  blurb: 'More pawns every level. Bodies, not brains.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — FIRST BLOOD. King f8 behind three pawns. Rank 8 does nothing.
+    make(1, [pawn(5, 7), pawn(6, 7), pawn(7, 7), king(6, 8)], STILL),
+    // L2 — THE SHELL. Two pawn layers (e7-g7, d6/h6, e5/g5) + two marchers.
+    make(
+      2,
+      [
+        pawn(5, 7), pawn(6, 7), pawn(7, 7),
+        pawn(4, 6), pawn(8, 6), pawn(5, 5), pawn(7, 5),
+        pawn(3, 3), pawn(4, 4),
+        king(6, 8),
+      ],
+      STILL,
+    ),
+    // L3 — THE DOORS. First fleeing king, 3x2 room c7-e8. Key d5 is FREE
+    // (capture-stun lesson); door pawns c5/e5 block the side files; marchers b3/g3.
+    make(
+      3,
+      [pawn(4, 5), pawn(3, 5), pawn(5, 5), pawn(2, 3), pawn(7, 3), king(4, 8)],
+      {
+        ...FLEE,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L4 — ONE GUARD. Key e5 defended by ONE pawn (d6) — take the guard first.
+    // Knight c4 hunts; g5 shell; marchers a3/h4.
+    make(
+      4,
+      [pawn(5, 5), pawn(4, 6), knight(3, 4), pawn(7, 5), pawn(1, 3), pawn(8, 4), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L5 — THE HEDGE. Key d5 with two defenders (c6/e6) and a side ring
+    // (b5/f5). Knight f4 hunts; marcher h3.
+    make(
+      5,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5),
+        knight(6, 4),
+        pawn(8, 3),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L6 — THICKET. Same hedge plus a pawn IN FRONT of the key (d4) — the
+    // file needs two captures. Knight h3; marchers f3/a4.
+    make(
+      6,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5), pawn(4, 4),
+        knight(8, 3),
+        pawn(6, 3), pawn(1, 4),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L7 — BRAMBLE. Key d5, c6/e6 defenders, b5/f5 ring. Knight f3 hunts;
+    // marchers a4/g2 — the first level where two marchers race you.
+    make(
+      7,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5),
+        knight(6, 3),
+        pawn(1, 4), pawn(7, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L8 — THE WALL OF PAWNS. Key e5, d6/f6 defenders, c5/g5 ring. Knight c3
+    // + bishop g3 hunt; marchers h4/b4/c2.
+    make(
+      8,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        pawn(3, 5), pawn(7, 5),
+        knight(3, 3), bishop(7, 3),
+        pawn(8, 4), pawn(2, 4), pawn(3, 2),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L9 — PAWN STORM. Three rings: key d5, c6/e6, b5/f5, d4 in front, c3/e3
+    // under it. Knight g4 + bishop b3; marchers a4/h3/g2.
+    make(
+      9,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5), pawn(4, 4), pawn(3, 3), pawn(5, 3),
+        knight(7, 4), bishop(2, 3),
+        pawn(1, 4), pawn(8, 3), pawn(7, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 16,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L10 — THE SWARM. Key e5, d6/f6, c5/g5, e4 in front, d3/f3 under it.
+    // Two knights (b4/h5) + a queen on a2; marchers a4/h2/b2/g2.
+    make(
+      10,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        pawn(3, 5), pawn(7, 5), pawn(5, 4), pawn(4, 3), pawn(6, 3),
+        knight(2, 4), knight(8, 5), queen(1, 2),
+        pawn(1, 4), pawn(8, 2), pawn(2, 2), pawn(7, 2),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+  ],
+};
+
+/**
+ * revenge-3 — THE ROYAL GUARD. Few pawns, HEAVY hunters: one bishop at L2,
+ * a queen from L6, two queens from L8, five heavies on L10. The pressure is
+ * sightlines, not bodies — every open line is somebody's.
+ */
+const RUN_REVENGE_3: RunDef = {
+  id: 'revenge-3',
+  name: 'The Royal Guard',
+  blurb: 'Few pawns. Heavy pieces. Every line is watched.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — THE THRONE. King d8 behind c7/d7/e7.
+    make(1, [pawn(3, 7), pawn(4, 7), pawn(5, 7), king(4, 8)], STILL),
+    // L2 — THE BISHOP. Corner king g8, f7-h7 shell + e6; bishop c5 hunts; marcher b3.
+    make(
+      2,
+      [pawn(6, 7), pawn(7, 7), pawn(8, 7), pawn(5, 6), bishop(3, 5), pawn(2, 3), king(7, 8)],
+      STILL,
+    ),
+    // L3 — THE PAGE. First flee: 3x2 room d7-f8, key e5 FREE (capture-stun
+    // lesson), one knight (b4) hunts; marchers a3/h3.
+    make(
+      3,
+      [pawn(5, 5), knight(2, 4), pawn(1, 3), pawn(8, 3), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L4 — TWO COURTIERS. Key d5 defended by e6 only; bishop g3 + knight b3
+    // hunt; marcher h4.
+    make(
+      4,
+      [pawn(4, 5), pawn(5, 6), bishop(7, 3), knight(2, 3), pawn(8, 4), king(4, 8)],
+      {
+        ...FLEE,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L5 — THE ESCORT. Key e5, d6/f6 defenders; bishop b3 + knight h4; marchers a3/g2.
+    make(
+      5,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        bishop(2, 3), knight(8, 4),
+        pawn(1, 3), pawn(7, 2),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L6 — HER MAJESTY. First queen (g2) + bishop a5. Key e5, d6/f6; marchers h4/b4.
+    make(
+      6,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        queen(7, 2), bishop(1, 5),
+        pawn(8, 4), pawn(2, 4),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L7 — THE RETINUE. Queen h3, bishop b5, knight a2. Key e5, d6/f6; marchers c2/a3.
+    make(
+      7,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        queen(8, 3), bishop(2, 5), knight(1, 2),
+        pawn(3, 2), pawn(1, 3),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 18,
+        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L8 — TWIN QUEENS. The ARCH: b7/c6/d5/e6/f7 pawns, each defended by the
+    // one behind it (b7/f7 are the free ends, but b7 and f7 lead nowhere —
+    // b8/f8 are walls). Queens a2 + h3, knight g4; marchers c2/g2. Two
+    // enemies move per turn from here on.
+    make(
+      8,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7),
+        queen(1, 2), queen(8, 3), knight(7, 4),
+        pawn(3, 2), pawn(7, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 14,
+        hazards: [X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L9 — THE PRIVY COUNCIL. Seven-pawn arch a8/b7/c6/d5/e6/f7/g8 — three
+    // captures a side before his file opens. Queens a3 + h2, bishop b5,
+    // knight g3; marchers b2/h4.
+    make(
+      9,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7), pawn(1, 8), pawn(7, 8),
+        queen(1, 3), queen(8, 2), bishop(2, 5), knight(7, 3),
+        pawn(2, 2), pawn(8, 4),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 14,
+        hazards: [X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L10 — THE ROYAL GUARD. Seven-pawn arch plus a second ring under it
+    // (b5/f5 guard c4/e4... and c4/e4 block the c/e files). Two queens
+    // (a2/h2), two bishops (b3/g3), knight g5; marchers c2/f2.
+    make(
+      10,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7), pawn(1, 8), pawn(7, 8),
+        pawn(3, 4), pawn(5, 4),
+        queen(1, 2), queen(8, 2), bishop(2, 3), bishop(7, 3), knight(7, 5),
+        pawn(3, 2), pawn(6, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 15,
+        hazards: [X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+  ],
+};
+
+/**
+ * revenge-4 — THE FORTRESS. Walls do the shaping here: inner walls that
+ * leave one door, corner keeps, and 3x3 courts with 8-wall curtains. Piece
+ * count still climbs (4 -> 14) but the ROOM is the character of each level.
+ */
+const RUN_REVENGE_4: RunDef = {
+  id: 'revenge-4',
+  name: 'The Fortress',
+  blurb: 'Walls make the room. Pawns make the door.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — THE GATEHOUSE. King d8 behind c7/d7/e7, first walls on b8/f8.
+    make(1, [pawn(3, 7), pawn(4, 7), pawn(5, 7), king(4, 8)], { ...STILL, hazards: [X(2, 8), X(6, 8)] }),
+    // L2 — THE WALLED SHELL. King c8 walled on a8/e7/e8; b7-d7 shell, e6
+    // pawn, bishop f5 hunts; marchers g3/h4.
+    make(
+      2,
+      [pawn(2, 7), pawn(3, 7), pawn(4, 7), pawn(5, 6), bishop(6, 5), pawn(7, 3), pawn(8, 4), king(3, 8)],
+      { ...STILL, hazards: [X(1, 8), X(5, 8), X(5, 7)] },
+    ),
+    // L3 — THE HALLWAY. Linear pen c8-e8 between walls b8/f8, door pawns
+    // c7/e7, FREE key d5 on his file. Reach his row and he's out of squares.
+    make(
+      3,
+      [pawn(3, 7), pawn(5, 7), pawn(4, 5), knight(6, 5), pawn(1, 4), pawn(8, 3), king(4, 8)],
+      {
+        ...FLEE,
+        hazards: [X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8'],
+      },
+    ),
+    // L4 — THE PORTCULLIS. 3x2 room d7-f8 with an INNER wall on d6: the only
+    // door is the e-file. Key e5 defended by f6; bishop b3; marchers h3/a4.
+    make(
+      4,
+      [pawn(5, 5), pawn(6, 6), bishop(2, 3), pawn(8, 3), pawn(1, 4), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 7), X(3, 8), X(7, 7), X(7, 8), X(4, 6)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L5 — INNER WARD. Room c7-e8, side walls extended to b6/f6. Key d5,
+    // c6/e6 defenders; knight g4; marchers a3/h3.
+    make(
+      5,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        knight(7, 4),
+        pawn(1, 3), pawn(8, 3),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(2, 6), X(6, 6), X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L6 — THE COURTYARD. Room d7-f8 with 6 walls (c6-c8, g6-g8). Key e5,
+    // d6/f6; a queen (c4) is the only hunter; marcher g4.
+    make(
+      6,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        queen(3, 4),
+        pawn(7, 4),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [X(3, 6), X(3, 7), X(3, 8), X(7, 6), X(7, 7), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L7 — THE DONJON. Corner keep a7-c8 walled on d7/d8. Key a5 defended by
+    // b6; queen f2, bishop d5, knight e3 hunt; marchers h4/g2.
+    make(
+      7,
+      [
+        pawn(1, 5), pawn(2, 6),
+        queen(6, 2), bishop(4, 5), knight(5, 3),
+        pawn(8, 4), pawn(7, 2),
+        king(1, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(4, 7), X(4, 8)],
+        kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7'],
+      },
+    ),
+    // L8 — CURTAIN WALL. 3x3 court c6-e8 behind 8 walls (b5-b8, f5-f8). Key
+    // d4, c5/e5 defenders; queen b3 + bishop a2 + knight g4 (knights jump
+    // walls); marchers f3/a3/g2.
+    make(
+      8,
+      [
+        pawn(4, 4), pawn(3, 5), pawn(5, 5),
+        queen(2, 3), bishop(1, 2), knight(7, 4),
+        pawn(6, 3), pawn(1, 3), pawn(7, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [X(2, 5), X(2, 6), X(2, 7), X(2, 8), X(6, 5), X(6, 6), X(6, 7), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7', 'c6', 'd6', 'e6'],
+      },
+    ),
+    // L9 — THE INNER KEEP. 3x3 court e6-g8 on the h-side (walls d5-d8,
+    // h5-h8). Key f4, e5/g5, d4/h4 ring; queen c4, bishop b4, knight c3;
+    // marchers a4/h2/d2.
+    make(
+      9,
+      [
+        pawn(6, 4), pawn(5, 5), pawn(7, 5), pawn(4, 4), pawn(8, 4),
+        queen(3, 4), bishop(2, 4), knight(3, 3),
+        pawn(1, 4), pawn(8, 2), pawn(4, 2),
+        king(6, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 17,
+        hazards: [X(4, 5), X(4, 6), X(4, 7), X(4, 8), X(8, 5), X(8, 6), X(8, 7), X(8, 8)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7', 'e6', 'f6', 'g6'],
+      },
+    ),
+    // L10 — THE FORTRESS. 3x3 court c6-e8 behind 8 walls. Key d4, c5/e5
+    // defenders (no ring — fewer stuns to farm); two queens (f3/b2), bishop b3,
+    // knights g2/h5; marchers h3/g3/a4.
+    make(
+      10,
+      [
+        pawn(4, 4), pawn(3, 5), pawn(5, 5),
+        queen(6, 3), queen(2, 2), bishop(2, 3), knight(7, 2), knight(8, 5),
+        pawn(8, 3), pawn(7, 3), pawn(1, 4),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(2, 5), X(2, 6), X(2, 7), X(2, 8), X(6, 5), X(6, 6), X(6, 7), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7', 'c6', 'd6', 'e6'],
+      },
+    ),
+  ],
+};
+
+/**
+ * revenge-5 — STONEWORK (name TBD by Tyler; alternatives: "The Walled City",
+ * "Masonry"). WALLS are the identity: every level is a piece of
+ * architecture — a gate, a corridor, a keyhole, a moat, one open file, a
+ * double gate, a bastion, a maze, a citadel — and the piece count still
+ * climbs underneath it. L1-3 teach, L4-9 are tuned against the STARTER KIT
+ * (surge / freeze-ray / drones, offers forced) rather than the no-ability
+ * bot. L10 is the vault (see its comment).
+ */
+const RUN_REVENGE_5: RunDef = {
+  id: 'revenge-5',
+  name: 'Stonework',
+  blurb: 'Every level is a building. Find the door.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — THE GATE. Walls close his rank (d8/f8); two pawns flank an open
+    // e-file. Come up the file.
+    make(1, [pawn(4, 7), pawn(6, 7), king(5, 8)], { ...STILL, hazards: [X(4, 8), X(6, 8)] }),
+    // L2 — THE CORRIDOR. A walled hallway d3-d6 / f3-f6 leads up the e-file
+    // to the king; one pawn stands in it. Marchers a4/h4 outside the walls.
+    make(
+      2,
+      [pawn(5, 5), pawn(1, 4), pawn(8, 4), king(5, 8)],
+      { ...STILL, hazards: [X(4, 3), X(4, 4), X(4, 5), X(4, 6), X(6, 3), X(6, 4), X(6, 5), X(6, 6)] },
+    ),
+    // L3 — THE KEYHOLE. Linear pen c8-e8 behind a rank-7 wall with ONE gap
+    // (d7). Free key d5 on his file: take it, step into the keyhole, and once
+    // you reach his rank he has no squares. Knight g5; marchers a3/h3.
+    make(
+      3,
+      [pawn(4, 5), knight(7, 5), pawn(1, 3), pawn(8, 3), king(4, 8)],
+      {
+        ...FLEE,
+        hazards: [X(2, 8), X(6, 8), X(3, 7), X(5, 7)],
+        kingPen: ['c8', 'd8', 'e8'],
+      },
+    ),
+    // L4 — THE MOAT. Walled court d7-f8 with a moat on rank 4 (d4/f4 walls):
+    // the d/f defenders (d6/f6) of the e5 key can only be reached sideways.
+    // Bishop b3; marchers a4/h3.
+    make(
+      4,
+      [pawn(5, 5), pawn(4, 6), pawn(6, 6), bishop(2, 3), pawn(1, 4), pawn(8, 3), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 7), X(3, 8), X(7, 7), X(7, 8), X(4, 4), X(6, 4)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L5 — THE ONE OPEN FILE. A wall runs the whole of rank 6 except the
+    // c6/d6/e6 gap under the pen, and the c6/e6 squares are PAWNS guarding
+    // the d5 key — his file is the only way in. Knight f3, bishop a3, queen
+    // h2; marchers c2/g2. Two enemies act per turn from here on.
+    make(
+      5,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        knight(6, 3), bishop(1, 3), queen(8, 2),
+        pawn(3, 2), pawn(7, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 11,
+        hazards: [
+          X(2, 7), X(2, 8), X(6, 7), X(6, 8),
+          X(1, 6), X(2, 6), X(6, 6), X(7, 6), X(8, 6),
+        ],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L6 — THE DOUBLE GATE. King on d7 (rank 7) with TWO lines: down the
+    // d-file to the d5 key (c6/e6 defend) and along rank 7 to the b7 key
+    // (a8 defends). Walls b8/f7/f8 close everything else. Queen h2, knight
+    // g4, bishop b3; marchers h4/c2.
+    make(
+      6,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(1, 8),
+        queen(8, 2), knight(7, 4), bishop(2, 3),
+        pawn(8, 4), pawn(3, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 11,
+        hazards: [X(2, 8), X(6, 7), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L7 — THE BASTION. Seven-pawn arch a8/b7/c6/d5/e6/f7/g8 under walls
+    // b8/f8: each pawn is defended by the one behind it, so his file opens
+    // only after three captures a side. Queen h2, bishops b3/h5, knight g4;
+    // marchers c2/f2.
+    make(
+      7,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7), pawn(1, 8), pawn(7, 8),
+        queen(8, 2), bishop(2, 3), bishop(8, 5), knight(7, 4),
+        pawn(3, 2), pawn(6, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 12,
+        hazards: [X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L8 — THE MAZE. Two wall lines with gaps on opposite sides: rank 3 is
+    // walled a3-g3 (gap h3), rank 5 is walled b5-h5 except the a5 gap and
+    // the e5 KEY itself. The approach is a zigzag: h3 -> rank 4 -> a5 -> rank
+    // 6 -> the d6/f6 defenders. Queen b7 waits by the pen; bishops g4/b4 and
+    // knight c4 patrol the middle rank.
+    make(
+      8,
+      [
+        pawn(5, 5), pawn(4, 6), pawn(6, 6),
+        queen(2, 7), bishop(7, 4), bishop(2, 4), knight(3, 4),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 11,
+        hazards: [
+          X(3, 7), X(3, 8), X(7, 7), X(7, 8),
+          X(1, 3), X(2, 3), X(3, 3), X(4, 3), X(5, 3), X(6, 3), X(7, 3),
+          X(2, 5), X(3, 5), X(4, 5), X(6, 5), X(7, 5), X(8, 5),
+        ],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L9 — THE CITADEL. Court c7-e8 behind 8 curtain walls (b5-b8, f5-f8)
+    // and two gate posts (b4/f4); the c6/e6 guards inside the curtain hold
+    // the d5 key. Two queens (a2/h2), bishop g3, knights b3/h4; marchers
+    // c2/f2.
+    make(
+      9,
+      [
+        pawn(4, 5), pawn(3, 6), pawn(5, 6),
+        queen(1, 2), queen(8, 2), bishop(7, 3), knight(2, 3), knight(8, 4),
+        pawn(3, 2), pawn(6, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 12,
+        hazards: [
+          X(2, 5), X(2, 6), X(2, 7), X(2, 8), X(6, 5), X(6, 6), X(6, 7), X(6, 8),
+          X(2, 4), X(6, 4),
+        ],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L10 — THE VAULT (intentionally unwinnable; system check). Nine walls
+    // seal d8 on every rook, bishop AND knight approach; b8/f8 guards, a
+    // queen, a bishop, a knight and two marchers dress the board.
+    make(
+      10,
+      [
+        pawn(2, 8), pawn(6, 8),
+        queen(1, 2), bishop(8, 3), knight(7, 5),
+        pawn(2, 4), pawn(7, 4),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(3, 8), X(5, 8), X(3, 7), X(4, 7), X(5, 7), X(2, 7), X(6, 7), X(3, 6), X(5, 6)],
+        kingPen: ['d8'],
+      },
+    ),
+  ],
+};
+
 /** Runs reachable ONLY by explicit id (/?run=...) — never listed anywhere. */
-const HIDDEN_RUNS: ReadonlyArray<RunDef> = [];
+const HIDDEN_RUNS: ReadonlyArray<RunDef> = [RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5];
 
 /**
  * Rookie's Revenge runs — THE game. Daily rotation cycles these only; the
@@ -4148,6 +4816,13 @@ const HIDDEN_RUNS: ReadonlyArray<RunDef> = [];
  * "Classic" but are not in the daily pool.
  */
 export const REVENGE_RUN_IDS: ReadonlyArray<string> = ['revenge-1'];
+
+/**
+ * Revenge runs still in playtest — reachable ONLY via `?run=<id>` (HIDDEN_RUNS),
+ * never in the daily pool. The nightly harness sweeps these alongside
+ * REVENGE_RUN_IDS; promote an id into REVENGE_RUN_IDS once Tyler signs off.
+ */
+export const REVENGE_CANDIDATE_RUN_IDS: ReadonlyArray<string> = ['revenge-2', 'revenge-3', 'revenge-4', 'revenge-5'];
 
 export const STC_RUN_IDS = [
   'stc-king',

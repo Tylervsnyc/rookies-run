@@ -1,0 +1,556 @@
+{
+ "normal": {
+  "tier": "T5",
+  "runs": 40,
+  "fullClears": 0,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 40,
+    "cleared": 34,
+    "clearRate": 85,
+    "losses": {
+     "move-limit": 4,
+     "captured": 2
+    }
+   },
+   {
+    "level": 6,
+    "reached": 34,
+    "cleared": 34,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 34,
+    "cleared": 34,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 34,
+    "cleared": 34,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 34,
+    "cleared": 31,
+    "clearRate": 91,
+    "losses": {
+     "move-limit": 3
+    }
+   },
+   {
+    "level": 10,
+    "reached": 31,
+    "cleared": 0,
+    "clearRate": 0,
+    "losses": {
+     "dead-end": 5,
+     "move-limit": 21,
+     "stall": 5
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 10,
+   "queen-pulse": 47,
+   "knight-hop": 35,
+   "rewind": 4,
+   "freeze-ray": 29,
+   "bishop-step": 21,
+   "decoy": 7,
+   "poison-dart": 7,
+   "magnet": 22,
+   "become-king": 9,
+   "surge": 28,
+   "drones": 2,
+   "rabies-dart": 9,
+   "squad": 9,
+   "smoke": 11,
+   "boulder": 2
+  },
+  "seconds": 87,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "5": 6,
+   "9": 3,
+   "10": 31
+  }
+ },
+ "authored": {
+  "tier": "T5",
+  "runs": 40,
+  "fullClears": 0,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 40,
+    "cleared": 36,
+    "clearRate": 90,
+    "losses": {
+     "captured": 3,
+     "move-limit": 1
+    }
+   },
+   {
+    "level": 6,
+    "reached": 36,
+    "cleared": 36,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 36,
+    "cleared": 36,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 36,
+    "cleared": 36,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 36,
+    "cleared": 31,
+    "clearRate": 86,
+    "losses": {
+     "dead-end": 1,
+     "move-limit": 4
+    }
+   },
+   {
+    "level": 10,
+    "reached": 31,
+    "cleared": 0,
+    "clearRate": 0,
+    "losses": {
+     "dead-end": 8,
+     "stall": 9,
+     "move-limit": 13,
+     "captured": 1
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 7,
+   "queen-pulse": 39,
+   "bishop-step": 31,
+   "rewind": 3,
+   "knight-hop": 35,
+   "bodyguard": 2,
+   "freeze-ray": 28,
+   "decoy": 6,
+   "poison-dart": 7,
+   "surge": 41,
+   "magnet": 24,
+   "smoke": 5,
+   "drones": 3,
+   "rabies-dart": 8,
+   "squad": 10,
+   "become-king": 7,
+   "aegis": 6,
+   "boulder": 3
+  },
+  "seconds": 116,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "5": 4,
+   "9": 5,
+   "10": 31
+  }
+ },
+ "hard": {
+  "tier": "T5",
+  "runs": 40,
+  "fullClears": 0,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 40,
+    "cleared": 34,
+    "clearRate": 85,
+    "losses": {
+     "move-limit": 5,
+     "captured": 1
+    }
+   },
+   {
+    "level": 6,
+    "reached": 34,
+    "cleared": 34,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 34,
+    "cleared": 34,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 34,
+    "cleared": 34,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 34,
+    "cleared": 33,
+    "clearRate": 97,
+    "losses": {
+     "captured": 1
+    }
+   },
+   {
+    "level": 10,
+    "reached": 33,
+    "cleared": 0,
+    "clearRate": 0,
+    "losses": {
+     "dead-end": 11,
+     "move-limit": 14,
+     "stall": 8
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 9,
+   "bishop-step": 31,
+   "queen-pulse": 41,
+   "rewind": 5,
+   "knight-hop": 44,
+   "decoy": 6,
+   "poison-dart": 5,
+   "surge": 28,
+   "magnet": 18,
+   "become-king": 7,
+   "drones": 2,
+   "squad": 14,
+   "freeze-ray": 31,
+   "aegis": 2,
+   "rabies-dart": 13,
+   "boulder": 3
+  },
+  "seconds": 122,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "5": 6,
+   "9": 1,
+   "10": 33
+  }
+ },
+ "nightmare": {
+  "tier": "T5",
+  "runs": 40,
+  "fullClears": 0,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 40,
+    "cleared": 37,
+    "clearRate": 93,
+    "losses": {
+     "captured": 3
+    }
+   },
+   {
+    "level": 10,
+    "reached": 37,
+    "cleared": 0,
+    "clearRate": 0,
+    "losses": {
+     "stall": 6,
+     "dead-end": 12,
+     "move-limit": 19
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 7,
+   "surge": 45,
+   "knight-hop": 55,
+   "rewind": 6,
+   "bishop-step": 37,
+   "become-king": 20,
+   "decoy": 8,
+   "queen-pulse": 54,
+   "rabies-dart": 9,
+   "aegis": 9,
+   "drones": 11,
+   "freeze-ray": 24,
+   "poison-dart": 4,
+   "magnet": 3,
+   "boulder": 8,
+   "squad": 2
+  },
+  "seconds": 136,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "9": 3,
+   "10": 37
+  }
+ },
+ "rookie": {
+  "tier": "T5",
+  "runs": 40,
+  "fullClears": 0,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 40,
+    "cleared": 40,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 40,
+    "cleared": 0,
+    "clearRate": 0,
+    "losses": {
+     "dead-end": 8,
+     "move-limit": 26,
+     "stall": 6
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 11,
+   "surge": 42,
+   "knight-hop": 50,
+   "rewind": 6,
+   "boulder": 12,
+   "queen-pulse": 55,
+   "freeze-ray": 55,
+   "become-king": 9,
+   "bishop-step": 30,
+   "smoke": 7,
+   "drones": 8,
+   "magnet": 32,
+   "bodyguard": 4,
+   "rabies-dart": 6,
+   "poison-dart": 7,
+   "squad": 7,
+   "decoy": 2
+  },
+  "seconds": 163,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "10": 40
+  }
+ }
+}

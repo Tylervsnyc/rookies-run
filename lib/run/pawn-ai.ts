@@ -902,8 +902,10 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
     const moved: EnemyPiece = { ...p, file: target.file, rank: target.rank };
     // Pawn promotion: reaches Rookie's home rank.
     if (moved.type === 'pawn' && target.rank === 1) {
+      // Seeded (not Math.random): the playtest harness and the app must roll
+      // the same piece for the same seed — parity check 2026-08-30.
       const pool = promotionPool(state.level);
-      moved.type = pool[Math.floor(Math.random() * pool.length)];
+      moved.type = pickRandom(pool, mulberry32((aiRng(state)() * 2 ** 32) >>> 0));
     }
     return moved;
   });

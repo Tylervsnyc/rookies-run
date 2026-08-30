@@ -1,0 +1,384 @@
+{
+ "runId": "revenge-4",
+ "runs": 20,
+ "starters": [
+  "knight-hop",
+  "surge",
+  "freeze-ray"
+ ],
+ "starterRookie": {
+  "tier": "T5",
+  "runs": 20,
+  "fullClears": 20,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "knight-hop": 60,
+   "surge": 67,
+   "freeze-ray": 66
+  },
+  "seconds": 21,
+  "unlockedAbilities": [
+   "knight-hop",
+   "surge",
+   "freeze-ray"
+  ],
+  "retriesPerLevel": 8,
+  "retriesUsed": 0,
+  "deathsAt": {}
+ },
+ "starterNormal": {
+  "tier": "T5",
+  "runs": 20,
+  "fullClears": 20,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "knight-hop": 41,
+   "freeze-ray": 46,
+   "surge": 45
+  },
+  "seconds": 20,
+  "unlockedAbilities": [
+   "knight-hop",
+   "surge",
+   "freeze-ray"
+  ],
+  "retriesPerLevel": 3,
+  "retriesUsed": 0,
+  "deathsAt": {}
+ },
+ "veteranRookie": {
+  "tier": "T5",
+  "runs": 20,
+  "fullClears": 20,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "freeze-ray": 28,
+   "smoke": 2,
+   "bishop-step": 41,
+   "surge": 29,
+   "aegis": 15,
+   "magnet": 2,
+   "knight-hop": 35,
+   "bodyguard": 3,
+   "queen-pulse": 10,
+   "boulder": 7,
+   "decoy": 2,
+   "drones": 5,
+   "rewind": 10,
+   "poison-dart": 5
+  },
+  "seconds": 38,
+  "retriesPerLevel": 8,
+  "retriesUsed": 0,
+  "deathsAt": {}
+ },
+ "veteranNormal": {
+  "tier": "T5",
+  "runs": 20,
+  "fullClears": 20,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 20,
+    "cleared": 20,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "freeze-ray": 20,
+   "magnet": 8,
+   "knight-hop": 22,
+   "bishop-step": 34,
+   "surge": 20,
+   "aegis": 7,
+   "decoy": 5,
+   "queen-pulse": 9,
+   "drones": 2,
+   "rewind": 4,
+   "convert": 1
+  },
+  "seconds": 18,
+  "retriesPerLevel": 3,
+  "retriesUsed": 1,
+  "deathsAt": {
+   "10": 1
+  }
+ }
+}

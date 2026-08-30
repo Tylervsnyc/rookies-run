@@ -1,0 +1,207 @@
+{
+ "since": "2026-07-31",
+ "source": "disk-only",
+ "byRun": [
+  {
+   "runId": "revenge-1",
+   "traces": 19,
+   "wins": 9,
+   "byLevel": [
+    {
+     "level": 1,
+     "reached": 19,
+     "cleared": 19,
+     "clearRate": 100
+    },
+    {
+     "level": 2,
+     "reached": 19,
+     "cleared": 19,
+     "clearRate": 100
+    },
+    {
+     "level": 3,
+     "reached": 19,
+     "cleared": 19,
+     "clearRate": 100
+    },
+    {
+     "level": 4,
+     "reached": 19,
+     "cleared": 19,
+     "clearRate": 100
+    },
+    {
+     "level": 5,
+     "reached": 19,
+     "cleared": 14,
+     "clearRate": 74
+    },
+    {
+     "level": 6,
+     "reached": 14,
+     "cleared": 14,
+     "clearRate": 100
+    },
+    {
+     "level": 7,
+     "reached": 14,
+     "cleared": 14,
+     "clearRate": 100
+    },
+    {
+     "level": 8,
+     "reached": 14,
+     "cleared": 9,
+     "clearRate": 64
+    },
+    {
+     "level": 9,
+     "reached": 9,
+     "cleared": 9,
+     "clearRate": 100
+    },
+    {
+     "level": 10,
+     "reached": 9,
+     "cleared": 9,
+     "clearRate": 100
+    }
+   ]
+  },
+  {
+   "runId": "revenge-3",
+   "traces": 0,
+   "wins": 0,
+   "byLevel": [
+    {
+     "level": 1,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 2,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 3,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 4,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 5,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 6,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 7,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 8,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 9,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 10,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    }
+   ]
+  },
+  {
+   "runId": "revenge-4",
+   "traces": 0,
+   "wins": 0,
+   "byLevel": [
+    {
+     "level": 1,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 2,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 3,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 4,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 5,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 6,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 7,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 8,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 9,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 10,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    }
+   ]
+  }
+ ]
+}

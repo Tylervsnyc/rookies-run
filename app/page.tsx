@@ -23,7 +23,7 @@ import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
 import { readProfile, recordBest, setDifficulty as persistDifficulty } from '@/lib/run/profile';
-import { DIFFICULTIES, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
+import { DIFFICULTIES, isDifficultyId, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { tempoMaxFor } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
@@ -45,8 +45,11 @@ import {
   applyOfferPick,
   convertTargets as computeConvertTargets,
   magnetTargets as computeMagnetTargets,
+  maxUsesForTier,
   type AbilityId,
   type AbilityOfferOption,
+  type AbilityTier,
+  type OwnedAbility,
 } from '@/lib/run/abilities';
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
@@ -78,9 +81,46 @@ import type { BoardState, Coord, RunPuzzle } from '@/lib/run/types';
  * permanent for the run and live in the rack below the board.
  */
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string } {
+/**
+ * DEV-ONLY parity hook (scripts/run-playtest/revenge-parity.ts). Never
+ * active in production builds. `?parity=1&seed=<u32>&file=<1-8>
+ * &loadout=surge:1,freeze-ray:1&difficulty=normal` pins the enemy-AI seed,
+ * Rookie's start file, a starting loadout and the difficulty so the headless
+ * harness and the real app can be stepped side by side from an identical
+ * BoardState. The live state is mirrored to `window.__rrParity` so the
+ * driver can wait for the enemy phase and diff every field, not just the DOM.
+ */
+interface ParityHook {
+  seed: number;
+  file: number | null;
+  loadout: OwnedAbility[];
+  difficulty: DifficultyId | null;
+}
+
+function readParityHook(params: URLSearchParams): ParityHook | null {
+  if (process.env.NODE_ENV === 'production') return null;
+  if (params.get('parity') !== '1') return null;
+  const seed = parseInt(params.get('seed') ?? '', 10);
+  const fileRaw = parseInt(params.get('file') ?? '', 10);
+  const loadout: OwnedAbility[] = [];
+  for (const entry of (params.get('loadout') ?? '').split(',')) {
+    const [id, tierRaw] = entry.split(':');
+    if (!id || !(id in ABILITY_DEFS)) continue;
+    const tier = Math.min(5, Math.max(1, parseInt(tierRaw ?? '1', 10) || 1)) as AbilityTier;
+    loadout.push({ id: id as AbilityId, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(id as AbilityId, tier) });
+  }
+  const d = params.get('difficulty');
+  return {
+    seed: Number.isFinite(seed) && seed > 0 ? seed >>> 0 : 1,
+    file: fileRaw >= 1 && fileRaw <= 8 ? fileRaw : null,
+    loadout,
+    difficulty: isDifficultyId(d) ? d : null,
+  };
+}
+
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; parity: ParityHook | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '' };
+    return { runId: '', startLevelIndex: 0, date: '', parity: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -92,7 +132,7 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
     const n = parseInt(levelStr, 10);
     if (!Number.isNaN(n) && n >= 1) startLevelIndex = n - 1;
   }
-  return { runId, startLevelIndex, date };
+  return { runId, startLevelIndex, date, parity: readParityHook(params) };
 }
 
 function readSavedRunId(): string {
@@ -104,15 +144,34 @@ interface RunMeta {
   iso: string;
   runId: string;
   startLevelIndex: number;
+  /** Dev-only; null in production and whenever `?parity=1` is absent. */
+  parity: ParityHook | null;
 }
 
 function freshRun(
   iso: string,
   runId: string,
   startLevelIndex: number,
+  parity: ParityHook | null = null,
 ): { state: BoardState; puzzle: RunPuzzle } {
   const puzzle = puzzleForDate(iso, startLevelIndex, runId);
   const profile = readProfile();
+  if (parity) {
+    // Same builder the harness uses (puzzleToBoardState), same inputs. The
+    // start file is overridden after the fact because randomizedRookieStart
+    // draws from Math.random — the harness does the identical override.
+    const built = puzzleToBoardState(puzzle, {
+      runId,
+      unlockedAbilities: profile.unlockedAbilities,
+      difficulty: parity.difficulty ?? profile.difficulty,
+      aiRngSeed: parity.seed,
+      abilities: parity.loadout,
+    });
+    return {
+      state: parity.file ? { ...built, rookie: { file: parity.file, rank: built.rookie.rank } } : built,
+      puzzle,
+    };
+  }
   return {
     state: puzzleToBoardState(puzzle, {
       runId,
@@ -162,7 +221,7 @@ export default function RookiesRunPage() {
     }
     const maxLevel = totalLevelsForRun(validRunId) - 1;
     const startLevelIndex = Math.min(url.startLevelIndex, maxLevel);
-    return { iso, runId: validRunId, startLevelIndex };
+    return { iso, runId: validRunId, startLevelIndex, parity: url.parity };
   }, []);
 
   const runDef = useMemo(() => getRunById(meta.runId), [meta.runId]);
@@ -171,8 +230,8 @@ export default function RookiesRunPage() {
 
   const [levelIndex, setLevelIndex] = useState(meta.startLevelIndex);
   const initial = useMemo(
-    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex),
-    [meta.iso, meta.runId, meta.startLevelIndex],
+    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity),
+    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity],
   );
   const [state, setState] = useState<BoardState>(initial.state);
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
@@ -335,6 +394,13 @@ export default function RookiesRunPage() {
   const [deathSettled, setDeathSettled] = useState(false);
   /** Why the level was lost — 'unwinnable' = the solver called it, not a capture / move limit. */
   const [lossReason, setLossReason] = useState<'unwinnable' | null>(null);
+
+  // Dev-only parity mirror (see ParityHook). Inert in production and without
+  // `?parity=1` — the effect body never runs.
+  useEffect(() => {
+    if (!meta.parity || process.env.NODE_ENV === 'production') return;
+    (window as unknown as { __rrParity?: unknown }).__rrParity = { state, lossReason, levelIndex };
+  }, [meta.parity, state, lossReason, levelIndex]);
   const [showLevelCleared, setShowLevelCleared] = useState(false);
   const [runComplete, setRunComplete] = useState(false);
   const [glitching, setGlitching] = useState(false);
@@ -894,7 +960,7 @@ export default function RookiesRunPage() {
   }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
-    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex);
+    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity);
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
     setState(fresh.state);
