@@ -291,6 +291,14 @@ function AbilityIcon({ id, size }: { id: AbilityId; size: number }) {
           <path d="M6 21h12M7 18h10l-1-8H8zM6 4v5h12V4h-3v2h-2V4h-2v2H9V4z" />
         </svg>
       );
+    case 'summon-knight':
+      // knight silhouette
+      return (
+        <svg {...props}>
+          <path d="M6 21h12M8 18h8l-1-5c3-2 3-6 1-8l-3-2-1 2-3 1c-2 1-3 4-2 6l-1 2z" />
+          <path d="M12 8l1 1" />
+        </svg>
+      );
     default:
       return null;
   }

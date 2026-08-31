@@ -197,7 +197,7 @@ export function RunSummaryModal({
               onClick={onReplay}
               className="tap-highlight px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-black"
             >
-              Try again
+              {completed ? 'Play again' : 'Try again'}
             </button>
           </div>
         )}

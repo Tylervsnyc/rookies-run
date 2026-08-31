@@ -13,6 +13,7 @@
 import type { DifficultyId } from '../../lib/run/difficulty';
 import { FINISHERS, winPct, type Cell, type RunsReport, type SolveResult } from './revenge-core';
 import type { RevengeFeatures } from './revenge-features';
+import { shortReason, type ContentItem, type PipelineSummary } from '../../lib/content/pipeline';
 import {
   abilityTierList,
   bandFor,
@@ -85,6 +86,8 @@ export interface HumanSummary {
 export interface DigestInput {
   date: string;
   quick: boolean;
+  /** Content pipeline state after tonight's grading (data/content/pipeline.json). */
+  pipeline?: PipelineSummary;
   wallSeconds: number;
   trials: { realistic: number; mode: number; runs: number; solveDepth: number; solveNodes: number; experiment: number };
   runs: RunReport[];
@@ -428,6 +431,14 @@ export function renderDigest(input: DigestInput): string {
   }
   L.push('');
 
+  // Content pipeline
+  if (input.pipeline) {
+    L.push(`## Content pipeline`);
+    L.push('');
+    L.push(...renderPipelineSection(input.pipeline));
+    L.push('');
+  }
+
   // Solver detail
   const withSolver = input.runs.filter((r) => r.solver.length);
   if (withSolver.length) {
@@ -569,6 +580,49 @@ function matrixTable(cells: Cell[]): string {
 // ─────────────────────────────────────────────────────────────────────────────
 // Slack summary (≤ 25 lines)
 
+/** "## Content pipeline" — what exists, what is waiting on Tyler, what just shipped. */
+export function renderPipelineSection(p: PipelineSummary): string[] {
+  const L: string[] = [];
+  const label = (i: ContentItem) => `${i.name} (\`${i.id}\`, ${i.kind})`;
+  L.push(`Registry: \`data/content/pipeline.json\` · approve with \`npx tsx scripts/pipeline.ts approve <id>\` (or tell Claude "approve <name>"). Only approved|live content reaches players; testing content stays behind \`?run=\` / \`?loadout=\`.`);
+  L.push('');
+  L.push(`| Stage | idea | built | testing | approved | live | retired |`);
+  L.push(`|---|---|---|---|---|---|---|`);
+  L.push(`| Count | ${p.counts.idea} | ${p.counts.built} | ${p.counts.testing} | ${p.counts.approved} | ${p.counts.live} | ${p.counts.retired} |`);
+  L.push('');
+  L.push(`**Waiting on Tyler (${p.waiting.length})** — READY first:`);
+  L.push('');
+  if (!p.waiting.length) L.push('- nothing in testing.');
+  for (const i of p.waiting) {
+    const t = i.testing;
+    if (!t) L.push(`- ${label(i)} — not graded yet.`);
+    else if (t.verdict === 'READY') L.push(`- **READY** ${label(i)} — ${t.summary} (${t.lastRun})`);
+    else L.push(`- HOLD ${label(i)} — ${shortReason(i, 160)} (${t.lastRun})`);
+  }
+  if (p.approvedNotLive.length) {
+    L.push('');
+    L.push(`**Approved, not yet live (${p.approvedNotLive.length}):** ${p.approvedNotLive.map(label).join(', ')} — goes live at the next nightly after deploy (or \`pipeline.ts mark-live\`).`);
+  }
+  L.push('');
+  L.push(`**Went live in the last 7 days (${p.wentLive.length}):** ${p.wentLive.length ? p.wentLive.map((i) => `${label(i)} ${i.live?.at}`).join(', ') : 'none'}`);
+  L.push('');
+  L.push(`**Idea backlog (${p.ideas.length}):** ${p.ideas.length ? p.ideas.map((i) => `${i.name} — ${i.notes}`).join(' · ') : 'empty'}`);
+  return L;
+}
+
+/** Two Slack lines, max. */
+export function renderPipelineSlack(p: PipelineSummary): string[] {
+  const ready = p.waiting.filter((i) => i.testing?.verdict === 'READY').map((i) => i.id);
+  const hold = p.waiting.filter((i) => i.testing?.verdict !== 'READY').map((i) => i.id);
+  const L = [
+    `Pipeline: testing ${p.counts.testing} (READY: ${ready.join(', ') || 'none'} · HOLD: ${hold.join(', ') || 'none'}) · approved ${p.counts.approved} · live ${p.counts.live} · ideas ${p.counts.idea}`,
+  ];
+  if (p.wentLive.length || p.approvedNotLive.length) {
+    L.push(`  went live 7d: ${p.wentLive.map((i) => i.id).join(', ') || 'none'}${p.approvedNotLive.length ? ` · approved, awaiting deploy: ${p.approvedNotLive.map((i) => i.id).join(', ')}` : ''}`);
+  }
+  return L;
+}
+
 export function renderSlack(input: DigestInput): string {
   const L: string[] = [];
   L.push(`Rookie's Revenge nightly — ${input.date}${input.quick ? ' (quick)' : ''} · ${(input.wallSeconds / 60).toFixed(0)} min`);
@@ -621,6 +675,9 @@ export function renderSlack(input: DigestInput): string {
     const h = input.humans.byRun.find((r) => r.traces > 0)!;
     L.push(`Humans: ${h.traces} runs on ${h.runId}, ${h.wins} won.`);
   }
+  if (input.pipeline) L.push(...renderPipelineSlack(input.pipeline));
   L.push(`Full report: data/run-playtest/revenge/digests/${input.date}.md`);
-  return L.slice(0, 25).join('\n');
+  // Cap at 25 lines but never drop the pipeline + report-path tail.
+  const tail = input.pipeline ? renderPipelineSlack(input.pipeline).length + 1 : 1;
+  return (L.length <= 25 ? L : [...L.slice(0, 25 - tail), ...L.slice(-tail)]).join('\n');
 }

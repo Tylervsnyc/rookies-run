@@ -87,7 +87,8 @@ import {
   type AbilityTier,
   type OwnedAbility,
 } from '../../lib/run/abilities';
-import { REVENGE_ABILITIES, REVENGE_CORE } from '../../lib/run/runs';
+import { REVENGE_CORE } from '../../lib/run/runs';
+import { ALL_LOADOUTS } from './revenge-core';
 import { mulberry32, puzzleToBoardState } from '../../lib/run/seed';
 import type { BoardState, Coord, EnemyPiece, PieceType, RunPuzzle } from '../../lib/run/types';
 import { toSquare } from '../../lib/run/types';
@@ -1223,7 +1224,7 @@ interface Opts {
 
 function readOpts(): Opts {
   const lo = arg('loadouts', 'core')!;
-  const loadouts = lo === 'core' ? CORE_LOADOUTS : lo === 'all' ? ['none', ...REVENGE_ABILITIES] : lo.split(',').map((s) => s.trim()).filter(Boolean);
+  const loadouts = lo === 'core' ? CORE_LOADOUTS : lo === 'all' ? [...ALL_LOADOUTS] : lo.split(',').map((s) => s.trim()).filter(Boolean);
   return {
     slots: parseSlots(arg('slots')),
     archetypes: (arg('archetypes', 'all') === 'all' ? ARCHETYPES.map((a) => a.id) : arg('archetypes')!.split(',')).map((s) => s.trim()),

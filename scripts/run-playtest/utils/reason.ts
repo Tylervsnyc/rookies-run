@@ -61,6 +61,13 @@ export function describeAction(state: BoardState, action: BotAction): string {
       }
       return `${from} → ${sq}; ${advanceTag}`;
     }
+    case 'squire-move': {
+      const sq = toSquare(action.target);
+      const captured = state.pieces.find(
+        (p) => p.file === action.target.file && p.rank === action.target.rank,
+      );
+      return captured ? `Squire → ${sq}, captures ${captured.type}` : `Squire → ${sq}`;
+    }
     case 'activate-ability': {
       const name = ABILITY_DEFS[action.abilityId]?.name ?? action.abilityId;
       return `activated ${name}`;

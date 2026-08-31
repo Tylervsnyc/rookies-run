@@ -6,12 +6,14 @@ import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
+import { canMoveSquire, squireLegalMoves, squireOf } from '@/lib/run/abilities';
 import { nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
 import { BreathingRook } from '@/components/ui/BreathingRook';
+import { PieceBlocks } from './PieceBlocks';
 
 interface BoardProps {
   state: BoardState;
@@ -352,15 +354,27 @@ export function RunBoard({
       };
     }
 
-    // Selection: only when Rookie is selected, show her ring + legal-move
-    // dots/rings.
+    // Squire (player-controlled knight): a soft rainbow ring says "tap me"
+    // whenever he can move this turn.
+    const squire = squireOf(state);
+    const squireSq = squire ? toSquare(squire) : null;
+    if (squireSq && canMoveSquire(state) && selectedSquare !== squireSq) {
+      styles[squireSq] = {
+        ...styles[squireSq],
+        boxShadow: 'inset 0 0 0 3px rgba(167,139,250,0.75)',
+      };
+    }
+
+    // Selection: when Rookie (or the Squire) is selected, show the ring +
+    // legal-move dots/rings for that body.
     if (selectedSquare && state.turn === 'rookie' && state.status === 'playing') {
       styles[selectedSquare] = {
         ...styles[selectedSquare],
         backgroundColor: SELECTED_BG,
         boxShadow: SELECTED_RING,
       };
-      for (const m of rookieLegalMoves(state)) {
+      const legal = squireSq && selectedSquare === squireSq ? squireLegalMoves(state) : rookieLegalMoves(state);
+      for (const m of legal) {
         const sq = toSquare(m);
         const isCapture = state.pieces.some(
           (p) => p.file === m.file && p.rank === m.rank,
@@ -1499,7 +1513,7 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
-  if (fx.kind === 'bodyguard') {
+  if (fx.kind === 'bodyguard' || fx.kind === 'summon-knight') {
     // Rainbow ring blooms on the spawn square.
     const k = Math.floor(fx.id);
     return (
@@ -1770,6 +1784,8 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
     >
       {allies.map((a) => {
         const PieceComp = defaultPieces[ALLY_SPRITE[a.type]];
+        // Squire = the same block-knight Rookie becomes during Knight Hop.
+        const isSquire = a.source === 'squire';
         return (
           <div
             key={a.id}
@@ -1784,7 +1800,22 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
                 'drop-shadow(0 0 6px rgba(255,255,255,0.85)) drop-shadow(0 0 10px rgba(167,139,250,0.65))',
             }}
           >
-            {PieceComp ? <PieceComp /> : null}
+            {isSquire ? (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: 'scale(0.88)',
+                }}
+              >
+                <PieceBlocks piece="N" blockSize={3} animate />
+              </div>
+            ) : PieceComp ? (
+              <PieceComp />
+            ) : null}
           </div>
         );
       })}

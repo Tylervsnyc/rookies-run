@@ -26,7 +26,8 @@ import {
   type AbilityTier,
   type OwnedAbility,
 } from '../../lib/run/abilities';
-import { REVENGE_ABILITIES, REVENGE_CORE, getRunById } from '../../lib/run/runs';
+import { REVENGE_ABILITY_CATALOG, REVENGE_CORE, getRunById } from '../../lib/run/runs';
+import { isBuilt } from '../../lib/content/pipeline';
 import { puzzleForDate, puzzleToBoardState } from '../../lib/run/seed';
 import type { DifficultyId } from '../../lib/run/difficulty';
 import type { BoardState, RunPuzzle } from '../../lib/run/types';
@@ -41,7 +42,8 @@ import { rngFromString } from './utils/rng';
 
 export const REVENGE_ISO = '2026-08-18';
 export const MAX_TURNS = 300;
-export const ALL_LOADOUTS: ReadonlyArray<string> = ['none', ...REVENGE_ABILITIES];
+/** Every BUILT ability (testing|approved|live in the registry) — content in testing gets graded nightly too. */
+export const ALL_LOADOUTS: ReadonlyArray<string> = ['none', ...REVENGE_ABILITY_CATALOG.filter((id) => isBuilt(id))];
 export const FINISHERS: ReadonlyArray<string> = REVENGE_CORE;
 
 export interface RevengeCfg {
@@ -427,6 +429,7 @@ function enemyResponses(s: BoardState): BoardState[] {
 
 function candidateToAction(c: ActionCandidate): BotAction {
   if (c.kind === 'move') return { kind: 'move', target: c.target! };
+  if (c.kind === 'squire-move') return { kind: 'squire-move', target: c.target! };
   if (c.kind === 'activate-ability') return { kind: 'activate-ability', abilityId: c.abilityId! };
   return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target! };
 }
@@ -434,8 +437,8 @@ function candidateToAction(c: ActionCandidate): BotAction {
 function orderCandidates(s: BoardState, cands: ActionCandidate[]): ActionCandidate[] {
   const king = s.pieces.find((p) => p.type === 'king');
   const score = (c: ActionCandidate): number => {
-    if (c.kind === 'move' && king && c.target!.file === king.file && c.target!.rank === king.rank) return 1000;
-    if (c.kind !== 'move') return 50;
+    if ((c.kind === 'move' || c.kind === 'squire-move') && king && c.target!.file === king.file && c.target!.rank === king.rank) return 1000;
+    if (c.kind !== 'move' && c.kind !== 'squire-move') return 50;
     const cap = s.pieces.some((p) => p.file === c.target!.file && p.rank === c.target!.rank);
     let v = cap ? 30 : 0;
     if (king) {

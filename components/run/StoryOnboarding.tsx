@@ -60,7 +60,9 @@ import { haptic, hapticSuccess } from '@/lib/haptics';
  * Beat 3  — colour returns and Rookie transforms from a plain white rook
  *           into the breathing rook. "Rookie took that personally."
  * Beat 4  — the target: the king is still there. Capture the king.
- * Beat 5  — rook drill (interactive): a1xa7, Ng1-f3 (scripted), a8 (he
+ * Beat 5  — rook drill (interactive): a1xa7 (the capture STUNS the king —
+ *           the engine's real capture-stun rule, named while his badge
+ *           shows), Ng1-f3 (scripted, the stun expires), a8 (he
  *           panics), f7-f6 (scripted, "he makes a door" + his escape arrow),
  *           "Too late.", a8xg8.
  * Beat 6  — "This is Rookie's Revenge." (the won board stays up)
@@ -454,9 +456,11 @@ const CTA_CLASS =
   'w-full py-3 min-h-[44px] rounded-2xl bg-chess-text text-white font-black text-[14px] tracking-wide active:translate-y-px transition-transform';
 
 // Beat 5 drill steps.
-// 0 take a7   1 knight returning   2 go a8   3 on a8 — he panics
-// 4 he makes a door (his escape arrow)   5 too late — take him
-type DrillStep = 0 | 1 | 2 | 3 | 4 | 5;
+// 0 take a7   1 he's stunned (the capture-stun rule, Next-gated)
+// 2 knight returning (his turn — the stun expires)   3 go a8
+// 4 on a8 — he panics   5 he makes a door (his escape arrow)
+// 6 too late — take him
+type DrillStep = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 // Beat 7 phases: the king sidesteps, the offer opens, the player picks Knight
 // Hop ('armed' = it's in the rack, tap it), she's a knight ('hop').
 type HopPhase = 'line' | 'stepped' | 'offer' | 'armed' | 'hop';
@@ -608,32 +612,33 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     };
   }, [beat]);
 
-  // Beat 5: after a7 falls, the knight hurries back to f3. Too late.
+  // Beat 5: after the stun beat, the knight hurries back to f3. Too late.
+  // That's the enemy turn the capture-stun covered — the stun expires here.
   useEffect(() => {
-    if (beat !== 5 || drill !== 1) return;
+    if (beat !== 5 || drill !== 2) return;
     const t = setTimeout(() => {
-      setState((s) => moveEnemy(s, 'g1', 'f3'));
+      setState((s) => ({ ...moveEnemy(s, 'g1', 'f3'), kingStunTurns: 0 }));
       void playMoveSound();
-      setDrill(2);
+      setDrill(3);
     }, KNIGHT_RETURNS_AT);
     return () => clearTimeout(t);
   }, [beat, drill]);
 
   // Beat 5: on a8 he panics, then makes a door (f7-f6)...
   useEffect(() => {
-    if (beat !== 5 || drill !== 3) return;
+    if (beat !== 5 || drill !== 4) return;
     const t = setTimeout(() => {
       setState((s) => moveEnemy(s, 'f7', 'f6'));
       void playMoveSound();
-      setDrill(4);
+      setDrill(5);
     }, DOOR_AT);
     return () => clearTimeout(t);
   }, [beat, drill]);
 
   // Beat 5: ...his escape arrow shows, then "Too late." and the player is on.
   useEffect(() => {
-    if (beat !== 5 || drill !== 4) return;
-    const t = setTimeout(() => setDrill(5), DOOR_TOO_LATE_AT);
+    if (beat !== 5 || drill !== 5) return;
+    const t = setTimeout(() => setDrill(6), DOOR_TOO_LATE_AT);
     return () => clearTimeout(t);
   }, [beat, drill]);
 
@@ -754,6 +759,12 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       sadMusicRef.current = startSadMusic();
       return;
     }
+    // Beat 5: Next after the stun beat lets the knight take his turn.
+    if (beat === 5 && drill === 1) {
+      haptic('light');
+      setDrill(2);
+      return;
+    }
     // Beat 7: Next after the sidestep opens the offer.
     if (beat === 7 && hopPhase === 'stepped') {
       haptic('light');
@@ -761,7 +772,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       return;
     }
     if (beat < LAST_BEAT) goTo((beat + 1) as Beat);
-  }, [beat, phase, hopPhase, goTo]);
+  }, [beat, phase, drill, hopPhase, goTo]);
 
   // Beat 9: Next after the demo rewinds — Rookie back to h5, the king back
   // to e1 — and the player is on (Freeze Ray first).
@@ -781,7 +792,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const tempoDone = beat === 10 && tempoStep >= TEMPO_PATH.length;
   const interactive =
     beat === 5
-      ? !won && (drill === 0 || drill === 2 || drill === 5)
+      ? !won && (drill === 0 || drill === 3 || drill === 6)
       : beat === 7
         ? !won && hopPhase === 'hop'
         : beat === 10
@@ -818,14 +829,17 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         // Enemies never get a free turn — hand control straight back. The
         // engine rolls an offer when the bar fills; beat 10 shows the real one.
         // The king falls in slow motion, under the full celestial track.
+        // The a7 capture keeps the engine's REAL kingStunTurns — the stun
+        // beat names the rule while his "Stunned" badge shows. The knight's
+        // scripted return (drill 2) clears it.
         if (nextState.status === 'won') playKingCaptureTheme(true);
-        land({ ...nextState, turn: 'rookie', pendingOffer: null, kingStunTurns: 0 });
+        land({ ...nextState, turn: 'rookie', pendingOffer: null });
         if (nextState.status === 'won') {
           trackEvent('run_onboarding_backrank_win');
         } else if (drill === 0 && wasCapture) {
           setDrill(1);
-        } else if (drill === 2 && toSquare(nextState.rookie) === 'a8') {
-          setDrill(3);
+        } else if (drill === 3 && toSquare(nextState.rookie) === 'a8') {
+          setDrill(4);
           haptic('medium');
         }
         return true;
@@ -1059,9 +1073,9 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (beat === 1 && phase === 3) return [{ from: 'h3', to: 'g1', color: '#FFC800' }];
     if (beat === 5 && !won) {
       if (drill === 0) return [{ from: 'a1', to: 'a7' }];
-      if (drill === 2) return [{ from: 'a7', to: 'a8' }];
-      if (drill === 4) return [{ from: KING_SQUARE, to: 'f7' }]; // his planned escape
-      if (drill === 5 && rookieSq === 'a8') return [{ from: 'a8', to: KING_SQUARE }];
+      if (drill === 3) return [{ from: 'a7', to: 'a8' }];
+      if (drill === 5) return [{ from: KING_SQUARE, to: 'f7' }]; // his planned escape
+      if (drill === 6 && rookieSq === 'a8') return [{ from: 'a8', to: KING_SQUARE }];
       return [];
     }
     if (beat === 7 && !won) {
@@ -1099,7 +1113,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     return [];
   })();
   const bursts: OverlayBurst[] = (() => {
-    if (beat === 5 && !won && drill >= 3) return [{ square: KING_SQUARE, text: '!!' }];
+    if (beat === 5 && !won && drill >= 4) return [{ square: KING_SQUARE, text: '!!' }];
     if (beat === 7 && !won && hopPhase === 'stepped') return [{ square: HOP_KING_TO, text: 'ha!' }];
     if (beat === 8) {
       if (won && revengeLine) return [{ square: rookieSq, text: revengeLine }];
@@ -1111,7 +1125,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (beat === 9 && !won && stuck) return [{ square: FREEZE_KING_STEP, text: 'ha!' }];
     return [];
   })();
-  const shakes: string[] = beat === 5 && !won && drill >= 3 ? [KING_SQUARE] : [];
+  const shakes: string[] = beat === 5 && !won && drill >= 4 ? [KING_SQUARE] : [];
   // Blue pointer on the board: the king to freeze.
   const pointers: string[] =
     beat === 9 && !won && state.activeAbility?.step === 'pick-enemy' ? [FREEZE_KING_SQUARE] : [];
@@ -1172,10 +1186,11 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       case 5:
         if (won) return 'Got him. Rooks can capture anything in a straight line.';
         if (drill === 0) return 'Rooks move in straight lines. That pawn on a7 is hanging.';
-        if (drill === 1) return 'The knight hurries back. Too late.';
-        if (drill === 2) return 'Up to a8. Then she’s on the 8th rank.';
-        if (drill === 3) return 'She’s on the 8th rank. The king’s rank. He panics.';
-        if (drill === 4) return 'He makes a door to escape.';
+        if (drill === 1) return 'Every capture stuns the king. Take a piece and he can’t run.';
+        if (drill === 2) return 'The knight hurries back. Too late.';
+        if (drill === 3) return 'Up to a8. Then she’s on the 8th rank.';
+        if (drill === 4) return 'She’s on the 8th rank. The king’s rank. He panics.';
+        if (drill === 5) return 'He makes a door to escape.';
         return 'Too late.';
       case 6:
         return 'This is Rookie’s Revenge. The game after the game.';
@@ -1231,7 +1246,9 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       case 4:
         return 'Capture the king.';
       case 5:
-        return drill >= 1 ? 'Every capture charges tempo.' : 'Rooks move in straight lines.';
+        // The stun beat gets no chip — the caption + his badge carry the rule.
+        if (drill === 1) return null;
+        return drill >= 2 ? 'Every capture charges tempo.' : 'Rooks move in straight lines.';
       case 6:
         return 'Capture the king. Every level.';
       case 7:
@@ -1250,9 +1267,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     switch (beat) {
       case 5:
         if (won) return null;
-        if (drill === 1 || drill === 3 || drill === 4) return ' ';
+        if (drill === 1) return null; // Next button takes over (stun beat)
+        if (drill === 2 || drill === 4 || drill === 5) return ' ';
         if (drill === 0) return 'Tap Rookie, then the pawn on a7.';
-        if (drill === 2) return 'Tap Rookie, then a8.';
+        if (drill === 3) return 'Tap Rookie, then a8.';
         return 'Tap Rookie, then the king on g8.';
       case 7:
         if (won) return null;

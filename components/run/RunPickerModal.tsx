@@ -41,7 +41,7 @@ export function RunPickerModal({
         <div className="px-6 pt-6 pb-3 flex flex-col items-center gap-3">
           {logo ?? <RookiesRevengeLogo scale={0.45} />}
           <h2 className="text-sm font-black text-chess-text-muted leading-tight text-center">
-            {caption ?? `${visibleRuns.length} ways to climb`}
+            {caption ?? (visibleRuns.length === 1 ? 'Today’s hunt' : `${visibleRuns.length} ways to climb`)}
           </h2>
         </div>
 

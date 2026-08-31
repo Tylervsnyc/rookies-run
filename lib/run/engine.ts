@@ -162,7 +162,8 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
   // If we're not in a Surge bonus chain and we have allies, redirect turn to
   // 'allies' and the UI ticks stepAllyTurn one ally at a time. Otherwise hand
   // straight to the enemy as before.
-  const allyPhaseNeeded = !hasBonus && withOffer.allies.length > 0;
+  // (The Squire is player-controlled — it never needs an AI ally phase.)
+  const allyPhaseNeeded = !hasBonus && withOffer.allies.some((a) => a.source !== 'squire');
   if (allyPhaseNeeded) {
     return {
       ...withOffer,
@@ -230,4 +231,8 @@ export {
   applyOfferPick,
   applyDismissOffer,
   abilityLegalMoves,
+  applySquireMove,
+  squireLegalMoves,
+  squireOf,
+  canMoveSquire,
 } from './abilities';

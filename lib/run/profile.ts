@@ -8,6 +8,7 @@
  */
 
 import { ALL_ABILITY_IDS, type AbilityId } from './abilities';
+import { isPlayerFacing, stageOf } from '../content/pipeline';
 import {
   ACHIEVEMENTS,
   bumpCounters,
@@ -26,10 +27,26 @@ export const PROFILE_KEY = 'rookies-revenge-profile-v1';
  * Surge + Freeze Ray are the other two ways to close the gap. (Drones was cut —
  * a swarm doesn't fit a king-hunt.)
  */
-export const STARTER_ABILITIES: ReadonlyArray<AbilityId> = ['knight-hop', 'surge', 'freeze-ray'];
+export const STARTER_KIT_CATALOG: ReadonlyArray<AbilityId> = [
+  'knight-hop',
+  'surge',
+  'freeze-ray',
+  // Squire — a knight you control. In the kit once approved in the registry.
+  'summon-knight',
+];
 
-/** Cut from Revenge. Stripped from saved profiles on load so old kits lose them. */
-export const RETIRED_ABILITIES: ReadonlySet<string> = new Set(['drones']);
+/**
+ * What a brand-new player actually holds: the kit catalog filtered to
+ * approved|live content in `data/content/pipeline.json`. Anything still in
+ * `testing` (Squire, 2026-08-31) is only reachable via `?loadout=`.
+ */
+export const STARTER_ABILITIES: ReadonlyArray<AbilityId> = STARTER_KIT_CATALOG.filter((id) => isPlayerFacing(id));
+
+/**
+ * Cut from Revenge (stage `retired` in the registry). Stripped from saved
+ * profiles on load so old kits lose them.
+ */
+export const RETIRED_ABILITIES: ReadonlySet<string> = new Set(ALL_ABILITY_IDS.filter((id) => stageOf(id) === 'retired'));
 
 export interface EarnedAchievement {
   unlockedAt: string; // ISO
@@ -69,7 +86,9 @@ function sanitize(raw: unknown): PlayerProfile {
   if (Array.isArray(r.unlockedAbilities)) {
     const set = new Set<AbilityId>(STARTER_ABILITIES);
     for (const id of r.unlockedAbilities) {
-      if (typeof id === 'string' && KNOWN_ABILITIES.has(id) && !RETIRED_ABILITIES.has(id)) {
+      // Only player-facing content survives a reload: retired kits AND
+      // still-in-testing abilities (a dev-hook session can leave one behind).
+      if (typeof id === 'string' && KNOWN_ABILITIES.has(id) && !RETIRED_ABILITIES.has(id) && isPlayerFacing(id)) {
         set.add(id as AbilityId);
       }
     }

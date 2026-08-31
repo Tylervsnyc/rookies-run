@@ -466,6 +466,14 @@ async function replayAction(page: Page, before: BoardState, action: BotAction): 
       await clickSquare(page, toSquare(action.target));
       return;
     }
+    case 'squire-move': {
+      const squire = before.allies.find((a) => a.source === 'squire');
+      if (!squire) return;
+      await clickSquare(page, toSquare(squire));
+      await sleep(120);
+      await clickSquare(page, toSquare(action.target));
+      return;
+    }
     case 'activate-ability': {
       await clickRack(page, action.abilityId);
       return;
@@ -565,6 +573,7 @@ function promotionResync(harness: BoardState, app: BoardState, before: BoardStat
 
 function describe(a: BotAction): string {
   if (a.kind === 'move') return `move ${toSquare(a.target)}`;
+  if (a.kind === 'squire-move') return `squire ${toSquare(a.target)}`;
   if (a.kind === 'activate-ability') return `cast ${a.abilityId}`;
   if (a.kind === 'ability-target') return `cast ${a.abilityId} @${toSquare(a.target)}`;
   if (a.kind === 'pick-offer') return `pick-offer #${a.optionIndex}`;

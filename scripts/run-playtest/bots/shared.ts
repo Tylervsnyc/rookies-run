@@ -22,6 +22,9 @@ import {
   convertTargets,
   isSmoked,
   magnetTargets,
+  canMoveSquire,
+  squireLegalMoves,
+  squireSpawnSquares,
   visibleEnemySquares,
 } from '../../../lib/run/abilities';
 import { rookieLegalMoves, enemyAt } from '../../../lib/run/movement';
@@ -335,7 +338,7 @@ export function rookieCanBeCapturedThisTurn(state: BoardState): boolean {
  * can score each concrete result rather than just "tap the card."
  */
 export interface ActionCandidate {
-  kind: 'move' | 'activate-ability' | 'ability-target';
+  kind: 'move' | 'squire-move' | 'activate-ability' | 'ability-target';
   abilityId?: AbilityId;
   target?: Coord;
 }
@@ -351,6 +354,10 @@ export function legalCandidates(
 
   for (const m of rookieLegalMoves(state)) {
     out.push({ kind: 'move', target: m });
+  }
+  // Squire: the player's second body — its knight moves are real candidates.
+  if (canMoveSquire(state)) {
+    for (const m of squireLegalMoves(state)) out.push({ kind: 'squire-move', target: m });
   }
 
   for (const owned of state.abilities) {
@@ -486,6 +493,12 @@ function candidatesForAbility(
     }
     case 'bodyguard':
       if (bodyguardSpawnSquare(state)) out.push({ kind: 'activate-ability', abilityId: 'bodyguard' });
+      return out;
+    case 'summon-knight':
+      // Place the Squire on any free square beside Rookie (at most 8).
+      for (const c of squireSpawnSquares(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'summon-knight', target: c });
+      }
       return out;
   }
   return out;

@@ -41,7 +41,8 @@ export type AbilityId =
   | 'smoke'
   | 'rewind'
   | 'magnet'
-  | 'bodyguard';
+  | 'bodyguard'
+  | 'summon-knight';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -204,6 +205,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Instant · Ally',
     description: 'Summon a rainbow rook at your side for a few turns.',
   },
+  'summon-knight': {
+    id: 'summon-knight',
+    name: 'Squire',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'Summon a rainbow knight YOU control. A second body on the board.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -309,6 +317,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/2/2/1 — T5 lasts the whole level.
       if (tier === 3 || tier === 4) return 2;
       return 1;
+    case 'summon-knight':
+      // 1/1/2/2/2 — from T3 you can re-summon after he's taken.
+      if (tier <= 2) return 1;
+      return 2;
   }
 }
 
@@ -379,6 +391,7 @@ const HOW: Record<AbilityId, string> = {
   rewind: 'Tap card. The last turn unhappens.',
   magnet: 'Tap card, then tap an enemy on your line.',
   bodyguard: 'Tap card. A rook appears beside you.',
+  'summon-knight': 'Tap card, then tap a square beside you. Tap the knight to move it.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -488,6 +501,11 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'A rainbow rook guards you for the rest of the level.';
       if (tier >= 3) return 'A rainbow rook guards you for 3 turns.';
       return 'A rainbow rook guards you for 2 turns.';
+    case 'summon-knight':
+      if (tier === 5) return 'A knight you control, all level. Move him AND you each turn.';
+      if (tier === 4) return 'A knight you control for the rest of the level. Move him or you.';
+      if (tier >= 2) return 'A knight you control for 9 turns. Move him or you.';
+      return 'A knight you control for 6 turns. Move him or you.';
   }
 }
 
@@ -596,6 +614,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Rook ally, 3 turns. 2/level.';
       if (tier === 2) return 'Rook ally, 2 turns. 1/level.';
       return 'Rook ally, 2 turns. 1/level.';
+    case 'summon-knight':
+      if (tier === 5) return 'Your knight, all level, free move. 2/level.';
+      if (tier === 4) return 'Your knight, all level. 2/level.';
+      if (tier === 3) return 'Your knight, 9 turns. 2/level.';
+      if (tier === 2) return 'Your knight, 9 turns. 1/level.';
+      return 'Your knight, 6 turns. 1/level.';
   }
 }
 
@@ -641,7 +665,8 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
     : null;
   // Meta-progression: the player only sees abilities they've unlocked.
   // Owned abilities always stay upgradable (they were unlocked when picked).
-  const unlocked = state.unlockedAbilities ? new Set<string>(state.unlockedAbilities) : null;
+  const unlocked =
+    state.unlockedAbilities && !runDef?.ignoreUnlocks ? new Set<string>(state.unlockedAbilities) : null;
   const runAllowed = (() => {
     if (!runAllowedRaw && !unlocked) return null;
     const ids = ALL_ABILITY_IDS.filter(
@@ -806,6 +831,7 @@ export function abilityLegalMoves(
   // Boulder is a pick-square target — its drop squares render as the same
   // tier-coloured dots a movement ability would (quieter than 60 rings).
   if (abilityId === 'boulder') return boulderTargets(state);
+  if (abilityId === 'summon-knight') return squireSpawnSquares(state);
   return [];
 }
 
@@ -901,8 +927,9 @@ export function applyAbilityActivate(
   // Targeted abilities pick an enemy as their second tap — except Boulder,
   // which picks an EMPTY square.
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
-  if (def.activation === 'targeted' && abilityId !== 'boulder') step = 'pick-enemy';
+  if (def.activation === 'targeted' && abilityId !== 'boulder' && abilityId !== 'summon-knight') step = 'pick-enemy';
   if (abilityId === 'boulder' && boulderTargets(state).length === 0) return state;
+  if (abilityId === 'summon-knight' && squireSpawnSquares(state).length === 0) return state;
   if (abilityId === 'magnet' && magnetTargets(state).length === 0) return state;
   return { ...state, activeAbility: { id: abilityId, step } };
 }
@@ -1224,6 +1251,10 @@ export function applyAbilityTargeted(
         id: Date.now() + Math.random(),
       },
     };
+  }
+
+  if (abilityId === 'summon-knight') {
+    return applySummonKnight(state, target);
   }
 
   if (abilityId === 'magnet') {
@@ -1609,6 +1640,169 @@ function applyBodyguard(state: BoardState): BoardState {
       id: Date.now() + Math.random(),
     },
   };
+}
+
+// ---------------------------------------------------------------------------
+// Squire (summon-knight) — a rainbow knight the PLAYER controls.
+//
+// A second BODY, not just tempo: it blocks lines, enemies hunt it like any
+// ally (captured = gone), and it captures like a knight — including the
+// king, which wins the level. On your turn you move Rookie OR the Squire
+// (T1–T4). At T5 the Squire's move is a free action: move him, then her.
+// ---------------------------------------------------------------------------
+
+/** Enemy turns the Squire stays on the board. 6 / 9 / 9 / level / level. */
+export function squireTurns(tier: AbilityTier): number {
+  if (tier === 1) return 6;
+  if (tier <= 3) return 9;
+  return 999;
+}
+
+/** T5: the Squire's move does not end the turn (once per turn). */
+export function squireMoveIsFree(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'summon-knight');
+  return !!owned && owned.tier === 5;
+}
+
+/** The living Squire, if any. */
+export function squireOf(state: BoardState): AllyPiece | null {
+  return (state.allies ?? []).find((a) => a.source === 'squire') ?? null;
+}
+
+/** Empty squares in the 8-neighbourhood of Rookie where a Squire may appear. */
+export function squireSpawnSquares(state: BoardState): Coord[] {
+  const out: Coord[] = [];
+  if (squireOf(state)) return out; // one Squire at a time
+  for (const [df, dr] of ALLY_QUEEN_DIRS) {
+    const f = state.rookie.file + df;
+    const r = state.rookie.rank + dr;
+    if (!allyInBounds(f, r)) continue;
+    if (allyIsHazard(state, f, r)) continue;
+    if (state.pieces.some((p) => p.file === f && p.rank === r)) continue;
+    if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) continue;
+    if ((state.drones ?? []).some((d) => d.alive && d.file === f && d.rank === r)) continue;
+    out.push({ file: f, rank: r });
+  }
+  return out;
+}
+
+function applySummonKnight(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'summon-knight');
+  if (!owned) return state;
+  if (owned.usesLeftThisLevel === 0) return state;
+  if (!squireSpawnSquares(state).some((c) => c.file === target.file && c.rank === target.rank)) {
+    return state;
+  }
+  const ally: AllyPiece = {
+    id: Date.now() + Math.random(),
+    type: 'knight',
+    file: target.file,
+    rank: target.rank,
+    source: 'squire',
+    turnsLeft: squireTurns(owned.tier),
+  };
+  return {
+    ...state,
+    allies: [...state.allies, ally],
+    abilities: decrementUse(state.abilities, 'summon-knight'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'summon-knight',
+      from: toSquare(state.rookie),
+      to: toSquare(target),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/** True when the player may move the Squire right now. */
+export function canMoveSquire(state: BoardState): boolean {
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.pendingOffer || state.activeAbility) return false;
+  if (!squireOf(state)) return false;
+  if (squireMoveIsFree(state) && state.squireMovedThisTurn) return false;
+  return true;
+}
+
+/**
+ * Squares the Squire may move to (knight jumps). Unlike AI allies it MAY
+ * land on the enemy king — that capture wins the level.
+ */
+export function squireLegalMoves(state: BoardState): Coord[] {
+  const sq = squireOf(state);
+  if (!sq) return [];
+  const out: Coord[] = [];
+  for (const [df, dr] of ALLY_KNIGHT_DELTAS) {
+    const f = sq.file + df;
+    const r = sq.rank + dr;
+    if (!allyInBounds(f, r)) continue;
+    if (allyIsHazard(state, f, r)) continue;
+    if (allyOccupied(state, f, r, sq)) continue;
+    out.push({ file: f, rank: r });
+  }
+  return out;
+}
+
+/**
+ * Move the Squire. T1–T4: this IS your move for the turn (one body per
+ * turn) — it ticks the move budget and hands off to the enemy exactly like
+ * a Rookie move. T5: free action, once per turn; Rookie still moves after.
+ */
+export function applySquireMove(state: BoardState, target: Coord): BoardState {
+  if (!canMoveSquire(state)) return state;
+  const sq = squireOf(state)!;
+  if (!squireLegalMoves(state).some((m) => m.file === target.file && m.rank === target.rank)) {
+    return state;
+  }
+  const captured = state.pieces.find((p) => p.file === target.file && p.rank === target.rank);
+  const targetSq = toSquare(target);
+  const statusOverlay = captured ? clearStatusOnSquare(state, targetSq) : null;
+  const clearDecoy = !!captured && state.decoyTarget === targetSq;
+  const gain = captured ? TEMPO_REWARD[captured.type] ?? 0 : 0;
+  const tempo = Math.min(tempoMaxFor(state), state.tempo + gain);
+  const allies = state.allies.map((a) =>
+    a === sq ? { ...a, file: target.file, rank: target.rank } : a,
+  );
+  const base: BoardState = {
+    ...state,
+    ...(statusOverlay ?? {}),
+    allies,
+    pieces: captured ? state.pieces.filter((p) => p !== captured) : state.pieces,
+    captures: captured ? [...state.captures, captured.type] : state.captures,
+    tempo,
+    decoyTarget: clearDecoy ? null : state.decoyTarget,
+    decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
+    cancellableActivation: undefined,
+    ...(captured ? stunKingAfterCapture(state) : {}),
+    ...ensureRewindTurnStart(state),
+  };
+
+  // Taking the king wins the level (the 'king' win condition).
+  if (captured?.type === 'king' && state.winCondition === 'king') {
+    return { ...base, status: 'won', turn: 'rookie' };
+  }
+
+  if (squireMoveIsFree(state)) {
+    return { ...base, squireMovedThisTurn: true };
+  }
+
+  // One body per turn: the Squire's move ends the turn like Rookie's would.
+  const nextMoveCount = state.moveCount + 1;
+  const hasBonus = state.bonusMovesLeft > 0;
+  const afterMove: BoardState = {
+    ...base,
+    moveCount: nextMoveCount,
+    bonusMovesLeft: hasBonus ? state.bonusMovesLeft - 1 : state.bonusMovesLeft,
+    turn: hasBonus ? 'rookie' : 'enemy',
+  };
+  if (afterMove.moveLimit !== null && nextMoveCount >= afterMove.moveLimit) {
+    return { ...afterMove, status: 'lost', turn: 'rookie' };
+  }
+  if (!hasBonus && allies.some((a) => a.source !== 'squire')) {
+    return { ...afterMove, turn: 'allies', allyTurnIndex: 0, enemyMovedSquares: [], enemyVacatedSquares: [] };
+  }
+  return { ...afterMove, enemyMovedSquares: [], enemyVacatedSquares: [] };
 }
 
 /**
@@ -2181,8 +2375,9 @@ export function stepAllyTurn(state: BoardState): BoardState {
   }
   const idx = state.allyTurnIndex;
   const ally = state.allies[idx];
-  // Ally either can't move or no longer exists — skip it.
-  if (!ally) {
+  // Ally either can't move or no longer exists — skip it. The Squire is
+  // player-controlled (see applySquireMove) and never moves on its own.
+  if (!ally || ally.source === 'squire') {
     return { ...state, allyTurnIndex: idx + 1 };
   }
   let moves = allyMoves(state, ally);

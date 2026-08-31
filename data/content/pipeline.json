@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "bishop-step",
+      "kind": "ability",
+      "name": "Bishop Step",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "knight-hop",
+      "kind": "ability",
+      "name": "Knight Hop",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "queen-pulse",
+      "kind": "ability",
+      "name": "Queen Pulse",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "become-king",
+      "kind": "ability",
+      "name": "Become King",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "freeze-ray",
+      "kind": "ability",
+      "name": "Freeze Ray",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "poison-dart",
+      "kind": "ability",
+      "name": "Poison Dart",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "rabies-dart",
+      "kind": "ability",
+      "name": "Rabies Dart",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "convert",
+      "kind": "ability",
+      "name": "Convert",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "squad",
+      "kind": "ability",
+      "name": "Squad",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "surge",
+      "kind": "ability",
+      "name": "Surge",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "aegis",
+      "kind": "ability",
+      "name": "Aegis",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "decoy",
+      "kind": "ability",
+      "name": "Decoy",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "boulder",
+      "kind": "ability",
+      "name": "Boulder",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "smoke",
+      "kind": "ability",
+      "name": "Smoke",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "rewind",
+      "kind": "ability",
+      "name": "Rewind",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "magnet",
+      "kind": "ability",
+      "name": "Magnet",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "bodyguard",
+      "kind": "ability",
+      "name": "Bodyguard",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "Shipped with Rookie's Revenge (2026-08-18).",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "drones",
+      "kind": "ability",
+      "name": "Drones",
+      "stage": "retired",
+      "created": "2026-08-18",
+      "notes": "Cut from Revenge before launch: a swarm does not fit a king-hunt. Stripped from saved profiles on load; no achievement unlocks it.",
+      "retired": {
+        "at": "2026-08-18",
+        "why": "A swarm does not fit a king-hunt (profile.ts RETIRED_ABILITIES)."
+      }
+    },
+    {
+      "id": "summon-knight",
+      "kind": "ability",
+      "name": "Squire",
+      "stage": "approved",
+      "created": "2026-08-31",
+      "notes": "A rainbow knight the player controls — a second body on the board. Built 2026-08-31; Tyler played it via ?loadout=summon-knight:5 and loved it, not formally approved yet. Candidate 4th starter.",
+      "approved": {
+        "at": "2026-08-31",
+        "by": "Tyler"
+      }
+    },
+    {
+      "id": "revenge-1",
+      "kind": "run",
+      "name": "Rookie's Revenge",
+      "stage": "live",
+      "created": "2026-08-18",
+      "notes": "The daily run. Rank 8 is just a row. Take the king.",
+      "approved": {
+        "at": "2026-08-18",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-08-18"
+      }
+    },
+    {
+      "id": "revenge-2",
+      "kind": "run",
+      "name": "Pawn Storm",
+      "stage": "testing",
+      "created": "2026-08-30",
+      "notes": "More pawns every level. Bodies, not brains. Drafted by revenge-generate.ts, hand-tuned.",
+      "testing": {
+        "lastRun": "2026-08-30",
+        "verdict": "HOLD",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 38% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+      }
+    },
+    {
+      "id": "revenge-3",
+      "kind": "run",
+      "name": "The Royal Guard",
+      "stage": "testing",
+      "created": "2026-08-30",
+      "notes": "Few pawns, heavy pieces. Every line is watched. Drafted by revenge-generate.ts, hand-tuned.",
+      "testing": {
+        "lastRun": "2026-08-30",
+        "verdict": "HOLD",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+      }
+    },
+    {
+      "id": "revenge-4",
+      "kind": "run",
+      "name": "The Fortress",
+      "stage": "testing",
+      "created": "2026-08-30",
+      "notes": "Walls make the room. Pawns make the door. Drafted by revenge-generate.ts, hand-tuned.",
+      "testing": {
+        "lastRun": "2026-08-30",
+        "verdict": "HOLD",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+      }
+    },
+    {
+      "id": "revenge-5",
+      "kind": "run",
+      "name": "Stonework",
+      "stage": "testing",
+      "created": "2026-08-30",
+      "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable — a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
+      "testing": {
+        "lastRun": "2026-08-30",
+        "verdict": "HOLD",
+        "summary": "L10: IMPOSSIBLE — 0% with every loadout (19 tried), stall/move-limit 69%, solver: no line, app fail-safe would fire (intentional system-check level); too hard — new player clears 0% on Normal (target 40-60%); beginners walled — new player clears only 0% on Rookie (need 70%+)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+      }
+    },
+    {
+      "id": "page",
+      "kind": "ability",
+      "name": "Page",
+      "stage": "idea",
+      "created": "2026-08-31",
+      "notes": "A controllable pawn. Walks forward, captures diagonally, promotes when it reaches the far rank."
+    },
+    {
+      "id": "twin",
+      "kind": "ability",
+      "name": "Twin",
+      "stage": "idea",
+      "created": "2026-08-31",
+      "notes": "A second controllable rook. Two Rookies, one board."
+    },
+    {
+      "id": "bishop-squire",
+      "kind": "ability",
+      "name": "Bishop Squire",
+      "stage": "idea",
+      "created": "2026-08-31",
+      "notes": "Squire variant: a rainbow bishop the player controls."
+    },
+    {
+      "id": "swap",
+      "kind": "ability",
+      "name": "Swap",
+      "stage": "idea",
+      "created": "2026-08-31",
+      "notes": "Trade places with your Squire — teleport through his square."
+    },
+    {
+      "id": "sacrifice",
+      "kind": "ability",
+      "name": "Sacrifice",
+      "stage": "idea",
+      "created": "2026-08-31",
+      "notes": "Squire explodes, capturing every enemy on his knight-squares."
+    }
+  ]
+}

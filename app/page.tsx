@@ -19,6 +19,8 @@ import { RunPickerModal } from '@/components/run/RunPickerModal';
 import { RookiesRevengeLogo } from '@/components/run/RookiesRevengeLogo';
 import { StcRunLogo } from '@/components/run/StcRunLogo';
 import { TempoBar } from '@/components/run/TempoBar';
+import { MusicMenu } from '@/components/run/MusicMenu';
+import { startMusicIfEnabled } from '@/lib/music';
 import { TrophyGlyph } from '@/components/run/AchievementToast';
 import { RunAchievementPop } from '@/components/achievements/RunAchievementPop';
 import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
@@ -43,6 +45,9 @@ import {
   applyAbilityCancel,
   applyAbilityMove,
   applyAbilityTargeted,
+  applySquireMove,
+  canMoveSquire,
+  squireOf,
   applyDismissOffer,
   applyOfferPick,
   convertTargets as computeConvertTargets,
@@ -60,7 +65,7 @@ import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } fr
 import {
   REVENGE_RUN_IDS,
   DEFAULT_RUN_ID,
-  getNextRunId,
+  getNextRevengeRunId,
   getRunById,
   isKnownRunId,
 } from '@/lib/run/runs';
@@ -306,6 +311,7 @@ export default function RookiesRunPage() {
       rewind: 800,
       magnet: 700,
       bodyguard: 600,
+      'summon-knight': 600,
     };
     const t = setTimeout(() => setAbilityFx(null), durations[abilityFx.kind]);
     return () => clearTimeout(t);
@@ -410,6 +416,7 @@ export default function RookiesRunPage() {
 
   const audioWarmedRef = useRef(false);
   const ensureAudioWarm = useCallback(() => {
+    startMusicIfEnabled(); // idempotent; retries play() if a prior attempt was refused
     if (audioWarmedRef.current) return;
     audioWarmedRef.current = true;
     warmupAudio();
@@ -852,7 +859,35 @@ export default function RookiesRunPage() {
         setSelectedSquare((cur) => (cur === square ? null : square));
         return;
       }
+      // Squire: the player's second body. Tap him to select, tap a knight
+      // square to move him (T1–T4 that IS the turn; T5 it's a free action).
+      const squire = squireOf(state);
+      const squireSquare = squire ? toSquare(squire) : null;
+      if (squireSquare && square === squireSquare && canMoveSquire(state)) {
+        setSelectedSquare((cur) => (cur === square ? null : square));
+        return;
+      }
       if (!selectedSquare) return;
+      if (squireSquare && selectedSquare === squireSquare) {
+        const target = fromSquare(square);
+        const next = applySquireMove(state, target);
+        if (next !== state) {
+          const grew = next.captures.length > state.captures.length;
+          recordEvent({
+            kind: 'squire-move',
+            level: state.level,
+            from: squireSquare,
+            to: square,
+            captured: grew ? next.captures[next.captures.length - 1] : null,
+            tempo: next.tempo,
+            enemyCount: next.pieces.length,
+          });
+          setState(next);
+          haptic('medium');
+        }
+        setSelectedSquare(null);
+        return;
+      }
 
       const target = fromSquare(square);
       const next = applyRookieMove(state, target);
@@ -1021,22 +1056,19 @@ export default function RookiesRunPage() {
     });
   }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
-  const goToNextRun = useCallback(() => {
-    // STC and regular runs are separate cycles — never advance across the line.
-    let nextRunId: string;
+  // STC and Revenge runs are separate cycles — never advance across the line.
+  // The non-STC cycle stays inside the player-facing Revenge pool: classic
+  // rank-8 runs must never be a "Next Run" destination (they are ?run= only).
+  const nextRunId = useMemo(() => {
     if (meta.runId.startsWith('stc-')) {
       const stcOrder = ['stc-king', 'stc-bishop', 'stc-pawn', 'stc-knight', 'stc-queen'];
       const i = stcOrder.indexOf(meta.runId);
-      nextRunId = stcOrder[(i + 1) % stcOrder.length];
-    } else {
-      // Walk the regular cycle, skipping any STC entry that sneaks in.
-      let candidate = getNextRunId(meta.runId);
-      let guard = 0;
-      while (candidate.startsWith('stc-') && guard++ < 50) {
-        candidate = getNextRunId(candidate);
-      }
-      nextRunId = candidate;
+      return stcOrder[(i + 1) % stcOrder.length] ?? meta.runId;
     }
+    return getNextRevengeRunId(meta.runId);
+  }, [meta.runId]);
+
+  const goToNextRun = useCallback(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('rookies-run-current', nextRunId);
       trackEvent('run_advanced', { from: meta.runId, to: nextRunId });
@@ -1046,7 +1078,7 @@ export default function RookiesRunPage() {
       return;
     }
     trackEvent('run_advanced', { from: meta.runId, to: nextRunId });
-  }, [meta.runId]);
+  }, [meta.runId, nextRunId]);
 
   const [showRunPicker, setShowRunPicker] = useState(false);
 
@@ -1234,6 +1266,7 @@ export default function RookiesRunPage() {
 
           <div className="flex flex-col items-end gap-1 shrink-0">
             <div className="flex items-center gap-1.5">
+            <MusicMenu />
             <button
               type="button"
               onClick={() => setShowTrophies(true)}
@@ -1409,7 +1442,9 @@ export default function RookiesRunPage() {
           filter={
             isStc
               ? (id: string) => id.startsWith('stc-')
-              : (id: string) => !id.startsWith('stc-')
+              : // Revenge surface: list ONLY player-facing Revenge runs — the
+                // classic rank-8 runs are ?run=-only and never shown/linked.
+                (id: string) => REVENGE_RUN_IDS.includes(id)
           }
           logo={isStc ? <StcRunLogo scale={0.5} /> : undefined}
           caption={isStc ? 'Five pieces, five mini-runs' : undefined}
@@ -1447,18 +1482,8 @@ export default function RookiesRunPage() {
           stats={stats}
           shareString={shareString}
           onReplay={resetRun}
-          nextRunName={getRunById(
-            isStc
-              ? (['stc-king', 'stc-bishop', 'stc-pawn', 'stc-knight', 'stc-queen'][
-                  (['stc-king', 'stc-bishop', 'stc-pawn', 'stc-knight', 'stc-queen'].indexOf(
-                    meta.runId,
-                  ) +
-                    1) %
-                    5
-                ] ?? meta.runId)
-              : getNextRunId(meta.runId),
-          ).name}
-          onNextRun={goToNextRun}
+          nextRunName={nextRunId !== meta.runId ? getRunById(nextRunId).name : undefined}
+          onNextRun={nextRunId !== meta.runId ? goToNextRun : undefined}
         />
       )}
     </div>

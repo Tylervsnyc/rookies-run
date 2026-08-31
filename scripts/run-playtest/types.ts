@@ -21,6 +21,8 @@ export type BotAction =
   | { kind: 'pick-offer'; optionIndex: 0 | 1 }
   | { kind: 'dismiss-offer' }
   | { kind: 'move'; target: Coord }
+  /** Move the player-controlled Squire knight (summon-knight). */
+  | { kind: 'squire-move'; target: Coord }
   | { kind: 'activate-ability'; abilityId: AbilityId }
   | { kind: 'ability-target'; abilityId: AbilityId; target: Coord };
 

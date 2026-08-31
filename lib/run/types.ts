@@ -54,7 +54,7 @@ export interface AllyPiece {
   type: AllyPieceType;
   file: number;
   rank: number;
-  source: 'squad' | 'convert' | 'bodyguard';
+  source: 'squad' | 'convert' | 'bodyguard' | 'squire';
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
    * end of each enemy turn; the ally dissolves when it hits 0. Absent =
@@ -217,7 +217,8 @@ export interface BoardState {
       | 'smoke'
       | 'rewind'
       | 'magnet'
-      | 'bodyguard';
+      | 'bodyguard'
+      | 'summon-knight';
     from: string;
     to: string;
     id: number;
@@ -297,6 +298,12 @@ export interface BoardState {
    * of a level); consumed by the Rewind ability.
    */
   rewindStack?: Array<BoardState | null>;
+  /**
+   * Squire (summon-knight) at T5 — the knight's move is a FREE action, once
+   * per Rookie turn. Set when the Squire moves without ending the turn;
+   * cleared when control comes back to Rookie after the enemy turn.
+   */
+  squireMovedThisTurn?: boolean;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {

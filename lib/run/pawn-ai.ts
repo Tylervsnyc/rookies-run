@@ -15,6 +15,7 @@
 
 import {
   allyAttackedSquares,
+  squireLegalMoves,
   clearStatusOnSquare,
   isSmoked,
   relocateStatusMarkers,
@@ -228,7 +229,9 @@ function kingFleeMove(
       (m) => m.file === kingPos.file && m.rank === kingPos.rank,
     ) ||
     // Nightmare: he also reads the rainbow allies' lines as a threat.
-    (kingReactsToAllies(state) && !!allyCover && allyCover.has(toSquare(kingPos)));
+    (kingReactsToAllies(state) && !!allyCover && allyCover.has(toSquare(kingPos))) ||
+    // The Squire (player-controlled knight) CAN take him — he always fears it.
+    squireLegalMoves(state).some((m) => m.file === kingPos.file && m.rank === kingPos.rank);
   if (!threatened) return null;
   const vacated = vacatedSet(state);
   const pen = state.kingPen ? new Set(state.kingPen) : null;
@@ -1059,6 +1062,7 @@ export function stepEnemyTurn(state: BoardState): BoardState {
       tempo,
       allies: nextAllies,
       ...smokePatch,
+      squireMovedThisTurn: false,
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,

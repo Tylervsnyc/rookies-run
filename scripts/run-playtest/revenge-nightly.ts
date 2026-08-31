@@ -83,6 +83,7 @@ import {
   type Sample,
 } from './revenge-analysis';
 import { MODES, renderDigest, renderSlack, type DigestInput, type HumanSummary, type ModeBlock, type RunReport } from './revenge-digest';
+import { readPipelineSummary, updatePipelineFromReports } from './revenge-pipeline';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Args
@@ -560,9 +561,25 @@ async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
     verdicts: reports.map((r) => ({ runId: r.runId, candidate: r.candidate, ...r.verdict })),
   });
 
+  // Content pipeline: write tonight's verdicts into data/content/pipeline.json
+  // (runs + abilities in `testing`), flip approved → live, summarize for the
+  // digest. A --render-only pass reads without writing.
+  const digestRelPath = `data/run-playtest/revenge/digests/${ctx.date}.md`;
+  let pipeline = readPipelineSummary(ctx.date);
+  if (!opts.renderOnly) {
+    try {
+      const upd = updatePipelineFromReports(reports, ctx.date, digestRelPath);
+      pipeline = upd.summary;
+      log(`pipeline: graded ${upd.graded.join(', ') || 'nothing'}${upd.wentLive.length ? `; went live: ${upd.wentLive.join(', ')}` : ''}`);
+    } catch (err) {
+      caveats.push(`Content pipeline update failed: ${(err as Error).message}`);
+    }
+  }
+
   const input: DigestInput = {
     date: ctx.date,
     quick: ctx.quick,
+    pipeline,
     wallSeconds: ctx.wallSeconds,
     trials: { realistic: opts.live.trials, mode: opts.live.modeTrials, runs: opts.live.runs, solveDepth: opts.solveDepth, solveNodes: opts.solveNodes, experiment: opts.expTrials },
     runs: reports.map(({ modeFeatures: _mf, ...r }) => r),

@@ -19,6 +19,7 @@ import {
   applyAbilityActivate,
   applyAbilityMove,
   applyAbilityTargeted,
+  applySquireMove,
   stepDroneTurn,
 } from '../../../lib/run/abilities';
 import { applyRookieMove } from '../../../lib/run/engine';
@@ -30,6 +31,9 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
   switch (action.kind) {
     case 'move':
       return applyRookieMove(state, action.target);
+
+    case 'squire-move':
+      return applySquireMove(state, action.target);
 
     case 'activate-ability': {
       let next = applyAbilityActivate(state, action.abilityId);

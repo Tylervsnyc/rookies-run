@@ -10,6 +10,7 @@
  */
 
 import { DAILY_LEVELS } from './daily-levels';
+import { isPlayerFacing, stageOf } from '../content/pipeline';
 import type {
   Coord,
   EnemyPiece,
@@ -52,6 +53,12 @@ export interface RunDef {
    */
   offerCore?: ReadonlyArray<string>;
   offerCoreMin?: number;
+  /**
+   * Sandbox runs: offer everything in `allowedAbilities` regardless of the
+   * player's unlock progress (meta-progression normally hides un-earned
+   * abilities). For playtesting new abilities, never for shipped runs.
+   */
+  ignoreUnlocks?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -3937,10 +3944,13 @@ const FLEE = { ...KING_GOAL, kingBehavior: 'flee' as const };
 const X = (file: number, rank: number): Coord => ({ file, rank });
 
 /**
- * The 10 king-catching tools offered in Rookie's Revenge. See
- * docs/revenge-abilities.md for the "why it catches kings" notes.
+ * Every ability the Revenge system knows about, whatever its pipeline stage.
+ * The nightly harness sweeps the built ones (testing/approved/live); real
+ * players only ever see `REVENGE_ABILITIES` below. See
+ * docs/revenge-abilities.md for the "why it catches kings" notes and
+ * docs/content-pipeline.md for the stages.
  */
-export const REVENGE_ABILITIES: ReadonlyArray<string> = [
+export const REVENGE_ABILITY_CATALOG: ReadonlyArray<string> = [
   'surge',
   'freeze-ray',
   'knight-hop',
@@ -3962,7 +3972,16 @@ export const REVENGE_ABILITIES: ReadonlyArray<string> = [
   'rewind',
   'magnet',
   'bodyguard',
+  // Squire (2026-08-31): a rainbow knight the player controls — a second body.
+  'summon-knight',
 ];
+
+/**
+ * The offer pool real players draw from: catalog ∩ (approved | live) in
+ * `data/content/pipeline.json`. Content in `testing` is NOT here — it stays
+ * reachable through `?loadout=<id>:<tier>` (dev parity hook) only.
+ */
+export const REVENGE_ABILITIES: ReadonlyArray<string> = REVENGE_ABILITY_CATALOG.filter((id) => isPlayerFacing(id));
 
 /**
  * The FINISHERS — abilities that take the king directly (extra move, pin,
@@ -4140,8 +4159,9 @@ const RUN_REVENGE_1: RunDef = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Rookie's Revenge — CANDIDATE runs (2026-08-30). Hidden (HIDDEN_RUNS +
-// REVENGE_CANDIDATE_RUN_IDS) until Tyler signs off. Direction: difficulty
+// Rookie's Revenge — CANDIDATE runs (2026-08-30). Stage `testing` in
+// data/content/pipeline.json (hidden from the daily pool + picker, loadable
+// via ?run=) until Tyler approves them there. Direction: difficulty
 // comes from the NUMBER OF PIECES (shells, defenders, hunters, marchers);
 // walls/pens are the secondary flavour. Every level was drafted by
 // scripts/run-playtest/revenge-generate.ts and then tuned by hand against
@@ -4807,22 +4827,105 @@ const RUN_REVENGE_5: RunDef = {
   ],
 };
 
-/** Runs reachable ONLY by explicit id (/?run=...) — never listed anywhere. */
-const HIDDEN_RUNS: ReadonlyArray<RunDef> = [RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5];
+// ─────────────────────────────────────────────────────────────────────────────
+// ABILITY LAB (2026-08-31) — hidden sandbox for playtesting the newest support
+// abilities (Boulder / Smoke / Rewind / Magnet / Bodyguard / Squire) with the
+// gameplay music. Reach via /?run=ability-lab. 3 short flee levels, a free
+// 3-card offer before EVERY level, unlock gating OFF. NOT tuned by the harness —
+// it's a toy box, not a run. Delete or promote once the abilities are signed off.
+
+const LAB_ABILITIES: ReadonlyArray<string> = [
+  'boulder',
+  'smoke',
+  'rewind',
+  'magnet',
+  'bodyguard',
+  'summon-knight', // dev sandbox: testing-stage content is fair game here
+  // two finishers so a slate can't brick the run
+  'surge',
+  'knight-hop',
+];
+
+const RUN_ABILITY_LAB: RunDef = {
+  id: 'ability-lab',
+  name: 'Ability Lab',
+  blurb: 'New toys. Loud music. Take the king.',
+  allowedAbilities: LAB_ABILITIES,
+  ignoreUnlocks: true,
+  offerEveryLevel: true,
+  offerSize: 3,
+  offerCore: LAB_ABILITIES.filter((id) => id !== 'surge' && id !== 'knight-hop'),
+  offerCoreMin: 2,
+  levels: [
+    // L1 — DRAWBRIDGE. King penned in the h8 corner behind a wall on the
+    // f-file. A bishop on b2 owns the long diagonal into g7. Boulder a square
+    // on that diagonal (or Magnet the bishop) and the pen is yours.
+    make(
+      1,
+      [bishop(2, 2), pawn(7, 6), pawn(4, 5), king(8, 8)],
+      {
+        ...FLEE,
+        hazards: [X(6, 8), X(6, 7), X(6, 6)],
+        kingPen: ['g8', 'h8', 'g7', 'h7'],
+      },
+    ),
+    // L2 — GALLERY. King roams a 3-wide room c8-e8 / c7-e7 hunted by two
+    // knights. Smoke to slip past the hunters; Squire gives you a second
+    // body to cover an escape square while the rook closes.
+    make(
+      2,
+      [knight(3, 4), knight(6, 5), pawn(2, 5), pawn(7, 4), king(4, 8)],
+      {
+        ...FLEE,
+        hazards: [X(2, 8), X(6, 8), X(2, 7), X(6, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L3 — CLOCK TOWER. 10-move limit, a queen prowling. A misstep costs the
+    // level — unless you Rewind it. Bodyguard soaks the queen's tempo.
+    make(
+      3,
+      [queen(1, 3), pawn(4, 6), pawn(5, 6), pawn(3, 5), king(4, 8)],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [X(2, 8), X(6, 8), X(2, 7), X(6, 7), X(3, 7), X(5, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'd7'],
+      },
+    ),
+  ],
+};
+
+/**
+ * Every Rookie's Revenge run that exists in code, whatever its pipeline
+ * stage. Which of these real players see is decided in ONE place:
+ * `data/content/pipeline.json` (stage approved|live = player-facing).
+ */
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5];
+
+/** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
+const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));
+
+/**
+ * Runs reachable ONLY by explicit id (/?run=...) — never listed anywhere:
+ * Revenge runs not yet approved (or retired) plus the ability-lab sandbox.
+ */
+const HIDDEN_RUNS: ReadonlyArray<RunDef> = [...REVENGE_RUN_CATALOG.filter((r) => !isPlayerFacing(r.id)), RUN_ABILITY_LAB];
 
 /**
  * Rookie's Revenge runs — THE game. Daily rotation cycles these only; the
  * classic rank-8 runs below stay playable from the picker / ?run= as
  * "Classic" but are not in the daily pool.
  */
-export const REVENGE_RUN_IDS: ReadonlyArray<string> = ['revenge-1'];
+export const REVENGE_RUN_IDS: ReadonlyArray<string> = REVENGE_RUNS.map((r) => r.id);
 
 /**
- * Revenge runs still in playtest — reachable ONLY via `?run=<id>` (HIDDEN_RUNS),
- * never in the daily pool. The nightly harness sweeps these alongside
- * REVENGE_RUN_IDS; promote an id into REVENGE_RUN_IDS once Tyler signs off.
+ * Revenge runs still in playtest (stage `testing` in the registry) —
+ * reachable ONLY via `?run=<id>`, never in the daily pool. The nightly
+ * harness sweeps these alongside REVENGE_RUN_IDS and writes its verdict
+ * back to the registry; `npx tsx scripts/pipeline.ts approve <id>` promotes.
  */
-export const REVENGE_CANDIDATE_RUN_IDS: ReadonlyArray<string> = ['revenge-2', 'revenge-3', 'revenge-4', 'revenge-5'];
+export const REVENGE_CANDIDATE_RUN_IDS: ReadonlyArray<string> = REVENGE_RUN_CATALOG.filter((r) => stageOf(r.id) === 'testing').map((r) => r.id);
 
 export const STC_RUN_IDS = [
   'stc-king',
@@ -4833,7 +4936,7 @@ export const STC_RUN_IDS = [
 ] as const;
 
 export const RUNS: ReadonlyArray<RunDef> = [
-  RUN_REVENGE_1,
+  ...REVENGE_RUNS,
   RUN_DAILY,
   RUN_ABILITIES_V2,
   RUN_KNIGHT_ACADEMY,
@@ -4892,7 +4995,16 @@ export function getRunIndex(id: string): number {
   return i < 0 ? 0 : i;
 }
 
-export function getNextRunId(id: string): string {
-  const i = getRunIndex(id);
-  return RUNS[(i + 1) % RUNS.length].id;
+/**
+ * Next run after `id` in the player-facing Rookie's Revenge rotation.
+ * The cycle NEVER leaves the Revenge pool — classic rank-8 runs are
+ * reachable only via an explicit `?run=` URL, so "Next Run" from a finished
+ * run must not land on one. An unknown/classic/hidden id wraps to the first
+ * Revenge run. When only one Revenge run is live this returns `id` itself —
+ * callers hide the "Next Run" CTA in that case (Replay covers it).
+ */
+export function getNextRevengeRunId(id: string): string {
+  if (REVENGE_RUN_IDS.length === 0) return DEFAULT_RUN_ID;
+  const i = REVENGE_RUN_IDS.indexOf(id);
+  return REVENGE_RUN_IDS[(i + 1) % REVENGE_RUN_IDS.length];
 }

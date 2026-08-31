@@ -1,4 +1,4 @@
-# Rookie's Revenge — the king-catching abilities (v3: 15 in the pool)
+# Rookie's Revenge — the king-catching abilities (v3: 15 in the pool + Squire behind a flag)
 
 Hidden run `revenge-1` (`/?run=revenge-1`). Win condition: **capture the
 enemy king**. A lone rook can never catch a fleeing king — abilities are the point.
@@ -68,6 +68,7 @@ mental model. Bot win % is the T6 MCTS bot at **T1**, worst level in L3–L10
 | 13 | **Rewind** | Undo the last full turn (her move + the enemy reply); 1/1/2/2/3 uses; charges stay spent, tempo stays | A take-back for the flee you didn't see. Bots never cast it (harness has no "that went badly" signal) so its column = `none`. | n/a (bots skip it) |
 | 14 | **Magnet** | Pull an enemy on her current form's line 2 / 3 / 3 / any / any squares toward her; 1/1/2/2/2 uses; never the king | Yank the guard OFF the king's line (or into her range) without moving; a pulled piece next to her is not auto-captured — take it next move for the stun. | 40% (L10; 73–80% L6–L9; 97–100% L3–L5) |
 | 15 | **Bodyguard** | Rainbow ROOK ally beside her for 2 / 2 / 3 / 3 / level enemy turns; 1/1/2/2/1 uses | A real piece: blocks a hunter's line, its rook lines are squares the king won't step on, and it captures (capture-stun) — it holds her side and only moves to take something. | 53% (L10; ≥93% elsewhere) |
+| 16 | **Squire** (`summon-knight`, flag `SUMMON_KNIGHT_ENABLED`) | Rainbow KNIGHT you control, placed beside her; lasts 6 / 9 / 9 / level / level enemy turns; 1/1/2/2/2 uses; T5 = his move is FREE (move him AND her every turn) | A second body. T1–T4 you move Rookie OR the Squire each turn (his move ticks the budget like hers). He blocks lines, enemies hunt him (captured = gone), the king flees his threat and won't step on his squares, and he CAN take the king. Starter kit while flagged. | 75% (L10; 83% L8–L9, ≥92% elsewhere; bot casts on L5+) |
 
 The v3 five (2026-08-18) were tuned once from the first sweep: Boulder T1 1→2
 placements, Magnet T1 pull 1→2, Bodyguard T1 1→2 turns (each lifted L6–L9 by

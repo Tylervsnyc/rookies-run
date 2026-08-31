@@ -219,6 +219,7 @@ export function actionHighlights(
   beforeBoard: SerializedBoard,
   action:
     | { kind: 'move'; target: { file: number; rank: number } }
+    | { kind: 'squire-move'; target: { file: number; rank: number } }
     | { kind: 'ability-target'; abilityId: AbilityId; target: { file: number; rank: number } }
     | { kind: 'activate-ability'; abilityId: AbilityId }
     | { kind: 'pick-offer'; optionIndex: 0 | 1 }
@@ -235,6 +236,9 @@ export function actionHighlights(
         from: toSquare(beforeBoard.rookie),
         to: toSquare(action.target),
       };
+    case 'squire-move':
+      // The Squire's own square isn't in the serialized board — light the target.
+      return { from: null, to: toSquare(action.target) };
     case 'activate-ability':
       // No spatial move — just light up Rookie's square as the focus.
       return { from: toSquare(beforeBoard.rookie), to: null };
