@@ -10,7 +10,7 @@ import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
-import { DeskLanding } from '@/components/run/DeskLanding';
+import { HomeLanding } from '@/components/run/HomeLanding';
 import { submitScore } from '@/lib/run/leaderboard-client';
 import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
@@ -444,16 +444,23 @@ export default function RookiesRunPage() {
   }, [meta.iso]);
 
   const resetRunRef = useRef<() => void>(() => {});
-  const dismissIntro = useCallback(() => {
+  // Optionally starts under a specific difficulty (HomeLanding's Daily GO and
+  // Ladder rows pick one in the same gesture). Persist BEFORE resetting so
+  // freshRun's readProfile() builds the board under the new mode.
+  const dismissIntro = useCallback((d?: DifficultyId) => {
     ensureAudioWarm();
     if (typeof window !== 'undefined') {
       localStorage.setItem(`rookies-run-intro-seen:${meta.iso}`, '1');
     }
-    // The board was built at mount from the profile; if the picker changed
-    // the mode since, rebuild the run under the new difficulty.
-    if ((state.difficulty ?? 'normal') !== difficulty) resetRunRef.current();
+    const target = d ?? difficulty;
+    if (d && d !== difficulty && !isDifficultyLocked(d, readProfile())) {
+      persistDifficulty(d);
+      setDifficultyState(d);
+    }
+    // The board was built at mount from the profile; rebuild if the mode changed.
+    if ((state.difficulty ?? 'normal') !== target) resetRunRef.current();
     setShowIntro(false);
-    trackEvent('run_intro_dismissed', { iso: meta.iso, difficulty });
+    trackEvent('run_intro_dismissed', { iso: meta.iso, difficulty: target });
   }, [meta.iso, ensureAudioWarm, state.difficulty, difficulty]);
 
   const onDifficultyChange = useCallback(
@@ -1220,18 +1227,13 @@ export default function RookiesRunPage() {
             onDifficultyChange={isStc ? undefined : onDifficultyChange}
           />
         ) : (
-          <DeskLanding
+          <HomeLanding
             onStart={dismissIntro}
             iso={meta.iso}
             runId={meta.runId}
-            runName={runDef.name}
-            totalLevels={totalLevels}
-            powerLevels={runDef.offerOnLevels}
             dateLabel={dateLabel}
             profile={progress.profile}
             onTrophies={() => setShowTrophies(true)}
-            difficulty={difficulty}
-            onDifficultyChange={onDifficultyChange}
           />
         )}
         {showTrophies && (
