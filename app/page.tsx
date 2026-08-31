@@ -10,6 +10,8 @@ import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
+import { DeskLanding } from '@/components/run/DeskLanding';
+import { submitScore } from '@/lib/run/leaderboard-client';
 import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
@@ -1125,7 +1127,19 @@ export default function RookiesRunPage() {
       completed: runComplete,
     });
     setHistoryVersion((v) => v + 1);
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, levelReached, totalLevels]);
+    // Global daily board (anonymous handle). Fails soft; never blocks the game.
+    if (!isStc) {
+      void submitScore({
+        runDate: meta.iso,
+        runId: meta.runId,
+        difficulty: state.difficulty ?? 'normal',
+        levelsCleared: runComplete ? totalLevels : Math.max(0, levelReached - 1),
+        totalLevels,
+        captures: state.captures.length,
+        completed: runComplete,
+      });
+    }
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, levelReached, totalLevels, isStc, state.difficulty, state.captures.length]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 
@@ -1163,15 +1177,31 @@ export default function RookiesRunPage() {
     })();
     return (
       <div className="h-full overflow-auto">
-        <RunLanding
-          onStart={dismissIntro}
-          tagline={isStc ? 'Powered by the Story Time Chess method' : undefined}
-          dateLabel={dateLabel}
-          profile={progress.profile}
-          onTrophies={() => setShowTrophies(true)}
-          difficulty={isStc ? undefined : difficulty}
-          onDifficultyChange={isStc ? undefined : onDifficultyChange}
-        />
+        {isStc || process.env.NEXT_PUBLIC_HOME_CLASSIC === '1' ? (
+          <RunLanding
+            onStart={dismissIntro}
+            tagline={isStc ? 'Powered by the Story Time Chess method' : undefined}
+            dateLabel={dateLabel}
+            profile={progress.profile}
+            onTrophies={() => setShowTrophies(true)}
+            difficulty={isStc ? undefined : difficulty}
+            onDifficultyChange={isStc ? undefined : onDifficultyChange}
+          />
+        ) : (
+          <DeskLanding
+            onStart={dismissIntro}
+            iso={meta.iso}
+            runId={meta.runId}
+            runName={runDef.name}
+            totalLevels={totalLevels}
+            powerLevels={runDef.offerOnLevels}
+            dateLabel={dateLabel}
+            profile={progress.profile}
+            onTrophies={() => setShowTrophies(true)}
+            difficulty={difficulty}
+            onDifficultyChange={onDifficultyChange}
+          />
+        )}
         {showTrophies && (
           <TrophyRoom
             profile={progress.profile}
