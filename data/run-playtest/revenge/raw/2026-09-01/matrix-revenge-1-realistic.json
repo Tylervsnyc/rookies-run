@@ -26,7 +26,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 2.75
+   "avgMoves": 2.5
   },
   {
    "level": 1,
@@ -62,7 +62,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 2.5
+   "avgMoves": 2.75
   },
   {
    "level": 1,
@@ -86,7 +86,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 2.5
+   "avgMoves": 2.75
   },
   {
    "level": 2,
@@ -110,7 +110,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 2.25
+   "avgMoves": 2.75
   },
   {
    "level": 2,
@@ -122,7 +122,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 3
+   "avgMoves": 2.5
   },
   {
    "level": 2,
@@ -134,7 +134,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 3
+   "avgMoves": 2.75
   },
   {
    "level": 2,
@@ -146,7 +146,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 2.25
+   "avgMoves": 2.5
   },
   {
    "level": 3,
@@ -158,7 +158,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 3
+   "avgMoves": 2.5
   },
   {
    "level": 3,
@@ -170,11 +170,59 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 3
+   "avgMoves": 2.75
   },
   {
    "level": 3,
    "loadout": "knight-hop",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 0,
+   "avgMoves": 3
+  },
+  {
+   "level": 3,
+   "loadout": "none",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 0,
+   "avgMoves": 3
+  },
+  {
+   "level": 3,
+   "loadout": "queen-pulse",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 0,
+   "avgMoves": 3
+  },
+  {
+   "level": 3,
+   "loadout": "surge",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 0,
+   "avgMoves": 3
+  },
+  {
+   "level": 4,
+   "loadout": "bishop-step",
    "trials": 4,
    "wins": 4,
    "captured": 0,
@@ -182,55 +230,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 1,
-   "avgMoves": 2.5
-  },
-  {
-   "level": 3,
-   "loadout": "none",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 0,
-   "avgMoves": 2.75
-  },
-  {
-   "level": 3,
-   "loadout": "queen-pulse",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 0,
-   "avgMoves": 3
-  },
-  {
-   "level": 3,
-   "loadout": "surge",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 0,
-   "avgMoves": 3
-  },
-  {
-   "level": 4,
-   "loadout": "bishop-step",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 1,
-   "avgMoves": 2.5
+   "avgMoves": 2.25
   },
   {
    "level": 4,
@@ -266,7 +266,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 2.75
+   "avgMoves": 3
   },
   {
    "level": 4,
@@ -290,7 +290,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 3
+   "avgMoves": 2.75
   },
   {
    "level": 5,
@@ -302,7 +302,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3
+   "avgMoves": 2.5
   },
   {
    "level": 5,
@@ -314,7 +314,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.25
+   "avgMoves": 5.75
   },
   {
    "level": 5,
@@ -332,13 +332,13 @@
    "level": 5,
    "loadout": "none",
    "trials": 4,
-   "wins": 4,
+   "wins": 3,
    "captured": 0,
    "stall": 0,
-   "moveLimit": 0,
+   "moveLimit": 1,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 8
+   "avgMoves": 10
   },
   {
    "level": 5,
@@ -362,82 +362,10 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 4
-  },
-  {
-   "level": 6,
-   "loadout": "bishop-step",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 3.5
-  },
-  {
-   "level": 6,
-   "loadout": "freeze-ray",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 4
-  },
-  {
-   "level": 6,
-   "loadout": "knight-hop",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
    "avgMoves": 4.75
   },
   {
    "level": 6,
-   "loadout": "none",
-   "trials": 4,
-   "wins": 2,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 2,
-   "deadEnd": 0,
-   "usedAbility": 0,
-   "avgMoves": 10.5
-  },
-  {
-   "level": 6,
-   "loadout": "queen-pulse",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 3
-  },
-  {
-   "level": 6,
-   "loadout": "surge",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 4.5
-  },
-  {
-   "level": 7,
    "loadout": "bishop-step",
    "trials": 4,
    "wins": 4,
@@ -446,71 +374,11 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.75
+   "avgMoves": 2.5
   },
   {
-   "level": 7,
+   "level": 6,
    "loadout": "freeze-ray",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 4.5
-  },
-  {
-   "level": 7,
-   "loadout": "knight-hop",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 3
-  },
-  {
-   "level": 7,
-   "loadout": "none",
-   "trials": 4,
-   "wins": 3,
-   "captured": 1,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 0,
-   "avgMoves": 9.25
-  },
-  {
-   "level": 7,
-   "loadout": "queen-pulse",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 4.5
-  },
-  {
-   "level": 7,
-   "loadout": "surge",
-   "trials": 4,
-   "wins": 4,
-   "captured": 0,
-   "stall": 0,
-   "moveLimit": 0,
-   "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 3.5
-  },
-  {
-   "level": 8,
-   "loadout": "bishop-step",
    "trials": 4,
    "wins": 4,
    "captured": 0,
@@ -521,6 +389,138 @@
    "avgMoves": 5
   },
   {
+   "level": 6,
+   "loadout": "knight-hop",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 5
+  },
+  {
+   "level": 6,
+   "loadout": "none",
+   "trials": 4,
+   "wins": 1,
+   "captured": 1,
+   "stall": 0,
+   "moveLimit": 2,
+   "deadEnd": 0,
+   "usedAbility": 0,
+   "avgMoves": 8.5
+  },
+  {
+   "level": 6,
+   "loadout": "queen-pulse",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 3.25
+  },
+  {
+   "level": 6,
+   "loadout": "surge",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 3.75
+  },
+  {
+   "level": 7,
+   "loadout": "bishop-step",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 3.5
+  },
+  {
+   "level": 7,
+   "loadout": "freeze-ray",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 4
+  },
+  {
+   "level": 7,
+   "loadout": "knight-hop",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 2.75
+  },
+  {
+   "level": 7,
+   "loadout": "none",
+   "trials": 4,
+   "wins": 1,
+   "captured": 2,
+   "stall": 0,
+   "moveLimit": 1,
+   "deadEnd": 0,
+   "usedAbility": 0,
+   "avgMoves": 8.5
+  },
+  {
+   "level": 7,
+   "loadout": "queen-pulse",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 3,
+   "avgMoves": 3
+  },
+  {
+   "level": 7,
+   "loadout": "surge",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 4.5
+  },
+  {
+   "level": 8,
+   "loadout": "bishop-step",
+   "trials": 4,
+   "wins": 4,
+   "captured": 0,
+   "stall": 0,
+   "moveLimit": 0,
+   "deadEnd": 0,
+   "usedAbility": 4,
+   "avgMoves": 3.5
+  },
+  {
    "level": 8,
    "loadout": "freeze-ray",
    "trials": 4,
@@ -530,7 +530,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 6.5
+   "avgMoves": 4.5
   },
   {
    "level": 8,
@@ -542,19 +542,19 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 7.5
+   "avgMoves": 5.75
   },
   {
    "level": 8,
    "loadout": "none",
    "trials": 4,
-   "wins": 0,
-   "captured": 1,
+   "wins": 1,
+   "captured": 0,
    "stall": 0,
    "moveLimit": 3,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 12.25
+   "avgMoves": 11.75
   },
   {
    "level": 8,
@@ -566,7 +566,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 4.25
+   "avgMoves": 3.75
   },
   {
    "level": 8,
@@ -590,7 +590,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.5
+   "avgMoves": 4.75
   },
   {
    "level": 9,
@@ -602,7 +602,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.75
+   "avgMoves": 4.5
   },
   {
    "level": 9,
@@ -614,7 +614,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.5
+   "avgMoves": 3
   },
   {
    "level": 9,
@@ -638,7 +638,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.5
+   "avgMoves": 4
   },
   {
    "level": 9,
@@ -650,7 +650,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 4
+   "avgMoves": 3.25
   },
   {
    "level": 10,
@@ -662,7 +662,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 4.75
+   "avgMoves": 7
   },
   {
    "level": 10,
@@ -674,31 +674,31 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 10.5
+   "avgMoves": 8
   },
   {
    "level": 10,
    "loadout": "knight-hop",
    "trials": 4,
-   "wins": 4,
+   "wins": 3,
    "captured": 0,
    "stall": 0,
-   "moveLimit": 0,
+   "moveLimit": 1,
    "deadEnd": 0,
-   "usedAbility": 4,
-   "avgMoves": 8.5
+   "usedAbility": 3,
+   "avgMoves": 14.75
   },
   {
    "level": 10,
    "loadout": "none",
    "trials": 4,
-   "wins": 1,
-   "captured": 0,
+   "wins": 0,
+   "captured": 1,
    "stall": 0,
    "moveLimit": 3,
    "deadEnd": 0,
    "usedAbility": 0,
-   "avgMoves": 18
+   "avgMoves": 16.5
   },
   {
    "level": 10,
@@ -710,7 +710,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 7.25
+   "avgMoves": 4
   },
   {
    "level": 10,
@@ -722,7 +722,7 @@
    "moveLimit": 0,
    "deadEnd": 0,
    "usedAbility": 4,
-   "avgMoves": 3.75
+   "avgMoves": 4
   }
  ]
 }

@@ -1,47 +1,25 @@
 [
  {
-  "id": "2026-09-01:revenge-1:L8:move-limit:none",
+  "id": "2026-09-01:revenge-1:L5:remove-piece:none",
   "runId": "revenge-1",
-  "level": 8,
-  "mutation": {
-   "kind": "move-limit",
-   "delta": 2
-  },
-  "loadout": "none",
-  "predictedDelta": 34,
-  "predictedPct": 34,
-  "baselinePct": 0,
-  "predictionSource": "mode-slope",
-  "text": "L8: raise the move budget by 2 → no-ability win goes 0% → about 34%",
-  "why": "L8 no-ability is 0%, too hard for its band (35-65%). The move budget is the cleanest knob.",
-  "date": "2026-09-01",
-  "quick": true,
-  "trials": 5,
-  "actualPct": 20,
-  "actualDelta": 20,
-  "verdict": "inconclusive"
- },
- {
-  "id": "2026-09-01:revenge-1:L6:remove-piece:none",
-  "runId": "revenge-1",
-  "level": 6,
+  "level": 5,
   "mutation": {
    "kind": "remove-piece",
-   "square": "b5",
+   "square": "g5",
    "piece": "bishop"
   },
   "loadout": "none",
   "predictedDelta": 8,
-  "predictedPct": 58,
-  "baselinePct": 50,
+  "predictedPct": 83,
+  "baselinePct": 75,
   "predictionSource": "regression",
-  "text": "L6: remove the bishop on b5 → no-ability win goes 50% → about 58%",
-  "why": "L6 sits mid-curve (50%); removing its closest hunter (bishop b5) measures one piece's worth.",
+  "text": "L5: remove the bishop on g5 → no-ability win goes 75% → about 83%",
+  "why": "L5 sits mid-curve (75%); removing its closest hunter (bishop g5) measures one piece's worth.",
   "date": "2026-09-01",
   "quick": true,
   "trials": 5,
   "actualPct": 80,
-  "actualDelta": 30,
-  "verdict": "falsified"
+  "actualDelta": 5,
+  "verdict": "confirmed"
  }
 ]

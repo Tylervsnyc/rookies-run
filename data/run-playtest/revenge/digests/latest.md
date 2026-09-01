@@ -1,11 +1,11 @@
 # Rookie's Revenge — Morning Report
 
-**Date:** 2026-09-01 · **Mode:** quick smoke (few trials — numbers are rough) · **Wall time:** 1.7 min
+**Date:** 2026-09-01 · **Mode:** quick smoke (few trials — numbers are rough) · **Wall time:** 2.0 min
 **Bot:** T5 MCTS · **Live run:** 4 trials per cell at realistic tiers, 3 per difficulty mode, 4 full runs per mode · **Experiments:** 5 trials · candidates run lighter (see each run)
 
 ## Headline
 
-Rookie's Revenge: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +35 points (no-ability averages 65%, finishers 100%). Weak finishers: freeze-ray 75% on L10. Zero stalls. Pawn Storm: a new player (3 starters) clears the run 80% of the time on Normal and 98% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 93% / 100%. Powers carry you by +27 points (no-ability averages 71%, finishers 97%). Weak finishers: freeze-ray 28% on L10. 1 stall (king unreachable — look at this first). The Royal Guard: a new player (3 starters) clears the run 98% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 95% / 100%. Powers carry you by +34 points (no-ability averages 64%, finishers 98%). Weak finishers: freeze-ray 75% on L8. Zero stalls. The Fortress: a new player (3 starters) clears the run 95% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 95% / 100%. Powers carry you by +26 points (no-ability averages 73%, finishers 98%). Zero stalls. Stonework: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +23 points (no-ability averages 77%, finishers 100%). Zero stalls. Two Keys: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +28 points (no-ability averages 72%, finishers 99%). Zero stalls. Versus last night: 207 cells moved more than 15 points since 2026-08-30 (biggest: L10 aegis 0→100% [realistic]; L10 become-king 0→100% [realistic]); 1 NEW stall; L8 left its band (35→0%, too hard), L9 left its band (25→0%, too hard). Ran 2 experiments on level tweaks: 0 predictions confirmed, 1 falsified. No candidate runs in the queue tonight. 34 human runs on revenge-1 since 2026-08-02, 14 won.
+Rookie's Revenge: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +44 points (no-ability averages 55%, finishers 99%). Weak finishers: freeze-ray 75% on L10. Zero stalls. Pawn Storm: a new player (3 starters) clears the run 80% of the time on Normal and 98% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 93% / 100%. Powers carry you by +27 points (no-ability averages 71%, finishers 97%). Weak finishers: freeze-ray 28% on L10. 1 stall (king unreachable — look at this first). The Royal Guard: a new player (3 starters) clears the run 98% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 95% / 100%. Powers carry you by +34 points (no-ability averages 64%, finishers 98%). Weak finishers: freeze-ray 75% on L8. Zero stalls. The Fortress: a new player (3 starters) clears the run 95% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 95% / 100%. Powers carry you by +26 points (no-ability averages 73%, finishers 98%). Zero stalls. Stonework: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +23 points (no-ability averages 77%, finishers 100%). Zero stalls. Two Keys: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +28 points (no-ability averages 72%, finishers 99%). Zero stalls. Versus last night: 218 cells moved more than 15 points since 2026-08-30 (biggest: L10 aegis 0→100% [realistic]; L10 become-king 0→100% [realistic]); 1 NEW stall; L6 left its band (50→25%, too hard), L8 left its band (35→25%, too hard), L9 left its band (25→0%, too hard), L10 left its band (38→0%, too hard). Ran 1 experiment on level tweaks: 1 prediction confirmed, 0 falsified. No candidate runs in the queue tonight. 18 human runs on revenge-1 since 2026-08-02, 5 won.
 
 ## Run difficulty and ability tiers
 
@@ -13,9 +13,9 @@ Difficulty is measured on the player who actually exists: a **new player** with 
 
 **Rookie's Revenge** (`revenge-1`)
 
-- **New player clears this run 100% of the time on Normal / 100% on Rookie — TOO EASY.** (3 runs per mode; retries used: Normal 7, Rookie 4.)
+- **New player clears this run 100% of the time on Normal / 100% on Rookie — TOO EASY.** (3 runs per mode; retries used: Normal 1, Rookie 0.)
 - Veteran (all 5 abilities): 100% on Normal / 100% on Rookie.
-- Powers carry you by **+35 points**: no-ability averages 65% across L1-L10, the five finishers average 100%. Hard levels without powers (no-ability under 60%): L6 50%, L8 0%, L9 0%, L10 25%.
+- Powers carry you by **+44 points**: no-ability averages 55% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L6 25%, L7 25%, L8 25%, L9 0%, L10 0%.
 
 | L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
 |---|---|---|---|---|---|
@@ -26,21 +26,21 @@ Difficulty is measured on the player who actually exists: a **new player** with 
 | 5 | 100% (3/3) | 0 | 100% (3/3) | 0 | 100% |
 | 6 | 100% (3/3) | 0 | 100% (3/3) | 0 | 100% |
 | 7 | 100% (3/3) | 0 | 100% (3/3) | 0 | 100% |
-| 8 | 100% (3/3) | 4 | 100% (3/3) | 0 | 100% |
+| 8 | 100% (3/3) | 0 | 100% (3/3) | 0 | 100% |
 | 9 | 100% (3/3) | 0 | 100% (3/3) | 0 | 100% |
-| 10 | 100% (3/3) | 3 | 100% (3/3) | 4 | 100% |
+| 10 | 100% (3/3) | 1 | 100% (3/3) | 0 | 100% |
 
 "Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
 
-Ability tier list, realistic tiers, scored over the 5 levels where no-ability is under 100% (L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
 
 | Tier | Ability | Avg win | Lift | Worst level | Cast rate |
 |---|---|---|---|---|---|
-| S | bishop-step | 100% | +70 | L6 100% | 100% |
-| S | knight-hop | 100% | +70 | L6 100% | 100% |
-| S | queen-pulse | 100% | +70 | L6 100% | 100% |
-| S | surge | 100% | +70 | L6 100% | 100% |
-| S | freeze-ray | 95% | +65 | L10 75% | 100% |
+| S | bishop-step | 100% | +75 | L5 100% | 100% |
+| S | queen-pulse | 100% | +75 | L5 100% | 96% |
+| S | surge | 100% | +75 | L5 100% | 100% |
+| S | freeze-ray | 96% | +71 | L10 75% | 100% |
+| S | knight-hop | 96% | +71 | L10 75% | 96% |
 
 **Pawn Storm** (`revenge-2`)
 
@@ -274,15 +274,15 @@ Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 3 | - |
-| 2 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 3 | - |
-| 3 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 2.8 | - |
-| 4 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 2.8 | - |
-| 5 | 75-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 12 | 8 | - |
-| 6 | 35-65% | **50%** (m2) | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 12 | 10.5 | - |
-| 7 | 40-70% | **75%** (c1) **too easy** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 12 | 9.3 | - |
-| 8 | 35-65% | **0%** (c1,m3) **too hard** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 14 | 12.3 | - |
+| 2 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 2.5 | - |
+| 3 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 3 | - |
+| 4 | 85-100% | **100%** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | - | 3 | - |
+| 5 | 75-100% | **75%** (m1) | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 12 | 10 | - |
+| 6 | 35-65% | **25%** (c1,m2) **too hard** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 12 | 8.5 | - |
+| 7 | 40-70% | **25%** (c2,m1) **too hard** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 12 | 8.5 | - |
+| 8 | 35-65% | **25%** (m3) **too hard** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 14 | 11.8 | - |
 | 9 | 15-45% | **0%** (m4) **too hard** | 5 tied 100% | bishop-step 100% | bishop-step 100% | - | 14 | 14 | none no4, 1/5 finishers proven |
-| 10 | 15-45% | **25%** (m3) | 4 tied 100% | freeze-ray 75% **low** | freeze-ray 75% | - | 18 | 18 | none no4, 0/5 finishers proven |
+| 10 | 15-45% | **0%** (c1,m3) **too hard** | 3 tied 100% | freeze-ray 75% **low** | freeze-ray 75% | - | 18 | 16.5 | none no4, 0/5 finishers proven |
 
 Every ability, win % at realistic tiers:
 
@@ -292,18 +292,18 @@ Every ability, win % at realistic tiers:
 | 2 | 100% | 100% | 100% | 100% | 100% | 100% |
 | 3 | 100% | 100% | 100% | 100% | 100% | 100% |
 | 4 | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 100% | 100% | 100% | 100% | 100% | 100% |
-| 6 | 50% | 100% | 100% | 100% | 100% | 100% |
-| 7 | 75% | 100% | 100% | 100% | 100% | 100% |
-| 8 | 0% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 75% | 100% | 100% | 100% | 100% | 100% |
+| 6 | 25% | 100% | 100% | 100% | 100% | 100% |
+| 7 | 25% | 100% | 100% | 100% | 100% | 100% |
+| 8 | 25% | 100% | 100% | 100% | 100% | 100% |
 | 9 | 0% | 100% | 100% | 100% | 100% | 100% |
-| 10 | 25% | 100% | **75%** | 100% | 100% | 100% |
+| 10 | 0% | 100% | **75%** | **75%** | 100% | 100% |
 
 **Verdict:** needs a look 
 - TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)
 - L10 freeze-ray only 75% (every finisher must be at least 80%)
 
-No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L7 no-ability 75% is too easy for the legacy band (40-70%); L8 no-ability 0% is too hard for the legacy band (35-65%); L9 no-ability 0% is too hard for the legacy band (15-45%).
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L6 no-ability 25% is too hard for the legacy band (35-65%); L7 no-ability 25% is too hard for the legacy band (40-70%); L8 no-ability 25% is too hard for the legacy band (35-65%); L9 no-ability 0% is too hard for the legacy band (15-45%); L10 no-ability 0% is too hard for the legacy band (15-45%).
 
 ### Difficulty modes — Rookie's Revenge
 
@@ -311,10 +311,10 @@ T1 loadouts, no-ability + the five finishers, 3 trials per cell. "No ability" is
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/100/67/100/67/67/33 | L10 33% | freeze-ray 67% on L6 | - | 3/4 |
-| Normal | 100/100/100/100/100/67/67/33/33/33 | L8 33% | freeze-ray 67% on L6 | - | 4/4 |
-| Hard | 100/100/100/100/67/67/33/67/0/33 | L9 0% | freeze-ray 67% on L10 | - | 3/4 |
-| Nightmare | 100/100/100/100/67/100/67/67/33/33 | L9 33% | freeze-ray 0% on L10 | - | 3/4 |
+| Rookie | 100/100/100/100/100/33/33/100/67/33 | L6 33% | freeze-ray 67% on L6 | - | 3/4 |
+| Normal | 100/100/100/100/67/33/100/33/0/0 | L9 0% | freeze-ray 33% on L6 | - | 3/4 |
+| Hard | 100/100/100/100/67/100/0/0/0/33 | L7 0% | knight-hop 0% on L10 | - | 4/4 |
+| Nightmare | 100/100/100/100/100/100/33/33/0/33 | L9 0% | freeze-ray 33% on L10 | - | 4/4 |
 
 ### Full runs — Rookie's Revenge (authored, random picks)
 
@@ -327,13 +327,13 @@ T1 loadouts, no-ability + the five finishers, 3 trials per cell. "No ability" is
 | 3 | 4 | 4 | 100% | - |
 | 4 | 4 | 4 | 100% | - |
 | 5 | 4 | 4 | 100% | - |
-| 6 | 4 | 3 | 75% | move-limit 1 |
-| 7 | 3 | 3 | 100% | - |
-| 8 | 3 | 3 | 100% | - |
+| 6 | 4 | 4 | 100% | - |
+| 7 | 4 | 4 | 100% | - |
+| 8 | 4 | 3 | 75% | captured 1 |
 | 9 | 3 | 3 | 100% | - |
 | 10 | 3 | 3 | 100% | - |
 
-Most-picked cards: bishop-step 6, queen-pulse 5, convert 4, magnet 3, boulder 3, summon-knight 2, squad 2, knight-hop 1.
+Most-picked cards: bishop-step 12, convert 3, magnet 3, queen-pulse 2, summon-knight 2, squad 2, boulder 2, knight-hop 1.
 
 ## Pawn Storm (`revenge-2`)
 
@@ -697,11 +697,13 @@ Compared 1940 cells against 2026-08-30. Anything over 15 points is listed; with 
 | revenge-5 | normal | 10 | queen-pulse | 0% | 100% | +100 |
 | revenge-5 | normal | 10 | surge | 0% | 100% | +100 |
 | revenge-5 | hard | 10 | knight-hop | 0% | 100% | +100 |
-| … | | | | | | 187 more |
+| … | | | | | | 198 more |
 
 - **NEW STALL** revenge-2 realistic L4 none: 1 game timed out with the king alive.
-- **Left its band:** revenge-1 L8 no-ability 35% → 0% (too hard).
+- **Left its band:** revenge-1 L6 no-ability 50% → 25% (too hard).
+- **Left its band:** revenge-1 L8 no-ability 35% → 25% (too hard).
 - **Left its band:** revenge-1 L9 no-ability 25% → 0% (too hard).
+- **Left its band:** revenge-1 L10 no-ability 38% → 0% (too hard).
 - Back in band: revenge-2 L6 no-ability 79% → 60%.
 - Back in band: revenge-3 L7 no-ability 38% → 53%.
 - Back in band: revenge-3 L9 no-ability 54% → 20%.
@@ -717,113 +719,68 @@ Compared 1940 cells against 2026-08-30. Anything over 15 points is listed; with 
 
 **Plain-English splits (no-ability win %):**
 
-- Levels with 12+ pawns average **67 points lower** no-ability win than the rest (6% vs 73%, 5 vs 295 snapshots).
-- Levels with 12+ marchers (pawns pushing down the board) average **67 points lower** no-ability win than the rest (6% vs 73%, 5 vs 295 snapshots).
-- Levels with 23+ total material average **59 points lower** no-ability win than the rest (26% vs 85%, 65 vs 235 snapshots).
-- Levels with 15+ total enemies average **58 points lower** no-ability win than the rest (17% vs 75%, 15 vs 285 snapshots).
-- Levels with 2+ queens average **55 points lower** no-ability win than the rest (23% vs 78%, 35 vs 265 snapshots).
-- Levels with 5+ pen squares under enemy fire average **55 points lower** no-ability win than the rest (19% vs 74%, 10 vs 290 snapshots).
+- Levels with 12+ pawns average **66 points lower** no-ability win than the rest (6% vs 72%, 5 vs 295 snapshots).
+- Levels with 12+ marchers (pawns pushing down the board) average **66 points lower** no-ability win than the rest (6% vs 72%, 5 vs 295 snapshots).
+- Levels with 27+ total material average **60 points lower** no-ability win than the rest (19% vs 80%, 45 vs 255 snapshots).
+- Levels with 15+ total enemies average **57 points lower** no-ability win than the rest (17% vs 73%, 15 vs 285 snapshots).
+- Levels with 2+ queens average **56 points lower** no-ability win than the rest (21% vs 77%, 35 vs 265 snapshots).
+- Levels with 21+ hunter power (3 per minor, 9 per queen) average **55 points lower** no-ability win than the rest (24% vs 80%, 50 vs 250 snapshots).
 
 **Same, for the weakest finisher's win % (the safety net):**
 
-- 12+ pawns: finisher floor **80 points lower** (15% vs 95%).
-- 12+ marchers (pawns pushing down the board): finisher floor **80 points lower** (15% vs 95%).
-- 2+ enemies inside the pen: finisher floor **39 points lower** (55% vs 94%).
-- 15+ total enemies: finisher floor **34 points lower** (61% vs 95%).
+- 12+ pawns: finisher floor **79 points lower** (15% vs 94%).
+- 12+ marchers (pawns pushing down the board): finisher floor **79 points lower** (15% vs 94%).
+- 2+ enemies inside the pen: finisher floor **52 points lower** (42% vs 94%).
+- 15+ total enemies: finisher floor **33 points lower** (61% vs 94%).
 
 **Strongest single correlations:**
 
 | Feature | vs no-ability | vs finisher floor | High-quartile avg (none) | Low-quartile avg (none) |
 |---|---|---|---|---|
-| total material | -0.84 | -0.49 | 33% | 100% |
-| hunter power (3 per minor, 9 per queen) | -0.79 | -0.39 | 37% | 94% |
-| total enemies | -0.78 | -0.61 | 33% | 99% |
-| squares under enemy fire | -0.77 | -0.39 | 35% | 99% |
-| queens | -0.77 | -0.36 | 40% | 85% |
-| approach squares under fire (ranks 2-5) | -0.76 | -0.37 | 38% | 100% |
-| hunters (non-pawn pieces that chase Rookie) | -0.74 | -0.38 | 41% | 94% |
-| pawns | -0.59 | -0.57 | 42% | 92% |
-| marchers (pawns pushing down the board) | -0.59 | -0.57 | 42% | 92% |
-| move budget | 0.59 | 0.26 | 100% | 64% |
+| total material | -0.84 | -0.49 | 31% | 100% |
+| hunter power (3 per minor, 9 per queen) | -0.79 | -0.40 | 35% | 94% |
+| squares under enemy fire | -0.77 | -0.41 | 33% | 99% |
+| queens | -0.77 | -0.36 | 39% | 84% |
+| approach squares under fire (ranks 2-5) | -0.77 | -0.38 | 36% | 100% |
+| total enemies | -0.76 | -0.59 | 32% | 99% |
+| hunters (non-pawn pieces that chase Rookie) | -0.75 | -0.40 | 39% | 94% |
+| move budget | 0.59 | 0.26 | 100% | 60% |
+| budget slack (moves minus distance to king) | 0.59 | 0.27 | 100% | 59% |
+| pen size | -0.58 | -0.30 | 52% | 100% |
 
 Reading: −1 means "more of this, harder level"; +1 means "more of this, easier". Anything past ±0.5 is worth believing at this sample size.
 
-**All features together (ridge regression, no-ability %):** fit R² 0.82 on 300 snapshots, held-out R² 0.84 on 60.
+**All features together (ridge regression, no-ability %):** fit R² 0.82 on 300 snapshots, held-out R² 0.76 on 60.
 
 | Feature | Points per +1 unit | Points per +1 std dev |
 |---|---|---|
 | approach squares under fire (ranks 2-5) | +2.3 | +17 |
-| squares under enemy fire | -1.0 | -12 |
-| guards next to the king | +9.2 | +11 |
-| walls | +3.8 | +10 |
-| queens | -13.5 | -9 |
-| total material | -0.7 | -7 |
+| guards next to the king | +10.4 | +12 |
+| walls | +4.3 | +12 |
+| squares under enemy fire | -0.9 | -11 |
+| queens | -15.2 | -11 |
+| total material | -0.8 | -7 |
 
 With this few snapshots the coefficients are directional, not gospel. They firm up as more runs enter the pool.
 
 ## Humans vs bot
 
-Human runs since 2026-08-02 (disk-only). "Cleared" is the share of human runs that got past the level; the bot column is the random-pick full-run clear rate on the authored level.
+Human runs since 2026-08-02 (supabase+disk). "Cleared" is the share of human runs that got past the level; the bot column is the random-pick full-run clear rate on the authored level.
 
-**revenge-1** — 34 runs, 14 won.
-
-| L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
-|---|---|---|---|---|---|
-| 1 | 34 | 33 | 97% | 100% | -3 |
-| 2 | 33 | 33 | 100% | 100% | 0 |
-| 3 | 33 | 33 | 100% | 100% | 0 |
-| 4 | 33 | 33 | 100% | 100% | 0 |
-| 5 | 33 | 26 | 79% | 100% | -21 |
-| 6 | 26 | 25 | 96% | 75% | +21 |
-| 7 | 25 | 24 | 96% | 100% | -4 |
-| 8 | 24 | 18 | 75% | 100% | -25 |
-| 9 | 18 | 15 | 83% | 100% | -17 |
-| 10 | 15 | 14 | 93% | 100% | -7 |
-
-**revenge-3** — 2 runs, 0 won.
+**revenge-1** — 18 runs, 5 won.
 
 | L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
 |---|---|---|---|---|---|
-| 1 | 2 | 2 | 100% | 100% | 0 |
-| 2 | 2 | 2 | 100% | 100% | 0 |
-| 3 | 2 | 2 | 100% | 100% | 0 |
-| 4 | 2 | 2 | 100% | 100% | 0 |
-| 5 | 2 | 2 | 100% | 98% | +2 |
-| 6 | 2 | 2 | 100% | 99% | +1 |
-| 7 | 2 | 2 | 100% | 91% | +9 |
-| 8 | 2 | 2 | 100% | 84% | +16 |
-| 9 | 2 | 1 | 50% | 100% | -50 |
-| 10 | 1 | 0 | 0% | 97% | -97 |
-
-**revenge-4** — 1 run, 1 won.
-
-| L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
-|---|---|---|---|---|---|
-| 1 | 1 | 1 | 100% | 100% | 0 |
-| 2 | 1 | 1 | 100% | 100% | 0 |
-| 3 | 1 | 1 | 100% | 100% | 0 |
-| 4 | 1 | 1 | 100% | 100% | 0 |
-| 5 | 1 | 1 | 100% | 100% | 0 |
-| 6 | 1 | 1 | 100% | 100% | 0 |
-| 7 | 1 | 1 | 100% | 100% | 0 |
-| 8 | 1 | 1 | 100% | 95% | +5 |
-| 9 | 1 | 1 | 100% | 99% | +1 |
-| 10 | 1 | 1 | 100% | 88% | +12 |
-
-**revenge-5** — 3 runs, 0 won.
-
-| L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
-|---|---|---|---|---|---|
-| 1 | 3 | 3 | 100% | 100% | 0 |
-| 2 | 3 | 3 | 100% | 100% | 0 |
-| 3 | 3 | 3 | 100% | 100% | 0 |
-| 4 | 3 | 3 | 100% | 100% | 0 |
-| 5 | 3 | 3 | 100% | 100% | 0 |
-| 6 | 3 | 3 | 100% | 100% | 0 |
-| 7 | 3 | 3 | 100% | 99% | +1 |
-| 8 | 3 | 3 | 100% | 99% | +1 |
-| 9 | 3 | 3 | 100% | 99% | +1 |
-| 10 | 3 | 0 | 0% | 91% | -91 |
+| 1 | 18 | 17 | 94% | 100% | -6 |
+| 2 | 17 | 17 | 100% | 100% | 0 |
+| 3 | 17 | 17 | 100% | 100% | 0 |
+| 4 | 17 | 16 | 94% | 100% | -6 |
+| 5 | 16 | 14 | 88% | 100% | -12 |
+| 6 | 14 | 13 | 93% | 100% | -7 |
+| 7 | 13 | 10 | 77% | 100% | -23 |
+| 8 | 10 | 9 | 90% | 75% | +15 |
+| 9 | 9 | 6 | 67% | 100% | -33 |
+| 10 | 6 | 5 | 83% | 100% | -17 |
 
 Where humans fall well below the bot on a level the bot clears ability-free, the level is probably reading badly (unclear key, hidden hunter) rather than being tight. Caveat: traces written by a dev server (`data/run-playtest/human-traces/`) also include games the parity driver played through the real app — those are bot games wearing a human label.
 
@@ -833,11 +790,9 @@ Each one takes a level, makes ONE change, and replays the cell at realistic tier
 
 | Run | L | Change | Loadout | Baseline | Predicted | Actual | Verdict | Prediction from |
 |---|---|---|---|---|---|---|---|---|
-| revenge-1 | 8 | budget +2 | none | 0% | 34% | **20%** | inconclusive | mode-slope |
-| revenge-1 | 6 | remove bishop b5 | none | 50% | 58% | **80%** | falsified | regression |
+| revenge-1 | 5 | remove bishop g5 | none | 75% | 83% | **80%** | confirmed | regression |
 
-- L8 no-ability is 0%, too hard for its band (35-65%). The move budget is the cleanest knob.
-- L6 sits mid-curve (50%); removing its closest hunter (bishop b5) measures one piece's worth.
+- L5 sits mid-curve (75%); removing its closest hunter (bishop g5) measures one piece's worth.
 
 ## Top 3 hypotheses for tonight
 
@@ -947,6 +902,5 @@ AND-OR search, depth 4, 20,000 nodes, worst case over every start file. W4 = for
 Caveats tonight:
 - Quick mode tested revenge-1 only; skipped revenge-2, revenge-3, revenge-4, revenge-5, revenge-6 (add --all-runs).
 - Quick mode: trial counts are tiny and only no-ability + the five finishers were swept, so every percentage is coarse and movers vs last night are mostly noise.
-- No Supabase credentials in env — human traces read from disk only.
 
 Reproduce: `npx tsx scripts/run-playtest/revenge-nightly.ts` (add `--quick` for a 2-minute smoke). Raw JSON: `data/run-playtest/revenge/raw/2026-09-01/`.

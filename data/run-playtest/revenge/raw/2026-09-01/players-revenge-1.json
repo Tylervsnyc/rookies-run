@@ -83,21 +83,19 @@
    }
   ],
   "pickCounts": {
-   "freeze-ray": 12,
-   "knight-hop": 7,
-   "summon-knight": 11
+   "freeze-ray": 9,
+   "knight-hop": 13,
+   "summon-knight": 9
   },
-  "seconds": 4,
+  "seconds": 9,
   "unlockedAbilities": [
    "knight-hop",
    "freeze-ray",
    "summon-knight"
   ],
   "retriesPerLevel": 5,
-  "retriesUsed": 4,
-  "deathsAt": {
-   "10": 4
-  }
+  "retriesUsed": 0,
+  "deathsAt": {}
  },
  "starterNormal": {
   "tier": "T5",
@@ -176,21 +174,20 @@
    }
   ],
   "pickCounts": {
-   "freeze-ray": 10,
-   "knight-hop": 7,
-   "summon-knight": 6
+   "freeze-ray": 6,
+   "knight-hop": 9,
+   "summon-knight": 9
   },
-  "seconds": 4,
+  "seconds": 10,
   "unlockedAbilities": [
    "knight-hop",
    "freeze-ray",
    "summon-knight"
   ],
   "retriesPerLevel": 3,
-  "retriesUsed": 7,
+  "retriesUsed": 1,
   "deathsAt": {
-   "8": 4,
-   "10": 3
+   "10": 1
   }
  },
  "veteranRookie": {
@@ -270,19 +267,17 @@
    }
   ],
   "pickCounts": {
-   "queen-pulse": 11,
+   "queen-pulse": 6,
    "rewind": 2,
-   "bishop-step": 8,
+   "bishop-step": 9,
    "knight-hop": 5,
-   "freeze-ray": 3
+   "convert": 3,
+   "freeze-ray": 5
   },
-  "seconds": 2,
+  "seconds": 8,
   "retriesPerLevel": 5,
-  "retriesUsed": 2,
-  "deathsAt": {
-   "8": 1,
-   "10": 1
-  }
+  "retriesUsed": 0,
+  "deathsAt": {}
  },
  "veteranNormal": {
   "tier": "T5",
@@ -361,16 +356,18 @@
    }
   ],
   "pickCounts": {
-   "queen-pulse": 3,
-   "bodyguard": 2,
-   "knight-hop": 6,
-   "bishop-step": 4,
+   "queen-pulse": 4,
+   "aegis": 2,
+   "knight-hop": 2,
+   "bishop-step": 7,
    "rabies-dart": 2,
-   "freeze-ray": 6
+   "freeze-ray": 4
   },
-  "seconds": 3,
+  "seconds": 9,
   "retriesPerLevel": 3,
-  "retriesUsed": 0,
-  "deathsAt": {}
+  "retriesUsed": 1,
+  "deathsAt": {
+   "10": 1
+  }
  }
 }
