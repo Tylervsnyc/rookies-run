@@ -397,6 +397,7 @@ const HOW: Record<AbilityId, string> = {
 function limitText(id: AbilityId, tier: AbilityTier): string {
   const n = maxUsesForTier(id, tier);
   if (n < 0) return '';
+  if (isOneChargePerRun(id)) return n === 1 ? '1 charge per run' : `${n} charges per run`;
   if (n === 1) return '1 use per level';
   return `${n} uses per level`;
 }
@@ -1848,12 +1849,38 @@ export function tryAegisIntercept(
   };
 }
 
-/** Reset every owned ability's per-level uses (called at level transitions). */
+/**
+ * FINISHERS are ONE CHARGE PER RUN (Tyler, 2026-09-01 — option A).
+ *
+ * The nightly harness proved that any finisher wins 90-100% of levels on its
+ * own, so with per-level refreshes a new player cleared every run 100% no
+ * matter how the boards were tuned. Finisher charges therefore do NOT come
+ * back at level transitions: you get one when you pick the card and one
+ * more each time you upgrade it (see pickAbility). Spend it on the level
+ * that needs it. Support abilities still refresh every level.
+ */
+export const ONE_CHARGE_PER_RUN: ReadonlySet<AbilityId> = new Set<AbilityId>([
+  'knight-hop',
+  'bishop-step',
+  'queen-pulse',
+  'freeze-ray',
+  'summon-knight',
+  'surge',
+]);
+
+export function isOneChargePerRun(id: AbilityId): boolean {
+  return ONE_CHARGE_PER_RUN.has(id);
+}
+
+/**
+ * Reset per-level uses at level transitions. Finishers keep whatever charge
+ * they have left (see ONE_CHARGE_PER_RUN); everything else refills.
+ */
 export function refreshAbilityUses(abilities: OwnedAbility[]): OwnedAbility[] {
-  return abilities.map((a) => ({
-    ...a,
-    usesLeftThisLevel: maxUsesForTier(a.id, a.tier),
-  }));
+  return abilities.map((a) => {
+    if (isOneChargePerRun(a.id) && typeof a.usesLeftThisLevel === 'number') return a;
+    return { ...a, usesLeftThisLevel: maxUsesForTier(a.id, a.tier) };
+  });
 }
 
 // ---------------------------------------------------------------------------
