@@ -88,11 +88,20 @@ export function realisticTierFor(level: number): AbilityTier {
   return Math.min(5, 1 + Math.floor((level - 1) / 3)) as AbilityTier;
 }
 
+/**
+ * `id` is normally a single ability id ("twin"). It may also be a `+`-joined
+ * compound ("summon-knight+swap") to give the loadout MULTIPLE abilities at
+ * once — needed to measure a support card (swap/sacrifice/knighting) paired
+ * with the summon it operates on, since matrix mode otherwise only ever
+ * grants one owned ability per cell.
+ */
 export function loadoutFor(id: string, level: number, realistic: boolean): OwnedAbility[] {
   if (id === 'none') return [];
   const tier = realistic ? realisticTierFor(level) : 1;
-  const aid = id as AbilityId;
-  return [{ id: aid, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(aid, tier) }];
+  return id.split('+').map((part) => {
+    const aid = part as AbilityId;
+    return { id: aid, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(aid, tier) };
+  });
 }
 
 export function startState(
