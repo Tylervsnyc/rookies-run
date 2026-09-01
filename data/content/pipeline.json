@@ -140,7 +140,7 @@
       "id": "surge",
       "kind": "ability",
       "name": "Surge",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-18",
       "notes": "Shipped with Rookie's Revenge (2026-08-18).",
       "approved": {
@@ -149,6 +149,10 @@
       },
       "live": {
         "at": "2026-08-18"
+      },
+      "retired": {
+        "at": "2026-09-01",
+        "why": "Balance flag 2026-09-01 (Tyler): king does not react during Surge turns, so T2/T3 Surge flattens every level to 100%. Re-enable after the king reacts to surge moves or uses/tier are cut."
       }
     },
     {
@@ -272,12 +276,15 @@
       "id": "summon-knight",
       "kind": "ability",
       "name": "Squire",
-      "stage": "approved",
+      "stage": "live",
       "created": "2026-08-31",
       "notes": "A rainbow knight the player controls — a second body on the board. Built 2026-08-31; Tyler played it via ?loadout=summon-knight:5 and loved it, not formally approved yet. Candidate 4th starter.",
       "approved": {
         "at": "2026-08-31",
         "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-01"
       }
     },
     {
@@ -293,6 +300,12 @@
       },
       "live": {
         "at": "2026-08-18"
+      },
+      "testing": {
+        "lastRun": "2026-09-01",
+        "verdict": "HOLD",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L6 freeze-ray only 75% (every finisher must be at least 80%); L8 freeze-ray only 75% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
     {
@@ -303,10 +316,10 @@
       "created": "2026-08-30",
       "notes": "More pawns every level. Bodies, not brains. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-08-30",
+        "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 38% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 33% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
     {
