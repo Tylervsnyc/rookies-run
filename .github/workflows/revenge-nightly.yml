@@ -83,6 +83,9 @@ jobs:
             echo "nothing to commit"
           else
             git commit -m "Rookie's Revenge: nightly playtest digest $TODAY (GitHub Actions)"
+            # Drop uncommitted leftovers (e.g. raw dirs over the 2MB cap) so rebase is clean.
+            git restore .
+            git clean -fd data/run-playtest/revenge/raw
             git pull --rebase origin main
             git push origin main
           fi
