@@ -1,0 +1,88 @@
+# Rookie's Revenge — nightly playtest in the cloud.
+#
+# Successor to the LOCAL crontab entry (scripts/run-revenge-nightly.sh), which
+# only fired while Tyler's Mac was awake. This runs on GitHub's machines at
+# 06:30 UTC (2:30am ET) every night regardless: full harness -> digest ->
+# Slack summary -> commit + push, same as the local wrapper.
+#
+# Manual run: Actions tab -> "Revenge nightly" -> Run workflow (quick=true
+# for a 2-minute smoke).
+
+name: Revenge nightly
+
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+    inputs:
+      quick:
+        description: 'Quick 2-minute smoke instead of the full harness'
+        type: boolean
+        default: false
+
+concurrency:
+  group: revenge-nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  playtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run the harness
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          FLAGS=""
+          if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick"; fi
+          npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
+
+      - name: Post Slack summary
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          RAW="data/run-playtest/revenge/raw/$TODAY"
+          if [ -n "$SLACK_WEBHOOK_URL" ] && [ -f "$RAW/slack.txt" ]; then
+            PAYLOAD=$(python3 -c 'import json,sys; print(json.dumps({"text": open(sys.argv[1]).read().strip()}))' "$RAW/slack.txt")
+            curl -sS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" \
+              && echo "slack posted" || echo "warn: slack post failed"
+          else
+            echo "slack skipped (no webhook or no slack.txt)"
+          fi
+
+      - name: Commit digests and push
+        run: |
+          TODAY=$(date -u +%Y-%m-%d)
+          RAW="data/run-playtest/revenge/raw/$TODAY"
+          git config user.name "Rookie Playtest Bot"
+          git config user.email "playtest@rookies-run.local"
+          git add data/run-playtest/revenge/digests/
+          RAW_BYTES=$(du -sk "$RAW" 2>/dev/null | cut -f1)
+          if [ -n "$RAW_BYTES" ] && [ "$RAW_BYTES" -lt 2048 ]; then
+            git add "$RAW"/*.json || true
+          else
+            echo "raw dir is ${RAW_BYTES:-?} KB — committing digests only"
+          fi
+          git add data/run-playtest/revenge/experiments.jsonl || true
+          git add data/content/pipeline.json || true
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+          else
+            git commit -m "Rookie's Revenge: nightly playtest digest $TODAY (GitHub Actions)"
+            git pull --rebase origin main
+            git push origin main
+          fi
