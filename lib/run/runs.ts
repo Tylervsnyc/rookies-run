@@ -4445,43 +4445,42 @@ const RUN_REVENGE_3: RunDef = {
         kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
-    // L9 — THE PRIVY COUNCIL. Seven-pawn arch a8/b7/c6/d5/e6/f7/g8 — three
-    // captures a side before his file opens. Queens a3 + h2, bishop b5,
-    // knight g3; marchers b2/h4.
+    // L9 — THE PRIVY COUNCIL. 4 heavy hunters (queen, queen, bishop, knight) — sightlines, not bodies. Key c4. [generated royal-guard-L9-v2, 2026-09-01]
+    // Key pc4; defended by pb5 pd5; shell pa4 pe4; hunters qe2 qa5 bh2 kh5; marchers pa3 pe3.
     make(
       9,
       [
-        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7), pawn(1, 8), pawn(7, 8),
-        queen(1, 3), queen(8, 2), bishop(2, 5), knight(7, 3),
-        pawn(2, 2), pawn(8, 4),
-        king(4, 8),
+        pawn(3, 4),
+        pawn(2, 5), pawn(4, 5),
+        pawn(1, 4), pawn(5, 4),
+        queen(5, 2), queen(1, 5), bishop(8, 2), knight(8, 5),
+        pawn(1, 3), pawn(5, 3),
+        king(3, 8),
       ],
       {
         ...FLEE,
-        enemiesPerTurn: 2,
         moveLimit: 14,
-        hazards: [X(2, 8), X(6, 8)],
-        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+        hazards: [X(1, 6), X(5, 6), X(1, 7), X(5, 7), X(1, 8), X(5, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7', 'b6', 'c6', 'd6'],
       },
     ),
-    // L10 — THE ROYAL GUARD. Seven-pawn arch plus a second ring under it
-    // (b5/f5 guard c4/e4... and c4/e4 block the c/e files). Two queens
-    // (a2/h2), two bishops (b3/g3), knight g5; marchers c2/f2.
+    // L10 — CROSSHAIRS. two keys — c5 on his file, f7 on his rank; the right wall is gone. [generated double-key-L10-v2, 2026-09-01]
+    // Keys pc5 pf7; defended by pb6 pd6 pe8 pg8; shell pa5 pe5; hunters qg4 qg2 ba4 kh3; marchers ph4 pa3 pe3.
     make(
       10,
       [
-        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7), pawn(1, 8), pawn(7, 8),
-        pawn(3, 4), pawn(5, 4),
-        queen(1, 2), queen(8, 2), bishop(2, 3), bishop(7, 3), knight(7, 5),
-        pawn(3, 2), pawn(6, 2),
-        king(4, 8),
+        pawn(3, 5), pawn(6, 7),
+        pawn(2, 6), pawn(4, 6), pawn(5, 8), pawn(7, 8),
+        pawn(1, 5), pawn(5, 5),
+        queen(7, 4), queen(7, 2), bishop(1, 4), knight(8, 3),
+        pawn(8, 4), pawn(1, 3), pawn(5, 3),
+        king(3, 7),
       ],
       {
         ...FLEE,
-        enemiesPerTurn: 2,
-        moveLimit: 15,
-        hazards: [X(2, 8), X(6, 8)],
-        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+        moveLimit: 19,
+        hazards: [X(1, 7), X(1, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
       },
     ),
   ],
@@ -4806,22 +4805,23 @@ const RUN_REVENGE_5: RunDef = {
         kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
-    // L10 — THE VAULT (intentionally unwinnable; system check). Nine walls
-    // seal d8 on every rook, bishop AND knight approach; b8/f8 guards, a
-    // queen, a bishop, a knight and two marchers dress the board.
+    // L10 — CROSSHAIRS. two keys — f5 on his file, c7 on his rank; the left wall is gone. [generated double-key-L10-v1, 2026-09-01]
+    // Keys pf5 pc7; defended by pe6 pg6 pb8 pd8; shell pd5 ph5; hunters qa3 qb4 bb3 kh4; marchers pd3 pa4.
     make(
       10,
       [
-        pawn(2, 8), pawn(6, 8),
-        queen(1, 2), bishop(8, 3), knight(7, 5),
-        pawn(2, 4), pawn(7, 4),
-        king(4, 8),
+        pawn(6, 5), pawn(3, 7),
+        pawn(5, 6), pawn(7, 6), pawn(2, 8), pawn(4, 8),
+        pawn(4, 5), pawn(8, 5),
+        queen(1, 3), queen(2, 4), bishop(2, 3), knight(8, 4),
+        pawn(4, 3), pawn(1, 4),
+        king(6, 7),
       ],
       {
         ...FLEE,
-        moveLimit: 12,
-        hazards: [X(3, 8), X(5, 8), X(3, 7), X(4, 7), X(5, 7), X(2, 7), X(6, 7), X(3, 6), X(5, 6)],
-        kingPen: ['d8'],
+        moveLimit: 21,
+        hazards: [X(8, 7), X(8, 8)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
       },
     ),
   ],
