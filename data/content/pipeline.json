@@ -304,7 +304,7 @@
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L10 knight-hop only 73% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
@@ -312,56 +312,84 @@
       "id": "revenge-2",
       "kind": "run",
       "name": "Pawn Storm",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-30",
       "notes": "More pawns every level. Bodies, not brains. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 13% (every finisher must be at least 80%)",
+        "summary": "TOO EASY — a new player clears 90% of runs on Normal (target 40-60%); L9 freeze-ray only 79% (every finisher must be at least 80%); L10 freeze-ray only 4% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+      },
+      "approved": {
+        "at": "2026-09-01",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-01"
       }
     },
     {
       "id": "revenge-3",
       "kind": "run",
       "name": "The Royal Guard",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-30",
       "notes": "Few pawns, heavy pieces. Every line is watched. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 90% of runs on Normal (target 40-60%); L9 freeze-ray only 33% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
+        "summary": "too hard — new player clears 0% on Normal (target 40-60%); beginners walled — new player clears only 20% on Rookie (need 70%+); L9 freeze-ray only 33% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+      },
+      "approved": {
+        "at": "2026-09-01",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-01"
       }
     },
     {
       "id": "revenge-4",
       "kind": "run",
       "name": "The Fortress",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-30",
       "notes": "Walls make the room. Pawns make the door. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY — a new player clears 95% of runs on Normal (target 40-60%); L9 freeze-ray only 67% (every finisher must be at least 80%); L10 knight-hop only 75% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+      },
+      "approved": {
+        "at": "2026-09-01",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-01"
       }
     },
     {
       "id": "revenge-5",
       "kind": "run",
       "name": "Stonework",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-30",
       "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable — a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "L10: IMPOSSIBLE — 0% with every loadout (18 tried), stall/move-limit 72%, solver: no line, app fail-safe would fire (\"No way through\"); too hard — new player clears 0% on Normal (target 40-60%); beginners walled — new player clears only 0% on Rookie (need 70%+); L5 freeze-ray only 46% (every finisher must be at least 80%); L7 freeze-ray only 33% (every finisher must be at least 80%); L9 freeze-ray only 21% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "summary": "L5 freeze-ray only 58% (every finisher must be at least 80%); L7 freeze-ray only 42% (every finisher must be at least 80%); L9 knight-hop only 25% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+      },
+      "approved": {
+        "at": "2026-09-01",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-01"
       }
     },
     {
@@ -408,9 +436,16 @@
       "id": "revenge-6",
       "kind": "run",
       "name": "Two Keys",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-01",
-      "notes": "Double-key + open-flank archetypes, generated 2026-09-01 by the level factory loop. Name TBD by Tyler."
+      "notes": "Double-key + open-flank archetypes, generated 2026-09-01 by the level factory loop. Name TBD by Tyler.",
+      "approved": {
+        "at": "2026-09-01",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-01"
+      }
     }
   ]
 }

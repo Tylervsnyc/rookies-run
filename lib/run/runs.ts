@@ -4695,26 +4695,21 @@ const RUN_REVENGE_5: RunDef = {
         kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
       },
     ),
-    // L5 — THE ONE OPEN FILE. A wall runs the whole of rank 6 except the
-    // c6/d6/e6 gap under the pen, and the c6/e6 squares are PAWNS guarding
-    // the d5 key — his file is the only way in. Knight f3, bishop a3, queen
-    // h2; marchers c2/g2. Two enemies act per turn from here on.
+    // L5 — [generated 2026-09-01] THE HEDGE. 5 pawns. 1-ring shell around the d5 key; dismantle the chain from the outside in.
+    // Key pd5; defended by pc6 pe6; shell pb5 pf5; hunters kf4.
     make(
       5,
       [
-        pawn(4, 5), pawn(3, 6), pawn(5, 6),
-        knight(6, 3), bishop(1, 3), queen(8, 2),
-        pawn(3, 2), pawn(7, 2),
+        pawn(4, 5),
+        pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5),
+        knight(6, 4),
         king(4, 8),
       ],
       {
         ...FLEE,
-        enemiesPerTurn: 2,
         moveLimit: 11,
-        hazards: [
-          X(2, 7), X(2, 8), X(6, 7), X(6, 8),
-          X(1, 6), X(2, 6), X(6, 6), X(7, 6), X(8, 6),
-        ],
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
         kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
@@ -4738,24 +4733,22 @@ const RUN_REVENGE_5: RunDef = {
         kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
-    // L7 — THE BASTION. Seven-pawn arch a8/b7/c6/d5/e6/f7/g8 under walls
-    // b8/f8: each pawn is defended by the one behind it, so his file opens
-    // only after three captures a side. Queen h2, bishops b3/h5, knight g4;
-    // marchers c2/f2.
+    // L7 — [generated 2026-09-01] THE BAILEY. 8 walls — side walls plus an inner wall with one door on the e-file.
+    // Key pe4; defended by pd5 pf5; hunters qa4 ka3; marchers ph4 pg4.
     make(
       7,
       [
-        pawn(4, 5), pawn(3, 6), pawn(5, 6), pawn(2, 7), pawn(6, 7), pawn(1, 8), pawn(7, 8),
-        queen(8, 2), bishop(2, 3), bishop(8, 5), knight(7, 4),
-        pawn(3, 2), pawn(6, 2),
-        king(4, 8),
+        pawn(5, 4),
+        pawn(4, 5), pawn(6, 5),
+        queen(1, 4), knight(1, 3),
+        pawn(8, 4), pawn(7, 4),
+        king(5, 8),
       ],
       {
         ...FLEE,
-        enemiesPerTurn: 2,
         moveLimit: 12,
-        hazards: [X(2, 8), X(6, 8)],
-        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+        hazards: [X(3, 6), X(7, 6), X(3, 7), X(7, 7), X(3, 8), X(7, 8), X(3, 5), X(7, 5)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7', 'd6', 'e6', 'f6'],
       },
     ),
     // L8 — THE MAZE. Two wall lines with gaps on opposite sides: rank 3 is
@@ -4782,27 +4775,21 @@ const RUN_REVENGE_5: RunDef = {
         kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
       },
     ),
-    // L9 — THE CITADEL. Court c7-e8 behind 8 curtain walls (b5-b8, f5-f8)
-    // and two gate posts (b4/f4); the c6/e6 guards inside the curtain hold
-    // the d5 key. Two queens (a2/h2), bishop g3, knights b3/h4; marchers
-    // c2/f2.
+    // L9 — [generated 2026-09-01] THE OUTFLANK. left flank open; 3 knights posted to cover it. Key e4.
+    // Key pe4; defended by pd5 pf5; hunters kb6 kc4 kc5 bh3 qg3.
     make(
       9,
       [
-        pawn(4, 5), pawn(3, 6), pawn(5, 6),
-        queen(1, 2), queen(8, 2), bishop(7, 3), knight(2, 3), knight(8, 4),
-        pawn(3, 2), pawn(6, 2),
-        king(4, 8),
+        pawn(5, 4),
+        pawn(4, 5), pawn(6, 5),
+        knight(2, 6), knight(3, 4), knight(3, 5), bishop(8, 3), queen(7, 3),
+        king(5, 8),
       ],
       {
         ...FLEE,
-        enemiesPerTurn: 2,
-        moveLimit: 12,
-        hazards: [
-          X(2, 5), X(2, 6), X(2, 7), X(2, 8), X(6, 5), X(6, 6), X(6, 7), X(6, 8),
-          X(2, 4), X(6, 4),
-        ],
-        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+        moveLimit: 15,
+        hazards: [X(7, 6), X(7, 7), X(7, 8), X(3, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7', 'd6', 'e6', 'f6'],
       },
     ),
     // L10 — CROSSHAIRS. two keys — f5 on his file, c7 on his rank; the left wall is gone. [generated double-key-L10-v1, 2026-09-01]
