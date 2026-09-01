@@ -304,7 +304,7 @@
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L6 freeze-ray only 75% (every finisher must be at least 80%); L8 freeze-ray only 75% (every finisher must be at least 80%)",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
@@ -318,7 +318,7 @@
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 33% (every finisher must be at least 80%)",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 13% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
@@ -330,10 +330,10 @@
       "created": "2026-08-30",
       "notes": "Few pawns, heavy pieces. Every line is watched. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-08-30",
+        "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+        "summary": "TOO EASY — a new player clears 90% of runs on Normal (target 40-60%); L9 freeze-ray only 33% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
     {
@@ -344,10 +344,10 @@
       "created": "2026-08-30",
       "notes": "Walls make the room. Pawns make the door. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-08-30",
+        "lastRun": "2026-09-01",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
     {
@@ -358,10 +358,10 @@
       "created": "2026-08-30",
       "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable — a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
       "testing": {
-        "lastRun": "2026-08-30",
+        "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "L10: IMPOSSIBLE — 0% with every loadout (19 tried), stall/move-limit 69%, solver: no line, app fail-safe would fire (intentional system-check level); too hard — new player clears 0% on Normal (target 40-60%); beginners walled — new player clears only 0% on Rookie (need 70%+)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-08-30.md"
+        "summary": "L10: IMPOSSIBLE — 0% with every loadout (18 tried), stall/move-limit 72%, solver: no line, app fail-safe would fire (\"No way through\"); too hard — new player clears 0% on Normal (target 40-60%); beginners walled — new player clears only 0% on Rookie (need 70%+); L5 freeze-ray only 46% (every finisher must be at least 80%); L7 freeze-ray only 33% (every finisher must be at least 80%); L9 freeze-ray only 21% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },
     {
@@ -403,6 +403,14 @@
       "stage": "idea",
       "created": "2026-08-31",
       "notes": "Squire explodes, capturing every enemy on his knight-squares."
+    },
+    {
+      "id": "revenge-6",
+      "kind": "run",
+      "name": "Two Keys",
+      "stage": "testing",
+      "created": "2026-09-01",
+      "notes": "Double-key + open-flank archetypes, generated 2026-09-01 by the level factory loop. Name TBD by Tyler."
     }
   ]
 }
