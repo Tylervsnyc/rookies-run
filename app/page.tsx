@@ -433,15 +433,23 @@ export default function RookiesRunPage() {
     if (forced || !localStorage.getItem(ONBOARDING_KEY)) setShowOnboarding(true);
   }, []);
 
-  // Show the MTG-style intro card once per (run date), keyed by ISO.
-  // Past-day links (vault) get the intro too the first time they're opened.
+  // Revenge: HomeLanding IS the home screen (Daily / Ladder picker), so it
+  // shows on EVERY cold open — otherwise a second open the same day dropped
+  // players straight onto the board behind the level-1 ability offer.
+  // STC / classic RunLanding keeps the old once-per-(run date) intro-card
+  // contract, keyed by ISO in localStorage.
+  const usesClassicLanding = isStc || process.env.NEXT_PUBLIC_HOME_CLASSIC === '1';
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (!usesClassicLanding) {
+      setShowIntro(true);
+      return;
+    }
     const key = `rookies-run-intro-seen:${meta.iso}`;
     if (!localStorage.getItem(key)) {
       setShowIntro(true);
     }
-  }, [meta.iso]);
+  }, [meta.iso, usesClassicLanding]);
 
   const resetRunRef = useRef<() => void>(() => {});
   // Optionally starts under a specific difficulty (HomeLanding's Daily GO and
@@ -1216,7 +1224,7 @@ export default function RookiesRunPage() {
     })();
     return (
       <div className="h-full overflow-auto">
-        {isStc || process.env.NEXT_PUBLIC_HOME_CLASSIC === '1' ? (
+        {usesClassicLanding ? (
           <RunLanding
             onStart={dismissIntro}
             tagline={isStc ? 'Powered by the Story Time Chess method' : undefined}
