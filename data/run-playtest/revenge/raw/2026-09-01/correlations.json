@@ -1,595 +1,611 @@
 {
- "samples": 100,
+ "samples": 300,
  "none": [
   {
    "feature": "material",
    "label": "total material",
-   "pearson": -0.7893111736197618,
-   "meanWhenHigh": 23.88,
+   "pearson": -0.8436198389882927,
+   "meanWhenHigh": 33.14666666666667,
    "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "threatDensity",
-   "label": "squares under enemy fire",
-   "pearson": -0.725231512853292,
-   "meanWhenHigh": 20.24,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "approachAttacked",
-   "label": "approach squares under fire (ranks 2-5)",
-   "pearson": -0.7175883875971807,
-   "meanWhenHigh": 32.88,
-   "meanWhenLow": 100,
-   "samples": 100
+   "samples": 300
   },
   {
    "feature": "hunterPower",
    "label": "hunter power (3 per minor, 9 per queen)",
-   "pearson": -0.7149534229024547,
-   "meanWhenHigh": 23.88,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "hunters",
-   "label": "hunters (non-pawn pieces that chase Rookie)",
-   "pearson": -0.7085452631328597,
-   "meanWhenHigh": 23.88,
-   "meanWhenLow": 100,
-   "samples": 100
+   "pearson": -0.7940304604620833,
+   "meanWhenHigh": 36.693333333333335,
+   "meanWhenLow": 93.98666666666666,
+   "samples": 300
   },
   {
    "feature": "totalEnemies",
    "label": "total enemies",
-   "pearson": -0.679482823957591,
-   "meanWhenHigh": 35.92,
-   "meanWhenLow": 100,
-   "samples": 100
+   "pearson": -0.7802401953412972,
+   "meanWhenHigh": 32.6,
+   "meanWhenLow": 99.30666666666667,
+   "samples": 300
   },
   {
-   "feature": "startFiles",
-   "label": "possible start files",
-   "pearson": -0.6793618959109191,
-   "meanWhenHigh": 21.24,
-   "meanWhenLow": 100,
-   "samples": 100
+   "feature": "threatDensity",
+   "label": "squares under enemy fire",
+   "pearson": -0.7695594141602362,
+   "meanWhenHigh": 35,
+   "meanWhenLow": 99.44,
+   "samples": 300
   },
   {
    "feature": "majors",
    "label": "queens",
-   "pearson": -0.6470487175823455,
-   "meanWhenHigh": 26.56,
-   "meanWhenLow": 94.04,
-   "samples": 100
+   "pearson": -0.7693780961090382,
+   "meanWhenHigh": 39.88,
+   "meanWhenLow": 84.66666666666667,
+   "samples": 300
   },
   {
-   "feature": "budgetSlack",
-   "label": "budget slack (moves minus distance to king)",
-   "pearson": 0.6336172971712929,
-   "meanWhenHigh": 100,
-   "meanWhenLow": 49.32,
-   "samples": 100
-  },
-  {
-   "feature": "moveLimit",
-   "label": "move budget",
-   "pearson": 0.6249790582134498,
-   "meanWhenHigh": 100,
-   "meanWhenLow": 49.32,
-   "samples": 100
-  },
-  {
-   "feature": "minors",
-   "label": "knights + bishops",
-   "pearson": -0.6221055256590369,
-   "meanWhenHigh": 29.24,
+   "feature": "approachAttacked",
+   "label": "approach squares under fire (ranks 2-5)",
+   "pearson": -0.7631114318097917,
+   "meanWhenHigh": 38.413333333333334,
    "meanWhenLow": 100,
-   "samples": 100
+   "samples": 300
   },
   {
-   "feature": "pawnDefendedKeys",
-   "label": "pawn-defended keys",
-   "pearson": -0.6081073386056746,
-   "meanWhenHigh": 54,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "defendedKeys",
-   "label": "defended keys",
-   "pearson": -0.6081073386056746,
-   "meanWhenHigh": 54,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "freeKeys",
-   "label": "undefended keys",
-   "pearson": 0.6081073386056746,
-   "meanWhenHigh": 100,
-   "meanWhenLow": 38.96,
-   "samples": 100
-  },
-  {
-   "feature": "penArea",
-   "label": "pen size",
-   "pearson": -0.5384457919157686,
-   "meanWhenHigh": 51.28,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "penEmpty",
-   "label": "empty pen squares",
-   "pearson": -0.5268890528085358,
-   "meanWhenHigh": 51.28,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "walls",
-   "label": "walls",
-   "pearson": -0.45898083752866997,
-   "meanWhenHigh": 58,
-   "meanWhenLow": 97,
-   "samples": 100
-  },
-  {
-   "feature": "guardsAdjacent",
-   "label": "guards next to the king",
-   "pearson": 0.44867061539204006,
-   "meanWhenHigh": 94.64,
-   "meanWhenLow": 47.64,
-   "samples": 100
+   "feature": "hunters",
+   "label": "hunters (non-pawn pieces that chase Rookie)",
+   "pearson": -0.7425016350444291,
+   "meanWhenHigh": 40.946666666666665,
+   "meanWhenLow": 93.98666666666666,
+   "samples": 300
   },
   {
    "feature": "pawns",
    "label": "pawns",
-   "pearson": -0.4269193243085702,
-   "meanWhenHigh": 50.64,
-   "meanWhenLow": 91,
-   "samples": 100
+   "pearson": -0.5891579927265099,
+   "meanWhenHigh": 41.76,
+   "meanWhenLow": 91.64,
+   "samples": 300
   },
   {
    "feature": "marchers",
    "label": "marchers (pawns pushing down the board)",
-   "pearson": -0.4269193243085702,
-   "meanWhenHigh": 50.64,
-   "meanWhenLow": 91,
-   "samples": 100
+   "pearson": -0.5891579927265099,
+   "meanWhenHigh": 41.76,
+   "meanWhenLow": 91.64,
+   "samples": 300
   },
   {
-   "feature": "distToKey",
-   "label": "rook moves to the nearest key",
-   "pearson": -0.39779626273723917,
-   "meanWhenHigh": 42.6,
-   "meanWhenLow": 69.68,
-   "samples": 100
+   "feature": "moveLimit",
+   "label": "move budget",
+   "pearson": 0.5881134788840976,
+   "meanWhenHigh": 100,
+   "meanWhenLow": 63.96,
+   "samples": 300
   },
   {
-   "feature": "distToKing",
-   "label": "rook moves to the king",
-   "pearson": -0.39779626273723867,
-   "meanWhenHigh": 42.6,
-   "meanWhenLow": 69.68,
-   "samples": 100
+   "feature": "budgetSlack",
+   "label": "budget slack (moves minus distance to king)",
+   "pearson": 0.5855648989120638,
+   "meanWhenHigh": 100,
+   "meanWhenLow": 62.57333333333333,
+   "samples": 300
   },
   {
-   "feature": "safeLineSquares",
-   "label": "safe squares on the king's lines",
-   "pearson": 0.37492818429637803,
-   "meanWhenHigh": 90,
-   "meanWhenLow": 58.64,
-   "samples": 100
+   "feature": "penArea",
+   "label": "pen size",
+   "pearson": -0.5840672367095655,
+   "meanWhenHigh": 53,
+   "meanWhenLow": 100,
+   "samples": 300
   },
   {
-   "feature": "kingLineSquares",
-   "label": "empty squares on the king's lines",
-   "pearson": 0.36639560982248776,
-   "meanWhenHigh": 86,
-   "meanWhenLow": 56.32,
-   "samples": 100
+   "feature": "penEmpty",
+   "label": "empty pen squares",
+   "pearson": -0.5763545348368692,
+   "meanWhenHigh": 53,
+   "meanWhenLow": 100,
+   "samples": 300
   },
   {
-   "feature": "kingFlees",
-   "label": "king flees",
-   "pearson": -0.36167896308607606,
-   "meanWhenHigh": 62,
-   "meanWhenLow": 83,
-   "samples": 100
+   "feature": "pawnDefendedKeys",
+   "label": "pawn-defended keys",
+   "pearson": -0.5728621012893722,
+   "meanWhenHigh": 63.78666666666667,
+   "meanWhenLow": 100,
+   "samples": 300
+  },
+  {
+   "feature": "minors",
+   "label": "knights + bishops",
+   "pearson": -0.5597679276574582,
+   "meanWhenHigh": 46.22666666666667,
+   "meanWhenLow": 94.08,
+   "samples": 300
+  },
+  {
+   "feature": "defendedKeys",
+   "label": "defended keys",
+   "pearson": -0.556884455218439,
+   "meanWhenHigh": 65.28,
+   "meanWhenLow": 100,
+   "samples": 300
   },
   {
    "feature": "penAttacked",
    "label": "pen squares under enemy fire",
-   "pearson": -0.2848337823704794,
-   "meanWhenHigh": 58.28,
-   "meanWhenLow": 82.64,
-   "samples": 100
+   "pearson": -0.5407291272837429,
+   "meanWhenHigh": 44.04,
+   "meanWhenLow": 78.61333333333333,
+   "samples": 300
+  },
+  {
+   "feature": "freeKeys",
+   "label": "undefended keys",
+   "pearson": 0.5355935965146189,
+   "meanWhenHigh": 100,
+   "meanWhenLow": 55.8,
+   "samples": 300
+  },
+  {
+   "feature": "startFiles",
+   "label": "possible start files",
+   "pearson": -0.5118806619122037,
+   "meanWhenHigh": 62.53333333333333,
+   "meanWhenLow": 96.73333333333333,
+   "samples": 300
+  },
+  {
+   "feature": "safeLineSquares",
+   "label": "safe squares on the king's lines",
+   "pearson": 0.3757231207993013,
+   "meanWhenHigh": 97.46666666666667,
+   "meanWhenLow": 64.10666666666667,
+   "samples": 300
+  },
+  {
+   "feature": "kingFlees",
+   "label": "king flees",
+   "pearson": -0.3717624241665597,
+   "meanWhenHigh": 71.81333333333333,
+   "meanWhenLow": 89.12,
+   "samples": 300
+  },
+  {
+   "feature": "guardsAdjacent",
+   "label": "guards next to the king",
+   "pearson": 0.28397897922030774,
+   "meanWhenHigh": 83.38666666666667,
+   "meanWhenLow": 61.84,
+   "samples": 300
+  },
+  {
+   "feature": "keysOnKingLines",
+   "label": "keys on the king's lines",
+   "pearson": -0.2801056691558389,
+   "meanWhenHigh": 68.56,
+   "meanWhenLow": 75.05333333333333,
+   "samples": 300
   },
   {
    "feature": "penEnemies",
    "label": "enemies inside the pen",
-   "pearson": -0.23675008919870488,
-   "meanWhenHigh": 61.28,
-   "meanWhenLow": 69.68,
-   "samples": 100
+   "pearson": -0.16012285625086373,
+   "meanWhenHigh": 73.36,
+   "meanWhenLow": 74.90666666666667,
+   "samples": 300
   },
   {
-   "feature": "openSides",
-   "label": "open sides of the pen",
-   "pearson": 0.039369645329722404,
-   "meanWhenHigh": 71.28,
-   "meanWhenLow": 63,
-   "samples": 100
+   "feature": "kingLineSquares",
+   "label": "empty squares on the king's lines",
+   "pearson": 0.14366735776382702,
+   "meanWhenHigh": 82.92,
+   "meanWhenLow": 70.33333333333333,
+   "samples": 300
+  },
+  {
+   "feature": "walls",
+   "label": "walls",
+   "pearson": -0.136176584213718,
+   "meanWhenHigh": 66.8,
+   "meanWhenLow": 83.76,
+   "samples": 300
+  },
+  {
+   "feature": "distToKing",
+   "label": "rook moves to the king",
+   "pearson": -0.11855942023529442,
+   "meanWhenHigh": 64.48,
+   "meanWhenLow": 82.98666666666666,
+   "samples": 300
+  },
+  {
+   "feature": "distToKey",
+   "label": "rook moves to the nearest key",
+   "pearson": 0.09930440648616867,
+   "meanWhenHigh": 64.48,
+   "meanWhenLow": 81.65333333333334,
+   "samples": 300
   },
   {
    "feature": "enemiesPerTurn",
    "label": "enemies per turn",
-   "pearson": 0.02229318280935783,
-   "meanWhenHigh": 63.96,
-   "meanWhenLow": 69.68,
-   "samples": 100
+   "pearson": -0.08285074316024456,
+   "meanWhenHigh": 71.28,
+   "meanWhenLow": 73.38666666666667,
+   "samples": 300
+  },
+  {
+   "feature": "openSides",
+   "label": "open sides of the pen",
+   "pearson": 0.07167053280715434,
+   "meanWhenHigh": 71.70666666666666,
+   "meanWhenLow": 70.54666666666667,
+   "samples": 300
   }
  ],
  "floor": [
   {
    "feature": "totalEnemies",
    "label": "total enemies",
-   "pearson": -0.648574854030607,
-   "meanWhenHigh": 65.36,
+   "pearson": -0.6055956325818918,
+   "meanWhenHigh": 75.98666666666666,
    "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "distToKey",
-   "label": "rook moves to the nearest key",
-   "pearson": -0.5840325462720486,
-   "meanWhenHigh": 65.36,
-   "meanWhenLow": 95.36,
-   "samples": 100
-  },
-  {
-   "feature": "distToKing",
-   "label": "rook moves to the king",
-   "pearson": -0.5840325462720478,
-   "meanWhenHigh": 65.36,
-   "meanWhenLow": 95.36,
-   "samples": 100
+   "samples": 300
   },
   {
    "feature": "pawns",
    "label": "pawns",
-   "pearson": -0.5540270374605157,
-   "meanWhenHigh": 73.32,
-   "meanWhenLow": 98,
-   "samples": 100
+   "pearson": -0.5742183543966011,
+   "meanWhenHigh": 80.16,
+   "meanWhenLow": 99.64,
+   "samples": 300
   },
   {
    "feature": "marchers",
    "label": "marchers (pawns pushing down the board)",
-   "pearson": -0.5540270374605157,
-   "meanWhenHigh": 73.32,
-   "meanWhenLow": 98,
-   "samples": 100
+   "pearson": -0.5742183543966011,
+   "meanWhenHigh": 80.16,
+   "meanWhenLow": 99.64,
+   "samples": 300
   },
   {
    "feature": "material",
    "label": "total material",
-   "pearson": -0.5348396283295072,
-   "meanWhenHigh": 68.08,
+   "pearson": -0.4886791470715784,
+   "meanWhenHigh": 79.30666666666667,
    "meanWhenLow": 100,
-   "samples": 100
+   "samples": 300
   },
   {
    "feature": "threatDensity",
    "label": "squares under enemy fire",
-   "pearson": -0.43293519733044183,
-   "meanWhenHigh": 68.4,
+   "pearson": -0.39129337103640216,
+   "meanWhenHigh": 83.96,
    "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "hunters",
-   "label": "hunters (non-pawn pieces that chase Rookie)",
-   "pearson": -0.42285912784859897,
-   "meanWhenHigh": 68.08,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "minors",
-   "label": "knights + bishops",
-   "pearson": -0.4079996415488262,
-   "meanWhenHigh": 64.04,
-   "meanWhenLow": 100,
-   "samples": 100
+   "samples": 300
   },
   {
    "feature": "hunterPower",
    "label": "hunter power (3 per minor, 9 per queen)",
-   "pearson": -0.3969772665676433,
-   "meanWhenHigh": 68.08,
-   "meanWhenLow": 100,
-   "samples": 100
+   "pearson": -0.3903181909953891,
+   "meanWhenHigh": 85.73333333333333,
+   "meanWhenLow": 99.90666666666667,
+   "samples": 300
   },
   {
-   "feature": "startFiles",
-   "label": "possible start files",
-   "pearson": -0.38640363309122205,
-   "meanWhenHigh": 66.04,
-   "meanWhenLow": 100,
-   "samples": 100
+   "feature": "hunters",
+   "label": "hunters (non-pawn pieces that chase Rookie)",
+   "pearson": -0.3819869852834119,
+   "meanWhenHigh": 87.66666666666667,
+   "meanWhenLow": 99.90666666666667,
+   "samples": 300
   },
   {
    "feature": "approachAttacked",
    "label": "approach squares under fire (ranks 2-5)",
-   "pearson": -0.37632289957492626,
-   "meanWhenHigh": 84.76,
+   "pearson": -0.3679818376018581,
+   "meanWhenHigh": 87.72,
    "meanWhenLow": 100,
-   "samples": 100
+   "samples": 300
   },
   {
    "feature": "majors",
    "label": "queens",
-   "pearson": -0.3239349555116926,
-   "meanWhenHigh": 68.08,
-   "meanWhenLow": 100,
-   "samples": 100
+   "pearson": -0.3602546318638119,
+   "meanWhenHigh": 88.53333333333333,
+   "meanWhenLow": 96.32,
+   "samples": 300
   },
   {
-   "feature": "budgetSlack",
-   "label": "budget slack (moves minus distance to king)",
-   "pearson": 0.3128581419174928,
-   "meanWhenHigh": 100,
-   "meanWhenLow": 85.04,
-   "samples": 100
+   "feature": "startFiles",
+   "label": "possible start files",
+   "pearson": -0.3231898419188099,
+   "meanWhenHigh": 90.57333333333334,
+   "meanWhenLow": 99.90666666666667,
+   "samples": 300
   },
   {
-   "feature": "penArea",
-   "label": "pen size",
-   "pearson": -0.30483991437710306,
-   "meanWhenHigh": 72.04,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "pawnDefendedKeys",
-   "label": "pawn-defended keys",
-   "pearson": -0.2962623577990116,
-   "meanWhenHigh": 76,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "defendedKeys",
-   "label": "defended keys",
-   "pearson": -0.2962623577990116,
-   "meanWhenHigh": 76,
-   "meanWhenLow": 100,
-   "samples": 100
-  },
-  {
-   "feature": "freeKeys",
-   "label": "undefended keys",
-   "pearson": 0.2962623577990116,
-   "meanWhenHigh": 100,
-   "meanWhenLow": 87.4,
-   "samples": 100
-  },
-  {
-   "feature": "moveLimit",
-   "label": "move budget",
-   "pearson": 0.29051657158189237,
-   "meanWhenHigh": 100,
-   "meanWhenLow": 85.04,
-   "samples": 100
-  },
-  {
-   "feature": "penEmpty",
-   "label": "empty pen squares",
-   "pearson": -0.2718775542208485,
-   "meanWhenHigh": 72.04,
-   "meanWhenLow": 100,
-   "samples": 100
+   "feature": "minors",
+   "label": "knights + bishops",
+   "pearson": -0.31291110195455146,
+   "meanWhenHigh": 88.54666666666667,
+   "meanWhenLow": 99.90666666666667,
+   "samples": 300
   },
   {
    "feature": "penEnemies",
    "label": "enemies inside the pen",
-   "pearson": -0.25913436693125835,
-   "meanWhenHigh": 76.04,
-   "meanWhenLow": 95.36,
-   "samples": 100
+   "pearson": -0.3015957470197981,
+   "meanWhenHigh": 93.13333333333334,
+   "meanWhenLow": 93.94666666666667,
+   "samples": 300
+  },
+  {
+   "feature": "penArea",
+   "label": "pen size",
+   "pearson": -0.2906326243837655,
+   "meanWhenHigh": 88.32,
+   "meanWhenLow": 100,
+   "samples": 300
+  },
+  {
+   "feature": "distToKing",
+   "label": "rook moves to the king",
+   "pearson": -0.29015417122482823,
+   "meanWhenHigh": 85.21333333333334,
+   "meanWhenLow": 98.49333333333334,
+   "samples": 300
   },
   {
    "feature": "penAttacked",
    "label": "pen squares under enemy fire",
-   "pearson": -0.2540143258978851,
-   "meanWhenHigh": 86.08,
+   "pearson": -0.28296006693535575,
+   "meanWhenHigh": 87.36,
+   "meanWhenLow": 95.72,
+   "samples": 300
+  },
+  {
+   "feature": "budgetSlack",
+   "label": "budget slack (moves minus distance to king)",
+   "pearson": 0.26787171161828,
+   "meanWhenHigh": 100,
+   "meanWhenLow": 91.65333333333334,
+   "samples": 300
+  },
+  {
+   "feature": "penEmpty",
+   "label": "empty pen squares",
+   "pearson": -0.26343494186500765,
+   "meanWhenHigh": 88.32,
    "meanWhenLow": 100,
-   "samples": 100
+   "samples": 300
+  },
+  {
+   "feature": "pawnDefendedKeys",
+   "label": "pawn-defended keys",
+   "pearson": -0.2608719138211018,
+   "meanWhenHigh": 94.58666666666667,
+   "meanWhenLow": 100,
+   "samples": 300
+  },
+  {
+   "feature": "freeKeys",
+   "label": "undefended keys",
+   "pearson": 0.25779808815512145,
+   "meanWhenHigh": 100,
+   "meanWhenLow": 85.53333333333333,
+   "samples": 300
+  },
+  {
+   "feature": "moveLimit",
+   "label": "move budget",
+   "pearson": 0.2557687340822116,
+   "meanWhenHigh": 100,
+   "meanWhenLow": 93.94666666666667,
+   "samples": 300
+  },
+  {
+   "feature": "defendedKeys",
+   "label": "defended keys",
+   "pearson": -0.2529819870020175,
+   "meanWhenHigh": 94.58666666666667,
+   "meanWhenLow": 100,
+   "samples": 300
   },
   {
    "feature": "safeLineSquares",
    "label": "safe squares on the king's lines",
-   "pearson": 0.24620047364129308,
-   "meanWhenHigh": 94,
-   "meanWhenLow": 77.68,
-   "samples": 100
-  },
-  {
-   "feature": "walls",
-   "label": "walls",
-   "pearson": -0.232390159465049,
-   "meanWhenHigh": 76,
-   "meanWhenLow": 99,
-   "samples": 100
-  },
-  {
-   "feature": "guardsAdjacent",
-   "label": "guards next to the king",
-   "pearson": 0.21912713227528413,
-   "meanWhenHigh": 98.68,
-   "meanWhenLow": 89.72,
-   "samples": 100
-  },
-  {
-   "feature": "kingLineSquares",
-   "label": "empty squares on the king's lines",
-   "pearson": 0.17850339958420636,
-   "meanWhenHigh": 90,
-   "meanWhenLow": 94.04,
-   "samples": 100
+   "pearson": 0.19297182699585538,
+   "meanWhenHigh": 99.81333333333333,
+   "meanWhenLow": 87.86666666666666,
+   "samples": 300
   },
   {
    "feature": "kingFlees",
    "label": "king flees",
-   "pearson": -0.1762055077576775,
-   "meanWhenHigh": 80,
-   "meanWhenLow": 98,
-   "samples": 100
+   "pearson": -0.17894097842417925,
+   "meanWhenHigh": 95.76,
+   "meanWhenLow": 97.90666666666667,
+   "samples": 300
   },
   {
-   "feature": "openSides",
-   "label": "open sides of the pen",
-   "pearson": -0.09771423407543876,
-   "meanWhenHigh": 82.04,
-   "meanWhenLow": 95.36,
-   "samples": 100
+   "feature": "guardsAdjacent",
+   "label": "guards next to the king",
+   "pearson": 0.14156725509762988,
+   "meanWhenHigh": 96.52,
+   "meanWhenLow": 87.06666666666666,
+   "samples": 300
+  },
+  {
+   "feature": "keysOnKingLines",
+   "label": "keys on the king's lines",
+   "pearson": -0.10753730242503794,
+   "meanWhenHigh": 94.77333333333333,
+   "meanWhenLow": 93.01333333333334,
+   "samples": 300
   },
   {
    "feature": "enemiesPerTurn",
    "label": "enemies per turn",
-   "pearson": -0.08870361659975125,
-   "meanWhenHigh": 81.36,
-   "meanWhenLow": 96.68,
-   "samples": 100
-  }
- ],
- "findingsNone": [
-  {
-   "feature": "totalEnemies",
-   "label": "total enemies",
-   "threshold": 15,
-   "aboveMean": 0,
-   "belowMean": 70.7578947368421,
-   "aboveN": 5,
-   "belowN": 95,
-   "deltaPts": -70.7578947368421
+   "pearson": -0.09087263939559863,
+   "meanWhenHigh": 94.29333333333334,
+   "meanWhenLow": 92.65333333333334,
+   "samples": 300
   },
   {
-   "feature": "pawns",
-   "label": "pawns",
-   "threshold": 12,
-   "aboveMean": 0,
-   "belowMean": 70.7578947368421,
-   "aboveN": 5,
-   "belowN": 95,
-   "deltaPts": -70.7578947368421
+   "feature": "kingLineSquares",
+   "label": "empty squares on the king's lines",
+   "pearson": 0.08442359214771174,
+   "meanWhenHigh": 96.4,
+   "meanWhenLow": 90.96,
+   "samples": 300
   },
   {
-   "feature": "marchers",
-   "label": "marchers (pawns pushing down the board)",
-   "threshold": 12,
-   "aboveMean": 0,
-   "belowMean": 70.7578947368421,
-   "aboveN": 5,
-   "belowN": 95,
-   "deltaPts": -70.7578947368421
+   "feature": "walls",
+   "label": "walls",
+   "pearson": -0.07260373439463053,
+   "meanWhenHigh": 94.10666666666667,
+   "meanWhenLow": 96.42666666666666,
+   "samples": 300
   },
   {
-   "feature": "material",
-   "label": "total material",
-   "threshold": 27,
-   "aboveMean": 13.2,
-   "belowMean": 76.75294117647059,
-   "aboveN": 15,
-   "belowN": 85,
-   "deltaPts": -63.55294117647058
-  },
-  {
-   "feature": "threatDensity",
-   "label": "squares under enemy fire",
-   "threshold": 33,
-   "aboveMean": 20.24,
-   "belowMean": 82.88,
-   "aboveN": 25,
-   "belowN": 75,
-   "deltaPts": -62.64
-  },
-  {
-   "feature": "approachAttacked",
-   "label": "approach squares under fire (ranks 2-5)",
-   "threshold": 18,
-   "aboveMean": 29.7,
-   "belowMean": 92.23333333333333,
-   "aboveN": 40,
-   "belowN": 60,
-   "deltaPts": -62.53333333333333
-  }
- ],
- "findingsFloor": [
-  {
-   "feature": "totalEnemies",
-   "label": "total enemies",
-   "threshold": 15,
-   "aboveMean": 6.6,
-   "belowMean": 93.88421052631578,
-   "aboveN": 5,
-   "belowN": 95,
-   "deltaPts": -87.28421052631579
-  },
-  {
-   "feature": "pawns",
-   "label": "pawns",
-   "threshold": 12,
-   "aboveMean": 6.6,
-   "belowMean": 93.88421052631578,
-   "aboveN": 5,
-   "belowN": 95,
-   "deltaPts": -87.28421052631579
-  },
-  {
-   "feature": "marchers",
-   "label": "marchers (pawns pushing down the board)",
-   "threshold": 12,
-   "aboveMean": 6.6,
-   "belowMean": 93.88421052631578,
-   "aboveN": 5,
-   "belowN": 95,
-   "deltaPts": -87.28421052631579
-  },
-  {
-   "feature": "material",
-   "label": "total material",
-   "threshold": 27,
-   "aboveMean": 55.6,
-   "belowMean": 95.50588235294117,
-   "aboveN": 15,
-   "belowN": 85,
-   "deltaPts": -39.90588235294117
+   "feature": "openSides",
+   "label": "open sides of the pen",
+   "pearson": -0.01889897570884614,
+   "meanWhenHigh": 93.08,
+   "meanWhenLow": 91.46666666666667,
+   "samples": 300
   },
   {
    "feature": "distToKey",
    "label": "rook moves to the nearest key",
+   "pearson": 0.018224627984191936,
+   "meanWhenHigh": 85.21333333333334,
+   "meanWhenLow": 98.22666666666667,
+   "samples": 300
+  }
+ ],
+ "findingsNone": [
+  {
+   "feature": "pawns",
+   "label": "pawns",
+   "threshold": 12,
+   "aboveMean": 5.8,
+   "belowMean": 73.05084745762711,
+   "aboveN": 5,
+   "belowN": 295,
+   "deltaPts": -67.25084745762712
+  },
+  {
+   "feature": "marchers",
+   "label": "marchers (pawns pushing down the board)",
+   "threshold": 12,
+   "aboveMean": 5.8,
+   "belowMean": 73.05084745762711,
+   "aboveN": 5,
+   "belowN": 295,
+   "deltaPts": -67.25084745762712
+  },
+  {
+   "feature": "material",
+   "label": "total material",
+   "threshold": 23,
+   "aboveMean": 26.046153846153846,
+   "belowMean": 84.62127659574467,
+   "aboveN": 65,
+   "belowN": 235,
+   "deltaPts": -58.57512274959083
+  },
+  {
+   "feature": "totalEnemies",
+   "label": "total enemies",
+   "threshold": 15,
+   "aboveMean": 16.6,
+   "belowMean": 74.84210526315789,
+   "aboveN": 15,
+   "belowN": 285,
+   "deltaPts": -58.24210526315789
+  },
+  {
+   "feature": "majors",
+   "label": "queens",
    "threshold": 2,
-   "aboveMean": 59.2,
-   "belowMean": 97.1,
-   "aboveN": 20,
-   "belowN": 80,
-   "deltaPts": -37.89999999999999
+   "aboveMean": 23.17142857142857,
+   "belowMean": 78.36981132075472,
+   "aboveN": 35,
+   "belowN": 265,
+   "deltaPts": -55.19838274932615
+  },
+  {
+   "feature": "penAttacked",
+   "label": "pen squares under enemy fire",
+   "threshold": 5,
+   "aboveMean": 19.2,
+   "belowMean": 73.74827586206897,
+   "aboveN": 10,
+   "belowN": 290,
+   "deltaPts": -54.54827586206896
+  }
+ ],
+ "findingsFloor": [
+  {
+   "feature": "pawns",
+   "label": "pawns",
+   "threshold": 12,
+   "aboveMean": 15,
+   "belowMean": 94.58983050847458,
+   "aboveN": 5,
+   "belowN": 295,
+   "deltaPts": -79.58983050847458
+  },
+  {
+   "feature": "marchers",
+   "label": "marchers (pawns pushing down the board)",
+   "threshold": 12,
+   "aboveMean": 15,
+   "belowMean": 94.58983050847458,
+   "aboveN": 5,
+   "belowN": 295,
+   "deltaPts": -79.58983050847458
+  },
+  {
+   "feature": "penEnemies",
+   "label": "enemies inside the pen",
+   "threshold": 2,
+   "aboveMean": 55.2,
+   "belowMean": 93.90847457627119,
+   "aboveN": 5,
+   "belowN": 295,
+   "deltaPts": -38.708474576271186
+  },
+  {
+   "feature": "totalEnemies",
+   "label": "total enemies",
+   "threshold": 15,
+   "aboveMean": 61,
+   "belowMean": 94.96140350877192,
+   "aboveN": 15,
+   "belowN": 285,
+   "deltaPts": -33.96140350877192
   },
   {
    "feature": "distToKing",
    "label": "rook moves to the king",
    "threshold": 3,
-   "aboveMean": 59.2,
-   "belowMean": 97.1,
-   "aboveN": 20,
-   "belowN": 80,
-   "deltaPts": -37.89999999999999
+   "aboveMean": 64.88,
+   "belowMean": 95.84363636363636,
+   "aboveN": 25,
+   "belowN": 275,
+   "deltaPts": -30.96363636363637
+  },
+  {
+   "feature": "distToKey",
+   "label": "rook moves to the nearest key",
+   "threshold": 2,
+   "aboveMean": 70.73333333333333,
+   "belowMean": 95.76666666666667,
+   "aboveN": 30,
+   "belowN": 270,
+   "deltaPts": -25.03333333333333
   }
  ]
 }

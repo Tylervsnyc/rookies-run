@@ -1,0 +1,25 @@
+Rookie's Revenge nightly — 2026-09-01 (quick) · 2 min
+revenge-1: new player clears 100% Normal / 100% Rookie — TOO EASY · veteran 100% / 100% · powers +35 pts (none 65%) · weak finisher: freeze-ray 75% L10 · stalls 0
+revenge-2: new player clears 80% Normal / 98% Rookie — too easy · veteran 93% / 100% · powers +27 pts (none 71%) · weak finisher: freeze-ray 28% L10 · stalls 1
+revenge-3: new player clears 98% Normal / 100% Rookie — TOO EASY · veteran 95% / 100% · powers +34 pts (none 64%) · weak finisher: freeze-ray 75% L8 · stalls 0
+revenge-4: new player clears 95% Normal / 100% Rookie — TOO EASY · veteran 95% / 100% · powers +26 pts (none 73%) · finishers ok · stalls 0
+revenge-5: new player clears 100% Normal / 100% Rookie — TOO EASY · veteran 100% / 100% · powers +23 pts (none 77%) · finishers ok · stalls 0
+revenge-6: new player clears 100% Normal / 100% Rookie — TOO EASY · veteran 100% / 100% · powers +28 pts (none 72%) · finishers ok · stalls 0
+revenge-1 tiers · top: S bishop-step 100%, S knight-hop 100%, S queen-pulse 100%, S surge 100%, S freeze-ray 95%
+revenge-2 tiers · top: S aegis 100%, S become-king 100%, S decoy 100%, S queen-pulse 100%, S rabies-dart 100% · bottom: A smoke 87%, C magnet 67%, C rewind 57%†
+revenge-3 tiers · top: S become-king 100%, S decoy 100%, S queen-pulse 100%, S rabies-dart 100%, S bishop-step 99% · bottom: A boulder 86%, C magnet 64%, D rewind 43%†
+revenge-4 tiers · top: S become-king 100%, S decoy 100%, S rabies-dart 100%, S aegis 99%, S bishop-step 99% · bottom: A squad 86%†, B magnet 83%, C rewind 56%†
+revenge-5 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S bodyguard 100%, S decoy 100% · bottom: A boulder 87%, A magnet 86%, D rewind 38%†
+revenge-6 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S decoy 100%, S queen-pulse 100% · bottom: B boulder 85%, B magnet 82%, C rewind 52%†
+† = bot never casts it (floor, not a verdict)
+Movers vs 2026-08-30:
+  L10 aegis [realistic] 0% -> 100% (+100)
+  L10 become-king [realistic] 0% -> 100% (+100)
+  L10 bishop-step [realistic] 0% -> 100% (+100)
+  L10 bodyguard [realistic] 0% -> 100% (+100)
+  L10 decoy [realistic] 0% -> 100% (+100)
+  L10 knight-hop [realistic] 0% -> 100% (+100)
+  NEW STALL L4 none [realistic] x1
+Pipeline: testing 0 (READY: none · HOLD: none) · approved 0 · live 23 · ideas 5
+  went live 7d: summon-knight, revenge-2, revenge-3, revenge-4, revenge-5, revenge-6
+Full report: data/run-playtest/revenge/digests/2026-09-01.md

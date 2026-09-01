@@ -304,7 +304,7 @@
       "testing": {
         "lastRun": "2026-09-01",
         "verdict": "HOLD",
-        "summary": "too easy — new player clears 83% on Normal (target 40-60%); L10 knight-hop only 78% (every finisher must be at least 80%)",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
     },

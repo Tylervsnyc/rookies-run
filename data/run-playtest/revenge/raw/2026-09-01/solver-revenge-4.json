@@ -3,630 +3,630 @@
   "level": 6,
   "loadout": "aegis",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 2658
+  "depth": 3,
+  "nodes": 500
  },
  {
   "level": 6,
   "loadout": "become-king",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 4727
+  "nodes": 5006
  },
  {
   "level": 6,
   "loadout": "bishop-step",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 1602
+  "nodes": 4564
  },
  {
   "level": 6,
   "loadout": "bodyguard",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 4880
+  "nodes": 2397
  },
  {
   "level": 6,
   "loadout": "boulder",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 28992
+  "nodes": 155068
  },
  {
   "level": 6,
   "loadout": "convert",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 2599
+  "depth": 3,
+  "nodes": 67
  },
  {
   "level": 6,
   "loadout": "decoy",
   "verdict": "forced-win",
   "depth": 3,
-  "nodes": 3223
+  "nodes": 1986
  },
  {
   "level": 6,
   "loadout": "freeze-ray",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 33138
+  "nodes": 11124
  },
  {
   "level": 6,
   "loadout": "knight-hop",
+  "verdict": "forced-win",
+  "depth": 3,
+  "nodes": 423
+ },
+ {
+  "level": 6,
+  "loadout": "magnet",
+  "verdict": "forced-win",
+  "depth": 5,
+  "nodes": 12549
+ },
+ {
+  "level": 6,
+  "loadout": "none",
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 18350
+ },
+ {
+  "level": 6,
+  "loadout": "poison-dart",
+  "verdict": "forced-win",
+  "depth": 4,
+  "nodes": 780
+ },
+ {
+  "level": 6,
+  "loadout": "queen-pulse",
+  "verdict": "forced-win",
+  "depth": 4,
+  "nodes": 8772
+ },
+ {
+  "level": 6,
+  "loadout": "rabies-dart",
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 41062
+ },
+ {
+  "level": 6,
+  "loadout": "rewind",
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 18350
+ },
+ {
+  "level": 6,
+  "loadout": "smoke",
+  "verdict": "forced-win",
+  "depth": 6,
+  "nodes": 11430
+ },
+ {
+  "level": 6,
+  "loadout": "squad",
+  "verdict": "forced-win",
+  "depth": 6,
+  "nodes": 14301
+ },
+ {
+  "level": 6,
+  "loadout": "summon-knight",
+  "verdict": "forced-win",
+  "depth": 4,
+  "nodes": 6016
+ },
+ {
+  "level": 7,
+  "loadout": "aegis",
+  "verdict": "forced-win",
+  "depth": 3,
+  "nodes": 840
+ },
+ {
+  "level": 7,
+  "loadout": "become-king",
+  "verdict": "forced-win",
+  "depth": 3,
+  "nodes": 837
+ },
+ {
+  "level": 7,
+  "loadout": "bishop-step",
   "verdict": "forced-win",
   "depth": 3,
   "nodes": 683
  },
  {
-  "level": 6,
-  "loadout": "magnet",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 8908
- },
- {
-  "level": 6,
-  "loadout": "none",
-  "verdict": "forced-win",
-  "depth": 6,
-  "nodes": 36424
- },
- {
-  "level": 6,
-  "loadout": "poison-dart",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 640
- },
- {
-  "level": 6,
-  "loadout": "queen-pulse",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 4515
- },
- {
-  "level": 6,
-  "loadout": "rabies-dart",
-  "verdict": "forced-win",
-  "depth": 6,
-  "nodes": 36431
- },
- {
-  "level": 6,
-  "loadout": "rewind",
-  "verdict": "forced-win",
-  "depth": 6,
-  "nodes": 36424
- },
- {
-  "level": 6,
-  "loadout": "smoke",
-  "verdict": "forced-win",
-  "depth": 6,
-  "nodes": 115345
- },
- {
-  "level": 6,
-  "loadout": "squad",
-  "verdict": "forced-win",
-  "depth": 6,
-  "nodes": 21458
- },
- {
-  "level": 6,
-  "loadout": "summon-knight",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 4399
- },
- {
-  "level": 7,
-  "loadout": "aegis",
-  "verdict": "forced-win",
-  "depth": 3,
-  "nodes": 678
- },
- {
-  "level": 7,
-  "loadout": "become-king",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 6129
- },
- {
-  "level": 7,
-  "loadout": "bishop-step",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 4012
- },
- {
   "level": 7,
   "loadout": "bodyguard",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 6154
+  "depth": 3,
+  "nodes": 501
  },
  {
   "level": 7,
   "loadout": "boulder",
   "verdict": "forced-win",
   "depth": 6,
-  "nodes": 209003
+  "nodes": 5886
  },
  {
   "level": 7,
   "loadout": "convert",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 1859
+  "depth": 3,
+  "nodes": 292
  },
  {
   "level": 7,
   "loadout": "decoy",
   "verdict": "forced-win",
   "depth": 3,
-  "nodes": 2454
+  "nodes": 438
  },
  {
   "level": 7,
   "loadout": "freeze-ray",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 27500
+  "depth": 3,
+  "nodes": 2073
  },
  {
   "level": 7,
   "loadout": "knight-hop",
   "verdict": "forced-win",
   "depth": 3,
-  "nodes": 708
+  "nodes": 486
  },
  {
   "level": 7,
   "loadout": "magnet",
   "verdict": "forced-win",
-  "depth": 3,
-  "nodes": 1078
+  "depth": 5,
+  "nodes": 2709
  },
  {
   "level": 7,
   "loadout": "none",
   "verdict": "forced-win",
   "depth": 6,
-  "nodes": 33216
+  "nodes": 14558
  },
  {
   "level": 7,
   "loadout": "poison-dart",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 1219
+  "nodes": 988
  },
  {
   "level": 7,
   "loadout": "queen-pulse",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 7159
+  "depth": 3,
+  "nodes": 1543
  },
  {
   "level": 7,
   "loadout": "rabies-dart",
   "verdict": "forced-win",
   "depth": 6,
-  "nodes": 33223
+  "nodes": 14565
  },
  {
   "level": 7,
   "loadout": "rewind",
   "verdict": "forced-win",
   "depth": 6,
-  "nodes": 33216
+  "nodes": 14558
  },
  {
   "level": 7,
   "loadout": "smoke",
   "verdict": "forced-win",
-  "depth": 6,
-  "nodes": 108202
+  "depth": 3,
+  "nodes": 1379
  },
  {
   "level": 7,
   "loadout": "squad",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 30993
+  "nodes": 24177
  },
  {
   "level": 7,
   "loadout": "summon-knight",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 6041
+  "nodes": 8757
  },
  {
   "level": 8,
   "loadout": "aegis",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 3278
+  "nodes": 2766
  },
  {
   "level": 8,
   "loadout": "become-king",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 4282
+  "nodes": 1898
  },
  {
   "level": 8,
   "loadout": "bishop-step",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 2742
+  "nodes": 1012
  },
  {
   "level": 8,
   "loadout": "bodyguard",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 3435
+  "nodes": 1763
  },
  {
   "level": 8,
   "loadout": "boulder",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 11617
+  "nodes": 87953
  },
  {
   "level": 8,
   "loadout": "convert",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 6236
+  "nodes": 5628
  },
  {
   "level": 8,
   "loadout": "decoy",
   "verdict": "forced-win",
-  "depth": 3,
-  "nodes": 207
+  "depth": 4,
+  "nodes": 14531
  },
  {
   "level": 8,
   "loadout": "freeze-ray",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 18838
+  "nodes": 9185
  },
  {
   "level": 8,
   "loadout": "knight-hop",
   "verdict": "forced-win",
-  "depth": 3,
-  "nodes": 466
+  "depth": 4,
+  "nodes": 874
  },
  {
   "level": 8,
   "loadout": "magnet",
-  "verdict": "forced-win",
-  "depth": 5,
-  "nodes": 11533
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 24499
  },
  {
   "level": 8,
   "loadout": "none",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 13398
+  "nodes": 9045
  },
  {
   "level": 8,
   "loadout": "poison-dart",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 1513
+  "depth": 5,
+  "nodes": 499
  },
  {
   "level": 8,
   "loadout": "queen-pulse",
   "verdict": "forced-win",
   "depth": 4,
-  "nodes": 5891
+  "nodes": 2497
  },
  {
   "level": 8,
   "loadout": "rabies-dart",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 13405
+  "nodes": 34888
  },
  {
   "level": 8,
   "loadout": "rewind",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 13398
+  "nodes": 9045
  },
  {
   "level": 8,
   "loadout": "smoke",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 63005
+  "nodes": 60749
  },
  {
   "level": 8,
   "loadout": "squad",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 28087
+  "nodes": 4554
  },
  {
   "level": 8,
   "loadout": "summon-knight",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 11832
+  "depth": 3,
+  "nodes": 3035
  },
  {
   "level": 9,
   "loadout": "aegis",
   "verdict": "forced-win",
   "depth": 6,
-  "nodes": 25782
+  "nodes": 4361
  },
  {
   "level": 9,
   "loadout": "become-king",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 27477
+  "nodes": 16296
  },
  {
   "level": 9,
   "loadout": "bishop-step",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 1852
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 18482
  },
  {
   "level": 9,
   "loadout": "bodyguard",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 101604
+  "nodes": 10538
  },
  {
   "level": 9,
   "loadout": "boulder",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 405079
+  "nodes": 48934
  },
  {
   "level": 9,
   "loadout": "convert",
   "verdict": "forced-win",
-  "depth": 5,
-  "nodes": 22525
+  "depth": 6,
+  "nodes": 6636
  },
  {
   "level": 9,
   "loadout": "decoy",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 2548
+  "depth": 3,
+  "nodes": 3110
  },
  {
   "level": 9,
   "loadout": "freeze-ray",
-  "verdict": "forced-win",
+  "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 497002
+  "nodes": 121259
  },
  {
   "level": 9,
   "loadout": "knight-hop",
-  "verdict": "forced-win",
-  "depth": 5,
-  "nodes": 14953
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 16693
  },
  {
   "level": 9,
   "loadout": "magnet",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 142298
+  "nodes": 1991
  },
  {
   "level": 9,
   "loadout": "none",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 40630
+  "nodes": 5055
  },
  {
   "level": 9,
   "loadout": "poison-dart",
   "verdict": "forced-win",
-  "depth": 5,
-  "nodes": 1823
+  "depth": 6,
+  "nodes": 5796
  },
  {
   "level": 9,
   "loadout": "queen-pulse",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 5543
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 28130
  },
  {
   "level": 9,
   "loadout": "rabies-dart",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 204477
+  "nodes": 21604
  },
  {
   "level": 9,
   "loadout": "rewind",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 40630
+  "nodes": 5055
  },
  {
   "level": 9,
   "loadout": "smoke",
-  "verdict": "no-forced-win",
+  "verdict": "forced-win",
   "depth": 6,
-  "nodes": 124472
+  "nodes": 25777
  },
  {
   "level": 9,
   "loadout": "squad",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 19738
+  "nodes": 7050
  },
  {
   "level": 9,
   "loadout": "summon-knight",
   "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 7508
+  "depth": 6,
+  "nodes": 144644
  },
  {
   "level": 10,
   "loadout": "aegis",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 19834
+  "nodes": 25558
  },
  {
   "level": 10,
   "loadout": "become-king",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 18949
+  "nodes": 6574
  },
  {
   "level": 10,
   "loadout": "bishop-step",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 5795
+  "nodes": 2075
  },
  {
   "level": 10,
   "loadout": "bodyguard",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 13815
+  "nodes": 4229
  },
  {
   "level": 10,
   "loadout": "boulder",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 19196
+  "nodes": 41039
  },
  {
   "level": 10,
   "loadout": "convert",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 91945
+  "nodes": 64954
  },
  {
   "level": 10,
   "loadout": "decoy",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 29185
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 72347
  },
  {
   "level": 10,
   "loadout": "freeze-ray",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 55852
+  "nodes": 23702
  },
  {
   "level": 10,
   "loadout": "knight-hop",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 7279
+  "nodes": 2128
  },
  {
   "level": 10,
   "loadout": "magnet",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 7492
+  "nodes": 18467
  },
  {
   "level": 10,
   "loadout": "none",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 2271
+  "nodes": 5334
  },
  {
   "level": 10,
   "loadout": "poison-dart",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 71353
+  "nodes": 6929
  },
  {
   "level": 10,
   "loadout": "queen-pulse",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 8282
+  "nodes": 5043
  },
  {
   "level": 10,
   "loadout": "rabies-dart",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 10400
+  "nodes": 21331
  },
  {
   "level": 10,
   "loadout": "rewind",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 2271
+  "nodes": 5334
  },
  {
   "level": 10,
   "loadout": "smoke",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 20234
+  "nodes": 30025
  },
  {
   "level": 10,
   "loadout": "squad",
   "verdict": "no-forced-win",
   "depth": 6,
-  "nodes": 3027
+  "nodes": 3636
  },
  {
   "level": 10,
   "loadout": "summon-knight",
-  "verdict": "forced-win",
-  "depth": 4,
-  "nodes": 3483
+  "verdict": "no-forced-win",
+  "depth": 6,
+  "nodes": 12847
  }
 ]
