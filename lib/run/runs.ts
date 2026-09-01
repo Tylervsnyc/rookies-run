@@ -3974,6 +3974,16 @@ export const REVENGE_ABILITY_CATALOG: ReadonlyArray<string> = [
   'bodyguard',
   // Squire (2026-08-31): a rainbow knight the player controls — a second body.
   'summon-knight',
+  // Controllable-summon family (2026-09-01): pieces you summon AND steer,
+  // plus support cards that operate on them. In `testing` until Tyler approves.
+  'bishop-squire',
+  'page',
+  'twin',
+  'duchess',
+  'vanguard',
+  'swap',
+  'sacrifice',
+  'knighting',
 ];
 
 /**
@@ -4829,6 +4839,15 @@ const LAB_ABILITIES: ReadonlyArray<string> = [
   'magnet',
   'bodyguard',
   'summon-knight', // dev sandbox: testing-stage content is fair game here
+  // Controllable-summon family (2026-09-01, testing).
+  'bishop-squire',
+  'page',
+  'twin',
+  'duchess',
+  'vanguard',
+  'swap',
+  'sacrifice',
+  'knighting',
   // two finishers so a slate can't brick the run
   'surge',
   'knight-hop',

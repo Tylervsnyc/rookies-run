@@ -42,7 +42,17 @@ export type AbilityId =
   | 'rewind'
   | 'magnet'
   | 'bodyguard'
-  | 'summon-knight';
+  | 'summon-knight'
+  // Controllable-summon family (2026-09-01, testing) — pieces you summon AND
+  // steer, plus upgrades of that idea. See docs/revenge-abilities.md.
+  | 'bishop-squire'
+  | 'page'
+  | 'twin'
+  | 'duchess'
+  | 'vanguard'
+  | 'swap'
+  | 'sacrifice'
+  | 'knighting';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -212,6 +222,62 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Ally',
     description: 'Summon a rainbow knight YOU control. A second body on the board.',
   },
+  'bishop-squire': {
+    id: 'bishop-squire',
+    name: 'Bishop Squire',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'Summon a rainbow bishop YOU control. Long diagonals, your hands.',
+  },
+  page: {
+    id: 'page',
+    name: 'Page',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'Summon a rainbow pawn YOU control. Walk him to the far rank: he becomes your queen.',
+  },
+  twin: {
+    id: 'twin',
+    name: 'Twin',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'Summon a second rook YOU control. Two Rookies, one board.',
+  },
+  duchess: {
+    id: 'duchess',
+    name: 'Duchess',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'Summon a rainbow queen YOU control. She does not stay long.',
+  },
+  vanguard: {
+    id: 'vanguard',
+    name: 'Vanguard',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'Drop a rainbow knight YOU control anywhere in range. Behind their lines.',
+  },
+  swap: {
+    id: 'swap',
+    name: 'Swap',
+    activation: 'targeted',
+    typeLine: 'Targeted · Trick',
+    description: 'Trade squares with one of your summons. Instantly.',
+  },
+  sacrifice: {
+    id: 'sacrifice',
+    name: 'Sacrifice',
+    activation: 'targeted',
+    typeLine: 'Targeted · Burst',
+    description: 'Your summon explodes. Everything it threatened is captured.',
+  },
+  knighting: {
+    id: 'knighting',
+    name: 'Knighting',
+    activation: 'targeted',
+    typeLine: 'Targeted · Rank',
+    description: 'Promote one of your summons into a bigger piece.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -321,6 +387,30 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/2/2/2 — from T3 you can re-summon after he's taken.
       if (tier <= 2) return 1;
       return 2;
+    case 'bishop-squire':
+    case 'page':
+    case 'twin':
+    case 'vanguard':
+      // 1/1/2/2/2 — mirror the Squire (one charge per run, see below).
+      if (tier <= 2) return 1;
+      return 2;
+    case 'duchess':
+      // 1/1/1/2/2 — a queen is worth a whole charge.
+      if (tier <= 3) return 1;
+      return 2;
+    case 'swap':
+      // 1/1/2/2/3 — support, refreshes every level.
+      if (tier <= 2) return 1;
+      if (tier <= 4) return 2;
+      return 3;
+    case 'sacrifice':
+      // 1/1/2/2/2 — support, refreshes every level.
+      if (tier <= 2) return 1;
+      return 2;
+    case 'knighting':
+      // 1/1/1/2/2 — support, refreshes every level.
+      if (tier <= 3) return 1;
+      return 2;
   }
 }
 
@@ -392,6 +482,14 @@ const HOW: Record<AbilityId, string> = {
   magnet: 'Tap card, then tap an enemy on your line.',
   bodyguard: 'Tap card. A rook appears beside you.',
   'summon-knight': 'Tap card, then tap a square beside you. Tap the knight to move it.',
+  'bishop-squire': 'Tap card, then tap a square beside you. Tap the bishop to move it.',
+  page: 'Tap card, then tap a square beside you. Tap the pawn to move it.',
+  twin: 'Tap card, then tap a square beside you. Tap the rook to move it.',
+  duchess: 'Tap card, then tap a square beside you. Tap the queen to move it.',
+  vanguard: 'Tap card, then tap any square in range. Tap the knight to move it.',
+  swap: 'Tap card, then tap one of your summons.',
+  sacrifice: 'Tap card, then tap one of your summons.',
+  knighting: 'Tap card, then tap one of your summons.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -507,6 +605,47 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 4) return 'A knight you control for the rest of the level. Move him or you.';
       if (tier >= 2) return 'A knight you control for 9 turns. Move him or you.';
       return 'A knight you control for 6 turns. Move him or you.';
+    case 'bishop-squire':
+      if (tier === 5) return 'A bishop you control, all level. Move him AND you each turn.';
+      if (tier === 4) return 'A bishop you control for the rest of the level. Move him or you.';
+      if (tier >= 2) return 'A bishop you control for 9 turns. Move him or you.';
+      return 'A bishop you control for 6 turns. Move him or you.';
+    case 'page':
+      if (tier === 5) return 'A pawn you control. Any capture promotes him to queen on the spot.';
+      if (tier === 4) return 'A pawn you control. Steps 2 forward; promotes on rank 7.';
+      if (tier === 3) return 'A pawn you control. Promotes to your queen on rank 7.';
+      if (tier === 2) return 'A pawn you control. He can step 2 forward.';
+      return 'A pawn you control. Reach rank 8: he becomes your queen.';
+    case 'twin':
+      if (tier === 5) return 'A rook you control, all level. Move her AND you each turn.';
+      if (tier === 4) return 'A rook you control for the rest of the level. Move her or you.';
+      if (tier === 3) return 'A rook you control for 8 turns. Move her or you.';
+      if (tier === 2) return 'A rook you control for 6 turns. Move her or you.';
+      return 'A rook you control for 4 turns. Move her or you.';
+    case 'duchess':
+      if (tier === 5) return 'A queen you control for 6 turns.';
+      if (tier === 4) return 'A queen you control for 4 turns.';
+      if (tier === 3) return 'A queen you control for 4 turns.';
+      if (tier === 2) return 'A queen you control for 3 turns.';
+      return 'A queen you control for 2 turns. Make them count.';
+    case 'vanguard':
+      if (tier === 5) return 'Drop a knight you control anywhere. He lasts the level.';
+      if (tier >= 3) return 'Drop a knight you control on any empty square.';
+      if (tier === 2) return 'Drop a knight you control within 5 squares.';
+      return 'Drop a knight you control within 3 squares.';
+    case 'swap':
+      if (tier >= 4) return 'Trade squares with ANY rainbow ally. Free action.';
+      return 'Trade squares with one of your summons. Free action.';
+    case 'sacrifice':
+      if (tier === 5) return 'Detonate a summon. It captures everything it threatens and beside it; the king is stunned 3 turns.';
+      if (tier >= 3) return 'Detonate a summon. Enemies it threatens and beside it are captured.';
+      return 'Detonate a summon. Enemies on its attack squares are captured.';
+    case 'knighting':
+      if (tier === 5) return 'Promote a summon straight to queen.';
+      if (tier === 4) return 'Promote a summon or ANY rainbow ally two steps up.';
+      if (tier === 3) return 'Promote a summon two steps up (pawn to bishop, knight to rook).';
+      if (tier === 2) return 'Promote a summon one step up. Its clock gains 3 turns.';
+      return 'Promote a summon one step: pawn, knight, bishop, rook, queen.';
   }
 }
 
@@ -621,6 +760,51 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Your knight, 9 turns. 2/level.';
       if (tier === 2) return 'Your knight, 9 turns. 1/level.';
       return 'Your knight, 6 turns. 1/level.';
+    case 'bishop-squire':
+      if (tier === 5) return 'Your bishop, all level, free move. 2 charges.';
+      if (tier === 4) return 'Your bishop, all level. 2 charges.';
+      if (tier === 3) return 'Your bishop, 9 turns. 2 charges.';
+      if (tier === 2) return 'Your bishop, 9 turns. 1 charge.';
+      return 'Your bishop, 6 turns. 1 charge.';
+    case 'page':
+      if (tier === 5) return 'Your pawn. Captures promote. 2 charges.';
+      if (tier === 4) return 'Your pawn. Promotes on rank 7. 2 charges.';
+      if (tier === 3) return 'Your pawn. Promotes on rank 7. 2 charges.';
+      if (tier === 2) return 'Your pawn, 2-step walk. 1 charge.';
+      return 'Your pawn. Queen on rank 8. 1 charge.';
+    case 'twin':
+      if (tier === 5) return 'Your rook, all level, free move. 2 charges.';
+      if (tier === 4) return 'Your rook, all level. 2 charges.';
+      if (tier === 3) return 'Your rook, 8 turns. 2 charges.';
+      if (tier === 2) return 'Your rook, 6 turns. 1 charge.';
+      return 'Your rook, 4 turns. 1 charge.';
+    case 'duchess':
+      if (tier === 5) return 'Your queen, 6 turns. 2 charges.';
+      if (tier === 4) return 'Your queen, 4 turns. 2 charges.';
+      if (tier === 3) return 'Your queen, 4 turns. 1 charge.';
+      if (tier === 2) return 'Your queen, 3 turns. 1 charge.';
+      return 'Your queen, 2 turns. 1 charge.';
+    case 'vanguard':
+      if (tier === 5) return 'Knight drop anywhere, all level. 2 charges.';
+      if (tier === 4) return 'Knight drop anywhere. 2 charges.';
+      if (tier === 3) return 'Knight drop anywhere. 2 charges.';
+      if (tier === 2) return 'Knight drop, range 5. 1 charge.';
+      return 'Knight drop, range 3. 1 charge.';
+    case 'swap':
+      if (tier === 5) return 'Trade with any ally. 3/level.';
+      if (tier === 4) return 'Trade with any ally. 2/level.';
+      if (tier === 3) return 'Trade with a summon. 2/level.';
+      return 'Trade with a summon. 1/level.';
+    case 'sacrifice':
+      if (tier === 5) return 'Detonate: threats + beside, stun 3. 2/level.';
+      if (tier >= 3) return 'Detonate: threats + beside. 2/level.';
+      return 'Detonate a summon. 1/level.';
+    case 'knighting':
+      if (tier === 5) return 'Summon straight to queen. 2/level.';
+      if (tier === 4) return 'Any ally, two steps up. 2/level.';
+      if (tier === 3) return 'Two steps up. 1/level.';
+      if (tier === 2) return 'One step up, +3 turns. 1/level.';
+      return 'One step up. 1/level.';
   }
 }
 
@@ -833,6 +1017,10 @@ export function abilityLegalMoves(
   // tier-coloured dots a movement ability would (quieter than 60 rings).
   if (abilityId === 'boulder') return boulderTargets(state);
   if (abilityId === 'summon-knight') return squireSpawnSquares(state);
+  if (isSummonAbility(abilityId)) return summonSpawnSquares(state, abilityId);
+  if (abilityId === 'swap') return swapTargets(state);
+  if (abilityId === 'sacrifice') return sacrificeTargets(state);
+  if (abilityId === 'knighting') return knightingTargets(state);
   return [];
 }
 
@@ -925,12 +1113,19 @@ export function applyAbilityActivate(
     return applyBodyguard(state);
   }
 
-  // Targeted abilities pick an enemy as their second tap — except Boulder,
-  // which picks an EMPTY square.
+  // Targeted abilities pick an enemy as their second tap — except Boulder
+  // and the controllable-summon family, which pick a SQUARE (empty square to
+  // spawn on / one of your own summons).
+  const picksSquare =
+    abilityId === 'boulder' ||
+    abilityId === 'summon-knight' ||
+    isSummonAbility(abilityId) ||
+    abilityId === 'swap' ||
+    abilityId === 'sacrifice' ||
+    abilityId === 'knighting';
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
-  if (def.activation === 'targeted' && abilityId !== 'boulder' && abilityId !== 'summon-knight') step = 'pick-enemy';
-  if (abilityId === 'boulder' && boulderTargets(state).length === 0) return state;
-  if (abilityId === 'summon-knight' && squireSpawnSquares(state).length === 0) return state;
+  if (def.activation === 'targeted' && !picksSquare) step = 'pick-enemy';
+  if (picksSquare && abilityLegalMoves(state, abilityId).length === 0) return state;
   if (abilityId === 'magnet' && magnetTargets(state).length === 0) return state;
   return { ...state, activeAbility: { id: abilityId, step } };
 }
@@ -1256,6 +1451,19 @@ export function applyAbilityTargeted(
 
   if (abilityId === 'summon-knight') {
     return applySummonKnight(state, target);
+  }
+
+  if (isSummonAbility(abilityId)) {
+    return applySummonAlly(state, abilityId, target);
+  }
+  if (abilityId === 'swap') {
+    return applySwap(state, target);
+  }
+  if (abilityId === 'sacrifice') {
+    return applySacrifice(state, target);
+  }
+  if (abilityId === 'knighting') {
+    return applyKnighting(state, target);
   }
 
   if (abilityId === 'magnet') {
@@ -1719,11 +1927,8 @@ function applySummonKnight(state: BoardState, target: Coord): BoardState {
 
 /** True when the player may move the Squire right now. */
 export function canMoveSquire(state: BoardState): boolean {
-  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
-  if (state.pendingOffer || state.activeAbility) return false;
-  if (!squireOf(state)) return false;
-  if (squireMoveIsFree(state) && state.squireMovedThisTurn) return false;
-  return true;
+  const sq = squireOf(state);
+  return !!sq && canMoveAllyAt(state, sq);
 }
 
 /**
@@ -1733,27 +1938,321 @@ export function canMoveSquire(state: BoardState): boolean {
 export function squireLegalMoves(state: BoardState): Coord[] {
   const sq = squireOf(state);
   if (!sq) return [];
-  const out: Coord[] = [];
-  for (const [df, dr] of ALLY_KNIGHT_DELTAS) {
-    const f = sq.file + df;
-    const r = sq.rank + dr;
-    if (!allyInBounds(f, r)) continue;
-    if (allyIsHazard(state, f, r)) continue;
-    if (allyOccupied(state, f, r, sq)) continue;
-    out.push({ file: f, rank: r });
-  }
-  return out;
+  return controlledAllyLegalMoves(state, sq);
 }
 
 /**
  * Move the Squire. T1–T4: this IS your move for the turn (one body per
  * turn) — it ticks the move budget and hands off to the enemy exactly like
  * a Rookie move. T5: free action, once per turn; Rookie still moves after.
+ * (Now a wrapper over the generic controlled-ally move below.)
  */
 export function applySquireMove(state: BoardState, target: Coord): BoardState {
-  if (!canMoveSquire(state)) return state;
-  const sq = squireOf(state)!;
-  if (!squireLegalMoves(state).some((m) => m.file === target.file && m.rank === target.rank)) {
+  const sq = squireOf(state);
+  if (!sq) return state;
+  return applyControlledAllyMove(state, { file: sq.file, rank: sq.rank }, target);
+}
+
+// ---------------------------------------------------------------------------
+// Controllable summons — the Squire FAMILY (2026-09-01).
+//
+// One shared engine for every piece the PLAYER summons and steers on her own
+// turns: Squire (knight), Bishop Squire, Page (pawn that promotes), Twin
+// (rook), Duchess (queen), Vanguard (dropped knight). All of them:
+//   - are rainbow allies enemies hunt like any other (captured = gone),
+//   - block lines, and their attack squares are squares the king won't enter,
+//   - MAY capture the enemy king — that wins the level (hence one charge per
+//     run, see ONE_CHARGE_PER_RUN),
+//   - move INSTEAD of Rookie (T1–T4); a T5 Squire/Bishop Squire/Twin's move
+//     is a free action, once per turn.
+// Swap / Sacrifice / Knighting are support cards that operate ON a summon.
+// ---------------------------------------------------------------------------
+
+/** Ally sources the player controls directly. */
+export const CONTROLLED_SOURCES: ReadonlySet<AllyPiece['source']> = new Set([
+  'squire',
+  'bishop-squire',
+  'page',
+  'twin',
+  'duchess',
+  'vanguard',
+] as AllyPiece['source'][]);
+
+export function isControlledAlly(a: AllyPiece): boolean {
+  return CONTROLLED_SOURCES.has(a.source);
+}
+
+/** All living controlled summons. */
+export function controlledAllies(state: BoardState): AllyPiece[] {
+  return (state.allies ?? []).filter(isControlledAlly);
+}
+
+/** The controlled summon standing on a square, if any. */
+export function controlledAllyAt(state: BoardState, c: Coord): AllyPiece | null {
+  return controlledAllies(state).find((a) => a.file === c.file && a.rank === c.rank) ?? null;
+}
+
+/** Spawn abilities in the family (each spawns exactly one source kind). */
+const SUMMON_ABILITIES: ReadonlyArray<AbilityId> = [
+  'bishop-squire',
+  'page',
+  'twin',
+  'duchess',
+  'vanguard',
+];
+
+export function isSummonAbility(id: AbilityId): boolean {
+  return (SUMMON_ABILITIES as ReadonlyArray<string>).includes(id);
+}
+
+/** Which ability owns a controlled source (for tier lookups). */
+const ABILITY_FOR_SOURCE: Partial<Record<AllyPiece['source'], AbilityId>> = {
+  squire: 'summon-knight',
+  'bishop-squire': 'bishop-squire',
+  page: 'page',
+  twin: 'twin',
+  duchess: 'duchess',
+  vanguard: 'vanguard',
+};
+
+function ownedAbilityForSource(
+  state: BoardState,
+  source: AllyPiece['source'],
+): OwnedAbility | null {
+  const id = ABILITY_FOR_SOURCE[source];
+  if (!id) return null;
+  return state.abilities.find((a) => a.id === id) ?? null;
+}
+
+/** Piece type a summon ability spawns. */
+function summonPieceFor(id: AbilityId): AllyPiece['type'] {
+  if (id === 'bishop-squire') return 'bishop';
+  if (id === 'page') return 'pawn';
+  if (id === 'twin') return 'rook';
+  if (id === 'duchess') return 'queen';
+  return 'knight'; // vanguard (and summon-knight, handled separately)
+}
+
+/**
+ * Enemy turns a summon stays on the board. undefined = permanent until
+ * captured (the Page — his whole job is the long walk to promotion).
+ */
+export function summonTurnsFor(id: AbilityId, tier: AbilityTier): number | undefined {
+  if (id === 'bishop-squire') {
+    // Mirror the Squire: 6/9/9/level/level.
+    if (tier === 1) return 6;
+    if (tier <= 3) return 9;
+    return 999;
+  }
+  if (id === 'page') return undefined;
+  if (id === 'twin') {
+    // 4/6/8/level/level — a second rook is the strongest body; short leash early.
+    if (tier === 1) return 4;
+    if (tier === 2) return 6;
+    if (tier === 3) return 8;
+    return 999;
+  }
+  if (id === 'duchess') {
+    // 2/3/4/4/6 — a queen on a timer.
+    if (tier === 1) return 2;
+    if (tier === 2) return 3;
+    if (tier <= 4) return 4;
+    return 6;
+  }
+  if (id === 'vanguard') {
+    // 4/6/8/8/level.
+    if (tier === 1) return 4;
+    if (tier === 2) return 6;
+    if (tier <= 4) return 8;
+    return 999;
+  }
+  return undefined;
+}
+
+/** Vanguard drop radius (Chebyshev from Rookie). 99 = anywhere. */
+export function vanguardRangeFor(tier: AbilityTier): number {
+  if (tier === 1) return 3;
+  if (tier === 2) return 5;
+  return 99;
+}
+
+function squareIsFreeForSummon(state: BoardState, f: number, r: number): boolean {
+  if (!allyInBounds(f, r)) return false;
+  if (allyIsHazard(state, f, r)) return false;
+  if (state.rookie.file === f && state.rookie.rank === r) return false;
+  if (state.pieces.some((p) => p.file === f && p.rank === r)) return false;
+  if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) return false;
+  if ((state.drones ?? []).some((d) => d.alive && d.file === f && d.rank === r)) return false;
+  return true;
+}
+
+/**
+ * Squares a summon ability may spawn on. Beside Rookie for the summons-at-
+ * her-side; anywhere in range for the Vanguard. One living summon per
+ * source at a time (a second charge re-summons after he's taken).
+ */
+export function summonSpawnSquares(state: BoardState, id: AbilityId): Coord[] {
+  const source = id as AllyPiece['source'];
+  if ((state.allies ?? []).some((a) => a.source === source)) return [];
+  const out: Coord[] = [];
+  if (id === 'vanguard') {
+    const owned = state.abilities.find((a) => a.id === 'vanguard');
+    const range = vanguardRangeFor(owned?.tier ?? 1);
+    for (let f = 1; f <= 8; f++) {
+      for (let r = 1; r <= 8; r++) {
+        const d = Math.max(Math.abs(f - state.rookie.file), Math.abs(r - state.rookie.rank));
+        if (d > range) continue;
+        if (squareIsFreeForSummon(state, f, r)) out.push({ file: f, rank: r });
+      }
+    }
+    return out;
+  }
+  for (const [df, dr] of ALLY_QUEEN_DIRS) {
+    const f = state.rookie.file + df;
+    const r = state.rookie.rank + dr;
+    if (squareIsFreeForSummon(state, f, r)) out.push({ file: f, rank: r });
+  }
+  return out;
+}
+
+function applySummonAlly(state: BoardState, id: AbilityId, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === id);
+  if (!owned) return state;
+  if (owned.usesLeftThisLevel === 0) return state;
+  if (!summonSpawnSquares(state, id).some((c) => c.file === target.file && c.rank === target.rank)) {
+    return state;
+  }
+  const turns = summonTurnsFor(id, owned.tier);
+  const ally: AllyPiece = {
+    id: Date.now() + Math.random(),
+    type: summonPieceFor(id),
+    file: target.file,
+    rank: target.rank,
+    source: id as AllyPiece['source'],
+    ...(turns !== undefined ? { turnsLeft: turns } : {}),
+  };
+  return {
+    ...state,
+    allies: [...state.allies, ally],
+    abilities: decrementUse(state.abilities, id),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'summon-knight', // same rainbow-bloom VFX as the Squire
+      from: toSquare(state.rookie),
+      to: toSquare(target),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/** T5 Squire / Bishop Squire / Twin: their move is a FREE action, once per turn. */
+export function allyHasFreeMove(state: BoardState, ally: AllyPiece): boolean {
+  if (ally.source !== 'squire' && ally.source !== 'bishop-squire' && ally.source !== 'twin') {
+    return false;
+  }
+  const owned = ownedAbilityForSource(state, ally.source);
+  return !!owned && owned.tier === 5;
+}
+
+/** True when the player may move this controlled summon right now. */
+export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.pendingOffer || state.activeAbility) return false;
+  if (!isControlledAlly(ally)) return false;
+  if (allyHasFreeMove(state, ally)) {
+    if (ally.movedThisTurn) return false;
+    if (ally.source === 'squire' && state.squireMovedThisTurn) return false;
+  }
+  return true;
+}
+
+/** Page double-step: T2+ he may step 2 forward when both squares are empty. */
+function pageDoubleStep(state: BoardState, ally: AllyPiece): boolean {
+  if (ally.source !== 'page') return false;
+  const owned = ownedAbilityForSource(state, 'page');
+  return !!owned && owned.tier >= 2;
+}
+
+/**
+ * Squares a controlled summon may move to, by its CURRENT piece type.
+ * Unlike AI allies it MAY land on the enemy king — that capture wins.
+ */
+export function controlledAllyLegalMoves(state: BoardState, ally: AllyPiece): Coord[] {
+  const out: Coord[] = [];
+  const tryStep = (f: number, r: number): boolean => {
+    // Returns true if the slide may continue past (f, r).
+    if (!allyInBounds(f, r)) return false;
+    if (allyIsHazard(state, f, r)) return false;
+    if (allyOccupied(state, f, r, ally)) return false;
+    const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
+    out.push({ file: f, rank: r });
+    return !enemy;
+  };
+  switch (ally.type) {
+    case 'knight':
+      for (const [df, dr] of ALLY_KNIGHT_DELTAS) tryStep(ally.file + df, ally.rank + dr);
+      return out;
+    case 'pawn': {
+      // Forward (toward rank 8) when empty; diagonal captures (king included).
+      const f1 = ally.rank + 1;
+      const emptyAt = (f: number, r: number) =>
+        allyInBounds(f, r) &&
+        !allyIsHazard(state, f, r) &&
+        !allyOccupied(state, f, r, ally) &&
+        !state.pieces.some((p) => p.file === f && p.rank === r);
+      if (emptyAt(ally.file, f1)) {
+        out.push({ file: ally.file, rank: f1 });
+        if (pageDoubleStep(state, ally) && emptyAt(ally.file, f1 + 1)) {
+          out.push({ file: ally.file, rank: f1 + 1 });
+        }
+      }
+      for (const df of [-1, 1]) {
+        const f = ally.file + df;
+        if (!allyInBounds(f, f1)) continue;
+        if (allyIsHazard(state, f, f1)) continue;
+        if (allyOccupied(state, f, f1, ally)) continue;
+        if (state.pieces.some((p) => p.file === f && p.rank === f1)) {
+          out.push({ file: f, rank: f1 });
+        }
+      }
+      return out;
+    }
+    case 'bishop':
+    case 'rook':
+    case 'queen': {
+      const dirs =
+        ally.type === 'queen' ? ALLY_QUEEN_DIRS : ally.type === 'rook' ? ALLY_ROOK_DIRS : ALLY_BISHOP_DIRS;
+      for (const [df, dr] of dirs) {
+        let f = ally.file + df;
+        let r = ally.rank + dr;
+        while (tryStep(f, r)) {
+          f += df;
+          r += dr;
+        }
+      }
+      return out;
+    }
+    case 'king':
+      return out; // summons are never kings
+  }
+}
+
+/**
+ * Move a controlled summon. T1–T4 (and every non-free summon): this IS your
+ * move for the turn — it ticks the move budget and hands off exactly like a
+ * Rookie move. Free-move summons (T5 Squire/Bishop Squire/Twin): once per
+ * turn, Rookie still moves after. The Page promotes to a controlled QUEEN
+ * when he reaches his promotion rank (8, or 7 from T3; any capture at T5).
+ */
+export function applyControlledAllyMove(
+  state: BoardState,
+  from: Coord,
+  target: Coord,
+): BoardState {
+  const ally = controlledAllyAt(state, from);
+  if (!ally || !canMoveAllyAt(state, ally)) return state;
+  if (!controlledAllyLegalMoves(state, ally).some((m) => m.file === target.file && m.rank === target.rank)) {
     return state;
   }
   const captured = state.pieces.find((p) => p.file === target.file && p.rank === target.rank);
@@ -1762,8 +2261,29 @@ export function applySquireMove(state: BoardState, target: Coord): BoardState {
   const clearDecoy = !!captured && state.decoyTarget === targetSq;
   const gain = captured ? TEMPO_REWARD[captured.type] ?? 0 : 0;
   const tempo = Math.min(tempoMaxFor(state), state.tempo + gain);
+  const isFree = allyHasFreeMove(state, ally);
+
+  // Page promotion.
+  let nextType = ally.type;
+  if (ally.type === 'pawn' && ally.source === 'page') {
+    const owned = ownedAbilityForSource(state, 'page');
+    const tier = owned?.tier ?? 1;
+    const promoteRank = tier >= 3 ? 7 : 8;
+    if (target.rank >= promoteRank || (tier === 5 && !!captured)) nextType = 'queen';
+  } else if (ally.type === 'pawn' && target.rank === 8) {
+    nextType = 'queen';
+  }
+
   const allies = state.allies.map((a) =>
-    a === sq ? { ...a, file: target.file, rank: target.rank } : a,
+    a === ally
+      ? {
+          ...a,
+          file: target.file,
+          rank: target.rank,
+          type: nextType,
+          ...(isFree ? { movedThisTurn: true } : {}),
+        }
+      : a,
   );
   const base: BoardState = {
     ...state,
@@ -1784,11 +2304,14 @@ export function applySquireMove(state: BoardState, target: Coord): BoardState {
     return { ...base, status: 'won', turn: 'rookie' };
   }
 
-  if (squireMoveIsFree(state)) {
-    return { ...base, squireMovedThisTurn: true };
+  if (isFree) {
+    return {
+      ...base,
+      ...(ally.source === 'squire' ? { squireMovedThisTurn: true } : {}),
+    };
   }
 
-  // One body per turn: the Squire's move ends the turn like Rookie's would.
+  // One body per turn: the summon's move ends the turn like Rookie's would.
   const nextMoveCount = state.moveCount + 1;
   const hasBonus = state.bonusMovesLeft > 0;
   const afterMove: BoardState = {
@@ -1800,10 +2323,208 @@ export function applySquireMove(state: BoardState, target: Coord): BoardState {
   if (afterMove.moveLimit !== null && nextMoveCount >= afterMove.moveLimit) {
     return { ...afterMove, status: 'lost', turn: 'rookie' };
   }
-  if (!hasBonus && allies.some((a) => a.source !== 'squire')) {
+  if (!hasBonus && allies.some((a) => !isControlledAlly(a))) {
     return { ...afterMove, turn: 'allies', allyTurnIndex: 0, enemyMovedSquares: [], enemyVacatedSquares: [] };
   }
   return { ...afterMove, enemyMovedSquares: [], enemyVacatedSquares: [] };
+}
+
+/**
+ * True when a controlled summon can capture the given square RIGHT NOW.
+ * Used by the fleeing king — he fears every summon the way he fears the
+ * Squire (they may take him).
+ */
+export function controlledThreatensSquare(state: BoardState, c: Coord): boolean {
+  for (const a of controlledAllies(state)) {
+    if (controlledAllyLegalMoves(state, a).some((m) => m.file === c.file && m.rank === c.rank)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Swap / Sacrifice / Knighting — support cards that operate ON a summon.
+// All three are FREE actions (like darts): they resolve without ending the
+// turn, limited by their per-level uses.
+// ---------------------------------------------------------------------------
+
+/** Allies Swap may trade squares with. T4+: any rainbow ally. */
+export function swapTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'swap');
+  if (!owned) return [];
+  const pool = owned.tier >= 4 ? state.allies ?? [] : controlledAllies(state);
+  return pool.map((a) => ({ file: a.file, rank: a.rank }));
+}
+
+function applySwap(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'swap');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  if (!swapTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
+  const ally = (state.allies ?? []).find((a) => a.file === target.file && a.rank === target.rank);
+  if (!ally) return state;
+  const rookieWas = { file: state.rookie.file, rank: state.rookie.rank };
+  return {
+    ...state,
+    rookie: { file: ally.file, rank: ally.rank },
+    allies: state.allies.map((a) =>
+      a === ally ? { ...a, file: rookieWas.file, rank: rookieWas.rank } : a,
+    ),
+    abilities: decrementUse(state.abilities, 'swap'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'summon-knight',
+      from: toSquare(rookieWas),
+      to: toSquare(target),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/** Squares a single ally attacks from where it stands (for the Sacrifice blast). */
+function attackSquaresOfAlly(state: BoardState, a: AllyPiece): Coord[] {
+  const out: Coord[] = [];
+  const add = (f: number, r: number) => {
+    if (allyInBounds(f, r)) out.push({ file: f, rank: r });
+  };
+  switch (a.type) {
+    case 'pawn':
+      add(a.file - 1, a.rank + 1);
+      add(a.file + 1, a.rank + 1);
+      break;
+    case 'knight':
+      for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
+      break;
+    case 'bishop':
+    case 'rook':
+    case 'queen': {
+      const dirs = a.type === 'queen' ? ALLY_QUEEN_DIRS : a.type === 'rook' ? ALLY_ROOK_DIRS : ALLY_BISHOP_DIRS;
+      for (const [df, dr] of dirs) {
+        let f = a.file + df;
+        let r = a.rank + dr;
+        while (allyInBounds(f, r)) {
+          if (allyIsHazard(state, f, r)) break;
+          add(f, r);
+          if (state.rookie.file === f && state.rookie.rank === r) break;
+          if (state.allies.some((o) => o !== a && o.file === f && o.rank === r)) break;
+          if (state.pieces.some((p) => p.file === f && p.rank === r)) break;
+          f += df;
+          r += dr;
+        }
+      }
+      break;
+    }
+    case 'king':
+      break;
+  }
+  return out;
+}
+
+/** Summons Sacrifice may detonate. */
+export function sacrificeTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'sacrifice');
+  if (!owned) return [];
+  return controlledAllies(state).map((a) => ({ file: a.file, rank: a.rank }));
+}
+
+function applySacrifice(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'sacrifice');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  const ally = controlledAllyAt(state, target);
+  if (!ally) return state;
+  // Blast area: the squares this summon attacks; from T3 also every square
+  // beside it. The king is never captured by the blast — but the mass
+  // capture stuns him hard (2 turns; 3 at T5).
+  const blast = new Map<string, Coord>();
+  for (const c of attackSquaresOfAlly(state, ally)) blast.set(toSquare(c), c);
+  if (owned.tier >= 3) {
+    for (const [df, dr] of ALLY_QUEEN_DIRS) {
+      const f = ally.file + df;
+      const r = ally.rank + dr;
+      if (allyInBounds(f, r)) blast.set(toSquare({ file: f, rank: r }), { file: f, rank: r });
+    }
+  }
+  const victims = state.pieces.filter(
+    (p) => p.type !== 'king' && blast.has(toSquare({ file: p.file, rank: p.rank })),
+  );
+  let working: BoardState = state;
+  const captures = [...state.captures];
+  let tempo = state.tempo;
+  for (const v of victims) {
+    const sq = toSquare({ file: v.file, rank: v.rank });
+    working = { ...working, ...clearStatusOnSquare(working, sq) };
+    captures.push(v.type);
+    tempo = Math.min(tempoMaxFor(state), tempo + (TEMPO_REWARD[v.type] ?? 0));
+  }
+  const allySq = toSquare({ file: ally.file, rank: ally.rank });
+  return {
+    ...working,
+    pieces: state.pieces.filter((p) => !victims.includes(p)),
+    allies: state.allies.filter((a) => a !== ally),
+    captures,
+    tempo,
+    decoyTarget:
+      state.decoyTarget && victims.some((v) => toSquare({ file: v.file, rank: v.rank }) === state.decoyTarget)
+        ? null
+        : state.decoyTarget,
+    abilities: decrementUse(state.abilities, 'sacrifice'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    ...(victims.length > 0 ? stunKingAfterCapture(state, owned.tier === 5 ? 3 : 2) : {}),
+    lastAbilityFx: {
+      kind: 'summon-knight',
+      from: allySq,
+      to: allySq,
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/** Promotion ladder for Knighting. */
+const PROMOTION_ORDER: ReadonlyArray<AllyPiece['type']> = ['pawn', 'knight', 'bishop', 'rook', 'queen'];
+
+/** Allies Knighting may promote. T4+: any rainbow ally. */
+export function knightingTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'knighting');
+  if (!owned) return [];
+  const pool = owned.tier >= 4 ? state.allies ?? [] : controlledAllies(state);
+  return pool
+    .filter((a) => a.type !== 'queen' && a.type !== 'king')
+    .map((a) => ({ file: a.file, rank: a.rank }));
+}
+
+function applyKnighting(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'knighting');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  if (!knightingTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
+  const ally = (state.allies ?? []).find((a) => a.file === target.file && a.rank === target.rank);
+  if (!ally) return state;
+  const i = PROMOTION_ORDER.indexOf(ally.type);
+  if (i < 0 || i >= PROMOTION_ORDER.length - 1) return state;
+  const steps = owned.tier === 5 ? PROMOTION_ORDER.length : owned.tier >= 3 ? 2 : 1;
+  const nextType = PROMOTION_ORDER[Math.min(PROMOTION_ORDER.length - 1, i + steps)];
+  return {
+    ...state,
+    allies: state.allies.map((a) =>
+      a === ally
+        ? {
+            ...a,
+            type: nextType,
+            ...(owned.tier >= 2 && a.turnsLeft !== undefined ? { turnsLeft: a.turnsLeft + 3 } : {}),
+          }
+        : a,
+    ),
+    abilities: decrementUse(state.abilities, 'knighting'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'summon-knight',
+      from: toSquare(state.rookie),
+      to: toSquare(target),
+      id: Date.now() + Math.random(),
+    },
+  };
 }
 
 /**
@@ -1866,6 +2587,13 @@ export const ONE_CHARGE_PER_RUN: ReadonlySet<AbilityId> = new Set<AbilityId>([
   'freeze-ray',
   'summon-knight',
   'surge',
+  // Controllable summons can take the king themselves — same rule as the
+  // Squire. Swap / Sacrifice / Knighting are support and refresh per level.
+  'bishop-squire',
+  'page',
+  'twin',
+  'duchess',
+  'vanguard',
 ]);
 
 export function isOneChargePerRun(id: AbilityId): boolean {
@@ -2402,9 +3130,10 @@ export function stepAllyTurn(state: BoardState): BoardState {
   }
   const idx = state.allyTurnIndex;
   const ally = state.allies[idx];
-  // Ally either can't move or no longer exists — skip it. The Squire is
-  // player-controlled (see applySquireMove) and never moves on its own.
-  if (!ally || ally.source === 'squire') {
+  // Ally either can't move or no longer exists — skip it. Controlled summons
+  // (Squire family) are player-moved (see applyControlledAllyMove) and never
+  // move on their own.
+  if (!ally || isControlledAlly(ally)) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
   let moves = allyMoves(state, ally);

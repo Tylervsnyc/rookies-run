@@ -6,7 +6,7 @@ import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
-import { canMoveSquire, squireLegalMoves, squireOf } from '@/lib/run/abilities';
+import { canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
 import { nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
@@ -354,26 +354,28 @@ export function RunBoard({
       };
     }
 
-    // Squire (player-controlled knight): a soft rainbow ring says "tap me"
-    // whenever he can move this turn.
-    const squire = squireOf(state);
-    const squireSq = squire ? toSquare(squire) : null;
-    if (squireSq && canMoveSquire(state) && selectedSquare !== squireSq) {
-      styles[squireSq] = {
-        ...styles[squireSq],
-        boxShadow: 'inset 0 0 0 3px rgba(167,139,250,0.75)',
-      };
+    // Controlled summons (Squire family): a soft rainbow ring says "tap me"
+    // on every one that can move this turn.
+    for (const ca of controlledAllies(state)) {
+      const caSq = toSquare(ca);
+      if (canMoveAllyAt(state, ca) && selectedSquare !== caSq) {
+        styles[caSq] = {
+          ...styles[caSq],
+          boxShadow: 'inset 0 0 0 3px rgba(167,139,250,0.75)',
+        };
+      }
     }
 
-    // Selection: when Rookie (or the Squire) is selected, show the ring +
-    // legal-move dots/rings for that body.
+    // Selection: when Rookie (or a controlled summon) is selected, show the
+    // ring + legal-move dots/rings for that body.
     if (selectedSquare && state.turn === 'rookie' && state.status === 'playing') {
       styles[selectedSquare] = {
         ...styles[selectedSquare],
         backgroundColor: SELECTED_BG,
         boxShadow: SELECTED_RING,
       };
-      const legal = squireSq && selectedSquare === squireSq ? squireLegalMoves(state) : rookieLegalMoves(state);
+      const selectedAlly = controlledAllyAt(state, fromSquare(selectedSquare));
+      const legal = selectedAlly ? controlledAllyLegalMoves(state, selectedAlly) : rookieLegalMoves(state);
       for (const m of legal) {
         const sq = toSquare(m);
         const isCapture = state.pieces.some(

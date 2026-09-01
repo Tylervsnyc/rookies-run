@@ -18,6 +18,7 @@ import {
   breakSmokeOnCapture,
   clearStatusOnSquare,
   ensureRewindTurnStart,
+  isControlledAlly,
   offerIsExhausted,
   rollOffer,
   stepAllyTurn,
@@ -162,8 +163,9 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
   // If we're not in a Surge bonus chain and we have allies, redirect turn to
   // 'allies' and the UI ticks stepAllyTurn one ally at a time. Otherwise hand
   // straight to the enemy as before.
-  // (The Squire is player-controlled — it never needs an AI ally phase.)
-  const allyPhaseNeeded = !hasBonus && withOffer.allies.some((a) => a.source !== 'squire');
+  // (Controlled summons — the Squire family — are player-moved and never
+  // need an AI ally phase.)
+  const allyPhaseNeeded = !hasBonus && withOffer.allies.some((a) => !isControlledAlly(a));
   if (allyPhaseNeeded) {
     return {
       ...withOffer,
@@ -235,4 +237,11 @@ export {
   squireLegalMoves,
   squireOf,
   canMoveSquire,
+  // Controllable-summon family (generic engine).
+  applyControlledAllyMove,
+  controlledAllies,
+  controlledAllyAt,
+  controlledAllyLegalMoves,
+  canMoveAllyAt,
+  isControlledAlly,
 } from './abilities';

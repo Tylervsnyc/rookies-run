@@ -19,12 +19,17 @@ import {
   abilityLegalMoves,
   bodyguardSpawnSquare,
   boulderTargets,
+  canMoveAllyAt,
+  controlledAllies,
+  controlledAllyLegalMoves,
   convertTargets,
   isSmoked,
+  knightingTargets,
   magnetTargets,
-  canMoveSquire,
-  squireLegalMoves,
+  sacrificeTargets,
+  summonSpawnSquares,
   squireSpawnSquares,
+  swapTargets,
   visibleEnemySquares,
 } from '../../../lib/run/abilities';
 import { rookieLegalMoves, enemyAt } from '../../../lib/run/movement';
@@ -341,6 +346,8 @@ export interface ActionCandidate {
   kind: 'move' | 'squire-move' | 'activate-ability' | 'ability-target';
   abilityId?: AbilityId;
   target?: Coord;
+  /** squire-move only: WHICH controlled summon moves (several can coexist). */
+  from?: Coord;
 }
 
 export function legalCandidates(
@@ -355,9 +362,14 @@ export function legalCandidates(
   for (const m of rookieLegalMoves(state)) {
     out.push({ kind: 'move', target: m });
   }
-  // Squire: the player's second body — its knight moves are real candidates.
-  if (canMoveSquire(state)) {
-    for (const m of squireLegalMoves(state)) out.push({ kind: 'squire-move', target: m });
+  // Controlled summons (Squire family): the player's other bodies — their
+  // moves are real candidates, one entry per (summon, target).
+  for (const ca of controlledAllies(state)) {
+    if (!canMoveAllyAt(state, ca)) continue;
+    const from = { file: ca.file, rank: ca.rank };
+    for (const m of controlledAllyLegalMoves(state, ca)) {
+      out.push({ kind: 'squire-move', from, target: m });
+    }
   }
 
   for (const owned of state.abilities) {
@@ -500,6 +512,48 @@ function candidatesForAbility(
         out.push({ kind: 'ability-target', abilityId: 'summon-knight', target: c });
       }
       return out;
+    case 'bishop-squire':
+    case 'page':
+    case 'twin':
+    case 'duchess': {
+      // Spawn beside Rookie (at most 8 squares).
+      for (const c of summonSpawnSquares(state, owned.id)) {
+        out.push({ kind: 'ability-target', abilityId: owned.id, target: c });
+      }
+      return out;
+    }
+    case 'vanguard': {
+      // Anywhere in range = up to 60+ squares; keep the branching sane by
+      // only offering drops near the king or near Rookie (mirrors Boulder).
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      for (const c of summonSpawnSquares(state, 'vanguard')) {
+        const nearKing = king ? cheb(c, king) <= 2 : false;
+        const nearRookie = cheb(c, state.rookie) <= 2;
+        if (nearKing || nearRookie) {
+          out.push({ kind: 'ability-target', abilityId: 'vanguard', target: c });
+        }
+      }
+      return out;
+    }
+    case 'swap': {
+      for (const c of swapTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'swap', target: c });
+      }
+      return out;
+    }
+    case 'sacrifice': {
+      for (const c of sacrificeTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'sacrifice', target: c });
+      }
+      return out;
+    }
+    case 'knighting': {
+      for (const c of knightingTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'knighting', target: c });
+      }
+      return out;
+    }
   }
   return out;
 }

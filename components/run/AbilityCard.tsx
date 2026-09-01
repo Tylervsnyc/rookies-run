@@ -140,16 +140,19 @@ const TIER: Record<AbilityTier, TierStyle> = {
 
 function AbilityIcon({ id, size }: { id: AbilityId; size: number }) {
   // Piece-form abilities use chess glyphs.
-  const glyph =
-    id === 'bishop-step'
-      ? '♝' // ♝
-      : id === 'knight-hop'
-        ? '♞' // ♞
-        : id === 'queen-pulse'
-          ? '♛' // ♛
-          : id === 'become-king'
-            ? '♚' // ♚
-            : null;
+  const GLYPHS: Partial<Record<AbilityId, string>> = {
+    'bishop-step': '♝',
+    'knight-hop': '♞',
+    'queen-pulse': '♛',
+    'become-king': '♚',
+    // Controllable-summon family — the piece you get is the icon.
+    'bishop-squire': '♝',
+    page: '♟',
+    twin: '♜',
+    duchess: '♛',
+    vanguard: '♞',
+  };
+  const glyph = GLYPHS[id] ?? null;
   if (glyph) {
     return (
       <span
@@ -297,6 +300,29 @@ function AbilityIcon({ id, size }: { id: AbilityId; size: number }) {
         <svg {...props}>
           <path d="M6 21h12M8 18h8l-1-5c3-2 3-6 1-8l-3-2-1 2-3 1c-2 1-3 4-2 6l-1 2z" />
           <path d="M12 8l1 1" />
+        </svg>
+      );
+    case 'swap':
+      // two opposing arrows
+      return (
+        <svg {...props}>
+          <path d="M4 8h13M14 4l4 4-4 4" />
+          <path d="M20 16H7M10 12l-4 4 4 4" />
+        </svg>
+      );
+    case 'sacrifice':
+      // burst
+      return (
+        <svg {...props}>
+          <path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3" />
+        </svg>
+      );
+    case 'knighting':
+      // chevron rank-up
+      return (
+        <svg {...props}>
+          <path d="M5 15l7-7 7 7" />
+          <path d="M5 21l7-7 7 7" />
         </svg>
       );
     default:

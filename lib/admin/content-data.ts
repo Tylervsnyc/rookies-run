@@ -138,7 +138,18 @@ function artFileFor(id: string): string {
   return ART_OVERRIDES[id] ?? `${id}-1.webp`;
 }
 /** Art known to be a stop-gap (hue-shifted copy of another card). */
-const PLACEHOLDER_ART = new Set(['summon-knight-1.webp']);
+const PLACEHOLDER_ART = new Set([
+  'summon-knight-1.webp',
+  // Controllable-summon family (2026-09-01) — no art yet.
+  'bishop-squire-1.webp',
+  'page-1.webp',
+  'twin-1.webp',
+  'duchess-1.webp',
+  'vanguard-1.webp',
+  'swap-1.webp',
+  'sacrifice-1.webp',
+  'knighting-1.webp',
+]);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Registry + write mode

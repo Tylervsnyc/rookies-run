@@ -429,7 +429,7 @@ function enemyResponses(s: BoardState): BoardState[] {
 
 function candidateToAction(c: ActionCandidate): BotAction {
   if (c.kind === 'move') return { kind: 'move', target: c.target! };
-  if (c.kind === 'squire-move') return { kind: 'squire-move', target: c.target! };
+  if (c.kind === 'squire-move') return { kind: 'squire-move', target: c.target!, ...(c.from ? { from: c.from } : {}) };
   if (c.kind === 'activate-ability') return { kind: 'activate-ability', abilityId: c.abilityId! };
   return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target! };
 }

@@ -54,13 +54,30 @@ export interface AllyPiece {
   type: AllyPieceType;
   file: number;
   rank: number;
-  source: 'squad' | 'convert' | 'bodyguard' | 'squire';
+  source:
+    | 'squad'
+    | 'convert'
+    | 'bodyguard'
+    | 'squire'
+    // Controllable-summon family (2026-09-01) — pieces the PLAYER steers on
+    // her own turns, like the Squire. See CONTROLLED_SOURCES in abilities.ts.
+    | 'bishop-squire'
+    | 'page'
+    | 'twin'
+    | 'duchess'
+    | 'vanguard';
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
    * end of each enemy turn; the ally dissolves when it hits 0. Absent =
    * permanent (Squad / Convert allies).
    */
   turnsLeft?: number;
+  /**
+   * Controlled summons with a FREE move (Squire/Twin/Bishop Squire at T5):
+   * set when this ally moves without ending the turn; cleared when control
+   * returns to Rookie after the enemy turn.
+   */
+  movedThisTurn?: boolean;
 }
 
 export type Turn = 'rookie' | 'allies' | 'drones' | 'enemy';

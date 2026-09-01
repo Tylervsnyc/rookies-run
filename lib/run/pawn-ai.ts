@@ -15,7 +15,7 @@
 
 import {
   allyAttackedSquares,
-  squireLegalMoves,
+  controlledThreatensSquare,
   clearStatusOnSquare,
   isSmoked,
   relocateStatusMarkers,
@@ -230,8 +230,8 @@ function kingFleeMove(
     ) ||
     // Nightmare: he also reads the rainbow allies' lines as a threat.
     (kingReactsToAllies(state) && !!allyCover && allyCover.has(toSquare(kingPos))) ||
-    // The Squire (player-controlled knight) CAN take him — he always fears it.
-    squireLegalMoves(state).some((m) => m.file === kingPos.file && m.rank === kingPos.rank);
+    // Controlled summons (the Squire family) CAN take him — he always fears them.
+    controlledThreatensSquare(state, kingPos);
   if (!threatened) return null;
   const vacated = vacatedSet(state);
   const pen = state.kingPen ? new Set(state.kingPen) : null;
@@ -1049,10 +1049,14 @@ export function stepEnemyTurn(state: BoardState): BoardState {
     // Smoke ticks down at end of enemy turn.
     const smokePatch =
       (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
-    // Bodyguard allies dissolve when their turns run out.
-    const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined)
+    // Bodyguard / timed summons dissolve when their turns run out; free-move
+    // summons (T5 Squire family) get their once-per-turn move back.
+    const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined || a.movedThisTurn)
       ? s.allies
-          .map((a) => (a.turnsLeft === undefined ? a : { ...a, turnsLeft: a.turnsLeft - 1 }))
+          .map((a) => {
+            const ticked = a.turnsLeft === undefined ? a : { ...a, turnsLeft: a.turnsLeft - 1 };
+            return ticked.movedThisTurn ? { ...ticked, movedThisTurn: false } : ticked;
+          })
           .filter((a) => a.turnsLeft === undefined || a.turnsLeft > 0)
       : s.allies;
     return withRewindSnapshot({

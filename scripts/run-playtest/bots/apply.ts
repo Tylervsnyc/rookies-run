@@ -19,6 +19,7 @@ import {
   applyAbilityActivate,
   applyAbilityMove,
   applyAbilityTargeted,
+  applyControlledAllyMove,
   applySquireMove,
   stepDroneTurn,
 } from '../../../lib/run/abilities';
@@ -33,7 +34,11 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
       return applyRookieMove(state, action.target);
 
     case 'squire-move':
-      return applySquireMove(state, action.target);
+      // `from` names which controlled summon moves; legacy actions without it
+      // mean the (single) Squire.
+      return action.from
+        ? applyControlledAllyMove(state, action.from, action.target)
+        : applySquireMove(state, action.target);
 
     case 'activate-ability': {
       let next = applyAbilityActivate(state, action.abilityId);

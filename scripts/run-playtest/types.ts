@@ -21,8 +21,11 @@ export type BotAction =
   | { kind: 'pick-offer'; optionIndex: 0 | 1 }
   | { kind: 'dismiss-offer' }
   | { kind: 'move'; target: Coord }
-  /** Move the player-controlled Squire knight (summon-knight). */
-  | { kind: 'squire-move'; target: Coord }
+  /**
+   * Move a player-controlled summon (Squire family). `from` names WHICH
+   * summon when several are on the board; absent = the Squire (legacy).
+   */
+  | { kind: 'squire-move'; target: Coord; from?: Coord }
   | { kind: 'activate-ability'; abilityId: AbilityId }
   | { kind: 'ability-target'; abilityId: AbilityId; target: Coord };
 

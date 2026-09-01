@@ -396,7 +396,7 @@
       "id": "page",
       "kind": "ability",
       "name": "Page",
-      "stage": "idea",
+      "stage": "testing",
       "created": "2026-08-31",
       "notes": "A controllable pawn. Walks forward, captures diagonally, promotes when it reaches the far rank."
     },
@@ -404,7 +404,7 @@
       "id": "twin",
       "kind": "ability",
       "name": "Twin",
-      "stage": "idea",
+      "stage": "testing",
       "created": "2026-08-31",
       "notes": "A second controllable rook. Two Rookies, one board."
     },
@@ -412,7 +412,7 @@
       "id": "bishop-squire",
       "kind": "ability",
       "name": "Bishop Squire",
-      "stage": "idea",
+      "stage": "testing",
       "created": "2026-08-31",
       "notes": "Squire variant: a rainbow bishop the player controls."
     },
@@ -420,7 +420,7 @@
       "id": "swap",
       "kind": "ability",
       "name": "Swap",
-      "stage": "idea",
+      "stage": "testing",
       "created": "2026-08-31",
       "notes": "Trade places with your Squire — teleport through his square."
     },
@@ -428,7 +428,7 @@
       "id": "sacrifice",
       "kind": "ability",
       "name": "Sacrifice",
-      "stage": "idea",
+      "stage": "testing",
       "created": "2026-08-31",
       "notes": "Squire explodes, capturing every enemy on his knight-squares."
     },
@@ -452,6 +452,46 @@
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
       }
+    },
+    {
+      "id": "duchess",
+      "kind": "ability",
+      "name": "Duchess",
+      "stage": "testing",
+      "created": "2026-09-01",
+      "notes": "Controllable summon family: a rainbow queen you control for 2-6 enemy turns. One charge per run."
+    },
+    {
+      "id": "vanguard",
+      "kind": "ability",
+      "name": "Vanguard",
+      "stage": "testing",
+      "created": "2026-09-01",
+      "notes": "Controllable summon family: a controllable knight dropped anywhere in range (3/5/anywhere by tier). One charge per run."
+    },
+    {
+      "id": "knighting",
+      "kind": "ability",
+      "name": "Knighting",
+      "stage": "testing",
+      "created": "2026-09-01",
+      "notes": "Summon support: promote one of your summons a step up the ladder (pawn-knight-bishop-rook-queen). Per-level uses."
+    },
+    {
+      "id": "banner",
+      "kind": "ability",
+      "name": "War Banner",
+      "stage": "idea",
+      "created": "2026-09-01",
+      "notes": "DESIGN ONLY: while active, each of your summons moves as a free action once per turn. Needs turn-loop work."
+    },
+    {
+      "id": "phalanx",
+      "kind": "ability",
+      "name": "Phalanx",
+      "stage": "idea",
+      "created": "2026-09-01",
+      "notes": "DESIGN ONLY: summon 2-3 controllable pawns as a wall. Generic engine supports it; fun value unproven."
     }
   ]
 }

@@ -45,9 +45,9 @@ import {
   applyAbilityCancel,
   applyAbilityMove,
   applyAbilityTargeted,
-  applySquireMove,
-  canMoveSquire,
-  squireOf,
+  applyControlledAllyMove,
+  canMoveAllyAt,
+  controlledAllyAt,
   applyDismissOffer,
   applyOfferPick,
   convertTargets as computeConvertTargets,
@@ -874,24 +874,25 @@ export default function RookiesRunPage() {
         setSelectedSquare((cur) => (cur === square ? null : square));
         return;
       }
-      // Squire: the player's second body. Tap him to select, tap a knight
-      // square to move him (T1–T4 that IS the turn; T5 it's a free action).
-      const squire = squireOf(state);
-      const squireSquare = squire ? toSquare(squire) : null;
-      if (squireSquare && square === squireSquare && canMoveSquire(state)) {
+      // Controlled summons (Squire family): the player's other bodies. Tap
+      // one to select it, tap a legal square to move it (T1–T4 that IS the
+      // turn; T5 Squire/Bishop Squire/Twin get a free move).
+      const tappedAlly = controlledAllyAt(state, fromSquare(square));
+      if (tappedAlly && canMoveAllyAt(state, tappedAlly)) {
         setSelectedSquare((cur) => (cur === square ? null : square));
         return;
       }
       if (!selectedSquare) return;
-      if (squireSquare && selectedSquare === squireSquare) {
+      const selectedAlly = controlledAllyAt(state, fromSquare(selectedSquare));
+      if (selectedAlly) {
         const target = fromSquare(square);
-        const next = applySquireMove(state, target);
+        const next = applyControlledAllyMove(state, fromSquare(selectedSquare), target);
         if (next !== state) {
           const grew = next.captures.length > state.captures.length;
           recordEvent({
             kind: 'squire-move',
             level: state.level,
-            from: squireSquare,
+            from: selectedSquare,
             to: square,
             captured: grew ? next.captures[next.captures.length - 1] : null,
             tempo: next.tempo,
