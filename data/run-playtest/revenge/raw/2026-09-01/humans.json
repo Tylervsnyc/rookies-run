@@ -1,0 +1,140 @@
+{
+ "since": "2026-08-02",
+ "source": "supabase+disk",
+ "byRun": [
+  {
+   "runId": "revenge-1",
+   "traces": 34,
+   "wins": 14,
+   "byLevel": [
+    {
+     "level": 1,
+     "reached": 34,
+     "cleared": 33,
+     "clearRate": 97
+    },
+    {
+     "level": 2,
+     "reached": 33,
+     "cleared": 33,
+     "clearRate": 100
+    },
+    {
+     "level": 3,
+     "reached": 33,
+     "cleared": 33,
+     "clearRate": 100
+    },
+    {
+     "level": 4,
+     "reached": 33,
+     "cleared": 33,
+     "clearRate": 100
+    },
+    {
+     "level": 5,
+     "reached": 33,
+     "cleared": 26,
+     "clearRate": 79
+    },
+    {
+     "level": 6,
+     "reached": 26,
+     "cleared": 25,
+     "clearRate": 96
+    },
+    {
+     "level": 7,
+     "reached": 25,
+     "cleared": 24,
+     "clearRate": 96
+    },
+    {
+     "level": 8,
+     "reached": 24,
+     "cleared": 18,
+     "clearRate": 75
+    },
+    {
+     "level": 9,
+     "reached": 18,
+     "cleared": 15,
+     "clearRate": 83
+    },
+    {
+     "level": 10,
+     "reached": 15,
+     "cleared": 14,
+     "clearRate": 93
+    }
+   ]
+  },
+  {
+   "runId": "revenge-2",
+   "traces": 0,
+   "wins": 0,
+   "byLevel": [
+    {
+     "level": 1,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 2,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 3,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 4,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 5,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 6,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 7,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 8,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 9,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    },
+    {
+     "level": 10,
+     "reached": 0,
+     "cleared": 0,
+     "clearRate": null
+    }
+   ]
+  }
+ ]
+}

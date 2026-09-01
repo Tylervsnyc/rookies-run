@@ -1,0 +1,86 @@
+[
+ {
+  "level": 9,
+  "loadout": "bishop-step",
+  "verdict": "forced-win",
+  "depth": 4,
+  "nodes": 1852
+ },
+ {
+  "level": 9,
+  "loadout": "freeze-ray",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 71149
+ },
+ {
+  "level": 9,
+  "loadout": "knight-hop",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 6017
+ },
+ {
+  "level": 9,
+  "loadout": "none",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 3030
+ },
+ {
+  "level": 9,
+  "loadout": "queen-pulse",
+  "verdict": "forced-win",
+  "depth": 4,
+  "nodes": 5543
+ },
+ {
+  "level": 9,
+  "loadout": "surge",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 10032
+ },
+ {
+  "level": 10,
+  "loadout": "bishop-step",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 1497
+ },
+ {
+  "level": 10,
+  "loadout": "freeze-ray",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 16388
+ },
+ {
+  "level": 10,
+  "loadout": "knight-hop",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 1394
+ },
+ {
+  "level": 10,
+  "loadout": "none",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 605
+ },
+ {
+  "level": 10,
+  "loadout": "queen-pulse",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 2522
+ },
+ {
+  "level": 10,
+  "loadout": "surge",
+  "verdict": "no-forced-win",
+  "depth": 4,
+  "nodes": 4189
+ }
+]

@@ -1,0 +1,456 @@
+{
+ "nightmare": {
+  "tier": "T5",
+  "runs": 3,
+  "fullClears": 2,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 3,
+    "cleared": 2,
+    "clearRate": 67,
+    "losses": {
+     "captured": 1
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 6,
+   "queen-pulse": 1,
+   "knight-hop": 6,
+   "magnet": 3,
+   "summon-knight": 1,
+   "boulder": 2
+  },
+  "seconds": 13,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "10": 1
+  }
+ },
+ "hard": {
+  "tier": "T5",
+  "runs": 3,
+  "fullClears": 2,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 3,
+    "cleared": 2,
+    "clearRate": 67,
+    "losses": {
+     "captured": 1
+    }
+   }
+  ],
+  "pickCounts": {
+   "convert": 6,
+   "queen-pulse": 1,
+   "knight-hop": 4,
+   "magnet": 2,
+   "summon-knight": 2,
+   "freeze-ray": 2,
+   "boulder": 2
+  },
+  "seconds": 14,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {
+   "10": 1
+  }
+ },
+ "normal": {
+  "tier": "T5",
+  "runs": 3,
+  "fullClears": 3,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "convert": 6,
+   "freeze-ray": 2,
+   "knight-hop": 8,
+   "magnet": 1,
+   "summon-knight": 2,
+   "boulder": 3
+  },
+  "seconds": 15,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {}
+ },
+ "rookie": {
+  "tier": "T5",
+  "runs": 3,
+  "fullClears": 3,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "convert": 9,
+   "knight-hop": 5,
+   "bishop-step": 6,
+   "magnet": 4,
+   "rabies-dart": 2,
+   "boulder": 4
+  },
+  "seconds": 19,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {}
+ },
+ "authored": {
+  "tier": "T5",
+  "runs": 3,
+  "fullClears": 3,
+  "rows": [
+   {
+    "level": 1,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 2,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 3,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 4,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 5,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 6,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 7,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 8,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 9,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   },
+   {
+    "level": 10,
+    "reached": 3,
+    "cleared": 3,
+    "clearRate": 100,
+    "losses": {}
+   }
+  ],
+  "pickCounts": {
+   "convert": 7,
+   "freeze-ray": 3,
+   "knight-hop": 4,
+   "magnet": 1,
+   "summon-knight": 2,
+   "boulder": 2
+  },
+  "seconds": 20,
+  "retriesPerLevel": 0,
+  "retriesUsed": 0,
+  "deathsAt": {}
+ }
+}
