@@ -5254,23 +5254,26 @@ const RUN_REVENGE_7: RunDef = {
         kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7', 'b6', 'c6', 'd6'],
       },
     ),
-    // L10 — THE ROYAL GUARD. 5 heavy hunters (queen, queen, bishop, bishop, knight) — sightlines, not bodies. Key f4.
-    // Key pf4; defended by pe5 pg5; shell pd4 ph4; hunters qb2 qc2 ba2 bd2 kd3; marchers pa4 pc3.
+    // L10 — CROSSHAIRS. two keys — f5 on his file, c7 on his rank; the left wall is gone.
+    // Keys pf5 pc7; defended by pe6 pg6 pb8 pd8; shell pd5 ph5; hunters qa3 qb4 bb3 kh4; marchers pd3 pa4.
+    // (double-key-L10-v1 2026-09-01 — swapped in twice: royal-guard-L10-v1's freeze-ray losses
+    // were mostly CAPTURED, and walled-court-L10-v1's were mostly move-limit but still under 80%
+    // even at moveLimit 19; this candidate held zero captures and a clean lint pass at high trials.)
     make(
       10,
       [
-        pawn(6, 4),
-        pawn(5, 5), pawn(7, 5),
-        pawn(4, 4), pawn(8, 4),
-        queen(2, 2), queen(3, 2), bishop(1, 2), bishop(4, 2), knight(4, 3),
-        pawn(1, 4), pawn(3, 3),
-        king(6, 8),
+        pawn(6, 5), pawn(3, 7),
+        pawn(5, 6), pawn(7, 6), pawn(2, 8), pawn(4, 8),
+        pawn(4, 5), pawn(8, 5),
+        queen(1, 3), queen(2, 4), bishop(2, 3), knight(8, 4),
+        pawn(4, 3), pawn(1, 4),
+        king(6, 7),
       ],
       {
         ...FLEE,
-        moveLimit: 17,
-        hazards: [X(4, 6), X(8, 6), X(4, 7), X(8, 7), X(4, 8), X(8, 8)],
-        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7', 'e6', 'f6', 'g6'],
+        moveLimit: 21,
+        hazards: [X(8, 7), X(8, 8)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
       },
     ),
   ],

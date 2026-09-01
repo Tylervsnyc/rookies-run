@@ -492,6 +492,14 @@
       "stage": "idea",
       "created": "2026-09-01",
       "notes": "DESIGN ONLY: summon 2-3 controllable pawns as a wall. Generic engine supports it; fun value unproven."
+    },
+    {
+      "id": "revenge-7",
+      "kind": "run",
+      "name": "Bramble Crown",
+      "stage": "testing",
+      "created": "2026-09-01",
+      "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell)."
     }
   ]
 }
