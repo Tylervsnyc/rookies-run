@@ -4309,22 +4309,23 @@ const RUN_REVENGE_2: RunDef = {
         kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
-    // L10 — THE SWARM. Key e5, d6/f6, c5/g5, e4 in front, d3/f3 under it.
-    // Two knights (b4/h5) + a queen on a2; marchers a4/h2/b2/g2.
+    // L10 — [8/30 batch, replaced THE SWARM 2026-09-01: freeze-ray 27-38%] THE LAST TOWER. 3x3 corner room on a8; key a4 on his file, chain runs inward.
+    // Key pa4; defended by pb5; shell pb3; hunters qe3 qf2 bd3 kc2; marchers pc4 pf3 pg4.
     make(
       10,
       [
-        pawn(5, 5), pawn(4, 6), pawn(6, 6),
-        pawn(3, 5), pawn(7, 5), pawn(5, 4), pawn(4, 3), pawn(6, 3),
-        knight(2, 4), knight(8, 5), queen(1, 2),
-        pawn(1, 4), pawn(8, 2), pawn(2, 2), pawn(7, 2),
-        king(5, 8),
+        pawn(1, 4),
+        pawn(2, 5),
+        pawn(2, 3),
+        queen(5, 3), queen(6, 2), bishop(4, 3), knight(3, 2),
+        pawn(3, 4), pawn(6, 3), pawn(7, 4),
+        king(1, 8),
       ],
       {
         ...FLEE,
-        moveLimit: 13,
-        hazards: [X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
-        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+        moveLimit: 18,
+        hazards: [X(4, 6), X(4, 7), X(4, 8)],
+        kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7', 'a6', 'b6', 'c6'],
       },
     ),
   ],
