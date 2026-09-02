@@ -5,28 +5,26 @@ import { REVENGE_RED, REVENGE_RED_DARK, RookiesRevengeLogo } from './RookiesReve
 import { TrophyGlyph } from './AchievementToast';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
-import {
-  DIFFICULTIES,
-  DIFFICULTY_ORDER,
-  difficultyLockHint,
-  hasClearedDifficulty,
-  isDifficultyLocked,
-  type DifficultyId,
-} from '@/lib/run/difficulty';
+import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
+import { LADDER_RUNG_IDS, rungRun, rungState } from '@/lib/run/ladder';
 import { fetchBoard, getHandle, setHandle, type LeaderboardResponse } from '@/lib/run/leaderboard-client';
 
 /**
  * Rookie's Revenge home screen — chesspath-style "Quiet Hero".
  * Red hero band with a Daily/Ladder segmented toggle; white cards below.
  *   DAILY  = today's one run (no visible difficulty) + today's leaderboard.
- *   LADDER = one run per difficulty (Rookie → Nightmare), tap to play.
+ *   LADDER = The Ladder: 10 fixed rungs, easiest to hardest, unlock chain.
  *   CODEX  = the trophy room, on both tabs.
  * Replaces DeskLanding; same page contract except onStart takes an optional
- * difficulty so a ladder tap can switch mode and launch in one gesture.
+ * difficulty so the Daily GO can switch mode and launch in one gesture.
+ * Ladder rungs launch through onLadderStart — always Normal rules, the
+ * difficulty picker is a DAILY-only concept.
  */
 interface HomeLandingProps {
-  /** Start the run. When `d` is given, the parent switches difficulty first. */
+  /** Start today's daily. When `d` is given, the parent switches difficulty first. */
   onStart: (d?: DifficultyId) => void;
+  /** Start a Ladder rung — the exact run, always on Normal rules. */
+  onLadderStart?: (runId: string) => void;
   iso: string;
   runId: string;
   dateLabel?: string;
@@ -68,7 +66,7 @@ function LockIcon() {
   );
 }
 
-export function HomeLanding({ onStart, iso, runId, dateLabel, profile, onTrophies }: HomeLandingProps) {
+export function HomeLanding({ onStart, onLadderStart, iso, runId, dateLabel, profile, onTrophies }: HomeLandingProps) {
   const [mode, setMode] = useState<Mode>('daily');
   const countdown = useCountdownToMidnight();
 
@@ -76,22 +74,22 @@ export function HomeLanding({ onStart, iso, runId, dateLabel, profile, onTrophie
   // Rookie for brand-new players who haven't unlocked it yet.
   const dailyDifficulty: DifficultyId = isDifficultyLocked('normal', profile) ? 'rookie' : 'normal';
 
-  // Ladder rows.
-  const rows = DIFFICULTY_ORDER.map((id) => {
-    const def = DIFFICULTIES[id];
-    const locked = isDifficultyLocked(id, profile);
-    const cleared = hasClearedDifficulty(profile, id);
-    const best = profile?.bestByDifficulty?.[id]?.levels ?? 0;
-    const sub = locked
-      ? difficultyLockHint(id)
-      : cleared
-        ? 'Cleared — play again'
-        : best > 0
-          ? `Best L${best}`
-          : def.tagline;
-    return { id, name: def.name, sub, locked, cleared };
+  // The Ladder — 10 fixed rungs, easiest to hardest. Rungs whose run hasn't
+  // landed in runs.ts yet render as "Coming soon" (never crash, never launch).
+  const rungs = LADDER_RUNG_IDS.map((id, i) => {
+    const run = rungRun(i);
+    const state = rungState(profile, i);
+    const best = profile?.ladder?.[id];
+    const sub = !run
+      ? 'Coming soon'
+      : state === 'locked'
+        ? `Clear rung ${i} to unlock`
+        : state === 'cleared'
+          ? `Cleared — best ${best?.score ?? 0} captures`
+          : run.blurb;
+    return { id, rung: i + 1, name: run?.name ?? '???', sub, state, comingSoon: !run };
   });
-  const firstOpen = rows.find((r) => !r.locked && !r.cleared) ?? rows.find((r) => !r.locked);
+  const firstOpen = rungs.find((r) => r.state === 'open' && !r.comingSoon);
 
   // Codex counts.
   const abilitiesTotal = unlockableAbilityIds().length;
@@ -167,15 +165,15 @@ export function HomeLanding({ onStart, iso, runId, dateLabel, profile, onTrophie
           ) : (
             <>
               <h1 className="text-[22px] font-black leading-tight mt-3">The Ladder</h1>
-              <p className="text-[12px] mt-0.5 opacity-85">One king per difficulty. Beat him to face the next.</p>
-              {firstOpen && (
+              <p className="text-[12px] mt-0.5 opacity-85">Ten rungs, easiest to hardest. Clear one to open the next.</p>
+              {firstOpen && onLadderStart && (
                 <button
                   type="button"
-                  onClick={() => onStart(firstOpen.id)}
+                  onClick={() => onLadderStart(firstOpen.id)}
                   className="mt-3.5 w-full min-h-[52px] rounded-2xl bg-white font-black text-[16px] tracking-wide active:translate-y-px transition-transform"
                   style={{ color: REVENGE_RED, boxShadow: '0 4px 0 rgba(0,0,0,0.25)' }}
                 >
-                  {firstOpen.cleared ? `REPLAY · ${firstOpen.name.toUpperCase()}` : `PLAY · ${firstOpen.name.toUpperCase()}`}
+                  {`RUNG ${firstOpen.rung} · ${firstOpen.name.toUpperCase()}`}
                 </button>
               )}
             </>
@@ -248,37 +246,43 @@ export function HomeLanding({ onStart, iso, runId, dateLabel, profile, onTrophie
             </Card>
           ) : (
             <Card>
-              <div className="mb-1"><SectionLabel>Pick your run</SectionLabel></div>
+              <div className="mb-1"><SectionLabel>The rungs</SectionLabel></div>
               <ul className="divide-y divide-chess-text/5">
-                {rows.map((r) => (
-                  <li key={r.id}>
-                    <button
-                      type="button"
-                      disabled={r.locked}
-                      onClick={() => onStart(r.id)}
-                      data-difficulty={r.id}
-                      className={`w-full min-h-[54px] flex items-center gap-3 text-left py-1 ${r.locked ? 'opacity-45' : 'active:opacity-70'}`}
-                    >
-                      <span
-                        className="w-9 h-9 rounded-lg flex items-center justify-center text-[14px] font-black shrink-0"
-                        style={
-                          r.cleared
-                            ? { background: '#2A3C45', color: '#fff' }
-                            : r.locked
-                              ? { background: '#e5edf3', color: '#94a3b8' }
-                              : { background: '#FFEBEE', color: REVENGE_RED }
-                        }
+                {rungs.map((r) => {
+                  const playable = !r.comingSoon && r.state !== 'locked' && !!onLadderStart;
+                  return (
+                    <li key={r.id}>
+                      <button
+                        type="button"
+                        disabled={!playable}
+                        onClick={() => { if (playable && onLadderStart) onLadderStart(r.id); }}
+                        data-rung={r.rung}
+                        data-run-id={r.id}
+                        className={`w-full min-h-[54px] flex items-center gap-3 text-left py-1 ${playable ? 'active:opacity-70' : 'opacity-45'}`}
                       >
-                        {r.cleared ? '✓' : r.locked ? <LockIcon /> : '♟'}
-                      </span>
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-[15px] font-black leading-tight">{r.name}</span>
-                        <span className="block text-[11px] text-chess-text-muted">{r.sub}</span>
-                      </span>
-                      {!r.locked && <span className="text-[14px] font-black text-chess-text-faint">›</span>}
-                    </button>
-                  </li>
-                ))}
+                        <span
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-[14px] font-black shrink-0"
+                          style={
+                            r.state === 'cleared'
+                              ? { background: '#2A3C45', color: '#fff' }
+                              : !playable
+                                ? { background: '#e5edf3', color: '#94a3b8' }
+                                : { background: '#FFEBEE', color: REVENGE_RED }
+                          }
+                        >
+                          {r.state === 'cleared' ? '✓' : r.state === 'locked' || r.comingSoon ? <LockIcon /> : r.rung}
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-[15px] font-black leading-tight">
+                            {r.comingSoon ? `Rung ${r.rung}` : `Rung ${r.rung} · ${r.name}`}
+                          </span>
+                          <span className="block text-[11px] text-chess-text-muted">{r.sub}</span>
+                        </span>
+                        {playable && r.state === 'open' && <span className="text-[14px] font-black text-chess-text-faint">›</span>}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </Card>
           )}

@@ -26,7 +26,8 @@ import { RunAchievementPop } from '@/components/achievements/RunAchievementPop';
 import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
-import { readProfile, recordBest, setDifficulty as persistDifficulty } from '@/lib/run/profile';
+import { readProfile, recordBest, recordLadderResult, setDifficulty as persistDifficulty } from '@/lib/run/profile';
+import { isLadderRunId } from '@/lib/run/ladder';
 import { DIFFICULTIES, isDifficultyId, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { tempoMaxFor } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
@@ -104,6 +105,28 @@ interface ParityHook {
   difficulty: DifficultyId | null;
 }
 
+/**
+ * Standalone `?loadout=surge:1,duchess:5` — a starting loadout by explicit
+ * URL, working in PRODUCTION too (the /review page's Play links; testing-stage
+ * summons are meant to be reachable by URL, same as `?run=revenge-7`).
+ * Strict: applied only when EVERY id resolves in ABILITY_DEFS — a typo means
+ * no loadout, never half of one. `?parity=1` keeps its own (lenient, dev-only)
+ * parser and wins when both are present.
+ */
+function readLoadoutParam(params: URLSearchParams): OwnedAbility[] | null {
+  const raw = params.get('loadout');
+  if (!raw) return null;
+  const loadout: OwnedAbility[] = [];
+  for (const entry of raw.split(',')) {
+    if (!entry) continue;
+    const [id, tierRaw] = entry.split(':');
+    if (!id || !(id in ABILITY_DEFS)) return null;
+    const tier = Math.min(5, Math.max(1, parseInt(tierRaw ?? '1', 10) || 1)) as AbilityTier;
+    loadout.push({ id: id as AbilityId, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(id as AbilityId, tier) });
+  }
+  return loadout.length > 0 ? loadout : null;
+}
+
 function readParityHook(params: URLSearchParams): ParityHook | null {
   if (process.env.NODE_ENV === 'production') return null;
   if (params.get('parity') !== '1') return null;
@@ -125,9 +148,9 @@ function readParityHook(params: URLSearchParams): ParityHook | null {
   };
 }
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string; parity: ParityHook | null } {
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; loadout: OwnedAbility[] | null; parity: ParityHook | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '', parity: null };
+    return { runId: '', startLevelIndex: 0, date: '', ladder: false, loadout: null, parity: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -139,7 +162,8 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
     const n = parseInt(levelStr, 10);
     if (!Number.isNaN(n) && n >= 1) startLevelIndex = n - 1;
   }
-  return { runId, startLevelIndex, date, parity: readParityHook(params) };
+  const ladder = params.get('ladder') === '1';
+  return { runId, startLevelIndex, date, ladder, loadout: readLoadoutParam(params), parity: readParityHook(params) };
 }
 
 function readSavedRunId(): string {
@@ -151,6 +175,13 @@ interface RunMeta {
   iso: string;
   runId: string;
   startLevelIndex: number;
+  /**
+   * The run was launched from The Ladder (`?ladder=1&run=<id>`): skip the
+   * home screen, force Normal rules, and record the result to profile.ladder.
+   */
+  ladder: boolean;
+  /** Standalone `?loadout=` starting kit (works in production); parity wins over it. */
+  loadout: OwnedAbility[] | null;
   /** Dev-only; null in production and whenever `?parity=1` is absent. */
   parity: ParityHook | null;
 }
@@ -160,6 +191,8 @@ function freshRun(
   runId: string,
   startLevelIndex: number,
   parity: ParityHook | null = null,
+  forceDifficulty: DifficultyId | null = null,
+  loadout: OwnedAbility[] | null = null,
 ): { state: BoardState; puzzle: RunPuzzle } {
   const puzzle = puzzleForDate(iso, startLevelIndex, runId);
   const profile = readProfile();
@@ -183,7 +216,10 @@ function freshRun(
     state: puzzleToBoardState(puzzle, {
       runId,
       unlockedAbilities: profile.unlockedAbilities,
-      difficulty: profile.difficulty,
+      // Ladder runs always play on Normal rules; the profile difficulty is
+      // a DAILY-only concept and is left untouched.
+      difficulty: forceDifficulty ?? profile.difficulty,
+      ...(loadout ? { abilities: loadout } : {}),
     }),
     puzzle,
   };
@@ -223,12 +259,15 @@ export default function RookiesRunPage() {
       }
     }
     const validRunId = isKnownRunId(runId) ? runId : dailyRunForDate;
-    if (typeof window !== 'undefined' && !url.date) {
+    // A Ladder launch only counts when the exact requested run resolved —
+    // a fallback to the daily must never record a ladder result.
+    const ladder = url.ladder && !!url.runId && validRunId === url.runId && isLadderRunId(validRunId);
+    if (typeof window !== 'undefined' && !url.date && !ladder) {
       localStorage.setItem('rookies-run-current', validRunId);
     }
     const maxLevel = totalLevelsForRun(validRunId) - 1;
     const startLevelIndex = Math.min(url.startLevelIndex, maxLevel);
-    return { iso, runId: validRunId, startLevelIndex, parity: url.parity };
+    return { iso, runId: validRunId, startLevelIndex, ladder, loadout: url.loadout, parity: url.parity };
   }, []);
 
   const runDef = useMemo(() => getRunById(meta.runId), [meta.runId]);
@@ -237,8 +276,8 @@ export default function RookiesRunPage() {
 
   const [levelIndex, setLevelIndex] = useState(meta.startLevelIndex);
   const initial = useMemo(
-    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity),
-    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity],
+    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout),
+    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.loadout],
   );
   const [state, setState] = useState<BoardState>(initial.state);
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
@@ -441,6 +480,9 @@ export default function RookiesRunPage() {
   const usesClassicLanding = isStc || process.env.NEXT_PUBLIC_HOME_CLASSIC === '1';
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    // A Ladder launch (?ladder=1&run=<id>) goes straight to the board — the
+    // player just tapped the rung on the home screen.
+    if (meta.ladder) return;
     if (!usesClassicLanding) {
       setShowIntro(true);
       return;
@@ -449,7 +491,7 @@ export default function RookiesRunPage() {
     if (!localStorage.getItem(key)) {
       setShowIntro(true);
     }
-  }, [meta.iso, usesClassicLanding]);
+  }, [meta.iso, meta.ladder, usesClassicLanding]);
 
   const resetRunRef = useRef<() => void>(() => {});
   // Optionally starts under a specific difficulty (HomeLanding's Daily GO and
@@ -1013,7 +1055,7 @@ export default function RookiesRunPage() {
   }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
-    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity);
+    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout);
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
     setState(fresh.state);
@@ -1174,6 +1216,17 @@ export default function RookiesRunPage() {
       totalLevels,
       completed: runComplete,
     });
+    // The Ladder: a run launched from a rung files its result (win OR loss)
+    // so the next rung can unlock and the rung row can show a best score.
+    if (meta.ladder) {
+      recordLadderResult(
+        meta.runId,
+        runComplete ? totalLevels : Math.max(0, levelReached - 1),
+        state.captures.length,
+        runComplete,
+      );
+      progress.setProfile(readProfile());
+    }
     setHistoryVersion((v) => v + 1);
     // Global daily board (anonymous handle). Fails soft; never blocks the game.
     if (!isStc) {
@@ -1187,7 +1240,7 @@ export default function RookiesRunPage() {
         completed: runComplete,
       });
     }
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, levelReached, totalLevels, isStc, state.difficulty, state.captures.length]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 
@@ -1238,6 +1291,9 @@ export default function RookiesRunPage() {
         ) : (
           <HomeLanding
             onStart={dismissIntro}
+            onLadderStart={(id) => {
+              window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1`;
+            }}
             iso={meta.iso}
             runId={meta.runId}
             dateLabel={dateLabel}

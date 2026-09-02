@@ -53,6 +53,12 @@ export interface EarnedAchievement {
   seen: boolean;
 }
 
+export interface LadderRungResult {
+  cleared: boolean;
+  bestLevels: number;
+  score: number;
+}
+
 export interface PlayerProfile {
   v: 1;
   createdAt: string;
@@ -61,6 +67,8 @@ export interface PlayerProfile {
   achievements: Record<string, EarnedAchievement>;
   counters: Counters;
   bestByDifficulty: Partial<Record<DifficultyId, { levels: number; score: number }>>;
+  /** The Ladder — best result per rung run id (see lib/run/ladder.ts). */
+  ladder: Record<string, LadderRungResult>;
 }
 
 export function freshProfile(now = new Date()): PlayerProfile {
@@ -72,6 +80,7 @@ export function freshProfile(now = new Date()): PlayerProfile {
     achievements: {},
     counters: {},
     bestByDifficulty: {},
+    ladder: {},
   };
 }
 
@@ -108,6 +117,17 @@ function sanitize(raw: unknown): PlayerProfile {
   }
   if (r.bestByDifficulty && typeof r.bestByDifficulty === 'object') {
     p.bestByDifficulty = { ...(r.bestByDifficulty as PlayerProfile['bestByDifficulty']) };
+  }
+  if (r.ladder && typeof r.ladder === 'object') {
+    for (const [runId, entry] of Object.entries(r.ladder)) {
+      if (!entry || typeof entry !== 'object') continue;
+      const e = entry as Partial<LadderRungResult>;
+      p.ladder[runId] = {
+        cleared: !!e.cleared,
+        bestLevels: typeof e.bestLevels === 'number' && Number.isFinite(e.bestLevels) ? e.bestLevels : 0,
+        score: typeof e.score === 'number' && Number.isFinite(e.score) ? e.score : 0,
+      };
+    }
   }
   // Achievements already earned always grant their ability (handles catalog
   // edits + abilities that shipped after the achievement was earned).
@@ -213,6 +233,23 @@ export function recordBest(d: DifficultyId, levels: number, score: number): void
     const cur = p.bestByDifficulty[d];
     if (cur && (cur.levels > levels || (cur.levels === levels && cur.score >= score))) return p;
     return { ...p, bestByDifficulty: { ...p.bestByDifficulty, [d]: { levels, score } } };
+  });
+}
+
+/**
+ * The Ladder — record a finished rung attempt. Keeps the best result:
+ * `cleared` never regresses to false, `bestLevels`/`score` only improve.
+ */
+export function recordLadderResult(runId: string, levels: number, score: number, cleared: boolean): PlayerProfile {
+  return updateProfile((p) => {
+    const cur = p.ladder[runId];
+    const next: LadderRungResult = {
+      cleared: (cur?.cleared ?? false) || cleared,
+      bestLevels: Math.max(cur?.bestLevels ?? 0, levels),
+      score: Math.max(cur?.score ?? 0, score),
+    };
+    if (cur && cur.cleared === next.cleared && cur.bestLevels === next.bestLevels && cur.score === next.score) return p;
+    return { ...p, ladder: { ...p.ladder, [runId]: next } };
   });
 }
 
