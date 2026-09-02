@@ -116,15 +116,16 @@ export function AbilityOfferModal({
       `}</style>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#12222b]/80 backdrop-blur-sm px-3 py-4">
         {/* Painted gold frame (public/ui/offer-frame.webp, prepped from
-            concepts/offer-frame-1.png). The box is letterboxed to the
-            frame's own aspect so the painting never distorts; content sits
-            inside the frame's window (insets measured from the pixels:
-            L 16.7% / R 16.6% / T 19.4% / B 16.1%, padded a touch inward). */}
+            concepts/offer-frame-thin-1.png — slender double rail, ruby crest).
+            The box is letterboxed to the frame's own aspect so the painting
+            never distorts; content sits inside the frame's window (insets
+            measured from the pixels: L 9.5% / R 9.5% / T 6.3% rail with the
+            crest dipping to 7.4% at center / B 4.4%, padded a touch inward). */}
         <div
           className="offer-frame-enter relative"
           style={{
-            width: 'min(370px, 94vw, calc((100dvh - 2rem) * 0.6293))',
-            aspectRatio: '905 / 1438',
+            width: 'min(398px, 94vw, calc((100dvh - 2rem) * 0.5843))',
+            aspectRatio: '783 / 1340',
             filter: 'drop-shadow(0 0 16px rgba(255, 191, 36, 0.45)) drop-shadow(0 16px 32px rgba(0,0,0,0.45))',
           }}
         >
@@ -134,19 +135,22 @@ export function AbilityOfferModal({
             aria-hidden
             className="absolute rounded-[10px]"
             style={{
-              left: '15.7%',
-              right: '15.6%',
-              top: '18.4%',
-              bottom: '15.1%',
+              left: '8.5%',
+              right: '8.5%',
+              top: '5.3%',
+              bottom: '3.4%',
               background: 'linear-gradient(180deg, #faf4e4, #f3e9d2)',
             }}
           />
 
           {/* Content — lives inside the frame's window. */}
           <div
-            className="absolute z-10 flex flex-col gap-2 overflow-y-auto overflow-x-hidden"
-            style={{ left: '17.4%', right: '17.3%', top: '20.2%', bottom: '16.9%' }}
+            className="absolute z-10 flex flex-col overflow-y-auto overflow-x-hidden"
+            style={{ left: '10%', right: '10%', top: '8.6%', bottom: '5.2%' }}
           >
+            {/* my-auto centers the slate in the tall thin-frame window;
+                collapses to 0 when the content overflows so scroll still works. */}
+            <div className="my-auto flex flex-col gap-2">
             <div className="text-center px-0.5">
               <h2 className="text-[15px] font-black text-chess-text leading-tight">
                 {title ?? (isLevel ? 'One rook can’t do this alone. Take something.' : 'Tempo full. Upgrade Rookie.')}
@@ -269,6 +273,7 @@ export function AbilityOfferModal({
                 Skip (½ tempo back)
               </button>
             )}
+            </div>
           </div>
 
           {/* The painting itself — above the content, clicks pass through. */}
