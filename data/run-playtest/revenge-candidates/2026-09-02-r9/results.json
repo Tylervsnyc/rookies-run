@@ -1,0 +1,9817 @@
+{
+ "meta": {
+  "date": "2026-09-02",
+  "tier": "T5",
+  "trials": 12,
+  "seed": 9,
+  "seconds": 173
+ },
+ "opts": {
+  "slots": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "archetypes": [
+   "royal-guard",
+   "walled-court"
+  ],
+  "variants": 3,
+  "trials": 12,
+  "tier": "T5",
+  "loadouts": [
+   "none",
+   "surge",
+   "freeze-ray",
+   "knight-hop",
+   "bishop-step",
+   "queen-pulse"
+  ],
+  "seed": 9,
+  "jobs": 8
+ },
+ "candidates": [
+  {
+   "id": "royal-guard-L1-v1",
+   "slot": 1,
+   "archetype": "royal-guard",
+   "title": "FIRST BLOOD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@c7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 1,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "royal-guard-L1-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 8.896
+   }
+  },
+  {
+   "id": "royal-guard-L1-v2",
+   "slot": 1,
+   "archetype": "royal-guard",
+   "title": "FIRST BLOOD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 1,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "royal-guard-L1-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 9.124
+   }
+  },
+  {
+   "id": "royal-guard-L1-v3",
+   "slot": 1,
+   "archetype": "royal-guard",
+   "title": "FIRST BLOOD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 1,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "royal-guard-L1-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 9.061
+   }
+  },
+  {
+   "id": "royal-guard-L2-v1",
+   "slot": 2,
+   "archetype": "royal-guard",
+   "title": "THE SHELL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 2,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "royal-guard-L2-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 8.958
+   }
+  },
+  {
+   "id": "royal-guard-L2-v2",
+   "slot": 2,
+   "archetype": "royal-guard",
+   "title": "THE SHELL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@e7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 2,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "royal-guard-L2-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 9.206
+   }
+  },
+  {
+   "id": "royal-guard-L2-v3",
+   "slot": 2,
+   "archetype": "royal-guard",
+   "title": "THE SHELL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 2,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "royal-guard-L2-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     }
+    ],
+    "score": 96,
+    "seconds": 9.505
+   }
+  },
+  {
+   "id": "royal-guard-L3-v1",
+   "slot": 3,
+   "archetype": "royal-guard",
+   "title": "THE PAGE",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f5 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 3,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L3-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     }
+    ],
+    "score": 96,
+    "seconds": 16.567
+   }
+  },
+  {
+   "id": "royal-guard-L3-v2",
+   "slot": 3,
+   "archetype": "royal-guard",
+   "title": "THE PAGE",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@c5 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 3,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L3-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     }
+    ],
+    "score": 96,
+    "seconds": 17.057
+   }
+  },
+  {
+   "id": "royal-guard-L3-v3",
+   "slot": 3,
+   "archetype": "royal-guard",
+   "title": "THE PAGE",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@e5 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 3,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L3-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.3
+     }
+    ],
+    "score": 96,
+    "seconds": 12.255
+   }
+  },
+  {
+   "id": "royal-guard-L4-v1",
+   "slot": 4,
+   "archetype": "royal-guard",
+   "title": "THE BISHOP",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 4,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L4-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.2
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     }
+    ],
+    "score": 100,
+    "seconds": 23.909
+   }
+  },
+  {
+   "id": "royal-guard-L4-v2",
+   "slot": 4,
+   "archetype": "royal-guard",
+   "title": "THE BISHOP",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 4,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L4-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 7.1
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.7
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     }
+    ],
+    "score": 100,
+    "seconds": 22.155
+   }
+  },
+  {
+   "id": "royal-guard-L4-v3",
+   "slot": 4,
+   "archetype": "royal-guard",
+   "title": "THE BISHOP",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 4,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L4-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 10,
+      "captured": 2,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 7.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     }
+    ],
+    "score": 75,
+    "seconds": 19.604
+   }
+  },
+  {
+   "id": "royal-guard-L5-v1",
+   "slot": 5,
+   "archetype": "royal-guard",
+   "title": "HER MAJESTY",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 5,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L5-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 4,
+      "captured": 0,
+      "moveLimit": 8,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 10.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.2
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     }
+    ],
+    "score": 15,
+    "seconds": 17.102
+   }
+  },
+  {
+   "id": "royal-guard-L5-v2",
+   "slot": 5,
+   "archetype": "royal-guard",
+   "title": "HER MAJESTY",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 5,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L5-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 8,
+      "captured": 0,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.3
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     }
+    ],
+    "score": 65,
+    "seconds": 17.898
+   }
+  },
+  {
+   "id": "royal-guard-L5-v3",
+   "slot": 5,
+   "archetype": "royal-guard",
+   "title": "HER MAJESTY",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 5,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L5-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 8,
+      "captured": 0,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.3
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     }
+    ],
+    "score": 65,
+    "seconds": 13.535
+   }
+  },
+  {
+   "id": "royal-guard-L6-v1",
+   "slot": 6,
+   "archetype": "royal-guard",
+   "title": "TWO COURTIERS",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 6,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L6-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 2,
+      "captured": 2,
+      "moveLimit": 8,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 10,
+      "captured": 0,
+      "moveLimit": 2,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 7.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     }
+    ],
+    "score": 50,
+    "seconds": 12.417
+   }
+  },
+  {
+   "id": "royal-guard-L6-v2",
+   "slot": 6,
+   "archetype": "royal-guard",
+   "title": "TWO COURTIERS",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 6,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 11,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L6-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 3,
+      "captured": 0,
+      "moveLimit": 9,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 10.6
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     }
+    ],
+    "score": 62.5,
+    "seconds": 15.029
+   }
+  },
+  {
+   "id": "royal-guard-L6-v3",
+   "slot": 6,
+   "archetype": "royal-guard",
+   "title": "TWO COURTIERS",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 6,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 5
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 4,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L6-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 2,
+      "captured": 0,
+      "moveLimit": 10,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.2
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     }
+    ],
+    "score": 50,
+    "seconds": 14.827
+   }
+  },
+  {
+   "id": "royal-guard-L7-v1",
+   "slot": 7,
+   "archetype": "royal-guard",
+   "title": "THE RETINUE",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 7,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 7,
+      "rank": 5
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 11,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L7-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 4,
+      "captured": 1,
+      "moveLimit": 7,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.6
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.7
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     }
+    ],
+    "score": 67.5,
+    "seconds": 12.34
+   }
+  },
+  {
+   "id": "royal-guard-L7-v2",
+   "slot": 7,
+   "archetype": "royal-guard",
+   "title": "THE RETINUE",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 7,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L7-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 10,
+      "captured": 0,
+      "moveLimit": 2,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 10
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.4
+     }
+    ],
+    "score": 57.5,
+    "seconds": 13.375
+   }
+  },
+  {
+   "id": "royal-guard-L7-v3",
+   "slot": 7,
+   "archetype": "royal-guard",
+   "title": "THE RETINUE",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 7,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 11,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L7-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 1,
+      "captured": 0,
+      "moveLimit": 11,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 10.9
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     }
+    ],
+    "score": 30,
+    "seconds": 14.052
+   }
+  },
+  {
+   "id": "royal-guard-L8-v1",
+   "slot": 8,
+   "archetype": "royal-guard",
+   "title": "TWIN QUEENS",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@f4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 8,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 5
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 2
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 15,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7",
+     "e6",
+     "f6",
+     "g6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L8-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 2,
+      "captured": 1,
+      "moveLimit": 9,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 14.7
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.9
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     }
+    ],
+    "score": 46,
+    "seconds": 13.906
+   }
+  },
+  {
+   "id": "royal-guard-L8-v2",
+   "slot": 8,
+   "archetype": "royal-guard",
+   "title": "TWIN QUEENS",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@f4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 8,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 5
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 4,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 4,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7",
+     "e6",
+     "f6",
+     "g6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L8-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 11,
+      "captured": 1,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 11,
+      "captured": 1,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     }
+    ],
+    "score": 33.5,
+    "seconds": 9.412
+   }
+  },
+  {
+   "id": "royal-guard-L8-v3",
+   "slot": 8,
+   "archetype": "royal-guard",
+   "title": "TWIN QUEENS",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@d4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 8,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 15,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7",
+     "c6",
+     "d6",
+     "e6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L8-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 1,
+      "captured": 3,
+      "moveLimit": 8,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 13.5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 11,
+      "captured": 1,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 8,
+      "captured": 1,
+      "moveLimit": 3,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.5
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 10,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 2,
+      "avgMoves": 7.4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.9
+     }
+    ],
+    "score": 6.8,
+    "seconds": 14.64
+   }
+  },
+  {
+   "id": "royal-guard-L9-v1",
+   "slot": 9,
+   "archetype": "royal-guard",
+   "title": "THE PRIVY COUNCIL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 9,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 14,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L9-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 1,
+      "captured": 3,
+      "moveLimit": 8,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     }
+    ],
+    "score": 63.5,
+    "seconds": 14.839
+   }
+  },
+  {
+   "id": "royal-guard-L9-v2",
+   "slot": 9,
+   "archetype": "royal-guard",
+   "title": "THE PRIVY COUNCIL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@c4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@g4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 9,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 5,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 5,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 6
+     },
+     {
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 14,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7",
+     "b6",
+     "c6",
+     "d6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L9-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 6,
+      "captured": 4,
+      "moveLimit": 2,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.3
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.6
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     }
+    ],
+    "score": 58,
+    "seconds": 15.424
+   }
+  },
+  {
+   "id": "royal-guard-L9-v3",
+   "slot": 9,
+   "archetype": "royal-guard",
+   "title": "THE PRIVY COUNCIL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 9,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 2
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L9-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 4,
+      "captured": 1,
+      "moveLimit": 7,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.5
+     }
+    ],
+    "score": 91,
+    "seconds": 14.838
+   }
+  },
+  {
+   "id": "royal-guard-L10-v1",
+   "slot": 10,
+   "archetype": "royal-guard",
+   "title": "THE ROYAL GUARD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@c4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 10,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 3,
+      "rank": 2
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 17,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L10-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 5,
+      "captured": 3,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 11,
+      "captured": 1,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 7,
+      "captured": 5,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 8,
+      "captured": 4,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     }
+    ],
+    "score": 4.5,
+    "seconds": 10.545
+   }
+  },
+  {
+   "id": "royal-guard-L10-v2",
+   "slot": 10,
+   "archetype": "royal-guard",
+   "title": "THE ROYAL GUARD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 10,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 18,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L10-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 4,
+      "captured": 2,
+      "moveLimit": 6,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 12.1
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 11,
+      "captured": 1,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.6
+     }
+    ],
+    "score": 91,
+    "seconds": 16.302
+   }
+  },
+  {
+   "id": "royal-guard-L10-v3",
+   "slot": 10,
+   "archetype": "royal-guard",
+   "title": "THE ROYAL GUARD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@c4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 10,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 7,
+      "rank": 2
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 8,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 6
+     },
+     {
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "moveLimit": 18,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7",
+     "b6",
+     "c6",
+     "d6"
+    ]
+   },
+   "scored": {
+    "id": "royal-guard-L10-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 3,
+      "captured": 3,
+      "moveLimit": 6,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 14.3
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.2
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.4
+     }
+    ],
+    "score": 88.5,
+    "seconds": 20.719
+   }
+  },
+  {
+   "id": "walled-court-L1-v1",
+   "slot": 1,
+   "archetype": "walled-court",
+   "title": "FIRST BLOOD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@c7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 1,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "walled-court-L1-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     }
+    ],
+    "score": 96,
+    "seconds": 7.664
+   }
+  },
+  {
+   "id": "walled-court-L1-v2",
+   "slot": 1,
+   "archetype": "walled-court",
+   "title": "FIRST BLOOD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@e7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 1,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "walled-court-L1-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.4
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 8.409
+   }
+  },
+  {
+   "id": "walled-court-L1-v3",
+   "slot": 1,
+   "archetype": "walled-court",
+   "title": "FIRST BLOOD",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@e7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 1,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "walled-court-L1-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     }
+    ],
+    "score": 96,
+    "seconds": 9.763
+   }
+  },
+  {
+   "id": "walled-court-L2-v1",
+   "slot": 2,
+   "archetype": "walled-court",
+   "title": "THE SHELL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 2,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "walled-court-L2-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     }
+    ],
+    "score": 96,
+    "seconds": 8.324
+   }
+  },
+  {
+   "id": "walled-court-L2-v2",
+   "slot": 2,
+   "archetype": "walled-court",
+   "title": "THE SHELL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@d7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 2,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 7,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "walled-court-L2-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     }
+    ],
+    "score": 96,
+    "seconds": 7.692
+   }
+  },
+  {
+   "id": "walled-court-L2-v3",
+   "slot": 2,
+   "archetype": "walled-court",
+   "title": "THE SHELL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@e7 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 2,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [],
+    "winCondition": "king",
+    "kingBehavior": "still"
+   },
+   "scored": {
+    "id": "walled-court-L2-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 96,
+    "seconds": 9.996
+   }
+  },
+  {
+   "id": "walled-court-L3-v1",
+   "slot": 3,
+   "archetype": "walled-court",
+   "title": "THE GATE",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@c5 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 3,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 4,
+      "rank": 6
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L3-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.7
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     }
+    ],
+    "score": 96,
+    "seconds": 60.654
+   }
+  },
+  {
+   "id": "walled-court-L3-v2",
+   "slot": 3,
+   "archetype": "walled-court",
+   "title": "THE GATE",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@f5 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 3,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L3-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.3
+     }
+    ],
+    "score": 96,
+    "seconds": 66.698
+   }
+  },
+  {
+   "id": "walled-court-L3-v3",
+   "slot": 3,
+   "archetype": "walled-court",
+   "title": "THE GATE",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "undefended key pawn@d5 (capture-stun lesson)"
+    ]
+   },
+   "puzzle": {
+    "level": 3,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 5,
+      "rank": 6
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L3-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.6
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.5
+     }
+    ],
+    "score": 96,
+    "seconds": 57.438
+   }
+  },
+  {
+   "id": "walled-court-L4-v1",
+   "slot": 4,
+   "archetype": "walled-court",
+   "title": "THE PORTCULLIS",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 4,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 6
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L4-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     }
+    ],
+    "score": 100,
+    "seconds": 29.462
+   }
+  },
+  {
+   "id": "walled-court-L4-v2",
+   "slot": 4,
+   "archetype": "walled-court",
+   "title": "THE PORTCULLIS",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 4,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 6
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L4-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     }
+    ],
+    "score": 100,
+    "seconds": 28.805
+   }
+  },
+  {
+   "id": "walled-court-L4-v3",
+   "slot": 4,
+   "archetype": "walled-court",
+   "title": "THE PORTCULLIS",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 4,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 7,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 6
+     }
+    ],
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L4-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     }
+    ],
+    "score": 100,
+    "seconds": 22.202
+   }
+  },
+  {
+   "id": "walled-court-L5-v1",
+   "slot": 5,
+   "archetype": "walled-court",
+   "title": "INNER WARD",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 5,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 6
+     }
+    ],
+    "moveLimit": 11,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L5-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     }
+    ],
+    "score": 85,
+    "seconds": 26.214
+   }
+  },
+  {
+   "id": "walled-court-L5-v2",
+   "slot": 5,
+   "archetype": "walled-court",
+   "title": "INNER WARD",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 5,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 6
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L5-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.9
+     }
+    ],
+    "score": 85,
+    "seconds": 27.237
+   }
+  },
+  {
+   "id": "walled-court-L5-v3",
+   "slot": 5,
+   "archetype": "walled-court",
+   "title": "INNER WARD",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 5,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 6
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L5-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.7
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.1
+     }
+    ],
+    "score": 85,
+    "seconds": 31.954
+   }
+  },
+  {
+   "id": "walled-court-L6-v1",
+   "slot": 6,
+   "archetype": "walled-court",
+   "title": "THE COURTYARD",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 6,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L6-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 8,
+      "captured": 1,
+      "moveLimit": 3,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     }
+    ],
+    "score": 75,
+    "seconds": 24.781
+   }
+  },
+  {
+   "id": "walled-court-L6-v2",
+   "slot": 6,
+   "archetype": "walled-court",
+   "title": "THE COURTYARD",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 6,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     }
+    ],
+    "moveLimit": 11,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L6-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 9,
+      "captured": 0,
+      "moveLimit": 3,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 8.9
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.2
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.9
+     }
+    ],
+    "score": 62.5,
+    "seconds": 22.731
+   }
+  },
+  {
+   "id": "walled-court-L6-v3",
+   "slot": 6,
+   "archetype": "walled-court",
+   "title": "THE COURTYARD",
+   "lint": {
+    "errors": [],
+    "warnings": []
+   },
+   "puzzle": {
+    "level": 6,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 1,
+      "rank": 6
+     },
+     {
+      "file": 5,
+      "rank": 6
+     }
+    ],
+    "moveLimit": 11,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L6-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 4,
+      "captured": 0,
+      "moveLimit": 8,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 10.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 2.8
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.8
+     }
+    ],
+    "score": 75,
+    "seconds": 20.66
+   }
+  },
+  {
+   "id": "walled-court-L7-v1",
+   "slot": 7,
+   "archetype": "walled-court",
+   "title": "THE BAILEY",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@d4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 7,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "file": 6,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7",
+     "c6",
+     "d6",
+     "e6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L7-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 10,
+      "captured": 0,
+      "moveLimit": 2,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 8.6
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.6
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     }
+    ],
+    "score": 53.5,
+    "seconds": 29.279
+   }
+  },
+  {
+   "id": "walled-court-L7-v2",
+   "slot": 7,
+   "archetype": "walled-court",
+   "title": "THE BAILEY",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@c4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 7,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 6
+     },
+     {
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 1,
+      "rank": 5
+     },
+     {
+      "file": 5,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7",
+     "b6",
+     "c6",
+     "d6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L7-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 6,
+      "captured": 0,
+      "moveLimit": 6,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 11.7
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.4
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.2
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     }
+    ],
+    "score": 88.5,
+    "seconds": 26.007
+   }
+  },
+  {
+   "id": "walled-court-L7-v3",
+   "slot": 7,
+   "archetype": "walled-court",
+   "title": "THE BAILEY",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 7,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "file": 7,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 12,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L7-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 2,
+      "captured": 1,
+      "moveLimit": 9,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 10.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.9
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     }
+    ],
+    "score": 38.5,
+    "seconds": 28.451
+   }
+  },
+  {
+   "id": "walled-court-L8-v1",
+   "slot": 8,
+   "archetype": "walled-court",
+   "title": "CURTAIN WALL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@f4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 8,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 8,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     },
+     {
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "file": 8,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 14,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7",
+     "e6",
+     "f6",
+     "g6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L8-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 8,
+      "captured": 0,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.4
+     }
+    ],
+    "score": 71,
+    "seconds": 34.691
+   }
+  },
+  {
+   "id": "walled-court-L8-v2",
+   "slot": 8,
+   "archetype": "walled-court",
+   "title": "CURTAIN WALL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@f4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 8,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 6,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 4,
+      "rank": 6
+     },
+     {
+      "file": 8,
+      "rank": 6
+     },
+     {
+      "file": 4,
+      "rank": 7
+     },
+     {
+      "file": 8,
+      "rank": 7
+     },
+     {
+      "file": 4,
+      "rank": 8
+     },
+     {
+      "file": 8,
+      "rank": 8
+     },
+     {
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "file": 8,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "e8",
+     "f8",
+     "g8",
+     "e7",
+     "f7",
+     "g7",
+     "e6",
+     "f6",
+     "g6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L8-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 6,
+      "captured": 2,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.5
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.4
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     }
+    ],
+    "score": 96,
+    "seconds": 22.299
+   }
+  },
+  {
+   "id": "walled-court-L8-v3",
+   "slot": 8,
+   "archetype": "walled-court",
+   "title": "CURTAIN WALL",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@d4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@g4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 8,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "file": 6,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 14,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7",
+     "c6",
+     "d6",
+     "e6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L8-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 6,
+      "captured": 1,
+      "moveLimit": 5,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.9
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.8
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 11,
+      "captured": 0,
+      "moveLimit": 1,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 6.7
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.6
+     }
+    ],
+    "score": 92,
+    "seconds": 18.126
+   }
+  },
+  {
+   "id": "walled-court-L9-v1",
+   "slot": 9,
+   "archetype": "walled-court",
+   "title": "THE INNER KEEP",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@d4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@b4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@a3 on rank 3 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 9,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "file": 6,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 13,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7",
+     "c6",
+     "d6",
+     "e6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L9-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 2,
+      "captured": 6,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 8.1
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.2
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 5,
+      "captured": 7,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 7,
+      "captured": 1,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 8.2
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 10,
+      "captured": 1,
+      "moveLimit": 1,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 6.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.1
+     }
+    ],
+    "score": -52,
+    "seconds": 18.81
+   }
+  },
+  {
+   "id": "walled-court-L9-v2",
+   "slot": 9,
+   "archetype": "walled-court",
+   "title": "THE INNER KEEP",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@c4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@a4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 9,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "file": 7,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 14,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L9-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 7,
+      "captured": 2,
+      "moveLimit": 3,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 9.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.7
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.6
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.6
+     }
+    ],
+    "score": 45.5,
+    "seconds": 30.88
+   }
+  },
+  {
+   "id": "walled-court-L9-v3",
+   "slot": 9,
+   "archetype": "walled-court",
+   "title": "THE INNER KEEP",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@d4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@g4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 9,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "file": 6,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 14,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7",
+     "c6",
+     "d6",
+     "e6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L9-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 2,
+      "captured": 1,
+      "moveLimit": 9,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 12.8
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 8,
+      "captured": 0,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 8.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 6,
+      "captured": 4,
+      "moveLimit": 2,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 8.3
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 11,
+      "captured": 1,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 6.5
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 9,
+      "captured": 0,
+      "moveLimit": 3,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 7.8
+     }
+    ],
+    "score": -24.7,
+    "seconds": 30.383
+   }
+  },
+  {
+   "id": "walled-court-L10-v1",
+   "slot": 10,
+   "archetype": "walled-court",
+   "title": "THE FORTRESS",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@d4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 10,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 3
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 2
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 6,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 4,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 2,
+      "rank": 6
+     },
+     {
+      "file": 6,
+      "rank": 6
+     },
+     {
+      "file": 2,
+      "rank": 7
+     },
+     {
+      "file": 6,
+      "rank": 7
+     },
+     {
+      "file": 2,
+      "rank": 8
+     },
+     {
+      "file": 6,
+      "rank": 8
+     },
+     {
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "file": 6,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 17,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "c8",
+     "d8",
+     "e8",
+     "c7",
+     "d7",
+     "e7",
+     "c6",
+     "d6",
+     "e6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L10-v1",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 4,
+      "captured": 6,
+      "moveLimit": 2,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 7.1
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.1
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.3
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.1
+     }
+    ],
+    "score": 91,
+    "seconds": 32.443
+   }
+  },
+  {
+   "id": "walled-court-L10-v2",
+   "slot": 10,
+   "archetype": "walled-court",
+   "title": "THE FORTRESS",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@e4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 10,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 2,
+      "rank": 3
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 2,
+      "rank": 2
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 5,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 3,
+      "rank": 6
+     },
+     {
+      "file": 7,
+      "rank": 6
+     },
+     {
+      "file": 3,
+      "rank": 7
+     },
+     {
+      "file": 7,
+      "rank": 7
+     },
+     {
+      "file": 3,
+      "rank": 8
+     },
+     {
+      "file": 7,
+      "rank": 8
+     },
+     {
+      "file": 3,
+      "rank": 5
+     },
+     {
+      "file": 7,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 17,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "d8",
+     "e8",
+     "f8",
+     "d7",
+     "e7",
+     "f7",
+     "d6",
+     "e6",
+     "f6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L10-v2",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 11,
+      "captured": 0,
+      "moveLimit": 1,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 7.4
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.5
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.2
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.6
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.2
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 4.5
+     }
+    ],
+    "score": 3.5,
+    "seconds": 33.688
+   }
+  },
+  {
+   "id": "walled-court-L10-v3",
+   "slot": 10,
+   "archetype": "walled-court",
+   "title": "THE FORTRESS",
+   "lint": {
+    "errors": [],
+    "warnings": [
+     "shell pawn@c4 on rank 4 will march off its post — keep keys/defenders on rank 5+",
+     "shell pawn@f4 on rank 4 will march off its post — keep keys/defenders on rank 5+"
+    ]
+   },
+   "puzzle": {
+    "level": 10,
+    "rookieStart": {
+     "file": 4,
+     "rank": 1
+    },
+    "pieces": [
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 3,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 2,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 4,
+      "rank": 5
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 5,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 8,
+      "rank": 4
+     },
+     {
+      "type": "queen",
+      "color": "black",
+      "file": 7,
+      "rank": 4
+     },
+     {
+      "type": "knight",
+      "color": "black",
+      "file": 5,
+      "rank": 3
+     },
+     {
+      "type": "bishop",
+      "color": "black",
+      "file": 1,
+      "rank": 2
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 6,
+      "rank": 4
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 1,
+      "rank": 3
+     },
+     {
+      "type": "pawn",
+      "color": "black",
+      "file": 7,
+      "rank": 3
+     },
+     {
+      "type": "king",
+      "color": "black",
+      "file": 3,
+      "rank": 8
+     }
+    ],
+    "hazards": [
+     {
+      "file": 1,
+      "rank": 6
+     },
+     {
+      "file": 5,
+      "rank": 6
+     },
+     {
+      "file": 1,
+      "rank": 7
+     },
+     {
+      "file": 5,
+      "rank": 7
+     },
+     {
+      "file": 1,
+      "rank": 8
+     },
+     {
+      "file": 5,
+      "rank": 8
+     },
+     {
+      "file": 1,
+      "rank": 5
+     },
+     {
+      "file": 5,
+      "rank": 5
+     }
+    ],
+    "moveLimit": 18,
+    "winCondition": "king",
+    "kingBehavior": "flee",
+    "kingPen": [
+     "b8",
+     "c8",
+     "d8",
+     "b7",
+     "c7",
+     "d7",
+     "b6",
+     "c6",
+     "d6"
+    ]
+   },
+   "scored": {
+    "id": "walled-court-L10-v3",
+    "cells": [
+     {
+      "loadout": "none",
+      "trials": 12,
+      "wins": 3,
+      "captured": 4,
+      "moveLimit": 5,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 12.5
+     },
+     {
+      "loadout": "surge",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 3.3
+     },
+     {
+      "loadout": "freeze-ray",
+      "trials": 12,
+      "wins": 3,
+      "captured": 0,
+      "moveLimit": 9,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 14.3
+     },
+     {
+      "loadout": "knight-hop",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 6.2
+     },
+     {
+      "loadout": "bishop-step",
+      "trials": 12,
+      "wins": 12,
+      "captured": 0,
+      "moveLimit": 0,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 5.8
+     },
+     {
+      "loadout": "queen-pulse",
+      "trials": 12,
+      "wins": 8,
+      "captured": 0,
+      "moveLimit": 4,
+      "stall": 0,
+      "deadEnd": 0,
+      "avgMoves": 12.8
+     }
+    ],
+    "score": -52.2,
+    "seconds": 32.963
+   }
+  }
+ ]
+}

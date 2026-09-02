@@ -5437,7 +5437,7 @@ const RUN_REVENGE_8: RunDef = {
       },
     ),
     // L10 — THE LAST TOWER. 3x3 corner room on a8; key a4 on his file, two queens hold the yard.
-    // Key pa4; defended by pb5; shell pb3; hunters qd4 qc3 bf5 kc4; marchers pe4 pg4 pf3 ph3. (corner-keep-L10-v3 +marcher, budget 18->16)
+    // Key pa4; defended by pb5; shell pb3; hunters qd4 qc3 bf5 kc4; marchers pe4 pg4 pf3 ph3. (corner-keep-L10-v3 +marcher, budget 18->13)
     make(
       10,
       [
@@ -5458,7 +5458,185 @@ const RUN_REVENGE_8: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8];
+const RUN_REVENGE_9: RunDef = {
+  id: 'revenge-9',
+  name: 'Cold Court',
+  blurb: 'The guard is heavy and the walls do not care.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — FIRST BLOOD. king alone behind three pawns. Rank 8 does nothing; the king does.
+    // shell pb7 pc7 pd7. (royal-guard-L1-v1)
+    make(
+      1,
+      [
+        pawn(2, 7), pawn(3, 7), pawn(4, 7),
+        king(3, 8),
+      ],
+      STILL,
+    ),
+    // L2 — THE SHELL. a second pawn layer and one bishop. Still still — find the line, take the key.
+    // shell pe7 pf7 pg7 pd6 ph6; hunters bc5; marchers ph3 pc3. (royal-guard-L2-v1)
+    make(
+      2,
+      [
+        pawn(5, 7), pawn(6, 7), pawn(7, 7), pawn(4, 6), pawn(8, 6),
+        bishop(3, 5),
+        pawn(8, 3), pawn(3, 3),
+        king(6, 8),
+      ],
+      STILL,
+    ),
+    // L3 — THE GATE. 6 walls — side walls plus an inner wall with one door on the c-file.
+    // Key pc5. (walled-court-L3-v1)
+    make(
+      3,
+      [
+        pawn(3, 5),
+        king(3, 8),
+      ],
+      {
+        ...FLEE,
+        hazards: [X(1, 7), X(5, 7), X(1, 8), X(5, 8), X(2, 6), X(4, 6)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L4 — THE BISHOP. 1 heavy hunter (bishop) — sightlines, not bodies. Key d5.
+    // Key pd5; defended by pe6; hunters bg4; marchers ph3. (royal-guard-L4-v1)
+    make(
+      4,
+      [
+        pawn(4, 5),
+        pawn(5, 6),
+        bishop(7, 4),
+        pawn(8, 3),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L5 — HER MAJESTY. 1 heavy hunter (queen) — sightlines, not bodies. Key c5.
+    // Key pc5; defended by pb6 pd6; hunters qe4; marchers pa3. (royal-guard-L5-v2)
+    make(
+      5,
+      [
+        pawn(3, 5),
+        pawn(2, 6), pawn(4, 6),
+        queen(5, 4),
+        pawn(1, 3),
+        king(3, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 16,
+        hazards: [X(1, 7), X(5, 7), X(1, 8), X(5, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L6 — THE COURTYARD. 6 walls — side walls plus an inner wall with one door on the c-file.
+    // Key pc5; defended by pb6 pd6; hunters qf4; marchers pf2. (walled-court-L6-v3)
+    make(
+      6,
+      [
+        pawn(3, 5),
+        pawn(2, 6), pawn(4, 6),
+        queen(6, 4),
+        pawn(6, 2),
+        king(3, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(1, 7), X(5, 7), X(1, 8), X(5, 8), X(1, 6), X(5, 6)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L7 — THE RETINUE. 3 heavy hunters (queen, bishop, knight) — sightlines, not bodies. Key d5.
+    // Key pd5; defended by pc6 pe6; hunters qa3 bg5 ka4; marchers pf4 pg4. (royal-guard-L7-v1)
+    make(
+      7,
+      [
+        pawn(4, 5),
+        pawn(3, 6), pawn(5, 6),
+        queen(1, 3), bishop(7, 5), knight(1, 4),
+        pawn(6, 4), pawn(7, 4),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L8 — CURTAIN WALL. 8 walls — side walls plus an inner wall with one door on the f-file.
+    // Key pf4; defended by pe5 pg5; shell pd4 ph4; hunters qa4 bc3; marchers pc2 pb2. (walled-court-L8-v2)
+    make(
+      8,
+      [
+        pawn(6, 4),
+        pawn(5, 5), pawn(7, 5),
+        pawn(4, 4), pawn(8, 4),
+        queen(1, 4), bishop(3, 3),
+        pawn(3, 2), pawn(2, 2),
+        king(6, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(4, 6), X(8, 6), X(4, 7), X(8, 7), X(4, 8), X(8, 8), X(4, 5), X(8, 5)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7', 'e6', 'f6', 'g6'],
+      },
+    ),
+    // L9 — THE PRIVY COUNCIL. 4 heavy hunters (queen, queen, bishop, knight) — sightlines, not bodies. Key e4.
+    // Key pe4; defended by pd5 pf5; shell pc4 pg4; hunters qg2 qc3 bb4 kb3; marchers ph4 pb2. (royal-guard-L9-v3)
+    make(
+      9,
+      [
+        pawn(5, 4),
+        pawn(4, 5), pawn(6, 5),
+        pawn(3, 4), pawn(7, 4),
+        queen(7, 2), queen(3, 3), bishop(2, 4), knight(2, 3),
+        pawn(8, 4), pawn(2, 2),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(3, 6), X(7, 6), X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7', 'd6', 'e6', 'f6'],
+      },
+    ),
+    // L10 — THE ROYAL GUARD. 5 heavy hunters (queen, queen, bishop, bishop, knight) — sightlines, not bodies. Key c4.
+    // Key pc4; defended by pb5 pd5; shell pa4 pe4; hunters qh3 qa3 ba2 bg2 kh5; marchers pf4 pg3. (royal-guard-L10-v3 +marcher, budget 18->16)
+    make(
+      10,
+      [
+        pawn(3, 4),
+        pawn(2, 5), pawn(4, 5),
+        pawn(1, 4), pawn(5, 4),
+        queen(8, 3), queen(1, 3), bishop(1, 2), bishop(7, 2), knight(8, 5),
+        pawn(6, 4), pawn(7, 3),
+        king(3, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(1, 6), X(5, 6), X(1, 7), X(5, 7), X(1, 8), X(5, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7', 'b6', 'c6', 'd6'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));
