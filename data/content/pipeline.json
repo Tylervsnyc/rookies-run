@@ -504,6 +504,30 @@
       "stage": "testing",
       "created": "2026-09-01",
       "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell)."
+    },
+    {
+      "id": "revenge-8",
+      "kind": "run",
+      "name": "The Rampart",
+      "stage": "testing",
+      "created": "2026-09-02",
+      "notes": "Rung 8 of the 10-rung ladder, generated 2026-09-02 (swarm + corner-keep archetypes). Matrix-verified T5 realistic: none 100/100/100/100/92/58/52/38/33/37, finishers >= 79% (band 100/100/100/95/80/45/45/40/25/25 +/-15, finishers >= 75)."
+    },
+    {
+      "id": "revenge-9",
+      "kind": "run",
+      "name": "Cold Court",
+      "stage": "testing",
+      "created": "2026-09-02",
+      "notes": "Rung 9 of the ladder, generated 2026-09-02 (royal-guard + walled-court archetypes — heavy hunters and walls). Matrix-verified T5 realistic: none 100/100/100/100/73/38/26/36/17/21, finishers >= 92% (band 100/100/95/90/70/40/35/30/20/20 +/-15, finishers >= 70)."
+    },
+    {
+      "id": "revenge-10",
+      "kind": "run",
+      "name": "The Vault",
+      "stage": "testing",
+      "created": "2026-09-02",
+      "notes": "Rung 10, top of the ladder, generated 2026-09-02 (mixed heaviest: swarm, royal-guard, corner-keep, double-key). Matrix-verified T5 realistic: none 100/100/100/100/54/40/38/21/25/21, finishers >= 88% (band 100/95/90/85/60/35/30/25/15/15 +/-15, finishers >= 65)."
     }
   ]
 }
