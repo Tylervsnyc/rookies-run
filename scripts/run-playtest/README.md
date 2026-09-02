@@ -22,6 +22,7 @@ For every run in `REVENGE_RUN_IDS` and `REVENGE_CANDIDATE_RUN_IDS` (`lib/run/run
 | f | Pearson + ridge regression of features vs no-ability win % and vs the finisher floor, plus plain-English threshold splits | `revenge-analysis.ts` |
 | g | Night-over-night deltas: any cell moving >15 pts, any new stall, any level leaving its band | `revenge-analysis.ts` (`compareNights`) |
 | h | Human traces from Supabase `run_traces` (reuses `pull-traces.ts`; creds from env) vs bot clear rate per level | `revenge-nightly.ts` |
+| h2 | Watching Tyler: replay his real traces through the engine, ask T5 what IT would play at every verified decision, mine lessons + an ability frequency table; feeds `--tyler-priors` in the bot | `learn-from-tyler.ts` |
 | i | 3 hypotheses per run (budget ±2, remove the nearest hunter, add a pawn defender / hunter), each with a predicted effect, each RUN tonight as an experiment; ledgered in `experiments.jsonl` | `revenge-analysis.ts` (`buildHypotheses`, `runExperiment`) |
 
 The morning report (`revenge-digest.ts`) goes to `data/run-playtest/revenge/digests/YYYY-MM-DD.md` (+ `latest.md`); raw JSON to `data/run-playtest/revenge/raw/YYYY-MM-DD/` (committed by the wrapper when under 2 MB); a ≤25-line Slack summary to `raw/<date>/slack.txt`.

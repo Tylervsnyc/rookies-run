@@ -26,6 +26,7 @@ import { isDifficultyId, type DifficultyId } from '../../lib/run/difficulty';
 import type { BoardState } from '../../lib/run/types';
 import { toSquare } from '../../lib/run/types';
 import { applyBotAction } from './bots/apply';
+import { setTylerPriors } from './bots/mcts';
 import { enemyAttackedSquares } from './bots/shared';
 import { settleEnemyTurns } from './bots/t3';
 import type { BotContext } from './types';
@@ -57,6 +58,13 @@ function arg(name: string, def?: string): string | undefined {
   return def;
 }
 const JSON_OUT = process.argv.includes('--json');
+// Tyler-derived move priors (learn-from-tyler.ts) default ON for the harness.
+// `--tyler-priors=off` restores the untuned bot; the env var propagates to
+// spawned matrix/solve workers so parallel runs stay consistent.
+if (arg('tyler-priors') === 'off' || arg('tyler-priors') === 'false' || arg('tyler-priors') === '0') {
+  process.env.TYLER_PRIORS = '0';
+  setTylerPriors(false);
+}
 /** Which Revenge run to test (any id in RUNS or HIDDEN_RUNS). `--run=revenge-2` */
 const RUN_ID = arg('run', 'revenge-1')!;
 const DIFFICULTY: DifficultyId | undefined = (() => {

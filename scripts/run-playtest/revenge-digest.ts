@@ -83,6 +83,21 @@ export interface HumanSummary {
   byRun: Array<{ runId: string; traces: number; wins: number; byLevel: HumanLevelRow[] }>;
 }
 
+/** Summary of learn-from-tyler.ts — mined lessons from Tyler's real traces. */
+export interface TylerDigest {
+  since: string;
+  runsWatched: number;
+  won: number;
+  lost: number;
+  /** Share of Tyler's actions the replay verifiably reconstructed. */
+  reconstructedPct: number;
+  /** Decision points where T5 was asked what IT would play. */
+  compared: number;
+  agreementPct: number | null;
+  topLesson: string | null;
+  reportPath: string | null;
+}
+
 export interface DigestInput {
   date: string;
   quick: boolean;
@@ -100,6 +115,8 @@ export interface DigestInput {
   fitNone: RidgeFit | null;
   fitFloor: RidgeFit | null;
   humans: HumanSummary | null;
+  /** Watching Tyler — null when Supabase creds are absent (skipped silently). */
+  tyler?: TylerDigest | null;
   hypotheses: Hypothesis[];
   experiments: ExperimentResult[];
   caveats: string[];
@@ -381,6 +398,20 @@ export function renderDigest(input: DigestInput): string {
     L.push(`Where humans fall well below the bot on a level the bot clears ability-free, the level is probably reading badly (unclear key, hidden hunter) rather than being tight. Caveat: traces written by a dev server (\`data/run-playtest/human-traces/\`) also include games the parity driver played through the real app — those are bot games wearing a human label.`);
   }
   L.push('');
+
+  // Watching Tyler — mined from his real traces by learn-from-tyler.ts.
+  if (input.tyler) {
+    const t = input.tyler;
+    L.push(`## Watching Tyler`);
+    L.push('');
+    L.push(`Replayed Tyler's real runs through the engine and asked T5 what IT would play at every verifiably reconstructed decision (learn-from-tyler.ts).`);
+    L.push('');
+    L.push(`- **${t.runsWatched} runs watched** since ${t.since} (${t.won} won, ${t.lost} lost); ${t.reconstructedPct}% of his actions reconstructed exactly.`);
+    L.push(`- **Bot agreement: ${t.agreementPct === null ? 'n/a' : `${t.agreementPct}%`}** across ${t.compared} decision points.`);
+    if (t.topLesson) L.push(`- Top lesson: ${t.topLesson}`);
+    if (t.reportPath) L.push(`- Full board-by-board report: \`${t.reportPath.replace(/^.*data\//, 'data/')}\``);
+    L.push('');
+  }
 
   // Experiments run tonight
   L.push(`## Experiments run tonight`);

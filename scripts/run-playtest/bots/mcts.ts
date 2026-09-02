@@ -15,6 +15,7 @@ import {
   applyDismissOffer,
   applyOfferPick,
   formForAbility,
+  isOneChargePerRun,
 } from '../../../lib/run/abilities';
 import type { AbilityId } from '../../../lib/run/abilities';
 import { rookieLegalMoves } from '../../../lib/run/movement';
@@ -30,6 +31,19 @@ import type { Bot, BotAction, BotContext, BotDecision } from '../types';
 
 const MAX_ROLLOUT_DEPTH = 40;
 const ROLLOUT_TOPK = 3;
+
+/**
+ * Tyler-derived candidate priors, mined by learn-from-tyler.ts from real
+ * human traces. Default ON for the harness; `--tyler-priors=off` (revenge.ts)
+ * or setTylerPriors(false) restores the untuned bot for A/B runs.
+ */
+let TYLER_PRIORS = process.env.TYLER_PRIORS !== '0';
+export function setTylerPriors(on: boolean): void {
+  TYLER_PRIORS = on;
+}
+export function tylerPriorsEnabled(): boolean {
+  return TYLER_PRIORS;
+}
 
 interface MctsOpts {
   name: string;
@@ -129,6 +143,43 @@ function decideMcts(
       bestIdx = i;
       bestWins = wins[i];
       bestTie = scoreSum[i];
+    }
+  }
+
+  // Tyler prior #2 — finisher charge discipline. Mined from human traces
+  // (learn-from-tyler.ts, 2026-09-02): 53% of Tyler's targeted casts land on
+  // L7+, and he banks one-charge-per-run finishers on early levels unless the
+  // move limit is squeezing. When the top candidate SPENDS a per-run charge on
+  // L1-6 with comfortable move slack, and a non-spending candidate is within
+  // 10% rollout wins, take the non-spending one — same result now, charge
+  // still in the bank for the level that needs it.
+  if (TYLER_PRIORS && state.level <= 6) {
+    const slack = state.moveLimit === null ? Infinity : state.moveLimit - state.moveCount;
+    const spendsCharge = (i: number) => {
+      const c = candidates[i];
+      return (
+        (c.kind === 'activate-ability' || c.kind === 'ability-target') &&
+        !!c.abilityId &&
+        isOneChargePerRun(c.abilityId)
+      );
+    };
+    if (slack >= 4 && spendsCharge(bestIdx)) {
+      const margin = Math.max(1, Math.ceil(perCand * 0.1));
+      let altIdx = -1;
+      let altWins = -2;
+      let altTie = -Infinity;
+      for (let i = 0; i < candidates.length; i++) {
+        if (spendsCharge(i) || doomed[i] || wins[i] < 0) continue;
+        if (wins[i] >= bestWins - margin && (wins[i] > altWins || (wins[i] === altWins && scoreSum[i] > altTie))) {
+          altIdx = i;
+          altWins = wins[i];
+          altTie = scoreSum[i];
+        }
+      }
+      if (altIdx !== -1) {
+        bestIdx = altIdx;
+        bestWins = wins[altIdx];
+      }
     }
   }
 
@@ -239,6 +290,13 @@ function pickRolloutAction(
     // Encourage occasional ability casts so rollouts explore ability use.
     if (isAbilityCast) {
       s += rng() * 3; // jitter — keeps abilities competitive on ties
+      // Tyler prior #1 — casts are a MAIN line on thick boards, not a garnish.
+      // Mined from human traces (learn-from-tyler.ts, 2026-09-02): Tyler's
+      // casts happen at 7-9.5 enemies still on board and sit on levels he
+      // clears 78-100% of the time, while T5 would have played a plain move
+      // at 40% of those verified cast points. A flat bump (not jitter) when
+      // the board is thick makes rollouts actually explore the cast lines.
+      if (TYLER_PRIORS && state.pieces.length >= 6) s += 3;
       // A transform that gives the new form an advancing move when the rook
       // had none is the key out of the trap — make rollouts take it.
       if (

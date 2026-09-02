@@ -82,7 +82,7 @@ import {
   type PlayerSims,
   type Sample,
 } from './revenge-analysis';
-import { MODES, renderDigest, renderSlack, type DigestInput, type HumanSummary, type ModeBlock, type RunReport } from './revenge-digest';
+import { MODES, renderDigest, renderSlack, type DigestInput, type HumanSummary, type ModeBlock, type RunReport, type TylerDigest } from './revenge-digest';
 import { readPipelineSummary, updatePipelineFromReports } from './revenge-pipeline';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -510,6 +510,34 @@ async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
     if (humans) writeJson(rawDir, 'humans.json', humans);
   }
 
+  // h2. Watching Tyler — replay his traces vs T5 (learn-from-tyler.ts). Runs
+  // only when Supabase creds exist; skipped silently otherwise (a dev box
+  // without creds just gets no section).
+  let tyler: TylerDigest | null = null;
+  const haveTraceCreds = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!opts.skipHumans && haveTraceCreds) {
+    try {
+      const t = Date.now();
+      const { watchTyler } = await import('./learn-from-tyler');
+      const w = await watchTyler({ days: 7, rollouts: 6 });
+      tyler = {
+        since: w.since,
+        runsWatched: w.tracesWatched,
+        won: w.won,
+        lost: w.lost,
+        reconstructedPct: w.reconstructedPct,
+        compared: w.compared,
+        agreementPct: w.agreementPct,
+        topLesson: w.topLesson,
+        reportPath: w.reportPath,
+      };
+      writeJson(rawDir, 'tyler.json', tyler);
+      log(`tyler: ${w.tracesWatched} runs watched, agreement ${w.agreementPct ?? '-'}% at ${w.compared} decisions (${secs(t)})`);
+    } catch (err) {
+      caveats.push(`learn-from-tyler failed: ${(err as Error).message.slice(0, 160)}`);
+    }
+  }
+
   // i. hypotheses + experiments (merged per run into hypotheses.json / experiments.json)
   const prior = readLedger();
   const keepH = (readJson<Hypothesis[]>(join(rawDir, 'hypotheses.json')) ?? []).filter((h) => !ctx.hypothesisRuns.includes(h.runId));
@@ -592,6 +620,7 @@ async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
     fitNone,
     fitFloor,
     humans,
+    tyler,
     hypotheses,
     experiments,
     caveats,
