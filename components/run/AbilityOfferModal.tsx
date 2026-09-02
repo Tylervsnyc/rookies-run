@@ -166,7 +166,7 @@ export function AbilityOfferModal({
                   )}
                   {/* Full-bleed art with a bottom gradient band — the classic
                       card-game look. The illustration fills the whole card. */}
-                  <div className="relative w-full aspect-[3/4] rounded-[10px] overflow-hidden bg-[#1a2b33]">
+                  <div className="relative w-full aspect-[3/4.8] rounded-[10px] overflow-hidden bg-[#1a2b33]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={`/abilities/${artFile(option.id)}`}

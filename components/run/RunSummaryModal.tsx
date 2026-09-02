@@ -45,7 +45,7 @@ export function RunSummaryModal({
 
   useEffect(() => {
     if (!completed) return;
-    const palette = ['#58CC02', '#1CB0F6', '#FF9600', '#CE82FF', '#FFD166'];
+    const palette = ['#E53935', '#B71C1C', '#f5cf5a', '#d9a520', '#ffffff'];
     fireConfetti({
       particleCount: 80,
       angle: 60,
@@ -140,7 +140,7 @@ export function RunSummaryModal({
               </div>
             </div>
             <div className="rounded-xl bg-chess-page px-3 py-2.5">
-              <div className="text-2xl font-black text-indigo-500 tabular-nums leading-none">
+              <div className="text-2xl font-black text-chess-text tabular-nums leading-none">
                 {timedScore ?? 0}
               </div>
               <div className="mt-1 text-[10px] uppercase tracking-wide text-chess-text-faint">
@@ -176,7 +176,7 @@ export function RunSummaryModal({
                 <div className="flex-1 h-6 rounded bg-chess-page overflow-hidden relative">
                   <div
                     className={`h-full flex items-center justify-end pr-2 text-[11px] font-black text-white tabular-nums ${
-                      r.isToday ? 'bg-emerald-500' : 'bg-chess-text/40'
+                      r.isToday ? 'bg-[#E53935]' : 'bg-chess-text/40'
                     }`}
                     style={{
                       width: `${Math.max(r.count > 0 ? 10 : 0, r.pct)}%`,
@@ -188,7 +188,7 @@ export function RunSummaryModal({
                     {r.count > 0 ? r.count : ''}
                   </div>
                   {r.count === 0 && r.isToday && (
-                    <div className="absolute inset-0 flex items-center px-2 text-[11px] font-black text-emerald-600 dark:text-emerald-400">
+                    <div className="absolute inset-0 flex items-center px-2 text-[11px] font-black text-[#E53935]">
                       ← you
                     </div>
                   )}
@@ -202,7 +202,7 @@ export function RunSummaryModal({
           <>
             <button
               onClick={onNextRun}
-              className="mt-6 w-full py-3 rounded-xl bg-indigo-500 hover:bg-indigo-600 active:scale-[0.98] text-white font-black text-base shadow-lg transition-all"
+              className="mt-6 w-full py-3 rounded-xl bg-[#E53935] hover:bg-[#B71C1C] active:scale-[0.98] text-white font-black text-base shadow-lg transition-all"
             >
               Next Run · {nextRunName} →
             </button>
@@ -231,7 +231,7 @@ export function RunSummaryModal({
             </button>
             <button
               onClick={onReplay}
-              className="tap-highlight px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-black"
+              className="tap-highlight px-4 py-2 rounded-xl bg-[#E53935] text-white text-sm font-black"
             >
               {completed ? 'Play again' : 'Try again'}
             </button>

@@ -207,7 +207,7 @@ function BoardMeta({
           {board.abilities.map((a) => {
             const name = ABILITY_DEFS[a.id]?.name ?? a.id;
             const uses =
-              a.usesLeftThisLevel < 0 ? '∞' : `${a.usesLeftThisLevel}`;
+              a.usesLeftThisLevel < 0 || a.usesLeftThisLevel >= 999 ? '∞' : `${a.usesLeftThisLevel}`;
             return (
               <span
                 key={a.id}

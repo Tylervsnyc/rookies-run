@@ -9,6 +9,8 @@
 
 import { useEffect, useState } from 'react';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
+import { TempoBar } from '@/components/run/TempoBar';
+import { KingStunCauseLabel } from '@/components/run/Board';
 import { LevelClearedModal } from '@/components/run/LevelClearedModal';
 import { blurbDetailForTier, type AbilityOffer } from '@/lib/run/abilities';
 
@@ -34,10 +36,33 @@ const OFFER: AbilityOffer = [
 ];
 
 export default function TestOfferPage() {
-  const [intro, setIntro] = useState(false);
+  const [mode, setMode] = useState('');
   useEffect(() => {
-    setIntro(new URLSearchParams(window.location.search).has('intro'));
+    const q = new URLSearchParams(window.location.search);
+    setMode(q.has('intro') ? 'intro' : q.has('hud') ? 'hud' : '');
   }, []);
+  const intro = mode === 'intro';
+  if (mode === 'hud') {
+    // ?hud — infinity-glyph paths (KING form at T5 = 999-turn sentinel) and
+    // the transient king-stun cause label, without grinding a real run.
+    return (
+      <div className="h-full overflow-auto bg-chess-page p-4 flex flex-col gap-4 max-w-md mx-auto">
+        <TempoBar tempo={5} max={12} form="king" formMovesLeft={999} />
+        <div
+          className="relative w-full rounded-lg overflow-hidden"
+          style={{
+            aspectRatio: '1 / 1',
+            backgroundImage:
+              'repeating-conic-gradient(#EDEED1 0% 25%, #7FA650 0% 50%)',
+            backgroundSize: '25% 25%',
+          }}
+        >
+          <KingStunCauseLabel square="e5" cause="capture" />
+          <KingStunCauseLabel square="b7" cause="boulder" />
+        </div>
+      </div>
+    );
+  }
   if (intro) {
     return (
       <div className="h-full overflow-auto bg-chess-page">

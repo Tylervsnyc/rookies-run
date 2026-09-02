@@ -1744,15 +1744,15 @@ export default function RookiesRunPage() {
         />
 
         {state.abilities.some((a) => a.id === 'squad') && (
-          <div className="flex items-center justify-center gap-1.5 text-[10px] font-black tracking-wide uppercase text-fuchsia-700 dark:text-fuchsia-300">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-fuchsia-500 animate-pulse" />
+          <div className="flex items-center justify-center gap-1.5 text-[10px] font-black tracking-wide uppercase text-amber-700 dark:text-amber-300">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             Passive: Squad
           </div>
         )}
 
         {state.status === 'playing' && state.activeAbility && (
-          <div className="flex items-center gap-2 rounded-lg bg-indigo-500/15 border border-indigo-400/40 px-3 py-2">
-            <span className="text-xs font-black text-indigo-700 dark:text-indigo-300 flex-1 leading-tight">
+          <div className="flex items-center gap-2 rounded-lg bg-[#E53935]/10 border border-[#E53935]/40 px-3 py-2">
+            <span className="text-xs font-black text-[#B71C1C] dark:text-[#f0a4a2] flex-1 leading-tight">
               {ABILITY_DEFS[state.activeAbility.id].name}:{' '}
               {state.activeAbility.step === 'pick-enemy'
                 ? state.activeAbility.id === 'magnet'

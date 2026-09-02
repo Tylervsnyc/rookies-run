@@ -343,7 +343,7 @@ function UsesPips({
   max: number;
   color: string;
 }) {
-  if (uses < 0) {
+  if (uses < 0 || uses >= 999) {
     return (
       <span
         style={{
@@ -682,8 +682,7 @@ export function AbilityCardFull({
           className="px-3 text-center flex items-center justify-center shrink-0"
           style={{
             height: '12%',
-            fontFamily:
-              'ui-serif, Georgia, "Times New Roman", serif',
+            fontFamily: "'DM Sans', system-ui, sans-serif",
             fontWeight: 900,
             fontSize: 'clamp(13px, 3.6cqw, 17px)',
             lineHeight: 1.05,

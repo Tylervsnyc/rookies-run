@@ -324,6 +324,34 @@ export function RunBoard({
     return k ? toSquare({ file: k.file, rank: k.rank }) : null;
   }, [kingGoal, state.pieces]);
 
+  // Rookie's Revenge — WHY did the king just get stunned? Every capture stuns
+  // him (core rule) but the feedback never said so. Diff-driven, render-only:
+  // watch kingStunTurns rise 0 -> n and attribute it to the freshest signal
+  // (blast / poison / boulder / rewind), defaulting to 'capture'.
+  const stunPrevRef = useRef({ stun: 0, fxId: 0, poisonId: 0, sacId: 0 });
+  const [stunCause, setStunCause] = useState<{ text: string; id: number } | null>(null);
+  useEffect(() => {
+    const stun = state.kingStunTurns ?? 0;
+    const fxId = state.lastAbilityFx?.id ?? 0;
+    const poisonId = state.lastPoisonDeath?.id ?? 0;
+    const sacId = sacrificeFx?.id ?? 0;
+    const prev = stunPrevRef.current;
+    if (kingGoal && stun > 0 && prev.stun === 0) {
+      let text = 'capture';
+      if (sacId !== prev.sacId) text = 'blast';
+      else if (poisonId !== prev.poisonId) text = 'poison';
+      else if (fxId !== prev.fxId && state.lastAbilityFx?.kind === 'boulder') text = 'boulder';
+      else if (fxId !== prev.fxId && state.lastAbilityFx?.kind === 'rewind') text = 'rewind';
+      setStunCause({ text, id: Date.now() });
+    }
+    stunPrevRef.current = { stun, fxId, poisonId, sacId };
+  }, [state.kingStunTurns, state.lastAbilityFx, state.lastPoisonDeath, sacrificeFx, kingGoal]);
+  useEffect(() => {
+    if (!stunCause) return;
+    const t = setTimeout(() => setStunCause(null), 1600);
+    return () => clearTimeout(t);
+  }, [stunCause]);
+
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};
 
@@ -954,6 +982,13 @@ export function RunBoard({
                   ? 'stunned'
                   : null
             }
+          />
+        )}
+        {state.status === 'playing' && kingGoal && kingSquare && stunCause && (
+          <KingStunCauseLabel
+            key={stunCause.id}
+            square={kingSquare}
+            cause={stunCause.text}
           />
         )}
         {state.status === 'playing' && rankGoal && (
@@ -1830,6 +1865,64 @@ function KingGoalLabel({
   return <SquareChip square={square} label={label} palette={palette} />;
 }
 
+/**
+ * Transient "Stunned · capture" label that floats up off the king's square
+ * and fades over ~1.5s — teaches WHY he's stunned (every capture stuns him;
+ * boulders, blasts, poison and rewind do too). Purely decorative; rendered
+ * once per stun rising-edge, keyed so re-stuns replay the animation.
+ */
+export function KingStunCauseLabel({ square, cause }: { square: string; cause: string }) {
+  const { file, rank } = fromSquare(square);
+  const above = rank < 8;
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: 'absolute',
+        left: `${Math.min(Math.max((file - 1) * 12.5 - 6.25, 0), 75)}%`,
+        top: `${(8 - rank) * 12.5 + (above ? -5.5 : 15.5)}%`,
+        width: '25%',
+        display: 'flex',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+        zIndex: 4,
+      }}
+    >
+      <style>{`
+        @keyframes rrStunCauseFloat {
+          0%   { opacity: 0; transform: translateY(5px) scale(0.9); }
+          12%  { opacity: 1; transform: translateY(0) scale(1.06); }
+          22%  { transform: translateY(0) scale(1); }
+          68%  { opacity: 1; }
+          100% { opacity: 0; transform: translateY(-9px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .rr-stun-cause { animation: none !important; }
+        }
+      `}</style>
+      <span
+        className="rr-stun-cause"
+        style={{
+          animation: 'rrStunCauseFloat 1500ms ease-out both',
+          fontSize: 'clamp(7px, 1.8cqw, 11px)',
+          fontWeight: 900,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          whiteSpace: 'nowrap',
+          color: '#4c1d95',
+          background: 'rgba(233,213,255,0.96)',
+          border: '1px solid rgba(168,85,247,0.9)',
+          borderRadius: 5,
+          padding: '2px 6px',
+          boxShadow: '0 1px 5px rgba(0,0,0,0.3)',
+        }}
+      >
+        Stunned · {cause}
+      </span>
+    </div>
+  );
+}
+
 /** Tiny status chip pinned just below a square (above it on rank 1). */
 function SquareChip({
   square,
@@ -2024,7 +2117,7 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
                 zIndex: 2,
               }}
             >
-              {a.turnsLeft}
+              {a.turnsLeft >= 999 ? '\u221e' : a.turnsLeft}
             </div>
           )}
         </div>

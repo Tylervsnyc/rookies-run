@@ -52,7 +52,7 @@ export function TempoBar({ tempo, max = TEMPO_MAX, form, formMovesLeft }: TempoB
         {FORM_LABEL[form]}
         {form !== 'rook' && formMovesLeft > 0 && (
           <span className="ml-1 text-chess-text-faint text-[10px] font-bold">
-            ·{formMovesLeft}
+            ·{formMovesLeft >= 999 ? '\u221e' : formMovesLeft}
           </span>
         )}
       </div>
