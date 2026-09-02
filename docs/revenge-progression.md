@@ -29,7 +29,7 @@ run-completed, session-start). The engine is untouched and stays pure.
 
 ## Achievements — `ACHIEVEMENTS`
 
-54 trophies in 7 groups (Firsts · Body Count · Style · Powers · Learning Experiences ·
+57 trophies in 7 groups (Firsts · Body Count · Style · Powers · Learning Experiences ·
 Habits · Difficulty). Each has Rookie's line (`blurb`), a locked-card `hint`, optional
 `progress(counters)`, and optional `unlocks: AbilityId`. Secret ones hide the hint.
 
@@ -37,21 +37,27 @@ Habits · Difficulty). Each has Rookie's line (`blurb`), a locked-card `hint`, o
 
 | Trophy | Condition | Unlocks |
 |---|---|---|
-| Regicide | first king | Knight Hop |
+| Regicide | first king | Magnet |
+| Foot Traffic | 10 pawns | Page |
+| Shift Change | cast Squire 5× | Swap |
+| Comeback Kid | finish a run after losing 3+ levels | Sacrifice |
 | Pawn Broker | 25 pawns | Poison Dart |
 | Closing Time | first full run | Bishop Step |
-| Drone Strike | 3 drone captures in one salvo | Convert |
+| Drone Strike | 3 drone captures in one salvo | Convert (dead — drones retired) |
 | Cold Shoulder | freeze the king 3× | Aegis |
 | Untouchable | run with 0 level losses | Queen Pulse |
 | Horse Whisperer | 10 knights | Decoy |
+| Horseplay | king captured in knight form | Vanguard |
 | Photo Finish | win on the last move | Smoke |
-| Excommunicated | 10 bishops | Bodyguard |
+| Excommunicated | 10 bishops | Bishop Squire |
+| Seeing Double | clear 50 levels | Twin |
 | Army of One (Plus Some) | 20 ally captures | Boulder |
-| Hoarder | level with 3× T5 | Magnet |
 | Deja Vu | lose the same level 3× in a run | Rewind |
 | Queen Slayer | 5 queens | Rabies Dart |
 | Serial Regicide | 10 kings | Squad |
 | Sore Winner | Hard clear | Become King (also opens Nightmare) |
+| Her Majesty | king captured in queen form | Duchess |
+| Revenge Served | Nightmare clear | Dragon |
 
 ## Offers respect unlocks
 

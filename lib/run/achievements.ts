@@ -235,6 +235,15 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
 
   // ---- Volume -------------------------------------------------------------
   {
+    id: 'foot-traffic',
+    name: 'Foot Traffic',
+    blurb: 'Ten pawns. They walk forward. I walk through.',
+    hint: 'Capture 10 pawns.',
+    group: 'volume',
+    unlocks: 'page',
+    ...count('cap.pawn', 10),
+  },
+  {
     id: 'pawn-broker',
     name: 'Pawn Broker',
     blurb: 'Twenty-five pawns. They keep sending them.',
@@ -266,7 +275,7 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'Bishops only see one color. I am not on it.',
     hint: 'Capture 10 bishops.',
     group: 'volume',
-    unlocks: 'bodyguard',
+    unlocks: 'bishop-squire',
     ...count('cap.bishop', 10),
   },
   {
@@ -310,6 +319,15 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     hint: 'Capture 1,000 pieces.',
     group: 'volume',
     ...count('cap.total', 1000),
+  },
+  {
+    id: 'seeing-double',
+    name: 'Seeing Double',
+    blurb: 'Fifty rooms cleared alone. That is enough alone. I am hiring me.',
+    hint: 'Clear 50 levels.',
+    group: 'volume',
+    unlocks: 'twin',
+    ...count('levels.cleared', 50),
   },
   {
     id: 'ten-runs',
@@ -463,6 +481,7 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'A rook does not jump. A rook did.',
     hint: 'Capture the king while in knight form.',
     group: 'abilities',
+    unlocks: 'vanguard',
     ...count('cap.king.as.knight', 1),
   },
   {
@@ -471,6 +490,7 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'Queen for a moment. Long enough.',
     hint: 'Capture the king while in queen form.',
     group: 'abilities',
+    unlocks: 'duchess',
     ...count('cap.king.as.queen', 1),
   },
   {
@@ -497,6 +517,15 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     group: 'abilities',
     unlocks: 'boulder',
     ...count('cap.via.ally', 20),
+  },
+  {
+    id: 'shift-change',
+    name: 'Shift Change',
+    blurb: 'Five knights summoned. He holds the square. I hold the grudge. We rotate.',
+    hint: 'Cast Squire 5 times.',
+    group: 'abilities',
+    unlocks: 'swap',
+    ...count('ability.used.summon-knight', 5),
   },
   {
     id: 'trigger-happy',
@@ -548,6 +577,7 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'Down three levels and still finished. That is the whole story of me.',
     hint: 'Finish a run after losing 3 or more levels.',
     group: 'fails',
+    unlocks: 'sacrifice',
     ...count('runs.comeback', 1),
   },
   {
@@ -642,6 +672,7 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'Nightmare. One life. He knew I was coming and it did not matter.',
     hint: 'Finish a run on Nightmare.',
     group: 'difficulty',
+    unlocks: 'dragon',
     ...count('runs.completed.nightmare', 1),
   },
   {
