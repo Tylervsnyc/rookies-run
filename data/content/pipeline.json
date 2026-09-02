@@ -306,10 +306,10 @@
         "at": "2026-08-18"
       },
       "testing": {
-        "lastRun": "2026-09-01",
+        "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+        "summary": "TOO EASY — a new player clears 90% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
     {
@@ -320,10 +320,10 @@
       "created": "2026-08-30",
       "notes": "More pawns every level. Bodies, not brains. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-09-01",
+        "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "too easy — new player clears 80% on Normal (target 40-60%); L4 has 1 stall (king unreachable); L10 freeze-ray only 28% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L9 freeze-ray only 75% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -341,10 +341,10 @@
       "created": "2026-08-30",
       "notes": "Few pawns, heavy pieces. Every line is watched. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-09-01",
+        "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 98% of runs on Normal (target 40-60%); L8 freeze-ray only 75% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L7 knight-hop only 78% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -362,10 +362,10 @@
       "created": "2026-08-30",
       "notes": "Walls make the room. Pawns make the door. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-09-01",
+        "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 95% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+        "summary": "TOO EASY — a new player clears 98% of runs on Normal (target 40-60%); L9 freeze-ray only 78% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -383,10 +383,10 @@
       "created": "2026-08-30",
       "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable — a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
       "testing": {
-        "lastRun": "2026-09-01",
+        "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+        "summary": "TOO EASY — a new player clears 98% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -402,7 +402,13 @@
       "name": "Page",
       "stage": "testing",
       "created": "2026-08-31",
-      "notes": "A controllable pawn. Walks forward, captures diagonally, promotes when it reaches the far rank."
+      "notes": "A controllable pawn. Walks forward, captures diagonally, promotes when it reaches the far rank.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "READY",
+        "summary": "Tier A on revenge-1, A on revenge-2, B on revenge-3, B on revenge-4, C on revenge-5, B on revenge-6, B on revenge-7; avg win 81% at realistic tiers (lift +33 vs no ability), cast in 92% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "twin",
@@ -410,7 +416,13 @@
       "name": "Twin",
       "stage": "testing",
       "created": "2026-08-31",
-      "notes": "A second controllable rook. Two Rookies, one board."
+      "notes": "A second controllable rook. Two Rookies, one board.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "READY",
+        "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 98% at realistic tiers (lift +50 vs no ability), cast in 96% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "bishop-squire",
@@ -418,7 +430,13 @@
       "name": "Bishop Squire",
       "stage": "testing",
       "created": "2026-08-31",
-      "notes": "Squire variant: a rainbow bishop the player controls."
+      "notes": "Squire variant: a rainbow bishop the player controls.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "READY",
+        "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, A on revenge-4, A on revenge-5, A on revenge-6, A on revenge-7; avg win 92% at realistic tiers (lift +44 vs no ability), cast in 94% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "swap",
@@ -426,7 +444,13 @@
       "name": "Swap",
       "stage": "testing",
       "created": "2026-08-31",
-      "notes": "Trade places with your Squire — teleport through his square."
+      "notes": "Trade places with your Squire — teleport through his square.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "sacrifice",
@@ -434,7 +458,13 @@
       "name": "Sacrifice",
       "stage": "testing",
       "created": "2026-08-31",
-      "notes": "Squire explodes, capturing every enemy on his knight-squares."
+      "notes": "Squire explodes, capturing every enemy on his knight-squares.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 49% at realistic tiers (lift +1 vs no ability), cast in 0% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "revenge-6",
@@ -451,10 +481,10 @@
         "at": "2026-09-01"
       },
       "testing": {
-        "lastRun": "2026-09-01",
+        "lastRun": "2026-09-02",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-01.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
     {
@@ -463,7 +493,13 @@
       "name": "Duchess",
       "stage": "testing",
       "created": "2026-09-01",
-      "notes": "Controllable summon family: a rainbow queen you control for 2-6 enemy turns. One charge per run."
+      "notes": "Controllable summon family: a rainbow queen you control for 2-6 enemy turns. One charge per run.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "READY",
+        "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 99% at realistic tiers (lift +50 vs no ability), cast in 97% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "vanguard",
@@ -471,7 +507,13 @@
       "name": "Vanguard",
       "stage": "testing",
       "created": "2026-09-01",
-      "notes": "Controllable summon family: a controllable knight dropped anywhere in range (3/5/anywhere by tier). One charge per run."
+      "notes": "Controllable summon family: a controllable knight dropped anywhere in range (3/5/anywhere by tier). One charge per run.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "READY",
+        "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 100% at realistic tiers (lift +52 vs no ability), cast in 99% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "knighting",
@@ -479,7 +521,13 @@
       "name": "Knighting",
       "stage": "testing",
       "created": "2026-09-01",
-      "notes": "Summon support: promote one of your summons a step up the ladder (pawn-knight-bishop-rook-queen). Per-level uses."
+      "notes": "Summon support: promote one of your summons a step up the ladder (pawn-knight-bishop-rook-queen). Per-level uses.",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, C on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "banner",
@@ -503,7 +551,13 @@
       "name": "Bramble Crown",
       "stage": "testing",
       "created": "2026-09-01",
-      "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell)."
+      "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell).",
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      }
     },
     {
       "id": "revenge-8",
