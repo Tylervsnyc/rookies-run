@@ -5292,40 +5292,54 @@ const RUN_REVENGE_8: RunDef = {
   offerCore: REVENGE_CORE,
   offerCoreMin: 2,
   levels: [
-    // L1 — FIRST BLOOD. king alone behind three pawns. Rank 8 does nothing; the king does.
-    // shell pd7 pe7 pf7. (swarm-L1-v1, 2026-09-02-r8)
+    // L1 — THE PALISADE. A detached flat pawn wall (a6 c6 d6 e6) with ONE gap
+    // on the king's file. King b8 — left flank, not top-center. Teaches: walls
+    // have doors; slide through the gap. Differs from Bramble Crown's L1
+    // (king-hugging 3-pawn shell at f8): the wall stands two ranks off the
+    // king and reads as a rampart segment, not a shell. (2026-09-02 rework:
+    // Tyler playtest — the four testing runs all opened identically.)
     make(
       1,
       [
-        pawn(4, 7), pawn(5, 7), pawn(6, 7),
-        king(5, 8),
+        pawn(1, 6), pawn(3, 6), pawn(4, 6), pawn(5, 6),
+        king(2, 8),
       ],
       STILL,
     ),
-    // L2 — THE SHELL. a second pawn layer. Still still — find the line, take the key.
-    // shell pe7 pf7 pg7 pd6 ph6 pe5 pg5; marchers pd2 ph3. (swarm-L2-v1)
+    // L2 — DOUBLE WALL. Two full wall rows with OFFSET doors: outer wall rank 4
+    // (gap a4), inner wall rank 6 (gap c6). King c8. Teaches: when the doors
+    // don't line up, breach a wall pawn instead of threading both gaps.
+    // Marcher pg3 keeps the clock honest. No shell, no hunters — pure walls,
+    // unlike Bramble/Vault L2 pawn shells or Cold Court's sightlines.
     make(
       2,
       [
-        pawn(5, 7), pawn(6, 7), pawn(7, 7), pawn(4, 6), pawn(8, 6), pawn(5, 5), pawn(7, 5),
-        pawn(4, 2), pawn(8, 3),
-        king(6, 8),
+        pawn(2, 4), pawn(3, 4), pawn(4, 4), pawn(5, 4),
+        pawn(1, 6), pawn(2, 6), pawn(4, 6), pawn(5, 6),
+        pawn(7, 3),
+        king(3, 8),
       ],
       STILL,
     ),
-    // L3 — CORNER OFFICE. 2x2 corner room on h8; key h5 on his file, chain runs inward.
-    // Key ph5; hunters kb3. (corner-keep-L3-v2)
+    // L3 — THE BREACH. First flee king: f8 in a 3x2 pen behind a 3-wide wall
+    // segment (e5 f5 g5) whose center — the key on his file — is DEFENDED by
+    // pg6. The decision: take the g6 defender first, or breach the free e5
+    // flank and come up the open file. Marcher pb3 = the ignore-it-and-pay
+    // threat. Hardened 2026-09-02 (Tyler: old corner-office L3 "super easy");
+    // same defended-key pattern as the Bramble Crown L3 fix (99d7054), but on
+    // a wall, which is this run's identity.
     make(
       3,
       [
-        pawn(8, 5),
-        knight(2, 3),
-        king(8, 8),
+        pawn(5, 5), pawn(6, 5), pawn(7, 5),
+        pawn(7, 6),
+        pawn(2, 3),
+        king(6, 8),
       ],
       {
         ...FLEE,
-        hazards: [X(6, 7), X(6, 8)],
-        kingPen: ['g8', 'h8', 'g7', 'h7'],
+        hazards: [X(4, 7), X(4, 8), X(8, 7), X(8, 8)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
       },
     ),
     // L4 — ONE GUARD. 0-ring shell around the d5 key; dismantle the chain from the outside in.
@@ -5471,40 +5485,52 @@ const RUN_REVENGE_9: RunDef = {
   offerCore: REVENGE_CORE,
   offerCoreMin: 2,
   levels: [
-    // L1 — FIRST BLOOD. king alone behind three pawns. Rank 8 does nothing; the king does.
-    // shell pb7 pc7 pd7. (royal-guard-L1-v1)
+    // L1 — THE WATCHER. Empty court: king g8, ONE shield pawn g7, and a lone
+    // distant bishop c3 whose diagonal covers g7. Teaches the run's whole
+    // thesis in one board — the guard is a sightline, not a body: grabbing g7
+    // greedily loses the rook; take the watcher first or slip up the h-file.
+    // No pawn shell at all, unlike every other run's opener. (2026-09-02
+    // rework: Tyler playtest — the four testing runs all opened identically.)
     make(
       1,
       [
-        pawn(2, 7), pawn(3, 7), pawn(4, 7),
-        king(3, 8),
+        pawn(7, 7),
+        bishop(3, 3),
+        king(7, 8),
       ],
       STILL,
     ),
-    // L2 — THE SHELL. a second pawn layer and one bishop. Still still — find the line, take the key.
-    // shell pe7 pf7 pg7 pd6 ph6; hunters bc5; marchers ph3 pc3. (royal-guard-L2-v1)
+    // L2 — CROSSED LINES. Two bishops (b3, h3) hold a two-pawn chain (f7
+    // defends g6) from across an otherwise empty board. Teaches reading two
+    // crossing diagonals before touching the chain: b3 guards f7, h3 sits IN
+    // the h-file door. Sparse court — 5 pieces vs the sibling runs' 8-10 —
+    // because Cold Court's weight is sightlines, not bodies.
     make(
       2,
       [
-        pawn(5, 7), pawn(6, 7), pawn(7, 7), pawn(4, 6), pawn(8, 6),
-        bishop(3, 5),
-        pawn(8, 3), pawn(3, 3),
-        king(6, 8),
+        pawn(6, 7), pawn(7, 6),
+        bishop(2, 3), bishop(8, 3),
+        king(7, 8),
       ],
       STILL,
     ),
-    // L3 — THE GATE. 6 walls — side walls plus an inner wall with one door on the c-file.
-    // Key pc5. (walled-court-L3-v1)
+    // L3 — THE LONG DIAGONAL. First flee king: d8 in a 3x2 pen; the d5 key on
+    // his file is defended not by a pawn but by bishop a2 from across the
+    // court. The decision: cross the board to remove the watcher, or leave
+    // the key alone and work the pen from the flanks. Distinct from Bramble
+    // (pawn-defended key), Rampart (defended wall), and The Vault (hazard
+    // seal) — here the defense is a sightline you must walk over to break.
     make(
       3,
       [
-        pawn(3, 5),
-        king(3, 8),
+        pawn(4, 5),
+        bishop(1, 2),
+        king(4, 8),
       ],
       {
         ...FLEE,
-        hazards: [X(1, 7), X(5, 7), X(1, 8), X(5, 8), X(2, 6), X(4, 6)],
-        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+        hazards: [X(2, 7), X(2, 8), X(6, 7), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
     // L4 — THE BISHOP. 1 heavy hunter (bishop) — sightlines, not bodies. Key d5.
@@ -5649,41 +5675,59 @@ const RUN_REVENGE_10: RunDef = {
   offerCore: REVENGE_CORE,
   offerCoreMin: 2,
   levels: [
-    // L1 — FIRST BLOOD. king alone behind three pawns. Rank 8 does nothing; the king does.
-    // shell pd7 pe7 pf7. (swarm-L1-v1)
+    // L1 — THE CELL. The king is ALREADY boxed: hazard walls c7/c8/e7/e8 form
+    // a one-file slot around d8, with pawn d7 as the door. Teaches: the vault
+    // has exactly one way in — find the door square. No other run opens with
+    // hazard geometry; the enclosure is this run's identity from move one.
+    // (2026-09-02 rework: Tyler playtest — the four testing runs all opened
+    // identically.)
     make(
       1,
       [
-        pawn(4, 7), pawn(5, 7), pawn(6, 7),
-        king(5, 8),
+        pawn(4, 7),
+        king(4, 8),
       ],
-      STILL,
+      {
+        ...STILL,
+        hazards: [X(3, 7), X(3, 8), X(5, 7), X(5, 8)],
+      },
     ),
-    // L2 — THE SHELL. a second pawn layer and one bishop. Still still — find the line, take the key.
-    // shell pc7 pd7 pe7 pb6 pf6 pc5 pe5; marchers pb3 pg4. (swarm-L2-v1)
+    // L2 — THE ANTECHAMBER. A full hazard corridor (c6-c8, e6-e8) seals the
+    // king at d7; even rank 8 is unreachable around the walls. Two stacked
+    // door pawns (d5, d6), and the OUTER door d5 is defended by knight b4 —
+    // take the keeper first or lose the rook on the breach. Marcher pg3.
+    // Hazard-enclosure escalation, vs the sibling runs' pawn walls/sightlines.
     make(
       2,
       [
-        pawn(3, 7), pawn(4, 7), pawn(5, 7), pawn(2, 6), pawn(6, 6), pawn(3, 5), pawn(5, 5),
-        pawn(2, 3), pawn(7, 4),
-        king(4, 8),
+        pawn(4, 5), pawn(4, 6),
+        knight(2, 4),
+        pawn(7, 3),
+        king(4, 7),
       ],
-      STILL,
+      {
+        ...STILL,
+        hazards: [X(3, 6), X(3, 7), X(3, 8), X(5, 6), X(5, 7), X(5, 8)],
+      },
     ),
-    // L3 — THE PAGE. 1 heavy hunter (knight) — sightlines, not bodies. Key c5.
-    // Key pc5; hunters kh4; marchers pf2. (royal-guard-L3-v1)
+    // L3 — THE STRONGROOM. First flee king: g8 in a 3x2 pen whose left side is
+    // a full hazard seal (e6-e8). The g5 key on his file is defended by pf6
+    // (the defended-key decision, per the Bramble L3 fix) and the open h-file
+    // is the narrow alternative route. Knight c4 patrols the approach.
+    // Differs from the siblings: the geometry itself — a sealed wall plus one
+    // corridor — does the constraining, not bodies or sightlines.
     make(
       3,
       [
-        pawn(3, 5),
-        knight(8, 4),
-        pawn(6, 2),
-        king(3, 8),
+        pawn(7, 5),
+        pawn(6, 6),
+        knight(3, 4),
+        king(7, 8),
       ],
       {
         ...FLEE,
-        hazards: [X(1, 7), X(5, 7), X(1, 8), X(5, 8)],
-        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+        hazards: [X(5, 6), X(5, 7), X(5, 8)],
+        kingPen: ['f8', 'g8', 'h8', 'f7', 'g7', 'h7'],
       },
     ),
     // L4 — TWO DOORS. two keys — f5 on his file, c7 on his rank; the left wall is gone.
