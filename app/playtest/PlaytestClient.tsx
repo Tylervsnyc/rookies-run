@@ -1,60 +1,77 @@
 'use client';
 
 /**
- * /playtest client — queue + embedded game + comment box.
+ * /playtest client v2 — pick a level, pick up to 3 abilities, PLAY.
  *
- * Per-device "done today" checkmarks live in localStorage (keyed by local
- * date + item id, try/catch everywhere — storage can throw). Comments POST
- * to /api/playtest-feedback which relays to Slack.
+ * Coverage ("what's left to test") lives in localStorage under
+ * `playtest-coverage-v2`: tested (runId:level) pairs + tested ability ids.
+ * A level and its selected abilities are marked tested the moment PLAY is
+ * pressed. All storage access is try/catch — storage can throw.
+ *
+ * Comments POST to /api/playtest-feedback (unchanged API) with item = the
+ * run id; the loadout is appended to the text like "[loadout duchess:3,...]".
  */
 
 import { useEffect, useMemo, useState } from 'react';
 
-export interface PlaytestItem {
+export interface PlaytestRun {
   id: string;
-  kind: 'ability' | 'run';
   name: string;
-  stage: string;
-  notes: string;
+  levels: number;
+}
+
+export interface PlaytestAbility {
+  id: string;
+  name: string;
+  testing: boolean;
 }
 
 const VERDICTS = ['SHIP', 'TUNE', 'KILL', 'BUG'] as const;
 type Verdict = (typeof VERDICTS)[number];
 
-function localDateKey(): string {
-  const d = new Date();
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+const COVERAGE_KEY = 'playtest-coverage-v2';
+
+interface Coverage {
+  levels: string[]; // "runId:level"
+  abilities: string[]; // ability ids
 }
 
-function doneKey(id: string): string {
-  return `playtest-done:${localDateKey()}:${id}`;
-}
-
-function readDone(ids: string[]): Set<string> {
-  const done = new Set<string>();
+function readCoverage(): Coverage {
   try {
-    for (const id of ids) if (localStorage.getItem(doneKey(id)) === '1') done.add(id);
+    const raw = localStorage.getItem(COVERAGE_KEY);
+    if (!raw) return { levels: [], abilities: [] };
+    const p = JSON.parse(raw) as Partial<Coverage>;
+    return {
+      levels: Array.isArray(p.levels) ? p.levels.filter((x) => typeof x === 'string') : [],
+      abilities: Array.isArray(p.abilities) ? p.abilities.filter((x) => typeof x === 'string') : [],
+    };
   } catch {
-    /* storage unavailable — everything shows undone */
+    return { levels: [], abilities: [] };
   }
-  return done;
 }
 
-function iframeSrc(item: PlaytestItem, tier: number): string {
-  return item.kind === 'run'
-    ? `/?run=${encodeURIComponent(item.id)}`
-    : `/?run=revenge-1&loadout=${encodeURIComponent(item.id)}:${tier}`;
+function writeCoverage(c: Coverage) {
+  try {
+    localStorage.setItem(COVERAGE_KEY, JSON.stringify(c));
+  } catch {
+    /* per-device convenience only */
+  }
 }
 
-export function PlaytestClient({ queue, options }: { queue: PlaytestItem[]; options: PlaytestItem[] }) {
-  const [done, setDone] = useState<Set<string>>(new Set());
-  const [selected, setSelected] = useState<PlaytestItem | null>(null);
+function levelKey(runId: string, level: number): string {
+  return `${runId}:${level}`;
+}
+
+export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abilities: PlaytestAbility[] }) {
+  const [coverage, setCoverage] = useState<Coverage>({ levels: [], abilities: [] });
+  const [pickedLevel, setPickedLevel] = useState<{ runId: string; level: number } | null>(null);
+  // Ordered oldest-first; a 4th pick replaces the oldest.
+  const [picked, setPicked] = useState<string[]>([]);
   const [tier, setTier] = useState(3);
+  const [playing, setPlaying] = useState<{ src: string; runId: string; level: number; loadout: string } | null>(null);
   const [frameNonce, setFrameNonce] = useState(0);
 
-  // Comment box state.
-  const [commentItem, setCommentItem] = useState('');
+  // Comment box.
   const [level, setLevel] = useState<string>('');
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [text, setText] = useState('');
@@ -62,48 +79,65 @@ export function PlaytestClient({ queue, options }: { queue: PlaytestItem[]; opti
   const [sendError, setSendError] = useState('');
 
   useEffect(() => {
-    setDone(readDone(queue.map((i) => i.id)));
-  }, [queue]);
+    setCoverage(readCoverage());
+  }, []);
 
-  const left = queue.filter((i) => !done.has(i.id)).length;
+  const testedLevels = useMemo(() => new Set(coverage.levels), [coverage.levels]);
+  const testedAbilities = useMemo(() => new Set(coverage.abilities), [coverage.abilities]);
 
-  const selectItem = (item: PlaytestItem) => {
-    setSelected(item);
-    setCommentItem(item.id);
-    setLevel('');
-    setVerdict(null);
-    setText('');
+  const totalLevels = runs.reduce((n, r) => n + r.levels, 0);
+  const levelsLeft = runs.reduce(
+    (n, r) => n + Array.from({ length: r.levels }, (_, i) => i + 1).filter((l) => !testedLevels.has(levelKey(r.id, l))).length,
+    0,
+  );
+  const totalAbilities = abilities.length;
+  const abilitiesLeft = abilities.filter((a) => !testedAbilities.has(a.id)).length;
+
+  const toggleAbility = (id: string) => {
+    setPicked((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length < 3) return [...prev, id];
+      return [...prev.slice(1), id]; // replace the oldest
+    });
+  };
+
+  const loadoutString = picked.map((id) => `${id}:${tier}`).join(',');
+
+  const play = () => {
+    if (!pickedLevel) return;
+    const { runId, level: lvl } = pickedLevel;
+    const src =
+      `/?run=${encodeURIComponent(runId)}` +
+      (loadoutString ? `&loadout=${encodeURIComponent(loadoutString)}` : '') +
+      `&level=${lvl}&ladder=0`;
+    // Mark tested the moment PLAY is pressed.
+    setCoverage((prev) => {
+      const next: Coverage = {
+        levels: prev.levels.includes(levelKey(runId, lvl)) ? prev.levels : [...prev.levels, levelKey(runId, lvl)],
+        abilities: [...prev.abilities, ...picked.filter((id) => !prev.abilities.includes(id))],
+      };
+      writeCoverage(next);
+      return next;
+    });
+    setPlaying({ src, runId, level: lvl, loadout: loadoutString });
+    setLevel(String(lvl));
     setSendState('idle');
     setFrameNonce((n) => n + 1);
   };
 
-  const toggleDone = (id: string) => {
-    setDone((prev) => {
-      const next = new Set(prev);
-      const nowDone = !next.has(id);
-      if (nowDone) next.add(id);
-      else next.delete(id);
-      try {
-        if (nowDone) localStorage.setItem(doneKey(id), '1');
-        else localStorage.removeItem(doneKey(id));
-      } catch {
-        /* per-device convenience only */
-      }
-      return next;
-    });
+  const resetCoverage = () => {
+    const empty: Coverage = { levels: [], abilities: [] };
+    writeCoverage(empty);
+    setCoverage(empty);
   };
 
-  const commentKind = useMemo<'ability' | 'run'>(() => {
-    const match = options.find((o) => o.id === commentItem);
-    return match?.kind ?? selected?.kind ?? 'ability';
-  }, [commentItem, options, selected]);
-
   const send = async () => {
-    if (!commentItem || !text.trim() || sendState === 'sending') return;
+    if (!playing || !text.trim() || sendState === 'sending') return;
     setSendState('sending');
     setSendError('');
     try {
-      const body: Record<string, unknown> = { item: commentItem, kind: commentKind, text: text.trim() };
+      const fullText = playing.loadout ? `${text.trim()} [loadout ${playing.loadout}]` : text.trim();
+      const body: Record<string, unknown> = { item: playing.runId, kind: 'run', text: fullText };
       if (level) body.level = Number(level);
       if (verdict) body.verdict = verdict;
       const res = await fetch('/api/playtest-feedback', {
@@ -122,230 +156,227 @@ export function PlaytestClient({ queue, options }: { queue: PlaytestItem[]; opti
     }
   };
 
-  const src = selected ? iframeSrc(selected, tier) : null;
+  const runName = (id: string) => runs.find((r) => r.id === id)?.name ?? id;
+  const abilityName = (id: string) => abilities.find((a) => a.id === id)?.name ?? id;
 
   return (
     <div className="h-full overflow-auto bg-chess-page font-body text-chess-text">
-      <div className="mx-auto max-w-6xl px-4 py-6">
-        <header className="mb-4">
-          <h1 className="text-2xl font-extrabold">Daily Playtest</h1>
-          <p className="text-sm text-chess-text-muted">
-            {queue.length === 0
-              ? 'The testing stage is empty.'
-              : left === 0
-                ? 'All done for today.'
-                : `${left} left to test today`}
+      <div className="mx-auto max-w-3xl px-4 py-6">
+        <header className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1">
+          <h1 className="text-2xl font-extrabold">Playtest</h1>
+          <p className="text-sm font-bold text-chess-text-muted">
+            Levels left: {levelsLeft} of {totalLevels} &middot; Abilities left: {abilitiesLeft} of {totalAbilities}
           </p>
+          <button
+            onClick={resetCoverage}
+            className="rounded-lg border-2 border-chess-disabled bg-white px-2.5 py-1 text-xs font-bold text-chess-text-muted"
+          >
+            Reset
+          </button>
         </header>
 
-        {queue.length === 0 || (left === 0 && !selected) ? (
-          <div className="rounded-2xl bg-chess-surface p-12 text-center shadow-sm">
-            <div className="text-3xl font-extrabold">Nothing left to test</div>
-            <p className="mt-2 text-chess-text-muted">
-              Every testing item is checked off for today. New content appears here when its registry record lands.
-            </p>
-            {queue.length > 0 && (
-              <button
-                className="mt-6 rounded-xl bg-chess-blue px-5 py-2.5 font-bold text-white"
-                onClick={() => selectItem(queue[0])}
+        {/* LEVEL PICKER */}
+        <section className="rounded-2xl bg-chess-surface p-4 shadow-sm">
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-chess-text-muted">1. Pick a level</h2>
+          {runs.length === 0 ? (
+            <p className="text-sm text-chess-text-muted">No testing-stage runs in the registry.</p>
+          ) : (
+            <div className="space-y-3">
+              {runs.map((run) => (
+                <div key={run.id}>
+                  <div className="mb-1 text-sm font-extrabold">{run.name}</div>
+                  <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-10">
+                    {Array.from({ length: run.levels }, (_, i) => i + 1).map((l) => {
+                      const tested = testedLevels.has(levelKey(run.id, l));
+                      const isPicked = pickedLevel?.runId === run.id && pickedLevel.level === l;
+                      return (
+                        <button
+                          key={l}
+                          onClick={() => setPickedLevel({ runId: run.id, level: l })}
+                          aria-label={`${run.name} level ${l}${tested ? ' (tested)' : ''}`}
+                          className={`min-h-11 rounded-lg border-2 text-sm font-bold ${
+                            isPicked
+                              ? 'border-chess-blue bg-chess-blue text-white'
+                              : tested
+                                ? 'border-chess-disabled bg-chess-page text-chess-text-faint'
+                                : 'border-chess-disabled bg-white'
+                          }`}
+                        >
+                          L{l}
+                          {tested ? ' ✓' : ''}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ABILITY PICKER */}
+        <section className="mt-4 rounded-2xl bg-chess-surface p-4 shadow-sm">
+          <div className="mb-2 flex flex-wrap items-center gap-3">
+            <h2 className="text-xs font-bold uppercase tracking-wide text-chess-text-muted">
+              2. Pick up to 3 abilities ({picked.length}/3)
+            </h2>
+            <label className="ml-auto flex items-center gap-1.5 text-sm font-bold">
+              Tier
+              <select
+                value={tier}
+                onChange={(e) => setTier(Number(e.target.value))}
+                className="rounded-lg border-2 border-chess-disabled bg-white px-2 py-1"
               >
-                Replay the queue anyway
-              </button>
-            )}
+                {[1, 2, 3, 4, 5].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-        ) : (
-          <div className="flex flex-col gap-4 lg:flex-row">
-            {/* QUEUE */}
-            <aside className="w-full shrink-0 lg:w-72">
-              <div className="rounded-2xl bg-chess-surface p-3 shadow-sm">
-                <h2 className="px-2 pb-2 text-xs font-bold uppercase tracking-wide text-chess-text-muted">
-                  Testing queue
-                </h2>
-                <ul className="space-y-1">
-                  {queue.map((item) => {
-                    const isDone = done.has(item.id);
-                    const isSelected = selected?.id === item.id;
-                    return (
-                      <li key={item.id} className="flex items-start gap-2">
-                        <button
-                          aria-label={isDone ? `Mark ${item.name} not done` : `Mark ${item.name} done today`}
-                          onClick={() => toggleDone(item.id)}
-                          className={`mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 text-xs font-bold ${
-                            isDone
-                              ? 'border-chess-green bg-chess-green text-white'
-                              : 'border-chess-disabled bg-white text-transparent'
-                          }`}
-                        >
-                          {isDone ? '✓' : ''}
-                        </button>
-                        <button
-                          onClick={() => selectItem(item)}
-                          className={`min-w-0 flex-1 rounded-xl px-2 py-1.5 text-left ${
-                            isSelected ? 'bg-chess-blue/10 ring-2 ring-chess-blue' : 'hover:bg-chess-page'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className={`truncate font-bold ${isDone ? 'text-chess-text-faint line-through' : ''}`}>
-                              {item.name}
-                            </span>
-                            <span className="rounded-full bg-chess-page px-1.5 py-0.5 text-[10px] font-bold uppercase text-chess-text-muted">
-                              {item.kind}
-                            </span>
-                          </div>
-                          <div className="truncate text-xs text-chess-text-muted">{item.notes || item.id}</div>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            </aside>
+          <div className="flex flex-wrap gap-1.5">
+            {abilities.map((a) => {
+              const isPicked = picked.includes(a.id);
+              const untestedTesting = a.testing && !testedAbilities.has(a.id);
+              return (
+                <button
+                  key={a.id}
+                  onClick={() => toggleAbility(a.id)}
+                  className={`min-h-11 rounded-full border-2 px-3 py-1.5 text-sm font-bold ${
+                    isPicked
+                      ? 'border-chess-blue bg-chess-blue text-white'
+                      : untestedTesting
+                        ? 'border-chess-orange bg-white text-chess-text'
+                        : 'border-chess-disabled bg-white text-chess-text-muted'
+                  }`}
+                >
+                  {a.name}
+                  {a.testing && (
+                    <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-extrabold uppercase ${
+                      isPicked ? 'bg-white/25 text-white' : 'bg-chess-orange text-white'
+                    }`}>
+                      testing
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
-            {/* PLAY AREA + COMMENTS */}
-            <main className="min-w-0 flex-1">
-              <div className="rounded-2xl bg-chess-surface p-3 shadow-sm">
-                {selected && src ? (
-                  <>
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate font-extrabold">{selected.name}</div>
-                        <div className="truncate text-xs text-chess-text-muted">{src}</div>
-                      </div>
-                      {selected.kind === 'ability' && (
-                        <label className="flex items-center gap-1.5 text-sm font-bold">
-                          Tier
-                          <select
-                            value={tier}
-                            onChange={(e) => {
-                              setTier(Number(e.target.value));
-                              setFrameNonce((n) => n + 1);
-                            }}
-                            className="rounded-lg border-2 border-chess-disabled bg-white px-2 py-1"
-                          >
-                            {[1, 2, 3, 4, 5].map((t) => (
-                              <option key={t} value={t}>
-                                {t}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      )}
-                      <button
-                        onClick={() => setFrameNonce((n) => n + 1)}
-                        className="rounded-lg border-2 border-chess-disabled bg-white px-3 py-1 text-sm font-bold"
-                      >
-                        Reload
-                      </button>
-                      <a
-                        href={src}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-lg border-2 border-chess-disabled bg-white px-3 py-1 text-sm font-bold"
-                      >
-                        Open full
-                      </a>
-                    </div>
-                    <iframe
-                      key={`${selected.id}:${tier}:${frameNonce}`}
-                      src={src}
-                      title={`Playtest: ${selected.name}`}
-                      className="min-h-[70vh] w-full rounded-xl border-2 border-chess-disabled bg-white lg:h-[72vh]"
-                    />
-                  </>
-                ) : (
-                  <div className="flex min-h-[40vh] items-center justify-center text-chess-text-muted">
-                    Pick an item from the queue to load the game.
-                  </div>
-                )}
-              </div>
+        {/* PLAY */}
+        <button
+          onClick={play}
+          disabled={!pickedLevel}
+          className="mt-4 w-full rounded-2xl bg-chess-blue py-4 text-xl font-extrabold text-white shadow-sm disabled:opacity-40"
+        >
+          {pickedLevel
+            ? `PLAY — ${runName(pickedLevel.runId)} L${pickedLevel.level}${
+                picked.length > 0 ? ` with ${picked.map(abilityName).join(', ')}` : ''
+              }`
+            : 'PLAY — pick a level first'}
+        </button>
 
-              {/* COMMENT BOX */}
-              <div className="mt-4 rounded-2xl bg-chess-surface p-4 shadow-sm">
-                <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-chess-text-muted">
-                  Send feedback to Claude
-                </h2>
-                <div className="flex flex-wrap items-center gap-2">
-                  <select
-                    value={commentItem}
-                    onChange={(e) => setCommentItem(e.target.value)}
-                    aria-label="Item"
-                    className="max-w-full rounded-lg border-2 border-chess-disabled bg-white px-2 py-1.5 text-sm font-bold"
-                  >
-                    <option value="">Pick an item…</option>
-                    {options.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.name} ({o.kind}, {o.stage})
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    value={level}
-                    onChange={(e) => setLevel(e.target.value)}
-                    aria-label="Level (optional)"
-                    className="rounded-lg border-2 border-chess-disabled bg-white px-2 py-1.5 text-sm font-bold"
-                  >
-                    <option value="">Level: any</option>
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                      <option key={n} value={n}>
-                        L{n}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="flex gap-1.5">
-                    {VERDICTS.map((v) => (
-                      <button
-                        key={v}
-                        onClick={() => setVerdict(verdict === v ? null : v)}
-                        className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${
-                          verdict === v
-                            ? v === 'SHIP'
-                              ? 'bg-chess-green text-white'
-                              : v === 'KILL'
-                                ? 'bg-chess-red text-white'
-                                : v === 'BUG'
-                                  ? 'bg-chess-orange text-white'
-                                  : 'bg-chess-blue text-white'
-                            : 'bg-chess-page text-chess-text-muted'
-                        }`}
-                      >
-                        {v}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <textarea
-                  value={text}
-                  onChange={(e) => {
-                    setText(e.target.value);
-                    if (sendState === 'sent' || sendState === 'error') setSendState('idle');
-                  }}
-                  rows={3}
-                  placeholder="What happened? What should change?"
-                  className="mt-3 w-full rounded-xl border-2 border-chess-disabled bg-white p-3 text-sm"
-                />
-                <div className="mt-2 flex items-center gap-3">
+        {/* GAME */}
+        {playing && (
+          <div className="mt-4 rounded-2xl bg-chess-surface p-3 shadow-sm">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <div className="min-w-0 flex-1 truncate text-xs text-chess-text-muted">{playing.src}</div>
+              <button
+                onClick={() => setFrameNonce((n) => n + 1)}
+                className="rounded-lg border-2 border-chess-disabled bg-white px-3 py-1 text-sm font-bold"
+              >
+                Reload
+              </button>
+              <a
+                href={playing.src}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-lg border-2 border-chess-disabled bg-white px-3 py-1 text-sm font-bold"
+              >
+                Open full
+              </a>
+            </div>
+            <iframe
+              key={`${playing.src}:${frameNonce}`}
+              src={playing.src}
+              title={`Playtest: ${runName(playing.runId)} L${playing.level}`}
+              className="min-h-[70vh] w-full rounded-xl border-2 border-chess-disabled bg-white"
+            />
+          </div>
+        )}
+
+        {/* COMMENT BOX */}
+        {playing && (
+          <div className="mt-4 rounded-2xl bg-chess-surface p-4 shadow-sm">
+            <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-chess-text-muted">
+              Send feedback to Claude
+            </h2>
+            <div className="flex flex-wrap items-center gap-2 text-sm font-bold">
+              <span>{runName(playing.runId)}</span>
+              <label className="flex items-center gap-1">
+                L
+                <select
+                  value={level}
+                  onChange={(e) => setLevel(e.target.value)}
+                  aria-label="Level"
+                  className="rounded-lg border-2 border-chess-disabled bg-white px-1.5 py-1"
+                >
+                  <option value="">any</option>
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {playing.loadout && (
+                <span className="truncate text-xs font-normal text-chess-text-muted">[{playing.loadout}]</span>
+              )}
+              <div className="flex gap-1.5">
+                {VERDICTS.map((v) => (
                   <button
-                    onClick={send}
-                    disabled={!commentItem || !text.trim() || sendState === 'sending'}
-                    className="rounded-xl bg-chess-blue px-5 py-2.5 font-bold text-white disabled:opacity-40"
+                    key={v}
+                    onClick={() => setVerdict(verdict === v ? null : v)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${
+                      verdict === v
+                        ? v === 'SHIP'
+                          ? 'bg-chess-green text-white'
+                          : v === 'KILL'
+                            ? 'bg-chess-red text-white'
+                            : v === 'BUG'
+                              ? 'bg-chess-orange text-white'
+                              : 'bg-chess-blue text-white'
+                        : 'bg-chess-page text-chess-text-muted'
+                    }`}
                   >
-                    {sendState === 'sending' ? 'Sending…' : 'Send'}
+                    {v}
                   </button>
-                  {sendState === 'sent' && <span className="text-sm font-bold text-chess-green-dark">Sent to Slack.</span>}
-                  {sendState === 'error' && (
-                    <span className="text-sm font-bold text-chess-red">Failed: {sendError}</span>
-                  )}
-                  {selected && !done.has(selected.id) && (
-                    <button
-                      onClick={() => toggleDone(selected.id)}
-                      className="ml-auto rounded-xl border-2 border-chess-green px-4 py-2 text-sm font-bold text-chess-green-dark"
-                    >
-                      Mark done today
-                    </button>
-                  )}
-                </div>
+                ))}
               </div>
-            </main>
+            </div>
+            <textarea
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value);
+                if (sendState === 'sent' || sendState === 'error') setSendState('idle');
+              }}
+              rows={3}
+              placeholder="What happened? What should change?"
+              className="mt-3 w-full rounded-xl border-2 border-chess-disabled bg-white p-3 text-sm"
+            />
+            <div className="mt-2 flex items-center gap-3">
+              <button
+                onClick={send}
+                disabled={!text.trim() || sendState === 'sending'}
+                className="rounded-xl bg-chess-blue px-5 py-2.5 font-bold text-white disabled:opacity-40"
+              >
+                {sendState === 'sending' ? 'Sending…' : 'Send'}
+              </button>
+              {sendState === 'sent' && <span className="text-sm font-bold text-chess-green-dark">{'✓'} Sent</span>}
+              {sendState === 'error' && <span className="text-sm font-bold text-chess-red">Failed: {sendError}</span>}
+            </div>
           </div>
         )}
       </div>

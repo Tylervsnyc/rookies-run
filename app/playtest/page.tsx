@@ -1,51 +1,43 @@
 /**
- * /playtest — Tyler's daily playtest funnel.
+ * /playtest — Tyler's playtest funnel, v2.
  *
- * Server component: loads the content registry (data/content/pipeline.json
- * via lib/content/pipeline.ts) and hands the queue to the client. The queue
- * is every item in the `testing` stage — abilities AND runs — so new content
- * (revenge-8/9/10 etc.) appears here automatically once its registry record
- * lands, no hardcoding.
- *
- * Play links load the real game in an iframe:
- *   runs      -> /?run=<id>
- *   abilities -> /?run=revenge-1&loadout=<id>:<tier>
- * Comments POST to /api/playtest-feedback -> Slack.
+ * "Pick a level, pick 3 abilities, hit PLAY." The server component builds:
+ *   - one chip per (testing-stage run, level) from the registry + run defs
+ *   - one chip per player-relevant ability (ABILITY_DEFS minus retired),
+ *     testing-stage abilities badged and sorted first
+ * The client tracks coverage (what's left to test) in localStorage and loads
+ * the real game in an iframe via /?run=<id>&loadout=<a:t,...>&level=<n>.
+ * Comments POST to /api/playtest-feedback -> Slack (API unchanged).
  */
 
 import type { Metadata } from 'next';
 
-import { REGISTRY, type ContentItem } from '@/lib/content/pipeline';
-import { PlaytestClient, type PlaytestItem } from './PlaytestClient';
+import { REGISTRY, stageOf } from '@/lib/content/pipeline';
+import { ABILITY_DEFS } from '@/lib/run/abilities';
+import { getRunById } from '@/lib/run/runs';
+import { PlaytestClient, type PlaytestAbility, type PlaytestRun } from './PlaytestClient';
 
 export const metadata: Metadata = {
   title: "Playtest — Rookie's Revenge",
   robots: { index: false, follow: false },
 };
 
-function toItem(i: ContentItem): PlaytestItem {
-  return { id: i.id, kind: i.kind, name: i.name, stage: i.stage, notes: firstLine(i.notes) };
-}
-
-function firstLine(notes: string): string {
-  const line = (notes ?? '').split('\n')[0].trim();
-  return line.length > 140 ? line.slice(0, 139) + '…' : line;
-}
-
 export default function PlaytestPage() {
-  // The daily queue: everything still in `testing`. Abilities first (quick
-  // single-level checks), then runs (full climbs).
-  const testing = REGISTRY.items.filter((i) => i.stage === 'testing');
-  const queue = [
-    ...testing.filter((i) => i.kind === 'ability'),
-    ...testing.filter((i) => i.kind === 'run'),
-  ].map(toItem);
+  // Every level of every TESTING-stage run.
+  const runs: PlaytestRun[] = REGISTRY.items
+    .filter((i) => i.stage === 'testing' && i.kind === 'run')
+    .map((i) => {
+      const def = getRunById(i.id);
+      return { id: i.id, name: i.name, levels: def.id === i.id ? def.levels.length : 0 };
+    })
+    .filter((r) => r.levels > 0);
 
-  // Dropdown options for the comment box: all testing + live abilities and runs.
-  const options = REGISTRY.items
-    .filter((i) => i.stage === 'testing' || i.stage === 'live')
-    .map(toItem)
-    .sort((a, b) => (a.kind === b.kind ? a.id.localeCompare(b.id) : a.kind === 'ability' ? -1 : 1));
+  // Every player-relevant ability: ABILITY_DEFS minus retired-stage ids.
+  // Testing-stage abilities first (they're what needs eyes), then the rest.
+  const abilities: PlaytestAbility[] = Object.values(ABILITY_DEFS)
+    .filter((d) => stageOf(d.id) !== 'retired')
+    .map((d) => ({ id: d.id, name: d.name, testing: stageOf(d.id) === 'testing' }))
+    .sort((a, b) => (a.testing === b.testing ? a.name.localeCompare(b.name) : a.testing ? -1 : 1));
 
-  return <PlaytestClient queue={queue} options={options} />;
+  return <PlaytestClient runs={runs} abilities={abilities} />;
 }

@@ -184,6 +184,12 @@ interface RunMeta {
   loadout: OwnedAbility[] | null;
   /** Dev-only; null in production and whenever `?parity=1` is absent. */
   parity: ParityHook | null;
+  /**
+   * `?level=N` (N>1) jumped this run mid-way — a playtest/dev launch, not a
+   * real climb. No score, ladder, daily-completion, best or history side
+   * effects may fire for it.
+   */
+  levelJump: boolean;
 }
 
 function freshRun(
@@ -267,7 +273,15 @@ export default function RookiesRunPage() {
     }
     const maxLevel = totalLevelsForRun(validRunId) - 1;
     const startLevelIndex = Math.min(url.startLevelIndex, maxLevel);
-    return { iso, runId: validRunId, startLevelIndex, ladder, loadout: url.loadout, parity: url.parity };
+    return {
+      iso,
+      runId: validRunId,
+      startLevelIndex,
+      ladder,
+      loadout: url.loadout,
+      parity: url.parity,
+      levelJump: startLevelIndex > 0,
+    };
   }, []);
 
   const runDef = useMemo(() => getRunById(meta.runId), [meta.runId]);
@@ -483,6 +497,10 @@ export default function RookiesRunPage() {
     // A Ladder launch (?ladder=1&run=<id>) goes straight to the board — the
     // player just tapped the rung on the home screen.
     if (meta.ladder) return;
+    // A playtest deep link (?level=N with ?loadout=, /playtest's PLAY button)
+    // also boards directly — the funnel already picked the level + kit.
+    // Parity keeps its own flow untouched.
+    if (meta.levelJump && meta.loadout && !meta.parity) return;
     if (!usesClassicLanding) {
       setShowIntro(true);
       return;
@@ -491,7 +509,7 @@ export default function RookiesRunPage() {
     if (!localStorage.getItem(key)) {
       setShowIntro(true);
     }
-  }, [meta.iso, meta.ladder, usesClassicLanding]);
+  }, [meta.iso, meta.ladder, meta.levelJump, meta.loadout, meta.parity, usesClassicLanding]);
 
   const resetRunRef = useRef<() => void>(() => {});
   // Optionally starts under a specific difficulty (HomeLanding's Daily GO and
@@ -749,12 +767,12 @@ export default function RookiesRunPage() {
           abilitiesUsed: progress.abilitiesUsedThisRun(),
           streak: streakNow + 1,
         });
-        recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
+        if (!meta.levelJump) recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
       }
       // Record completion for streak (auth-only on the server; silent for anon).
       // Only record when this is the actual daily for that date — not, e.g.,
       // an STC run or a hand-picked non-daily run via ?run=.
-      if (!isStc && meta.runId === getRunIdForDate(meta.iso)) {
+      if (!isStc && !meta.levelJump && meta.runId === getRunIdForDate(meta.iso)) {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
         fetch('/api/run/complete', {
           method: 'POST',
@@ -1209,6 +1227,12 @@ export default function RookiesRunPage() {
     const finished = runComplete || (state.status === 'lost' && deathSettled && !canRetry);
     if (!finished) return;
     runRecordedRef.current = true;
+    // A `?level=N` jump (playtest launch) must leave no trace: no history,
+    // no ladder result, no leaderboard score.
+    if (meta.levelJump) {
+      setHistoryVersion((v) => v + 1);
+      return;
+    }
     recordRun({
       iso: meta.iso,
       runId: meta.runId,
@@ -1240,7 +1264,7 @@ export default function RookiesRunPage() {
         completed: runComplete,
       });
     }
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 
