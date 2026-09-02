@@ -328,7 +328,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
   const run = isKnownRunId(runId) ? getRunById(runId) : null;
   const runName = run?.name ?? "Today's run";
   const runBlurb = run?.blurb ?? 'Ten levels. One King. She has a list.';
-  const pool = useMemo(() => todaysAbilities(iso, runId, 6), [iso, runId]);
+  const pool = useMemo(() => todaysAbilities(iso, runId, 4), [iso, runId]);
 
   // The daily is "just one run": Normal once it's open, Rookie for brand-new players.
   const dailyDifficulty: DifficultyId = isDifficultyLocked('normal', profile) ? 'rookie' : 'normal';
