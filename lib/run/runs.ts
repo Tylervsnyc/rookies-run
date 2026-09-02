@@ -5126,6 +5126,7 @@ const RUN_REVENGE_7: RunDef = {
       2,
       [
         pawn(5, 7), pawn(6, 7), pawn(7, 7), pawn(4, 6), pawn(8, 6), pawn(5, 5), pawn(7, 5),
+        pawn(6, 5), // f5 — blocks the open F-file (Tyler playtest 2026-09-02: F1 -> xF7 -> xK was free)
         pawn(4, 2), pawn(8, 4),
         king(6, 8),
       ],
@@ -5137,6 +5138,7 @@ const RUN_REVENGE_7: RunDef = {
       3,
       [
         pawn(3, 5),
+        pawn(2, 6), // b6 defends the c5 key (Tyler playtest 2026-09-02: L3 too easy)
         king(3, 8),
       ],
       {
