@@ -17,6 +17,7 @@ import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
 import { RunPickerModal } from '@/components/run/RunPickerModal';
 import { RookiesRevengeLogo } from '@/components/run/RookiesRevengeLogo';
+import { LowMovesEmergency } from '@/components/run/LowMovesEmergency';
 import { StcRunLogo } from '@/components/run/StcRunLogo';
 import { TempoBar } from '@/components/run/TempoBar';
 import { MusicMenu } from '@/components/run/MusicMenu';
@@ -1458,25 +1459,14 @@ export default function RookiesRunPage() {
           60%      { transform: translateX(-1px); }
           80%      { transform: translateX(1px); }
         }
-        @keyframes rrLastMoveVignette {
-          0%, 100% { opacity: 0.55; }
-          50%      { opacity: 1; }
-        }
       `}</style>
-      {/* Last-move drama: red screen-edge vignette. Fixed + pointer-events
-          none so it never blocks input or covers the board content. */}
+      {/* Low-moves emergency: from 2 moves left the whole screen breathes a
+          red edge glow; at 1 it gets stronger. See LowMovesEmergency. */}
       {state.status === 'playing' &&
         state.winCondition === 'king' &&
         state.moveLimit !== null &&
-        state.moveLimit - state.moveCount <= 1 && (
-          <div
-            aria-hidden
-            className="pointer-events-none fixed inset-0 z-40"
-            style={{
-              boxShadow: 'inset 0 0 70px 18px rgba(220,38,38,0.4)',
-              animation: 'rrLastMoveVignette 1.1s ease-in-out infinite',
-            }}
-          />
+        state.moveLimit - state.moveCount <= 2 && (
+          <LowMovesEmergency left={state.moveLimit - state.moveCount} />
         )}
       <div className="max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pt-1.5 pb-3 flex flex-col gap-2">
         <header className="flex items-start justify-between gap-3">

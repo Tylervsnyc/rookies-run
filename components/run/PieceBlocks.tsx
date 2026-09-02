@@ -32,7 +32,7 @@ interface PieceTemplate {
 }
 
 export const PIECE_TEMPLATES: Record<PieceType, PieceTemplate> = {
-  P: { svgKey: 'wP', cols: 18, rows: 16, threshold: 0.35 },
+  P: { svgKey: 'wP', cols: 12, rows: 15, threshold: 0.35 },
   N: { svgKey: 'wN', cols: 16, rows: 18, threshold: 0.35 },
   B: { svgKey: 'wB', cols: 14, rows: 20, threshold: 0.35 },
   R: { svgKey: 'wR', cols: 14, rows: 18, threshold: 0.35 },
@@ -45,8 +45,35 @@ export const ROOKIE_PALETTE = ['#1CB0F6', '#2FCBEF', '#A560E8', '#58CC02', '#FFC
 
 type Mask = boolean[][];
 
+// Hand-authored pawn silhouette. The rasterized SVG pawn read as a "little
+// rocket" (pointed top), so the pawn alone gets a canonical sprite — same
+// technique as BreathingRook's 5x6 rook: a big CIRCULAR head, a collar ring
+// pinched off from the neck, a tapered body, and a wide base. Must stay
+// 12 cols x 15 rows (PIECE_TEMPLATES.P above).
+const PAWN_ART: readonly string[] = [
+  '....XXXX....',
+  '...XXXXXX...',
+  '..XXXXXXXX..',
+  '..XXXXXXXX..',
+  '..XXXXXXXX..',
+  '...XXXXXX...',
+  '....XXXX....',
+  '..XXXXXXXX..',
+  '....XXXX....',
+  '....XXXX....',
+  '...XXXXXX...',
+  '...XXXXXX...',
+  '..XXXXXXXX..',
+  '.XXXXXXXXXX.',
+  'XXXXXXXXXXXX',
+];
+
+const PAWN_MASK: Mask = PAWN_ART.map((row) => row.split('').map((c) => c === 'X'));
+
 // Module-level cache so each piece only rasterizes once per session.
 const MASK_CACHE = new Map<string, Mask>();
+// The pawn never rasterizes — its mask is authored above.
+MASK_CACHE.set('P', PAWN_MASK);
 const PENDING = new Map<string, Promise<Mask>>();
 
 async function rasterize(piece: PieceType): Promise<Mask> {
