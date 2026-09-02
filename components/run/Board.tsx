@@ -337,12 +337,15 @@ export function RunBoard({
     const sacId = sacrificeFx?.id ?? 0;
     const prev = stunPrevRef.current;
     if (kingGoal && stun > 0 && prev.stun === 0) {
-      let text = 'capture';
+      // Only SURPRISING causes get a label. Plain captures (Rookie's or a
+      // summon's) always stun — labeling every one was constant noise
+      // (Tyler: "definitely take out that other stun catcher").
+      let text: string | null = null;
       if (sacId !== prev.sacId) text = 'blast';
       else if (poisonId !== prev.poisonId) text = 'poison';
       else if (fxId !== prev.fxId && state.lastAbilityFx?.kind === 'boulder') text = 'boulder';
       else if (fxId !== prev.fxId && state.lastAbilityFx?.kind === 'rewind') text = 'rewind';
-      setStunCause({ text, id: Date.now() });
+      if (text) setStunCause({ text, id: Date.now() });
     }
     stunPrevRef.current = { stun, fxId, poisonId, sacId };
   }, [state.kingStunTurns, state.lastAbilityFx, state.lastPoisonDeath, sacrificeFx, kingGoal]);
@@ -1866,9 +1869,10 @@ function KingGoalLabel({
 }
 
 /**
- * Transient "Stunned · capture" label that floats up off the king's square
- * and fades over ~1.5s — teaches WHY he's stunned (every capture stuns him;
- * boulders, blasts, poison and rewind do too). Purely decorative; rendered
+ * Transient "Stunned · boulder" label that floats up off the king's square
+ * and fades over ~1.5s — teaches WHY he's stunned when the cause is NOT
+ * visible (boulder / blast / poison / rewind). Plain captures never label —
+ * captures always stun, so the label was noise. Purely decorative; rendered
  * once per stun rising-edge, keyed so re-stuns replay the animation.
  */
 export function KingStunCauseLabel({ square, cause }: { square: string; cause: string }) {
@@ -2084,7 +2088,10 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
               transform: 'scale(0.88)',
             }}
           >
-            <PieceBlocks piece={ALLY_BLOCK[a.type]} blockSize={3} animate />
+            {/* The Dragon has her OWN sprite — a hand-authored block dragon,
+                not the rainbow queen (Tyler: "it's just a queen right now.
+                We need to redesign"). Everything else keeps its piece glyph. */}
+            <PieceBlocks piece={a.source === 'dragon' ? 'D' : ALLY_BLOCK[a.type]} blockSize={3} animate />
           </div>
           {/* Turn countdown for timed summons (Duchess & friends) — small
               gold circle top-right; goes red + pulses on the last turn. */}

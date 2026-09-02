@@ -22,6 +22,13 @@ import { getMatteBackground } from '@/lib/daily-rook-blocks';
 
 export type PieceType = 'P' | 'N' | 'B' | 'R' | 'Q' | 'K';
 
+/**
+ * Everything PieceBlocks can draw: the chess family plus hand-authored
+ * creature sprites (D = the Dragon summon). Creatures never rasterize —
+ * their masks are authored below, same technique as the pawn.
+ */
+export type BlockPieceType = PieceType | 'D';
+
 interface PieceTemplate {
   /** react-chessboard piece key */
   svgKey: 'wP' | 'wN' | 'wB' | 'wR' | 'wQ' | 'wK';
@@ -31,13 +38,15 @@ interface PieceTemplate {
   threshold: number;
 }
 
-export const PIECE_TEMPLATES: Record<PieceType, PieceTemplate> = {
+export const PIECE_TEMPLATES: Record<BlockPieceType, PieceTemplate> = {
   P: { svgKey: 'wP', cols: 12, rows: 15, threshold: 0.35 },
   N: { svgKey: 'wN', cols: 16, rows: 18, threshold: 0.35 },
   B: { svgKey: 'wB', cols: 14, rows: 20, threshold: 0.35 },
   R: { svgKey: 'wR', cols: 14, rows: 18, threshold: 0.35 },
   Q: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
   K: { svgKey: 'wK', cols: 16, rows: 20, threshold: 0.35 },
+  // Dragon never rasterizes (mask authored below); svgKey is a placeholder.
+  D: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
 };
 
 // Rookie's canonical 8-color palette.
@@ -70,13 +79,43 @@ const PAWN_ART: readonly string[] = [
 
 const PAWN_MASK: Mask = PAWN_ART.map((row) => row.split('').map((c) => c === 'X'));
 
+// Hand-authored DRAGON silhouette (the Dragon summon's board sprite — she is
+// NOT a queen). Same technique as the pawn: authored for tiny sizes. Facing
+// left: two horns, a long upper snout with an OPEN jaw (the notch under the
+// snout), a serpentine neck stepping down-right, one swept-back wing sail on
+// the right, a thick body, and an S-coiled tail at the base. Must stay
+// 18 cols x 18 rows (PIECE_TEMPLATES.D above).
+const DRAGON_ART: readonly string[] = [
+  '....X..X..........',
+  '....X..X..........',
+  '...XXXXXX.......X.',
+  'XXXXXXXXX......XX.',
+  '....XXXXX.....XXX.',
+  '.XXXXXXX.....XXXX.',
+  '.....XXXX...XXXXX.',
+  '......XXXX..XXXX..',
+  '.......XXXXXXXX...',
+  '.......XXXXXXX....',
+  '......XXXXXXXXX...',
+  '.....XXXXXXXXXX...',
+  '.....XXXXXXXXX....',
+  '.....XXXXXXXX.....',
+  '......XXXXXXXX....',
+  '..........XXXXXX..',
+  '.....XXXXXXXXXX...',
+  '...XXXXXX.........',
+];
+
+const DRAGON_MASK: Mask = DRAGON_ART.map((row) => row.split('').map((c) => c === 'X'));
+
 // Module-level cache so each piece only rasterizes once per session.
 const MASK_CACHE = new Map<string, Mask>();
-// The pawn never rasterizes — its mask is authored above.
+// The pawn and dragon never rasterize — their masks are authored above.
 MASK_CACHE.set('P', PAWN_MASK);
+MASK_CACHE.set('D', DRAGON_MASK);
 const PENDING = new Map<string, Promise<Mask>>();
 
-async function rasterize(piece: PieceType): Promise<Mask> {
+async function rasterize(piece: BlockPieceType): Promise<Mask> {
   const cacheKey = piece;
   const cached = MASK_CACHE.get(cacheKey);
   if (cached) return cached;
@@ -136,7 +175,7 @@ async function rasterize(piece: PieceType): Promise<Mask> {
 }
 
 interface PieceBlocksProps {
-  piece: PieceType;
+  piece: BlockPieceType;
   /** Pixel size of each block. */
   blockSize?: number;
   /** Slow brightness pulse like BreathingRook. */

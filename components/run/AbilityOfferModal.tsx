@@ -115,12 +115,14 @@ export function AbilityOfferModal({
         }
       `}</style>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#12222b]/80 backdrop-blur-sm px-3 py-4">
-        {/* Compact art-forward slate — the illustrations ARE the cards.
-            No painted frame; a whisper of parchment as the backdrop panel. */}
+        {/* Magic-card slate — classic card anatomy (name bar / full square
+            art / text box) on a parchment backdrop panel. Taller cards, so
+            the panel scrolls on short phones. */}
         <div
-          className="offer-frame-enter relative w-full overflow-hidden rounded-2xl p-3 sm:p-4"
+          className="offer-frame-enter relative w-full overflow-x-hidden overflow-y-auto rounded-2xl p-3 sm:p-4"
           style={{
             maxWidth: 'min(640px, 94vw)',
+            maxHeight: '92dvh',
             background: 'linear-gradient(180deg, #faf4e4, #f0e5cc)',
             boxShadow:
               '0 0 0 1.5px rgba(184,133,43,0.5), 0 0 20px rgba(255,191,36,0.25), 0 18px 40px rgba(0,0,0,0.45)',
@@ -152,7 +154,7 @@ export function AbilityOfferModal({
                   onClick={() => {
                     if (!locked) onPick(option);
                   }}
-                  className={`offer-card-enter relative rounded-xl p-[2px] text-left transition-transform ${
+                  className={`offer-card-enter relative flex rounded-xl p-[2px] text-left transition-transform ${
                     locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
                   }`}
                   style={{
@@ -164,65 +166,66 @@ export function AbilityOfferModal({
                   {pointed && (
                     <PointerArrow style={{ position: 'absolute', left: '50%', top: -34 }} />
                   )}
-                  {/* Full-bleed art with a bottom gradient band — the classic
-                      card-game look. The illustration fills the whole card. */}
-                  <div className="relative w-full aspect-[3/4.8] rounded-[10px] overflow-hidden bg-[#1a2b33]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={`/abilities/${artFile(option.id)}`}
-                      alt=""
-                      draggable={false}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-
-                    {/* UPGRADE ribbon across the top of the art. */}
-                    {upgrade && (
-                      <div
-                        className="absolute top-0 inset-x-0 text-center text-[8.5px] sm:text-[10px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
-                        style={{ background: GOLD_CHIP, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
-                      >
-                        Upgrade · Tier {option.tier}
-                      </div>
-                    )}
-                    {/* NEW chip on a mixed slate so the two modes read. */}
-                    {!upgrade && mixed && (
-                      <div
-                        className="absolute top-1.5 left-1.5 rounded px-1.5 py-[2px] text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-[0.1em] text-white"
-                        style={{ background: accent, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
-                      >
-                        New
-                      </div>
-                    )}
-
-                    {/* Bottom band: name + one line, over the art. */}
-                    <div
-                      className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 px-1.5 sm:px-2.5 pb-1.5 sm:pb-2.5 pt-6"
-                      style={{
-                        background:
-                          'linear-gradient(180deg, rgba(10,18,23,0) 0%, rgba(10,18,23,0.72) 38%, rgba(10,18,23,0.92) 100%)',
-                      }}
-                    >
-                      <div
-                        className="text-[10.5px] sm:text-[13px] font-black leading-tight uppercase tracking-[0.05em] text-white"
-                        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
-                      >
+                  {/* Magic-card anatomy: name bar on top, then the FULL
+                      uncropped square art, then the text box. The art files
+                      are 1:1 — never object-cover them (Tyler: "I want them
+                      to look like Magic cards... so we can see all of them"). */}
+                  <div className="relative flex h-full w-full flex-col rounded-[10px] overflow-hidden bg-[#1a2b33]">
+                    {/* Name bar. */}
+                    <div className="flex min-h-[26px] sm:min-h-[32px] items-center justify-center px-1 py-[3px] bg-[#22343e]">
+                      <span className="text-center text-[9.5px] sm:text-[12px] font-black leading-tight uppercase tracking-[0.05em] text-white">
                         {def.name}
-                      </div>
+                      </span>
+                    </div>
+
+                    {/* Full square art, edge to edge, thin gold inner rule. */}
+                    <div className="relative w-full aspect-square">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/abilities/${artFile(option.id)}`}
+                        alt=""
+                        draggable={false}
+                        className="block w-full h-full"
+                      />
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0"
+                        style={{ boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.65)' }}
+                      />
+
+                      {/* UPGRADE ribbon across the top of the art. */}
+                      {upgrade && (
+                        <div
+                          className="absolute top-0 inset-x-0 text-center text-[8.5px] sm:text-[10px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
+                          style={{ background: GOLD_CHIP, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
+                        >
+                          Upgrade · Tier {option.tier}
+                        </div>
+                      )}
+                      {/* NEW chip on a mixed slate so the two modes read. */}
+                      {!upgrade && mixed && (
+                        <div
+                          className="absolute top-1.5 left-1.5 rounded px-1.5 py-[2px] text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-[0.1em] text-white"
+                          style={{ background: accent, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
+                        >
+                          New
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Text box below the art. */}
+                    <div className="flex flex-1 flex-col justify-center gap-0.5 px-1.5 sm:px-2.5 py-1.5 sm:py-2">
                       {upgrade ? (
                         deltas.map((line) => (
                           <p
                             key={line}
                             className="text-[9.5px] sm:text-[11.5px] font-black leading-snug text-amber-200"
-                            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.7)' }}
                           >
                             {line}
                           </p>
                         ))
                       ) : (
-                        <p
-                          className="text-[9px] sm:text-[10.5px] font-semibold leading-snug text-white/85"
-                          style={{ textShadow: '0 1px 2px rgba(0,0,0,0.7)' }}
-                        >
+                        <p className="text-[9px] sm:text-[10.5px] font-semibold leading-snug text-white/85">
                           {plainText(option)}
                         </p>
                       )}

@@ -52,6 +52,18 @@ function PawnBlocksInner() {
 
         <section>
           <div className="text-xs font-bold uppercase tracking-wider opacity-60 mb-2">
+            Dragon vs queen — board size (blockSize 3) and close-up (blockSize 6)
+          </div>
+          <div className="bg-white rounded-xl p-4 flex items-end justify-around">
+            <PieceBlocks piece="D" blockSize={3} />
+            <PieceBlocks piece="Q" blockSize={3} />
+            <PieceBlocks piece="D" blockSize={6} />
+            <PieceBlocks piece="Q" blockSize={6} />
+          </div>
+        </section>
+
+        <section>
+          <div className="text-xs font-bold uppercase tracking-wider opacity-60 mb-2">
             Emergency pulse
           </div>
           <div className="flex gap-2">
