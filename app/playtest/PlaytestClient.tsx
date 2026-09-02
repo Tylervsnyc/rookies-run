@@ -1,22 +1,24 @@
 'use client';
 
 /**
- * /playtest client v3 — pick a run (dropdown), pick up to 3 abilities as
+ * /playtest client v4 — pick a run (dropdown), pick up to 3 abilities as
  * cards that SHOW what each ability does (type line, description, and the
- * current-tier effect + uses text straight from blurbDetailForTier), PLAY.
- * A play is the whole run from level 1.
+ * T1 effect + uses text straight from blurbDetailForTier), PLAY.
+ * A play is a REAL run from level 1: nothing is preloaded — the picks become
+ * the game's entire offer pool (?testkit=), so Tyler takes them at T1 via
+ * the normal offer flow and upgrades them between rounds.
  *
  * Coverage ("what's left to test") lives in localStorage under
  * `playtest-coverage-v3`: run ids played + ability ids tried, marked the
  * moment PLAY is pressed. All storage access is try/catch.
  *
  * Comments POST to /api/playtest-feedback (unchanged API) with item = the
- * run id; the loadout is appended to the text like "[loadout duchess:3,...]".
+ * run id; the kit is appended to the text like "[kit twin,duchess,swap]".
  */
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { blurbDetailForTier, type AbilityId, type AbilityTier } from '@/lib/run/abilities';
+import { blurbDetailForTier, type AbilityId } from '@/lib/run/abilities';
 
 export interface PlaytestRun {
   id: string;
@@ -68,8 +70,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
   const [runId, setRunId] = useState<string>(runs[0]?.id ?? '');
   // Ordered oldest-first; a 4th pick replaces the oldest.
   const [picked, setPicked] = useState<string[]>([]);
-  const [tier, setTier] = useState(1);
-  const [playing, setPlaying] = useState<{ src: string; runId: string; loadout: string } | null>(null);
+  const [playing, setPlaying] = useState<{ src: string; runId: string; kit: string } | null>(null);
   const [frameNonce, setFrameNonce] = useState(0);
 
   // Comment box.
@@ -97,13 +98,13 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
     });
   };
 
-  const loadoutString = picked.map((id) => `${id}:${tier}`).join(',');
+  const kitString = picked.join(',');
 
   const play = () => {
     if (!runId) return;
     const src =
       `/?run=${encodeURIComponent(runId)}` +
-      (loadoutString ? `&loadout=${encodeURIComponent(loadoutString)}` : '') +
+      (kitString ? `&testkit=${encodeURIComponent(kitString)}` : '') +
       `&refresh=1&ladder=0`;
     // Mark tested the moment PLAY is pressed.
     setCoverage((prev) => {
@@ -114,7 +115,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
       writeCoverage(next);
       return next;
     });
-    setPlaying({ src, runId, loadout: loadoutString });
+    setPlaying({ src, runId, kit: kitString });
     setLevel('');
     setSendState('idle');
     setFrameNonce((n) => n + 1);
@@ -131,7 +132,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
     setSendState('sending');
     setSendError('');
     try {
-      const fullText = playing.loadout ? `${text.trim()} [loadout ${playing.loadout}]` : text.trim();
+      const fullText = playing.kit ? `${text.trim()} [kit ${playing.kit}]` : text.trim();
       const body: Record<string, unknown> = { item: playing.runId, kind: 'run', text: fullText };
       if (level) body.level = Number(level);
       if (verdict) body.verdict = verdict;
@@ -153,7 +154,6 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
 
   const runName = (id: string) => runs.find((r) => r.id === id)?.name ?? id;
   const abilityName = (id: string) => abilities.find((a) => a.id === id)?.name ?? id;
-  const safeTier = (Math.min(5, Math.max(1, tier)) as AbilityTier) ?? 3;
 
   return (
     <div className="h-full overflow-auto bg-chess-page font-body text-chess-text">
@@ -202,27 +202,16 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
             <h2 className="text-xs font-bold uppercase tracking-wide text-chess-text-muted">
               2. Pick up to 3 abilities ({picked.length}/3)
             </h2>
-            <label className="ml-auto flex items-center gap-1.5 text-sm font-bold">
-              Tier
-              <select
-                value={tier}
-                onChange={(e) => setTier(Number(e.target.value))}
-                className="rounded-lg border-2 border-chess-disabled bg-white px-2 py-1"
-              >
-                {[1, 2, 3, 4, 5].map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <span className="ml-auto text-[11px] font-bold text-chess-text-muted">
+              Real run: picks arrive as T1 offers, upgrade between rounds
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {abilities.map((a) => {
               const slot = picked.indexOf(a.id);
               const isPicked = slot >= 0;
               const untried = a.testing && !triedAbilities.has(a.id);
-              const blurb = blurbDetailForTier(a.id as AbilityId, safeTier);
+              const blurb = blurbDetailForTier(a.id as AbilityId, 1);
               return (
                 <button
                   key={a.id}
@@ -251,7 +240,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
                   <div className="text-[10px] font-bold uppercase tracking-wide text-chess-text-faint">{a.typeLine}</div>
                   <div className="mt-1 text-xs text-chess-text-muted">{a.description}</div>
                   <div className="mt-1 text-xs font-bold">
-                    T{safeTier}: {blurb.what}
+                    T1: {blurb.what}
                   </div>
                   {blurb.limit && <div className="text-[11px] text-chess-text-muted">{blurb.limit}</div>}
                 </button>
@@ -308,8 +297,8 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
             </h2>
             <div className="flex flex-wrap items-center gap-2 text-sm font-bold">
               <span>{runName(playing.runId)}</span>
-              {playing.loadout && (
-                <span className="truncate text-xs font-normal text-chess-text-muted">[{playing.loadout}]</span>
+              {playing.kit && (
+                <span className="truncate text-xs font-normal text-chess-text-muted">[{playing.kit}]</span>
               )}
               <label className="flex items-center gap-1">
                 L

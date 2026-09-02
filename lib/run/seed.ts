@@ -140,6 +140,8 @@ export function puzzleToBoardState(
     runId?: string;
     /** Player's unlocked abilities (profile). undefined = all. */
     unlockedAbilities?: BoardState['unlockedAbilities'];
+    /** Playtest kit (?testkit=) — exact offer pool; see BoardState.testkit. */
+    testkit?: BoardState['testkit'];
     difficulty?: BoardState['difficulty'];
   } = {},
 ): BoardState {
@@ -193,6 +195,7 @@ export function puzzleToBoardState(
     })(),
     runId: carry.runId,
     ...(carry.unlockedAbilities ? { unlockedAbilities: [...carry.unlockedAbilities] } : {}),
+    ...(carry.testkit && carry.testkit.length > 0 ? { testkit: [...carry.testkit] } : {}),
     ...(carry.difficulty ? { difficulty: carry.difficulty } : {}),
     moveLimit: puzzle.moveLimit ?? null,
     enemiesPerTurn: puzzle.enemiesPerTurn ?? 1,

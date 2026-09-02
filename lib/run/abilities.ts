@@ -845,13 +845,18 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
         }
       })()
     : null;
-  const runAllowedRaw = runDef?.allowedAbilities
-    ? new Set(runDef.allowedAbilities as string[])
-    : null;
+  // Playtest kit (/playtest real-run mode): the kit IS the offer pool —
+  // it overrides the run allowlist and the unlocked set entirely.
+  const testkit = state.testkit && state.testkit.length > 0 ? new Set<string>(state.testkit) : null;
+  const runAllowedRaw = testkit
+    ? testkit
+    : runDef?.allowedAbilities
+      ? new Set(runDef.allowedAbilities as string[])
+      : null;
   // Meta-progression: the player only sees abilities they've unlocked.
   // Owned abilities always stay upgradable (they were unlocked when picked).
   const unlocked =
-    state.unlockedAbilities && !runDef?.ignoreUnlocks ? new Set<string>(state.unlockedAbilities) : null;
+    !testkit && state.unlockedAbilities && !runDef?.ignoreUnlocks ? new Set<string>(state.unlockedAbilities) : null;
   const runAllowed = (() => {
     if (!runAllowedRaw && !unlocked) return null;
     const ids = ALL_ABILITY_IDS.filter(

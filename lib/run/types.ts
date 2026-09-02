@@ -191,6 +191,13 @@ export interface BoardState {
    * Offers only draw from this set. undefined = everything (playtest bots).
    */
   unlockedAbilities?: AbilityId[];
+  /**
+   * Playtest kit (?testkit= — /playtest real-run mode): when set, ability
+   * offers draw from EXACTLY these ids — new picks at T1, then upgrades —
+   * overriding both the run allowlist and unlockedAbilities. Never set for
+   * normal players.
+   */
+  testkit?: AbilityId[];
   /** Difficulty mode this state was built under (see lib/run/difficulty.ts). */
   difficulty?: DifficultyId;
   /**

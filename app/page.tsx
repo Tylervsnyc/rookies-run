@@ -128,6 +128,25 @@ function readLoadoutParam(params: URLSearchParams): OwnedAbility[] | null {
   return loadout.length > 0 ? loadout : null;
 }
 
+/**
+ * `?testkit=twin,duchess,swap` — /playtest real-run mode: no preloaded
+ * abilities; these ids become the ENTIRE offer pool (new at T1, then
+ * upgrades), so a run plays out normally but confined to the kit.
+ * Strict like ?loadout=: any unknown id voids the whole param. Max 3
+ * (MAX_OWNED_ABILITIES). `?parity=1` wins when both are present.
+ */
+function readTestkitParam(params: URLSearchParams): AbilityId[] | null {
+  const raw = params.get('testkit');
+  if (!raw) return null;
+  const ids: AbilityId[] = [];
+  for (const entry of raw.split(',')) {
+    if (!entry) continue;
+    if (!(entry in ABILITY_DEFS)) return null;
+    if (!ids.includes(entry as AbilityId)) ids.push(entry as AbilityId);
+  }
+  return ids.length > 0 ? ids.slice(0, 3) : null;
+}
+
 function readParityHook(params: URLSearchParams): ParityHook | null {
   if (process.env.NODE_ENV === 'production') return null;
   if (params.get('parity') !== '1') return null;
@@ -149,9 +168,9 @@ function readParityHook(params: URLSearchParams): ParityHook | null {
   };
 }
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; refresh: boolean; loadout: OwnedAbility[] | null; parity: ParityHook | null } {
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '', ladder: false, refresh: false, loadout: null, parity: null };
+    return { runId: '', startLevelIndex: 0, date: '', ladder: false, refresh: false, loadout: null, testkit: null, parity: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -165,7 +184,10 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
   }
   const ladder = params.get('ladder') === '1';
   const refresh = params.get('refresh') === '1';
-  return { runId, startLevelIndex, date, ladder, refresh, loadout: readLoadoutParam(params), parity: readParityHook(params) };
+  const parity = readParityHook(params);
+  // Parity wins: a parity session never combines with a testkit.
+  const testkit = parity ? null : readTestkitParam(params);
+  return { runId, startLevelIndex, date, ladder, refresh, loadout: readLoadoutParam(params), testkit, parity };
 }
 
 function readSavedRunId(): string {
@@ -198,6 +220,8 @@ interface RunMeta {
    * no-side-effects rule as levelJump — a refresh run never posts scores.
    */
   refreshAll: boolean;
+  /** `?testkit=` real-run playtest kit (see readTestkitParam). null off parity. */
+  testkit: AbilityId[] | null;
 }
 
 function freshRun(
@@ -207,6 +231,7 @@ function freshRun(
   parity: ParityHook | null = null,
   forceDifficulty: DifficultyId | null = null,
   loadout: OwnedAbility[] | null = null,
+  testkit: AbilityId[] | null = null,
 ): { state: BoardState; puzzle: RunPuzzle } {
   const puzzle = puzzleForDate(iso, startLevelIndex, runId);
   const profile = readProfile();
@@ -233,7 +258,10 @@ function freshRun(
       // Ladder runs always play on Normal rules; the profile difficulty is
       // a DAILY-only concept and is left untouched.
       difficulty: forceDifficulty ?? profile.difficulty,
-      ...(loadout ? { abilities: loadout } : {}),
+      // Testkit (real-run playtest): NO preloaded abilities — the kit is the
+      // offer pool and progression happens through the normal offer flow.
+      ...(loadout && !testkit ? { abilities: loadout } : {}),
+      ...(testkit ? { testkit } : {}),
     }),
     puzzle,
   };
@@ -289,7 +317,8 @@ export default function RookiesRunPage() {
       loadout: url.loadout,
       parity: url.parity,
       levelJump: startLevelIndex > 0,
-      refreshAll: url.refresh && !!url.loadout && !url.parity,
+      refreshAll: url.refresh && (!!url.loadout || !!url.testkit) && !url.parity,
+      testkit: url.testkit,
     };
   }, []);
 
@@ -299,8 +328,8 @@ export default function RookiesRunPage() {
 
   const [levelIndex, setLevelIndex] = useState(meta.startLevelIndex);
   const initial = useMemo(
-    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout),
-    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.loadout],
+    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout, meta.testkit),
+    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.loadout, meta.testkit],
   );
   const [state, setState] = useState<BoardState>(initial.state);
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
@@ -776,12 +805,12 @@ export default function RookiesRunPage() {
           abilitiesUsed: progress.abilitiesUsedThisRun(),
           streak: streakNow + 1,
         });
-        if (!meta.levelJump && !meta.refreshAll) recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
+        if (!meta.levelJump && !meta.refreshAll && !meta.testkit) recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
       }
       // Record completion for streak (auth-only on the server; silent for anon).
       // Only record when this is the actual daily for that date — not, e.g.,
       // an STC run or a hand-picked non-daily run via ?run=.
-      if (!isStc && !meta.levelJump && !meta.refreshAll && meta.runId === getRunIdForDate(meta.iso)) {
+      if (!isStc && !meta.levelJump && !meta.refreshAll && !meta.testkit && meta.runId === getRunIdForDate(meta.iso)) {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
         fetch('/api/run/complete', {
           method: 'POST',
@@ -1076,6 +1105,7 @@ export default function RookiesRunPage() {
         pendingOffer: state.pendingOffer,
         runId: meta.runId,
         unlockedAbilities: state.unlockedAbilities,
+        testkit: state.testkit,
         difficulty: state.difficulty,
       }),
     );
@@ -1084,7 +1114,7 @@ export default function RookiesRunPage() {
   }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
-    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout);
+    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout, meta.testkit);
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
     setState(fresh.state);
@@ -1126,6 +1156,7 @@ export default function RookiesRunPage() {
         pendingOffer: state.pendingOffer,
         runId: meta.runId,
         unlockedAbilities: state.unlockedAbilities,
+        testkit: state.testkit,
         difficulty: state.difficulty,
       }),
     );
@@ -1240,7 +1271,7 @@ export default function RookiesRunPage() {
     runRecordedRef.current = true;
     // A `?level=N` jump or `?refresh=1` session (playtest launches) must
     // leave no trace: no history, no ladder result, no leaderboard score.
-    if (meta.levelJump || meta.refreshAll) {
+    if (meta.levelJump || meta.refreshAll || meta.testkit) {
       setHistoryVersion((v) => v + 1);
       return;
     }
@@ -1275,7 +1306,7 @@ export default function RookiesRunPage() {
         completed: runComplete,
       });
     }
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 
