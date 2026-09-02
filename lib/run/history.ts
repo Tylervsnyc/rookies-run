@@ -13,6 +13,10 @@ export interface RunHistoryEntry {
   levelReached: number; // 1-indexed; furthest level the player started/cleared
   totalLevels: number;
   completed: boolean; // true if all levels cleared
+  /** Total active-play ms for the run (TESTING clock, 2026-09-02). Optional. */
+  timeMs?: number;
+  /** Per-level splits from the run clock. Optional; absent on old entries. */
+  splits?: { level: number; ms: number; enemies: number; moves: number }[];
 }
 
 export interface RunStats {

@@ -92,6 +92,79 @@ export interface ScoreBreakdown {
   total: number; // clamped >= 0
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Timed score (TESTING, 2026-09-02) — computed ALONGSIDE the classic score,
+// never submitted to the leaderboard yet. Each cleared level pays
+// levelPoints × speedMult, where speedMult scales 1.5 (fast) down to 0.8
+// (slow) against a par time of 12s + 4s per enemy on the level. A brisk
+// human clearing at par lands at exactly 1.0×.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const TIMED_SCORE = {
+  PAR_BASE_MS: 12_000,
+  PAR_PER_ENEMY_MS: 4_000,
+  MULT_MAX: 1.5,
+  MULT_MIN: 0.8,
+} as const;
+
+/** One cleared level's split, recorded by the run clock (active play only). */
+export interface LevelSplit {
+  level: number; // 1-indexed
+  ms: number; // active-play ms spent on this level (retries included)
+  enemies: number; // enemy pieces on the board at level start
+  moves: number; // Rookie moves used on the clearing attempt
+  captures: PieceType[]; // pieces captured on the clearing attempt
+}
+
+export function parMsFor(enemies: number): number {
+  return TIMED_SCORE.PAR_BASE_MS + TIMED_SCORE.PAR_PER_ENEMY_MS * enemies;
+}
+
+/**
+ * Speed multiplier for one level: 1.0 at par, up to 1.5 when twice as fast,
+ * floored at 0.8 for slow clears. Linear in par/elapsed so small speedups
+ * always pay a little.
+ */
+export function speedMultFor(ms: number, parMs: number): number {
+  if (ms <= 0) return TIMED_SCORE.MULT_MAX;
+  const raw = 0.5 + 0.5 * (parMs / ms);
+  return Math.min(TIMED_SCORE.MULT_MAX, Math.max(TIMED_SCORE.MULT_MIN, raw));
+}
+
+/** Base points a level is worth before the speed multiplier. */
+export function levelPointsFor(split: Pick<LevelSplit, 'captures'>): number {
+  return (
+    SCORE.LEVEL_BONUS +
+    split.captures.reduce((sum, t) => sum + (PIECE_VALUES[t] ?? 0), 0)
+  );
+}
+
+export interface TimedScoreLevel {
+  level: number;
+  ms: number;
+  parMs: number;
+  mult: number;
+  points: number; // rounded levelPoints × mult
+}
+
+export function computeTimedScore(splits: LevelSplit[]): {
+  total: number;
+  perLevel: TimedScoreLevel[];
+} {
+  const perLevel = splits.map((s) => {
+    const parMs = parMsFor(s.enemies);
+    const mult = speedMultFor(s.ms, parMs);
+    return {
+      level: s.level,
+      ms: s.ms,
+      parMs,
+      mult,
+      points: Math.round(levelPointsFor(s) * mult),
+    };
+  });
+  return { total: perLevel.reduce((sum, l) => sum + l.points, 0), perLevel };
+}
+
 export function computeScore(input: ScoreInput): ScoreBreakdown {
   const base = SCORE.BASE;
   const movePenalty = -SCORE.MOVE_PENALTY * input.moves;

@@ -18,6 +18,12 @@ interface RunSummaryModalProps {
   onNextRun?: () => void;
   /** Difficulty mode name (e.g. "Hard") — shown as a small chip under the title. */
   difficultyLabel?: string;
+  /** Classic score (lib/run/scoring computeScore). */
+  score?: number;
+  /** Time-based score — TESTING; shown clearly labeled, never submitted. */
+  timedScore?: number;
+  /** Total active-play ms for the run (the header clock's final reading). */
+  timeMs?: number;
 }
 
 export function RunSummaryModal({
@@ -31,6 +37,9 @@ export function RunSummaryModal({
   nextRunName,
   onNextRun,
   difficultyLabel,
+  score,
+  timedScore,
+  timeMs,
 }: RunSummaryModalProps) {
   const [shareCopied, setShareCopied] = useState(false);
 
@@ -117,6 +126,33 @@ export function RunSummaryModal({
             <span className="rounded-full bg-chess-text/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
               {difficultyLabel}
             </span>
+          </div>
+        )}
+
+        {(score !== undefined || timedScore !== undefined) && (
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-chess-page px-3 py-2.5">
+              <div className="text-2xl font-black text-chess-text tabular-nums leading-none">
+                {score ?? 0}
+              </div>
+              <div className="mt-1 text-[10px] uppercase tracking-wide text-chess-text-faint">
+                Score
+              </div>
+            </div>
+            <div className="rounded-xl bg-chess-page px-3 py-2.5">
+              <div className="text-2xl font-black text-indigo-500 tabular-nums leading-none">
+                {timedScore ?? 0}
+              </div>
+              <div className="mt-1 text-[10px] uppercase tracking-wide text-chess-text-faint">
+                Timed score (testing)
+                {timeMs !== undefined && (
+                  <span className="ml-1 normal-case tracking-normal tabular-nums">
+                    · {Math.floor(timeMs / 60000)}:
+                    {String(Math.floor(timeMs / 1000) % 60).padStart(2, '0')}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         )}
 

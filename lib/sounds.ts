@@ -307,6 +307,25 @@ export async function playCaptureSound(): Promise<void> {
 }
 
 /**
+ * Ally/summon captured — the same capture hit, pitched DOWN so it reads as a
+ * loss (ours went down), not a win. No new asset; playbackRate does the work.
+ */
+export async function playAllyCaptureSound(): Promise<void> {
+  const ctx = await ensureAudioReady();
+  if (!ctx) return;
+  if (!buffersLoaded) await preloadSounds();
+  if (!captureBuffer) return;
+  const source = ctx.createBufferSource();
+  source.buffer = captureBuffer;
+  source.playbackRate.value = 0.68;
+  const gain = ctx.createGain();
+  gain.gain.value = 0.9;
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start();
+}
+
+/**
  * "Poof" — Rookie turning BACK into a rook after a knight / queen / king
  * form expires (Tyler's ElevenLabs SFX, 2026-08-27). Not for the
  * transform-INTO; that's a separate cue.

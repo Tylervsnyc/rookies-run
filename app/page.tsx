@@ -30,9 +30,10 @@ import { useProgress } from '@/hooks/useProgress';
 import { readProfile, recordBest, recordLadderResult, setDifficulty as persistDifficulty } from '@/lib/run/profile';
 import { isLadderRunId } from '@/lib/run/ladder';
 import { DIFFICULTIES, isDifficultyId, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
-import { tempoMaxFor } from '@/lib/run/scoring';
+import { computeScore, computeTimedScore, tempoMaxFor, type LevelSplit } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
+  playAllyCaptureSound,
   playCaptureSound,
   playCardDrawSound,
   playCardPlaySound,
@@ -388,6 +389,53 @@ export default function RookiesRunPage() {
     const t = setTimeout(() => setSacrificeFx(null), 700);
     return () => clearTimeout(t);
   }, [state]);
+  // Summon-gone poof VFX + ally-capture sfx — detected by state diffing (an
+  // ally id present last tick, gone this tick, same level). A summon whose
+  // turnsLeft stood at 1 expired (grey smoke + soft poof); anything else was
+  // captured (red-tinged smoke + a pitched-down capture hit + haptic).
+  // Sacrifice detonations are excluded — SacrificeBlastLayer owns that beat.
+  const [allyPoofFx, setAllyPoofFx] = useState<
+    { poofs: { square: string; kind: 'expire' | 'captured' }[]; id: number } | null
+  >(null);
+  const allyPoofPrevRef = useRef<BoardState | null>(null);
+  useEffect(() => {
+    const prev = allyPoofPrevRef.current;
+    allyPoofPrevRef.current = state;
+    if (!prev || prev.level !== state.level) return;
+    // A retry rebuilds this same level from scratch — that's not a capture.
+    if (prev.status !== 'playing' || state.moveCount < prev.moveCount) return;
+    const prevSac = prev.abilities.find((a) => a.id === 'sacrifice')?.usesLeftThisLevel;
+    const nextSac = state.abilities.find((a) => a.id === 'sacrifice')?.usesLeftThisLevel;
+    const sacrificeFired = prevSac != null && nextSac != null && nextSac < prevSac;
+    if (sacrificeFired) return;
+    const gone = prev.allies.filter((a) => !state.allies.some((b) => b.id === a.id));
+    if (gone.length === 0) return;
+    const poofs = gone.map((a) => ({
+      square: toSquare({ file: a.file, rank: a.rank }),
+      kind: (a.turnsLeft === 1 ? 'expire' : 'captured') as 'expire' | 'captured',
+    }));
+    setAllyPoofFx({ poofs, id: Date.now() });
+    if (poofs.some((p) => p.kind === 'captured')) {
+      void playAllyCaptureSound();
+      haptic('medium');
+    } else {
+      void playTransformBackSound(); // the existing soft "poof" cue
+    }
+    const t = setTimeout(() => setAllyPoofFx(null), 800);
+    return () => clearTimeout(t);
+  }, [state]);
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Run clock (TESTING, 2026-09-02) — active play time only. The interval
+  // effect lives further down (after every modal flag it pauses on exists);
+  // these refs are declared early because level-transition callbacks use them.
+  // ───────────────────────────────────────────────────────────────────────────
+  const activeMsRef = useRef(0);
+  const levelStartMsRef = useRef(0);
+  const levelStartEnemiesRef = useRef(initial.state.pieces.length);
+  const splitsRef = useRef<LevelSplit[]>([]);
+  const [clockSec, setClockSec] = useState(0);
+
   // Warm ability art at run start so the offer modal never shows blank cards.
   useEffect(() => {
     preloadAbilityArt(Object.keys(ABILITY_DEFS) as (keyof typeof ABILITY_DEFS)[]);
@@ -812,6 +860,19 @@ export default function RookiesRunPage() {
   useEffect(() => {
     if (state.status !== 'won' || showLevelCleared || runComplete) return;
 
+    // Per-level split for the timed score (testing) — active-play ms spent on
+    // this level, retries included.
+    splitsRef.current = [
+      ...splitsRef.current.filter((s) => s.level !== levelIndex + 1),
+      {
+        level: levelIndex + 1,
+        ms: Math.max(0, activeMsRef.current - levelStartMsRef.current),
+        enemies: levelStartEnemiesRef.current,
+        moves: state.moveCount,
+        captures: [...state.captures],
+      },
+    ];
+
     setLevelsCleared((n) => n + 1);
 
     trackEvent('run_level_cleared', {
@@ -1162,6 +1223,8 @@ export default function RookiesRunPage() {
       difficulty: state.difficulty,
     });
     levelStartAbilitiesRef.current = nextState.abilities;
+    levelStartMsRef.current = activeMsRef.current;
+    levelStartEnemiesRef.current = nextState.pieces.length;
     setState(nextState);
     setSelectedSquare(null);
     setShowLevelCleared(false);
@@ -1172,6 +1235,11 @@ export default function RookiesRunPage() {
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
     levelStartAbilitiesRef.current = fresh.state.abilities;
+    activeMsRef.current = 0;
+    levelStartMsRef.current = 0;
+    levelStartEnemiesRef.current = fresh.state.pieces.length;
+    splitsRef.current = [];
+    setClockSec(0);
     setState(fresh.state);
     setSelectedSquare(null);
     setLevelsCleared(0);
@@ -1263,6 +1331,39 @@ export default function RookiesRunPage() {
 
   const [showRunPicker, setShowRunPicker] = useState(false);
 
+  // Run clock tick — accumulates ACTIVE play time only. Pauses while any
+  // modal / offer / celebration is up, on menus and landings, whenever the
+  // board isn't in live play, and while the tab is hidden. Ships to everyone
+  // as a small header clock; the derived timed score stays labeled testing.
+  const timerPaused =
+    state.status !== 'playing' ||
+    !!state.pendingOffer ||
+    showIntro ||
+    showOnboarding ||
+    showLevelCleared ||
+    runComplete ||
+    showTempoHelp ||
+    showRunPicker ||
+    showTrophies ||
+    progress.queue.unlocks.length > 0;
+  useEffect(() => {
+    if (timerPaused) return;
+    let last = Date.now();
+    const tick = () => {
+      const now = Date.now();
+      if (typeof document === 'undefined' || !document.hidden) {
+        activeMsRef.current += now - last;
+      }
+      last = now;
+      setClockSec(Math.floor(activeMsRef.current / 1000));
+    };
+    const iv = setInterval(tick, 250);
+    return () => {
+      tick();
+      clearInterval(iv);
+    };
+  }, [timerPaused]);
+
   const switchRun = useCallback(
     (runId: string) => {
       if (runId === meta.runId) {
@@ -1344,6 +1445,13 @@ export default function RookiesRunPage() {
       levelReached,
       totalLevels,
       completed: runComplete,
+      timeMs: Math.round(activeMsRef.current),
+      splits: splitsRef.current.map((s) => ({
+        level: s.level,
+        ms: Math.round(s.ms),
+        enemies: s.enemies,
+        moves: s.moves,
+      })),
     });
     // The Ladder: a run launched from a rung files its result (win OR loss)
     // so the next rung can unlock and the rung row can show a best score.
@@ -1372,6 +1480,25 @@ export default function RookiesRunPage() {
   }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
+
+  // Both scores for the summary screen. "Score" = the classic formula
+  // (lib/run/scoring computeScore); "Timed score" = the TESTING per-level
+  // par-time formula. Neither touches leaderboard submission.
+  const runFinished = runComplete || (state.status === 'lost' && deathSettled);
+  const scorePair = useMemo(() => {
+    if (!runFinished) return null;
+    const splits = splitsRef.current;
+    const classic = computeScore({
+      moves: splits.reduce((n, s) => n + s.moves, 0),
+      captures: splits.flatMap((s) => s.captures),
+      elapsedMs: activeMsRef.current,
+      levelsCleared: splits.length,
+      tempoRemaining: state.tempo,
+    }).total;
+    const timed = computeTimedScore(splits).total;
+    return { classic, timed };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runFinished, state.tempo]);
 
   const shareString = buildShareString({
     iso: meta.iso,
@@ -1504,6 +1631,16 @@ export default function RookiesRunPage() {
             </div>
             </div>
             <div className="flex items-center gap-1.5">
+            {/* Run clock — active play time only (pauses on modals/offers). */}
+            <div
+              className="bg-chess-surface rounded-lg px-2 py-1 shadow-sm inline-flex items-center leading-none"
+              data-testid="run-clock"
+              title="Play time"
+            >
+              <span className="text-[10px] font-black tabular-nums text-chess-text-muted">
+                {Math.floor(clockSec / 60)}:{String(clockSec % 60).padStart(2, '0')}
+              </span>
+            </div>
             {!isStc && (
               <div
                 className="bg-chess-surface rounded-lg px-2 py-1 shadow-sm inline-flex items-center leading-none"
@@ -1588,6 +1725,7 @@ export default function RookiesRunPage() {
             abilityTier={activeAbilityTier}
             convertTargets={convertTargets}
             sacrificeFx={sacrificeFx}
+            allyPoofFx={allyPoofFx}
             onSquareClick={onSquareClick}
             onPieceDrop={onPieceDrop}
             vanillaPieces={isStc}
@@ -1720,6 +1858,9 @@ export default function RookiesRunPage() {
           completed={runComplete}
           stats={stats}
           shareString={shareString}
+          score={scorePair?.classic}
+          timedScore={scorePair?.timed}
+          timeMs={Math.round(activeMsRef.current)}
           onReplay={resetRun}
           nextRunName={nextRunId !== meta.runId ? getRunById(nextRunId).name : undefined}
           onNextRun={nextRunId !== meta.runId ? goToNextRun : undefined}

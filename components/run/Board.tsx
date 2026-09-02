@@ -53,6 +53,9 @@ interface BoardProps {
   /** Transient Sacrifice detonation VFX — burst on the summon square plus a
    *  hit flash on every square the blast captured. */
   sacrificeFx?: { summonSq: string; capturedSqs: string[]; id: number } | null;
+  /** Transient summon-gone VFX — a quick smoke poof on each square where an
+   *  ally/summon expired (grey) or was captured (grey with a red tinge). */
+  allyPoofFx?: { poofs: { square: string; kind: 'expire' | 'captured' }[]; id: number } | null;
   onSquareClick: (square: string) => void;
   /** Called when Rookie is dragged onto a square. Return true to accept the
    *  move, false to snap her back. */
@@ -157,6 +160,7 @@ export function RunBoard({
   abilityTier,
   convertTargets,
   sacrificeFx = null,
+  allyPoofFx = null,
   onSquareClick,
   onPieceDrop,
   vanillaPieces = false,
@@ -1049,6 +1053,7 @@ export function RunBoard({
         )}
         {allyTargets.length > 0 && <ConvertTargetsOverlay targets={allyTargets} />}
         {sacrificeFx && <SacrificeBlastLayer fx={sacrificeFx} />}
+        {allyPoofFx && <SummonPoofLayer fx={allyPoofFx} />}
         {abilityFx?.kind === 'convert' && (
           <ConvertFlashOverlay sq={abilityFx.to} id={abilityFx.id} />
         )}
@@ -1894,12 +1899,71 @@ const ALLY_BLOCK: Record<AllyPieceType, 'P' | 'N' | 'B' | 'R' | 'Q' | 'K'> = {
   king: 'K',
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SummonPoofLayer — a summon left the board: grey smoke puffs bloom out of its
+// last square (~600ms). Expiry = plain grey; captured = grey with a red tinge.
+// Fired by app-side state diffing (ally id gone between ticks), same pattern
+// as SacrificeBlastLayer.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SummonPoofLayer({
+  fx,
+}: {
+  fx: { poofs: { square: string; kind: 'expire' | 'captured' }[]; id: number };
+}) {
+  const k = Math.floor(fx.id);
+  return (
+    <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 5 }}>
+      <style>{`
+        @keyframes rrSummonPoof-${k} {
+          0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.95; }
+          100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+        }
+      `}</style>
+      {fx.poofs.map((p) => {
+        const c = fromSquare(p.square);
+        const cx = (c.file - 1) * 12.5 + 6.25;
+        const cy = (8 - c.rank) * 12.5 + 6.25;
+        const puff =
+          p.kind === 'captured'
+            ? 'radial-gradient(circle, rgba(226,232,240,0.95) 0%, rgba(190,140,140,0.7) 45%, transparent 75%)'
+            : 'radial-gradient(circle, rgba(226,232,240,0.95) 0%, rgba(148,163,184,0.7) 45%, transparent 75%)';
+        return [0, 90, 180].map((delay, i) => (
+          <div
+            key={`${p.square}-${i}`}
+            style={{
+              position: 'absolute',
+              left: `${cx + (i - 1) * 2}%`,
+              top: `${cy - i * 1.5}%`,
+              width: '11%',
+              height: '11%',
+              borderRadius: '50%',
+              background: puff,
+              animation: `rrSummonPoof-${k} 600ms ease-out ${delay}ms forwards`,
+              opacity: 0,
+            }}
+          />
+        ));
+      })}
+    </div>
+  );
+}
+
 function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
+  const anyLastTurn = allies.some((a) => a.turnsLeft === 1);
   return (
     <div
       aria-hidden
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}
     >
+      {anyLastTurn && (
+        <style>{`
+          @keyframes rrSummonLastTurn {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.25); }
+          }
+        `}</style>
+      )}
       {allies.map((a) => (
         // Every ally is a RAINBOW piece — the same PieceBlocks block-art
         // treatment the Squire launched with (and Rookie's own palette).
@@ -1929,6 +1993,40 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
           >
             <PieceBlocks piece={ALLY_BLOCK[a.type]} blockSize={3} animate />
           </div>
+          {/* Turn countdown for timed summons (Duchess & friends) — small
+              gold circle top-right; goes red + pulses on the last turn. */}
+          {a.turnsLeft !== undefined && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '-8%',
+                right: '-8%',
+                width: '40%',
+                height: '40%',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 'clamp(8px, 2.4cqw, 13px)',
+                fontWeight: 900,
+                lineHeight: 1,
+                color: a.turnsLeft <= 1 ? '#fff' : '#5b3a00',
+                background:
+                  a.turnsLeft <= 1
+                    ? 'radial-gradient(circle at 35% 30%, #f87171 0%, #dc2626 70%)'
+                    : 'radial-gradient(circle at 35% 30%, #fde68a 0%, #f0b429 70%)',
+                border: `1.5px solid ${a.turnsLeft <= 1 ? '#7f1d1d' : '#a16207'}`,
+                boxShadow:
+                  a.turnsLeft <= 1
+                    ? '0 0 8px rgba(220,38,38,0.85)'
+                    : '0 1px 3px rgba(0,0,0,0.35)',
+                animation: a.turnsLeft <= 1 ? 'rrSummonLastTurn 0.9s ease-in-out infinite' : undefined,
+                zIndex: 2,
+              }}
+            >
+              {a.turnsLeft}
+            </div>
+          )}
         </div>
       ))}
     </div>
