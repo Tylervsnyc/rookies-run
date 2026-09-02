@@ -60,7 +60,7 @@ export function AbilityRack({
             ? 'Fill tempo to claim a power'
             : abilities.length >= MAX_OWNED_ABILITIES
               ? 'Rack full — fill tempo to upgrade'
-              : `${abilities.length}/${MAX_OWNED_ABILITIES} powers · refills each level`}
+              : `${abilities.length}/${MAX_OWNED_ABILITIES} powers · finishers are one charge per run`}
         </div>
       </div>
     </>
