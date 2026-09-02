@@ -117,7 +117,6 @@ const DRAGON_ART: readonly string[] = [
   '...XXXXXX.........',
 ];
 
-const DRAGON_MASK: Mask = DRAGON_ART.map((row) => row.split('').map((c) => c === 'X'));
 
 // ALTERNATE dragon masks (Tyler review, /test/pawn-blocks). All 18x18.
 // Goal: silhouettes that CANNOT read as a chicken at blockSize 3.
@@ -222,6 +221,9 @@ const MASK_CACHE = new Map<string, Mask>();
 // The pawn and dragon never rasterize — their masks are authored above.
 MASK_CACHE.set('P', PAWN_MASK);
 MASK_CACHE.set('D', DRAGON_MASK);
+// Tyler picked option B (bat-wing) 2026-09-02 — 'D' renders the B silhouette;
+// DRAGON_ART (the original) stays only as the 'Current' reference on /test/pawn-blocks.
+const DRAGON_MASK: Mask = DRAGON_ART_B.map((row) => row.split('').map((c) => c === 'X'));
 MASK_CACHE.set('DA', toMask(DRAGON_ART_A));
 MASK_CACHE.set('DB', toMask(DRAGON_ART_B));
 MASK_CACHE.set('DC', toMask(DRAGON_ART_C));
