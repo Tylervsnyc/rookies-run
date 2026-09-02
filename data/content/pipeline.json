@@ -519,7 +519,7 @@
       "id": "knighting",
       "kind": "ability",
       "name": "Knighting",
-      "stage": "testing",
+      "stage": "retired",
       "created": "2026-09-01",
       "notes": "Summon support: promote one of your summons a step up the ladder (pawn-knight-bishop-rook-queen). Per-level uses.",
       "testing": {
@@ -527,6 +527,10 @@
         "verdict": "HOLD",
         "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, C on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "retired": {
+        "at": "2026-09-02",
+        "why": "Tyler playtest 2026-09-02: 'i don't think knighting will work'."
       }
     },
     {
