@@ -7,7 +7,9 @@
  * grinding tempo in a real run.
  */
 
+import { useEffect, useState } from 'react';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
+import { LevelClearedModal } from '@/components/run/LevelClearedModal';
 import { blurbDetailForTier, type AbilityOffer } from '@/lib/run/abilities';
 
 const OFFER: AbilityOffer = [
@@ -32,6 +34,23 @@ const OFFER: AbilityOffer = [
 ];
 
 export default function TestOfferPage() {
+  const [intro, setIntro] = useState(false);
+  useEffect(() => {
+    setIntro(new URLSearchParams(window.location.search).has('intro'));
+  }, []);
+  if (intro) {
+    return (
+      <div className="h-full overflow-auto bg-chess-page">
+        <LevelClearedModal
+          level={6}
+          totalLevels={10}
+          tempo={7}
+          runName="Iron Veil"
+          onNext={() => window.location.reload()}
+        />
+      </div>
+    );
+  }
   return (
     <div className="h-full overflow-auto bg-chess-page">
       <AbilityOfferModal

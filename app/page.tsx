@@ -1833,6 +1833,7 @@ export default function RookiesRunPage() {
           level={levelIndex + 1}
           totalLevels={totalLevels}
           tempo={state.tempo}
+          runName={runDef.name}
           onNext={goToNextLevel}
         />
       )}

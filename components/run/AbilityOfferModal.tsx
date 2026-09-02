@@ -53,7 +53,7 @@ const PLAIN: Partial<Record<AbilityId, string>> = {
   convert: 'Flip an enemy onto your side.',
 };
 
-/** Per-power accent so the three cards read as three different things. */
+/** Per-power accent — colors the NEW chip so three cards read as three things. */
 const ACCENT: Partial<Record<AbilityId, string>> = {
   'knight-hop': '#e89c1a',
   surge: '#e0484c',
@@ -61,11 +61,11 @@ const ACCENT: Partial<Record<AbilityId, string>> = {
 };
 const DEFAULT_ACCENT = '#2A3C45';
 
-/** Golden frame — same gradient recipe as the tier-4 card in AbilityCard.tsx. */
+/** Thin golden card ring — same gradient recipe as the tier-4 card. */
 const GOLD_FRAME =
   'linear-gradient(135deg, #b8852b, #6a4612 30%, #ffd87a 60%, #b8852b)';
-const GOLD_HALO = '0 0 18px rgba(255, 191, 36, 0.55)';
-/** Chip gradient for the UPGRADE / NEW banners. */
+const GOLD_HALO = '0 0 14px rgba(255, 191, 36, 0.45)';
+/** Ribbon gradient for the UPGRADE banner. */
 const GOLD_CHIP = 'linear-gradient(180deg, #f2ce7a, #d3a238)';
 
 function plainText(option: AbilityOfferOption): string {
@@ -115,178 +115,137 @@ export function AbilityOfferModal({
         }
       `}</style>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#12222b]/80 backdrop-blur-sm px-3 py-4">
-        {/* Painted gold frame (public/ui/offer-frame.webp, prepped from
-            concepts/offer-frame-thin-1.png — slender double rail, ruby crest).
-            The box is letterboxed to the frame's own aspect so the painting
-            never distorts; content sits inside the frame's window (insets
-            measured from the pixels: L 9.5% / R 9.5% / T 6.3% rail with the
-            crest dipping to 7.4% at center / B 4.4%, padded a touch inward). */}
+        {/* Compact art-forward slate — the illustrations ARE the cards.
+            No painted frame; a whisper of parchment as the backdrop panel. */}
         <div
-          className="offer-frame-enter relative"
+          className="offer-frame-enter relative w-full overflow-hidden rounded-2xl p-3 sm:p-4"
           style={{
-            width: 'min(398px, 94vw, calc((100dvh - 2rem) * 0.5843))',
-            aspectRatio: '783 / 1340',
-            filter: 'drop-shadow(0 0 16px rgba(255, 191, 36, 0.45)) drop-shadow(0 16px 32px rgba(0,0,0,0.45))',
+            maxWidth: 'min(640px, 94vw)',
+            background: 'linear-gradient(180deg, #faf4e4, #f0e5cc)',
+            boxShadow:
+              '0 0 0 1.5px rgba(184,133,43,0.5), 0 0 20px rgba(255,191,36,0.25), 0 18px 40px rgba(0,0,0,0.45)',
           }}
         >
-          {/* Parchment fill inside the window (bleeds 1% under the gold so
-              no gap ever shows) — keeps the delta text legible. */}
-          <div
-            aria-hidden
-            className="absolute rounded-[10px]"
-            style={{
-              left: '8.5%',
-              right: '8.5%',
-              top: '5.3%',
-              bottom: '3.4%',
-              background: 'linear-gradient(180deg, #faf4e4, #f3e9d2)',
-            }}
-          />
+          <div className="text-center mb-2 sm:mb-3 px-0.5">
+            <h2 className="text-[13px] sm:text-[15px] font-black text-chess-text leading-tight">
+              {title ?? (isLevel ? 'One rook can’t do this alone. Take something.' : 'Tempo full. Upgrade Rookie.')}
+            </h2>
+            <p className="text-[10px] sm:text-[11px] font-bold text-chess-text-muted mt-0.5">
+              {subtitle ?? 'Tap a power to keep it.'}
+            </p>
+          </div>
 
-          {/* Content — lives inside the frame's window. */}
-          <div
-            className="absolute z-10 flex flex-col overflow-y-auto overflow-x-hidden"
-            style={{ left: '10%', right: '10%', top: '8.6%', bottom: '5.2%' }}
-          >
-            {/* my-auto centers the slate in the tall thin-frame window;
-                collapses to 0 when the content overflows so scroll still works. */}
-            <div className="my-auto flex flex-col gap-2">
-            <div className="text-center px-0.5">
-              <h2 className="text-[15px] font-black text-chess-text leading-tight">
-                {title ?? (isLevel ? 'One rook can’t do this alone. Take something.' : 'Tempo full. Upgrade Rookie.')}
-              </h2>
-              <p className="text-[10.5px] font-bold text-chess-text-muted mt-0.5">
-                {subtitle ?? 'Tap a power to keep it.'}
-              </p>
-            </div>
+          <div className={`grid ${cols} gap-2 sm:gap-3 items-stretch`}>
+            {offer.map((option, idx) => {
+              const def = ABILITY_DEFS[option.id];
+              const accent = ACCENT[option.id] ?? DEFAULT_ACCENT;
+              const upgrade = option.kind !== 'new';
+              const locked = selectableIds !== undefined && !selectableIds.includes(option.id);
+              const pointed = pointAtId === option.id;
+              const deltas = upgrade ? upgradeDeltaForTier(option.id, option.tier) : [];
+              return (
+                <button
+                  key={`${option.id}-${option.tier}-${idx}`}
+                  type="button"
+                  disabled={locked}
+                  aria-disabled={locked}
+                  onClick={() => {
+                    if (!locked) onPick(option);
+                  }}
+                  className={`offer-card-enter relative rounded-xl p-[2px] text-left transition-transform ${
+                    locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
+                  }`}
+                  style={{
+                    animationDelay: `${idx * 80}ms`,
+                    background: locked ? '#9aa6ad' : GOLD_FRAME,
+                    boxShadow: locked ? 'none' : `${GOLD_HALO}, 0 8px 16px rgba(18,34,43,0.25)`,
+                  }}
+                >
+                  {pointed && (
+                    <PointerArrow style={{ position: 'absolute', left: '50%', top: -34 }} />
+                  )}
+                  {/* Full-bleed art with a bottom gradient band — the classic
+                      card-game look. The illustration fills the whole card. */}
+                  <div className="relative w-full aspect-[3/4] rounded-[10px] overflow-hidden bg-[#1a2b33]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/abilities/${artFile(option.id)}`}
+                      alt=""
+                      draggable={false}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
 
-            <div className={`grid ${cols} gap-1.5 items-stretch`}>
-              {offer.map((option, idx) => {
-                const def = ABILITY_DEFS[option.id];
-                const accent = ACCENT[option.id] ?? DEFAULT_ACCENT;
-                const upgrade = option.kind !== 'new';
-                const locked = selectableIds !== undefined && !selectableIds.includes(option.id);
-                const pointed = pointAtId === option.id;
-                const deltas = upgrade ? upgradeDeltaForTier(option.id, option.tier) : [];
-                return (
-                  <button
-                    key={`${option.id}-${option.tier}-${idx}`}
-                    type="button"
-                    disabled={locked}
-                    aria-disabled={locked}
-                    onClick={() => {
-                      if (!locked) onPick(option);
-                    }}
-                    className={`offer-card-enter relative flex min-h-[44px] rounded-2xl p-[3px] text-left transition-transform ${
-                      locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
-                    }`}
-                    style={{
-                      animationDelay: `${idx * 80}ms`,
-                      background: locked ? '#9aa6ad' : GOLD_FRAME,
-                      boxShadow: locked ? 'none' : `${GOLD_HALO}, 0 8px 16px rgba(18,34,43,0.18)`,
-                    }}
-                  >
-                    {pointed && (
-                      <PointerArrow style={{ position: 'absolute', left: '50%', top: -34 }} />
-                    )}
-                    {/* Inner cardface — per-power accent lives inside the gold frame */}
-                    <div
-                      className="relative flex flex-col flex-1 rounded-[13px] overflow-hidden bg-chess-page"
-                      style={{ boxShadow: `inset 0 -3px 0 ${accent}` }}
-                    >
-                      {/* Art window */}
+                    {/* UPGRADE ribbon across the top of the art. */}
+                    {upgrade && (
                       <div
-                        className="relative w-full aspect-square"
-                        style={{
-                          background: `radial-gradient(ellipse at 50% 35%, ${accent}33 0%, ${accent}0d 70%)`,
-                        }}
+                        className="absolute top-0 inset-x-0 text-center text-[8.5px] sm:text-[10px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
+                        style={{ background: GOLD_CHIP, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`/abilities/${artFile(option.id)}`}
-                          alt=""
-                          draggable={false}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
+                        Upgrade · Tier {option.tier}
                       </div>
+                    )}
+                    {/* NEW chip on a mixed slate so the two modes read. */}
+                    {!upgrade && mixed && (
+                      <div
+                        className="absolute top-1.5 left-1.5 rounded px-1.5 py-[2px] text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-[0.1em] text-white"
+                        style={{ background: accent, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
+                      >
+                        New
+                      </div>
+                    )}
 
-                      {/* Mode banner beneath the art — UPGRADE · TIER N, or NEW
-                          on a mixed slate so the two modes read at a glance. */}
+                    {/* Bottom band: name + one line, over the art. */}
+                    <div
+                      className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 px-1.5 sm:px-2.5 pb-1.5 sm:pb-2.5 pt-6"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, rgba(10,18,23,0) 0%, rgba(10,18,23,0.72) 38%, rgba(10,18,23,0.92) 100%)',
+                      }}
+                    >
+                      <div
+                        className="text-[10.5px] sm:text-[13px] font-black leading-tight uppercase tracking-[0.05em] text-white"
+                        style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
+                      >
+                        {def.name}
+                      </div>
                       {upgrade ? (
-                        <div
-                          className="text-center text-[9px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
-                          style={{ background: GOLD_CHIP }}
-                        >
-                          Upgrade · Tier {option.tier}
-                        </div>
-                      ) : mixed ? (
-                        <div
-                          className="text-center text-[9px] font-black uppercase tracking-[0.1em] py-[3px] text-white"
-                          style={{ background: accent }}
-                        >
-                          New
-                        </div>
-                      ) : null}
-
-                      {/* Name + copy. NEW = what it does. UPGRADE = what the
-                          upgrade CHANGES vs the tier you own (the delta),
-                          with the full description smaller below. */}
-                      <div className="flex flex-col gap-1 px-1.5 pt-1.5 pb-2.5 flex-1">
-                        <div
-                          className="text-[12px] font-black leading-tight uppercase tracking-[0.04em]"
-                          style={{ color: accent }}
-                        >
-                          {def.name}
-                        </div>
-                        {upgrade ? (
-                          <>
-                            {deltas.map((line) => (
-                              <p
-                                key={line}
-                                className="text-[11.5px] font-black leading-snug text-chess-text"
-                              >
-                                {line}
-                              </p>
-                            ))}
-                            <p className="text-[9.5px] font-semibold leading-snug text-chess-text-muted mt-auto pt-1">
-                              {option.description.what}
-                            </p>
-                          </>
-                        ) : (
-                          <p className="text-[11px] font-semibold leading-snug text-chess-text">
-                            {plainText(option)}
+                        deltas.map((line) => (
+                          <p
+                            key={line}
+                            className="text-[9.5px] sm:text-[11.5px] font-black leading-snug text-amber-200"
+                            style={{ textShadow: '0 1px 2px rgba(0,0,0,0.7)' }}
+                          >
+                            {line}
                           </p>
-                        )}
-                      </div>
+                        ))
+                      ) : (
+                        <p
+                          className="text-[9px] sm:text-[10.5px] font-semibold leading-snug text-white/85"
+                          style={{ textShadow: '0 1px 2px rgba(0,0,0,0.7)' }}
+                        >
+                          {plainText(option)}
+                        </p>
+                      )}
                     </div>
-                  </button>
-                );
-              })}
-            </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-            {!isLevel && (
+          {!isLevel && (
+            <div className="flex justify-center mt-1 sm:mt-2">
               <button
                 type="button"
                 onClick={onSkip}
-                className="self-center min-h-[44px] px-3 text-xs font-bold text-chess-text-muted underline underline-offset-2 active:opacity-60"
+                className="min-h-[44px] px-3 text-xs font-bold text-chess-text-muted underline underline-offset-2 active:opacity-60"
               >
                 Skip (½ tempo back)
               </button>
-            )}
             </div>
-          </div>
+          )}
 
-          {/* The painting itself — above the content, clicks pass through. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/ui/offer-frame.webp"
-            alt=""
-            draggable={false}
-            className="pointer-events-none select-none absolute inset-0 z-20 w-full h-full"
-            style={{ objectFit: 'fill' }}
-          />
-
-          {/* One-shot gold glint sweeping across the frame on entrance. */}
+          {/* One-shot gold glint sweeping across on entrance. */}
           <div
             aria-hidden
             className="offer-glow-sweep pointer-events-none absolute inset-y-0 left-0 z-30 w-1/2"

@@ -72,10 +72,6 @@ export function preloadAbilityArt(ids: readonly AbilityId[]): void {
       img.decoding = 'async';
       img.src = `/abilities/${artFile(id)}`;
     }
-    // The offer modal's painted frame — warm it too so it never pops in late.
-    const frame = new Image();
-    frame.decoding = 'async';
-    frame.src = '/ui/offer-frame.webp';
   };
   if ('requestIdleCallback' in window) {
     (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(run);

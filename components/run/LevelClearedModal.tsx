@@ -5,14 +5,40 @@ interface LevelClearedModalProps {
   totalLevels: number;
   tempo: number;
   onNext: () => void;
+  /** Run name shown as the kicker above the big level number. */
+  runName?: string;
+}
+
+/**
+ * Rookie's line for the level you're heading INTO (index 1..10). Short,
+ * over-invested, escalating — she's walking you toward him.
+ */
+const ROOKIE_LINES = [
+  'First door. Kick it in.',
+  'They noticed. Good.',
+  'Three deep. Nobody’s stopped us.',
+  'You’re scaring them. Keep going.',
+  'Halfway. He’s counting his guards.',
+  'The guards are getting nervous.',
+  'Deep territory. Stay sharp for me.',
+  'Almost. Don’t blink now.',
+  'One door left after this.',
+  'He knows you’re coming.',
+];
+
+function rookieLineFor(nextLevel: number): string {
+  const idx = Math.min(Math.max(nextLevel, 1), ROOKIE_LINES.length) - 1;
+  return ROOKIE_LINES[idx];
 }
 
 export function LevelClearedModal({
   level,
   totalLevels,
-  tempo,
+  tempo: _tempo,
   onNext,
+  runName,
 }: LevelClearedModalProps) {
+  const nextLevel = Math.min(level + 1, totalLevels);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 animate-[rookiesRunFadeIn_220ms_ease-out]">
       <style>{`
@@ -100,19 +126,37 @@ export function LevelClearedModal({
         ))}
 
         <div className="relative z-10">
-          <div className="text-xs uppercase tracking-widest text-chess-text-faint">
-            Level {level} of {totalLevels}
-          </div>
+          {runName && (
+            <div className="text-[11px] uppercase tracking-[0.25em] font-bold text-chess-text-faint">
+              {runName}
+            </div>
+          )}
           <h2
-            className="mt-1 text-4xl font-black text-chess-text"
+            className="mt-1 text-2xl font-black uppercase tracking-wide text-chess-text"
             style={{ animation: 'rookiesRunHeadingGlow 2s ease-in-out infinite' }}
           >
             Cleared!
           </h2>
-          <p className="mt-2 text-sm text-chess-text-muted">
-            {tempo > 0
-              ? `Carrying ${tempo} tempo into level ${level + 1}.`
-              : `Onward to level ${level + 1}.`}
+          <div className="mt-2 flex items-baseline justify-center gap-2">
+            <div
+              className="text-[64px] leading-none font-black uppercase tracking-tight"
+              style={{
+                background: 'linear-gradient(180deg, #E53935 20%, #B71C1C 90%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+                textShadow: 'none',
+                filter: 'drop-shadow(0 2px 0 rgba(183,28,28,0.25))',
+              }}
+            >
+              Level {nextLevel}
+            </div>
+            <div className="text-base font-black text-chess-text-faint">
+              of {totalLevels}
+            </div>
+          </div>
+          <p className="mt-3 text-[15px] font-bold text-chess-text">
+            {rookieLineFor(nextLevel)}
           </p>
 
           <div className="mt-5 flex justify-center">
