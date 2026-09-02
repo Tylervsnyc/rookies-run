@@ -12,7 +12,10 @@ name: Revenge nightly
 
 on:
   schedule:
-    - cron: '30 6 * * *'
+    # 04:30 UTC (= 12:30am ET). GitHub cron can fire hours late on busy
+    # shared runners (2026-09-02: the 06:30 fire came at 11:33), so start
+    # early enough that even a late, slow run lands before morning.
+    - cron: '30 4 * * *'
   workflow_dispatch:
     inputs:
       quick:
@@ -46,7 +49,12 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          FLAGS=""
+          # GitHub's hosted runners have ~4 cores vs the dev Mac's 10+, so run
+          # a reduced budget (~half trials) or the full harness takes 4-6h
+          # (2026-09-02: the first full-budget fire ran past 3h). Noise grows
+          # from about +/-10 to +/-14 points per cell — fine for a nightly
+          # trend read; verify borderline calls locally at full budget.
+          FLAGS="--trials=24 --mode-trials=10 --runs=24 --player-runs=24 --cand-trials=16 --cand-mode-trials=8 --cand-runs=12 --cand-player-runs=12 --exp-trials=24"
           if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick"; fi
           npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
 
