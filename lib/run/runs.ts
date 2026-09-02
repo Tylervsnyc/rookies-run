@@ -5859,7 +5859,50 @@ const RUN_REVENGE_10: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10];
+/**
+ * THE CRUCIBLE — a single proving level built from Tyler's three playtest
+ * sessions (2026-09-02). Every one of his notes is a rule here:
+ * no free chain-captures (both keys defended, one DOUBLE-defended like the
+ * Rampart L4 he praised), sightline hunters (Cold Court), two keys where
+ * the second is the whole point (Two Keys), a marcher clock, and a court
+ * with walls so the endgame is not a walk-in.
+ */
+const RUN_CRUCIBLE: RunDef = {
+  id: 'crucible',
+  name: 'The Crucible',
+  blurb: 'One level. Everything you taught her.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // King d7 in a walled court (b8/f8/b7/f7 walls). Key #1 pawn d5 on his
+    // file, DOUBLE-defended (pawn c6 + knight f4). Key #2 pawn g7 on his
+    // rank, defended by pawn h8. Sightlines: queen a4 rakes rank 4, bishop
+    // h3 rakes the f5/e6 approach. Marchers b3/g2 are the clock.
+    make(
+      1,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(8, 8),
+        queen(1, 4), bishop(8, 3), knight(6, 4),
+        pawn(2, 3), pawn(7, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 11,
+        hazards: [X(2, 8), X(6, 8), X(2, 7)], // f7 open — the rank line to the g7 key is the second door
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));

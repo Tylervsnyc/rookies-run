@@ -586,6 +586,14 @@
       "stage": "testing",
       "created": "2026-09-02",
       "notes": "Rung 10, top of the ladder, generated 2026-09-02 (mixed heaviest: swarm, royal-guard, corner-keep, double-key). Matrix-verified T5 realistic: none 100/100/100/100/54/40/38/21/25/21, finishers >= 88% (band 100/95/90/85/60/35/30/25/15/15 +/-15, finishers >= 65)."
+    },
+    {
+      "id": "crucible",
+      "kind": "run",
+      "name": "The Crucible",
+      "stage": "testing",
+      "created": "2026-09-02",
+      "notes": "Single proving level built from Tyler's 2026-09-02 playtest notes: double-defended key, second key on the rank, sightline hunters, marcher clock, walled court."
     }
   ]
 }
