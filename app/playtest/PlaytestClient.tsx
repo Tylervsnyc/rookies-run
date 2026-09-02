@@ -169,6 +169,9 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
           >
             Reset
           </button>
+          <a href="/playtest/art" className="text-xs font-bold text-chess-blue underline">
+            Art picks
+          </a>
         </header>
 
         {/* RUN PICKER */}
