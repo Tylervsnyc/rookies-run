@@ -5860,12 +5860,20 @@ const RUN_REVENGE_10: RunDef = {
 };
 
 /**
- * THE CRUCIBLE — a single proving level built from Tyler's three playtest
- * sessions (2026-09-02). Every one of his notes is a rule here:
- * no free chain-captures (both keys defended, one DOUBLE-defended like the
- * Rampart L4 he praised), sightline hunters (Cold Court), two keys where
- * the second is the whole point (Two Keys), a marcher clock, and a court
- * with walls so the endgame is not a walk-in.
+ * THE CRUCIBLE — the proving run. Ten levels, every one built from Tyler's
+ * 2026-09-02 playtest notes, escalating so the upgrade curve can be felt:
+ * no free chain-captures (every key defended; L1's single free door is the
+ * one allowed teaching beat), a DOUBLE-defended key from L4 on (pawn +
+ * knight, the Rampart L4 pattern he praised), sightline hunters raking the
+ * approaches from across the board (Cold Court), two keys where the second
+ * is the whole point (Two Keys), marcher clocks from L2 on, and walled courts
+ * so the endgame is never a walk-in. Identity = "two doors, watched":
+ * double-key + sightlines from level one — no other run opens this way.
+ * The original single proving level (8fa13f4) sits at L7, budget +2 for
+ * its slot. Tuned via scripts/run-playtest/revenge.ts (matrix, T5
+ * realistic, 96 trials) against band 100/100/100/95/85/60/50/45/35/30
+ * +/-15, finishers >= 80. Measured none-curve:
+ * 100/100/100/100/81/68/38/38/41/23; finishers >= 88 everywhere.
  */
 const RUN_CRUCIBLE: RunDef = {
   id: 'crucible',
@@ -5873,17 +5881,118 @@ const RUN_CRUCIBLE: RunDef = {
   blurb: 'One level. Everything you taught her.',
   allowedAbilities: REVENGE_ABILITIES,
   offerEveryLevel: true,
-  offerOnLevels: [1],
+  offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
   offerCore: REVENGE_CORE,
   offerCoreMin: 2,
   levels: [
-    // King d7 in a walled court (b8/f8/b7/f7 walls). Key #1 pawn d5 on his
-    // file, DOUBLE-defended (pawn c6 + knight f4). Key #2 pawn g7 on his
-    // rank, defended by pawn h8. Sightlines: queen a4 rakes rank 4, bishop
-    // h3 rakes the f5/e6 approach. Marchers b3/g2 are the clock.
+    // L1 — TWO DOORS. Still king d8 with a key on EACH line from move one:
+    // d6 on his file is the free door (the run's one undefended teaching key),
+    // g8 on his rank is WATCHED by bishop c4 from across the board. The whole
+    // run in one board: two doors, and you must read which one is covered.
     make(
       1,
+      [
+        pawn(4, 6), pawn(7, 8),
+        bishop(3, 4),
+        king(4, 8),
+      ],
+      STILL,
+    ),
+    // L2 — BOTH WATCHED. Still king e8; now neither door is free. Key e5 on
+    // his file is defended by pawn d6; key g8 on his rank is still the
+    // bishop's (c4). Marcher a3 introduces the clock idea gently.
+    make(
+      2,
+      [
+        pawn(5, 5), pawn(4, 6),
+        pawn(7, 8),
+        bishop(3, 4),
+        pawn(1, 3),
+        king(5, 8),
+      ],
+      STILL,
+    ),
+    // L3 — THE PEN. First flee king: c7 behind the a-wall, penned. Key c5 on
+    // his file (defended by pawn b6), key f7 on his rank (defended by pawn
+    // g8). Bishop h4 rakes the e7/d8 approach from the far corner.
+    make(
+      3,
+      [
+        pawn(3, 5), pawn(2, 6),
+        pawn(6, 7), pawn(7, 8),
+        bishop(8, 4),
+        king(3, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(1, 7), X(1, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L4 — DOUBLE LOCK. The run's signature arrives: key d5 is DOUBLE-defended
+    // (pawn c6 + knight f4) — trading into it costs two reads, not one. Key
+    // g7 on his rank is held by pawn h8. King d7 in the walled court.
+    make(
+      4,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(8, 8),
+        knight(6, 4),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(2, 8), X(6, 8), X(2, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L5 — THE WATCHTOWER. L4's court plus bishop h3 raking the f5/e6
+    // approach and marcher g2 starting the clock. Same two doors, more eyes.
+    make(
+      5,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(8, 8),
+        knight(6, 4), bishop(8, 3),
+        pawn(7, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(2, 8), X(6, 8), X(2, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L6 — HER MAJESTY WATCHES. King c7; key c5 double-defended (pawn b6 +
+    // knight e4), key f7 double-defended (pawns e8 + g8). Queen h2 owns the
+    // long diagonal and the second rank, bishop h4 rakes the e7/d8 approach;
+    // marcher a3 and a seven-move clock keep it honest.
+    make(
+      6,
+      [
+        pawn(3, 5), pawn(2, 6),
+        pawn(6, 7), pawn(5, 8), pawn(7, 8),
+        knight(5, 4), queen(8, 2), bishop(8, 4),
+        pawn(1, 3),
+        king(3, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 7,
+        hazards: [X(1, 7), X(1, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L7 — THE CRUCIBLE. The original proving level (8fa13f4), budget +2
+    // (11 -> 13) for its slot in the arc. King d7 in the walled court. Key d5 DOUBLE-defended
+    // (pawn c6 + knight f4), key g7 held by pawn h8. Queen a4 rakes rank 4,
+    // bishop h3 rakes the f5/e6 approach. Marchers b3/g2 are the clock.
+    make(
+      7,
       [
         pawn(4, 5), pawn(3, 6),
         pawn(7, 7), pawn(8, 8),
@@ -5894,8 +6003,70 @@ const RUN_CRUCIBLE: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 11,
+        moveLimit: 13,
         hazards: [X(2, 8), X(6, 8), X(2, 7)], // f7 open — the rank line to the g7 key is the second door
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L8 — MIRROR COURT. L7 flipped to the e-file and reinforced: key e5
+    // double-defended (pawn f6 + knight c4), key b7 held by pawn a8. Queen h4
+    // rakes rank 4 from the other wing, bishop a3 rakes the d6 approach.
+    // Marchers b2/g3. Two enemies move per turn and the budget tightens.
+    make(
+      8,
+      [
+        pawn(5, 5), pawn(6, 6),
+        pawn(2, 7), pawn(1, 8),
+        queen(8, 4), bishop(1, 3), knight(3, 4),
+        pawn(2, 2), pawn(7, 3),
+        king(5, 7),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 12,
+        hazards: [X(7, 8), X(3, 8), X(7, 7)], // c7 open — the rank line to the b7 key is the second door
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L9 — THE GAUNTLET. Both keys double-defended: c5 (pawn b6 + knight e4)
+    // and f7 (pawns e8 + g8), with shell pawns a5/e5 padding the court.
+    // Queen h2 and bishop g4 hunt the approaches; marchers h3/f2.
+    make(
+      9,
+      [
+        pawn(3, 5), pawn(2, 6),
+        pawn(6, 7), pawn(5, 8), pawn(7, 8),
+        pawn(1, 5), pawn(5, 5),
+        knight(5, 4), queen(8, 2), bishop(7, 4),
+        pawn(8, 3), pawn(6, 2),
+        king(3, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 9,
+        hazards: [X(1, 7), X(1, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L10 — THE PROOF. Everything at once: key d5 double-defended (pawn c6 +
+    // knight f4), key g7 double-defended (pawns f8 + h8), shell b5/f5, TWO
+    // queens (a4 raking rank 4, h2 the long diagonal) plus bishop h3.
+    // Marchers b3/g2. Twelve moves on the clock. Prove it.
+    make(
+      10,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(6, 8), pawn(8, 8),
+        pawn(2, 5), pawn(6, 5),
+        queen(1, 4), queen(8, 2), bishop(8, 3), knight(6, 4),
+        pawn(2, 3), pawn(7, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(2, 7), X(2, 8)],
         kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
       },
     ),
