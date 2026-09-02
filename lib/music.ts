@@ -1,13 +1,16 @@
 // Background music for Rookie's Revenge gameplay (experiment, 2026-08-31).
 //
-// One looping <audio> element, one persisted preference. Browsers block audio
+// One <audio> element, one persisted preference. Browsers block audio
 // until a user gesture, so `startIfEnabled()` is called from the same tap
 // that warms up the SFX AudioContext — if the user has music on, it begins
-// on their first touch of the board.
+// on their first touch of the board. The playlist runs like a jukebox: when a
+// track ends, the next one in MUSIC_TRACKS starts (wrapping around), and the
+// selection in the menu follows along.
 
 export const MUSIC_TRACKS = [
   { id: 'dust-on-the-cartridge', name: 'Dust on the Cartridge', src: '/music/dust-on-the-cartridge.mp3' },
   { id: 'lost-checkpoint', name: 'Lost Checkpoint', src: '/music/lost-checkpoint.mp3' },
+  { id: 'distant-horizon', name: 'Distant Horizon', src: '/music/distant-horizon.mp3' },
 ] as const;
 
 export type MusicTrackId = (typeof MUSIC_TRACKS)[number]['id'];
@@ -61,8 +64,9 @@ function ensureAudio(): HTMLAudioElement | null {
   if (typeof window === 'undefined') return null;
   if (!audio) {
     audio = new Audio();
-    audio.loop = true;
+    audio.loop = false; // the playlist advances on 'ended' instead of looping one track
     audio.preload = 'auto';
+    audio.addEventListener('ended', playNextTrack);
     if (process.env.NODE_ENV !== 'production') {
       (window as unknown as { __rrMusic?: HTMLAudioElement }).__rrMusic = audio;
     }
@@ -91,6 +95,15 @@ function apply() {
       // Autoplay refused — will retry on the next gesture via startIfEnabled.
     });
   }
+}
+
+/** Advance to the next track in the playlist (wraps around). No-op when music is off. */
+function playNextTrack() {
+  const p = loadPrefs();
+  if (p.track === null) return;
+  const idx = MUSIC_TRACKS.findIndex((t) => t.id === p.track);
+  const next = MUSIC_TRACKS[(idx + 1) % MUSIC_TRACKS.length];
+  setMusicTrack(next.id);
 }
 
 /** Read current prefs (safe on server: returns defaults). */
