@@ -314,14 +314,22 @@ export interface BoardState {
    */
   smokeTurnsLeft?: number;
   /**
-   * Rewind — two board snapshots (each stored WITHOUT its own rewindStack):
-   *   [0] = the board at the start of the PREVIOUS Rookie turn (the undo
-   *         target: her last move + the enemy reply unhappen), or null;
-   *   [1] = the board at the start of the CURRENT Rookie turn.
+   * Rewind — three board snapshots (each stored WITHOUT its own rewindStack):
+   *   [0] = the board at the start of the turn BEFORE LAST (the two-turn
+   *         undo target, Rewind T4+), or null;
+   *   [1] = the board at the start of the PREVIOUS Rookie turn (the one-turn
+   *         undo target: her last move + the enemy reply unhappen), or null;
+   *   [2] = the board at the start of the CURRENT Rookie turn.
    * Written by the enemy-turn `endTurn` (and lazily by the first Rookie move
    * of a level); consumed by the Rewind ability.
    */
   rewindStack?: Array<BoardState | null>;
+  /**
+   * Boulder T4 — after the first drop of a use, one more FREE placement is
+   * owed (the use drops two boulders). Set by the boulder branch of
+   * applyAbilityTargeted; cleared by the second drop or by cancelling.
+   */
+  boulderDropsLeft?: number;
   /**
    * Squire (summon-knight) at T5 — the knight's move is a FREE action, once
    * per Rookie turn. Set when the Squire moves without ending the turn;

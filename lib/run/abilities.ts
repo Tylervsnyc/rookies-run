@@ -583,7 +583,9 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Mark an enemy for 2 turns. Its team will attack it.';
       return 'Mark an enemy for 1 turn. Its team will attack it.';
     case 'boulder':
-      if (tier === 5) return 'Drop boulders anywhere, as many as you like.';
+      if (tier === 5) return 'Drop boulders anywhere, as many as you like. Drop one on an enemy pawn to crush it.';
+      if (tier === 4) return 'Each use drops 2 boulders. Drop one on an enemy pawn to crush it.';
+      if (tier >= 2) return 'Drop a boulder on an empty square — or on an enemy pawn to crush it.';
       return 'Drop a boulder on an empty square. It blocks everyone, for good.';
     case 'smoke':
       if (tier === 5) return 'Vanish for 3 turns. Captures do not break cover.';
@@ -591,9 +593,12 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Vanish for 2 turns. Enemies cannot see you.';
       return 'Vanish for 1 turn. Enemies cannot see you.';
     case 'rewind':
+      if (tier >= 4) return 'Undo the last TWO turns. Charges spent in them come back.';
+      if (tier >= 2) return 'Undo the last turn. Charges spent in it come back.';
       return 'Undo the last turn: your move and their reply.';
     case 'magnet':
-      if (tier >= 4) return 'Pull an enemy on your line all the way to you.';
+      if (tier === 5) return 'Pull an enemy on your line all the way to you — even the king, one square.';
+      if (tier === 4) return 'Pull an enemy on your line all the way to you.';
       if (tier >= 2) return 'Pull an enemy on your line up to 3 squares.';
       return 'Pull an enemy on your line up to 2 squares.';
     case 'bodyguard':
@@ -612,7 +617,7 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       return 'A bishop you control for 6 turns. Move him or you.';
     case 'page':
       if (tier === 5) return 'A pawn you control. Any capture promotes him to queen on the spot.';
-      if (tier === 4) return 'A pawn you control. Steps 2 forward; promotes on rank 7.';
+      if (tier === 4) return 'A pawn you control. Sprints 3 forward; promotes on rank 7.';
       if (tier === 3) return 'A pawn you control. Promotes to your queen on rank 7.';
       if (tier === 2) return 'A pawn you control. He can step 2 forward.';
       return 'A pawn you control. Reach rank 8: he becomes your queen.';
@@ -634,11 +639,14 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Drop a knight you control within 3 squares.';
       return 'Drop a knight you control within 2 squares.';
     case 'swap':
-      if (tier >= 4) return 'Trade squares with ANY rainbow ally. Free action.';
+      if (tier >= 4) return 'Trade squares with ANY rainbow ally. Its clock gains 2 turns. Free action.';
+      if (tier >= 2) return 'Trade squares with one of your summons. Its clock gains 2 turns. Free action.';
       return 'Trade squares with one of your summons. Free action.';
     case 'sacrifice':
-      if (tier === 5) return 'Detonate a summon. It captures everything it threatens and beside it; the king is stunned 3 turns.';
-      if (tier >= 3) return 'Detonate a summon. Enemies it threatens and beside it are captured.';
+      if (tier === 5) return 'Detonate a summon. It captures everything it threatens and within 2 squares; the king is stunned 3 turns.';
+      if (tier === 4) return 'Detonate a summon. Enemies it threatens and within 2 squares are captured. Survivors beside it are stunned.';
+      if (tier === 3) return 'Detonate a summon. Enemies it threatens and beside it are captured. Survivors beside it are stunned.';
+      if (tier === 2) return 'Detonate a summon. Enemies on its attack squares are captured; survivors beside it are stunned.';
       return 'Detonate a summon. Enemies on its attack squares are captured.';
     case 'knighting':
       if (tier === 5) return 'Promote a summon straight to queen.';
@@ -730,8 +738,10 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Mark for 2 turns. 1/level.';
       return 'Mark an enemy for 1 turn. 1/level.';
     case 'boulder':
-      if (tier === 5) return 'Unlimited boulders.';
-      if (tier >= 3) return 'Drop a boulder. 3/level.';
+      if (tier === 5) return 'Unlimited boulders. Crush pawns.';
+      if (tier === 4) return '2 boulders per use. 3/level.';
+      if (tier === 3) return 'Drop, or crush a pawn. 3/level.';
+      if (tier === 2) return 'Drop, or crush a pawn. 2/level.';
       return 'Drop a boulder. 2/level.';
     case 'smoke':
       if (tier === 5) return 'Vanish 3 turns, captures keep cover. 1/level.';
@@ -740,11 +750,14 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Vanish 2 turns. 1/level.';
       return 'Vanish 1 turn. 1/level.';
     case 'rewind':
-      if (tier === 5) return 'Undo last turn. 3/level.';
-      if (tier >= 3) return 'Undo last turn. 2/level.';
+      if (tier === 5) return 'Undo last TWO turns. 3/level.';
+      if (tier === 4) return 'Undo last TWO turns. 2/level.';
+      if (tier === 3) return 'Undo + refund charges. 2/level.';
+      if (tier === 2) return 'Undo + refund charges. 1/level.';
       return 'Undo last turn. 1/level.';
     case 'magnet':
-      if (tier >= 4) return 'Pull any distance. 2/level.';
+      if (tier === 5) return 'Pull any distance. Even the king. 2/level.';
+      if (tier === 4) return 'Pull any distance. 2/level.';
       if (tier === 3) return 'Pull up to 3. 2/level.';
       if (tier === 2) return 'Pull up to 3. 1/level.';
       return 'Pull up to 2. 1/level.';
@@ -768,7 +781,7 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       return 'Your bishop, 6 turns. 1 charge.';
     case 'page':
       if (tier === 5) return 'Your pawn. Captures promote. 2 charges.';
-      if (tier === 4) return 'Your pawn. Promotes on rank 7. 2 charges.';
+      if (tier === 4) return 'Your pawn, 3-square sprint. 2 charges.';
       if (tier === 3) return 'Your pawn. Promotes on rank 7. 2 charges.';
       if (tier === 2) return 'Your pawn, 2-step walk. 1 charge.';
       return 'Your pawn. Queen on rank 8. 1 charge.';
@@ -791,13 +804,16 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Knight drop, range 3. 1 charge.';
       return 'Knight drop, range 2. 1 charge.';
     case 'swap':
-      if (tier === 5) return 'Trade with any ally. 3/level.';
-      if (tier === 4) return 'Trade with any ally. 2/level.';
-      if (tier === 3) return 'Trade with a summon. 2/level.';
+      if (tier === 5) return 'Trade with any ally, +2 turns. 3/level.';
+      if (tier === 4) return 'Trade with any ally, +2 turns. 2/level.';
+      if (tier === 3) return 'Trade, +2 turns on its clock. 2/level.';
+      if (tier === 2) return 'Trade, +2 turns on its clock. 1/level.';
       return 'Trade with a summon. 1/level.';
     case 'sacrifice':
-      if (tier === 5) return 'Detonate: threats + beside, stun 3. 2/level.';
-      if (tier >= 3) return 'Detonate: threats + beside. 2/level.';
+      if (tier === 5) return 'Detonate: threats + 2 rings, stun 3. 2/level.';
+      if (tier === 4) return 'Detonate: threats + 2 rings. 2/level.';
+      if (tier === 3) return 'Detonate: threats + beside. 2/level.';
+      if (tier === 2) return 'Detonate + stun survivors. 1/level.';
       return 'Detonate a summon. 1/level.';
     case 'knighting':
       if (tier === 5) return 'Summon straight to queen. 2/level.';
@@ -901,9 +917,9 @@ export const UPGRADE_NOTES: Record<
     5: 'Mark lasts until captured',
   },
   boulder: {
-    2: 'Same rock. Shinier card.',
+    2: 'Drops can land ON enemy pawns — crunch',
     3: '',
-    4: 'Same rocks. Shinier card.',
+    4: 'Each use drops 2 boulders',
     5: 'Unlimited boulders',
   },
   smoke: {
@@ -913,16 +929,16 @@ export const UPGRADE_NOTES: Record<
     5: 'Captures no longer break cover',
   },
   rewind: {
-    2: 'Same undo. Shinier card.',
+    2: 'Charges spent in the undone turn come back',
     3: '',
-    4: 'Same undo. Shinier card.',
+    4: 'Undoes the last TWO turns',
     5: '',
   },
   magnet: {
     2: 'Pull reach 2 squares → 3',
     3: '',
     4: 'Pulls from any distance',
-    5: 'Same pull. Shinier card.',
+    5: 'Even the king moves: yanked 1 square',
   },
   bodyguard: {
     2: 'Same guard. Shinier card.',
@@ -945,7 +961,7 @@ export const UPGRADE_NOTES: Record<
   page: {
     2: 'He can step 2 forward now',
     3: 'Promotes on rank 7, not 8',
-    4: 'Same pawn. Shinier card.',
+    4: 'His sprint: 2 squares → 3',
     5: 'Any capture promotes him on the spot',
   },
   twin: {
@@ -967,15 +983,15 @@ export const UPGRADE_NOTES: Record<
     5: 'Range 5. Stays the whole level.',
   },
   swap: {
-    2: 'Same trade. Shinier card.',
+    2: 'The trade adds 2 turns to its clock',
     3: '',
     4: 'Trades with ANY rainbow ally',
     5: '',
   },
   sacrifice: {
-    2: 'Same boom. Shinier card.',
+    2: 'Survivors beside the boom are stunned',
     3: 'Blast also hits adjacent squares',
-    4: 'Same boom. Shinier card.',
+    4: 'Blast reaches 2 squares out',
     5: 'King stun 2 turns → 3',
   },
   knighting: {
@@ -1346,7 +1362,8 @@ export function applyAbilityActivate(
 
 export function applyAbilityCancel(state: BoardState): BoardState {
   if (!state.activeAbility) return state;
-  return { ...state, activeAbility: null };
+  // Cancelling mid-Boulder-T4 forfeits the owed free second drop.
+  return { ...state, activeAbility: null, boulderDropsLeft: undefined };
 }
 
 function decrementUse(
@@ -1536,8 +1553,11 @@ export function applyAbilityTargeted(
   // The enemy king (Rookie's Revenge) is the objective — only Rookie herself
   // may take him. No decoy / poison / rabies / convert on the king. Freeze
   // Ray is the ONE exception: freezing the king pins him so he can't flee.
+  // Magnet T5 is the second exception: the king can't be captured by it,
+  // but he CAN be yanked one square (magnetPull caps his pull distance).
   if (
     abilityId !== 'freeze-ray' &&
+    !(abilityId === 'magnet' && owned.tier === 5) &&
     state.pieces.some(
       (p) => p.type === 'king' && p.file === target.file && p.rank === target.rank,
     )
@@ -1648,12 +1668,37 @@ export function applyAbilityTargeted(
     if (!boulderTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) {
       return state;
     }
-    return {
+    // T2+: a boulder may land ON an enemy pawn — it crushes it (counts as a
+    // Rookie capture: tempo + king stun), and the square becomes the boulder.
+    const crushed =
+      owned.tier >= 2
+        ? state.pieces.find(
+            (p) => p.type === 'pawn' && p.file === target.file && p.rank === target.rank,
+          )
+        : undefined;
+    const statusOverlay = crushed ? clearStatusOnSquare(state, sq) : null;
+    const clearDecoy = !!crushed && state.decoyTarget === sq;
+    // T4+: each use drops TWO boulders. The first drop of a use spends the
+    // charge and owes one free follow-up placement (activeAbility stays
+    // armed; cancelling forfeits it).
+    const chained = (state.boulderDropsLeft ?? 0) > 0;
+    const owesSecond = !chained && owned.tier >= 4;
+    const next: BoardState = {
       ...state,
+      ...(statusOverlay ?? {}),
+      pieces: crushed ? state.pieces.filter((p) => p !== crushed) : state.pieces,
+      captures: crushed ? [...state.captures, crushed.type] : state.captures,
+      tempo: crushed
+        ? Math.min(tempoMaxFor(state), state.tempo + (TEMPO_REWARD[crushed.type] ?? 0))
+        : state.tempo,
+      decoyTarget: clearDecoy ? null : state.decoyTarget,
+      decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
       hazards: [...state.hazards, { file: target.file, rank: target.rank }],
-      abilities: decrementUse(state.abilities, abilityId),
+      abilities: chained ? state.abilities : decrementUse(state.abilities, abilityId),
       activeAbility: null,
+      boulderDropsLeft: undefined,
       cancellableActivation: undefined,
+      ...(crushed ? stunKingAfterCapture(state) : {}),
       lastAbilityFx: {
         kind: 'boulder',
         from: toSquare(state.rookie),
@@ -1661,6 +1706,14 @@ export function applyAbilityTargeted(
         id: Date.now() + Math.random(),
       },
     };
+    if (owesSecond && boulderTargets(next).length > 0) {
+      return {
+        ...next,
+        activeAbility: { id: 'boulder', step: 'pick-square' },
+        boulderDropsLeft: 1,
+      };
+    }
+    return next;
   }
 
   if (abilityId === 'summon-knight') {
@@ -1795,15 +1848,23 @@ function decoyTurns(tier: AbilityTier): number {
  * (she can't wall herself in; a stuck rook is a softlock).
  */
 export function boulderTargets(state: BoardState): Coord[] {
+  // T2+: squares holding an enemy PAWN are also legal — the drop crushes it.
+  const owned = state.abilities.find((a) => a.id === 'boulder');
+  const canCrush = (owned?.tier ?? 1) >= 2;
   const out: Coord[] = [];
   for (let file = 1; file <= 8; file++) {
     for (let rank = 1; rank <= 8; rank++) {
       if (state.rookie.file === file && state.rookie.rank === rank) continue;
-      if (state.pieces.some((p) => p.file === file && p.rank === rank)) continue;
+      const enemy = state.pieces.find((p) => p.file === file && p.rank === rank);
+      if (enemy && !(canCrush && enemy.type === 'pawn')) continue;
       if ((state.allies ?? []).some((a) => a.file === file && a.rank === rank)) continue;
       if ((state.drones ?? []).some((d) => d.alive && d.file === file && d.rank === rank)) continue;
       if (state.hazards.some((h) => h.file === file && h.rank === rank)) continue;
-      const walled: BoardState = { ...state, hazards: [...state.hazards, { file, rank }] };
+      const walled: BoardState = {
+        ...state,
+        pieces: enemy ? state.pieces.filter((p) => p !== enemy) : state.pieces,
+        hazards: [...state.hazards, { file, rank }],
+      };
       if (rookieLegalMoves(walled).length === 0) continue;
       out.push({ file, rank });
     }
@@ -1876,8 +1937,12 @@ function rewindSnapshotOf(state: BoardState): BoardState {
  * current-turn start.
  */
 export function withRewindSnapshot(state: BoardState): BoardState {
-  const prevTurnStart = state.rewindStack?.[1] ?? null;
-  return { ...state, rewindStack: [prevTurnStart, rewindSnapshotOf(state)] };
+  // Keep the last TWO turn starts (T4+ undoes two turns). Reads by position
+  // from the end so a legacy 2-entry stack migrates cleanly.
+  const stack = state.rewindStack ?? [];
+  const prevPrev = stack.length >= 2 ? (stack[stack.length - 2] ?? null) : null;
+  const prev = stack.length >= 1 ? (stack[stack.length - 1] ?? null) : null;
+  return { ...state, rewindStack: [prevPrev, prev, rewindSnapshotOf(state)] };
 }
 
 /**
@@ -1886,7 +1951,7 @@ export function withRewindSnapshot(state: BoardState): BoardState {
  */
 export function ensureRewindTurnStart(state: BoardState): Pick<BoardState, 'rewindStack'> | Record<string, never> {
   if (state.rewindStack) return {};
-  return { rewindStack: [null, rewindSnapshotOf(state)] };
+  return { rewindStack: [null, null, rewindSnapshotOf(state)] };
 }
 
 function applyRewind(state: BoardState): BoardState {
@@ -1894,18 +1959,36 @@ function applyRewind(state: BoardState): BoardState {
   if (!owned) return state;
   if (owned.usesLeftThisLevel === 0) return state;
   if (state.moveCount === 0) return state;
-  const snap = state.rewindStack?.[0];
+  const stack = state.rewindStack ?? [];
+  const prev = stack.length >= 2 ? stack[stack.length - 2] : null;
+  const prevPrev = stack.length >= 3 ? stack[stack.length - 3] : null;
+  // T4+: the undo reaches back TWO full turns when two are on record.
+  const snap = owned.tier >= 4 && prevPrev ? prevPrev : prev;
   if (!snap) return state;
+  // T2+: charges spent in the undone turn(s) come back — each ability's uses
+  // are restored to the target snapshot's count (capped at its CURRENT
+  // tier's max, so upgrades picked since the snapshot are kept, and never
+  // reduced below what it has now).
+  const restored =
+    owned.tier >= 2
+      ? state.abilities.map((a) => {
+          const was = snap.abilities.find((b) => b.id === a.id);
+          if (!was || a.usesLeftThisLevel < 0 || was.usesLeftThisLevel < 0) return a;
+          const cap = maxUsesForTier(a.id, a.tier);
+          const back = Math.min(cap, Math.max(a.usesLeftThisLevel, was.usesLeftThisLevel));
+          return back === a.usesLeftThisLevel ? a : { ...a, usesLeftThisLevel: back };
+        })
+      : state.abilities;
   return {
     ...snap,
     // Charges are spent, tempo is kept — time moves back, the meter doesn't.
-    abilities: decrementUse(state.abilities, 'rewind'),
+    abilities: decrementUse(restored, 'rewind'),
     tempo: state.tempo,
     activeAbility: null,
     cancellableActivation: undefined,
     // We're back at the start of that turn: no further undo, and this board
     // is the new turn start.
-    rewindStack: [null, rewindSnapshotOf(snap)],
+    rewindStack: [null, null, rewindSnapshotOf(snap)],
     // Carry the CURRENT transient fx ids so restoring an older state can't
     // re-fire an old animation.
     lastAegisIntercept: state.lastAegisIntercept,
@@ -1947,6 +2030,7 @@ function magnetDirs(form: RookieForm): ReadonlyArray<[number, number]> {
  * touching her can't be pulled closer). Never the king.
  */
 export function magnetTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'magnet');
   const out: Coord[] = [];
   for (const [df, dr] of magnetDirs(state.form)) {
     let f = state.rookie.file + df;
@@ -1957,7 +2041,10 @@ export function magnetTargets(state: BoardState): Coord[] {
       if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) break;
       const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
       if (enemy) {
-        if (enemy.type !== 'king' && dist >= 2) out.push({ file: f, rank: r });
+        // T5 signature: even the KING can be grabbed (magnetPull caps his
+        // pull at one square — a yank, not a kidnapping).
+        const kingOk = enemy.type === 'king' && (owned?.tier ?? 1) === 5;
+        if ((enemy.type !== 'king' || kingOk) && dist >= 2) out.push({ file: f, rank: r });
         break;
       }
       f += df;
@@ -1981,7 +2068,8 @@ export function magnetPull(
   if (!piece) return null;
   const df = Math.sign(state.rookie.file - target.file);
   const dr = Math.sign(state.rookie.rank - target.rank);
-  const max = magnetPullDistance(tier);
+  // The king (T5 only — see magnetTargets) is yanked exactly ONE square.
+  const max = piece.type === 'king' ? 1 : magnetPullDistance(tier);
   let f = target.file;
   let r = target.rank;
   let steps = 0;
@@ -2387,11 +2475,14 @@ export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
   return true;
 }
 
-/** Page double-step: T2+ he may step 2 forward when both squares are empty. */
-function pageDoubleStep(state: BoardState, ally: AllyPiece): boolean {
-  if (ally.source !== 'page') return false;
+/** Page forward reach: T2+ he may step 2 when clear; T4+ a 3-square sprint. */
+function pageSprintSteps(state: BoardState, ally: AllyPiece): number {
+  if (ally.source !== 'page') return 1;
   const owned = ownedAbilityForSource(state, 'page');
-  return !!owned && owned.tier >= 2;
+  if (!owned) return 1;
+  if (owned.tier >= 4) return 3;
+  if (owned.tier >= 2) return 2;
+  return 1;
 }
 
 /**
@@ -2423,8 +2514,10 @@ export function controlledAllyLegalMoves(state: BoardState, ally: AllyPiece): Co
         !state.pieces.some((p) => p.file === f && p.rank === r);
       if (emptyAt(ally.file, f1)) {
         out.push({ file: ally.file, rank: f1 });
-        if (pageDoubleStep(state, ally) && emptyAt(ally.file, f1 + 1)) {
-          out.push({ file: ally.file, rank: f1 + 1 });
+        const sprint = pageSprintSteps(state, ally);
+        for (let extra = 1; extra < sprint; extra++) {
+          if (!emptyAt(ally.file, f1 + extra)) break;
+          out.push({ file: ally.file, rank: f1 + extra });
         }
       }
       for (const df of [-1, 1]) {
@@ -2588,7 +2681,17 @@ function applySwap(state: BoardState, target: Coord): BoardState {
     ...state,
     rookie: { file: ally.file, rank: ally.rank },
     allies: state.allies.map((a) =>
-      a === ally ? { ...a, file: rookieWas.file, rank: rookieWas.rank } : a,
+      a === ally
+        ? {
+            ...a,
+            file: rookieWas.file,
+            rank: rookieWas.rank,
+            // T2+: the trade winds its clock — the summon fights 2 turns longer.
+            ...(owned.tier >= 2 && a.turnsLeft !== undefined
+              ? { turnsLeft: a.turnsLeft + 2 }
+              : {}),
+          }
+        : a,
     ),
     abilities: decrementUse(state.abilities, 'swap'),
     activeAbility: null,
@@ -2654,15 +2757,20 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
   const ally = controlledAllyAt(state, target);
   if (!ally) return state;
   // Blast area: the squares this summon attacks; from T3 also every square
-  // beside it. The king is never captured by the blast — but the mass
-  // capture stuns him hard (2 turns; 3 at T5).
+  // beside it; from T4 everything within 2 squares. The king is never
+  // captured by the blast — but the mass capture stuns him hard (2 turns;
+  // 3 at T5).
   const blast = new Map<string, Coord>();
   for (const c of attackSquaresOfAlly(state, ally)) blast.set(toSquare(c), c);
   if (owned.tier >= 3) {
-    for (const [df, dr] of ALLY_QUEEN_DIRS) {
-      const f = ally.file + df;
-      const r = ally.rank + dr;
-      if (allyInBounds(f, r)) blast.set(toSquare({ file: f, rank: r }), { file: f, rank: r });
+    const ring = owned.tier >= 4 ? 2 : 1;
+    for (let df = -ring; df <= ring; df++) {
+      for (let dr = -ring; dr <= ring; dr++) {
+        if (df === 0 && dr === 0) continue;
+        const f = ally.file + df;
+        const r = ally.rank + dr;
+        if (allyInBounds(f, r)) blast.set(toSquare({ file: f, rank: r }), { file: f, rank: r });
+      }
     }
   }
   const victims = state.pieces.filter(
@@ -2677,9 +2785,25 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
     captures.push(v.type);
     tempo = Math.min(tempoMaxFor(state), tempo + (TEMPO_REWARD[v.type] ?? 0));
   }
+  // T2+: the shockwave stuns — surviving enemies beside the summon are
+  // frozen for a turn (the king has his own stun below).
+  let frozenSquares = working.frozenSquares;
+  let frozenTurnsLeft = working.frozenTurnsLeft;
+  if (owned.tier >= 2) {
+    for (const p of state.pieces) {
+      if (p.type === 'king' || victims.includes(p)) continue;
+      const d = Math.max(Math.abs(p.file - ally.file), Math.abs(p.rank - ally.rank));
+      if (d > 1) continue;
+      const psq = toSquare({ file: p.file, rank: p.rank });
+      if (!frozenSquares.includes(psq)) frozenSquares = [...frozenSquares, psq];
+      frozenTurnsLeft = { ...frozenTurnsLeft, [psq]: Math.max(frozenTurnsLeft[psq] ?? 0, 1) };
+    }
+  }
   const allySq = toSquare({ file: ally.file, rank: ally.rank });
   return {
     ...working,
+    frozenSquares,
+    frozenTurnsLeft,
     pieces: state.pieces.filter((p) => !victims.includes(p)),
     allies: state.allies.filter((a) => a !== ally),
     captures,

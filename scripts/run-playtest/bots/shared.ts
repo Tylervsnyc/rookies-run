@@ -483,7 +483,11 @@ function candidatesForAbility(
       for (const c of boulderTargets(state)) {
         const nearKing = king ? cheb(c, king) <= 1 : false;
         const nearRookie = cheb(c, state.rookie) <= 2;
-        if (nearKing || nearRookie) {
+        // T2+ crush squares (an enemy pawn stands there) always matter.
+        const crush = state.pieces.some(
+          (p) => p.type === 'pawn' && p.file === c.file && p.rank === c.rank,
+        );
+        if (nearKing || nearRookie || crush) {
           out.push({ kind: 'ability-target', abilityId: 'boulder', target: c });
         }
       }

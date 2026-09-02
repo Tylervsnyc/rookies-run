@@ -97,9 +97,13 @@ export function realisticTierFor(level: number): AbilityTier {
  */
 export function loadoutFor(id: string, level: number, realistic: boolean): OwnedAbility[] {
   if (id === 'none') return [];
-  const tier = realistic ? realisticTierFor(level) : 1;
+  const defaultTier = realistic ? realisticTierFor(level) : 1;
   return id.split('+').map((part) => {
-    const aid = part as AbilityId;
+    // `part` may pin a tier: "magnet:5" / "sacrifice:2" (overrides --realistic).
+    const [rawId, rawTier] = part.split(':');
+    const aid = rawId as AbilityId;
+    const pinned = rawTier ? parseInt(rawTier, 10) : NaN;
+    const tier = (pinned >= 1 && pinned <= 5 ? pinned : defaultTier) as AbilityTier;
     return { id: aid, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(aid, tier) };
   });
 }

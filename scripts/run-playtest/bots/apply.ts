@@ -17,10 +17,12 @@
 
 import {
   applyAbilityActivate,
+  applyAbilityCancel,
   applyAbilityMove,
   applyAbilityTargeted,
   applyControlledAllyMove,
   applySquireMove,
+  boulderTargets,
   stepDroneTurn,
 } from '../../../lib/run/abilities';
 import { applyRookieMove } from '../../../lib/run/engine';
@@ -63,7 +65,24 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
         return applyAbilityMove(activated, action.abilityId, action.target);
       }
       if (def.activation === 'targeted') {
-        return applyAbilityTargeted(activated, action.abilityId, action.target);
+        let next = applyAbilityTargeted(activated, action.abilityId, action.target);
+        // Boulder T4 owes a FREE second placement (each use drops 2). Resolve
+        // it greedily here — nearest legal square to the king (else to
+        // Rookie) — so the bot's action stays atomic and no bot ever sees an
+        // armed activeAbility.
+        if (
+          action.abilityId === 'boulder' &&
+          next.activeAbility?.id === 'boulder' &&
+          (next.boulderDropsLeft ?? 0) > 0
+        ) {
+          const king = next.pieces.find((p) => p.type === 'king');
+          const anchor = king ?? next.rookie;
+          const cheb = (a: { file: number; rank: number }) =>
+            Math.max(Math.abs(a.file - anchor.file), Math.abs(a.rank - anchor.rank));
+          const best = [...boulderTargets(next)].sort((a, b) => cheb(a) - cheb(b))[0];
+          next = best ? applyAbilityTargeted(next, 'boulder', best) : applyAbilityCancel(next);
+        }
+        return next;
       }
       return activated;
     }

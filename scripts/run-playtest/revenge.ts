@@ -135,7 +135,10 @@ function matrixWorkerPairs(): boolean {
   const realistic = arg('realistic') === 'true';
   const cells: Cell[] = [];
   for (const p of pairs.split(',')) {
-    const [lv, lo] = p.split(':');
+    // Split on the FIRST colon only — the loadout may pin tiers ("boulder:2").
+    const i = p.indexOf(':');
+    const lv = p.slice(0, i);
+    const lo = p.slice(i + 1);
     cells.push(runMatrixCell(CFG, Number(lv), lo, trials, tier, realistic));
   }
   process.stdout.write(JSON.stringify(cells));
@@ -180,7 +183,9 @@ function solveMain(): void {
   if (worker) {
     const out: SolveResult[] = [];
     for (const p of worker.split(',')) {
-      const [lv, lo] = p.split(':');
+      const i = p.indexOf(':');
+      const lv = p.slice(0, i);
+      const lo = p.slice(i + 1);
       out.push(solveLevel(CFG, Number(lv), lo, depth, nodes));
     }
     process.stdout.write(JSON.stringify(out));
