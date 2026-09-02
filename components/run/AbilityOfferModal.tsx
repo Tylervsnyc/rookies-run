@@ -72,72 +72,6 @@ function plainText(option: AbilityOfferOption): string {
   return PLAIN[option.id] ?? ABILITY_DEFS[option.id].description;
 }
 
-/**
- * Ornate gold corner flourish — a corner curl with an interlocked figure-8
- * of filigree along each edge, inspired by the Swap concept art
- * (public/abilities/concepts/swap-1.png). Inline SVG, ~1KB; drawn once for
- * the top-left and rotated into the other three corners.
- */
-function OrnateCorner({
-  rotate,
-  size = 44,
-}: {
-  rotate: 0 | 90 | 180 | 270;
-  size?: number;
-}) {
-  const pos: Record<number, string> = {
-    0: 'top-[3px] left-[3px]',
-    90: 'top-[3px] right-[3px]',
-    180: 'bottom-[3px] right-[3px]',
-    270: 'bottom-[3px] left-[3px]',
-  };
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 64 64"
-      width={size}
-      height={size}
-      className={`pointer-events-none absolute ${pos[rotate]}`}
-      style={{ transform: `rotate(${rotate}deg)` }}
-    >
-      <defs>
-        <linearGradient id={`rrGold${rotate}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#8a6215" />
-          <stop offset="0.45" stopColor="#ffd87a" />
-          <stop offset="1" stopColor="#b8852b" />
-        </linearGradient>
-      </defs>
-      <g
-        fill="none"
-        stroke={`url(#rrGold${rotate})`}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {/* Corner curl hugging the frame */}
-        <path d="M3 30 V12 Q3 3 12 3 H30" strokeWidth="2.6" />
-        <path d="M8 24 V13 Q8 8 13 8 H24" strokeWidth="1.4" opacity="0.8" />
-        {/* Inner spiral curl in the corner itself */}
-        <path
-          d="M13 13 q6 -2 8 4 q1.5 4.5 -3 5 q-3.5 0.5 -3.5 -3"
-          strokeWidth="1.6"
-        />
-        {/* Figure-8 filigree along the top edge */}
-        <path
-          d="M32 8 c0 -4.4 7 -4.4 7 0 c0 4.4 7 4.4 7 0 c0 -4.4 -7 -4.4 -7 0 c0 4.4 -7 4.4 -7 0 Z"
-          strokeWidth="1.7"
-        />
-        <circle cx="52" cy="8" r="1.6" fill={`url(#rrGold${rotate})`} stroke="none" />
-        {/* Figure-8 filigree down the left edge */}
-        <path
-          d="M8 32 c-4.4 0 -4.4 7 0 7 c4.4 0 4.4 7 0 7 c-4.4 0 -4.4 -7 0 -7 c4.4 0 4.4 -7 0 -7 Z"
-          strokeWidth="1.7"
-        />
-        <circle cx="8" cy="52" r="1.6" fill={`url(#rrGold${rotate})`} stroke="none" />
-      </g>
-    </svg>
-  );
-}
-
 export function AbilityOfferModal({
   offer,
   onPick,
@@ -181,45 +115,48 @@ export function AbilityOfferModal({
         }
       `}</style>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#12222b]/80 backdrop-blur-sm px-3 py-4">
-        {/* Ornate double gold frame — thin gradient outer ring, white face,
-            corner filigree, one glow sweep on entrance. */}
+        {/* Painted gold frame (public/ui/offer-frame.webp, prepped from
+            concepts/offer-frame-1.png). The box is letterboxed to the
+            frame's own aspect so the painting never distorts; content sits
+            inside the frame's window (insets measured from the pixels:
+            L 16.7% / R 16.6% / T 19.4% / B 16.1%, padded a touch inward). */}
         <div
-          className="offer-frame-enter relative w-full max-w-[360px] rounded-[26px] p-[3px]"
+          className="offer-frame-enter relative"
           style={{
-            background: GOLD_FRAME,
-            boxShadow: `${GOLD_HALO}, 0 18px 40px rgba(0,0,0,0.4)`,
+            width: 'min(370px, 94vw, calc((100dvh - 2rem) * 0.6293))',
+            aspectRatio: '905 / 1438',
+            filter: 'drop-shadow(0 0 16px rgba(255, 191, 36, 0.45)) drop-shadow(0 16px 32px rgba(0,0,0,0.45))',
           }}
         >
+          {/* Parchment fill inside the window (bleeds 1% under the gold so
+              no gap ever shows) — keeps the delta text legible. */}
           <div
-            className="relative bg-chess-surface rounded-3xl p-4 pt-5 flex flex-col gap-3 max-h-[calc(100dvh-2.5rem)] overflow-y-auto overflow-x-hidden"
+            aria-hidden
+            className="absolute rounded-[10px]"
             style={{
-              borderRadius: 23,
-              // Inner thin gold ring = the "double frame".
-              boxShadow: 'inset 0 0 0 1.5px rgba(184, 133, 43, 0.55), inset 0 0 0 5px rgba(255, 216, 122, 0.18)',
+              left: '15.7%',
+              right: '15.6%',
+              top: '18.4%',
+              bottom: '15.1%',
+              background: 'linear-gradient(180deg, #faf4e4, #f3e9d2)',
             }}
+          />
+
+          {/* Content — lives inside the frame's window. */}
+          <div
+            className="absolute z-10 flex flex-col gap-2 overflow-y-auto overflow-x-hidden"
+            style={{ left: '17.4%', right: '17.3%', top: '20.2%', bottom: '16.9%' }}
           >
-            {/* Corner filigree (figure-8 loops, Swap-art style) */}
-            <OrnateCorner rotate={0} />
-            <OrnateCorner rotate={90} />
-            <OrnateCorner rotate={180} />
-            <OrnateCorner rotate={270} />
-
-            {/* One-shot gold glow sweep across the face */}
-            <div
-              aria-hidden
-              className="offer-glow-sweep pointer-events-none absolute inset-y-0 w-1/2 left-0"
-            />
-
-            <div className="text-center px-6">
-              <h2 className="text-[17px] font-black text-chess-text leading-tight">
+            <div className="text-center px-0.5">
+              <h2 className="text-[15px] font-black text-chess-text leading-tight">
                 {title ?? (isLevel ? 'One rook can’t do this alone. Take something.' : 'Tempo full. Upgrade Rookie.')}
               </h2>
-              <p className="text-[11px] font-bold text-chess-text-muted mt-1">
+              <p className="text-[10.5px] font-bold text-chess-text-muted mt-0.5">
                 {subtitle ?? 'Tap a power to keep it.'}
               </p>
             </div>
 
-            <div className={`grid ${cols} gap-2 items-stretch`}>
+            <div className={`grid ${cols} gap-1.5 items-stretch`}>
               {offer.map((option, idx) => {
                 const def = ABILITY_DEFS[option.id];
                 const accent = ACCENT[option.id] ?? DEFAULT_ACCENT;
@@ -290,7 +227,7 @@ export function AbilityOfferModal({
                       {/* Name + copy. NEW = what it does. UPGRADE = what the
                           upgrade CHANGES vs the tier you own (the delta),
                           with the full description smaller below. */}
-                      <div className="flex flex-col gap-1 px-2 pt-2 pb-3 flex-1">
+                      <div className="flex flex-col gap-1 px-1.5 pt-1.5 pb-2.5 flex-1">
                         <div
                           className="text-[12px] font-black leading-tight uppercase tracking-[0.04em]"
                           style={{ color: accent }}
@@ -333,6 +270,22 @@ export function AbilityOfferModal({
               </button>
             )}
           </div>
+
+          {/* The painting itself — above the content, clicks pass through. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/ui/offer-frame.webp"
+            alt=""
+            draggable={false}
+            className="pointer-events-none select-none absolute inset-0 z-20 w-full h-full"
+            style={{ objectFit: 'fill' }}
+          />
+
+          {/* One-shot gold glint sweeping across the frame on entrance. */}
+          <div
+            aria-hidden
+            className="offer-glow-sweep pointer-events-none absolute inset-y-0 left-0 z-30 w-1/2"
+          />
         </div>
       </div>
     </>
