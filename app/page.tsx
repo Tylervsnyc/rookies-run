@@ -10,7 +10,7 @@ import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
-import { HomeLanding } from '@/components/run/HomeLanding';
+import { ArenaHome } from '@/components/run/ArenaHome';
 import { submitScore } from '@/lib/run/leaderboard-client';
 import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
@@ -614,7 +614,7 @@ export default function RookiesRunPage() {
     if (forced || !localStorage.getItem(ONBOARDING_KEY)) setShowOnboarding(true);
   }, []);
 
-  // Revenge: HomeLanding IS the home screen (Daily / Ladder picker), so it
+  // Revenge: ArenaHome IS the home screen (board + Revenge/Ladder/Ranks/Codex tabs), so it
   // shows on EVERY cold open — otherwise a second open the same day dropped
   // players straight onto the board behind the level-1 ability offer.
   // STC / classic RunLanding keeps the old once-per-(run date) intro-card
@@ -640,7 +640,7 @@ export default function RookiesRunPage() {
   }, [meta.iso, meta.ladder, meta.levelJump, meta.loadout, meta.parity, usesClassicLanding]);
 
   const resetRunRef = useRef<() => void>(() => {});
-  // Optionally starts under a specific difficulty (HomeLanding's Daily GO and
+  // Optionally starts under a specific difficulty (ArenaHome's PLAY and
   // Ladder rows pick one in the same gesture). Persist BEFORE resetting so
   // freshRun's readProfile() builds the board under the new mode.
   const dismissIntro = useCallback((d?: DifficultyId) => {
@@ -1537,7 +1537,7 @@ export default function RookiesRunPage() {
       }
     })();
     return (
-      <div className="h-full overflow-auto">
+      <div className={usesClassicLanding ? 'h-full overflow-auto' : 'h-full overflow-hidden'}>
         {usesClassicLanding ? (
           <RunLanding
             onStart={dismissIntro}
@@ -1549,14 +1549,13 @@ export default function RookiesRunPage() {
             onDifficultyChange={isStc ? undefined : onDifficultyChange}
           />
         ) : (
-          <HomeLanding
+          <ArenaHome
             onStart={dismissIntro}
             onLadderStart={(id) => {
               window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1`;
             }}
             iso={meta.iso}
             runId={meta.runId}
-            dateLabel={dateLabel}
             profile={progress.profile}
             onTrophies={() => setShowTrophies(true)}
           />
