@@ -16,6 +16,7 @@
  */
 
 import {
+  abilityLegalMoves,
   applyAbilityActivate,
   applyAbilityCancel,
   applyAbilityMove,
@@ -66,6 +67,22 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
       }
       if (def.activation === 'targeted') {
         let next = applyAbilityTargeted(activated, action.abilityId, action.target);
+        // Magnet is two-step (grab, then CHOOSE the landing square). Resolve
+        // the second tap here so the bot's decision stays atomic; without a
+        // target2 (legacy actions) fall back to the farthest landing.
+        if (
+          action.abilityId === 'magnet' &&
+          next.activeAbility?.id === 'magnet' &&
+          next.activeAbility.step === 'pick-square'
+        ) {
+          const landing =
+            action.target2 ??
+            abilityLegalMoves(next, 'magnet')[abilityLegalMoves(next, 'magnet').length - 1];
+          next = landing
+            ? applyAbilityTargeted(next, 'magnet', landing)
+            : applyAbilityCancel(next);
+          if (next.activeAbility) next = applyAbilityCancel(next);
+        }
         // Boulder T4 owes a FREE second placement (each use drops 2). Resolve
         // it greedily here — nearest legal square to the king (else to
         // Rookie) — so the bot's action stays atomic and no bot ever sees an

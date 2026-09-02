@@ -27,7 +27,12 @@ export type BotAction =
    */
   | { kind: 'squire-move'; target: Coord; from?: Coord }
   | { kind: 'activate-ability'; abilityId: AbilityId }
-  | { kind: 'ability-target'; abilityId: AbilityId; target: Coord };
+  /**
+   * `target2` — second-tap square for two-step abilities (Magnet: `target`
+   * is the enemy grabbed, `target2` the CHOSEN landing square = pull
+   * distance). Absent = single-tap resolve (legacy / other abilities).
+   */
+  | { kind: 'ability-target'; abilityId: AbilityId; target: Coord; target2?: Coord };
 
 /** Constraints passed to bots — used by ablation / forced-take to bias choices. */
 export interface BotContext {

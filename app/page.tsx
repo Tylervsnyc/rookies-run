@@ -57,6 +57,7 @@ import {
   knightingTargets,
   sacrificeTargets,
   swapTargets,
+  canRewind,
   convertTargets as computeConvertTargets,
   magnetTargets as computeMagnetTargets,
   maxUsesForTier,
@@ -981,19 +982,22 @@ export default function RookiesRunPage() {
   // come through legalAbilityMoves as dots).
   const convertTargets = useMemo(() => {
     if (state.activeAbility?.id === 'convert') return computeConvertTargets(state);
-    if (state.activeAbility?.id === 'magnet') return computeMagnetTargets(state);
+    if (state.activeAbility?.id === 'magnet' && state.activeAbility.step === 'pick-enemy')
+      return computeMagnetTargets(state);
     return undefined;
   }, [state]);
 
   // Swap / Sacrifice / Knighting operate ON a summon — without an eligible
   // target the card tap silently no-ops in the engine, which reads as "the
-  // ability is broken". Gray the card out instead.
+  // ability is broken". Gray the card out instead. Rewind (enemy-only) is
+  // the same: with nothing on record to undo the tap no-ops, so gray it.
   const summonSupportDisabled = useMemo(() => {
     const out: AbilityId[] = [];
     for (const a of state.abilities) {
       if (a.id === 'swap' && swapTargets(state).length === 0) out.push('swap');
       if (a.id === 'sacrifice' && sacrificeTargets(state).length === 0) out.push('sacrifice');
       if (a.id === 'knighting' && knightingTargets(state).length === 0) out.push('knighting');
+      if (a.id === 'rewind' && a.usesLeftThisLevel !== 0 && !canRewind(state)) out.push('rewind');
     }
     return out;
   }, [state]);
@@ -1754,7 +1758,9 @@ export default function RookiesRunPage() {
                 ? state.activeAbility.id === 'magnet'
                   ? 'tap an enemy on your line'
                   : 'tap an enemy'
-                : state.activeAbility.id === 'swap'
+                : state.activeAbility.id === 'magnet'
+                  ? 'tap the square it lands on'
+                  : state.activeAbility.id === 'swap'
                   ? 'tap the summon to swap with'
                   : state.activeAbility.id === 'sacrifice'
                     ? 'tap the summon to detonate'

@@ -22,7 +22,7 @@ import {
   stepAllyTurn,
   stunKingAfterCapture,
   tryAegisIntercept,
-  withRewindSnapshot,
+  pushEnemyPhaseSnapshot,
 } from './abilities';
 import { DIFFICULTIES } from './difficulty';
 import { enemyAt, rookieLegalMoves } from './movement';
@@ -947,8 +947,12 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
  * - If a capture happens, sets status='lost' and turn='rookie'.
  * - Otherwise leaves turn='enemy' so the caller can step again.
  */
-export function stepEnemyTurn(state: BoardState): BoardState {
-  if (state.status !== 'playing' || state.turn !== 'enemy') return state;
+export function stepEnemyTurn(rawState: BoardState): BoardState {
+  if (rawState.status !== 'playing' || rawState.turn !== 'enemy') return rawState;
+  // Rewind (enemy-only): a FRESH enemy phase records the board as Rookie's
+  // side left it — the undo target if this phase needs to unhappen.
+  const state =
+    rawState.enemyMovedSquares.length === 0 ? pushEnemyPhaseSnapshot(rawState) : rawState;
   const budget = Math.max(1, state.enemiesPerTurn ?? 1);
   const exclude = new Set(state.enemyMovedSquares);
 
@@ -1059,7 +1063,7 @@ export function stepEnemyTurn(state: BoardState): BoardState {
           })
           .filter((a) => a.turnsLeft === undefined || a.turnsLeft > 0)
       : s.allies;
-    return withRewindSnapshot({
+    return {
       ...s,
       pieces,
       captures,
@@ -1085,7 +1089,7 @@ export function stepEnemyTurn(state: BoardState): BoardState {
         poisonDeaths.length > 0
           ? { deaths: poisonDeaths, id: Date.now() + Math.random() }
           : s.lastPoisonDeath,
-    });
+    };
   };
 
   if (state.enemyMovedSquares.length >= budget) return endTurn(state);

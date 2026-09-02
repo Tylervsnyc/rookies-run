@@ -17,7 +17,6 @@ import {
 import {
   breakSmokeOnCapture,
   clearStatusOnSquare,
-  ensureRewindTurnStart,
   isControlledAlly,
   offerIsExhausted,
   rollOffer,
@@ -122,8 +121,6 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
     ...(captured ? stunKingAfterCapture(state) : {}),
     // Smoke: a capture by Rookie herself blows her cover (T5 keeps it).
     ...(captured ? breakSmokeOnCapture(state) : {}),
-    // Rewind: first move of a level records the pre-move board as turn start.
-    ...ensureRewindTurnStart(state),
   };
 
   // When the meter fills, roll an offer — unless every ability is maxed, in

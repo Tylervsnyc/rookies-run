@@ -199,7 +199,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Rewind',
     activation: 'instant',
     typeLine: 'Instant · Time',
-    description: 'Undo the last turn. Yours and theirs.',
+    description: "Undo the enemies' last turn. The king takes it back. You don't.",
   },
   magnet: {
     id: 'magnet',
@@ -371,8 +371,9 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 3 || tier === 4) return 2;
       return 1;
     case 'rewind':
-      // 1/1/2/2/3
-      if (tier <= 2) return 1;
+      // 1/2/2/2/3 — enemy-only rewind (2026-09-02): T2 is simply MORE
+      // rewinds; the old T2 charge-refund is gone.
+      if (tier === 1) return 1;
       if (tier <= 4) return 2;
       return 3;
     case 'magnet':
@@ -478,8 +479,8 @@ const HOW: Record<AbilityId, string> = {
   decoy: 'Tap card, then tap an enemy.',
   boulder: 'Tap card, then tap an empty square.',
   smoke: 'Tap card. You vanish at once.',
-  rewind: 'Tap card. The last turn unhappens.',
-  magnet: 'Tap card, then tap an enemy on your line.',
+  rewind: "Tap card. The enemies' last turn unhappens. Yours stays.",
+  magnet: 'Tap card, tap an enemy on your line, then tap the square it lands on.',
   bodyguard: 'Tap card. A rook appears beside you.',
   'summon-knight': 'Tap card, then tap a square beside you. Tap the knight to move it.',
   'bishop-squire': 'Tap card, then tap a square beside you. Tap the bishop to move it.',
@@ -583,9 +584,9 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Mark an enemy for 2 turns. Its team will attack it.';
       return 'Mark an enemy for 1 turn. Its team will attack it.';
     case 'boulder':
-      if (tier === 5) return 'Drop boulders anywhere, as many as you like. Drop one on an enemy pawn to crush it.';
-      if (tier === 4) return 'Each use drops 2 boulders. Drop one on an enemy pawn to crush it.';
-      if (tier >= 2) return 'Drop a boulder on an empty square — or on an enemy pawn to crush it.';
+      if (tier === 5) return 'Drop a boulder on any square — crush an enemy pawn under it. Unlimited drops.';
+      if (tier === 4) return 'Drop a boulder on any square — crush an enemy pawn under it. Each use drops 2.';
+      if (tier >= 2) return 'Drop a boulder on any square — crush an enemy pawn under it.';
       return 'Drop a boulder on an empty square. It blocks everyone, for good.';
     case 'smoke':
       if (tier === 5) return 'Vanish for 3 turns. Captures do not break cover.';
@@ -593,14 +594,15 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Vanish for 2 turns. Enemies cannot see you.';
       return 'Vanish for 1 turn. Enemies cannot see you.';
     case 'rewind':
-      if (tier >= 4) return 'Undo the last TWO turns. Charges spent in them come back.';
-      if (tier >= 2) return 'Undo the last turn. Charges spent in it come back.';
-      return 'Undo the last turn: your move and their reply.';
+      if (tier === 5) return "Undo the last TWO enemy turns — and every piece you rewind is frozen for a turn.";
+      if (tier === 4) return "Undo the last TWO enemy turns. Your moves stay.";
+      if (tier === 3) return "Undo the enemies' last turn — and the king is stunned while they replay it.";
+      return "Undo the enemies' last turn. Your move stays.";
     case 'magnet':
-      if (tier === 5) return 'Pull an enemy on your line all the way to you — even the king, one square.';
-      if (tier === 4) return 'Pull an enemy on your line all the way to you.';
-      if (tier >= 2) return 'Pull an enemy on your line up to 3 squares.';
-      return 'Pull an enemy on your line up to 2 squares.';
+      if (tier === 5) return 'Pull an enemy on your line any distance you choose — even the king, one square.';
+      if (tier === 4) return 'Pull an enemy on your line any distance you choose.';
+      if (tier >= 2) return 'Pull an enemy on your line up to 3 squares — you pick how far.';
+      return 'Pull an enemy on your line up to 2 squares — you pick how far.';
     case 'bodyguard':
       if (tier === 5) return 'A rainbow rook guards you for the rest of the level.';
       if (tier >= 3) return 'A rainbow rook guards you for 3 turns.';
@@ -738,10 +740,10 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Mark for 2 turns. 1/level.';
       return 'Mark an enemy for 1 turn. 1/level.';
     case 'boulder':
-      if (tier === 5) return 'Unlimited boulders. Crush pawns.';
-      if (tier === 4) return '2 boulders per use. 3/level.';
-      if (tier === 3) return 'Drop, or crush a pawn. 3/level.';
-      if (tier === 2) return 'Drop, or crush a pawn. 2/level.';
+      if (tier === 5) return 'Crush pawns. Unlimited boulders.';
+      if (tier === 4) return 'Crush a pawn; 2 boulders per use. 3/level.';
+      if (tier === 3) return 'Crush a pawn under a boulder. 3/level.';
+      if (tier === 2) return 'Crush a pawn under a boulder. 2/level.';
       return 'Drop a boulder. 2/level.';
     case 'smoke':
       if (tier === 5) return 'Vanish 3 turns, captures keep cover. 1/level.';
@@ -750,17 +752,17 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Vanish 2 turns. 1/level.';
       return 'Vanish 1 turn. 1/level.';
     case 'rewind':
-      if (tier === 5) return 'Undo last TWO turns. 3/level.';
-      if (tier === 4) return 'Undo last TWO turns. 2/level.';
-      if (tier === 3) return 'Undo + refund charges. 2/level.';
-      if (tier === 2) return 'Undo + refund charges. 1/level.';
-      return 'Undo last turn. 1/level.';
+      if (tier === 5) return 'Undo 2 enemy turns; rewound pieces freeze. 3/level.';
+      if (tier === 4) return 'Undo the last TWO enemy turns. 2/level.';
+      if (tier === 3) return 'Undo their turn; king stunned. 2/level.';
+      if (tier === 2) return 'Undo their last turn. 2/level.';
+      return 'Undo their last turn. 1/level.';
     case 'magnet':
-      if (tier === 5) return 'Pull any distance. Even the king. 2/level.';
-      if (tier === 4) return 'Pull any distance. 2/level.';
-      if (tier === 3) return 'Pull up to 3. 2/level.';
-      if (tier === 2) return 'Pull up to 3. 1/level.';
-      return 'Pull up to 2. 1/level.';
+      if (tier === 5) return 'Pull any distance you choose. Even the king. 2/level.';
+      if (tier === 4) return 'Pull any distance you choose. 2/level.';
+      if (tier === 3) return 'Pull up to 3 — you choose. 2/level.';
+      if (tier === 2) return 'Pull up to 3 — you choose. 1/level.';
+      return 'Pull up to 2 — you choose. 1/level.';
     case 'bodyguard':
       if (tier === 5) return 'Rook ally, whole level. 1/level.';
       if (tier === 4) return 'Rook ally, 3 turns. 2/level.';
@@ -917,7 +919,7 @@ export const UPGRADE_NOTES: Record<
     5: 'Mark lasts until captured',
   },
   boulder: {
-    2: 'Drops can land ON enemy pawns — crunch',
+    2: 'Crush enemy pawns under your drops',
     3: '',
     4: 'Each use drops 2 boulders',
     5: 'Unlimited boulders',
@@ -929,10 +931,10 @@ export const UPGRADE_NOTES: Record<
     5: 'Captures no longer break cover',
   },
   rewind: {
-    2: 'Charges spent in the undone turn come back',
-    3: '',
-    4: 'Undoes the last TWO turns',
-    5: '',
+    2: '1 rewind per level → 2',
+    3: 'Rewinding also stuns the king a turn',
+    4: 'Reaches back TWO enemy turns',
+    5: 'Rewound pieces freeze for a turn',
   },
   magnet: {
     2: 'Pull reach 2 squares → 3',
@@ -1246,6 +1248,14 @@ export function abilityLegalMoves(
   // Boulder is a pick-square target — its drop squares render as the same
   // tier-coloured dots a movement ability would (quieter than 60 rings).
   if (abilityId === 'boulder') return boulderTargets(state);
+  // Magnet in its second step: the landing squares along the pull line —
+  // tapping one IS the distance chooser.
+  if (abilityId === 'magnet') {
+    const active = state.activeAbility;
+    if (active?.id !== 'magnet' || active.step !== 'pick-square' || !active.magnetFrom) return [];
+    const tier = state.abilities.find((a) => a.id === 'magnet')?.tier ?? 1;
+    return magnetLandingSquares(state, active.magnetFrom, tier);
+  }
   if (abilityId === 'summon-knight') return squireSpawnSquares(state);
   if (isSummonAbility(abilityId)) return summonSpawnSquares(state, abilityId);
   if (abilityId === 'swap') return swapTargets(state);
@@ -1554,7 +1564,7 @@ export function applyAbilityTargeted(
   // may take him. No decoy / poison / rabies / convert on the king. Freeze
   // Ray is the ONE exception: freezing the king pins him so he can't flee.
   // Magnet T5 is the second exception: the king can't be captured by it,
-  // but he CAN be yanked one square (magnetPull caps his pull distance).
+  // but he CAN be yanked one square (magnetLandingSquares caps his pull).
   if (
     abilityId !== 'freeze-ray' &&
     !(abilityId === 'magnet' && owned.tier === 5) &&
@@ -1734,9 +1744,24 @@ export function applyAbilityTargeted(
   }
 
   if (abilityId === 'magnet') {
-    const pull = magnetPull(state, target, owned.tier);
+    // Two taps: first pick the enemy to grab, THEN pick how far it comes —
+    // the second tap lands on one of the highlighted squares along the pull
+    // line. The charge is only spent when the pull resolves.
+    if (state.activeAbility.step === 'pick-enemy') {
+      if (!magnetTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) {
+        return state;
+      }
+      if (magnetLandingSquares(state, target, owned.tier).length === 0) return state;
+      return {
+        ...state,
+        activeAbility: { id: 'magnet', step: 'pick-square', magnetFrom: { ...target } },
+      };
+    }
+    const grabbed = state.activeAbility.magnetFrom;
+    if (!grabbed) return state;
+    const pull = magnetPullTo(state, grabbed, target, owned.tier);
     if (!pull) return state;
-    const fromSq = toSquare(target);
+    const fromSq = toSquare(grabbed);
     const toSq = toSquare(pull.landing);
     const relocated = relocateStatusMarkers(state, fromSq, toSq);
     // Frozen markers follow too (a frozen piece can still be dragged).
@@ -1920,75 +1945,173 @@ export function breakSmokeOnCapture(state: BoardState): Pick<BoardState, 'smokeT
 }
 
 // ---------------------------------------------------------------------------
-// Rewind — undo the last full turn (Rookie's move + the enemy reply).
+// Rewind — ENEMY-ONLY undo (2026-09-02 redesign): the king and his court
+// step back to where they were before their last turn. Rookie's move,
+// captures, tempo and charges all stay. "The king takes it back. You don't."
 // ---------------------------------------------------------------------------
 
 /** A copy of `state` with no rewind stack of its own (no nesting). */
 function rewindSnapshotOf(state: BoardState): BoardState {
   const snap: BoardState = { ...state };
-  delete snap.rewindStack;
+  delete snap.enemyRewindStack;
   return snap;
 }
 
 /**
- * Snapshot helper — called by the enemy-turn endTurn when control returns to
- * Rookie. The turn that just finished started at `rewindStack[1]`; that
- * becomes the undo target, and the handed-back board becomes the new
- * current-turn start.
+ * Give every enemy piece a stable id (preserved by spread-moves). Needed so
+ * Rewind T4+ can match a piece to where IT stood two enemy turns ago.
  */
-export function withRewindSnapshot(state: BoardState): BoardState {
-  // Keep the last TWO turn starts (T4+ undoes two turns). Reads by position
-  // from the end so a legacy 2-entry stack migrates cleanly.
-  const stack = state.rewindStack ?? [];
-  const prevPrev = stack.length >= 2 ? (stack[stack.length - 2] ?? null) : null;
-  const prev = stack.length >= 1 ? (stack[stack.length - 1] ?? null) : null;
-  return { ...state, rewindStack: [prevPrev, prev, rewindSnapshotOf(state)] };
+function withEnemyIds(state: BoardState): BoardState {
+  if (state.pieces.every((p) => p.id !== undefined)) return state;
+  let nextId = 1 + state.pieces.reduce((m, p) => Math.max(m, p.id ?? 0), 0);
+  return {
+    ...state,
+    pieces: state.pieces.map((p) => (p.id !== undefined ? p : { ...p, id: nextId++ })),
+  };
 }
 
 /**
- * Lazy turn-start snapshot for the FIRST Rookie move of a level (seed builds
- * states without a stack). Called by applyRookieMove on the pre-move state.
+ * Snapshot helper — called by stepEnemyTurn when a FRESH enemy phase begins
+ * (the board as Rookie's side left it, before any enemy replies). Keeps the
+ * last two phase-starts: [older, latest]. Restoring `latest` deletes exactly
+ * the enemy reply that follows it — Rookie's own move is already inside.
  */
-export function ensureRewindTurnStart(state: BoardState): Pick<BoardState, 'rewindStack'> | Record<string, never> {
-  if (state.rewindStack) return {};
-  return { rewindStack: [null, null, rewindSnapshotOf(state)] };
+export function pushEnemyPhaseSnapshot(state: BoardState): BoardState {
+  const withIds = withEnemyIds(state);
+  const stack = withIds.enemyRewindStack ?? [];
+  const last = stack[stack.length - 1];
+  // Guard against double-push within one phase (each Rookie turn has a
+  // unique moveCount, and one enemy phase follows each Rookie turn).
+  if (last && last.moveCount === withIds.moveCount) return withIds;
+  const snap = rewindSnapshotOf(withIds);
+  return { ...withIds, enemyRewindStack: last ? [last, snap] : [snap] };
+}
+
+/** Can Rewind do anything right now? (Owned, has uses, has a snapshot.) */
+export function canRewind(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'rewind');
+  if (!owned || owned.usesLeftThisLevel === 0) return false;
+  const latest = latestRewindSnapshot(state);
+  // Only before Rookie acts this turn (mid-Surge-chain her extra moves are
+  // not in the snapshot and must never be lost).
+  return latest !== null && latest.moveCount === state.moveCount;
+}
+
+/** The board as it stood before the enemies' LAST turn (or null). */
+export function latestRewindSnapshot(state: BoardState): BoardState | null {
+  const stack = state.enemyRewindStack ?? [];
+  return stack[stack.length - 1] ?? null;
+}
+
+/**
+ * T4+: walk enemies back one MORE enemy turn. `base` is the exact undo of
+ * the last enemy phase; `older` is the phase-start before that. Each piece
+ * (matched by id) steps back to its older square when that square is free.
+ * Pieces Rookie captured in between stay dead; status markers ride along.
+ */
+function mergeEnemyPositionsBack(base: BoardState, older: BoardState): BoardState {
+  let cur = base;
+  const occupied = new Set(cur.pieces.map((p) => toSquare(p)));
+  const blocked = (c: Coord): boolean =>
+    (cur.rookie.file === c.file && cur.rookie.rank === c.rank) ||
+    (cur.allies ?? []).some((a) => a.file === c.file && a.rank === c.rank) ||
+    allyIsHazard(cur, c.file, c.rank);
+  // Multi-pass: a piece stepping back can vacate the square another needs.
+  for (let pass = 0; pass < 4; pass++) {
+    let changed = false;
+    for (const p of cur.pieces) {
+      if (p.id === undefined) continue;
+      const was = older.pieces.find((o) => o.id === p.id);
+      if (!was || (was.file === p.file && was.rank === p.rank)) continue;
+      const destSq = toSquare(was);
+      if (occupied.has(destSq) || blocked(was)) continue;
+      const fromSq = toSquare(p);
+      occupied.delete(fromSq);
+      occupied.add(destSq);
+      cur = {
+        ...cur,
+        ...relocateStatusMarkers(cur, fromSq, destSq),
+        pieces: cur.pieces.map((x) =>
+          x === p ? { ...x, file: was.file, rank: was.rank } : x,
+        ),
+        decoyTarget: cur.decoyTarget === fromSq ? destSq : cur.decoyTarget,
+      };
+      // Frozen markers follow the piece too.
+      if (cur.frozenSquares.includes(fromSq)) {
+        const turns = cur.frozenTurnsLeft[fromSq];
+        const frozenTurnsLeft = { ...cur.frozenTurnsLeft };
+        delete frozenTurnsLeft[fromSq];
+        frozenTurnsLeft[destSq] = turns;
+        cur = {
+          ...cur,
+          frozenSquares: [...cur.frozenSquares.filter((s) => s !== fromSq), destSq],
+          frozenTurnsLeft,
+        };
+      }
+      changed = true;
+    }
+    if (!changed) break;
+  }
+  return cur;
 }
 
 function applyRewind(state: BoardState): BoardState {
   const owned = state.abilities.find((a) => a.id === 'rewind');
   if (!owned) return state;
   if (owned.usesLeftThisLevel === 0) return state;
-  if (state.moveCount === 0) return state;
-  const stack = state.rewindStack ?? [];
-  const prev = stack.length >= 2 ? stack[stack.length - 2] : null;
-  const prevPrev = stack.length >= 3 ? stack[stack.length - 3] : null;
-  // T4+: the undo reaches back TWO full turns when two are on record.
-  const snap = owned.tier >= 4 && prevPrev ? prevPrev : prev;
-  if (!snap) return state;
-  // T2+: charges spent in the undone turn(s) come back — each ability's uses
-  // are restored to the target snapshot's count (capped at its CURRENT
-  // tier's max, so upgrades picked since the snapshot are kept, and never
-  // reduced below what it has now).
-  const restored =
-    owned.tier >= 2
-      ? state.abilities.map((a) => {
-          const was = snap.abilities.find((b) => b.id === a.id);
-          if (!was || a.usesLeftThisLevel < 0 || was.usesLeftThisLevel < 0) return a;
-          const cap = maxUsesForTier(a.id, a.tier);
-          const back = Math.min(cap, Math.max(a.usesLeftThisLevel, was.usesLeftThisLevel));
-          return back === a.usesLeftThisLevel ? a : { ...a, usesLeftThisLevel: back };
-        })
-      : state.abilities;
+  const stack = state.enemyRewindStack ?? [];
+  const latest = stack[stack.length - 1];
+  if (!latest) return state;
+  // Never undo Rookie's OWN moves: mid-Surge-chain the snapshot predates her
+  // extra moves this turn — refuse until the next enemy phase re-arms.
+  if (latest.moveCount !== state.moveCount) return state;
+  // T4+: the undo reaches back TWO enemy turns when two are on record.
+  const older = owned.tier >= 4 && stack.length >= 2 ? stack[stack.length - 2] : null;
+  let snap = latest;
+  if (older) snap = mergeEnemyPositionsBack(latest, older);
+  // T5 signature: every piece the rewind MOVED (or brought back) is frozen
+  // for the replayed turn.
+  let frozenSquares = snap.frozenSquares;
+  let frozenTurnsLeft = snap.frozenTurnsLeft;
+  if (owned.tier >= 5) {
+    frozenSquares = [...frozenSquares];
+    frozenTurnsLeft = { ...frozenTurnsLeft };
+    for (const p of snap.pieces) {
+      const now = p.id !== undefined
+        ? state.pieces.find((x) => x.id === p.id)
+        : state.pieces.find((x) => x.file === p.file && x.rank === p.rank && x.type === p.type);
+      const moved = !now || now.file !== p.file || now.rank !== p.rank;
+      if (!moved) continue;
+      const sq = toSquare(p);
+      if (!frozenSquares.includes(sq)) frozenSquares.push(sq);
+      frozenTurnsLeft[sq] = Math.max(frozenTurnsLeft[sq] ?? 0, 1);
+    }
+  }
   return {
     ...snap,
-    // Charges are spent, tempo is kept — time moves back, the meter doesn't.
-    abilities: decrementUse(restored, 'rewind'),
+    // Enemy-only: Rookie's side is untouched — she hasn't moved since the
+    // snapshot, and her charges are simply what she has now (minus this use).
+    // Tempo, captures and any offer resolved since the snapshot stay too
+    // ("your position, captures, tempo and charges stay").
+    abilities: decrementUse(state.abilities, 'rewind'),
     tempo: state.tempo,
+    captures: state.captures,
+    pendingOffer: state.pendingOffer,
+    offerReason: state.offerReason,
+    turn: 'rookie',
+    status: 'playing',
+    enemyMovedSquares: [],
+    enemyVacatedSquares: [],
+    frozenSquares,
+    frozenTurnsLeft,
+    // T3+: the king is stunned while his court replays the turn.
+    ...(owned.tier >= 3 && snap.winCondition === 'king'
+      ? { kingStunTurns: Math.max(1, snap.kingStunTurns ?? 0) }
+      : {}),
     activeAbility: null,
     cancellableActivation: undefined,
-    // We're back at the start of that turn: no further undo, and this board
-    // is the new turn start.
-    rewindStack: [null, null, rewindSnapshotOf(snap)],
+    // No chaining: the cast clears the stack; the next enemy phase re-arms it.
+    enemyRewindStack: [],
     // Carry the CURRENT transient fx ids so restoring an older state can't
     // re-fire an old animation.
     lastAegisIntercept: state.lastAegisIntercept,
@@ -2041,7 +2164,7 @@ export function magnetTargets(state: BoardState): Coord[] {
       if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) break;
       const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
       if (enemy) {
-        // T5 signature: even the KING can be grabbed (magnetPull caps his
+        // T5 signature: even the KING can be grabbed (magnetLandingSquares caps his
         // pull at one square — a yank, not a kidnapping).
         const kingOk = enemy.type === 'king' && (owned?.tier ?? 1) === 5;
         if ((enemy.type !== 'king' || kingOk) && dist >= 2) out.push({ file: f, rank: r });
@@ -2055,21 +2178,23 @@ export function magnetTargets(state: BoardState): Coord[] {
   return out;
 }
 
-/** Resolve a Magnet pull: which piece, and where it lands. Null = illegal. */
-export function magnetPull(
+/**
+ * Squares the grabbed enemy may land on: every open square along the pull
+ * line toward Rookie, distance 1..tierMax — the PLAYER picks how far the
+ * pull goes by tapping one of them. Stops before Rookie, another piece, an
+ * ally, or a hazard. The king (T5 only) is yanked exactly ONE square.
+ */
+export function magnetLandingSquares(
   state: BoardState,
   target: Coord,
   tier: AbilityTier,
-): { piece: EnemyPiece; landing: Coord } | null {
-  if (!magnetTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) {
-    return null;
-  }
+): Coord[] {
   const piece = state.pieces.find((p) => p.file === target.file && p.rank === target.rank);
-  if (!piece) return null;
+  if (!piece) return [];
   const df = Math.sign(state.rookie.file - target.file);
   const dr = Math.sign(state.rookie.rank - target.rank);
-  // The king (T5 only — see magnetTargets) is yanked exactly ONE square.
   const max = piece.type === 'king' ? 1 : magnetPullDistance(tier);
+  const out: Coord[] = [];
   let f = target.file;
   let r = target.rank;
   let steps = 0;
@@ -2084,9 +2209,26 @@ export function magnetPull(
     f = nf;
     r = nr;
     steps += 1;
+    out.push({ file: f, rank: r });
   }
-  if (steps === 0) return null;
-  return { piece, landing: { file: f, rank: r } };
+  return out;
+}
+
+/** Resolve a Magnet pull to a CHOSEN landing square. Null = illegal. */
+export function magnetPullTo(
+  state: BoardState,
+  target: Coord,
+  landing: Coord,
+  tier: AbilityTier,
+): { piece: EnemyPiece; landing: Coord } | null {
+  if (!magnetTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) {
+    return null;
+  }
+  const piece = state.pieces.find((p) => p.file === target.file && p.rank === target.rank);
+  if (!piece) return null;
+  const legal = magnetLandingSquares(state, target, tier);
+  if (!legal.some((c) => c.file === landing.file && c.rank === landing.rank)) return null;
+  return { piece, landing };
 }
 
 // ---------------------------------------------------------------------------
@@ -2609,7 +2751,6 @@ export function applyControlledAllyMove(
     decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
     cancellableActivation: undefined,
     ...(captured ? stunKingAfterCapture(state) : {}),
-    ...ensureRewindTurnStart(state),
   };
 
   // Taking the king wins the level (the 'king' win condition).

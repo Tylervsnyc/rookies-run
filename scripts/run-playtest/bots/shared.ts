@@ -23,8 +23,11 @@ import {
   controlledAllies,
   controlledAllyLegalMoves,
   convertTargets,
+  canRewind,
   isSmoked,
   knightingTargets,
+  latestRewindSnapshot,
+  magnetLandingSquares,
   magnetTargets,
   sacrificeTargets,
   summonSpawnSquares,
@@ -496,14 +499,27 @@ function candidatesForAbility(
     case 'smoke':
       if (!isSmoked(state)) out.push({ kind: 'activate-ability', abilityId: 'smoke' });
       return out;
-    case 'rewind':
-      // Bots never rewind — the harness has no notion of "that turn went
-      // badly", and undoing a rollout's own move just burns nodes. Skipped
-      // on purpose; documented in docs/revenge-abilities.md.
+    case 'rewind': {
+      // Enemy-only rewind (2026-09-02): a real strategic action — the enemy
+      // reply unhappens, Rookie's move stays. Enumerate it when the last
+      // enemy turn HURT: an ally died, or an enemy now attacks Rookie.
+      if (!canRewind(state)) return out;
+      const snap = latestRewindSnapshot(state);
+      if (!snap) return out;
+      const allyDied = (snap.allies?.length ?? 0) > (state.allies?.length ?? 0);
+      const threatened = enemyAttackedSquares(state).has(toSquare(state.rookie));
+      if (allyDied || threatened) {
+        out.push({ kind: 'activate-ability', abilityId: 'rewind' });
+      }
       return out;
+    }
     case 'magnet': {
+      // One candidate per (enemy, landing square) — the pull DISTANCE is the
+      // player's choice, so the bot scores each concrete landing.
       for (const c of magnetTargets(state)) {
-        out.push({ kind: 'ability-target', abilityId: 'magnet', target: c });
+        for (const landing of magnetLandingSquares(state, c, owned.tier)) {
+          out.push({ kind: 'ability-target', abilityId: 'magnet', target: c, target2: landing });
+        }
       }
       return out;
     }

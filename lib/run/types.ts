@@ -40,6 +40,12 @@ export interface EnemyPiece {
   color: PieceColor;
   file: number;
   rank: number;
+  /**
+   * Stable identity across turns — assigned lazily by the Rewind snapshot
+   * machinery (see pushEnemyPhaseSnapshot) and preserved by every spread-move.
+   * Lets Rewind T4+ match a piece to where IT stood two enemy turns ago.
+   */
+  id?: number;
 }
 
 /**
@@ -181,7 +187,16 @@ export interface BoardState {
   /** When the tempo meter fills, the player is offered 3 ability choices. */
   pendingOffer: AbilityOffer | null;
   /** Currently-targeting ability — drives ability resolution UI. */
-  activeAbility: { id: AbilityId; step: 'pick-square' | 'pick-enemy' } | null;
+  activeAbility: {
+    id: AbilityId;
+    step: 'pick-square' | 'pick-enemy';
+    /**
+     * Magnet only — the enemy grabbed on the first tap. While set (step
+     * 'pick-square') the second tap picks the landing square along the pull
+     * line: the player chooses the pull DISTANCE.
+     */
+    magnetFrom?: Coord;
+  } | null;
   /** Current level number (1-based) — drives pawn promotion options. */
   level: number;
   /** Which run this state belongs to — used to filter ability offers. */
@@ -314,16 +329,18 @@ export interface BoardState {
    */
   smokeTurnsLeft?: number;
   /**
-   * Rewind — three board snapshots (each stored WITHOUT its own rewindStack):
-   *   [0] = the board at the start of the turn BEFORE LAST (the two-turn
-   *         undo target, Rewind T4+), or null;
-   *   [1] = the board at the start of the PREVIOUS Rookie turn (the one-turn
-   *         undo target: her last move + the enemy reply unhappen), or null;
-   *   [2] = the board at the start of the CURRENT Rookie turn.
-   * Written by the enemy-turn `endTurn` (and lazily by the first Rookie move
-   * of a level); consumed by the Rewind ability.
+   * Rewind (enemy-only, 2026-09-02) — up to two board snapshots taken at the
+   * START of an enemy phase, i.e. right after Rookie's side finished acting
+   * (each stored WITHOUT its own stack):
+   *   [last]     = the board just before the enemy turn that JUST resolved —
+   *                restoring it deletes ONLY the enemies' reply; Rookie's
+   *                move, captures and tempo are already in it.
+   *   [last - 1] = the board just before the enemy turn BEFORE that (the
+   *                Rewind T4+ two-turn reach).
+   * Written by stepEnemyTurn when a fresh enemy phase begins; consumed by
+   * the Rewind ability. Cleared by a cast (no chaining).
    */
-  rewindStack?: Array<BoardState | null>;
+  enemyRewindStack?: BoardState[];
   /**
    * Boulder T4 — after the first drop of a use, one more FREE placement is
    * owed (the use drops two boulders). Set by the boulder branch of

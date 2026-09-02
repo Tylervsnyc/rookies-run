@@ -31,6 +31,7 @@ import { join } from 'node:path';
 
 import {
   ABILITY_DEFS,
+  abilityLegalMoves,
   applyAbilityActivate,
   applyAbilityCancel,
   applyAbilityMove,
@@ -406,6 +407,20 @@ function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry
         continue;
       }
       st = next;
+      // Magnet became two-step (grab, then choose landing) on 2026-09-02.
+      // Legacy traces carry a single magnet ability-target event; when no
+      // second one follows, auto-resolve to the farthest landing (= the old
+      // fixed max-distance pull).
+      if (
+        ability === 'magnet' &&
+        st.activeAbility?.id === 'magnet' &&
+        st.activeAbility.step === 'pick-square' &&
+        !(evs[i + 1]?.kind === 'ability-target' && evs[i + 1]?.ability === 'magnet')
+      ) {
+        const landings = abilityLegalMoves(st, 'magnet');
+        const far = landings[landings.length - 1];
+        st = far ? applyAbilityTargeted(st, 'magnet', far) : applyAbilityCancel(st);
+      }
       continue;
     }
 
