@@ -594,6 +594,30 @@
       "stage": "testing",
       "created": "2026-09-02",
       "notes": "Full 10-level arc (2026-09-02) built from Tyler's playtest rules: two doors watched from L1 (double-key + sightline hunters = the run identity), double-defended keys from L4, marcher clocks, escalating courts; the original single proving level sits at L7 (budget 11 -> 13). Matrix-verified T5 realistic 96 trials: none 100/100/100/100/81/68/38/38/41/23 (band 100/100/100/95/85/60/50/45/35/30 +/-15), finishers >= 88."
+    },
+    {
+      "id": "dragon",
+      "kind": "ability",
+      "name": "Dragon",
+      "stage": "testing",
+      "created": "2026-09-02",
+      "notes": "Queen+knight controllable summon (Amazon). Tyler greenlit 2026-09-02: 'let's make the dragon.'"
+    },
+    {
+      "id": "griffin",
+      "kind": "ability",
+      "name": "Griffin",
+      "stage": "idea",
+      "created": "2026-09-02",
+      "notes": "Controllable summon, movement TBD — Tyler's nerdy-friend bestiary (Tyler, 2026-09-02)."
+    },
+    {
+      "id": "vanguard-pawn",
+      "kind": "ability",
+      "name": "Vanguard Pawn",
+      "stage": "idea",
+      "created": "2026-09-02",
+      "notes": "A pawn that can also capture straight forward (Tyler, 2026-09-02). Movement/economy TBD."
     }
   ]
 }

@@ -49,6 +49,7 @@ export type AbilityId =
   | 'page'
   | 'twin'
   | 'duchess'
+  | 'dragon'
   | 'vanguard'
   | 'swap'
   | 'sacrifice'
@@ -250,6 +251,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Ally',
     description: 'Summon a rainbow queen YOU control. She does not stay long.',
   },
+  dragon: {
+    id: 'dragon',
+    name: 'Dragon',
+    activation: 'targeted',
+    typeLine: 'Targeted · Ally',
+    description: 'A dragon. Queen moves, knight moves, no mercy.',
+  },
   vanguard: {
     id: 'vanguard',
     name: 'Vanguard',
@@ -399,6 +407,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/1/2/2 — a queen is worth a whole charge.
       if (tier <= 3) return 1;
       return 2;
+    case 'dragon':
+      // 1/1/1/1/2 — the strongest summon in the game holds ONE charge until T5.
+      if (tier <= 4) return 1;
+      return 2;
     case 'swap':
       // 1/1/2/2/3 — support, refreshes every level.
       if (tier <= 2) return 1;
@@ -487,6 +499,7 @@ const HOW: Record<AbilityId, string> = {
   page: 'Tap card, then tap a square beside you. Tap the pawn to move it.',
   twin: 'Tap card, then tap a square beside you. Tap the rook to move it.',
   duchess: 'Tap card, then tap a square beside you. Tap the queen to move it.',
+  dragon: 'Tap card, then tap a spawn square. Tap the dragon to move her.',
   vanguard: 'Tap card, then tap any square in range. Tap the knight to move it.',
   swap: 'Tap card, then tap one of your summons.',
   sacrifice: 'Tap card, then tap one of your summons.',
@@ -635,6 +648,14 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'A queen you control for 4 turns.';
       if (tier === 2) return 'A queen you control for 3 turns.';
       return 'A queen you control for 2 turns. Make them count.';
+    case 'dragon':
+      if (tier === 5)
+        return 'A dragon for 5 turns — queen moves plus knight moves. Summon her anywhere within 3 squares.';
+      if (tier === 4)
+        return 'A dragon for 4 turns — queen moves plus knight moves. Her captures stun the king 2 turns.';
+      if (tier === 3) return 'A dragon you control for 4 turns. Queen moves plus knight moves.';
+      if (tier === 2) return 'A dragon you control for 3 turns. Queen moves plus knight moves.';
+      return 'A dragon you control for 2 turns. Queen moves plus knight moves.';
     case 'vanguard':
       if (tier === 5) return 'Drop a knight you control within 5 squares. He lasts the level.';
       if (tier >= 3) return 'Drop a knight you control within 4 squares.';
@@ -799,6 +820,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Your queen, 4 turns. 1 charge.';
       if (tier === 2) return 'Your queen, 3 turns. 1 charge.';
       return 'Your queen, 2 turns. 1 charge.';
+    case 'dragon':
+      if (tier === 5) return 'Your dragon, 5 turns, drops in range 3. 2 charges.';
+      if (tier === 4) return 'Your dragon, 4 turns. Captures stun king 2. 1 charge.';
+      if (tier === 3) return 'Your dragon, 4 turns. 1 charge.';
+      if (tier === 2) return 'Your dragon, 3 turns. 1 charge.';
+      return 'Your dragon, 2 turns. 1 charge.';
     case 'vanguard':
       if (tier === 5) return 'Knight drop, range 5, all level. 2 charges.';
       if (tier === 4) return 'Knight drop, range 4. 2 charges.';
@@ -977,6 +1004,12 @@ export const UPGRADE_NOTES: Record<
     3: '3 turns → 4',
     4: '',
     5: '4 turns → 6',
+  },
+  dragon: {
+    2: 'On the board 2 turns → 3',
+    3: '3 turns → 4',
+    4: 'Her captures stun the king 2 turns, not 1',
+    5: '4 turns → 5; summon her anywhere within 3 squares',
   },
   vanguard: {
     2: 'Drop range 2 → 3',
@@ -2419,6 +2452,7 @@ export const CONTROLLED_SOURCES: ReadonlySet<AllyPiece['source']> = new Set([
   'page',
   'twin',
   'duchess',
+  'dragon',
   'vanguard',
 ] as AllyPiece['source'][]);
 
@@ -2442,6 +2476,7 @@ const SUMMON_ABILITIES: ReadonlyArray<AbilityId> = [
   'page',
   'twin',
   'duchess',
+  'dragon',
   'vanguard',
 ];
 
@@ -2456,6 +2491,7 @@ const ABILITY_FOR_SOURCE: Partial<Record<AllyPiece['source'], AbilityId>> = {
   page: 'page',
   twin: 'twin',
   duchess: 'duchess',
+  dragon: 'dragon',
   vanguard: 'vanguard',
 };
 
@@ -2474,6 +2510,9 @@ function summonPieceFor(id: AbilityId): AllyPiece['type'] {
   if (id === 'page') return 'pawn';
   if (id === 'twin') return 'rook';
   if (id === 'duchess') return 'queen';
+  // Dragon renders as a rainbow queen; her queen+knight moves are keyed on
+  // source === 'dragon', not on the piece type.
+  if (id === 'dragon') return 'queen';
   return 'knight'; // vanguard (and summon-knight, handled separately)
 }
 
@@ -2502,6 +2541,14 @@ export function summonTurnsFor(id: AbilityId, tier: AbilityTier): number | undef
     if (tier === 2) return 3;
     if (tier <= 4) return 4;
     return 6;
+  }
+  if (id === 'dragon') {
+    // 2/3/4/4/5 — the Amazon (queen+knight) lives on the shortest leash in
+    // the family. T4 keeps 4 turns; its delta is the 2-turn capture stun.
+    if (tier === 1) return 2;
+    if (tier === 2) return 3;
+    if (tier <= 4) return 4;
+    return 5;
   }
   if (id === 'vanguard') {
     // 4/6/8/8/level.
@@ -2556,6 +2603,21 @@ export function summonSpawnSquares(state: BoardState, id: AbilityId): Coord[] {
       }
     }
     return out;
+  }
+  // Dragon T5: summon her anywhere within 3 squares of Rookie (Chebyshev).
+  // T1-T4 place adjacent like the rest of the family (loop below).
+  if (id === 'dragon') {
+    const owned = state.abilities.find((a) => a.id === 'dragon');
+    if ((owned?.tier ?? 1) === 5) {
+      for (let f = 1; f <= 8; f++) {
+        for (let r = 1; r <= 8; r++) {
+          const d = Math.max(Math.abs(f - state.rookie.file), Math.abs(r - state.rookie.rank));
+          if (d > 3) continue;
+          if (squareIsFreeForSummon(state, f, r)) out.push({ file: f, rank: r });
+        }
+      }
+      return out;
+    }
   }
   for (const [df, dr] of ALLY_QUEEN_DIRS) {
     const f = state.rookie.file + df;
@@ -2686,6 +2748,11 @@ export function controlledAllyLegalMoves(state: BoardState, ally: AllyPiece): Co
           r += dr;
         }
       }
+      // Dragon: the Amazon — queen rays PLUS knight jumps. (A knight square
+      // is never on a queen line from the same origin, so no duplicates.)
+      if (ally.source === 'dragon') {
+        for (const [df, dr] of ALLY_KNIGHT_DELTAS) tryStep(ally.file + df, ally.rank + dr);
+      }
       return out;
     }
     case 'king':
@@ -2717,6 +2784,10 @@ export function applyControlledAllyMove(
   const gain = captured ? TEMPO_REWARD[captured.type] ?? 0 : 0;
   const tempo = Math.min(tempoMaxFor(state), state.tempo + gain);
   const isFree = allyHasFreeMove(state, ally);
+  // Dragon T4+ signature: her captures hit HARD — the king is stunned 2
+  // turns (every summon capture already stuns him 1, same as Rookie's).
+  const stunTurns =
+    ally.source === 'dragon' && (ownedAbilityForSource(state, 'dragon')?.tier ?? 1) >= 4 ? 2 : 1;
 
   // Page promotion.
   let nextType = ally.type;
@@ -2750,7 +2821,7 @@ export function applyControlledAllyMove(
     decoyTarget: clearDecoy ? null : state.decoyTarget,
     decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
     cancellableActivation: undefined,
-    ...(captured ? stunKingAfterCapture(state) : {}),
+    ...(captured ? stunKingAfterCapture(state, stunTurns) : {}),
   };
 
   // Taking the king wins the level (the 'king' win condition).
@@ -2876,6 +2947,10 @@ function attackSquaresOfAlly(state: BoardState, a: AllyPiece): Coord[] {
           f += df;
           r += dr;
         }
+      }
+      // Dragon: knight squares join the blast — detonating her is enormous.
+      if (a.source === 'dragon') {
+        for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
       }
       break;
     }
@@ -3078,6 +3153,7 @@ export const ONE_CHARGE_PER_RUN: ReadonlySet<AbilityId> = new Set<AbilityId>([
   'page',
   'twin',
   'duchess',
+  'dragon',
   'vanguard',
 ]);
 
@@ -3380,6 +3456,10 @@ export function allyAttackedSquares(state: BoardState): Set<string> {
             f += df;
             r += dr;
           }
+        }
+        // Dragon: the king fears her knight squares too.
+        if (a.source === 'dragon') {
+          for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
         }
         break;
       }

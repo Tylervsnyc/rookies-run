@@ -535,7 +535,8 @@ function candidatesForAbility(
     case 'bishop-squire':
     case 'page':
     case 'twin':
-    case 'duchess': {
+    case 'duchess':
+    case 'dragon': {
       // Spawn beside Rookie (at most 8 squares).
       for (const c of summonSpawnSquares(state, owned.id)) {
         out.push({ kind: 'ability-target', abilityId: owned.id, target: c });

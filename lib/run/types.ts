@@ -71,6 +71,7 @@ export interface AllyPiece {
     | 'page'
     | 'twin'
     | 'duchess'
+    | 'dragon'
     | 'vanguard';
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
