@@ -49,8 +49,12 @@ import {
   applyControlledAllyMove,
   canMoveAllyAt,
   controlledAllyAt,
+  abilitiesForRetry,
   applyDismissOffer,
   applyOfferPick,
+  knightingTargets,
+  sacrificeTargets,
+  swapTargets,
   convertTargets as computeConvertTargets,
   magnetTargets as computeMagnetTargets,
   maxUsesForTier,
@@ -333,6 +337,11 @@ export default function RookiesRunPage() {
   );
   const [state, setState] = useState<BoardState>(initial.state);
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
+  // Ability charges as they stood when the CURRENT level began. A retry
+  // restores this snapshot (see abilitiesForRetry): a one-charge finisher
+  // spent on a FAILED attempt comes back, one spent on a previously CLEARED
+  // level stays spent. Updated at every level-start build below.
+  const levelStartAbilitiesRef = useRef<OwnedAbility[]>(initial.state.abilities);
 
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   // Per-ability cast VFX — phase-step ghost / leap arc /
@@ -347,6 +356,37 @@ export default function RookiesRunPage() {
     { attackerSquare: string; rookieSquare: string; id: number } | null
   >(null);
   const lastAegisIdRef = useRef<number | null>(null);
+
+  // Sacrifice detonation VFX — detected by state diffing (a Sacrifice charge
+  // spent + a summon gone + enemies gone the same tick), NOT by wrapping the
+  // cast call, so the burst plays wherever the detonation event lands.
+  const [sacrificeFx, setSacrificeFx] = useState<
+    { summonSq: string; capturedSqs: string[]; id: number } | null
+  >(null);
+  const sacPrevRef = useRef<BoardState | null>(null);
+  useEffect(() => {
+    const prev = sacPrevRef.current;
+    sacPrevRef.current = state;
+    if (!prev || prev.level !== state.level) return;
+    const prevUses = prev.abilities.find((a) => a.id === 'sacrifice')?.usesLeftThisLevel;
+    const nextUses = state.abilities.find((a) => a.id === 'sacrifice')?.usesLeftThisLevel;
+    if (prevUses == null || nextUses == null || nextUses >= prevUses) return;
+    const gone = prev.allies.find((a) => !state.allies.some((b) => b.id === a.id));
+    if (!gone) return;
+    const summonSq = toSquare({ file: gone.file, rank: gone.rank });
+    const capturedSqs = prev.pieces
+      .filter(
+        (p) =>
+          !state.pieces.some(
+            (q) => q.file === p.file && q.rank === p.rank && q.type === p.type,
+          ),
+      )
+      .map((p) => toSquare({ file: p.file, rank: p.rank }));
+    setSacrificeFx({ summonSq, capturedSqs, id: Date.now() });
+    haptic('heavy');
+    const t = setTimeout(() => setSacrificeFx(null), 700);
+    return () => clearTimeout(t);
+  }, [state]);
   // Warm ability art at run start so the offer modal never shows blank cards.
   useEffect(() => {
     preloadAbilityArt(Object.keys(ABILITY_DEFS) as (keyof typeof ABILITY_DEFS)[]);
@@ -883,6 +923,19 @@ export default function RookiesRunPage() {
     return undefined;
   }, [state]);
 
+  // Swap / Sacrifice / Knighting operate ON a summon — without an eligible
+  // target the card tap silently no-ops in the engine, which reads as "the
+  // ability is broken". Gray the card out instead.
+  const summonSupportDisabled = useMemo(() => {
+    const out: AbilityId[] = [];
+    for (const a of state.abilities) {
+      if (a.id === 'swap' && swapTargets(state).length === 0) out.push('swap');
+      if (a.id === 'sacrifice' && sacrificeTargets(state).length === 0) out.push('sacrifice');
+      if (a.id === 'knighting' && knightingTargets(state).length === 0) out.push('knighting');
+    }
+    return out;
+  }, [state]);
+
   const onActivateAbility = useCallback(
     (id: AbilityId) => {
       ensureAudioWarm();
@@ -1096,19 +1149,19 @@ export default function RookiesRunPage() {
     const nextPuzzle = puzzleForDate(meta.iso, nextIdx, meta.runId);
     setLevelIndex(nextIdx);
     setPuzzle(nextPuzzle);
-    setState(
-      puzzleToBoardState(nextPuzzle, {
-        // Playtest refresh: refill EVERY ability (finishers included) at the
-        // level transition; seed.ts then re-runs its normal (idempotent) pass.
-        abilities: meta.refreshAll ? refreshAbilityUses(state.abilities, true) : state.abilities,
-        tempo: state.tempo,
-        pendingOffer: state.pendingOffer,
-        runId: meta.runId,
-        unlockedAbilities: state.unlockedAbilities,
-        testkit: state.testkit,
-        difficulty: state.difficulty,
-      }),
-    );
+    const nextState = puzzleToBoardState(nextPuzzle, {
+      // Playtest refresh: refill EVERY ability (finishers included) at the
+      // level transition; seed.ts then re-runs its normal (idempotent) pass.
+      abilities: meta.refreshAll ? refreshAbilityUses(state.abilities, true) : state.abilities,
+      tempo: state.tempo,
+      pendingOffer: state.pendingOffer,
+      runId: meta.runId,
+      unlockedAbilities: state.unlockedAbilities,
+      testkit: state.testkit,
+      difficulty: state.difficulty,
+    });
+    levelStartAbilitiesRef.current = nextState.abilities;
+    setState(nextState);
     setSelectedSquare(null);
     setShowLevelCleared(false);
   }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
@@ -1117,6 +1170,7 @@ export default function RookiesRunPage() {
     const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout, meta.testkit);
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
+    levelStartAbilitiesRef.current = fresh.state.abilities;
     setState(fresh.state);
     setSelectedSquare(null);
     setLevelsCleared(0);
@@ -1151,7 +1205,15 @@ export default function RookiesRunPage() {
     setPuzzle(samePuzzle);
     setState(
       puzzleToBoardState(samePuzzle, {
-        abilities: state.abilities,
+        // Restore charges to what they were when THIS level started — a
+        // one-charge finisher spent on the failed attempt comes back; one
+        // spent on a previous cleared level stays spent. Playtest ?refresh=1
+        // sessions refill everything, matching goToNextLevel.
+        abilities: abilitiesForRetry(
+          state.abilities,
+          levelStartAbilitiesRef.current,
+          meta.refreshAll,
+        ),
         tempo: state.tempo,
         pendingOffer: state.pendingOffer,
         runId: meta.runId,
@@ -1172,7 +1234,7 @@ export default function RookiesRunPage() {
       difficulty: state.difficulty ?? 'normal',
       retriesUsed: retriesUsedRef.current[levelIndex],
     });
-  }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
+  }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   // STC and Revenge runs are separate cycles — never advance across the line.
   // The non-STC cycle stays inside the player-facing Revenge pool: classic
@@ -1383,6 +1445,39 @@ export default function RookiesRunPage() {
 
   return (
     <div className="h-full overflow-auto bg-chess-page">
+      <style>{`
+        @keyframes rrMovesPulse {
+          0%   { transform: scale(1); }
+          35%  { transform: scale(1.22); }
+          100% { transform: scale(1); }
+        }
+        @keyframes rrMovesShake {
+          0%, 100% { transform: translateX(0); }
+          20%      { transform: translateX(-1.5px) rotate(-1deg); }
+          40%      { transform: translateX(1.5px) rotate(1deg); }
+          60%      { transform: translateX(-1px); }
+          80%      { transform: translateX(1px); }
+        }
+        @keyframes rrLastMoveVignette {
+          0%, 100% { opacity: 0.55; }
+          50%      { opacity: 1; }
+        }
+      `}</style>
+      {/* Last-move drama: red screen-edge vignette. Fixed + pointer-events
+          none so it never blocks input or covers the board content. */}
+      {state.status === 'playing' &&
+        state.winCondition === 'king' &&
+        state.moveLimit !== null &&
+        state.moveLimit - state.moveCount <= 1 && (
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-0 z-40"
+            style={{
+              boxShadow: 'inset 0 0 70px 18px rgba(220,38,38,0.4)',
+              animation: 'rrLastMoveVignette 1.1s ease-in-out infinite',
+            }}
+          />
+        )}
       <div className="max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pt-1.5 pb-3 flex flex-col gap-2">
         <header className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -1430,23 +1525,38 @@ export default function RookiesRunPage() {
                 </span>
               </div>
             )}
-            {/* Rookie's Revenge: flee levels have a move budget — show it. */}
-            {state.winCondition === 'king' && state.moveLimit !== null && (
-              <div
-                className={`rounded-lg px-2 py-1 shadow-sm inline-flex items-center gap-1 leading-none ${
-                  state.moveLimit - state.moveCount <= 3
-                    ? 'bg-rose-100 text-rose-700'
-                    : 'bg-chess-surface text-chess-text'
-                }`}
-              >
-                <span className="text-sm font-black tabular-nums">
-                  {Math.max(0, state.moveLimit - state.moveCount)}
-                </span>
-                <span className="text-[9px] font-black uppercase tracking-[0.14em] opacity-70">
-                  moves
-                </span>
-              </div>
-            )}
+            {/* Rookie's Revenge: flee levels have a move budget — show it.
+                At <=3 left it goes urgent (red + a pulse on each decrement);
+                at 1 left the chip shakes and a screen-edge vignette breathes.
+                Purely decorative: never blocks input, never covers the board. */}
+            {state.winCondition === 'king' && state.moveLimit !== null && (() => {
+              const left = Math.max(0, state.moveLimit - state.moveCount);
+              const urgent = left <= 3;
+              const critical = left <= 1 && state.status === 'playing';
+              return (
+                <div
+                  key={`moves-${left}`}
+                  className={`rounded-lg px-2 py-1 shadow-sm inline-flex items-center gap-1 leading-none ${
+                    urgent ? 'bg-rose-600 text-white' : 'bg-chess-surface text-chess-text'
+                  }`}
+                  style={
+                    urgent
+                      ? {
+                          boxShadow: '0 0 10px rgba(225,29,72,0.55)',
+                          animation: critical
+                            ? 'rrMovesPulse 420ms ease-out, rrMovesShake 0.55s ease-in-out 420ms infinite'
+                            : 'rrMovesPulse 420ms ease-out',
+                        }
+                      : undefined
+                  }
+                >
+                  <span className="text-sm font-black tabular-nums">{left}</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.14em] opacity-70">
+                    {left === 1 ? 'move' : 'moves'}
+                  </span>
+                </div>
+              );
+            })()}
             </div>
           </div>
         </header>
@@ -1487,6 +1597,7 @@ export default function RookiesRunPage() {
             legalAbilityMoves={legalAbilityMoves}
             abilityTier={activeAbilityTier}
             convertTargets={convertTargets}
+            sacrificeFx={sacrificeFx}
             onSquareClick={onSquareClick}
             onPieceDrop={onPieceDrop}
             vanillaPieces={isStc}
@@ -1496,6 +1607,7 @@ export default function RookiesRunPage() {
         <AbilityRack
           abilities={state.abilities}
           activeId={state.activeAbility?.id ?? null}
+          disabledIds={summonSupportDisabled}
           onActivate={onActivateAbility}
         />
 
@@ -1514,9 +1626,13 @@ export default function RookiesRunPage() {
                 ? state.activeAbility.id === 'magnet'
                   ? 'tap an enemy on your line'
                   : 'tap an enemy'
-                : ABILITY_DEFS[state.activeAbility.id].activation === 'targeted'
-                  ? 'tap an empty square'
-                  : 'tap a highlighted square'}
+                : state.activeAbility.id === 'swap'
+                  ? 'tap the summon to swap with'
+                  : state.activeAbility.id === 'sacrifice'
+                    ? 'tap the summon to detonate'
+                    : ABILITY_DEFS[state.activeAbility.id].activation === 'targeted'
+                      ? 'tap an empty square'
+                      : 'tap a highlighted square'}
             </span>
             <button
               type="button"

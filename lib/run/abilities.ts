@@ -629,10 +629,10 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'A queen you control for 3 turns.';
       return 'A queen you control for 2 turns. Make them count.';
     case 'vanguard':
-      if (tier === 5) return 'Drop a knight you control anywhere. He lasts the level.';
-      if (tier >= 3) return 'Drop a knight you control on any empty square.';
-      if (tier === 2) return 'Drop a knight you control within 5 squares.';
-      return 'Drop a knight you control within 3 squares.';
+      if (tier === 5) return 'Drop a knight you control within 5 squares. He lasts the level.';
+      if (tier >= 3) return 'Drop a knight you control within 4 squares.';
+      if (tier === 2) return 'Drop a knight you control within 3 squares.';
+      return 'Drop a knight you control within 2 squares.';
     case 'swap':
       if (tier >= 4) return 'Trade squares with ANY rainbow ally. Free action.';
       return 'Trade squares with one of your summons. Free action.';
@@ -785,11 +785,11 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Your queen, 3 turns. 1 charge.';
       return 'Your queen, 2 turns. 1 charge.';
     case 'vanguard':
-      if (tier === 5) return 'Knight drop anywhere, all level. 2 charges.';
-      if (tier === 4) return 'Knight drop anywhere. 2 charges.';
-      if (tier === 3) return 'Knight drop anywhere. 2 charges.';
-      if (tier === 2) return 'Knight drop, range 5. 1 charge.';
-      return 'Knight drop, range 3. 1 charge.';
+      if (tier === 5) return 'Knight drop, range 5, all level. 2 charges.';
+      if (tier === 4) return 'Knight drop, range 4. 2 charges.';
+      if (tier === 3) return 'Knight drop, range 4. 2 charges.';
+      if (tier === 2) return 'Knight drop, range 3. 1 charge.';
+      return 'Knight drop, range 2. 1 charge.';
     case 'swap':
       if (tier === 5) return 'Trade with any ally. 3/level.';
       if (tier === 4) return 'Trade with any ally. 2/level.';
@@ -2074,11 +2074,17 @@ export function summonTurnsFor(id: AbilityId, tier: AbilityTier): number | undef
   return undefined;
 }
 
-/** Vanguard drop radius (Chebyshev from Rookie). 99 = anywhere. */
+/**
+ * Vanguard drop radius (Chebyshev from Rookie). NEVER the whole board —
+ * unrestricted placement let players drop the knight beside the king for
+ * free (Tyler playtest, 2026-09-02). The range grows with tier but the drop
+ * always has to be fought forward from where Rookie stands.
+ */
 export function vanguardRangeFor(tier: AbilityTier): number {
-  if (tier === 1) return 3;
-  if (tier === 2) return 5;
-  return 99;
+  if (tier === 1) return 2;
+  if (tier === 2) return 3;
+  if (tier <= 4) return 4;
+  return 5;
 }
 
 function squareIsFreeForSummon(state: BoardState, f: number, r: number): boolean {
@@ -2616,6 +2622,32 @@ export function refreshAbilityUses(abilities: OwnedAbility[], refreshAll = false
   return abilities.map((a) => {
     if (!refreshAll && isOneChargePerRun(a.id) && typeof a.usesLeftThisLevel === 'number') return a;
     return { ...a, usesLeftThisLevel: maxUsesForTier(a.id, a.tier) };
+  });
+}
+
+/**
+ * Abilities to carry into a RETRY of the same level (playtest fix,
+ * 2026-09-02). Each ability's charge is restored to what it was when the
+ * level STARTED — a one-charge finisher spent on the FAILED attempt comes
+ * back, while one spent on a previously CLEARED level stays spent. An
+ * ability picked or upgraded DURING the level (no snapshot entry at that
+ * tier) refills to its tier max: a failed attempt must never burn a fresh
+ * pick. `refreshAll` (playtest ?refresh=1 sessions only) refills everything.
+ */
+export function abilitiesForRetry(
+  current: OwnedAbility[],
+  levelStart: OwnedAbility[],
+  refreshAll = false,
+): OwnedAbility[] {
+  return current.map((a) => {
+    if (refreshAll) return { ...a, usesLeftThisLevel: maxUsesForTier(a.id, a.tier) };
+    const atStart = levelStart.find((s) => s.id === a.id && s.tier === a.tier);
+    return {
+      ...a,
+      usesLeftThisLevel: atStart
+        ? atStart.usesLeftThisLevel
+        : maxUsesForTier(a.id, a.tier),
+    };
   });
 }
 

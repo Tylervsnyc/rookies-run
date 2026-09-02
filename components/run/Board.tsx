@@ -50,6 +50,9 @@ interface BoardProps {
   abilityTier?: AbilityTier;
   /** Enemy squares the active Convert ability can target (pulsing rings). */
   convertTargets?: Coord[];
+  /** Transient Sacrifice detonation VFX — burst on the summon square plus a
+   *  hit flash on every square the blast captured. */
+  sacrificeFx?: { summonSq: string; capturedSqs: string[]; id: number } | null;
   onSquareClick: (square: string) => void;
   /** Called when Rookie is dragged onto a square. Return true to accept the
    *  move, false to snap her back. */
@@ -153,6 +156,7 @@ export function RunBoard({
   legalAbilityMoves,
   abilityTier,
   convertTargets,
+  sacrificeFx = null,
   onSquareClick,
   onPieceDrop,
   vanillaPieces = false,
@@ -510,6 +514,14 @@ export function RunBoard({
 
     return styles;
   }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
+
+  // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
+  // "moves" are your own summons. Give those squares the same pulsing-ring
+  // language Convert uses so "tap the summon" is unmissable.
+  const allyTargets = useMemo(() => {
+    if (!legalAbilityMoves || legalAbilityMoves.length === 0) return [];
+    return legalAbilityMoves.filter((m) => controlledAllyAt(state, m) !== null);
+  }, [legalAbilityMoves, state]);
 
   const telekinesisSquare = telekinesisTarget
     ? toSquare({ file: telekinesisTarget.file, rank: telekinesisTarget.rank })
@@ -1035,6 +1047,8 @@ export function RunBoard({
         {convertTargets && convertTargets.length > 0 && (
           <ConvertTargetsOverlay targets={convertTargets} />
         )}
+        {allyTargets.length > 0 && <ConvertTargetsOverlay targets={allyTargets} />}
+        {sacrificeFx && <SacrificeBlastLayer fx={sacrificeFx} />}
         {abilityFx?.kind === 'convert' && (
           <ConvertFlashOverlay sq={abilityFx.to} id={abilityFx.id} />
         )}
@@ -1644,6 +1658,98 @@ function PoisonDeathLayer({
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SacrificeBlastLayer — the summon detonates: a white-hot core flash + amber
+// shockwave ring on the summon square, then a quick crimson hit-burst on each
+// captured square. Whole sequence stays under ~600ms; fired by app-side state
+// diffing (summon gone + enemies gone the same tick), so it plays wherever the
+// detonation event lands.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SacrificeBlastLayer({
+  fx,
+}: {
+  fx: { summonSq: string; capturedSqs: string[]; id: number };
+}) {
+  const idKey = Math.floor(fx.id);
+  const c = fromSquare(fx.summonSq);
+  const cx = (c.file - 1) * 12.5 + 6.25;
+  const cy = (8 - c.rank) * 12.5 + 6.25;
+  return (
+    <div
+      aria-hidden
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 6 }}
+    >
+      <style>{`
+        @keyframes rrSacFlash-${idKey} {
+          0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.35); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(2.6); }
+        }
+        @keyframes rrSacRing-${idKey} {
+          0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(3); }
+        }
+        @keyframes rrSacHit-${idKey} {
+          0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+          35%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.9); }
+        }
+      `}</style>
+      {/* White-hot core flash on the summon square. */}
+      <div
+        style={{
+          position: 'absolute',
+          left: `${cx}%`,
+          top: `${cy}%`,
+          width: '16%',
+          height: '16%',
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(251,191,36,0.9) 35%, rgba(239,68,68,0.6) 65%, transparent 85%)',
+          animation: `rrSacFlash-${idKey} 420ms ease-out forwards`,
+        }}
+      />
+      {/* Amber shockwave ring expanding outward. */}
+      <div
+        style={{
+          position: 'absolute',
+          left: `${cx}%`,
+          top: `${cy}%`,
+          width: '14%',
+          height: '14%',
+          borderRadius: '50%',
+          border: '3px solid rgba(251,191,36,0.95)',
+          boxShadow: '0 0 14px rgba(239,68,68,0.9), inset 0 0 10px rgba(255,214,90,0.8)',
+          animation: `rrSacRing-${idKey} 520ms ease-out forwards`,
+        }}
+      />
+      {/* Crimson hit-burst on every captured square, lightly staggered. */}
+      {fx.capturedSqs.map((sq, i) => {
+        const h = fromSquare(sq);
+        const hx = (h.file - 1) * 12.5 + 6.25;
+        const hy = (8 - h.rank) * 12.5 + 6.25;
+        return (
+          <div
+            key={`${idKey}-${sq}`}
+            style={{
+              position: 'absolute',
+              left: `${hx}%`,
+              top: `${hy}%`,
+              width: '13%',
+              height: '13%',
+              borderRadius: '50%',
+              background:
+                'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(252,165,165,0.9) 35%, rgba(220,38,38,0.7) 65%, transparent 85%)',
+              animation: `rrSacHit-${idKey} 360ms ease-out ${80 + i * 45}ms forwards`,
+              opacity: 0,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 function EnemyCaptureSlide({
   fx,
 }: {
@@ -1778,49 +1884,53 @@ const ALLY_SPRITE: Record<AllyPieceType, keyof typeof defaultPieces> = {
   king: 'wK',
 };
 
+// Rainbow block-art letter for each ally piece type (PieceBlocks input).
+const ALLY_BLOCK: Record<AllyPieceType, 'P' | 'N' | 'B' | 'R' | 'Q' | 'K'> = {
+  pawn: 'P',
+  knight: 'N',
+  bishop: 'B',
+  rook: 'R',
+  queen: 'Q',
+  king: 'K',
+};
+
 function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
   return (
     <div
       aria-hidden
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}
     >
-      {allies.map((a) => {
-        const PieceComp = defaultPieces[ALLY_SPRITE[a.type]];
-        // Squire = the same block-knight Rookie becomes during Knight Hop.
-        const isSquire = a.source === 'squire';
-        return (
+      {allies.map((a) => (
+        // Every ally is a RAINBOW piece — the same PieceBlocks block-art
+        // treatment the Squire launched with (and Rookie's own palette).
+        // One treatment for summons AND converted pieces alike.
+        <div
+          key={a.id}
+          style={{
+            position: 'absolute',
+            left: `${(a.file - 1) * 12.5}%`,
+            top: `${(8 - a.rank) * 12.5}%`,
+            width: '12.5%',
+            height: '12.5%',
+            transition: 'left 180ms cubic-bezier(0.4,0,0.2,1), top 180ms cubic-bezier(0.4,0,0.2,1)',
+            filter:
+              'drop-shadow(0 0 6px rgba(255,255,255,0.85)) drop-shadow(0 0 10px rgba(167,139,250,0.65))',
+          }}
+        >
           <div
-            key={a.id}
             style={{
-              position: 'absolute',
-              left: `${(a.file - 1) * 12.5}%`,
-              top: `${(8 - a.rank) * 12.5}%`,
-              width: '12.5%',
-              height: '12.5%',
-              transition: 'left 180ms cubic-bezier(0.4,0,0.2,1), top 180ms cubic-bezier(0.4,0,0.2,1)',
-              filter:
-                'drop-shadow(0 0 6px rgba(255,255,255,0.85)) drop-shadow(0 0 10px rgba(167,139,250,0.65))',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transform: 'scale(0.88)',
             }}
           >
-            {isSquire ? (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transform: 'scale(0.88)',
-                }}
-              >
-                <PieceBlocks piece="N" blockSize={3} animate />
-              </div>
-            ) : PieceComp ? (
-              <PieceComp />
-            ) : null}
+            <PieceBlocks piece={ALLY_BLOCK[a.type]} blockSize={3} animate />
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }
