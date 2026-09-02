@@ -1,12 +1,14 @@
 'use client';
 
 /**
- * /playtest client v2 — pick a level, pick up to 3 abilities, PLAY.
+ * /playtest client v3 — pick a run (dropdown), pick up to 3 abilities as
+ * cards that SHOW what each ability does (type line, description, and the
+ * current-tier effect + uses text straight from blurbDetailForTier), PLAY.
+ * A play is the whole run from level 1.
  *
  * Coverage ("what's left to test") lives in localStorage under
- * `playtest-coverage-v2`: tested (runId:level) pairs + tested ability ids.
- * A level and its selected abilities are marked tested the moment PLAY is
- * pressed. All storage access is try/catch — storage can throw.
+ * `playtest-coverage-v3`: run ids played + ability ids tried, marked the
+ * moment PLAY is pressed. All storage access is try/catch.
  *
  * Comments POST to /api/playtest-feedback (unchanged API) with item = the
  * run id; the loadout is appended to the text like "[loadout duchess:3,...]".
@@ -14,39 +16,42 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { blurbDetailForTier, type AbilityId, type AbilityTier } from '@/lib/run/abilities';
+
 export interface PlaytestRun {
   id: string;
   name: string;
-  levels: number;
 }
 
 export interface PlaytestAbility {
   id: string;
   name: string;
+  typeLine: string;
+  description: string;
   testing: boolean;
 }
 
 const VERDICTS = ['SHIP', 'TUNE', 'KILL', 'BUG'] as const;
 type Verdict = (typeof VERDICTS)[number];
 
-const COVERAGE_KEY = 'playtest-coverage-v2';
+const COVERAGE_KEY = 'playtest-coverage-v3';
 
 interface Coverage {
-  levels: string[]; // "runId:level"
-  abilities: string[]; // ability ids
+  runs: string[]; // run ids played this pass
+  abilities: string[]; // ability ids tried
 }
 
 function readCoverage(): Coverage {
   try {
     const raw = localStorage.getItem(COVERAGE_KEY);
-    if (!raw) return { levels: [], abilities: [] };
+    if (!raw) return { runs: [], abilities: [] };
     const p = JSON.parse(raw) as Partial<Coverage>;
     return {
-      levels: Array.isArray(p.levels) ? p.levels.filter((x) => typeof x === 'string') : [],
+      runs: Array.isArray(p.runs) ? p.runs.filter((x) => typeof x === 'string') : [],
       abilities: Array.isArray(p.abilities) ? p.abilities.filter((x) => typeof x === 'string') : [],
     };
   } catch {
-    return { levels: [], abilities: [] };
+    return { runs: [], abilities: [] };
   }
 }
 
@@ -58,17 +63,13 @@ function writeCoverage(c: Coverage) {
   }
 }
 
-function levelKey(runId: string, level: number): string {
-  return `${runId}:${level}`;
-}
-
 export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abilities: PlaytestAbility[] }) {
-  const [coverage, setCoverage] = useState<Coverage>({ levels: [], abilities: [] });
-  const [pickedLevel, setPickedLevel] = useState<{ runId: string; level: number } | null>(null);
+  const [coverage, setCoverage] = useState<Coverage>({ runs: [], abilities: [] });
+  const [runId, setRunId] = useState<string>(runs[0]?.id ?? '');
   // Ordered oldest-first; a 4th pick replaces the oldest.
   const [picked, setPicked] = useState<string[]>([]);
   const [tier, setTier] = useState(3);
-  const [playing, setPlaying] = useState<{ src: string; runId: string; level: number; loadout: string } | null>(null);
+  const [playing, setPlaying] = useState<{ src: string; runId: string; loadout: string } | null>(null);
   const [frameNonce, setFrameNonce] = useState(0);
 
   // Comment box.
@@ -82,16 +83,11 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
     setCoverage(readCoverage());
   }, []);
 
-  const testedLevels = useMemo(() => new Set(coverage.levels), [coverage.levels]);
-  const testedAbilities = useMemo(() => new Set(coverage.abilities), [coverage.abilities]);
+  const playedRuns = useMemo(() => new Set(coverage.runs), [coverage.runs]);
+  const triedAbilities = useMemo(() => new Set(coverage.abilities), [coverage.abilities]);
 
-  const totalLevels = runs.reduce((n, r) => n + r.levels, 0);
-  const levelsLeft = runs.reduce(
-    (n, r) => n + Array.from({ length: r.levels }, (_, i) => i + 1).filter((l) => !testedLevels.has(levelKey(r.id, l))).length,
-    0,
-  );
-  const totalAbilities = abilities.length;
-  const abilitiesLeft = abilities.filter((a) => !testedAbilities.has(a.id)).length;
+  const runsLeft = runs.filter((r) => !playedRuns.has(r.id)).length;
+  const abilitiesLeft = abilities.filter((a) => !triedAbilities.has(a.id)).length;
 
   const toggleAbility = (id: string) => {
     setPicked((prev) => {
@@ -104,29 +100,28 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
   const loadoutString = picked.map((id) => `${id}:${tier}`).join(',');
 
   const play = () => {
-    if (!pickedLevel) return;
-    const { runId, level: lvl } = pickedLevel;
+    if (!runId) return;
     const src =
       `/?run=${encodeURIComponent(runId)}` +
       (loadoutString ? `&loadout=${encodeURIComponent(loadoutString)}` : '') +
-      `&level=${lvl}&ladder=0`;
+      `&ladder=0`;
     // Mark tested the moment PLAY is pressed.
     setCoverage((prev) => {
       const next: Coverage = {
-        levels: prev.levels.includes(levelKey(runId, lvl)) ? prev.levels : [...prev.levels, levelKey(runId, lvl)],
+        runs: prev.runs.includes(runId) ? prev.runs : [...prev.runs, runId],
         abilities: [...prev.abilities, ...picked.filter((id) => !prev.abilities.includes(id))],
       };
       writeCoverage(next);
       return next;
     });
-    setPlaying({ src, runId, level: lvl, loadout: loadoutString });
-    setLevel(String(lvl));
+    setPlaying({ src, runId, loadout: loadoutString });
+    setLevel('');
     setSendState('idle');
     setFrameNonce((n) => n + 1);
   };
 
   const resetCoverage = () => {
-    const empty: Coverage = { levels: [], abilities: [] };
+    const empty: Coverage = { runs: [], abilities: [] };
     writeCoverage(empty);
     setCoverage(empty);
   };
@@ -158,6 +153,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
 
   const runName = (id: string) => runs.find((r) => r.id === id)?.name ?? id;
   const abilityName = (id: string) => abilities.find((a) => a.id === id)?.name ?? id;
+  const safeTier = (Math.min(5, Math.max(1, tier)) as AbilityTier) ?? 3;
 
   return (
     <div className="h-full overflow-auto bg-chess-page font-body text-chess-text">
@@ -165,7 +161,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
         <header className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1">
           <h1 className="text-2xl font-extrabold">Playtest</h1>
           <p className="text-sm font-bold text-chess-text-muted">
-            Levels left: {levelsLeft} of {totalLevels} &middot; Abilities left: {abilitiesLeft} of {totalAbilities}
+            Runs left: {runsLeft} of {runs.length} &middot; Abilities left: {abilitiesLeft} of {abilities.length}
           </p>
           <button
             onClick={resetCoverage}
@@ -175,42 +171,25 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
           </button>
         </header>
 
-        {/* LEVEL PICKER */}
+        {/* RUN PICKER */}
         <section className="rounded-2xl bg-chess-surface p-4 shadow-sm">
-          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-chess-text-muted">1. Pick a level</h2>
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-wide text-chess-text-muted">1. Pick a run</h2>
           {runs.length === 0 ? (
             <p className="text-sm text-chess-text-muted">No testing-stage runs in the registry.</p>
           ) : (
-            <div className="space-y-3">
-              {runs.map((run) => (
-                <div key={run.id}>
-                  <div className="mb-1 text-sm font-extrabold">{run.name}</div>
-                  <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-10">
-                    {Array.from({ length: run.levels }, (_, i) => i + 1).map((l) => {
-                      const tested = testedLevels.has(levelKey(run.id, l));
-                      const isPicked = pickedLevel?.runId === run.id && pickedLevel.level === l;
-                      return (
-                        <button
-                          key={l}
-                          onClick={() => setPickedLevel({ runId: run.id, level: l })}
-                          aria-label={`${run.name} level ${l}${tested ? ' (tested)' : ''}`}
-                          className={`min-h-11 rounded-lg border-2 text-sm font-bold ${
-                            isPicked
-                              ? 'border-chess-blue bg-chess-blue text-white'
-                              : tested
-                                ? 'border-chess-disabled bg-chess-page text-chess-text-faint'
-                                : 'border-chess-disabled bg-white'
-                          }`}
-                        >
-                          L{l}
-                          {tested ? ' ✓' : ''}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+            <select
+              value={runId}
+              onChange={(e) => setRunId(e.target.value)}
+              aria-label="Run"
+              className="min-h-11 w-full rounded-xl border-2 border-chess-disabled bg-white px-3 py-2 font-bold"
+            >
+              {runs.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                  {playedRuns.has(r.id) ? ' - done' : ''}
+                </option>
               ))}
-            </div>
+            </select>
           )}
         </section>
 
@@ -235,30 +214,43 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
               </select>
             </label>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {abilities.map((a) => {
-              const isPicked = picked.includes(a.id);
-              const untestedTesting = a.testing && !testedAbilities.has(a.id);
+              const slot = picked.indexOf(a.id);
+              const isPicked = slot >= 0;
+              const untried = a.testing && !triedAbilities.has(a.id);
+              const blurb = blurbDetailForTier(a.id as AbilityId, safeTier);
               return (
                 <button
                   key={a.id}
                   onClick={() => toggleAbility(a.id)}
-                  className={`min-h-11 rounded-full border-2 px-3 py-1.5 text-sm font-bold ${
+                  className={`relative rounded-xl border-2 p-2.5 text-left ${
                     isPicked
-                      ? 'border-chess-blue bg-chess-blue text-white'
-                      : untestedTesting
-                        ? 'border-chess-orange bg-white text-chess-text'
-                        : 'border-chess-disabled bg-white text-chess-text-muted'
+                      ? 'border-chess-blue bg-chess-blue/10'
+                      : untried
+                        ? 'border-chess-orange bg-white'
+                        : 'border-chess-disabled bg-white'
                   }`}
                 >
-                  {a.name}
-                  {a.testing && (
-                    <span className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-extrabold uppercase ${
-                      isPicked ? 'bg-white/25 text-white' : 'bg-chess-orange text-white'
-                    }`}>
-                      testing
+                  {isPicked && (
+                    <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-chess-blue text-xs font-extrabold text-white">
+                      {slot + 1}
                     </span>
                   )}
+                  <div className="pr-7 text-sm font-extrabold">
+                    {a.name}
+                    {a.testing && (
+                      <span className="ml-1.5 rounded-full bg-chess-orange px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-white">
+                        testing
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[10px] font-bold uppercase tracking-wide text-chess-text-faint">{a.typeLine}</div>
+                  <div className="mt-1 text-xs text-chess-text-muted">{a.description}</div>
+                  <div className="mt-1 text-xs font-bold">
+                    T{safeTier}: {blurb.what}
+                  </div>
+                  {blurb.limit && <div className="text-[11px] text-chess-text-muted">{blurb.limit}</div>}
                 </button>
               );
             })}
@@ -268,14 +260,12 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
         {/* PLAY */}
         <button
           onClick={play}
-          disabled={!pickedLevel}
+          disabled={!runId}
           className="mt-4 w-full rounded-2xl bg-chess-blue py-4 text-xl font-extrabold text-white shadow-sm disabled:opacity-40"
         >
-          {pickedLevel
-            ? `PLAY — ${runName(pickedLevel.runId)} L${pickedLevel.level}${
-                picked.length > 0 ? ` with ${picked.map(abilityName).join(', ')}` : ''
-              }`
-            : 'PLAY — pick a level first'}
+          {runId
+            ? `PLAY — ${runName(runId)}${picked.length > 0 ? ` with ${picked.map(abilityName).join(', ')}` : ''}`
+            : 'PLAY'}
         </button>
 
         {/* GAME */}
@@ -301,7 +291,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
             <iframe
               key={`${playing.src}:${frameNonce}`}
               src={playing.src}
-              title={`Playtest: ${runName(playing.runId)} L${playing.level}`}
+              title={`Playtest: ${runName(playing.runId)}`}
               className="min-h-[70vh] w-full rounded-xl border-2 border-chess-disabled bg-white"
             />
           </div>
@@ -315,6 +305,9 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
             </h2>
             <div className="flex flex-wrap items-center gap-2 text-sm font-bold">
               <span>{runName(playing.runId)}</span>
+              {playing.loadout && (
+                <span className="truncate text-xs font-normal text-chess-text-muted">[{playing.loadout}]</span>
+              )}
               <label className="flex items-center gap-1">
                 L
                 <select
@@ -331,9 +324,6 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
                   ))}
                 </select>
               </label>
-              {playing.loadout && (
-                <span className="truncate text-xs font-normal text-chess-text-muted">[{playing.loadout}]</span>
-              )}
               <div className="flex gap-1.5">
                 {VERDICTS.map((v) => (
                   <button
