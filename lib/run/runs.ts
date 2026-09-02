@@ -5636,7 +5636,184 @@ const RUN_REVENGE_9: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9];
+const RUN_REVENGE_10: RunDef = {
+  id: 'revenge-10',
+  name: 'The Vault',
+  blurb: 'Sixteen pieces deep. Bring everything.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — FIRST BLOOD. king alone behind three pawns. Rank 8 does nothing; the king does.
+    // shell pd7 pe7 pf7. (swarm-L1-v1)
+    make(
+      1,
+      [
+        pawn(4, 7), pawn(5, 7), pawn(6, 7),
+        king(5, 8),
+      ],
+      STILL,
+    ),
+    // L2 — THE SHELL. a second pawn layer and one bishop. Still still — find the line, take the key.
+    // shell pc7 pd7 pe7 pb6 pf6 pc5 pe5; marchers pb3 pg4. (swarm-L2-v1)
+    make(
+      2,
+      [
+        pawn(3, 7), pawn(4, 7), pawn(5, 7), pawn(2, 6), pawn(6, 6), pawn(3, 5), pawn(5, 5),
+        pawn(2, 3), pawn(7, 4),
+        king(4, 8),
+      ],
+      STILL,
+    ),
+    // L3 — THE PAGE. 1 heavy hunter (knight) — sightlines, not bodies. Key c5.
+    // Key pc5; hunters kh4; marchers pf2. (royal-guard-L3-v1)
+    make(
+      3,
+      [
+        pawn(3, 5),
+        knight(8, 4),
+        pawn(6, 2),
+        king(3, 8),
+      ],
+      {
+        ...FLEE,
+        hazards: [X(1, 7), X(5, 7), X(1, 8), X(5, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L4 — TWO DOORS. two keys — f5 on his file, c7 on his rank; the left wall is gone.
+    // Keys pf5 pc7; defended by pe6 pg6; hunters kh3. (double-key-L4-v1)
+    make(
+      4,
+      [
+        pawn(6, 5), pawn(3, 7),
+        pawn(5, 6), pawn(7, 6),
+        knight(8, 3),
+        king(6, 7),
+      ],
+      {
+        ...FLEE,
+        hazards: [X(8, 7), X(8, 8)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
+      },
+    ),
+    // L5 — HER MAJESTY. 1 heavy hunter (queen) — sightlines, not bodies. Key d5.
+    // Key pd5; defended by pc6 pe6; hunters qf2; marchers pb4. (royal-guard-L5-v2)
+    make(
+      5,
+      [
+        pawn(4, 5),
+        pawn(3, 6), pawn(5, 6),
+        queen(6, 2),
+        pawn(2, 4),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L6 — TWO COURTIERS. 2 heavy hunters (queen, bishop) — sightlines, not bodies. Key d5.
+    // Key pd5; defended by pc6 pe6; hunters qg3 bb2; marchers pa4 pf3. (royal-guard-L6-v1)
+    make(
+      6,
+      [
+        pawn(4, 5),
+        pawn(3, 6), pawn(5, 6),
+        queen(7, 3), bishop(2, 2),
+        pawn(1, 4), pawn(6, 3),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 12,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L7 — THE DONJON. 3x2 corner room on a8; key a5 on his file, chain runs inward.
+    // Key pa5; defended by pb6; hunters qc2 bg3 ke4; marchers pd2 pf2. (corner-keep-L7-v1)
+    make(
+      7,
+      [
+        pawn(1, 5),
+        pawn(2, 6),
+        queen(3, 2), bishop(7, 3), knight(5, 4),
+        pawn(4, 2), pawn(6, 2),
+        king(1, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(4, 7), X(4, 8)],
+        kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7'],
+      },
+    ),
+    // L8 — TWIN QUEENS. 3 heavy hunters (queen, queen, bishop) — sightlines, not bodies. Key e4.
+    // Key pe4; defended by pd5 pf5; hunters qg3 qh4 bg4; marchers pc2 pa3. (royal-guard-L8-v2)
+    make(
+      8,
+      [
+        pawn(5, 4),
+        pawn(4, 5), pawn(6, 5),
+        queen(7, 3), queen(8, 4), bishop(7, 4),
+        pawn(3, 2), pawn(1, 3),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 15,
+        hazards: [X(3, 6), X(7, 6), X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7', 'd6', 'e6', 'f6'],
+      },
+    ),
+    // L9 — THE INTERSECTION. two keys — c5 on his file, f7 on his rank; the right wall is gone.
+    // Keys pc5 pf7; defended by pb6 pd6 pe8 pg8; shell pa5 pe5; hunters qh2 be4 ka4; marchers ph3 pg2 pf2. (double-key-L9-v1 +marcher, budget 15->8)
+    make(
+      9,
+      [
+        pawn(3, 5), pawn(6, 7),
+        pawn(2, 6), pawn(4, 6), pawn(5, 8), pawn(7, 8),
+        pawn(1, 5), pawn(5, 5),
+        queen(8, 2), bishop(5, 4), knight(1, 4),
+        pawn(8, 3), pawn(7, 2), pawn(6, 2),
+        king(3, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 8,
+        hazards: [X(1, 7), X(1, 8)],
+        kingPen: ['b8', 'c8', 'd8', 'b7', 'c7', 'd7'],
+      },
+    ),
+    // L10 — CROSSHAIRS. two keys — d5 on his file, g7 on his rank; the right wall is gone.
+    // Keys pd5 pg7; defended by pc6 pe6 pf8 ph8; shell pb5 pf5; hunters qa4 qb3 bf3 kh4; marchers pf4 pa3 pb4. (double-key-L10-v1, budget 20->9)
+    make(
+      10,
+      [
+        pawn(4, 5), pawn(7, 7),
+        pawn(3, 6), pawn(5, 6), pawn(6, 8), pawn(8, 8),
+        pawn(2, 5), pawn(6, 5),
+        queen(1, 4), queen(2, 3), bishop(6, 3), knight(8, 4),
+        pawn(6, 4), pawn(1, 3), pawn(2, 4),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 9,
+        hazards: [X(2, 7), X(2, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));
