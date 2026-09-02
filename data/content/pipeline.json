@@ -400,7 +400,7 @@
       "id": "page",
       "kind": "ability",
       "name": "Page",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-31",
       "notes": "A controllable pawn. Walks forward, captures diagonally, promotes when it reaches the far rank.",
       "testing": {
@@ -408,13 +408,20 @@
         "verdict": "READY",
         "summary": "Tier A on revenge-1, A on revenge-2, B on revenge-3, B on revenge-4, C on revenge-5, B on revenge-6, B on revenge-7; avg win 81% at realistic tiers (lift +33 vs no ability), cast in 92% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
       "id": "twin",
       "kind": "ability",
       "name": "Twin",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-31",
       "notes": "A second controllable rook. Two Rookies, one board.",
       "testing": {
@@ -422,13 +429,20 @@
         "verdict": "READY",
         "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 98% at realistic tiers (lift +50 vs no ability), cast in 96% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
       "id": "bishop-squire",
       "kind": "ability",
       "name": "Bishop Squire",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-31",
       "notes": "Squire variant: a rainbow bishop the player controls.",
       "testing": {
@@ -436,13 +450,20 @@
         "verdict": "READY",
         "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, A on revenge-4, A on revenge-5, A on revenge-6, A on revenge-7; avg win 92% at realistic tiers (lift +44 vs no ability), cast in 94% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
       "id": "swap",
       "kind": "ability",
       "name": "Swap",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-31",
       "notes": "Trade places with your Squire — teleport through his square.",
       "testing": {
@@ -450,13 +471,20 @@
         "verdict": "HOLD",
         "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
       "id": "sacrifice",
       "kind": "ability",
       "name": "Sacrifice",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-08-31",
       "notes": "Squire explodes, capturing every enemy on his knight-squares.",
       "testing": {
@@ -464,6 +492,13 @@
         "verdict": "HOLD",
         "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 49% at realistic tiers (lift +1 vs no ability), cast in 0% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
@@ -491,7 +526,7 @@
       "id": "duchess",
       "kind": "ability",
       "name": "Duchess",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-01",
       "notes": "Controllable summon family: a rainbow queen you control for 2-6 enemy turns. One charge per run.",
       "testing": {
@@ -499,13 +534,20 @@
         "verdict": "READY",
         "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 99% at realistic tiers (lift +50 vs no ability), cast in 97% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
       "id": "vanguard",
       "kind": "ability",
       "name": "Vanguard",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-01",
       "notes": "Controllable summon family: a controllable knight dropped anywhere in range (3/5/anywhere by tier). One charge per run.",
       "testing": {
@@ -513,6 +555,13 @@
         "verdict": "READY",
         "summary": "Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 100% at realistic tiers (lift +52 vs no ability), cast in 99% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
@@ -553,7 +602,7 @@
       "id": "revenge-7",
       "kind": "run",
       "name": "Bramble Crown",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-01",
       "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell).",
       "testing": {
@@ -561,47 +610,89 @@
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
+      },
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
       }
     },
     {
       "id": "revenge-8",
       "kind": "run",
       "name": "The Rampart",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-02",
-      "notes": "Rung 8 of the 10-rung ladder, generated 2026-09-02 (swarm + corner-keep archetypes). Matrix-verified T5 realistic: none 100/100/100/100/92/58/52/38/33/37, finishers >= 79% (band 100/100/100/95/80/45/45/40/25/25 +/-15, finishers >= 75)."
+      "notes": "Rung 8 of the 10-rung ladder, generated 2026-09-02 (swarm + corner-keep archetypes). Matrix-verified T5 realistic: none 100/100/100/100/92/58/52/38/33/37, finishers >= 79% (band 100/100/100/95/80/45/45/40/25/25 +/-15, finishers >= 75).",
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
+      }
     },
     {
       "id": "revenge-9",
       "kind": "run",
       "name": "Cold Court",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-02",
-      "notes": "Rung 9 of the ladder, generated 2026-09-02 (royal-guard + walled-court archetypes — heavy hunters and walls). Matrix-verified T5 realistic: none 100/100/100/100/73/38/26/36/17/21, finishers >= 92% (band 100/100/95/90/70/40/35/30/20/20 +/-15, finishers >= 70)."
+      "notes": "Rung 9 of the ladder, generated 2026-09-02 (royal-guard + walled-court archetypes — heavy hunters and walls). Matrix-verified T5 realistic: none 100/100/100/100/73/38/26/36/17/21, finishers >= 92% (band 100/100/95/90/70/40/35/30/20/20 +/-15, finishers >= 70).",
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
+      }
     },
     {
       "id": "revenge-10",
       "kind": "run",
       "name": "The Vault",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-02",
-      "notes": "Rung 10, top of the ladder, generated 2026-09-02 (mixed heaviest: swarm, royal-guard, corner-keep, double-key). Matrix-verified T5 realistic: none 100/100/100/100/54/40/38/21/25/21, finishers >= 88% (band 100/95/90/85/60/35/30/25/15/15 +/-15, finishers >= 65)."
+      "notes": "Rung 10, top of the ladder, generated 2026-09-02 (mixed heaviest: swarm, royal-guard, corner-keep, double-key). Matrix-verified T5 realistic: none 100/100/100/100/54/40/38/21/25/21, finishers >= 88% (band 100/95/90/85/60/35/30/25/15/15 +/-15, finishers >= 65).",
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
+      }
     },
     {
       "id": "crucible",
       "kind": "run",
       "name": "The Crucible",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-02",
-      "notes": "Full 10-level arc (2026-09-02) built from Tyler's playtest rules: two doors watched from L1 (double-key + sightline hunters = the run identity), double-defended keys from L4, marcher clocks, escalating courts; the original single proving level sits at L7 (budget 11 -> 13). Matrix-verified T5 realistic 96 trials: none 100/100/100/100/81/68/38/38/41/23 (band 100/100/100/95/85/60/50/45/35/30 +/-15), finishers >= 88."
+      "notes": "Full 10-level arc (2026-09-02) built from Tyler's playtest rules: two doors watched from L1 (double-key + sightline hunters = the run identity), double-defended keys from L4, marcher clocks, escalating courts; the original single proving level sits at L7 (budget 11 -> 13). Matrix-verified T5 realistic 96 trials: none 100/100/100/100/81/68/38/38/41/23 (band 100/100/100/95/85/60/50/45/35/30 +/-15), finishers >= 88.",
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
+      }
     },
     {
       "id": "dragon",
       "kind": "ability",
       "name": "Dragon",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-02",
-      "notes": "Queen+knight controllable summon (Amazon). Tyler greenlit 2026-09-02: 'let's make the dragon.'"
+      "notes": "Queen+knight controllable summon (Amazon). Tyler greenlit 2026-09-02: 'let's make the dragon.'",
+      "approved": {
+        "at": "2026-09-02",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-02"
+      }
     },
     {
       "id": "griffin",

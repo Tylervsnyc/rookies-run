@@ -59,7 +59,7 @@ export const DIFFICULTIES: Record<DifficultyId, DifficultyDef> = {
     tempoMaxKing: 12,
     king: 'authored',
     kingReactsToAllies: false,
-    retriesPerLevel: 3,
+    retriesPerLevel: 1, // 3 -> 1 (Tyler 2026-09-02): with one-charge finishers, 3 retries made every run ~90% clear
     scoreMult: 1,
     requiresClearOf: 'rookie',
   },
