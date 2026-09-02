@@ -808,6 +808,215 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
   }
 }
 
+/**
+ * Upgrade delta notes — what the OFFERED tier changes vs the tier below it.
+ * Indexed by the offered tier (2–5). These describe the EFFECT delta only;
+ * the uses/charges delta is computed from maxUsesForTier by
+ * upgradeDeltaForTier so the numbers can never drift from the real limits.
+ * '' = the effect itself doesn't change at this tier (only uses do — the
+ * computed line carries the whole delta). Where a tier genuinely changes
+ * nothing (it happens), the note says so honestly.
+ * Kept in Rookie's register: short, warm, no emojis.
+ */
+export const UPGRADE_NOTES: Record<
+  AbilityId,
+  Record<2 | 3 | 4 | 5, string>
+> = {
+  'bishop-step': {
+    2: 'Bishop walk: 1 turn → 2',
+    3: '2 turns → 3',
+    4: '',
+    5: 'Lasts the rest of the level',
+  },
+  'knight-hop': {
+    2: 'Knight moves: 1 turn → 2',
+    3: '2 turns → 3',
+    4: '',
+    5: 'Lasts the rest of the level',
+  },
+  'queen-pulse': {
+    2: 'Queen moves: 1 turn → 2',
+    3: '',
+    4: '2 turns → 3',
+    5: 'Lasts the rest of the level',
+  },
+  'become-king': {
+    2: '',
+    3: 'Protected 1 turn → 2',
+    4: '',
+    5: 'Protected 2 turns → 3',
+  },
+  'freeze-ray': {
+    2: 'Freeze holds 1 turn → 2',
+    3: '',
+    4: 'Freeze holds 2 turns → 3',
+    5: 'Frozen forever. It never thaws.',
+  },
+  'poison-dart': {
+    2: '',
+    3: 'Dies in 3 turns → 2',
+    4: '',
+    5: 'Dies next turn',
+  },
+  'rabies-dart': {
+    2: 'Mad for 1 turn → 2',
+    3: '',
+    4: 'Mad for 2 turns → 3',
+    5: 'Mad for 3 turns → 5',
+  },
+  convert: {
+    2: 'Now flips knights and bishops',
+    3: 'Now flips rooks and queens',
+    4: 'Flips pawns, minors, AND majors',
+    5: 'Flips anything but the king',
+  },
+  drones: {
+    2: '1 drone → 2',
+    3: '2 drones → 3',
+    4: '3 drones → 4. Covers your back.',
+    5: '4 drones → 6',
+  },
+  squad: {
+    2: '1 pawn → 3 pawns',
+    3: 'A knight joins the squad',
+    4: 'A bishop joins the squad',
+    5: '5 allies → 7',
+  },
+  surge: {
+    2: '',
+    3: '1 extra move → 2',
+    4: '',
+    5: '2 extra moves → 3',
+  },
+  aegis: {
+    2: '',
+    3: 'Blocked attackers get stunned',
+    4: 'Stun gone; extra raise instead',
+    5: 'Permanent shield. Attackers die.',
+  },
+  decoy: {
+    2: 'Mark holds 1 turn → 2',
+    3: '',
+    4: 'Mark holds 3 turns; capturers freeze',
+    5: 'Mark lasts until captured',
+  },
+  boulder: {
+    2: 'Same rock. Shinier card.',
+    3: '',
+    4: 'Same rocks. Shinier card.',
+    5: 'Unlimited boulders',
+  },
+  smoke: {
+    2: 'Vanish 1 turn → 2',
+    3: '',
+    4: 'Vanish 2 turns → 3',
+    5: 'Captures no longer break cover',
+  },
+  rewind: {
+    2: 'Same undo. Shinier card.',
+    3: '',
+    4: 'Same undo. Shinier card.',
+    5: '',
+  },
+  magnet: {
+    2: 'Pull reach 2 squares → 3',
+    3: '',
+    4: 'Pulls from any distance',
+    5: 'Same pull. Shinier card.',
+  },
+  bodyguard: {
+    2: 'Same guard. Shinier card.',
+    3: 'Guards 2 turns → 3',
+    4: '',
+    5: 'Guards the rest of the level',
+  },
+  'summon-knight': {
+    2: 'On the board 6 turns → 9',
+    3: '',
+    4: 'Stays the rest of the level',
+    5: 'Free move: him AND you, every turn',
+  },
+  'bishop-squire': {
+    2: 'On the board 6 turns → 9',
+    3: '',
+    4: 'Stays the rest of the level',
+    5: 'Free move: him AND you, every turn',
+  },
+  page: {
+    2: 'He can step 2 forward now',
+    3: 'Promotes on rank 7, not 8',
+    4: 'Same pawn. Shinier card.',
+    5: 'Any capture promotes him on the spot',
+  },
+  twin: {
+    2: 'On the board 4 turns → 6',
+    3: '6 turns → 8',
+    4: 'Stays the rest of the level',
+    5: 'Free move: her AND you, every turn',
+  },
+  duchess: {
+    2: 'On the board 2 turns → 3',
+    3: '3 turns → 4',
+    4: '',
+    5: '4 turns → 6',
+  },
+  vanguard: {
+    2: 'Drop range 2 → 3',
+    3: 'Drop range 3 → 4',
+    4: '',
+    5: 'Range 5. Stays the whole level.',
+  },
+  swap: {
+    2: 'Same trade. Shinier card.',
+    3: '',
+    4: 'Trades with ANY rainbow ally',
+    5: '',
+  },
+  sacrifice: {
+    2: 'Same boom. Shinier card.',
+    3: 'Blast also hits adjacent squares',
+    4: 'Same boom. Shinier card.',
+    5: 'King stun 2 turns → 3',
+  },
+  knighting: {
+    2: 'Promoted summon gains 3 extra turns',
+    3: 'Promotes two steps up, not one',
+    4: 'Works on ANY rainbow ally',
+    5: 'Straight to queen',
+  },
+};
+
+/**
+ * The delta an upgrade offer gives vs the tier the player owns (offered - 1).
+ * Returns 1–2 short lines: the effect note from UPGRADE_NOTES plus a
+ * computed uses/charges line whenever maxUsesForTier changes between the
+ * two tiers. Never empty — a tier that changes nothing says so.
+ */
+export function upgradeDeltaForTier(
+  id: AbilityId,
+  offeredTier: AbilityTier,
+): string[] {
+  const from = Math.max(1, offeredTier - 1) as AbilityTier;
+  const lines: string[] = [];
+  const note =
+    offeredTier >= 2 ? UPGRADE_NOTES[id][offeredTier as 2 | 3 | 4 | 5] : '';
+  if (note) lines.push(note);
+  const a = maxUsesForTier(id, from);
+  const b = maxUsesForTier(id, offeredTier);
+  if (a !== b) {
+    const perRun = isOneChargePerRun(id);
+    const unit = (n: number) =>
+      perRun ? (n === 1 ? 'charge' : 'charges') : (n === 1 ? 'use' : 'uses');
+    const scope = perRun ? 'per run' : 'per level';
+    if (b < 0) lines.push('Unlimited uses');
+    else if (a < 0) lines.push(`${b} ${unit(b)} ${scope}`);
+    else if (b > a) lines.push(`+${b - a} ${unit(b - a)} ${scope}`);
+    else lines.push(`${a} ${unit(a)} → ${b} ${scope}`);
+  }
+  if (lines.length === 0) lines.push('Same power. Shinier card.');
+  return lines;
+}
+
 export interface AbilityOfferOption {
   kind: 'new' | 'upgrade';
   id: AbilityId;
