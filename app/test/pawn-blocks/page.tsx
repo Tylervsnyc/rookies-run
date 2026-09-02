@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { PieceBlocks, type PieceType } from '@/components/run/PieceBlocks';
+import { PieceBlocks, type PieceType, type BlockPieceType, type DragonAltType } from '@/components/run/PieceBlocks';
 import { LowMovesEmergency } from '@/components/run/LowMovesEmergency';
 
 /**
@@ -52,13 +52,54 @@ function PawnBlocksInner() {
 
         <section>
           <div className="text-xs font-bold uppercase tracking-wider opacity-60 mb-2">
-            Dragon vs queen — board size (blockSize 3) and close-up (blockSize 6)
+            Dragon options — each at board size (3) and close-up (6), queen for contrast
           </div>
-          <div className="bg-white rounded-xl p-4 flex items-end justify-around">
-            <PieceBlocks piece="D" blockSize={3} />
-            <PieceBlocks piece="Q" blockSize={3} />
-            <PieceBlocks piece="D" blockSize={6} />
-            <PieceBlocks piece="Q" blockSize={6} />
+          <div className="flex flex-col gap-3">
+            {(
+              [
+                ['D', 'Current (the chicken?)'],
+                ['DA', 'A — serpentine side profile'],
+                ['DB', 'B — bat-wing dominant'],
+                ['DC', 'C — coiled wyrm'],
+                ['DD', 'D — heraldic rampant'],
+              ] as [BlockPieceType | DragonAltType, string][]
+            ).map(([code, label]) => (
+              <div key={code} className="bg-white rounded-xl p-4">
+                <div className="text-xs font-bold mb-2">{label}</div>
+                <div className="flex items-end justify-around">
+                  <PieceBlocks piece={code} blockSize={3} />
+                  <PieceBlocks piece="Q" blockSize={3} />
+                  <PieceBlocks piece={code} blockSize={6} />
+                  <PieceBlocks piece="Q" blockSize={6} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <div className="text-xs font-bold uppercase tracking-wider opacity-60 mb-2">
+            The summons — every controllable piece
+          </div>
+          <div className="flex flex-col gap-3">
+            {(
+              [
+                ['N', 'Squire / Vanguard (knight)'],
+                ['R', 'Twin (rook)'],
+                ['Q', 'Duchess (queen)'],
+                ['B', 'Bishop Squire (bishop)'],
+                ['P', 'Page (pawn)'],
+                ['D', 'Dragon (current D)'],
+              ] as [BlockPieceType, string][]
+            ).map(([code, label]) => (
+              <div key={code} className="bg-white rounded-xl p-4">
+                <div className="text-xs font-bold mb-2">{label}</div>
+                <div className="flex items-end justify-around">
+                  <PieceBlocks piece={code} blockSize={3} />
+                  <PieceBlocks piece={code} blockSize={6} />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

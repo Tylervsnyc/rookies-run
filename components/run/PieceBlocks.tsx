@@ -29,6 +29,13 @@ export type PieceType = 'P' | 'N' | 'B' | 'R' | 'Q' | 'K';
  */
 export type BlockPieceType = PieceType | 'D';
 
+/**
+ * Dragon ALTERNATE masks under review on /test/pawn-blocks only.
+ * The game renders 'D' (current mask) until Tyler picks a winner —
+ * these codes are deliberately NOT part of BlockPieceType.
+ */
+export type DragonAltType = 'DA' | 'DB' | 'DC' | 'DD';
+
 interface PieceTemplate {
   /** react-chessboard piece key */
   svgKey: 'wP' | 'wN' | 'wB' | 'wR' | 'wQ' | 'wK';
@@ -38,15 +45,19 @@ interface PieceTemplate {
   threshold: number;
 }
 
-export const PIECE_TEMPLATES: Record<BlockPieceType, PieceTemplate> = {
+export const PIECE_TEMPLATES: Record<BlockPieceType | DragonAltType, PieceTemplate> = {
   P: { svgKey: 'wP', cols: 12, rows: 15, threshold: 0.35 },
   N: { svgKey: 'wN', cols: 16, rows: 18, threshold: 0.35 },
   B: { svgKey: 'wB', cols: 14, rows: 20, threshold: 0.35 },
   R: { svgKey: 'wR', cols: 14, rows: 18, threshold: 0.35 },
   Q: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
   K: { svgKey: 'wK', cols: 16, rows: 20, threshold: 0.35 },
-  // Dragon never rasterizes (mask authored below); svgKey is a placeholder.
+  // Dragons never rasterize (masks authored below); svgKey is a placeholder.
   D: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
+  DA: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
+  DB: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
+  DC: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
+  DD: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
 };
 
 // Rookie's canonical 8-color palette.
@@ -108,14 +119,116 @@ const DRAGON_ART: readonly string[] = [
 
 const DRAGON_MASK: Mask = DRAGON_ART.map((row) => row.split('').map((c) => c === 'X'));
 
+// ALTERNATE dragon masks (Tyler review, /test/pawn-blocks). All 18x18.
+// Goal: silhouettes that CANNOT read as a chicken at blockSize 3.
+
+// A — side-profile serpentine: ONE continuous horizontal body (a detached
+// wing split it into two blobs = bird takeoff, redrawn), horned head left,
+// dorsal spike ridge attached to the back, legs below, tail curling down.
+const DRAGON_ART_A: readonly string[] = [
+  '..................',
+  '..X...............',
+  '.XXX...X...X......',
+  'XXXXX..XX..XX.....',
+  'XXXXXXXXXXXXXXX...',
+  '.XXXXXXXXXXXXXXXX.',
+  '..XXXXXXXXXXXXXXXX',
+  '...XXXXXXXXXXXXXXX',
+  '....XXXX...XXXXXXX',
+  '....XXX.......XXXX',
+  '..............XXXX',
+  '.............XXXX.',
+  '...........XXXX...',
+  '.........XXXX.....',
+  '........XXX.......',
+  '........XXX.......',
+  '.........XXXX.....',
+  '...........XXX....',
+];
+
+// B — bat-wing dominant: the wide spread wings ARE the shape; small horned
+// head between them, narrow body dropping to a flicked tail.
+const DRAGON_ART_B: readonly string[] = [
+  '.......X..X.......',
+  'X......XXXX......X',
+  'XX.....XXXX.....XX',
+  'XXX....XXXX....XXX',
+  'XXXX..XXXXXX..XXXX',
+  'XXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXX',
+  'XXXXXXXXXXXXXXXXXX',
+  'XXX.XXXXXXXXXX.XXX',
+  'XX...XXXXXXXX...XX',
+  'X.....XXXXXX.....X',
+  '.......XXXX.......',
+  '.......XXXX.......',
+  '.......XXXX.......',
+  '........XXX.......',
+  '........XXX.......',
+  '.........XXX......',
+  '..........XXX.....',
+];
+
+// C — coiled wyrm: circular coil (hole in the middle sells it), head rising
+// over the top-left on a crossing neck. No wings.
+const DRAGON_ART_C: readonly string[] = [
+  '...XX.............',
+  '..XXXX............',
+  'XXXXXXX...........',
+  '.XXXXXX...........',
+  '...XXXX...........',
+  '....XXXX..........',
+  '.....XXXX.XXXXX...',
+  '.....XXXXXXXXXXX..',
+  '....XXXXXXXXXXXXX.',
+  '...XXXXX...XXXXXX.',
+  '..XXXXX.....XXXXXX',
+  '..XXXX.......XXXXX',
+  '..XXXX.......XXXXX',
+  '..XXXXX.....XXXXX.',
+  '...XXXXX...XXXXXX.',
+  '....XXXXXXXXXXXX..',
+  '......XXXXXXXXX...',
+  '........XXXXX.....',
+];
+
+// D — heraldic rampant: chest up, flat crocodilian snout (closed jaw) with a
+// swept-back horn, raised foreleg, small wing sail, THICK tail sweeping right.
+const DRAGON_ART_D: readonly string[] = [
+  '.......XX.........',
+  '......XXX.........',
+  'XXXXXXXXXX........',
+  '.XXXXXXXXX........',
+  '.....XXXXX.XX.....',
+  '......XXXXXXXX....',
+  '...XX.XXXXXXXXX...',
+  '...XXXXXXXXXXXXX..',
+  '.....XXXXXXXXXXX..',
+  '.....XXXXXXXXXX...',
+  '.....XXXXXXXXX....',
+  '......XXXXXXXX....',
+  '......XXXXXXXXX...',
+  '....XXXXXXXXXXXX..',
+  '....XXX.XXXXXXXXX.',
+  '..........XXXXXXXX',
+  '.............XXXXX',
+  '...........XXXXX..',
+];
+
+const toMask = (art: readonly string[]): Mask => art.map((row) => row.split('').map((c) => c === 'X'));
+
 // Module-level cache so each piece only rasterizes once per session.
 const MASK_CACHE = new Map<string, Mask>();
 // The pawn and dragon never rasterize — their masks are authored above.
 MASK_CACHE.set('P', PAWN_MASK);
 MASK_CACHE.set('D', DRAGON_MASK);
+MASK_CACHE.set('DA', toMask(DRAGON_ART_A));
+MASK_CACHE.set('DB', toMask(DRAGON_ART_B));
+MASK_CACHE.set('DC', toMask(DRAGON_ART_C));
+MASK_CACHE.set('DD', toMask(DRAGON_ART_D));
 const PENDING = new Map<string, Promise<Mask>>();
 
-async function rasterize(piece: BlockPieceType): Promise<Mask> {
+async function rasterize(piece: BlockPieceType | DragonAltType): Promise<Mask> {
   const cacheKey = piece;
   const cached = MASK_CACHE.get(cacheKey);
   if (cached) return cached;
@@ -175,7 +288,7 @@ async function rasterize(piece: BlockPieceType): Promise<Mask> {
 }
 
 interface PieceBlocksProps {
-  piece: BlockPieceType;
+  piece: BlockPieceType | DragonAltType;
   /** Pixel size of each block. */
   blockSize?: number;
   /** Slow brightness pulse like BreathingRook. */
