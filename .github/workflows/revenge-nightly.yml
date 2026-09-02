@@ -16,6 +16,9 @@ on:
     # shared runners (2026-09-02: the 06:30 fire came at 11:33), so start
     # early enough that even a late, slow run lands before morning.
     - cron: '30 4 * * *'
+    # TEMP (2026-09-02): Tyler's laptop-closed proof fire at 6pm ET. GitHub cron
+    # can run late; expect the fire between 6:00-7:00pm. REMOVE after tonight.
+    - cron: '0 22 * * *'
   workflow_dispatch:
     inputs:
       quick:
@@ -33,7 +36,7 @@ permissions:
 jobs:
   playtest:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +57,11 @@ jobs:
           # (2026-09-02: the first full-budget fire ran past 3h). Noise grows
           # from about +/-10 to +/-14 points per cell — fine for a nightly
           # trend read; verify borderline calls locally at full budget.
-          FLAGS="--trials=24 --mode-trials=10 --runs=24 --player-runs=24 --cand-trials=16 --cand-mode-trials=8 --cand-runs=12 --cand-player-runs=12 --exp-trials=24"
+          # Budget resized 2026-09-02: the live pool doubled (11 runs x 25 ability
+          # loadouts). 16 trials/cell keeps the sweep ~2-2.5h on the 4-core runner
+          # (noise ~+/-17/cell — trend-read only; verify borderline calls locally).
+          # player-runs stays 24: the new-player clear rate is the headline number.
+          FLAGS="--trials=16 --mode-trials=8 --runs=16 --player-runs=24 --cand-trials=16 --cand-mode-trials=8 --cand-runs=12 --cand-player-runs=12 --exp-trials=16"
           if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick"; fi
           npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
 
