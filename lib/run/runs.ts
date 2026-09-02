@@ -5279,7 +5279,186 @@ const RUN_REVENGE_7: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7];
+const RUN_REVENGE_8: RunDef = {
+  id: 'revenge-8',
+  name: 'The Rampart',
+  blurb: 'Every wall is thicker on the way up.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — FIRST BLOOD. king alone behind three pawns. Rank 8 does nothing; the king does.
+    // shell pd7 pe7 pf7. (swarm-L1-v1, 2026-09-02-r8)
+    make(
+      1,
+      [
+        pawn(4, 7), pawn(5, 7), pawn(6, 7),
+        king(5, 8),
+      ],
+      STILL,
+    ),
+    // L2 — THE SHELL. a second pawn layer. Still still — find the line, take the key.
+    // shell pe7 pf7 pg7 pd6 ph6 pe5 pg5; marchers pd2 ph3. (swarm-L2-v1)
+    make(
+      2,
+      [
+        pawn(5, 7), pawn(6, 7), pawn(7, 7), pawn(4, 6), pawn(8, 6), pawn(5, 5), pawn(7, 5),
+        pawn(4, 2), pawn(8, 3),
+        king(6, 8),
+      ],
+      STILL,
+    ),
+    // L3 — CORNER OFFICE. 2x2 corner room on h8; key h5 on his file, chain runs inward.
+    // Key ph5; hunters kb3. (corner-keep-L3-v2)
+    make(
+      3,
+      [
+        pawn(8, 5),
+        knight(2, 3),
+        king(8, 8),
+      ],
+      {
+        ...FLEE,
+        hazards: [X(6, 7), X(6, 8)],
+        kingPen: ['g8', 'h8', 'g7', 'h7'],
+      },
+    ),
+    // L4 — ONE GUARD. 0-ring shell around the d5 key; dismantle the chain from the outside in.
+    // Key pd5; defended by pe6; hunters kh5. (swarm-L4-v1)
+    make(
+      4,
+      [
+        pawn(4, 5),
+        pawn(5, 6),
+        knight(8, 5),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L5 — THE HEDGE. 1-ring shell around the f5 key; dismantle the chain from the outside in.
+    // Key pf5; defended by pe6 pg6; shell pd5 ph5; hunters kc3; marchers pb3. (swarm-L5-v2 +marcher, budget 12->11)
+    make(
+      5,
+      [
+        pawn(6, 5),
+        pawn(5, 6), pawn(7, 6),
+        pawn(4, 5), pawn(8, 5),
+        knight(3, 3),
+        pawn(2, 3),
+        king(6, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [X(4, 7), X(8, 7), X(4, 8), X(8, 8)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
+      },
+    ),
+    // L6 — THE OUTER HEDGE. 2-ring shell around the d5 key, a knight patrols the door.
+    // Key pd5; defended by pc6 pe6; shell pb5 pf5; hunters kf3; marchers pf4 pg2. (swarm-L7-v2, relabeled)
+    make(
+      6,
+      [
+        pawn(4, 5),
+        pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5),
+        knight(6, 3),
+        pawn(6, 4), pawn(7, 2),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L7 — BRAMBLE. 2-ring shell around the d5 key; the knight waits on the far flank.
+    // Key pd5; defended by pc6 pe6; shell pb5 pf5; hunters ka4; marchers pg2 pb3. (swarm-L7-v1)
+    make(
+      7,
+      [
+        pawn(4, 5),
+        pawn(3, 6), pawn(5, 6),
+        pawn(2, 5), pawn(6, 5),
+        knight(1, 4),
+        pawn(7, 2), pawn(2, 3),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [X(2, 7), X(6, 7), X(2, 8), X(6, 8)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L8 — THE BASTION. 3x2 corner room on a8; key a5 on his file, chain runs inward.
+    // Key pa5; defended by pb6; hunters qe3 bf3 kh3; marchers pf4 pd2 pg4 ph2. (corner-keep-L8-v1 +marcher, budget 15->13)
+    make(
+      8,
+      [
+        pawn(1, 5),
+        pawn(2, 6),
+        queen(5, 3), bishop(6, 3), knight(8, 3),
+        pawn(6, 4), pawn(4, 2), pawn(7, 4), pawn(8, 2),
+        king(1, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(4, 7), X(4, 8)],
+        kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7'],
+      },
+    ),
+    // L9 — THE CITADEL. 3x3 corner room on a8; key a4 on his file, chain runs inward.
+    // Key pa4; defended by pb5; shell pb3; hunters qe5 bc4 bf4 kh3; marchers pc3 pd3 pe3. (corner-keep-L9-v2)
+    make(
+      9,
+      [
+        pawn(1, 4),
+        pawn(2, 5),
+        pawn(2, 3),
+        queen(5, 5), bishop(3, 4), bishop(6, 4), knight(8, 3),
+        pawn(3, 3), pawn(4, 3), pawn(5, 3),
+        king(1, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 14,
+        hazards: [X(4, 6), X(4, 7), X(4, 8)],
+        kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7', 'a6', 'b6', 'c6'],
+      },
+    ),
+    // L10 — THE LAST TOWER. 3x3 corner room on a8; key a4 on his file, two queens hold the yard.
+    // Key pa4; defended by pb5; shell pb3; hunters qd4 qc3 bf5 kc4; marchers pe4 pg4 pf3 ph3. (corner-keep-L10-v3 +marcher, budget 18->16)
+    make(
+      10,
+      [
+        pawn(1, 4),
+        pawn(2, 5),
+        pawn(2, 3),
+        queen(4, 4), queen(3, 3), bishop(6, 5), knight(3, 4),
+        pawn(5, 4), pawn(7, 4), pawn(6, 3), pawn(8, 3),
+        king(1, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 16,
+        hazards: [X(4, 6), X(4, 7), X(4, 8)],
+        kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7', 'a6', 'b6', 'c6'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));
