@@ -249,7 +249,7 @@
       "id": "bodyguard",
       "kind": "ability",
       "name": "Bodyguard",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-18",
       "notes": "Shipped with Rookie's Revenge (2026-08-18).",
       "approved": {
@@ -258,6 +258,10 @@
       },
       "live": {
         "at": "2026-08-18"
+      },
+      "retired": {
+        "at": "2026-09-02",
+        "why": "BROKEN — Tyler 2026-09-02: 'bodyguard is BS doesn't work'. Pulled from the pool until rebuilt; investigate the summon path vs the passive rook spawn."
       }
     },
     {
