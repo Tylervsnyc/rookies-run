@@ -54,6 +54,7 @@ import {
   convertTargets as computeConvertTargets,
   magnetTargets as computeMagnetTargets,
   maxUsesForTier,
+  refreshAbilityUses,
   type AbilityId,
   type AbilityOfferOption,
   type AbilityTier,
@@ -148,9 +149,9 @@ function readParityHook(params: URLSearchParams): ParityHook | null {
   };
 }
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; loadout: OwnedAbility[] | null; parity: ParityHook | null } {
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; refresh: boolean; loadout: OwnedAbility[] | null; parity: ParityHook | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '', ladder: false, loadout: null, parity: null };
+    return { runId: '', startLevelIndex: 0, date: '', ladder: false, refresh: false, loadout: null, parity: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -163,7 +164,8 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
     if (!Number.isNaN(n) && n >= 1) startLevelIndex = n - 1;
   }
   const ladder = params.get('ladder') === '1';
-  return { runId, startLevelIndex, date, ladder, loadout: readLoadoutParam(params), parity: readParityHook(params) };
+  const refresh = params.get('refresh') === '1';
+  return { runId, startLevelIndex, date, ladder, refresh, loadout: readLoadoutParam(params), parity: readParityHook(params) };
 }
 
 function readSavedRunId(): string {
@@ -190,6 +192,12 @@ interface RunMeta {
    * effects may fire for it.
    */
   levelJump: boolean;
+  /**
+   * `?refresh=1` with a `?loadout=` (playtest context ONLY): every ability
+   * refills at each level transition, one-charge finishers included. Same
+   * no-side-effects rule as levelJump — a refresh run never posts scores.
+   */
+  refreshAll: boolean;
 }
 
 function freshRun(
@@ -281,6 +289,7 @@ export default function RookiesRunPage() {
       loadout: url.loadout,
       parity: url.parity,
       levelJump: startLevelIndex > 0,
+      refreshAll: url.refresh && !!url.loadout && !url.parity,
     };
   }, []);
 
@@ -767,12 +776,12 @@ export default function RookiesRunPage() {
           abilitiesUsed: progress.abilitiesUsedThisRun(),
           streak: streakNow + 1,
         });
-        if (!meta.levelJump) recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
+        if (!meta.levelJump && !meta.refreshAll) recordBest(state.difficulty ?? 'normal', totalLevels, state.captures.length);
       }
       // Record completion for streak (auth-only on the server; silent for anon).
       // Only record when this is the actual daily for that date — not, e.g.,
       // an STC run or a hand-picked non-daily run via ?run=.
-      if (!isStc && !meta.levelJump && meta.runId === getRunIdForDate(meta.iso)) {
+      if (!isStc && !meta.levelJump && !meta.refreshAll && meta.runId === getRunIdForDate(meta.iso)) {
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
         fetch('/api/run/complete', {
           method: 'POST',
@@ -1060,7 +1069,9 @@ export default function RookiesRunPage() {
     setPuzzle(nextPuzzle);
     setState(
       puzzleToBoardState(nextPuzzle, {
-        abilities: state.abilities,
+        // Playtest refresh: refill EVERY ability (finishers included) at the
+        // level transition; seed.ts then re-runs its normal (idempotent) pass.
+        abilities: meta.refreshAll ? refreshAbilityUses(state.abilities, true) : state.abilities,
         tempo: state.tempo,
         pendingOffer: state.pendingOffer,
         runId: meta.runId,
@@ -1070,7 +1081,7 @@ export default function RookiesRunPage() {
     );
     setSelectedSquare(null);
     setShowLevelCleared(false);
-  }, [levelIndex, meta.iso, meta.runId, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
+  }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
     const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout);
@@ -1227,9 +1238,9 @@ export default function RookiesRunPage() {
     const finished = runComplete || (state.status === 'lost' && deathSettled && !canRetry);
     if (!finished) return;
     runRecordedRef.current = true;
-    // A `?level=N` jump (playtest launch) must leave no trace: no history,
-    // no ladder result, no leaderboard score.
-    if (meta.levelJump) {
+    // A `?level=N` jump or `?refresh=1` session (playtest launches) must
+    // leave no trace: no history, no ladder result, no leaderboard score.
+    if (meta.levelJump || meta.refreshAll) {
       setHistoryVersion((v) => v + 1);
       return;
     }
@@ -1264,7 +1275,7 @@ export default function RookiesRunPage() {
         completed: runComplete,
       });
     }
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 

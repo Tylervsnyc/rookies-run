@@ -68,7 +68,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
   const [runId, setRunId] = useState<string>(runs[0]?.id ?? '');
   // Ordered oldest-first; a 4th pick replaces the oldest.
   const [picked, setPicked] = useState<string[]>([]);
-  const [tier, setTier] = useState(3);
+  const [tier, setTier] = useState(1);
   const [playing, setPlaying] = useState<{ src: string; runId: string; loadout: string } | null>(null);
   const [frameNonce, setFrameNonce] = useState(0);
 
@@ -104,7 +104,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
     const src =
       `/?run=${encodeURIComponent(runId)}` +
       (loadoutString ? `&loadout=${encodeURIComponent(loadoutString)}` : '') +
-      `&ladder=0`;
+      `&refresh=1&ladder=0`;
     // Mark tested the moment PLAY is pressed.
     setCoverage((prev) => {
       const next: Coverage = {

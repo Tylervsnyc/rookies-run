@@ -2603,10 +2603,13 @@ export function isOneChargePerRun(id: AbilityId): boolean {
 /**
  * Reset per-level uses at level transitions. Finishers keep whatever charge
  * they have left (see ONE_CHARGE_PER_RUN); everything else refills.
+ * `refreshAll` (playtest context ONLY — /playtest's ?refresh=1) bypasses the
+ * one-charge hold so every ability refills each level. Default behavior is
+ * unchanged for normal players, the harness, and seed.ts.
  */
-export function refreshAbilityUses(abilities: OwnedAbility[]): OwnedAbility[] {
+export function refreshAbilityUses(abilities: OwnedAbility[], refreshAll = false): OwnedAbility[] {
   return abilities.map((a) => {
-    if (isOneChargePerRun(a.id) && typeof a.usesLeftThisLevel === 'number') return a;
+    if (!refreshAll && isOneChargePerRun(a.id) && typeof a.usesLeftThisLevel === 'number') return a;
     return { ...a, usesLeftThisLevel: maxUsesForTier(a.id, a.tier) };
   });
 }
