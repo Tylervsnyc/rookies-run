@@ -41,7 +41,7 @@ export function AbilityRack({
         }
       `}</style>
       <div className="flex flex-col gap-1.5">
-        <div className="flex gap-2 justify-center items-end pb-1">
+        <div className="flex gap-2.5 justify-center items-end pb-1">
           {abilities.map((a) => (
             <RackEntry
               key={a.id}

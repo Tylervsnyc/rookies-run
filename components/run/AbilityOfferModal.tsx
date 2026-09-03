@@ -75,6 +75,22 @@ const GOLD_HALO = '0 0 14px rgba(255, 191, 36, 0.45)';
 /** Ribbon gradient for the UPGRADE banner. */
 const GOLD_CHIP = 'linear-gradient(180deg, #f2ce7a, #d3a238)';
 
+/** "Rookie" in the Chess Path wordmark gradient (the same one "Path" wears). */
+function RookieWord() {
+  return (
+    <span
+      style={{
+        background: 'linear-gradient(90deg, #FFC800 0%, #FFC800 55%, #FF6B6B 75%, #1CB0F6 100%)',
+        WebkitBackgroundClip: 'text',
+        backgroundClip: 'text',
+        color: 'transparent',
+      }}
+    >
+      Rookie
+    </span>
+  );
+}
+
 function plainText(option: AbilityOfferOption): string {
   return PLAIN[option.id] ?? ABILITY_DEFS[option.id].description;
 }
@@ -137,8 +153,14 @@ export function AbilityOfferModal({
           }}
         >
           <div className="text-center mb-2 sm:mb-3 px-0.5">
-            <h2 className="text-[13px] sm:text-[15px] font-black text-chess-text leading-tight">
-              {title ?? (isLevel ? 'One rook can’t do this alone. Take something.' : 'Tempo full. Upgrade Rookie.')}
+            <h2 className="text-[14px] sm:text-[16px] font-black text-chess-text leading-tight">
+              {title ?? (isLevel ? (
+                <>
+                  <RookieWord /> can’t do this alone. Take something.
+                </>
+              ) : (
+                <>Tempo full. Upgrade <RookieWord />.</>
+              ))}
             </h2>
             <p className="text-[10px] sm:text-[11px] font-bold text-chess-text-muted mt-0.5">
               {subtitle ?? 'Tap a power to keep it.'}
@@ -249,14 +271,15 @@ export function AbilityOfferModal({
           {owned && owned.length > 0 && (
             <div className="mt-2.5 sm:mt-3 rounded-xl px-2.5 py-2" style={{ background: 'rgba(58,40,6,0.07)', boxShadow: 'inset 0 0 0 1px rgba(184,133,43,0.35)' }}>
               <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-chess-text-muted mb-1.5">Your powers</div>
-              <div className="flex gap-2">
+              {/* Fixed-size mini cards, left-aligned — never stretched across (Tyler 2026-09-03). */}
+              <div className="flex gap-2 items-start">
                 {owned.map((a) => (
-                  <div key={a.id} className="flex items-center gap-1.5 min-w-0 flex-1 rounded-lg p-1 pr-2" style={{ background: 'rgba(255,255,255,0.55)', boxShadow: 'inset 0 0 0 1px rgba(184,133,43,0.3)' }}>
+                  <div key={a.id} className="flex flex-col items-center rounded-lg p-[2px] shrink-0" style={{ width: 62, background: GOLD_FRAME, boxShadow: '0 2px 6px rgba(0,0,0,0.25)' }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`/abilities/${artFile(a.id)}`} alt="" width={34} height={34} className="rounded-md shrink-0" style={{ width: 34, height: 34 }} draggable={false} />
-                    <div className="min-w-0 leading-tight">
-                      <div className="text-[10px] font-black text-chess-text truncate">{ABILITY_DEFS[a.id].name}</div>
-                      <div className="text-[9px] font-bold text-chess-text-muted">Tier {a.tier}</div>
+                    <img src={`/abilities/${artFile(a.id)}`} alt="" width={58} height={58} className="rounded-[6px]" style={{ width: 58, height: 58 }} draggable={false} />
+                    <div className="w-full text-center leading-tight py-[3px] rounded-b-[6px]" style={{ background: '#22343e' }}>
+                      <div className="text-[8px] font-black text-white truncate px-0.5">{ABILITY_DEFS[a.id].name}</div>
+                      <div className="text-[8px] font-bold text-amber-200">T{a.tier}</div>
                     </div>
                   </div>
                 ))}

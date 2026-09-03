@@ -5,6 +5,7 @@ import { RunBoard } from '@/components/run/Board';
 import { LevelClearedModal } from '@/components/run/LevelClearedModal';
 import { LevelLostModal } from '@/components/run/LevelLostModal';
 import { useNavyShell } from '@/components/run/useNavyShell';
+import { SAD_MUSIC_URL, startTrack, stopTrack, type TrackHandle } from '@/lib/run/tracks';
 import { RunSummaryModal } from '@/components/run/RunSummaryModal';
 import { computeStats, readHistory, recordRun } from '@/lib/run/history';
 import { AbilityRack } from '@/components/run/AbilityRack';
@@ -40,7 +41,7 @@ import {
   playCardPlaySound,
   playLevelClearSound,
   playMoveSound,
-  warmupAudio, playTransformBackSound, playTransformIntoSound, playFreezeSound, playSurgeSound } from '@/lib/sounds';
+  warmupAudio, playCorrectSound, playTransformBackSound, playTransformIntoSound, playFreezeSound, playSurgeSound } from '@/lib/sounds';
 import { haptic, hapticError, hapticSuccess } from '@/lib/haptics';
 import {
   ABILITY_DEFS,
@@ -198,6 +199,9 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
   const testkit = parity ? null : readTestkitParam(params);
   return { runId, startLevelIndex, date, ladder, refresh, loadout: readLoadoutParam(params), testkit, parity };
 }
+
+/** Slow-motion enemy slide onto Rookie when she gets captured (ms). */
+const CAPTURE_SLOWMO_MS = 1600;
 
 function readSavedRunId(): string {
   if (typeof window === 'undefined') return DEFAULT_RUN_ID;
@@ -813,12 +817,36 @@ export default function RookiesRunPage() {
     });
   }, [state.turn, state.enemyMovedSquares, state.level, state.rookie, state.pieces.length, state.allies.length, recordEvent]);
 
+  // Rookie CAPTURED (an enemy landed on her square) vs. out of moves. The
+  // capture plays in slow motion under the tutorial's sad bed, board fading
+  // to black & white — the player's mistake, cinematic and funny (Tyler
+  // 2026-09-03). Derived, not state, so the SAME render that moves the
+  // enemy piece already slides it slowly.
+  const rookieCaptured =
+    state.status === 'lost' &&
+    state.pieces.some((p) => p.file === state.rookie.file && p.rank === state.rookie.rank);
+  const sadTrackRef = useRef<TrackHandle | null>(null);
   useEffect(() => {
-    if (state.status !== 'lost') return;
-    setDying(true);
-    const t = setTimeout(() => setDeathSettled(true), 1200);
-    return () => clearTimeout(t);
-  }, [state.status]);
+    if (state.status !== 'lost') {
+      if (sadTrackRef.current) {
+        stopTrack(sadTrackRef.current, 500);
+        sadTrackRef.current = null;
+      }
+      return;
+    }
+    if (!rookieCaptured) {
+      setDying(true);
+      const t = setTimeout(() => setDeathSettled(true), 1200);
+      return () => clearTimeout(t);
+    }
+    sadTrackRef.current = startTrack(SAD_MUSIC_URL, 0.7);
+    const t1 = setTimeout(() => setDying(true), CAPTURE_SLOWMO_MS);
+    const t2 = setTimeout(() => setDeathSettled(true), CAPTURE_SLOWMO_MS + 1200);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [state.status, rookieCaptured]);
 
   const lastRookieMoveRef = useRef(0);
   const lastRookieCapCountRef = useRef(0);
@@ -854,7 +882,8 @@ export default function RookiesRunPage() {
 
   useEffect(() => {
     if (state.status !== 'won') return;
-    playLevelClearSound(levelIndex);
+    // Chess Path's puzzle two-tone, climbing one chromatic step per level (Tyler 2026-09-03).
+    playCorrectSound(levelIndex, 0);
     hapticSuccess();
   }, [state.status, levelIndex]);
 
@@ -1608,7 +1637,7 @@ export default function RookiesRunPage() {
         state.moveLimit - state.moveCount <= 2 && (
           <LowMovesEmergency left={state.moveLimit - state.moveCount} />
         )}
-      <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[calc(env(safe-area-inset-top)+12px)]'}`}>
+      <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[calc(env(safe-area-inset-top)+6px)]'}`}>
         <header className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
@@ -1727,6 +1756,7 @@ export default function RookiesRunPage() {
           className={`w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto ${isStc ? '' : 'rounded-[20px] p-2'}`}
           style={isStc ? undefined : { background: 'linear-gradient(180deg,#3d5297 0%,#1b2b5c 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}
         >
+          <div style={{ filter: rookieCaptured ? 'grayscale(1) contrast(1.05)' : 'none', transition: `filter ${CAPTURE_SLOWMO_MS}ms ease-in` }}>
           <RunBoard
             key={`level-${levelIndex}-${state.level}`}
             state={state}
@@ -1746,15 +1776,19 @@ export default function RookiesRunPage() {
             onSquareClick={onSquareClick}
             onPieceDrop={onPieceDrop}
             vanillaPieces={isStc}
+            slideMs={rookieCaptured ? CAPTURE_SLOWMO_MS : undefined}
           />
+          </div>
         </div>
 
+        <div className="-mt-1">
         <AbilityRack
           abilities={state.abilities}
           activeId={state.activeAbility?.id ?? null}
           disabledIds={summonSupportDisabled}
           onActivate={onActivateAbility}
         />
+        </div>
 
         {state.abilities.some((a) => a.id === 'squad') && (
           <div className="flex items-center justify-center gap-1.5 text-[10px] font-black tracking-wide uppercase text-amber-700 dark:text-amber-300">

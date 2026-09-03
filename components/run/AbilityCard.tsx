@@ -389,7 +389,7 @@ interface MiniProps {
 }
 
 /** Rack card width (Tyler 2026-09-03: "make these ability cards bigger, they look so darn good"). */
-export const RACK_CARD_W = 84;
+export const RACK_CARD_W = 100;
 
 export function AbilityCardMini({
   ability,

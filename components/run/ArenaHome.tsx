@@ -59,7 +59,8 @@ const GOLD_TEXT: CSSProperties = { color: GOLD, textShadow: '0 2px 0 rgba(0,0,0,
 const FRAME: CSSProperties = { background: 'linear-gradient(180deg,#3d5297 0%,#1b2b5c 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' };
 const TABS = ['Ladder', 'Ranks', 'Revenge', 'Codex'] as const;
 type Tab = (typeof TABS)[number];
-const TAB_ART: Record<Tab, string> = { Ladder: 'ladder-b', Ranks: 'ranks-a', Revenge: 'revenge-g', Codex: 'codex-a' };
+// Painted-relic set (Tyler 2026-09-03: the cartoon icons clashed with the illustrated ability art above them).
+const TAB_ART: Record<Tab, string> = { Ladder: 'ladder-p1', Ranks: 'ranks-p1', Revenge: 'revenge-p1', Codex: 'codex-p1' };
 
 function useCountdownToMidnight(): string {
   const [now, setNow] = useState(() => Date.now());
@@ -132,14 +133,22 @@ function Medal({ rank }: { rank: number }) {
 function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
   flipped: boolean; onBack: () => void; runName: string; runBlurb: string; poolSize: number;
 }) {
+  // backface-visibility does NOT reach the board's own transformed layers
+  // (the CAPTURE THE KING tag, the bottom rank), so the front face is swapped
+  // to hidden at the 90° point (325ms of 650) instead of trusting it.
+  const [showBack, setShowBack] = useState(flipped);
+  useEffect(() => {
+    const t = setTimeout(() => setShowBack(flipped), 325);
+    return () => clearTimeout(t);
+  }, [flipped]);
   return (
     <div className="relative w-full aspect-square" style={{ perspective: 1200 }}>
       <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)', transition: 'transform 650ms cubic-bezier(.22,1,.36,1)' }}>
-        <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', ...FRAME }}>
+        <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', visibility: showBack ? 'hidden' : 'visible', ...FRAME }}>
           {/* paused while flipped — nothing keeps moving behind the card */}
-          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)', backfaceVisibility: 'hidden' }}><DemoBoard paused={flipped} reticle={!flipped} /></div>
+          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)', backfaceVisibility: 'hidden' }}><DemoBoard paused={flipped || showBack} reticle={!flipped && !showBack} /></div>
         </div>
-        <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: 'linear-gradient(180deg,#5b2030 0%,#2a0f18 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}>
+        <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', visibility: showBack ? 'visible' : 'hidden', transform: 'rotateY(180deg)', background: 'linear-gradient(180deg,#5b2030 0%,#2a0f18 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}>
           <div className="rounded-[14px] h-full flex flex-col p-3.5" style={{ background: 'linear-gradient(180deg,#1c2f63 0%,#0f1c3f 100%)', boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}>
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: '#FF6B66' }}>Today&rsquo;s map</span>
@@ -152,8 +161,8 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,255,255,0.1)' }}>{poolSize} powers</span>
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,200,0,0.15)', ...GOLD_TEXT }}>Counts toward Ranks</span>
             </div>
-            <div className="flex-1 min-h-0 flex items-center justify-center py-2">
-              <RevengeMarkSvg size={96} ringColor="#fff" />
+            <div className="flex-1 min-h-0 flex items-center justify-center py-1 overflow-hidden">
+              <RevengeMarkSvg size={72} ringColor="#fff" />
             </div>
             <div className="text-[12px] font-bold text-center" style={{ color: 'rgba(255,255,255,0.6)' }}>Ten levels. One King. Hit BEGIN.</div>
           </div>
@@ -362,7 +371,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
       `}</style>
       <div className="h-full w-full max-w-[430px] flex flex-col px-3 pb-[max(env(safe-area-inset-bottom),12px)]" style={{ background: `linear-gradient(180deg, ${NAVY_2} 0%, ${NAVY} 60%)` }}>
         {/* header: small lockup left, handle right */}
-        <div className="flex items-center justify-between pt-[calc(env(safe-area-inset-top)+14px)]">
+        <div className="flex items-center justify-between pt-[calc(env(safe-area-inset-top)+6px)]">
           <div className="flex items-center gap-1.5">
             <RevengeMarkSvg size={26} />
             <span className="text-[12px] font-black leading-none" style={OUTLINE}>Rookie&rsquo;s <span style={{ color: '#FF6B66' }}>REVENGE</span></span>
@@ -373,7 +382,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
         </div>
 
         {/* the anchor — square, and never taller than what leaves room for the surround + tab bar */}
-        <div className="mt-3 mx-auto w-full" style={{ maxWidth: 'calc(100dvh - 410px)' }}>
+        <div className="mt-3 mx-auto w-full" style={{ maxWidth: 'calc(100dvh - 470px)' }}>
           <Arena flipped={flipped} onBack={() => setFlipped(false)} runName={runName} runBlurb={runBlurb} poolSize={pool.length} />
         </div>
 

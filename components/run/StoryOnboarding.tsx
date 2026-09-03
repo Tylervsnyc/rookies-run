@@ -1,5 +1,7 @@
 'use client';
 
+import { loadTrack, startTrack, stopTrack, SAD_MUSIC_URL, type TrackHandle } from '@/lib/run/tracks';
+
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
@@ -315,7 +317,6 @@ function tempoState(): BoardState {
  * preload. Starts when the knight takes the king, runs under GAME OVER and
  * the dissolve, and fades out (~600ms) when colour returns.
  */
-const SAD_MUSIC_URL = '/sounds/sad-cinematic.mp3';
 const SAD_FADE_MS = 600;
 // Every tutorial king capture: Rookie takes him in slow motion under a
 // somber, celestial (funny) track — the theme. The rook drill (beat 5) plays
@@ -329,91 +330,17 @@ const KING_CAPTURE_SHORT_FADE_MS = 700;
 // Beat 11: a cartoon woodwind sting when the final screen appears.
 const TUTORIAL_END_URL = '/sounds/tutorial-end-woodwind.mp3';
 
-// Onboarding-only tracks are fetched + decoded lazily here rather than in
-// lib/sounds' global preload. One cache entry per URL.
-const trackBuffers = new Map<string, AudioBuffer>();
-const trackPromises = new Map<string, Promise<AudioBuffer | null>>();
-
-function loadTrack(ctx: AudioContext, url: string): Promise<AudioBuffer | null> {
-  const cached = trackBuffers.get(url);
-  if (cached) return Promise.resolve(cached);
-  let pending = trackPromises.get(url);
-  if (!pending) {
-    pending = fetch(url)
-      .then((r) => r.arrayBuffer())
-      .then((ab) => ctx.decodeAudioData(ab))
-      .then((buf) => {
-        trackBuffers.set(url, buf);
-        return buf;
-      })
-      .catch(() => {
-        trackPromises.delete(url);
-        return null;
-      });
-    trackPromises.set(url, pending);
-  }
-  return pending;
-}
-
+// Track loading/starting/stopping lives in lib/run/tracks.ts (shared with the
+// game's slow-motion Rookie-captured moment). These are the tutorial's names.
+type SadMusicHandle = TrackHandle;
 function loadSadMusic(ctx: AudioContext): Promise<AudioBuffer | null> {
   return loadTrack(ctx, SAD_MUSIC_URL);
 }
-
-interface SadMusicHandle {
-  source: AudioBufferSourceNode;
-  gain: GainNode;
-  cancelled: boolean;
-}
-
-/** Start a lazily-loaded track (respects the gesture-gated shared context). */
-function startTrack(url: string, volume: number): SadMusicHandle | null {
-  const ctx = getSharedAudioContext();
-  if (!ctx) return null;
-  const gain = ctx.createGain();
-  gain.gain.value = volume;
-  gain.connect(ctx.destination);
-  const source = ctx.createBufferSource();
-  const handle: SadMusicHandle = { source, gain, cancelled: false };
-  // Fetch + decode right away (works on a suspended context); only the
-  // start waits for the gesture-unlocked context to be running.
-  const loading = loadTrack(ctx, url);
-  const go = () =>
-    loading.then((buf) => {
-      if (!buf || handle.cancelled) return;
-      source.buffer = buf;
-      source.connect(gain);
-      try {
-        source.start();
-      } catch {
-        /* already started/stopped */
-      }
-    });
-  if (ctx.state === 'suspended') {
-    ctx.resume().then(go).catch(() => undefined);
-  } else {
-    void go();
-  }
-  return handle;
-}
-
-/** Start the sad bed. */
 function startSadMusic(): SadMusicHandle | null {
   return startTrack(SAD_MUSIC_URL, 0.7);
 }
-
-/** Fade the bed out over SAD_FADE_MS and stop it. */
 function stopSadMusic(handle: SadMusicHandle | null, fadeMs = SAD_FADE_MS): void {
-  if (!handle || handle.cancelled) return;
-  handle.cancelled = true;
-  const ctx = handle.gain.context;
-  const t = ctx.currentTime;
-  try {
-    handle.gain.gain.setValueAtTime(handle.gain.gain.value, t);
-    handle.gain.gain.linearRampToValueAtTime(0.0001, t + fadeMs / 1000);
-    handle.source.stop(t + fadeMs / 1000 + 0.05);
-  } catch {
-    /* source never started — nothing to stop */
-  }
+  stopTrack(handle, fadeMs);
 }
 
 /** Move one enemy piece on the board (scripted black move). */

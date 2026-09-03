@@ -66,7 +66,9 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
   // not extra moves. Its formMovesLeft counts enemy turns and decrements in
   // stepEnemyTurn.endTurn, NOT here. So Rookie stays king through her own
   // move and reverts at the end of the next enemy turn.
-  const formLocked = state.formMovesLeft < 0;
+  // <0 = locked form; >=999 = the ∞ tier (T5 queen etc.) — never counts down
+  // (Tyler 2026-09-03: the rook showed ∞, then 998, 997…).
+  const formLocked = state.formMovesLeft < 0 || state.formMovesLeft >= 999;
   const isKingProtective = state.form === 'king';
   const movesLeftAfter = formLocked || isKingProtective
     ? state.formMovesLeft

@@ -1111,6 +1111,7 @@ export function RunBoard({
           />
         )}
         {state.allies.length > 0 && <AllyOverlay allies={state.allies} />}
+        {state.poisonedSquares.length > 0 && <PoisonCounterOverlay squares={state.poisonedSquares} turnsLeft={state.poisonedTurnsLeft} />}
         {state.drones.length > 0 && <DroneOverlay drones={state.drones} />}
         {convertTargets && convertTargets.length > 0 && (
           <ConvertTargetsOverlay targets={convertTargets} />
@@ -2155,6 +2156,55 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
           )}
         </div>
       ))}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PoisonCounterOverlay — a small green countdown on every poisoned enemy:
+// turns until it dies (Tyler 2026-09-03: "there should be a poison counter
+// on the piece that shows how long till it's dead"). Same badge language as
+// the summon turn counter, in the poison green; last turn goes bright.
+// ─────────────────────────────────────────────────────────────────────────────
+function PoisonCounterOverlay({ squares, turnsLeft }: { squares: string[]; turnsLeft: Record<string, number> }) {
+  return (
+    <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 21 }} aria-hidden>
+      <style>{`@keyframes rrPoisonLastTurn { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }`}</style>
+      {squares.map((sq) => {
+        const file = sq.charCodeAt(0) - 96;
+        const rank = Number(sq[1]);
+        const n = turnsLeft[sq];
+        if (!Number.isFinite(n)) return null;
+        const last = n <= 1;
+        return (
+          <div
+            key={sq}
+            style={{
+              position: 'absolute',
+              left: `calc(${(file - 1) * 12.5}% + 12.5% * 0.62)`,
+              top: `calc(${(8 - rank) * 12.5}% - 12.5% * 0.06)`,
+              width: '5%',
+              height: '5%',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 'clamp(8px, 2.4cqw, 13px)',
+              fontWeight: 900,
+              lineHeight: 1,
+              color: last ? '#052e16' : '#f0fdf4',
+              background: last
+                ? 'radial-gradient(circle at 35% 30%, #bef264 0%, #84cc16 70%)'
+                : 'radial-gradient(circle at 35% 30%, #4ade80 0%, #15803d 70%)',
+              border: `1.5px solid ${last ? '#3f6212' : '#14532d'}`,
+              boxShadow: last ? '0 0 8px rgba(132,204,22,0.9)' : '0 1px 3px rgba(0,0,0,0.35)',
+              animation: last ? 'rrPoisonLastTurn 0.9s ease-in-out infinite' : undefined,
+            }}
+          >
+            {n}
+          </div>
+        );
+      })}
     </div>
   );
 }
