@@ -8,16 +8,17 @@ doing it via API — see docs/ios.md).
 ## Name (30 chars max)
 
 ```
-Rookie's Revenge: Chess Runs
+Rookie's Revenge
 ```
-(28 chars. Alternative if Apple flags the apostrophe or it collides: `Rookies Revenge — Chess Runs`.)
+(Tyler 2026-09-03. "Rookie's Revenge: A Chess Roguelike" is 35 chars, over the
+30 limit, so the roguelike half lives in the subtitle. The plain name was free.)
 
 ## Subtitle (30 chars max)
 
 ```
-A daily chess roguelike
+A Chess Roguelike
 ```
-(23 chars.)
+(17 chars.)
 
 ## Category
 
@@ -123,7 +124,7 @@ every smaller size). Regenerate from the live site with
 ## Status (2026-09-03) — listing is FILLED, one click from submit
 
 Everything above is already applied to the ASC record (app id 6802359470) by
-`scripts/asc-listing.mjs`: name, subtitle, categories (Games > Board/Strategy,
+`scripts/asc-listing.mjs`: name "Rookie's Revenge", subtitle "A Chess Roguelike", categories (Games > Board/Strategy,
 secondary Education), age rating 4+, content rights (original), description,
 keywords, promo text, URLs, copyright, review contact + notes, free price
 schedule, 175 territories, and TestFlight build 4 attached to version 1.0.

@@ -26,8 +26,8 @@ const args = new Set(process.argv.slice(2));
 
 // ---------- copy (mirrors docs/appstore-metadata.md) ----------
 const COPY = {
-  name: "Rookie's Revenge: Chess Runs",
-  subtitle: 'A daily chess roguelike',
+  name: "Rookie's Revenge",
+  subtitle: 'A Chess Roguelike',
   privacyPolicyUrl: 'https://run.chesspath.app/privacy',
   supportUrl: 'https://run.chesspath.app/support',
   marketingUrl: 'https://run.chesspath.app/',
