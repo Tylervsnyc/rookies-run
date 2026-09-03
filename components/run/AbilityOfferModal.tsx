@@ -6,6 +6,7 @@ import {
   type AbilityId,
   type AbilityOffer,
   type AbilityOfferOption,
+  type OwnedAbility,
 } from '@/lib/run/abilities';
 import { artFile } from './AbilityCard';
 import { PointerArrow } from './BoardOverlay';
@@ -31,6 +32,12 @@ interface AbilityOfferModalProps {
   title?: string;
   /** Optional sub-heading override. */
   subtitle?: string;
+  /**
+   * What Rookie already holds — shown as a "Your powers" strip under the
+   * slate so an upgrade pick is made with the current kit in view (Tyler
+   * 2026-09-03: "I kind of forget a lot of the time").
+   */
+  owned?: OwnedAbility[];
 }
 
 /**
@@ -81,6 +88,7 @@ export function AbilityOfferModal({
   pointAtId = null,
   title,
   subtitle,
+  owned,
 }: AbilityOfferModalProps) {
   const isLevel = reason === 'level';
   const cols = offer.length >= 3 ? 'grid-cols-3' : 'grid-cols-2';
@@ -193,25 +201,27 @@ export function AbilityOfferModal({
                         style={{ boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.65)' }}
                       />
 
-                      {/* UPGRADE ribbon across the top of the art. */}
-                      {upgrade && (
-                        <div
-                          className="absolute top-0 inset-x-0 text-center text-[8.5px] sm:text-[10px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
-                          style={{ background: GOLD_CHIP, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
-                        >
-                          Upgrade · Tier {option.tier}
-                        </div>
-                      )}
-                      {/* NEW chip on a mixed slate so the two modes read. */}
-                      {!upgrade && mixed && (
-                        <div
-                          className="absolute top-1.5 left-1.5 rounded px-1.5 py-[2px] text-[8.5px] sm:text-[9.5px] font-black uppercase tracking-[0.1em] text-white"
-                          style={{ background: accent, boxShadow: '0 1px 4px rgba(0,0,0,0.35)' }}
-                        >
-                          New
-                        </div>
-                      )}
                     </div>
+
+                    {/* Status strip BETWEEN the art and the text — never over
+                        the illustration (Tyler 2026-09-03: "I don't want
+                        anything over these amazing illustrations"). */}
+                    {upgrade && (
+                      <div
+                        className="text-center text-[8.5px] sm:text-[10px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
+                        style={{ background: GOLD_CHIP, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }}
+                      >
+                        Upgrade · Tier {option.tier}
+                      </div>
+                    )}
+                    {!upgrade && mixed && (
+                      <div
+                        className="text-center text-[8.5px] sm:text-[10px] font-black uppercase tracking-[0.1em] py-[3px] text-white"
+                        style={{ background: accent }}
+                      >
+                        New
+                      </div>
+                    )}
 
                     {/* Text box below the art. */}
                     <div className="flex flex-1 flex-col justify-center gap-0.5 px-1.5 sm:px-2.5 py-1.5 sm:py-2">
@@ -235,6 +245,24 @@ export function AbilityOfferModal({
               );
             })}
           </div>
+
+          {owned && owned.length > 0 && (
+            <div className="mt-2.5 sm:mt-3 rounded-xl px-2.5 py-2" style={{ background: 'rgba(58,40,6,0.07)', boxShadow: 'inset 0 0 0 1px rgba(184,133,43,0.35)' }}>
+              <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-chess-text-muted mb-1.5">Your powers</div>
+              <div className="flex gap-2">
+                {owned.map((a) => (
+                  <div key={a.id} className="flex items-center gap-1.5 min-w-0 flex-1 rounded-lg p-1 pr-2" style={{ background: 'rgba(255,255,255,0.55)', boxShadow: 'inset 0 0 0 1px rgba(184,133,43,0.3)' }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/abilities/${artFile(a.id)}`} alt="" width={34} height={34} className="rounded-md shrink-0" style={{ width: 34, height: 34 }} draggable={false} />
+                    <div className="min-w-0 leading-tight">
+                      <div className="text-[10px] font-black text-chess-text truncate">{ABILITY_DEFS[a.id].name}</div>
+                      <div className="text-[9px] font-bold text-chess-text-muted">Tier {a.tier}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {!isLevel && (
             <div className="flex justify-center mt-1 sm:mt-2">

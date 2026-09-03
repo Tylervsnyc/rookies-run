@@ -14,7 +14,7 @@
  * uses the `.foil-card` class from globals.css.
  */
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type {
   AbilityBlurb,
   AbilityId,
@@ -388,6 +388,9 @@ interface MiniProps {
   disabled?: boolean;
 }
 
+/** Rack card width (Tyler 2026-09-03: "make these ability cards bigger, they look so darn good"). */
+export const RACK_CARD_W = 84;
+
 export function AbilityCardMini({
   ability,
   active,
@@ -408,6 +411,12 @@ export function AbilityCardMini({
   const [peeking, setPeeking] = useState(false);
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressedRef = useRef(false);
+
+  // Deselecting (tap the active card again) must land on the FRONT face —
+  // iOS fires mouseenter on tap, which used to leave the card peeking.
+  useEffect(() => {
+    if (!active) setPeeking(false);
+  }, [active]);
 
   const clearPress = () => {
     if (pressTimer.current) {
@@ -443,7 +452,7 @@ export function AbilityCardMini({
       onPointerUp={endPress}
       onPointerLeave={endPress}
       onPointerCancel={endPress}
-      onMouseEnter={() => setPeeking(true)}
+      onMouseEnter={() => { if (window.matchMedia?.('(hover: hover)').matches) setPeeking(true); }}
       onMouseLeave={() => setPeeking(false)}
       disabled={disabled}
       aria-label={`${def.name} — ${blurb.what} ${blurb.how}`}
@@ -453,9 +462,9 @@ export function AbilityCardMini({
         disabled ? 'opacity-45' : 'active:scale-95'
       } transition-transform`}
       style={{
-        width: 64,
+        width: RACK_CARD_W,
         aspectRatio: '5 / 7',
-        borderRadius: 7,
+        borderRadius: 9,
         background: 'transparent',
         perspective: '600px',
         boxShadow: 'none',
@@ -496,7 +505,7 @@ export function AbilityCardMini({
           >
             {/* Name banner */}
             <div
-              className="text-[7.5px] font-black uppercase leading-tight tracking-[0.04em] px-1 pt-[3px] pb-[2px] truncate text-center"
+              className="text-[9.5px] font-black uppercase leading-tight tracking-[0.04em] px-1 pt-[4px] pb-[3px] truncate text-center"
               style={{ letterSpacing: '0.04em' }}
             >
               {def.name}
@@ -530,14 +539,14 @@ export function AbilityCardMini({
                 color={t.gem}
               />
               <span
-                className="text-[7px] font-black"
+                className="text-[9px] font-black"
                 style={{
                   color: t.gem,
-                  width: 9,
-                  height: 9,
+                  width: 12,
+                  height: 12,
                   borderRadius: 999,
                   border: `1px solid ${t.gem}`,
-                  lineHeight: '7px',
+                  lineHeight: '9px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -570,13 +579,13 @@ export function AbilityCardMini({
             }}
           >
             <div
-              className="text-[7.5px] font-black uppercase leading-tight tracking-[0.04em] px-1 pt-[3px] pb-[2px] truncate text-center"
+              className="text-[9.5px] font-black uppercase leading-tight tracking-[0.04em] px-1 pt-[4px] pb-[3px] truncate text-center"
               style={{ letterSpacing: '0.04em', borderBottom: `1px solid ${t.gem}33` }}
             >
               {def.name}
             </div>
             <div
-              className="flex-1 px-[4px] py-[3px] flex flex-col gap-[2px] text-[6.5px] leading-[1.2] text-center"
+              className="flex-1 px-[5px] py-[4px] flex flex-col gap-[3px] text-[8.5px] leading-[1.25] text-center"
               style={{ color: t.text, hyphens: 'auto' }}
             >
               <div className="font-black">{blurb.what}</div>
@@ -586,7 +595,7 @@ export function AbilityCardMini({
               {blurb.limit ? (
                 <div
                   className="font-bold mt-auto"
-                  style={{ opacity: 0.7, fontSize: '5.5px' }}
+                  style={{ opacity: 0.7, fontSize: '7px' }}
                 >
                   {blurb.limit}
                 </div>
@@ -594,14 +603,14 @@ export function AbilityCardMini({
             </div>
             <div className="flex items-end justify-end px-[3px] pb-[3px]">
               <span
-                className="text-[7px] font-black"
+                className="text-[9px] font-black"
                 style={{
                   color: t.gem,
-                  width: 9,
-                  height: 9,
+                  width: 12,
+                  height: 12,
                   borderRadius: 999,
                   border: `1px solid ${t.gem}`,
-                  lineHeight: '7px',
+                  lineHeight: '9px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',

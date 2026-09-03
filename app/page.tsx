@@ -1526,7 +1526,7 @@ export default function RookiesRunPage() {
 
   if (showOnboarding) {
     return (
-      <div className="h-full overflow-auto pt-[env(safe-area-inset-top)]">
+      <div className="h-full overflow-auto pt-[calc(env(safe-area-inset-top)+8px)]">
         <StoryOnboarding
           onDone={() => {
             ensureAudioWarm();
@@ -1608,7 +1608,7 @@ export default function RookiesRunPage() {
         state.moveLimit - state.moveCount <= 2 && (
           <LowMovesEmergency left={state.moveLimit - state.moveCount} />
         )}
-      <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[max(env(safe-area-inset-top),8px)]'}`}>
+      <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[calc(env(safe-area-inset-top)+12px)]'}`}>
         <header className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
@@ -1804,6 +1804,7 @@ export default function RookiesRunPage() {
           onPick={onOfferPick}
           onSkip={onOfferSkip}
           reason={state.offerReason ?? 'tempo'}
+          owned={state.abilities}
         />
       )}
 

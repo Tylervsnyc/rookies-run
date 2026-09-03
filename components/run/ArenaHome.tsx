@@ -137,7 +137,7 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
       <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)', transition: 'transform 650ms cubic-bezier(.22,1,.36,1)' }}>
         <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', ...FRAME }}>
           {/* paused while flipped — nothing keeps moving behind the card */}
-          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}><DemoBoard paused={flipped} /></div>
+          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)', backfaceVisibility: 'hidden' }}><DemoBoard paused={flipped} reticle={!flipped} /></div>
         </div>
         <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: 'linear-gradient(180deg,#5b2030 0%,#2a0f18 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}>
           <div className="rounded-[14px] h-full flex flex-col p-3.5" style={{ background: 'linear-gradient(180deg,#1c2f63 0%,#0f1c3f 100%)', boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}>
@@ -362,7 +362,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
       `}</style>
       <div className="h-full w-full max-w-[430px] flex flex-col px-3 pb-[max(env(safe-area-inset-bottom),12px)]" style={{ background: `linear-gradient(180deg, ${NAVY_2} 0%, ${NAVY} 60%)` }}>
         {/* header: small lockup left, handle right */}
-        <div className="flex items-center justify-between pt-[max(env(safe-area-inset-top),16px)]">
+        <div className="flex items-center justify-between pt-[calc(env(safe-area-inset-top)+14px)]">
           <div className="flex items-center gap-1.5">
             <RevengeMarkSvg size={26} />
             <span className="text-[12px] font-black leading-none" style={OUTLINE}>Rookie&rsquo;s <span style={{ color: '#FF6B66' }}>REVENGE</span></span>

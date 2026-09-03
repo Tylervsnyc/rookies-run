@@ -51,6 +51,9 @@ export const viewport: Viewport = {
   // The board is a drag target — pinch-zoom on it is never what someone meant.
   maximumScale: 1,
   userScalable: false,
+  // Edge-to-edge in the native shell (contentInset 'never'): without this,
+  // env(safe-area-inset-*) reads 0 and the header sits inside the notch.
+  viewportFit: 'cover',
   // Must stay in step with the native splash: see SPLASH_BG in
   // components/run/NativeSplash.tsx and capacitor.config.ts.
   themeColor: '#eef6fc',

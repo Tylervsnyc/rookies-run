@@ -72,7 +72,7 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, chil
         }
       `}</style>
 
-      <div className="rr-stamp-card relative w-full max-w-sm rounded-[24px] p-6 text-center overflow-hidden text-white" style={CARD} data-testid={testId}>
+      <div className="rr-stamp-card relative w-full max-w-sm rounded-[24px] p-6 text-center overflow-y-auto overscroll-contain text-white" style={{ ...CARD, maxHeight: 'calc(100dvh - 3rem)' }} data-testid={testId}>
         <div className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.55)' }}>{kicker}</div>
 
         <div className="relative mt-3 h-[150px] flex items-center justify-center">

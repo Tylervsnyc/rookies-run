@@ -7,7 +7,7 @@ import {
   type AbilityTier,
   type OwnedAbility,
 } from '@/lib/run/abilities';
-import { AbilityCardMini } from './AbilityCard';
+import { AbilityCardMini, RACK_CARD_W } from './AbilityCard';
 
 interface AbilityRackProps {
   abilities: OwnedAbility[];
@@ -71,8 +71,8 @@ function EmptySlot() {
   return (
     <div
       aria-hidden="true"
-      className="shrink-0 rounded-[7px] border-2 border-dashed border-chess-text/15 flex items-center justify-center"
-      style={{ width: 64, aspectRatio: '5 / 7' }}
+      className="shrink-0 rounded-[9px] border-2 border-dashed border-chess-text/15 flex items-center justify-center"
+      style={{ width: RACK_CARD_W, aspectRatio: '5 / 7' }}
     >
       <span className="text-chess-text/20 text-xl font-black select-none">+</span>
     </div>

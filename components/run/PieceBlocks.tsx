@@ -50,7 +50,7 @@ export const PIECE_TEMPLATES: Record<BlockPieceType | DragonAltType, PieceTempla
   N: { svgKey: 'wN', cols: 16, rows: 18, threshold: 0.35 },
   B: { svgKey: 'wB', cols: 14, rows: 20, threshold: 0.35 },
   R: { svgKey: 'wR', cols: 14, rows: 18, threshold: 0.35 },
-  Q: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
+  Q: { svgKey: 'wQ', cols: 16, rows: 18, threshold: 0.35 }, // was 18x18 — read squat + too wide on the board (Tyler 2026-09-03)
   K: { svgKey: 'wK', cols: 16, rows: 20, threshold: 0.35 },
   // Dragons never rasterize (masks authored below); svgKey is a placeholder.
   D: { svgKey: 'wQ', cols: 18, rows: 18, threshold: 0.35 },
@@ -323,15 +323,19 @@ export function PieceBlocks({ piece, blockSize = 12, animate = true, className, 
   const scale = blockSize / 14;
   const s = (v: number) => `${(v * scale).toFixed(2)}px`;
   const insetShadow = `inset 0 ${s(0.75)} 0 rgba(0,0,0,0.15), inset 0 -${s(0.75)} 0 rgba(255,255,255,0.15)`;
-  const w = tpl.cols * blockSize + (tpl.cols - 1) * gap;
-  const h = tpl.rows * blockSize + (tpl.rows - 1) * gap;
+  // Box = the REAL mask footprint (hand-authored dragon masks are larger than
+  // their template), so the piece is centered in its cell instead of spilling.
+  const cols = mask?.[0]?.length ?? tpl.cols;
+  const rows = mask?.length ?? tpl.rows;
+  const w = cols * blockSize + (cols - 1) * gap;
+  const h = rows * blockSize + (rows - 1) * gap;
 
   if (!mask) {
     return <div className={className} style={{ width: w, height: h }} aria-hidden />;
   }
 
-  const CX = (tpl.cols - 1) / 2;
-  const CY = (tpl.rows - 1) / 2;
+  const CX = (cols - 1) / 2;
+  const CY = (rows - 1) / 2;
 
   return (
     <div className={className} style={{ position: 'relative', width: w, height: h }}>
@@ -344,7 +348,7 @@ export function PieceBlocks({ piece, blockSize = 12, animate = true, className, 
       {mask.map((row, y) => row.map((filled, x) => {
         if (!filled) return null;
         const pal = palette ?? ROOKIE_PALETTE;
-        const bandIdx = Math.min(pal.length - 1, Math.floor((y / tpl.rows) * pal.length));
+        const bandIdx = Math.min(pal.length - 1, Math.floor((y / rows) * pal.length));
         const tweak = (x + y) % 3 === 0 ? 1 : 0;
         const color = pal[(bandIdx + tweak) % pal.length];
         const dist = Math.sqrt((x - CX) ** 2 + (y - CY) ** 2);

@@ -3,7 +3,16 @@
 import { useEffect, useState } from 'react';
 import { fireConfetti } from '@/lib/confetti';
 import type { RunStats } from '@/lib/run/history';
+import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
+import { StampButton, StampCard, StampChip } from './StampCard';
 
+/**
+ * Run over — "The Stamp" (Tyler 2026-09-03: "redesign the run complete
+ * popup as well, with this new design"). Same card as the level popups:
+ * the number of levels cleared slams in, RUN COMPLETE / CAPTURED stamps
+ * over it, then the run's stats and the levels-reached history sit under
+ * the pips. Confetti on a completed run.
+ */
 interface RunSummaryModalProps {
   iso: string;
   totalLevels: number;
@@ -16,7 +25,7 @@ interface RunSummaryModalProps {
   onReplay: () => void;
   nextRunName?: string;
   onNextRun?: () => void;
-  /** Difficulty mode name (e.g. "Hard") — shown as a small chip under the title. */
+  /** Difficulty mode name (e.g. "Hard") — shown as a small chip under the pips. */
   difficultyLabel?: string;
   /** Classic score (lib/run/scoring computeScore). */
   score?: number;
@@ -25,6 +34,9 @@ interface RunSummaryModalProps {
   /** Total active-play ms for the run (the header clock's final reading). */
   timeMs?: number;
 }
+
+const GOLD = '#FFC800';
+const MUTED = 'rgba(255,255,255,0.6)';
 
 export function RunSummaryModal({
   iso,
@@ -45,25 +57,12 @@ export function RunSummaryModal({
 
   useEffect(() => {
     if (!completed) return;
-    const palette = ['#E53935', '#B71C1C', '#f5cf5a', '#d9a520', '#ffffff'];
-    fireConfetti({
-      particleCount: 80,
-      angle: 60,
-      spread: 65,
-      origin: { x: 0.15, y: 0.55 },
-      colors: palette,
-      gravity: 1.1,
-      ticks: 180,
-    });
-    fireConfetti({
-      particleCount: 80,
-      angle: 120,
-      spread: 65,
-      origin: { x: 0.85, y: 0.55 },
-      colors: palette,
-      gravity: 1.1,
-      ticks: 180,
-    });
+    const palette = [GOLD, '#ffffff', REVENGE_RED, '#f5cf5a'];
+    const t = setTimeout(() => {
+      fireConfetti({ particleCount: 80, angle: 60, spread: 65, origin: { x: 0.15, y: 0.55 }, colors: palette, gravity: 1.1, ticks: 180 });
+      fireConfetti({ particleCount: 80, angle: 120, spread: 65, origin: { x: 0.85, y: 0.55 }, colors: palette, gravity: 1.1, ticks: 180 });
+    }, 650);
+    return () => clearTimeout(t);
   }, [completed]);
 
   const handleCopy = async () => {
@@ -76,179 +75,110 @@ export function RunSummaryModal({
     }
   };
 
-  const title = completed ? 'Run complete!' : 'Captured.';
-  const subtitle = completed
-    ? `All ${totalLevels} levels cleared`
-    : `Reached Level ${levelReached} of ${totalLevels}`;
-
   // Build distribution rows: one per level, 1..totalLevels.
   const rows = Array.from({ length: totalLevels }, (_, i) => {
     const level = i + 1;
     const count = stats.distribution[level] ?? 0;
-    const pct =
-      stats.maxBucket === 0 ? 0 : Math.round((count / stats.maxBucket) * 100);
+    const pct = stats.maxBucket === 0 ? 0 : Math.round((count / stats.maxBucket) * 100);
     return { level, count, pct, isToday: level === levelReached };
   });
 
+  const clock =
+    timeMs !== undefined ? `${Math.floor(timeMs / 60000)}:${String(Math.floor(timeMs / 1000) % 60).padStart(2, '0')}` : null;
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6 animate-[rookiesRunFadeIn_180ms_ease-out] overscroll-contain"
-      onWheel={(e) => e.stopPropagation()}
-      onTouchMove={(e) => e.stopPropagation()}
+    <StampCard
+      kicker={`${iso}${difficultyLabel ? ` · ${difficultyLabel}` : ''}`}
+      level={completed ? totalLevels : levelReached}
+      totalLevels={totalLevels}
+      stamp={completed ? 'Run complete' : 'Captured'}
+      tone={completed ? 'won' : 'lost'}
+      chips={
+        <>
+          {score !== undefined && <StampChip gold>{score} pts</StampChip>}
+          {clock && <StampChip>{clock}</StampChip>}
+          {timedScore !== undefined && <StampChip>Timed {timedScore} (testing)</StampChip>}
+        </>
+      }
     >
-      <style>{`
-        @keyframes rookiesRunFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes rookiesRunPopIn {
-          0%   { opacity: 0; transform: scale(0.9) translateY(8px); }
-          60%  { opacity: 1; transform: scale(1.02) translateY(0); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes rookiesRunBarIn {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
-        }
-      `}</style>
+      <div className="grid grid-cols-4 gap-2">
+        <Stat value={stats.played} label="Played" />
+        <Stat value={`${stats.winPct}%`} label="Win" />
+        <Stat value={stats.currentStreak} label="Streak" />
+        <Stat value={stats.maxStreak} label="Max" />
+      </div>
 
-      <div
-        className="w-full max-w-sm rounded-3xl bg-chess-surface shadow-2xl p-6 text-center overflow-y-auto overscroll-contain"
-        style={{
-          animation: 'rookiesRunPopIn 360ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-          maxHeight: 'calc(100dvh - 3rem)',
-        }}
-      >
-        <div className="text-xs uppercase tracking-widest text-chess-text-faint">
-          {iso}
+      <div className="mt-2 text-left">
+        <div className="text-[10px] font-black uppercase tracking-[0.18em] mb-1.5 px-1" style={{ color: MUTED }}>
+          Levels reached
         </div>
-        <h2 className="mt-1 text-3xl font-black text-chess-text">{title}</h2>
-        <p className="mt-1 text-sm text-chess-text-muted">{subtitle}</p>
-        {difficultyLabel && (
-          <div className="mt-2 flex justify-center">
-            <span className="rounded-full bg-chess-text/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
-              {difficultyLabel}
-            </span>
-          </div>
-        )}
-
-        {(score !== undefined || timedScore !== undefined) && (
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <div className="rounded-xl bg-chess-page px-3 py-2.5">
-              <div className="text-2xl font-black text-chess-text tabular-nums leading-none">
-                {score ?? 0}
+        <div className="flex flex-col gap-1">
+          {rows.map((r, idx) => (
+            <div key={r.level} className="flex items-center gap-2 text-sm">
+              <div className="w-5 text-right text-[11px] font-black tabular-nums" style={{ color: MUTED }}>
+                {r.level}
               </div>
-              <div className="mt-1 text-[10px] uppercase tracking-wide text-chess-text-faint">
-                Score
-              </div>
-            </div>
-            <div className="rounded-xl bg-chess-page px-3 py-2.5">
-              <div className="text-2xl font-black text-chess-text tabular-nums leading-none">
-                {timedScore ?? 0}
-              </div>
-              <div className="mt-1 text-[10px] uppercase tracking-wide text-chess-text-faint">
-                Timed score (testing)
-                {timeMs !== undefined && (
-                  <span className="ml-1 normal-case tracking-normal tabular-nums">
-                    · {Math.floor(timeMs / 60000)}:
-                    {String(Math.floor(timeMs / 1000) % 60).padStart(2, '0')}
-                  </span>
+              <div className="flex-1 h-5 rounded overflow-hidden relative" style={{ background: 'rgba(0,0,0,0.35)' }}>
+                <div
+                  className="h-full flex items-center justify-end pr-2 text-[10px] font-black tabular-nums"
+                  style={{
+                    width: `${Math.max(r.count > 0 ? 10 : 0, r.pct)}%`,
+                    background: r.isToday ? (completed ? GOLD : REVENGE_RED) : 'rgba(255,255,255,0.22)',
+                    color: r.isToday && completed ? '#3a2a00' : '#fff',
+                    transformOrigin: 'left center',
+                    animation: 'rrStampBar 500ms cubic-bezier(0.16, 1, 0.3, 1) both',
+                    animationDelay: `${900 + idx * 40}ms`,
+                  }}
+                >
+                  {r.count > 0 ? r.count : ''}
+                </div>
+                {r.count === 0 && r.isToday && (
+                  <div className="absolute inset-0 flex items-center px-2 text-[10px] font-black" style={{ color: '#FF6B66' }}>
+                    ← you
+                  </div>
                 )}
               </div>
             </div>
-          </div>
-        )}
-
-        <div className="mt-5 grid grid-cols-4 gap-2">
-          <Stat value={stats.played} label="Played" />
-          <Stat value={`${stats.winPct}%`} label="Win" />
-          <Stat value={stats.currentStreak} label="Streak" />
-          <Stat value={stats.maxStreak} label="Max" />
+          ))}
         </div>
-
-        <div className="mt-6 text-left">
-          <div className="text-[11px] uppercase tracking-widest text-chess-text-faint mb-2 px-1">
-            Levels reached
-          </div>
-          <div className="flex flex-col gap-1">
-            {rows.map((r, idx) => (
-              <div key={r.level} className="flex items-center gap-2 text-sm">
-                <div className="w-5 text-right text-[12px] font-bold text-chess-text-muted tabular-nums">
-                  {r.level}
-                </div>
-                <div className="flex-1 h-6 rounded bg-chess-page overflow-hidden relative">
-                  <div
-                    className={`h-full flex items-center justify-end pr-2 text-[11px] font-black text-white tabular-nums ${
-                      r.isToday ? 'bg-[#E53935]' : 'bg-chess-text/40'
-                    }`}
-                    style={{
-                      width: `${Math.max(r.count > 0 ? 10 : 0, r.pct)}%`,
-                      transformOrigin: 'left center',
-                      animation: `rookiesRunBarIn 500ms ease-out both`,
-                      animationDelay: `${200 + idx * 40}ms`,
-                    }}
-                  >
-                    {r.count > 0 ? r.count : ''}
-                  </div>
-                  {r.count === 0 && r.isToday && (
-                    <div className="absolute inset-0 flex items-center px-2 text-[11px] font-black text-[#E53935]">
-                      ← you
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {completed && nextRunName && onNextRun ? (
-          <>
-            <button
-              onClick={onNextRun}
-              className="mt-6 w-full py-3 rounded-xl bg-[#E53935] hover:bg-[#B71C1C] active:scale-[0.98] text-white font-black text-base shadow-lg transition-all"
-            >
-              Next Run · {nextRunName} →
-            </button>
-            <div className="mt-3 flex gap-2 justify-center">
-              <button
-                onClick={handleCopy}
-                className="tap-highlight px-4 py-2 rounded-xl bg-chess-text text-white text-sm font-bold"
-              >
-                {shareCopied ? 'Copied!' : 'Share'}
-              </button>
-              <button
-                onClick={onReplay}
-                className="tap-highlight px-4 py-2 rounded-xl bg-chess-page text-chess-text text-sm font-bold border border-chess-text/10"
-              >
-                Replay this run
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="mt-6 flex gap-2 justify-center">
-            <button
-              onClick={handleCopy}
-              className="tap-highlight px-4 py-2 rounded-xl bg-chess-text text-white text-sm font-bold"
-            >
-              {shareCopied ? 'Copied!' : 'Share'}
-            </button>
-            <button
-              onClick={onReplay}
-              className="tap-highlight px-4 py-2 rounded-xl bg-[#E53935] text-white text-sm font-black"
-            >
-              {completed ? 'Play again' : 'Try again'}
-            </button>
-          </div>
-        )}
+        <style>{`
+          @keyframes rrStampBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+          @media (prefers-reduced-motion: reduce) { [style*="rrStampBar"] { animation: none !important; } }
+        `}</style>
       </div>
-    </div>
+
+      <div className="mt-3 flex flex-col gap-2">
+        {completed && nextRunName && onNextRun ? (
+          <StampButton color="#58CC02" shadow="#3d8c01" onClick={onNextRun}>
+            Next run · {nextRunName}
+          </StampButton>
+        ) : (
+          <StampButton color={REVENGE_RED} shadow={REVENGE_RED_DARK} onClick={onReplay}>
+            {completed ? 'Play again' : 'Try again'}
+          </StampButton>
+        )}
+        <div className="flex gap-2 justify-center">
+          <button type="button" onClick={handleCopy} className="min-h-[40px] px-4 text-[12px] font-black rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}>
+            {shareCopied ? 'Copied!' : 'Share'}
+          </button>
+          {completed && nextRunName && onNextRun && (
+            <button type="button" onClick={onReplay} className="min-h-[40px] px-4 text-[12px] font-black" style={{ color: MUTED }}>
+              Replay this run
+            </button>
+          )}
+        </div>
+      </div>
+    </StampCard>
   );
 }
 
 function Stat({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="flex flex-col items-center">
-      <div className="text-2xl font-black text-chess-text tabular-nums leading-none">
+    <div className="flex flex-col items-center rounded-lg py-1.5" style={{ background: 'rgba(0,0,0,0.25)' }}>
+      <div className="text-[20px] font-black tabular-nums leading-none" style={{ color: GOLD, textShadow: '0 2px 0 rgba(0,0,0,0.5)' }}>
         {value}
       </div>
-      <div className="mt-1 text-[10px] uppercase tracking-wide text-chess-text-faint">
+      <div className="mt-1 text-[9px] font-black uppercase tracking-wide" style={{ color: MUTED }}>
         {label}
       </div>
     </div>
