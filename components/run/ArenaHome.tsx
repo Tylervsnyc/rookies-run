@@ -13,6 +13,7 @@ import { getRunById, isKnownRunId } from '@/lib/run/runs';
 import { getHandle } from '@/lib/run/leaderboard-client';
 import { todaysAbilities } from '@/lib/run/daily-kit';
 import { useNavyShell } from './useNavyShell';
+import { autoplayMusicOnHome } from '@/lib/music';
 
 /**
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
@@ -336,6 +337,9 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
   const countdown = useCountdownToMidnight();
   const [handle, setHandle] = useState('Rook');
   useEffect(() => { setHandle(getHandle()); }, []);
+  // Music starts the moment the home screen shows (or on the first tap if
+  // the browser blocks autoplay) — not on the first board move.
+  useEffect(() => autoplayMusicOnHome(), []);
 
   useNavyShell(true);
 

@@ -142,6 +142,29 @@ export function startMusicIfEnabled() {
   apply();
 }
 
+/**
+ * Home screen: start music as soon as the screen shows (Tyler, 2026-09-03).
+ * Tries to play immediately — the iOS shell (WKWebView) allows it, and so does
+ * any browser where the user has already interacted with the site. If the
+ * browser refuses autoplay, the FIRST tap/keypress anywhere on the page starts
+ * it instead of waiting for the board. Returns a cleanup for the listeners.
+ */
+export function autoplayMusicOnHome(): () => void {
+  if (typeof window === 'undefined') return () => {};
+  startMusicIfEnabled();
+  const el = ensureAudio();
+  if (!el || loadPrefs().track === null || !el.paused) return () => {};
+
+  const events = ['pointerdown', 'touchstart', 'keydown'] as const;
+  const onGesture = () => {
+    startMusicIfEnabled();
+    cleanup();
+  };
+  const cleanup = () => events.forEach((e) => document.removeEventListener(e, onGesture, true));
+  events.forEach((e) => document.addEventListener(e, onGesture, { capture: true, passive: true }));
+  return cleanup;
+}
+
 /** Pause without changing the saved preference (e.g. tab hidden). */
 export function pauseMusic() {
   audio?.pause();
