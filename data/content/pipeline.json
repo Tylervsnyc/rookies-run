@@ -125,7 +125,7 @@
       "id": "squad",
       "kind": "ability",
       "name": "Squad",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-18",
       "notes": "Shipped with Rookie's Revenge (2026-08-18).",
       "approved": {
@@ -134,6 +134,10 @@
       },
       "live": {
         "at": "2026-08-18"
+      },
+      "retired": {
+        "at": "2026-09-03",
+        "why": "Tyler 2026-09-03 playtest: allies won't take the king and block Rookie's path — it just doesn't work"
       }
     },
     {

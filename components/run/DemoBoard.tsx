@@ -65,13 +65,15 @@ const SCRIPT: Step[] = [
 ];
 const LOOP_MS = 16000;
 
-export function DemoBoard({ reticle = true }: { reticle?: boolean }) {
+/** `paused` freezes the loop (the home screen flips the board over — nothing should keep moving behind the card). */
+export function DemoBoard({ reticle = true, paused = false }: { reticle?: boolean; paused?: boolean }) {
   const [state, setState] = useState<BoardState>(() => base());
   const [fx, setFx] = useState<Fx | null>(null);
   const [poisonFx, setPoisonFx] = useState<PoisonFx | null>(null);
   const idRef = useRef(1);
 
   useEffect(() => {
+    if (paused) return;
     let cancelled = false;
     const timers: number[] = [];
     const run = () => {
@@ -90,7 +92,7 @@ export function DemoBoard({ reticle = true }: { reticle?: boolean }) {
     };
     run();
     return () => { cancelled = true; timers.forEach(clearTimeout); };
-  }, []);
+  }, [paused]);
 
   const king = useMemo(() => state.pieces.find((p) => p.type === 'king'), [state.pieces]);
 
@@ -108,7 +110,7 @@ export function DemoBoard({ reticle = true }: { reticle?: boolean }) {
       {reticle && king && (
         <div
           aria-hidden
-          className="absolute pointer-events-none rr-lock"
+          className={`absolute pointer-events-none ${paused ? '' : 'rr-lock'}`}
           style={{
             left: `${(king.file - 1) * 12.5}%`,
             top: `${(8 - king.rank) * 12.5}%`,

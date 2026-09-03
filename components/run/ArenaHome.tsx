@@ -11,13 +11,17 @@ import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { LADDER_RUNG_IDS, rungRun, rungState } from '@/lib/run/ladder';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
 import { getHandle } from '@/lib/run/leaderboard-client';
+import { todaysAbilities } from '@/lib/run/daily-kit';
+import { setStatusBarText } from './StatusBarSync';
 
 /**
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
  * ONE screen, no scroll. The live board (DemoBoard: the real RunBoard running
  * a scripted loop) is the fixed anchor; four tabs swap what sits under it:
- *   Revenge — DAILY REVENGE button + today's abilities. Tapping the button
- *             flips the board to today's run card (theme, pool, PLAY).
+ *   Revenge — DAILY REVENGE button + today's abilities (the SAME four the run
+ *             offers — lib/run/daily-kit.ts). Tapping the button flips the
+ *             board to today's map card and the button itself becomes BEGIN
+ *             (Tyler 2026-09-03: no dead button, no second PLAY on the card).
  *   Ladder  — the 10 rungs (real profile state), tap an open rung to play it.
  *   Ranks   — today's hunters. DUMMY DATA for now (see DUMMY_ROWS).
  *   Codex   — powers + trophies counts; tap opens the Trophy Room.
@@ -70,21 +74,6 @@ function useCountdownToMidnight(): string {
   return `${hh}:${mm}`;
 }
 
-/** Deterministic daily pick: N abilities from the run's pool, seeded by the ISO date. */
-function todaysAbilities(iso: string, runId: string, n: number): AbilityId[] {
-  const run = isKnownRunId(runId) ? getRunById(runId) : null;
-  const pool = (run?.allowedAbilities as AbilityId[] | undefined) ?? unlockableAbilityIds();
-  let seed = 0;
-  for (const ch of iso) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
-  const arr = [...pool];
-  for (let i = arr.length - 1; i > 0; i--) {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    const j = seed % (i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr.slice(0, n).filter((id) => id in ABILITY_DEFS);
-}
-
 function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl ${className}`} style={{ background: PANEL, border: `2px solid ${PANEL_EDGE}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.14), inset 0 -3px 0 rgba(0,0,0,0.35), 0 6px 14px rgba(0,0,0,0.35)' }}>
@@ -110,14 +99,24 @@ function CpButton({ children, color = REVENGE_RED, shadow = REVENGE_RED_DARK, de
   );
 }
 
-function AbilityTile({ id, size, label = true }: { id: AbilityId; size?: number; label?: boolean }) {
+/**
+ * Home-screen ability tile, cut like the in-game card (gold frame, art window,
+ * name plate) rather than a squashed square — Tyler 2026-09-03: "the icons look
+ * so good in the app, they look different on the landing page."
+ */
+function AbilityTile({ id }: { id: AbilityId }) {
   return (
-    <div className="flex flex-col items-center min-w-0">
-      <div className="w-full aspect-square rounded-2xl p-1" style={{ ...FRAME, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -3px 0 rgba(0,0,0,0.4), 0 5px 12px rgba(0,0,0,0.4)', width: size }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/abilities/${artFile(id)}`} alt={ABILITY_DEFS[id].name} className="w-full h-full object-cover rounded-xl" />
+    <div
+      className="w-full rounded-[12px] p-[3px]"
+      style={{ aspectRatio: '4 / 5', background: 'linear-gradient(135deg,#b8852b,#6a4612 30%,#ffd87a 60%,#b8852b)', boxShadow: '0 5px 12px rgba(0,0,0,0.45)' }}
+    >
+      <div className="w-full h-full rounded-[9px] overflow-hidden flex flex-col" style={{ background: '#f6e7c5' }}>
+        <div className="flex-1 min-h-0 relative" style={{ background: 'radial-gradient(ellipse at center,#ffe9a8 0%,#d49a2a 100%)' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/abilities/${artFile(id)}`} alt="" className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+        </div>
+        <div className="px-1 py-[3px] text-[9.5px] font-black text-center leading-tight truncate" style={{ color: '#3d2806', letterSpacing: '0.02em' }}>{ABILITY_DEFS[id].name}</div>
       </div>
-      {label && <span className="mt-1.5 text-[11px] font-bold text-center leading-tight text-white">{ABILITY_DEFS[id].name}</span>}
     </div>
   );
 }
@@ -128,41 +127,34 @@ function Medal({ rank }: { rank: number }) {
   return <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black shrink-0" style={{ background: bg, color: fg, boxShadow: rank <= 3 ? 'inset 0 -2px 0 rgba(0,0,0,0.25)' : undefined }}>{rank}</span>;
 }
 
-// ── The arena: live board on the front, today's run card on the back ────────
-function Arena({ flipped, onBack, onPlay, runName, runBlurb, pool }: {
-  flipped: boolean; onBack: () => void; onPlay: () => void; runName: string; runBlurb: string; pool: AbilityId[];
+// ── The arena: live board on the front, today's map card on the back ────────
+function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
+  flipped: boolean; onBack: () => void; runName: string; runBlurb: string; poolSize: number;
 }) {
   return (
     <div className="relative w-full aspect-square" style={{ perspective: 1200 }}>
       <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)', transition: 'transform 650ms cubic-bezier(.22,1,.36,1)' }}>
         <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', ...FRAME }}>
-          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}><DemoBoard /></div>
+          {/* paused while flipped — nothing keeps moving behind the card */}
+          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}><DemoBoard paused={flipped} /></div>
         </div>
         <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', background: 'linear-gradient(180deg,#5b2030 0%,#2a0f18 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}>
-          <div className="rounded-[14px] h-full flex flex-col p-3" style={{ background: 'linear-gradient(180deg,#1c2f63 0%,#0f1c3f 100%)', boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}>
+          <div className="rounded-[14px] h-full flex flex-col p-3.5" style={{ background: 'linear-gradient(180deg,#1c2f63 0%,#0f1c3f 100%)', boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: '#FF6B66' }}>Today&rsquo;s revenge</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: '#FF6B66' }}>Today&rsquo;s map</span>
               <button type="button" onClick={onBack} className="min-h-[32px] text-[11px] font-black px-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}>Back</button>
             </div>
-            <div className="mt-1 text-[24px] font-black leading-none" style={OUTLINE}>{runName}</div>
-            <div className="mt-1.5 text-[12px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.8)' }}>{runBlurb}</div>
-            <div className="mt-2.5 flex items-center gap-2 text-[11px] font-black">
+            <div className="mt-2 text-[30px] font-black leading-none" style={OUTLINE}>{runName}</div>
+            <div className="mt-2 text-[13px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.8)' }}>{runBlurb}</div>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-black">
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,255,255,0.1)' }}>10 levels</span>
-              <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,255,255,0.1)' }}>{pool.length} powers</span>
+              <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,255,255,0.1)' }}>{poolSize} powers</span>
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,200,0,0.15)', ...GOLD_TEXT }}>Counts toward Ranks</span>
             </div>
-            <div className="mt-2.5 text-[10px] font-black uppercase tracking-[0.14em]" style={{ color: 'rgba(255,255,255,0.6)' }}>Today&rsquo;s pool</div>
-            <div className="mt-1.5 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.max(pool.length, 1)}, minmax(0, 1fr))` }}>
-              {pool.map((id) => (
-                <div key={id} className="flex flex-col items-center gap-1">
-                  <AbilityTile id={id} label={false} />
-                  <span className="text-[8px] font-bold text-center leading-tight" style={{ color: 'rgba(255,255,255,0.75)' }}>{ABILITY_DEFS[id].name}</span>
-                </div>
-              ))}
+            <div className="flex-1 min-h-0 flex items-center justify-center py-2">
+              <RevengeMarkSvg size={96} ringColor="#fff" />
             </div>
-            <div className="mt-auto">
-              <CpButton depth={5} className="min-h-[50px] text-[17px]" color="#58CC02" shadow="#3d8c01" onClick={onPlay}>PLAY</CpButton>
-            </div>
+            <div className="text-[12px] font-bold text-center" style={{ color: 'rgba(255,255,255,0.6)' }}>Ten levels. One King. Hit BEGIN.</div>
           </div>
         </div>
       </div>
@@ -170,19 +162,19 @@ function Arena({ flipped, onBack, onPlay, runName, runBlurb, pool }: {
   );
 }
 
-// ── Tab bar with sliding indicator ───────────────────────────────────────────
+// ── Tab bar: big icons, a raised gold-edged pill on the active tab ──────────
 function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
   const i = TABS.indexOf(active);
   return (
-    <div className="relative grid grid-cols-4 rounded-2xl p-1" role="tablist" aria-label="Home sections" style={{ background: '#0a1230', border: `2px solid ${PANEL_EDGE}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.08)' }}>
-      <div aria-hidden className="absolute top-1 bottom-1 rounded-xl" style={{ left: 4, width: 'calc((100% - 8px) / 4)', transform: `translateX(${i * 100}%)`, transition: 'transform 300ms cubic-bezier(.22,1,.36,1)', background: 'linear-gradient(180deg,#3d5297,#24397a)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), 0 3px 0 rgba(0,0,0,0.4)' }} />
+    <div className="relative grid grid-cols-4 rounded-2xl p-1" role="tablist" aria-label="Home sections" style={{ background: '#0a1230', border: `2px solid ${PANEL_EDGE}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.08), 0 4px 0 rgba(0,0,0,0.35)' }}>
+      <div aria-hidden className="absolute top-1 bottom-1 rounded-xl" style={{ left: 4, width: 'calc((100% - 8px) / 4)', transform: `translateX(${i * 100}%)`, transition: 'transform 300ms cubic-bezier(.22,1,.36,1)', background: 'linear-gradient(180deg,#4a63b0,#24397a)', border: `2px solid ${GOLD}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), 0 3px 0 rgba(0,0,0,0.45)' }} />
       {TABS.map((t) => {
         const on = t === active;
         return (
-          <button key={t} type="button" role="tab" aria-selected={on} onClick={() => onChange(t)} className="relative min-h-[58px] rounded-xl flex flex-col items-center justify-center gap-0.5">
+          <button key={t} type="button" role="tab" aria-selected={on} onClick={() => onChange(t)} className="relative min-h-[72px] rounded-xl flex flex-col items-center justify-center gap-0.5 arena-press" style={{ ['--depth' as string]: '2px' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/ui/tabs/${TAB_ART[t]}.webp`} alt="" width={34} height={34} style={{ width: 34, height: 34, transform: on ? 'translateY(-2px) scale(1.12)' : 'none', filter: on ? 'drop-shadow(0 0 6px rgba(255,200,0,0.5))' : 'saturate(0.8) brightness(0.85)', transition: 'transform 200ms cubic-bezier(.22,1,.36,1), filter 200ms' }} />
-            <span className="text-[10px] font-black" style={on ? OUTLINE : { color: 'rgba(255,255,255,0.65)' }}>{t}</span>
+            <img src={`/ui/tabs/${TAB_ART[t]}.webp`} alt="" width={48} height={48} style={{ width: 48, height: 48, transform: on ? 'translateY(-2px) scale(1.1)' : 'none', filter: on ? 'drop-shadow(0 0 8px rgba(255,200,0,0.6))' : 'saturate(0.6) brightness(0.7)', transition: 'transform 200ms cubic-bezier(.22,1,.36,1), filter 200ms' }} />
+            <span className="text-[11px] font-black uppercase tracking-wide" style={on ? { ...OUTLINE, color: GOLD } : { color: 'rgba(255,255,255,0.55)' }}>{t}</span>
           </button>
         );
       })}
@@ -191,19 +183,31 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
 }
 
 // ── Tabs ─────────────────────────────────────────────────────────────────────
-function RevengeTab({ onGo, countdown, runName, abilities }: { onGo: () => void; countdown: string; runName: string; abilities: AbilityId[] }) {
+function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities }: {
+  flipped: boolean; onGo: () => void; onBegin: () => void; countdown: string; runName: string; abilities: AbilityId[];
+}) {
   return (
     <div className="h-full flex flex-col">
-      <CpButton onClick={onGo} className="min-h-[70px]" ariaLabel="Daily Revenge">
-        <RevengeMarkSvg size={46} ringColor="#fff" />
-        <span className="flex flex-col items-start leading-none">
-          <span className="text-[24px]" style={{ ...OUTLINE, letterSpacing: '0.02em' }}>DAILY REVENGE</span>
-          <span className="text-[12px] font-bold mt-1" style={{ color: '#FFD6D6' }}>Resets in {countdown} · you&rsquo;re #{DUMMY_ME.rank} of {DUMMY_HUNTING.toLocaleString()}</span>
-        </span>
-      </CpButton>
-      <div className="mt-3.5 flex items-baseline justify-between px-1">
+      {flipped ? (
+        <CpButton onClick={onBegin} className="min-h-[70px]" color="#58CC02" shadow="#3d8c01" ariaLabel="Begin today's revenge">
+          <RevengeMarkSvg size={46} ringColor="#fff" />
+          <span className="flex flex-col items-start leading-none">
+            <span className="text-[26px]" style={{ ...OUTLINE, letterSpacing: '0.04em' }}>BEGIN</span>
+            <span className="text-[12px] font-bold mt-1 truncate max-w-[220px]" style={{ color: '#E9FFD6' }}>{runName} · counts toward Ranks</span>
+          </span>
+        </CpButton>
+      ) : (
+        <CpButton onClick={onGo} className="min-h-[70px]" ariaLabel="Daily Revenge">
+          <RevengeMarkSvg size={46} ringColor="#fff" />
+          <span className="flex flex-col items-start leading-none">
+            <span className="text-[24px]" style={{ ...OUTLINE, letterSpacing: '0.02em' }}>DAILY REVENGE</span>
+            <span className="text-[12px] font-bold mt-1" style={{ color: '#FFD6D6' }}>Resets in {countdown} · you&rsquo;re #{DUMMY_ME.rank} of {DUMMY_HUNTING.toLocaleString()}</span>
+          </span>
+        </CpButton>
+      )}
+      <div className="mt-3 flex items-baseline justify-between px-1">
         <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s abilities</span>
-        <span className="text-[11px] font-bold truncate ml-3" style={{ color: 'rgba(255,255,255,0.7)' }}>{runName}</span>
+        <span className="text-[11px] font-bold truncate ml-3" style={{ color: 'rgba(255,255,255,0.7)' }}>Map: {runName}</span>
       </div>
       <div className="mt-2 grid grid-cols-4 gap-2">
         {abilities.map((id) => <AbilityTile key={id} id={id} />)}
@@ -325,10 +329,31 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
   const [handle, setHandle] = useState('Rook');
   useEffect(() => { setHandle(getHandle()); }, []);
 
+  // Paint the page shell navy while the Arena is up so the notch + home-bar
+  // safe areas (which show the html background) match, and flip the native
+  // status-bar text to white. Restored on unmount — the game page is light.
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prev = { html: html.style.backgroundColor, body: body.style.backgroundColor };
+    html.style.backgroundColor = NAVY;
+    body.style.backgroundColor = NAVY;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    const prevTheme = meta?.getAttribute('content') ?? null;
+    meta?.setAttribute('content', NAVY);
+    setStatusBarText(true);
+    return () => {
+      html.style.backgroundColor = prev.html;
+      body.style.backgroundColor = prev.body;
+      if (meta && prevTheme !== null) meta.setAttribute('content', prevTheme);
+      setStatusBarText(false);
+    };
+  }, []);
+
   const run = isKnownRunId(runId) ? getRunById(runId) : null;
   const runName = run?.name ?? "Today's run";
   const runBlurb = run?.blurb ?? 'Ten levels. One King. She has a list.';
-  const pool = useMemo(() => todaysAbilities(iso, runId, 4), [iso, runId]);
+  const pool = useMemo(() => todaysAbilities(iso, runId), [iso, runId]);
 
   // The daily is "just one run": Normal once it's open, Rookie for brand-new players.
   const dailyDifficulty: DifficultyId = isDifficultyLocked('normal', profile) ? 'rookie' : 'normal';
@@ -356,13 +381,13 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
 
         {/* the anchor — square, and never taller than what leaves room for the surround + tab bar */}
         <div className="mt-3 mx-auto w-full" style={{ maxWidth: 'calc(100dvh - 410px)' }}>
-          <Arena flipped={flipped} onBack={() => setFlipped(false)} onPlay={() => onStart(dailyDifficulty)} runName={runName} runBlurb={runBlurb} pool={pool} />
+          <Arena flipped={flipped} onBack={() => setFlipped(false)} runName={runName} runBlurb={runBlurb} poolSize={pool.length} />
         </div>
 
         {/* the surround */}
         <div className="flex-1 min-h-0 mt-3 relative overflow-hidden">
           <div key={tab} className="h-full arena-tab-in">
-            {tab === 'Revenge' && <RevengeTab onGo={() => setFlipped(true)} countdown={countdown} runName={runName} abilities={pool.slice(0, 4)} />}
+            {tab === 'Revenge' && <RevengeTab flipped={flipped} onGo={() => setFlipped(true)} onBegin={() => onStart(dailyDifficulty)} countdown={countdown} runName={runName} abilities={pool} />}
             {tab === 'Ladder' && <LadderTab profile={profile} onLadderStart={onLadderStart} />}
             {tab === 'Ranks' && <RanksTab handle={handle} />}
             {tab === 'Codex' && <CodexTab profile={profile} onTrophies={onTrophies} />}

@@ -13,6 +13,17 @@ import { useEffect } from 'react';
  *
  * Native-only: renders nothing and does nothing on web.
  */
+/**
+ * Flip the status bar TEXT color for a dark screen (the Arena home is navy).
+ * `light: true` = white text. No-op on web. Callers restore with `false`.
+ */
+export function setStatusBarText(light: boolean): void {
+  if (typeof window === 'undefined' || window.Capacitor?.isNativePlatform?.() !== true) return;
+  import('@capacitor/status-bar')
+    .then(({ StatusBar, Style }) => StatusBar.setStyle({ style: light ? Style.Dark : Style.Light }))
+    .catch(() => {});
+}
+
 export function StatusBarSync() {
   useEffect(() => {
     if (window.Capacitor?.isNativePlatform?.() !== true) return;

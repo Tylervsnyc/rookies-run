@@ -85,6 +85,7 @@ import {
   totalLevelsForRun,
 } from '@/lib/run/seed';
 import { getRunIdForDate, getTodayInTZ, isValidDate } from '@/lib/run/daily';
+import { todaysAbilities } from '@/lib/run/daily-kit';
 import { buildShareString } from '@/lib/run/share';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import type { BoardState, Coord, RunPuzzle } from '@/lib/run/types';
@@ -258,6 +259,12 @@ function freshRun(
       puzzle,
     };
   }
+  // The DAILY run offers exactly today's kit — the same four the home screen
+  // shows (lib/run/daily-kit.ts). It rides the testkit offer-pool mechanism
+  // (kit = the whole pool, unlocks ignored) but is NOT a playtest: meta.testkit
+  // stays null, so scores, streak and daily completion still record.
+  const isDaily = !testkit && !loadout && forceDifficulty === null && runId === getRunIdForDate(iso);
+  const kit = testkit ?? (isDaily ? todaysAbilities(iso, runId) : null);
   return {
     state: puzzleToBoardState(puzzle, {
       runId,
@@ -268,7 +275,7 @@ function freshRun(
       // Testkit (real-run playtest): NO preloaded abilities — the kit is the
       // offer pool and progression happens through the normal offer flow.
       ...(loadout && !testkit ? { abilities: loadout } : {}),
-      ...(testkit ? { testkit } : {}),
+      ...(kit && kit.length > 0 ? { testkit: kit } : {}),
     }),
     puzzle,
   };
