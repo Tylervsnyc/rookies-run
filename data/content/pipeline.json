@@ -737,6 +737,14 @@
       "stage": "idea",
       "created": "2026-09-02",
       "notes": "A pawn that can also capture straight forward (Tyler, 2026-09-02). Movement/economy TBD."
+    },
+    {
+      "id": "revenge-11",
+      "kind": "run",
+      "name": "Dead Bolt",
+      "stage": "testing",
+      "created": "2026-09-03",
+      "notes": "Hard run: every key double-locked, tight budgets, two queens from L8. Built 2026-09-03 because all live runs clear 71-96% on Normal."
     }
   ]
 }

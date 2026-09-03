@@ -6075,7 +6075,250 @@ const RUN_CRUCIBLE: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE];
+/**
+ * revenge-11 — DEAD BOLT (2026-09-03). Built because every live run clears
+ * 71-96% on Normal for a new player (digest 2026-09-03, target 40-60%). The
+ * run leans on the levers the feature findings say actually move no-ability
+ * win %: every key on his line is DOUBLE-locked from L2 on (pawn + a second
+ * pawn or a knight — hunters leave posts, pawns do not), budgets are tight
+ * (7-13 moves, never under 7), approach ranks 2-5 sit under fire from the
+ * rank-4 queen(s) + a raking bishop, and marchers on ranks 2-3 run the clock.
+ * Two queens arrive at L8. Every flee level carries a move limit so a
+ * dodging king can never stall the game (Cold Court L3 lesson). Keys and
+ * defenders sit on rank 5+ so the shell never marches off its posts.
+ */
+const RUN_REVENGE_11: RunDef = {
+  id: 'revenge-11',
+  name: 'Dead Bolt',
+  blurb: 'Two locks on every door. He thinks that matters.',
+  allowedAbilities: REVENGE_ABILITIES,
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — FIRST LOCK. Still king d7, two doors, both locked once: key d5 on
+    // his file is held by pawn c6, key g7 on his rank by pawn h8. Bishop h3
+    // rakes the f5/e6 approach; marcher b3 starts the clock. Seven moves — the
+    // teaching level, but the budget means a wasted slide is a loss.
+    make(
+      1,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(8, 8),
+        bishop(8, 3),
+        pawn(2, 3),
+        king(4, 7),
+      ],
+      { ...STILL, moveLimit: 7 },
+    ),
+    // L2 — BOTH BOLTED. Still king e7, mirrored: key e5 is DOUBLE-locked
+    // (pawn f6 + knight c4) — the run's signature arrives on level two — and
+    // key b7 on his rank is held by pawn a8. Bishop a3 rakes the d6 approach
+    // from the other wing, marchers b2/g3. Harder than L1: the file door now
+    // costs two reads, and the knight hunts.
+    make(
+      2,
+      [
+        pawn(5, 5), pawn(6, 6),
+        pawn(2, 7), pawn(1, 8),
+        knight(3, 4), bishop(1, 3),
+        pawn(2, 2), pawn(7, 3),
+        king(5, 7),
+      ],
+      { ...STILL, moveLimit: 7 },
+    ),
+    // L3 — THE COURT. First flee king: d7 in the walled 3x2 court c7-e8
+    // (walls b7/b8/f8, f7 open so the rank door still works). Key d5 double-
+    // locked (pawn c6 + knight f4), key g7 held by pawn h8, bishop h3 on the
+    // approach, marcher g2. Harder than L2: he dodges now, so a capture-stun
+    // is the only way onto his line, and the budget drops to nine.
+    make(
+      3,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(8, 8),
+        knight(6, 4), bishop(8, 3),
+        pawn(7, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 9,
+        hazards: [X(2, 8), X(6, 8), X(2, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L4 — RANK FOUR. L3's court plus queen a4 owning the fourth rank — the
+    // approach ranks 2-5 are now under fire from three pieces. Marchers b3/g2.
+    // Harder than L3: the queen makes every rank-4 crossing a read, and she
+    // hunts.
+    make(
+      4,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(8, 8),
+        queen(1, 4), bishop(8, 3), knight(6, 4),
+        pawn(2, 3), pawn(7, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(2, 8), X(6, 8), X(2, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L5 — TWO A TURN. Mirror court on the e-file (walls c8/g8/g7, c7 open):
+    // key e5 double-locked (pawn f6 + knight c4), key b7 held by pawn a8,
+    // queen h4 on rank 4, bishop a3 on the d6 approach, marchers b2/g3.
+    // Harder than L4: two enemies move per turn, so the marchers promote in
+    // two of your moves and the hunters close twice as fast.
+    make(
+      5,
+      [
+        pawn(5, 5), pawn(6, 6),
+        pawn(2, 7), pawn(1, 8),
+        queen(8, 4), bishop(1, 3), knight(3, 4),
+        pawn(2, 2), pawn(7, 3),
+        king(5, 7),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 16,
+        hazards: [X(7, 8), X(3, 8), X(7, 7)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7'],
+      },
+    ),
+    // L6 — THE KEEP. Corner 3x2 room f7-h8 behind the e-wall; king h8. Key
+    // h5 on his file double-locked (pawn g6 + knight g3); the rank door is
+    // f8, reached only up a clear f-file with bishop c6 raking d7 and queen
+    // d4 owning the fourth rank. Marchers b3/d2. Harder than L5: no rank key
+    // to stun him with — you must break the file lock or walk the f-file
+    // under the queen.
+    make(
+      6,
+      [
+        pawn(8, 5), pawn(7, 6),
+        knight(7, 3), queen(4, 4), bishop(3, 6),
+        pawn(2, 3), pawn(4, 2),
+        king(8, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 13,
+        hazards: [X(5, 8), X(5, 7)],
+        kingPen: ['f8', 'g8', 'h8', 'f7', 'g7', 'h7'],
+      },
+    ),
+    // L7 — THE CRUCIBLE, BOLTED. King d7 in the walled court; key d5 double-
+    // locked (pawn c6 + knight f4), key g7 double-locked (pawns f8 + h8),
+    // shell pawn b5 pads the west. Queen a4 rakes rank 4, bishop h3 the
+    // approach; marchers b3/g2 with two enemies a turn. Twelve moves. Harder
+    // than L6: both doors double-locked for the first time, under a queen.
+    make(
+      7,
+      [
+        pawn(4, 5), pawn(3, 6),
+        pawn(7, 7), pawn(6, 8), pawn(8, 8),
+        pawn(2, 5),
+        queen(1, 4), bishop(8, 3), knight(6, 4),
+        pawn(2, 3), pawn(7, 2),
+        king(4, 7),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 12,
+        hazards: [X(2, 8), X(6, 8), X(2, 7)],
+        kingPen: ['c8', 'd8', 'e8', 'c7', 'd7', 'e7'],
+      },
+    ),
+    // L8 — CURTAIN WALL. 3x3 curtain e6-g8 (walls on d and h, ranks 5-8),
+    // king f8; the only door is the f-file. Key f4 double-locked (pawns e5 +
+    // g5), shell d4/h4. TWO queens now: a4 on the fourth rank, h2 on the long
+    // diagonal, plus bishop c3. Marchers b2/c2. Harder than L7: the second
+    // queen — every approach square on ranks 2-5 is covered.
+    make(
+      8,
+      [
+        pawn(6, 4),
+        pawn(5, 5), pawn(7, 5),
+        pawn(4, 4), pawn(8, 4),
+        queen(1, 4), queen(8, 2), bishop(3, 3),
+        pawn(3, 2), pawn(2, 2),
+        king(6, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 15,
+        hazards: [X(4, 6), X(8, 6), X(4, 7), X(8, 7), X(4, 8), X(8, 8), X(4, 5), X(8, 5)],
+        kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7', 'e6', 'f6', 'g6'],
+      },
+    ),
+    // L9 — PRIVY COUNCIL. 3x3 room d6-f8 (walls c/g on ranks 6-8), king e8.
+    // Key e4 double-locked (pawns d5 + f5), shell c4/g4; queens g2 + c3 and
+    // bishop b4 — three heavy hunters. Marchers h4/b2. Harder than L8: the
+    // two queens sit on the diagonals instead of the ranks, so the safe
+    // squares move every turn. (Cold Court L9 carries a fourth hunter and a
+    // 13-move budget and reads 6%; this one gives back the knight and four
+    // moves so it lands in the L9 band, not below it.)
+    make(
+      9,
+      [
+        pawn(5, 4),
+        pawn(4, 5), pawn(6, 5),
+        pawn(3, 4), pawn(7, 4),
+        queen(7, 2), queen(3, 3), bishop(2, 4),
+        pawn(8, 4), pawn(2, 2),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 17,
+        hazards: [X(3, 6), X(7, 6), X(3, 7), X(7, 7), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8', 'd7', 'e7', 'f7', 'd6', 'e6', 'f6'],
+      },
+    ),
+    // L10 — DEAD BOLT. L6's keep, bolted: the same 3x2 corner room f7-h8
+    // behind the e-wall, king h8, but every lock is doubled. ONE pawn locks
+    // both doors — g5 defends the h4 key on his file AND the f4 pawn on the
+    // f-file (the only road to his rank); pawn e5 is f4's second lock. Queen
+    // a4 rakes rank 4, queen h2 the second rank and the h-file, bishop d3 the
+    // f5 approach. Marchers b3/c2 and a TEN-move clock. Harder than L9: two
+    // queens, no undefended square on either of his lines, and the tightest
+    // budget in the run — every stun has to be earned by breaking the
+    // lynchpin first, fast.
+    // Tuning log (2026-09-03): v1 was the c6-e8 court with pawns c6/e6 beside
+    // the key — 88% no-ability, those pawns were stun ammo up the open c/e
+    // files. v2 was this keep as a 3x3 room with knight f3 covering g5+h4 —
+    // 8-25% no-ability but NO finisher had a provable line at depth 8: the
+    // third row was dodge room and the knight denied every forced capture.
+    // Solver probes showed the knight alone blocked the proofs, so v3 drops
+    // it and takes the difficulty back through the clock (budget 14 -> 10):
+    // none 21-25%, all four finishers proven W3-W5 and 96-100%.
+    make(
+      10,
+      [
+        pawn(8, 4), pawn(6, 4),
+        pawn(7, 5), pawn(5, 5),
+        queen(1, 4), queen(8, 2), bishop(4, 3),
+        pawn(2, 3), pawn(3, 2),
+        king(8, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [X(5, 7), X(5, 8)],
+        kingPen: ['f8', 'g8', 'h8', 'f7', 'g7', 'h7'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));

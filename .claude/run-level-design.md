@@ -42,6 +42,12 @@ If a single ability (or no ability) one-shots the level the same way every time,
 
 ---
 
+### 🚫 A hunter parked on the key's landing squares (Dead Bolt L10 v2, 2026-09-03)
+A knight on f3 covering BOTH the lynchpin pawn (g5) and the key (h4) read as a "hunter double-lock" — but it denied every finisher a forced line (solver `no8` for all four) while the bot still won 88-100% in practice. Hunters that cover the capture squares make a level *unprovable*, not *hard*. If provability matters (it does for L10), take the difficulty through the clock instead: dropping that knight and cutting the budget 14→10 kept no-ability at ~23% with all four finishers proven W3-W5.
+
+### 🚫 Pawns beside the pen on an open file (Dead Bolt L10 v1, 2026-09-03)
+A 3x3 court with pawns c6/e6 next to the key and open c/e files below them read 88% no-ability: each pawn is a free capture-stun one slide from rank 1. Density belongs in the defended chain, never adjacent to his room on a file Rookie can run. (Same lesson as docs/revenge-runs.md §3, now with a number.)
+
 ## Patterns that work
 
 ### ✅ Iron Curtain (the gold standard for hard)
@@ -94,6 +100,10 @@ Before shipping a new level / run:
 7. **Read the digest** — `data/run-playtest/digests/latest.md`. Fail-mode histogram should show a *mix* (captured-by, move-limit, dead-end). All-one-fail-mode = one-dimensional level.
 
 ---
+
+## Measuring — read the noise before you tune (2026-09-03)
+
+A single `revenge.ts matrix` cell moves with worker ordering, not just trials: Dead Bolt L10 no-ability read 50% inside a 240-cell parallel sweep and 21-25% in three isolated runs. Before tuning a level off one number, re-read it with `--levels=<n> --loadouts=none --trials=48 --jobs=1`; that read (23%) was the stable one.
 
 ## Open experiments
 
