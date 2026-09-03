@@ -5,6 +5,8 @@ import { DemoBoard } from '@/components/run/DemoBoard';
 import { REVENGE_RED, REVENGE_RED_DARK, RevengeMarkSvg } from '@/components/run/RookiesRevengeLogo';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { fireConfetti } from '@/lib/confetti';
+import { LevelClearedModal } from '@/components/run/LevelClearedModal';
+import { LevelLostModal } from '@/components/run/LevelLostModal';
 
 /**
  * MOCK — five animated "level cleared" popups + the matching "captured"
@@ -80,7 +82,7 @@ function Phone({ children, label, onReplay }: { children: ReactNode; label: stri
         <div className="text-sm font-black uppercase tracking-[0.18em]" style={GOLD_TEXT}>{label}</div>
         <button type="button" onClick={onReplay} className="text-[11px] font-black px-2.5 py-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}>Replay</button>
       </div>
-      <div className="relative overflow-hidden rounded-[36px]" style={{ width: 390, height: 780, border: '10px solid #06091a', boxShadow: '0 20px 60px rgba(0,0,0,0.6)', background: NAVY }}>
+      <div className="relative overflow-hidden rounded-[36px]" style={{ width: 390, height: 780, border: '10px solid #06091a', boxShadow: '0 20px 60px rgba(0,0,0,0.6)', background: NAVY, transform: 'translateZ(0)' }}>
         {children}
       </div>
     </div>
@@ -377,6 +379,17 @@ export default function RevengePopupsMock() {
           <h1 className="text-2xl font-black">Level popups — 5 options, Sep 3</h1>
           <p className="text-sm mt-1 max-w-[70ch]" style={{ color: 'rgba(255,255,255,0.65)' }}>Each option is one design language for BOTH moments: cleared on the left, captured on the right. Hit Replay to run the animation again. Same navy/gold kit as the play page.</p>
         </div>
+        <section className="flex flex-col gap-4">
+          <div>
+            <div className="text-lg font-black" style={GOLD_TEXT}>SHIPPED · The Stamp (real components)</div>
+            <div className="text-sm max-w-[70ch]" style={{ color: 'rgba(255,255,255,0.65)' }}>LevelClearedModal + LevelLostModal as they now render in the game. No quote.</div>
+          </div>
+          <div className="flex flex-wrap justify-center gap-8">
+            <Phone label="Cleared" onReplay={() => replay('real')}><div key={`real-c-${seed.real ?? 0}`} className="absolute inset-0"><Backdrop /><LevelClearedModal level={4} totalLevels={10} tempo={5} runName="The Fortress" onNext={() => {}} /></div></Phone>
+            <Phone label="Captured" onReplay={() => replay('real')}><div key={`real-l-${seed.real ?? 0}`} className="absolute inset-0"><Backdrop /><LevelLostModal level={5} totalLevels={10} retriesLeft={2} difficultyLabel="Normal" onRetry={() => {}} onGiveUp={() => {}} /></div></Phone>
+            <Phone label="No way through" onReplay={() => replay('real')}><div key={`real-u-${seed.real ?? 0}`} className="absolute inset-0"><Backdrop /><LevelLostModal level={7} totalLevels={10} retriesLeft={Infinity} reason="unwinnable" difficultyLabel="Rookie" onRetry={() => {}} onGiveUp={() => {}} /></div></Phone>
+          </div>
+        </section>
         {OPTIONS.map(({ key, label, blurb, C }) => (
           <section key={key} className="flex flex-col gap-4">
             <div>
