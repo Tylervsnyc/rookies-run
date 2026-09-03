@@ -370,6 +370,18 @@ function canCapture(piece: EnemyPiece, state: BoardState): boolean {
   );
 }
 
+/**
+ * True when any enemy piece could capture Rookie on its next move.
+ * Rookie's "in check" — drives her nervous/alarm sprite on the board.
+ * Shield and smoke both make her safe for the turn, so they suppress it.
+ */
+export function isRookieThreatened(state: BoardState): boolean {
+  if (state.status !== 'playing') return false;
+  if (state.shieldUp) return false;
+  if ((state.smokeTurnsLeft ?? 0) > 0) return false;
+  return state.pieces.some((piece) => canCapture(piece, state));
+}
+
 function chebyshev(a: Coord, b: Coord): number {
   return Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
 }

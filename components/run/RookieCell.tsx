@@ -3,6 +3,10 @@
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { GOLDEN_KING_PALETTE, PieceBlocks } from './PieceBlocks';
 import type { RookieForm } from '@/lib/run/types';
+import type { AlarmVariant } from '@/lib/rookie-os/types';
+
+/** 'siren' = BreathingRook's default panicking animation (no variant). */
+export type RookieAlarm = AlarmVariant | 'siren';
 
 interface RookieCellProps {
   /** Current Rookie form — drives which sprite renders. */
@@ -11,6 +15,8 @@ interface RookieCellProps {
   dying?: boolean;
   /** True briefly after a transform — plays the glitch-flicker effect. */
   glitching?: boolean;
+  /** Set while an enemy can capture Rookie — she panics with this red alarm. */
+  alarm?: RookieAlarm | null;
 }
 
 /**
@@ -27,9 +33,16 @@ interface RookieCellProps {
  * See git history for the padding-bottom: 100% ratio-box trick that keeps
  * Rookie centered inside react-chessboard's indeterminate-height piece slot.
  */
-function Sprite({ form, animate }: { form: RookieForm; animate: boolean }) {
+function Sprite({ form, animate, alarm }: { form: RookieForm; animate: boolean; alarm?: RookieAlarm | null }) {
   if (form === 'rook') {
-    return <BreathingRook size="xs" animate={animate} mood="neutral" />;
+    return (
+      <BreathingRook
+        size="xs"
+        animate={animate}
+        mood={alarm ? 'panicking' : 'neutral'}
+        alarmVariant={alarm && alarm !== 'siren' ? alarm : null}
+      />
+    );
   }
   if (form === 'king') {
     return (
@@ -56,6 +69,7 @@ export function RookieCell({
   form = 'rook',
   dying = false,
   glitching = false,
+  alarm = null,
 }: RookieCellProps) {
   const showGlitch = glitching && !dying;
 
@@ -123,7 +137,7 @@ export function RookieCell({
               : null),
           }}
         >
-          <Sprite form={form} animate={!dying && !showGlitch} />
+          <Sprite form={form} animate={!dying && !showGlitch} alarm={dying ? null : alarm} />
 
           {showGlitch && (
             <>

@@ -4,16 +4,19 @@ import { ENEMY_CAPTURE_SLIDE_MS, PIECE_SLIDE_MS } from './timing';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
-import { RookieCell } from './RookieCell';
+import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
 import { canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
-import { nextEnemyMovers } from '@/lib/run/pawn-ai';
+import { isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { PieceBlocks } from './PieceBlocks';
+
+/** Red alarms Rookie cycles through, one per time she lands in check. */
+const ROOKIE_ALARM_CYCLE: RookieAlarm[] = ['siren', 'heartbeat', 'sos', 'shiver', 'ringPulse', 'flickerOut'];
 
 interface BoardProps {
   state: BoardState;
@@ -633,6 +636,24 @@ export function RunBoard({
     return toSquare(state.rookie);
   }, [state.shieldUp, state.rookie, state.status]);
 
+  // Rookie "in check": when an enemy can capture her, she panics. Each new
+  // threat episode picks the NEXT red alarm in the cycle (Tyler 2026-09-03:
+  // "use those in a cycle, each time Rookie is in check call a different one").
+  const threatened = useMemo(() => isRookieThreatened(state), [state]);
+  const alarmIdxRef = useRef(-1);
+  const [alarm, setAlarm] = useState<RookieAlarm | null>(null);
+  useEffect(() => {
+    if (!threatened) {
+      setAlarm(null);
+      return;
+    }
+    setAlarm((cur) => {
+      if (cur) return cur; // still the same episode — keep this alarm
+      alarmIdxRef.current = (alarmIdxRef.current + 1) % ROOKIE_ALARM_CYCLE.length;
+      return ROOKIE_ALARM_CYCLE[alarmIdxRef.current];
+    });
+  }, [threatened]);
+
   const pieces = useMemo(
     () => vanillaPieces ? { ...defaultPieces } : ({
       ...defaultPieces,
@@ -642,6 +663,7 @@ export function RunBoard({
           form="rook"
           dying={dying && state.form === 'rook'}
           glitching={glitching && state.form === 'rook'}
+          alarm={state.form === 'rook' ? alarm : null}
         />
       ),
       wN: () => (
@@ -649,6 +671,7 @@ export function RunBoard({
           form="knight"
           dying={dying && state.form === 'knight'}
           glitching={glitching && state.form === 'knight'}
+          alarm={state.form === 'knight' ? alarm : null}
         />
       ),
       wB: () => (
@@ -656,6 +679,7 @@ export function RunBoard({
           form="bishop"
           dying={dying && state.form === 'bishop'}
           glitching={glitching && state.form === 'bishop'}
+          alarm={state.form === 'bishop' ? alarm : null}
         />
       ),
       wQ: () => (
@@ -663,6 +687,7 @@ export function RunBoard({
           form="queen"
           dying={dying && state.form === 'queen'}
           glitching={glitching && state.form === 'queen'}
+          alarm={state.form === 'queen' ? alarm : null}
         />
       ),
       wK: () => (
@@ -670,10 +695,11 @@ export function RunBoard({
           form="king"
           dying={dying && state.form === 'king'}
           glitching={glitching && state.form === 'king'}
+          alarm={state.form === 'king' ? alarm : null}
         />
       ),
     }),
-    [dying, glitching, state.form, vanillaPieces],
+    [dying, glitching, alarm, state.form, vanillaPieces],
   );
 
   return (
