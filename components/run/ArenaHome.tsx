@@ -12,6 +12,7 @@ import { LADDER_RUNG_IDS, rungRun, rungState } from '@/lib/run/ladder';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
 import { getHandle } from '@/lib/run/leaderboard-client';
 import { todaysAbilities } from '@/lib/run/daily-kit';
+import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
 import { autoplayMusicOnHome } from '@/lib/music';
 
@@ -130,8 +131,8 @@ function Medal({ rank }: { rank: number }) {
 }
 
 // ── The arena: live board on the front, today's map card on the back ────────
-function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
-  flipped: boolean; onBack: () => void; runName: string; runBlurb: string; poolSize: number;
+function Arena({ flipped, onBack, runName, runBlurb, poolSize, difficultyName }: {
+  flipped: boolean; onBack: () => void; runName: string; runBlurb: string; poolSize: number; difficultyName?: string;
 }) {
   // backface-visibility does NOT reach the board's own transformed layers
   // (the CAPTURE THE KING tag, the bottom rank), so the front face is swapped
@@ -159,6 +160,7 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
             <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-black">
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,255,255,0.1)' }}>10 levels</span>
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,255,255,0.1)' }}>{poolSize} powers</span>
+              {difficultyName && <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(229,57,53,0.3)', border: '1px solid rgba(229,57,53,0.6)' }}>{difficultyName}</span>}
               <span className="px-2 py-1 rounded-md" style={{ background: 'rgba(255,200,0,0.15)', ...GOLD_TEXT }}>Counts toward Ranks</span>
             </div>
             <div className="flex-1 min-h-0 flex items-center justify-center py-1 overflow-hidden">
@@ -358,7 +360,11 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
   const pool = useMemo(() => todaysAbilities(iso, runId), [iso, runId]);
 
   // The daily is "just one run": Normal once it's open, Rookie for brand-new players.
-  const dailyDifficulty: DifficultyId = isDifficultyLocked('normal', profile) ? 'rookie' : 'normal';
+  // A pinned daily may force a difficulty (Dead Bolt on Hard, 2026-09-03);
+  // players who haven't unlocked it fall back to the normal rule.
+  const forced = getDailyOverride(iso)?.difficulty;
+  const dailyDifficulty: DifficultyId =
+    forced && !isDifficultyLocked(forced, profile) ? forced : isDifficultyLocked('normal', profile) ? 'rookie' : 'normal';
 
   return (
     <div className="h-full w-full flex justify-center text-white" style={{ background: NAVY }}>
@@ -383,7 +389,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
 
         {/* the anchor — square, and never taller than what leaves room for the surround + tab bar */}
         <div className="mt-3 mx-auto w-full" style={{ maxWidth: 'calc(100dvh - 470px)' }}>
-          <Arena flipped={flipped} onBack={() => setFlipped(false)} runName={runName} runBlurb={runBlurb} poolSize={pool.length} />
+          <Arena flipped={flipped} onBack={() => setFlipped(false)} runName={runName} runBlurb={runBlurb} poolSize={pool.length} difficultyName={forced && dailyDifficulty === forced ? forced.toUpperCase() : undefined} />
         </div>
 
         {/* the surround */}

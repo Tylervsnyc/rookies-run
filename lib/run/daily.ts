@@ -19,18 +19,31 @@ function daysSinceEpoch(yyyyMmDd: string): number {
 }
 
 /**
- * Pinned dailies — a specific run on a specific date, ahead of the rotation.
- * Tyler 2026-09-03: "give me a new harder run as the daily revenge" → Dead
- * Bolt (revenge-11) today and tomorrow. Remove entries once they've passed.
+ * Pinned dailies — a specific run (and optionally a difficulty + kit seed)
+ * on a specific date, ahead of the rotation. Tyler 2026-09-03: Dead Bolt as
+ * the daily; then "a harder run with 4 random abilities" → the same run on
+ * Hard with a fresh kit. Remove entries once they've passed.
  */
-const DAILY_OVERRIDES: Readonly<Record<string, string>> = {
-  '2026-09-03': 'revenge-11',
-  '2026-09-04': 'revenge-11',
+export interface DailyOverride {
+  runId: string;
+  /** Forces the daily's difficulty (still subject to the player's unlock). */
+  difficulty?: 'rookie' | 'normal' | 'hard' | 'nightmare';
+  /** Alternate seed for the 4-ability kit (default = the ISO date). */
+  kitSeed?: string;
+}
+const DAILY_OVERRIDES: Readonly<Record<string, DailyOverride>> = {
+  '2026-09-03': { runId: 'revenge-11', difficulty: 'hard', kitSeed: '2026-09-03-hard' },
+  '2026-09-04': { runId: 'revenge-11', difficulty: 'hard', kitSeed: '2026-09-04-hard' },
 };
 
+export function getDailyOverride(yyyyMmDd: string): DailyOverride | null {
+  const o = DAILY_OVERRIDES[yyyyMmDd];
+  return o && DAILY_POOL.some((r) => r.id === o.runId) ? o : null;
+}
+
 export function getRunIdForDate(yyyyMmDd: string): string {
-  const pinned = DAILY_OVERRIDES[yyyyMmDd];
-  if (pinned && DAILY_POOL.some((r) => r.id === pinned)) return pinned;
+  const pinned = getDailyOverride(yyyyMmDd);
+  if (pinned) return pinned.runId;
   if (DAILY_POOL.length === 0) return RUNS[0].id;
   const idx = ((daysSinceEpoch(yyyyMmDd) % DAILY_POOL.length) + DAILY_POOL.length) % DAILY_POOL.length;
   return DAILY_POOL[idx].id;

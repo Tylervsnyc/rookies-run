@@ -1454,6 +1454,9 @@ export default function RookiesRunPage() {
       meta: {
         runId: meta.runId,
         iso: meta.iso,
+        // Lets scripts/build-home-replay.ts re-simulate enemy turns exactly.
+        aiRngSeed: state.aiRngSeed,
+        difficulty: state.difficulty,
         level: state.level,
         totalLevels,
         outcome: runComplete ? 'won' : 'lost',

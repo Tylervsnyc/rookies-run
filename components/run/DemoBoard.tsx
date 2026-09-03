@@ -66,14 +66,63 @@ const SCRIPT: Step[] = [
 const LOOP_MS = 16000;
 
 /** `paused` freezes the loop (the home screen flips the board over — nothing should keep moving behind the card). */
+/**
+ * Real-gameplay replay (Tyler 2026-09-03: "take some of my gameplay and put it
+ * up there"). public/run/home-replay.json is built by
+ * scripts/build-home-replay.ts from a run trace — every frame is a real
+ * BoardState from the engine. When it loads, the scripted loop below is
+ * replaced by it; if it can't load, the scripted loop stays.
+ */
+interface ReplayFrame { state: BoardState; hold: number; fx?: { kind: 'knight-hop'; from: string; to: string } }
+let replayCache: ReplayFrame[] | null | undefined;
+function loadReplay(): Promise<ReplayFrame[] | null> {
+  if (replayCache !== undefined) return Promise.resolve(replayCache);
+  return fetch('/run/home-replay.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j) => {
+      replayCache = j && Array.isArray(j.frames) && j.frames.length > 1 ? (j.frames as ReplayFrame[]) : null;
+      return replayCache;
+    })
+    .catch(() => {
+      replayCache = null;
+      return null;
+    });
+}
+
 export function DemoBoard({ reticle = true, paused = false }: { reticle?: boolean; paused?: boolean }) {
   const [state, setState] = useState<BoardState>(() => base());
   const [fx, setFx] = useState<Fx | null>(null);
   const [poisonFx, setPoisonFx] = useState<PoisonFx | null>(null);
   const idRef = useRef(1);
+  const [replay, setReplay] = useState<ReplayFrame[] | null | undefined>(replayCache);
 
   useEffect(() => {
-    if (paused) return;
+    if (replay !== undefined) return;
+    let alive = true;
+    loadReplay().then((r) => { if (alive) setReplay(r); });
+    return () => { alive = false; };
+  }, [replay]);
+
+  // Real replay: step through the recorded frames, loop forever.
+  useEffect(() => {
+    if (paused || !replay) return;
+    let cancelled = false;
+    let timer = 0;
+    let i = 0;
+    const show = () => {
+      if (cancelled) return;
+      const f = replay[i];
+      setState(f.state);
+      setFx(null); // Knight Hop is a form change — the sprite swap IS the effect.
+      i = (i + 1) % replay.length;
+      timer = window.setTimeout(show, i === 0 ? f.hold + 600 : f.hold);
+    };
+    show();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [paused, replay]);
+
+  useEffect(() => {
+    if (paused || replay) return;
     let cancelled = false;
     const timers: number[] = [];
     const run = () => {
@@ -92,7 +141,7 @@ export function DemoBoard({ reticle = true, paused = false }: { reticle?: boolea
     };
     run();
     return () => { cancelled = true; timers.forEach(clearTimeout); };
-  }, [paused]);
+  }, [paused, replay]);
 
   const king = useMemo(() => state.pieces.find((p) => p.type === 'king'), [state.pieces]);
 
