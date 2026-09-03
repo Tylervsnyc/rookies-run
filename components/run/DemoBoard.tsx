@@ -95,6 +95,9 @@ export function DemoBoard({ reticle = true, paused = false }: { reticle?: boolea
   const [poisonFx, setPoisonFx] = useState<PoisonFx | null>(null);
   const idRef = useRef(1);
   const [replay, setReplay] = useState<ReplayFrame[] | null | undefined>(replayCache);
+  // Bumped each time the replay wraps so the board remounts instead of
+  // animating h8 → d1 (a long slide that can flash the default piece glyph).
+  const [loopKey, setLoopKey] = useState(0);
 
   useEffect(() => {
     if (replay !== undefined) return;
@@ -112,6 +115,7 @@ export function DemoBoard({ reticle = true, paused = false }: { reticle?: boolea
     const show = () => {
       if (cancelled) return;
       const f = replay[i];
+      if (i === 0) setLoopKey((k) => k + 1);
       setState(f.state);
       setFx(null); // Knight Hop is a form change — the sprite swap IS the effect.
       i = (i + 1) % replay.length;
@@ -148,6 +152,7 @@ export function DemoBoard({ reticle = true, paused = false }: { reticle?: boolea
   return (
     <div className="relative w-full">
       <RunBoard
+        key={loopKey}
         state={state}
         selectedSquare={null}
         abilityFx={fx}

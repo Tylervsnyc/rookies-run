@@ -29,6 +29,22 @@ type Tab = 'trophies' | 'abilities';
  * that power's art. Locked cards are grey with a padlock and progress bar.
  * Read-only.
  */
+/** Chess Path button pattern: flat face, hard bottom shadow. The clear way out (Tyler 2026-09-03). */
+function BackButton({ onClick, compact = false }: { onClick: () => void; compact?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Back to the Arena"
+      className={`rounded-[14px] font-black flex items-center justify-center gap-2 active:translate-y-[4px] active:shadow-none transition-transform ${compact ? 'min-h-[44px] px-4 text-[13px]' : 'w-full min-h-[56px] text-[18px]'}`}
+      style={{ background: '#E53935', color: '#fff', boxShadow: '0 5px 0 #B71C1C', textShadow: '0 2px 0 rgba(0,0,0,0.45)' }}
+    >
+      <svg width={compact ? 14 : 18} height={compact ? 14 : 18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M15 5l-7 7 7 7" /></svg>
+      {compact ? 'BACK' : 'BACK TO THE ARENA'}
+    </button>
+  );
+}
+
 export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
   const [tab, setTab] = useState<Tab>('trophies');
   const earnedCount = Object.keys(profile.achievements).length;
@@ -36,15 +52,15 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
   const unlocked = new Set(profile.unlockedAbilities);
 
   return (
-    <div className="fixed inset-0 z-[65] bg-chess-page text-chess-text flex flex-col">
+    <div className="rr-navy fixed inset-0 z-[65] text-chess-text flex flex-col" style={{ background: 'linear-gradient(180deg, #182a5c 0%, #0f1c3f 60%)' }}>
       {/* Header */}
-      <div className="shrink-0 px-4 pt-3 pb-2 flex items-center justify-between gap-3 bg-chess-page/95 backdrop-blur border-b border-chess-text/10">
+      <div className="shrink-0 px-4 pb-2 flex items-center justify-between gap-3" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 10px)', borderBottom: '2px solid #3a4f8f' }}>
         <div className="flex items-center gap-2.5 min-w-0">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: GOLD.border, boxShadow: GOLD.halo ?? undefined }}
           >
-            <div className="w-8 h-8 rounded-lg bg-[#2A3C45] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#0a1230' }}>
               <TrophyGlyph size={18} />
             </div>
           </div>
@@ -55,18 +71,7 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
             <div className="text-lg font-black leading-tight">Trophy Room</div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <span className="w-8 h-8 rounded-full bg-chess-text/10 flex items-center justify-center text-chess-text-muted">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </span>
-        </button>
+        <BackButton onClick={onClose} compact />
       </div>
 
       {/* Tabs */}
@@ -80,13 +85,14 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-8">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28">
         <div className="max-w-md md:max-w-lg mx-auto w-full flex flex-col gap-5">
           {onReplayTutorial && (
             <button
               type="button"
               onClick={onReplayTutorial}
-              className="w-full min-h-[44px] py-3 rounded-2xl bg-white border border-chess-text/15 text-chess-text font-black text-[13px] tracking-wide active:translate-y-px transition-transform"
+              className="w-full min-h-[44px] py-3 rounded-2xl font-black text-[13px] tracking-wide active:translate-y-px transition-transform"
+              style={{ background: '#1c2f63', border: '2px solid #3a4f8f', color: '#fff', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.14), inset 0 -3px 0 rgba(0,0,0,0.35)' }}
             >
               Replay the tutorial
             </button>
@@ -131,6 +137,11 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
           )}
 
         </div>
+      </div>
+
+      {/* Always-visible way out. */}
+      <div className="absolute inset-x-0 bottom-0 px-4 pt-3" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)', background: 'linear-gradient(180deg, rgba(15,28,63,0) 0%, #0f1c3f 40%)' }}>
+        <div className="max-w-md md:max-w-lg mx-auto"><BackButton onClick={onClose} /></div>
       </div>
     </div>
   );
@@ -187,9 +198,12 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 min-h-[44px] rounded-xl text-[12px] font-black tracking-wide transition-colors ${
-        active ? 'bg-chess-text text-white' : 'bg-white border border-chess-text/15 text-chess-text-muted'
-      }`}
+      className="flex-1 min-h-[44px] rounded-xl text-[12px] font-black tracking-wide transition-colors"
+      style={
+        active
+          ? { background: 'linear-gradient(180deg,#4a63b0,#24397a)', border: '2px solid #FFC800', color: '#FFC800', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), 0 3px 0 rgba(0,0,0,0.45)', textShadow: '0 2px 0 rgba(0,0,0,0.5)' }
+          : { background: '#0a1230', border: '2px solid #3a4f8f', color: 'rgba(255,255,255,0.6)' }
+      }
     >
       {children}
     </button>
@@ -208,7 +222,7 @@ function StatsStrip({ profile, earned, total }: { profile: PlayerProfile; earned
   const pct = total > 0 ? Math.round((earned / total) * 100) : 0;
   return (
     <div className="rounded-2xl p-[3px]" style={{ background: GOLD.border }}>
-      <div className="bg-white rounded-[13px] p-3 flex flex-col gap-3">
+      <div className="rounded-[13px] p-3 flex flex-col gap-3" style={{ background: '#1c2f63', border: '2px solid #3a4f8f', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.14), inset 0 -3px 0 rgba(0,0,0,0.35)' }}>
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
             <div className="text-[9px] uppercase tracking-[0.2em] font-black text-chess-text-muted">
@@ -227,7 +241,7 @@ function StatsStrip({ profile, earned, total }: { profile: PlayerProfile; earned
             style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #d49a2a, #ffd87a)' }}
           />
         </div>
-        <div className="grid grid-cols-4 gap-2 pt-1 border-t border-chess-text/10">
+        <div className="grid grid-cols-4 gap-2 pt-1 border-t border-white/10">
           {items.map((it) => (
             <div key={it.label} className="text-center">
               <div className="text-lg font-black tabular-nums leading-none">{it.value}</div>
@@ -238,11 +252,11 @@ function StatsStrip({ profile, earned, total }: { profile: PlayerProfile; earned
           ))}
         </div>
         {bests.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1 border-t border-chess-text/10">
+          <div className="flex flex-wrap gap-1.5 pt-1 border-t border-white/10">
             {bests.map((d) => {
               const b = profile.bestByDifficulty[d]!;
               return (
-                <span key={d} className="text-[10px] font-black px-2 py-1 rounded-full bg-chess-page text-chess-text">
+                <span key={d} className="text-[10px] font-black px-2 py-1 rounded-full text-chess-text" style={{ background: 'rgba(0,0,0,0.3)' }}>
                   {DIFFICULTIES[d].name} · best {b.levels} lvls
                 </span>
               );
