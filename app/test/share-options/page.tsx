@@ -12,7 +12,7 @@
  * All five use the same fake run data (RUN below).
  */
 
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { defaultPieces } from 'react-chessboard';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { artFile } from '@/components/run/AbilityCard';
@@ -228,37 +228,42 @@ function FinalPositionCard() {
 // ---------------------------------------------------------------------------
 
 function KitFanCard() {
+  // "GIF of the last run": the board steps through the final level's last
+  // positions and loops (this is the preview; the real share would encode
+  // these frames as an animated GIF).
+  const [frame, setFrame] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setFrame((f) => (f + 1) % (REPLAY.length + 1)), 900);
+    return () => clearInterval(t);
+  }, []);
+  const last = frame >= REPLAY.length;
+  const pos = last ? FINAL : REPLAY[frame].pos;
   return (
-    <div style={{ width: 1080, height: 1350, background: `radial-gradient(ellipse at 50% 35%, #5a3d0d 0%, ${NAVY_MID} 45%, ${NAVY} 100%)`, color: '#fff', padding: 56, boxSizing: 'border-box', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 30, fontWeight: 900, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.3em' }}>The kit that did it</div>
-        <div style={{ fontSize: 76, fontWeight: 900, lineHeight: 1.05, marginTop: 8 }}>{RUN.name}</div>
-        <div style={{ fontSize: 30, fontWeight: 800, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: 6 }}>{RUN.difficulty} &middot; {RUN.date}</div>
+    <div style={{ width: 1080, height: 1350, background: `radial-gradient(ellipse at 50% 30%, #5a3d0d 0%, ${NAVY_MID} 45%, ${NAVY} 100%)`, color: '#fff', padding: 48, boxSizing: 'border-box', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 64, fontWeight: 900, lineHeight: 1.05 }}>{RUN.name}</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: 6 }}>{RUN.difficulty} &middot; {RUN.date}</div>
+        </div>
+        <Stars stars={RUN.stars} size={72} gap={6} />
       </div>
 
-      <div style={{ position: 'relative', height: 640, marginTop: 30 }}>
-        {RUN.kit.map((id, i) => {
-          const rot = [-14, 0, 14][i];
-          const x = [-250, 0, 250][i];
-          const y = [50, 0, 50][i];
-          return (
-            <div key={id} style={{ position: 'absolute', left: '50%', top: 30, transform: `translateX(calc(-50% + ${x}px)) translateY(${y}px) rotate(${rot}deg)`, zIndex: i === 1 ? 3 : 1 }}>
-              <KitCard id={id} width={400} />
-            </div>
-          );
-        })}
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+        <MiniBoard pos={pos} size={640} lit={last} radius={20} border="10px solid rgba(0,0,0,0.45)" />
+      </div>
+      <div style={{ textAlign: 'center', marginTop: 10, fontSize: 28, fontWeight: 800, color: 'rgba(255,255,255,0.7)', minHeight: 36 }}>
+        {last ? `Got him. ${RUN.moves} moves · par ${RUN.par}` : REPLAY[frame].caption}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 36, marginTop: 20 }}>
-        <Stars stars={RUN.stars} size={96} gap={10} />
-        <div style={{ fontSize: 44, fontWeight: 900, fontVariantNumeric: 'tabular-nums' }}>{RUN.moves} moves <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 700 }}>&middot; par {RUN.par}</span></div>
+      <div style={{ marginTop: 16, textAlign: 'center', fontSize: 26, fontWeight: 900, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.3em' }}>Rookie&rsquo;s Abilities</div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 20, marginTop: 12 }}>
+        {RUN.kit.map((id) => (
+          <KitCard key={id} id={id} width={200} />
+        ))}
       </div>
 
-      <div style={{ position: 'absolute', left: 56, bottom: 56 }}>
-        <Brand size={84} />
-      </div>
-      <div style={{ position: 'absolute', right: 56, bottom: 56 }}>
-        <MiniBoard pos={FINAL} size={208} lit radius={12} />
+      <div style={{ position: 'absolute', right: 48, bottom: 36 }}>
+        <Brand size={56} />
       </div>
     </div>
   );
@@ -427,7 +432,7 @@ function ReplayStripCard() {
 
 const OPTIONS: { name: string; pitch: string; render: () => ReactNode }[] = [
   { name: '1. Final position', pitch: 'The last board, big. Rookie lit red on the king’s square, RUN COMPLETE stamp, stars. The proof shot.', render: () => <FinalPositionCard /> },
-  { name: '2. The kit', pitch: 'The three ability cards fanned like a hand of cards. What you built, not just what you did. Board tucked in the corner.', render: () => <KitFanCard /> },
+  { name: '2. Rookie’s Abilities (picked)', pitch: 'Big board replaying the last level as a looping GIF, the three abilities under it.', render: () => <KitFanCard /> },
   { name: '3. The stat card', pitch: 'The Stamp popup as a card: level 10, CAPTURED, pips, stars, chips, kit icons and a moves-per-level strip. For people who like numbers.', render: () => <StatCard /> },
   { name: '4. The taunt', pitch: 'Poster. The tagline as the hero, a struck-through king, stars and the kit as tiny icons. Minimal, brand-first, works even if you know nothing about the game.', render: () => <TauntCard /> },
   { name: '5. The replay strip', pitch: 'Comic strip of the last four positions of level 10, ending in the capture. Tells the story instead of showing the score.', render: () => <ReplayStripCard /> },
