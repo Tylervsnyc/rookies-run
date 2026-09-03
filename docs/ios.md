@@ -29,11 +29,10 @@ when you change:
 2. `brew install fastlane`
 3. Put the App Store Connect API key at `~/Downloads/AuthKey_767R5DY9P3.p8`
    (the same key Chess Boxing uses; the Fastfile expects this exact path).
-4. **Create the app record in App Store Connect in a browser.** Fastlane
-   registers the bundle ID but Apple blocks creating the app record via API —
-   the `beta` lane prints a warning and continues without it, and the upload
-   then fails. Bundle ID `com.learnthroughstories.rookiesrun`, name
-   "Rookies Run".
+4. App record exists (ASC id 6802359470, created 2026-08-17). The whole
+   App Store listing is applied by `node scripts/asc-listing.mjs` — see
+   `docs/appstore-metadata.md` for the copy and the one browser-only step
+   (App Privacy label).
 
 ## Build and ship
 
@@ -49,6 +48,17 @@ fastlane fix_compliance   # only if TestFlight blocks on export compliance
 fastlane invite      # create/ensure the Internal group, add the build
 fastlane add_tester  # add tyler@tylervsnyc.com
 ```
+
+## App Store submission
+
+```bash
+node scripts/asc-listing.mjs --status    # what ASC has right now
+node scripts/asc-listing.mjs --submit    # attach newest VALID build to 1.0 + submit for review
+```
+
+For a later version: bump `MARKETING_VERSION` in `App.xcodeproj/project.pbxproj`,
+`fastlane beta && fastlane upload`, then `VERSION=1.1 node scripts/asc-listing.mjs`
+(creates the version + copies the listing) and `--submit`.
 
 > **`npm install` must run before Xcode opens.**
 > `ios/App/CapApp-SPM/Package.swift` references plugins by relative path

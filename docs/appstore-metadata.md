@@ -115,28 +115,37 @@ play. The tutorial (5 short beats) runs on first launch only.
 
 ## Screenshots
 
-Required: 6.9" iPhone set (1320 x 2868) or 6.7" (1290 x 2796) - one set can
-be reused for all smaller sizes. Generated set lives at
-`data/appstore/screenshots/` (see `scripts/appstore-screenshots.ts` in the
-chess-learning-tree scratchpad session, or regenerate by re-running it).
+`data/appstore/screenshots/*.png` — 1290 x 2796 (6.7" iPhone; ASC reuses it for
+every smaller size). Regenerate from the live site with
+`node scripts/appstore-screenshots.mjs`, then push to ASC with
+`node scripts/asc-listing.mjs --shots`. Files upload in filename order.
 
-Order for the store page:
-1. Board mid-hunt (the core fantasy: one rook vs the king's court)
-2. Ability offer (the roguelike pick)
-3. Daily home (The Daily Revenge, streak/leaderboard)
-4. Trophy room / ability arsenal
-5. Difficulty ladder
+## Status (2026-09-03) — listing is FILLED, one click from submit
 
-## What Tyler must do in the browser (Apple blocks these via API)
+Everything above is already applied to the ASC record (app id 6802359470) by
+`scripts/asc-listing.mjs`: name, subtitle, categories (Games > Board/Strategy,
+secondary Education), age rating 4+, content rights (original), description,
+keywords, promo text, URLs, copyright, review contact + notes, free price
+schedule, 175 territories, and TestFlight build 4 attached to version 1.0.
 
-1. Create the app record in App Store Connect: My Apps -> "+" -> New App ->
-   iOS, name per above, bundle `com.learnthroughstories.rookiesrun`, SKU
-   `rookiesrun`, English (U.S.).
-2. Paste the metadata above; upload the screenshot set.
-3. Answer the Privacy questionnaire: no data collected (no account, no
-   analytics SDK in the native shell) - verify before answering; if PostHog
-   runs on run.chesspath.app in the webview, declare "Product Interaction"
-   data not linked to identity.
-4. Then from the repo: `cd ios/App && fastlane beta && fastlane upload`
-   (runbook: docs/ios.md).
+```bash
+node scripts/asc-listing.mjs --status   # see the live state
+node scripts/asc-listing.mjs            # re-apply copy after editing COPY in the script
+node scripts/asc-listing.mjs --shots    # replace screenshots
+node scripts/asc-listing.mjs --submit   # attach newest VALID build + submit for review
 ```
+
+## The ONE thing Tyler must do in a browser
+
+**App Privacy label** — Apple has no API for it. Sign in at
+https://appstoreconnect.apple.com/apps/6802359470/distribution/privacy and
+declare (matches what the webview actually does — PostHog + Supabase leaderboard):
+
+- Data Types: **Identifiers → Device ID** (the random player id used for the
+  leaderboard) and **Usage Data → Product Interaction** (PostHog).
+- Both: Purpose = Analytics (+ App Functionality for Device ID), **not linked to
+  identity**, **not used for tracking**.
+- Do NOT declare email / name / contacts — there is no sign-in.
+
+Review will 409 until that label is published. After it is:
+`node scripts/asc-listing.mjs --submit`.
