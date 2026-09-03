@@ -249,21 +249,28 @@ function KitFanCard() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-        <MiniBoard pos={pos} size={640} lit={last} radius={20} border="10px solid rgba(0,0,0,0.45)" />
+        <MiniBoard pos={pos} size={600} lit={last} radius={20} border="10px solid rgba(0,0,0,0.45)" />
       </div>
       <div style={{ textAlign: 'center', marginTop: 10, fontSize: 28, fontWeight: 800, color: 'rgba(255,255,255,0.7)', minHeight: 36 }}>
         {last ? `Got him. ${RUN.moves} moves · par ${RUN.par}` : REPLAY[frame].caption}
       </div>
 
-      <div style={{ marginTop: 16, textAlign: 'center', fontSize: 26, fontWeight: 900, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.3em' }}>Rookie&rsquo;s Abilities</div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 20, marginTop: 12 }}>
+      <div style={{ marginTop: 10, textAlign: 'center', fontSize: 24, fontWeight: 900, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.3em' }}>Rookie&rsquo;s Abilities</div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 20, marginTop: 8 }}>
         {RUN.kit.map((id) => (
-          <KitCard key={id} id={id} width={200} />
+          <KitCard key={id} id={id} width={176} />
         ))}
       </div>
 
-      <div style={{ position: 'absolute', right: 48, bottom: 36 }}>
-        <Brand size={56} />
+      {/* CTA — a challenge, not a logo (Tyler 2026-09-03: "needs a stronger CTA"). */}
+      <div style={{ position: 'absolute', left: 48, right: 48, bottom: 36, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, padding: '18px 22px 18px 28px', borderRadius: 28, background: REVENGE_RED, boxShadow: `0 10px 0 ${REVENGE_RED_DARK}, 0 24px 40px rgba(0,0,0,0.45)` }}>
+        <div>
+          <div style={{ fontSize: 40, fontWeight: 900, lineHeight: 1, letterSpacing: '-0.01em' }}>Beat my {RUN.moves} moves.</div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#FFD6D6', marginTop: 8 }}>Same run, same abilities. Today only.</div>
+        </div>
+        <div style={{ flexShrink: 0, background: '#fff', color: REVENGE_RED, borderRadius: 18, padding: '18px 26px', fontSize: 28, fontWeight: 900, letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 6px 0 rgba(0,0,0,0.25)', textAlign: 'center', lineHeight: 1.1 }}>
+          Play free<br /><span style={{ fontSize: 20, fontWeight: 800, letterSpacing: 0, textTransform: 'none', color: '#8a1f1a' }}>run.chesspath.app</span>
+        </div>
       </div>
     </div>
   );
