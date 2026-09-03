@@ -3131,39 +3131,28 @@ export function tryAegisIntercept(
 }
 
 /**
- * FINISHERS are ONE CHARGE PER RUN (Tyler, 2026-09-01 — option A).
+ * EVERY ability refills at the top of every level (Tyler, 2026-09-03:
+ * "I want all abilities to be fresh at the top of every level, we'll just
+ * have to make the levels harder… no one likes not being able to use
+ * abilities"). This REVERSES the 2026-09-01 one-charge-per-run rule for
+ * finishers: players read a spent Freeze Ray on level 9 as a bug, not a
+ * budget. Difficulty now has to come from the boards (tighter move limits,
+ * double-locked keys — see revenge-11 Dead Bolt), never from withholding
+ * powers.
  *
- * The nightly harness proved that any finisher wins 90-100% of levels on its
- * own, so with per-level refreshes a new player cleared every run 100% no
- * matter how the boards were tuned. Finisher charges therefore do NOT come
- * back at level transitions: you get one when you pick the card and one
- * more each time you upgrade it (see pickAbility). Spend it on the level
- * that needs it. Support abilities still refresh every level.
+ * The set is kept (empty) so the mechanism can be switched back per-ability
+ * in one line if a finisher ever proves unfixable by level design.
  */
-export const ONE_CHARGE_PER_RUN: ReadonlySet<AbilityId> = new Set<AbilityId>([
-  'knight-hop',
-  'bishop-step',
-  'queen-pulse',
-  'freeze-ray',
-  'summon-knight',
-  'surge',
-  // Controllable summons can take the king themselves — same rule as the
-  // Squire. Swap / Sacrifice / Knighting are support and refresh per level.
-  'bishop-squire',
-  'page',
-  'twin',
-  'duchess',
-  'dragon',
-  'vanguard',
-]);
+export const ONE_CHARGE_PER_RUN: ReadonlySet<AbilityId> = new Set<AbilityId>([]);
 
 export function isOneChargePerRun(id: AbilityId): boolean {
   return ONE_CHARGE_PER_RUN.has(id);
 }
 
 /**
- * Reset per-level uses at level transitions. Finishers keep whatever charge
- * they have left (see ONE_CHARGE_PER_RUN); everything else refills.
+ * Reset per-level uses at level transitions. Everything refills (the
+ * ONE_CHARGE_PER_RUN set is empty as of 2026-09-03; anything listed there
+ * would keep its remaining charge instead).
  * `refreshAll` (playtest context ONLY — /playtest's ?refresh=1) bypasses the
  * one-charge hold so every ability refills each level. Default behavior is
  * unchanged for normal players, the harness, and seed.ts.
