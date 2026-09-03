@@ -134,22 +134,37 @@ function Medal({ rank }: { rank: number }) {
 function Arena({ flipped, onBack, runName, runBlurb, poolSize, difficultyName }: {
   flipped: boolean; onBack: () => void; runName: string; runBlurb: string; poolSize: number; difficultyName?: string;
 }) {
-  // backface-visibility does NOT reach the board's own transformed layers
-  // (the CAPTURE THE KING tag, the bottom rank), so the front face is swapped
-  // to hidden at the 90° point (325ms of 650) instead of trusting it.
-  const [showBack, setShowBack] = useState(flipped);
-  useEffect(() => {
-    const t = setTimeout(() => setShowBack(flipped), 325);
-    return () => clearTimeout(t);
-  }, [flipped]);
+  // No 3D flip (Tyler 2026-09-03: "it still looks weird"). The board's own
+  // transformed layers never respected backface-visibility, so the card
+  // flipped with ghosted labels. Now: the board fades + settles back, and
+  // the map card rises up over it. Plain opacity/transform — nothing to hide
+  // at a magic midpoint.
+  const EASE = 'cubic-bezier(.22,1,.36,1)';
   return (
-    <div className="relative w-full aspect-square" style={{ perspective: 1200 }}>
-      <div className="absolute inset-0" style={{ transformStyle: 'preserve-3d', transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)', transition: 'transform 650ms cubic-bezier(.22,1,.36,1)' }}>
-        <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', visibility: showBack ? 'hidden' : 'visible', ...FRAME }}>
-          {/* paused while flipped — nothing keeps moving behind the card */}
-          <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)', backfaceVisibility: 'hidden' }}><DemoBoard paused={flipped || showBack} reticle={!flipped && !showBack} /></div>
-        </div>
-        <div className="absolute inset-0 rounded-[20px] p-2" style={{ backfaceVisibility: 'hidden', visibility: showBack ? 'visible' : 'hidden', transform: 'rotateY(180deg)', background: 'linear-gradient(180deg,#5b2030 0%,#2a0f18 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}>
+    <div className="relative w-full aspect-square">
+      <div
+        className="absolute inset-0 rounded-[20px] p-2"
+        style={{
+          ...FRAME,
+          opacity: flipped ? 0 : 1,
+          transform: flipped ? 'scale(0.94)' : 'scale(1)',
+          visibility: flipped ? 'hidden' : 'visible',
+          pointerEvents: flipped ? 'none' : 'auto',
+          transition: `opacity 360ms ${EASE}, transform 420ms ${EASE}, visibility 0s linear ${flipped ? '360ms' : '0s'}`,
+        }}
+      >
+        {/* paused while the map is up — nothing keeps moving behind the card */}
+        <div className="rounded-[14px] overflow-hidden h-full" style={{ boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}><DemoBoard paused={flipped} reticle={!flipped} /></div>
+      </div>
+      <div
+        className="absolute inset-0 rounded-[20px] p-2"
+        style={{
+          opacity: flipped ? 1 : 0,
+          transform: flipped ? 'translateY(0) scale(1)' : 'translateY(18px) scale(0.97)',
+          visibility: flipped ? 'visible' : 'hidden',
+          pointerEvents: flipped ? 'auto' : 'none',
+          transition: `opacity 360ms ${EASE} ${flipped ? '80ms' : '0s'}, transform 460ms ${EASE} ${flipped ? '80ms' : '0s'}, visibility 0s linear ${flipped ? '0s' : '360ms'}`,
+          background: 'linear-gradient(180deg,#5b2030 0%,#2a0f18 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}>
           <div className="rounded-[14px] h-full flex flex-col p-3.5" style={{ background: 'linear-gradient(180deg,#1c2f63 0%,#0f1c3f 100%)', boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}>
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: '#FF6B66' }}>Today&rsquo;s map</span>
@@ -168,7 +183,6 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize, difficultyName }:
             </div>
             <div className="text-[12px] font-bold text-center" style={{ color: 'rgba(255,255,255,0.6)' }}>Ten levels. One King. Hit BEGIN.</div>
           </div>
-        </div>
       </div>
     </div>
   );
