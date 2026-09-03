@@ -12,7 +12,7 @@ import { LADDER_RUNG_IDS, rungRun, rungState } from '@/lib/run/ladder';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
 import { getHandle } from '@/lib/run/leaderboard-client';
 import { todaysAbilities } from '@/lib/run/daily-kit';
-import { setStatusBarText } from './StatusBarSync';
+import { useNavyShell } from './useNavyShell';
 
 /**
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
@@ -162,19 +162,27 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize }: {
   );
 }
 
-// ── Tab bar: big icons, a raised gold-edged pill on the active tab ──────────
+// ── Tab bar (option A, Tyler 2026-09-03): big icons, gold-edged raised pill
+// on the active tab, label only on the active tab ─────────────────────────
 function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
-  const i = TABS.indexOf(active);
   return (
-    <div className="relative grid grid-cols-4 rounded-2xl p-1" role="tablist" aria-label="Home sections" style={{ background: '#0a1230', border: `2px solid ${PANEL_EDGE}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.08), 0 4px 0 rgba(0,0,0,0.35)' }}>
-      <div aria-hidden className="absolute top-1 bottom-1 rounded-xl" style={{ left: 4, width: 'calc((100% - 8px) / 4)', transform: `translateX(${i * 100}%)`, transition: 'transform 300ms cubic-bezier(.22,1,.36,1)', background: 'linear-gradient(180deg,#4a63b0,#24397a)', border: `2px solid ${GOLD}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), 0 3px 0 rgba(0,0,0,0.45)' }} />
+    <div className="grid grid-cols-4 rounded-2xl p-1.5 gap-1" role="tablist" aria-label="Home sections" style={{ background: '#0a1230', border: `2px solid ${PANEL_EDGE}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.08), 0 4px 0 rgba(0,0,0,0.35)' }}>
       {TABS.map((t) => {
         const on = t === active;
         return (
-          <button key={t} type="button" role="tab" aria-selected={on} onClick={() => onChange(t)} className="relative min-h-[72px] rounded-xl flex flex-col items-center justify-center gap-0.5 arena-press" style={{ ['--depth' as string]: '2px' }}>
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={on}
+            aria-label={t}
+            onClick={() => onChange(t)}
+            className="min-h-[76px] rounded-xl flex flex-col items-center justify-center gap-1"
+            style={on ? { background: 'linear-gradient(180deg,#4a63b0,#24397a)', border: `2px solid ${GOLD}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), 0 3px 0 rgba(0,0,0,0.45)' } : undefined}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/ui/tabs/${TAB_ART[t]}.webp`} alt="" width={48} height={48} style={{ width: 48, height: 48, transform: on ? 'translateY(-2px) scale(1.1)' : 'none', filter: on ? 'drop-shadow(0 0 8px rgba(255,200,0,0.6))' : 'saturate(0.6) brightness(0.7)', transition: 'transform 200ms cubic-bezier(.22,1,.36,1), filter 200ms' }} />
-            <span className="text-[11px] font-black uppercase tracking-wide" style={on ? { ...OUTLINE, color: GOLD } : { color: 'rgba(255,255,255,0.55)' }}>{t}</span>
+            <img src={`/ui/tabs/${TAB_ART[t]}.webp`} alt="" width={56} height={56} style={{ width: on ? 50 : 56, height: on ? 50 : 56, transform: on ? 'translateY(-2px) scale(1.1)' : 'none', filter: on ? 'drop-shadow(0 0 8px rgba(255,200,0,0.6))' : 'saturate(0.5) brightness(0.6)', transition: 'transform 200ms cubic-bezier(.22,1,.36,1), filter 200ms' }} />
+            {on && <span className="text-[11px] font-black uppercase tracking-wide" style={{ ...OUTLINE, color: GOLD }}>{t}</span>}
           </button>
         );
       })}
@@ -329,26 +337,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
   const [handle, setHandle] = useState('Rook');
   useEffect(() => { setHandle(getHandle()); }, []);
 
-  // Paint the page shell navy while the Arena is up so the notch + home-bar
-  // safe areas (which show the html background) match, and flip the native
-  // status-bar text to white. Restored on unmount — the game page is light.
-  useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    const prev = { html: html.style.backgroundColor, body: body.style.backgroundColor };
-    html.style.backgroundColor = NAVY;
-    body.style.backgroundColor = NAVY;
-    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    const prevTheme = meta?.getAttribute('content') ?? null;
-    meta?.setAttribute('content', NAVY);
-    setStatusBarText(true);
-    return () => {
-      html.style.backgroundColor = prev.html;
-      body.style.backgroundColor = prev.body;
-      if (meta && prevTheme !== null) meta.setAttribute('content', prevTheme);
-      setStatusBarText(false);
-    };
-  }, []);
+  useNavyShell(true);
 
   const run = isKnownRunId(runId) ? getRunById(runId) : null;
   const runName = run?.name ?? "Today's run";

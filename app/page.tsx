@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RunBoard } from '@/components/run/Board';
 import { LevelClearedModal } from '@/components/run/LevelClearedModal';
 import { LevelLostModal } from '@/components/run/LevelLostModal';
+import { useNavyShell } from '@/components/run/useNavyShell';
 import { RunSummaryModal } from '@/components/run/RunSummaryModal';
 import { computeStats, readHistory, recordRun } from '@/lib/run/history';
 import { AbilityRack } from '@/components/run/AbilityRack';
@@ -615,6 +616,8 @@ export default function RookiesRunPage() {
   // First-run story onboarding — shown ONCE (localStorage), before the daily
   // intro card. `?onboarding=1` forces it for testing.
   const [showOnboarding, setShowOnboarding] = useState(false);
+  // Navy shell (notch + home bar + status-bar text) for every Revenge screen.
+  useNavyShell(!isStc && !showOnboarding);
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const forced = new URLSearchParams(window.location.search).get('onboarding') === '1';
@@ -1523,7 +1526,7 @@ export default function RookiesRunPage() {
 
   if (showOnboarding) {
     return (
-      <div className="h-full overflow-auto">
+      <div className="h-full overflow-auto pt-[env(safe-area-inset-top)]">
         <StoryOnboarding
           onDone={() => {
             ensureAudioWarm();
@@ -1582,7 +1585,7 @@ export default function RookiesRunPage() {
   }
 
   return (
-    <div className="h-full overflow-auto bg-chess-page">
+    <div className="h-full overflow-auto bg-chess-page" style={isStc ? undefined : { background: 'linear-gradient(180deg, #182a5c 0%, #0f1c3f 60%)' }}>
       <style>{`
         @keyframes rrMovesPulse {
           0%   { transform: scale(1); }
@@ -1605,7 +1608,7 @@ export default function RookiesRunPage() {
         state.moveLimit - state.moveCount <= 2 && (
           <LowMovesEmergency left={state.moveLimit - state.moveCount} />
         )}
-      <div className="max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pt-1.5 pb-3 flex flex-col gap-2">
+      <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[max(env(safe-area-inset-top),8px)]'}`}>
         <header className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
@@ -1614,9 +1617,10 @@ export default function RookiesRunPage() {
               className="text-left active:opacity-70 transition-opacity shrink-0"
               aria-label="Switch run"
             >
-              {isStc ? <StcRunLogo scale={0.45} /> : <RookiesRevengeLogo scale={0.3} />}
+              {/* Revenge: bigger lockup, white "Rookie's" on navy (Tyler 2026-09-03); the rules strip is gone. */}
+              {isStc ? <StcRunLogo scale={0.45} /> : <RookiesRevengeLogo scale={0.42} dark />}
             </button>
-            <RulesInline winCondition={state.winCondition} />
+            {isStc && <RulesInline winCondition={state.winCondition} />}
           </div>
 
           <div className="flex flex-col items-end gap-1 shrink-0">
@@ -1634,7 +1638,7 @@ export default function RookiesRunPage() {
               <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
                 Lvl
               </span>
-              <span className="text-sm font-black text-chess-text tabular-nums">
+              <span className="text-sm font-black text-chess-text tabular-nums" style={isStc ? undefined : { color: '#FFC800', textShadow: '0 2px 0 rgba(0,0,0,0.5)' }}>
                 {levelIndex + 1}
                 <span className="text-chess-text-faint">/{totalLevels}</span>
               </span>
@@ -1719,7 +1723,10 @@ export default function RookiesRunPage() {
           </button>
         </div>
 
-        <div className="w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto">
+        <div
+          className={`w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto ${isStc ? '' : 'rounded-[20px] p-2'}`}
+          style={isStc ? undefined : { background: 'linear-gradient(180deg,#3d5297 0%,#1b2b5c 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}
+        >
           <RunBoard
             key={`level-${levelIndex}-${state.level}`}
             state={state}
@@ -1757,8 +1764,8 @@ export default function RookiesRunPage() {
         )}
 
         {state.status === 'playing' && state.activeAbility && (
-          <div className="flex items-center gap-2 rounded-lg bg-[#E53935]/10 border border-[#E53935]/40 px-3 py-2">
-            <span className="text-xs font-black text-[#B71C1C] dark:text-[#f0a4a2] flex-1 leading-tight">
+          <div className="flex items-center gap-2 rounded-lg px-3 py-2" style={isStc ? { background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.4)' } : { background: 'rgba(229,57,53,0.22)', border: '1.5px solid rgba(229,57,53,0.7)' }}>
+            <span className="text-xs font-black flex-1 leading-tight" style={{ color: isStc ? '#B71C1C' : '#FFB3B0' }}>
               {ABILITY_DEFS[state.activeAbility.id].name}:{' '}
               {state.activeAbility.step === 'pick-enemy'
                 ? state.activeAbility.id === 'magnet'

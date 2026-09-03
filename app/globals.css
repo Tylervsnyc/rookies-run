@@ -350,3 +350,20 @@ body {
 }
 @keyframes foil-shift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes foil-sweep { 0%{transform:translateX(-100%)} 60%{transform:translateX(120%)} 100%{transform:translateX(120%)} }
+
+/* Rookie's Revenge game surface (Tyler 2026-09-03, approved at /test/revenge-play):
+   the Arena palette re-themes every token-based chip inside the play page.
+   Scoped so /review, /playtest, STC and the modals stay light. */
+.rr-navy {
+  --color-chess-page: #0f1c3f;
+  --color-chess-surface: #1c2f63;
+  --color-chess-text: #ffffff;
+  --color-chess-text-muted: rgba(255, 255, 255, 0.62);
+  --color-chess-text-faint: rgba(255, 255, 255, 0.42);
+  --color-chess-text-light: rgba(255, 255, 255, 0.42);
+  color: #fff;
+}
+.rr-navy .bg-chess-surface {
+  border: 2px solid #3a4f8f;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.14), inset 0 -3px 0 rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.35);
+}

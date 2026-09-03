@@ -34,7 +34,10 @@ const config: CapacitorConfig = {
     cleartext: false,
   },
   ios: {
-    contentInset: 'always',
+    // 'never' (2026-09-03): the web view runs edge-to-edge and every Revenge
+    // screen pads with env(safe-area-inset-*) itself, so the notch + home bar
+    // paint navy instead of the shell's light color. Needs a native rebuild.
+    contentInset: 'never',
   },
   plugins: {
     SplashScreen: {
