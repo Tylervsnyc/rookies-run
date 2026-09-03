@@ -379,7 +379,10 @@ export function isRookieThreatened(state: BoardState): boolean {
   if (state.status !== 'playing') return false;
   if (state.shieldUp) return false;
   if ((state.smokeTurnsLeft ?? 0) > 0) return false;
-  return state.pieces.some((piece) => canCapture(piece, state));
+  // A frozen piece skips its next action — it can't take her.
+  return state.pieces.some(
+    (piece) => !state.frozenSquares.includes(toSquare(piece)) && canCapture(piece, state),
+  );
 }
 
 function chebyshev(a: Coord, b: Coord): number {

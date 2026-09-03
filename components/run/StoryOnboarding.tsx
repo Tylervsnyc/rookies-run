@@ -14,6 +14,7 @@ import {
   RookiesRevengeLogo,
 } from '@/components/run/RookiesRevengeLogo';
 import { RevengeLockOn } from '@/components/run/RevengeLockOn';
+import { useNavyShell } from '@/components/run/useNavyShell';
 import { TempoBar } from '@/components/run/TempoBar';
 import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
@@ -74,13 +75,18 @@ import { haptic, hapticSuccess } from '@/lib/haptics';
  *           the king; take him; she STAYS a knight until Next.
  * Beat 8  — Surge (interactive): blue arrow at the Surge card, then arrows
  *           a1→e1→e4; the king's "I don't get a move" bubble; Rookie's line.
- * Beat 9  — Freeze Ray (interactive): the player drops to h1, the king steps
- *           up; Next rewinds; blue arrow at the card, pointer at the king,
- *           then EITHER route onto him (h1 or e5).
- * Beat 10 — tempo (interactive): the player takes a pawn, a knight and a
- *           queen; the bar glows with each real TEMPO_REWARD; then the
- *           powers popup demonstrates NEW vs UPGRADE.
- * Beat 11 — the final screen: "You're ready to play Rookie's Revenge."
+ * Beat 9  — Freeze Ray (interactive): the knight on h1 is free, the player
+ *           takes it (the king is stunned) — and the bishop on g2 takes HER.
+ *           Next rewinds; blue arrow at the card, pointer at the bishop;
+ *           freeze him, take the knight, take the king.
+ * Beat 10 — tempo (interactive): the player takes a pawn and a knight as a
+ *           rook, then Knight Hops onto the queen (a rook on the queen's
+ *           line would be in her sights — Rookie is never in danger here);
+ *           the bar glows with each real TEMPO_REWARD; then the powers popup
+ *           demonstrates NEW vs UPGRADE.
+ * Beat 11 — danger: a bishop is looking at Rookie; she turns red. "If you
+ *           lose her, you lose the game."
+ * Beat 12 — the final screen: "You're ready to play Rookie's Revenge."
  *
  * Beats 1-4 render a static ChessPathBoard (the run board can't hold white
  * pieces). Beats 5-10 reuse the real RunBoard + engine; enemies never act on
@@ -98,8 +104,15 @@ interface StoryOnboardingProps {
   onDone: () => void;
 }
 
-type Beat = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-const LAST_BEAT: Beat = 11;
+type Beat = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+const LAST_BEAT: Beat = 12;
+
+// Arena palette (components/run/ArenaHome.tsx) — the tutorial lives in the
+// same navy shell as the home screen and the game (Tyler, 2026-09-03).
+const NAVY = '#0f1c3f';
+const NAVY_2 = '#182a5c';
+const PANEL = '#1c2f63';
+const PANEL_EDGE = '#3a4f8f';
 
 // Beat 1 scene phases: 0 intro · 1 arrow d4→d7 · 2 Qxd7 (timed) · 3 "fatal
 // error" · 4 Nxg1 slow-mo · 5 GAME OVER stamp (timed).
@@ -120,8 +133,8 @@ const DOOR_TOO_LATE_AT = 900;
 // Beat 7: the king steps off her line after the arrow lands. After the
 // capture she stays a knight — beat 8 remounts the board as a fresh rook.
 const SIDESTEP_AT = 1500;
-// Beat 9 demo: the king steps up after the player drops to h1.
-const STEP_UP_AT = 700;
+// Beat 9 demo: the bishop takes her after she grabs the knight on h1.
+const BISHOP_TAKES_AT = 900;
 // Beat 10: tempo bar glow after each capture; the offer once it's full.
 const TEMPO_GLOW_MS = 1100;
 const TEMPO_OFFER_AT = 1400;
@@ -235,41 +248,71 @@ const SURGE_PUZZLE: RunPuzzle = {
 };
 const SURGE_KING_SQUARE = 'e4';
 
-// Beat 9: Rookie h5, king e1 on the back rank. Drop to h1 and he just steps
-// up to e2. Freeze him first, then h1, then take him along the rank.
+// Beat 9: Rookie h5, king e1. His knight on h1 is free to take — but the
+// bishop on g2 is watching h1. Pawns f4/f5 close the rank routes, so h1 is
+// the only way onto him. Freeze the bishop, take the knight (the capture
+// stuns him), take him along the rank. (Enemies have no rook type — Rookie
+// is the only rook — so the bait is a knight.)
 const FREEZE_PUZZLE: RunPuzzle = {
   level: 1,
   rookieStart: { file: 8, rank: 5 },
-  pieces: [{ type: 'king', color: 'black', file: 5, rank: 1 }],
+  pieces: [
+    { type: 'king', color: 'black', file: 5, rank: 1 },
+    { type: 'knight', color: 'black', file: 8, rank: 1 },
+    { type: 'bishop', color: 'black', file: 7, rank: 2 },
+    { type: 'pawn', color: 'black', file: 6, rank: 4 },
+    { type: 'pawn', color: 'black', file: 6, rank: 5 },
+  ],
   enemiesPerTurn: 0,
   winCondition: 'king',
   kingBehavior: 'still',
 };
 const FREEZE_KING_SQUARE = 'e1';
-const FREEZE_KING_STEP = 'e2';
-/** Where Knight Hop from h1 would land — it misses e2 (the ghost arrow). */
-const FREEZE_HOP_MISS = 'f2';
+const FREEZE_BAIT_SQUARE = 'h1';
+const FREEZE_BISHOP_SQUARE = 'g2';
 const FREEZE_ROOKIE_START = 'h5';
 
 /** Beat 8: Rookie's line after she takes him (one is picked per win). */
 const REVENGE_LINES = ['That’s for the white king.', 'She took it personally.', 'Personal.'];
 
-// Beat 10: three PLAYER captures on the real board — a4 (pawn), d4 (knight),
-// d7 (queen): TEMPO_REWARD 1 + 2 + 4 = 7, from max-7 to a full bar. No king:
-// nothing to win, just the meter filling.
+// Beat 10: three PLAYER captures on the real board — a4 (pawn), d4 (knight)
+// as a rook, then Knight Hop d4→e6 (queen): TEMPO_REWARD 1 + 2 + 4 = 7, from
+// max-7 to a full bar. No king: nothing to win, just the meter filling.
+// Rookie is NEVER attacked on this path (Tyler 2026-09-03): the queen on e6
+// sees no square she lands on, and a rook can only take a queen from the
+// queen's own line — so she hops onto her as a knight instead.
 const TEMPO_PUZZLE: RunPuzzle = {
   level: 1,
   rookieStart: { file: 1, rank: 1 },
   pieces: [
     { type: 'pawn', color: 'black', file: 1, rank: 4 },
     { type: 'knight', color: 'black', file: 4, rank: 4 },
-    { type: 'queen', color: 'black', file: 4, rank: 7 },
+    { type: 'queen', color: 'black', file: 5, rank: 6 },
   ],
   enemiesPerTurn: 0,
   winCondition: 'king',
   kingBehavior: 'still',
 };
-const TEMPO_PATH = ['a4', 'd4', 'd7'];
+const TEMPO_PATH = ['a4', 'd4', 'e6'];
+/** The capture that needs Knight Hop first (index into TEMPO_PATH). */
+const TEMPO_HOP_STEP = 2;
+
+// Beat 11: the bishop on g7 is looking straight at Rookie on d4 — the real
+// board's "in check" alarm fires on its own. Nothing to do but look.
+const DANGER_PUZZLE: RunPuzzle = {
+  level: 1,
+  rookieStart: { file: 4, rank: 4 },
+  pieces: [
+    { type: 'king', color: 'black', file: 5, rank: 8 },
+    { type: 'bishop', color: 'black', file: 7, rank: 7 },
+    { type: 'pawn', color: 'black', file: 2, rank: 7 },
+  ],
+  enemiesPerTurn: 0,
+  winCondition: 'king',
+  kingBehavior: 'still',
+};
+const DANGER_BISHOP_SQUARE = 'g7';
+const DANGER_ROOKIE_SQUARE = 'd4';
 const TEMPO_GAIN_TOTAL = TEMPO_REWARD.pawn + TEMPO_REWARD.knight + TEMPO_REWARD.queen;
 
 function baseState(puzzle: RunPuzzle): BoardState {
@@ -305,10 +348,22 @@ function lentState(puzzle: RunPuzzle, ids: AbilityId[] = STARTERS): BoardState {
   };
 }
 
-/** Beat 10: seven short of full, three pieces to take (1 + 2 + 4). */
+/** Beat 10: seven short of full, three pieces to take (1 + 2 + 4). Knight Hop racked for the queen. */
 function tempoState(): BoardState {
   const s = baseState(TEMPO_PUZZLE);
-  return { ...s, tempo: tempoMaxFor(s) - TEMPO_GAIN_TOTAL, abilities: [] };
+  return {
+    ...s,
+    tempo: tempoMaxFor(s) - TEMPO_GAIN_TOTAL,
+    abilities: [
+      { id: 'knight-hop', tier: 1 as const, mutations: [], usesLeftThisLevel: maxUsesForTier('knight-hop', 1) },
+    ],
+  };
+}
+
+/** Beat 11: Rookie under attack, empty rack, nothing to do. */
+function dangerState(): BoardState {
+  const s = baseState(DANGER_PUZZLE);
+  return { ...s, abilities: [] };
 }
 
 /**
@@ -378,9 +433,9 @@ function demoOffer(): AbilityOffer {
   ];
 }
 
-const CTA_STYLE = { boxShadow: '0 4px 0 #1a2c33, 0 6px 12px rgba(0,0,0,0.12)' };
+const CTA_STYLE = { background: REVENGE_RED, boxShadow: `0 4px 0 ${REVENGE_RED_DARK}, 0 6px 12px rgba(0,0,0,0.3)` };
 const CTA_CLASS =
-  'w-full py-3 min-h-[44px] rounded-2xl bg-chess-text text-white font-black text-[14px] tracking-wide active:translate-y-px transition-transform';
+  'w-full py-3 min-h-[44px] rounded-2xl text-white font-black text-[14px] tracking-wide active:translate-y-px transition-transform';
 
 // Beat 5 drill steps.
 // 0 take a7   1 he's stunned (the capture-stun rule, Next-gated)
@@ -391,10 +446,10 @@ type DrillStep = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 // Beat 7 phases: the king sidesteps, the offer opens, the player picks Knight
 // Hop ('armed' = it's in the rack, tap it), she's a knight ('hop').
 type HopPhase = 'line' | 'stepped' | 'offer' | 'armed' | 'hop';
-// Beat 9 phases: the player drops to h1 ('demo'), the king steps up
-// ('stepped'), the story explains ('explain'), Next rewinds and the player
-// is on ('ready').
-type FreezePhase = 'demo' | 'stepped' | 'explain' | 'ready';
+// Beat 9 phases: the player takes the knight on h1 ('demo' → 'taken', the
+// king is stunned), the bishop takes her ('captured'), Next rewinds and the
+// player is on ('ready').
+type FreezePhase = 'demo' | 'taken' | 'captured' | 'ready';
 
 export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   // Dev hook: `?onboardingBeat=11` (with `?onboarding=1`) opens on that beat.
@@ -422,7 +477,17 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const [tempoOffer, setTempoOffer] = useState(false);
   // Beat 8: Rookie's one-liner after she takes him (picked once per win).
   const [revengeLine, setRevengeLine] = useState<string | null>(null);
-  const [state, setState] = useState<BoardState>(() => drillState());
+  // Board state for the opening beat — the `?onboardingBeat=` dev hook lands
+  // on the right board too (it used to open every beat on the rook drill).
+  const [state, setState] = useState<BoardState>(() => {
+    if (typeof window === 'undefined') return drillState();
+    const n = Number(new URLSearchParams(window.location.search).get('onboardingBeat'));
+    const lent = LENT[n as Beat];
+    if (lent) return lentState(lent.puzzle, n === 7 ? ['knight-hop'] : STARTERS);
+    if (n === 10) return tempoState();
+    if (n === 11) return dangerState();
+    return drillState();
+  });
   const [selected, setSelected] = useState<string | null>(null);
   const sadMusicRef = useRef<SadMusicHandle | null>(null);
   const kingMusicRef = useRef<SadMusicHandle | null>(null);
@@ -581,15 +646,23 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     return () => clearTimeout(t);
   }, [beat, hopPhase]);
 
-  // Beat 9 demo: the player dropped to h1 — the king just steps up.
+  // Beat 9 demo: she took the knight on h1 — the bishop was watching h1.
+  // He takes her (the real board's captured-Rookie rendering, under the sad
+  // track, colour draining like the opening game).
   useEffect(() => {
-    if (beat !== 9 || freezePhase !== 'stepped') return;
+    if (beat !== 9 || freezePhase !== 'taken') return;
     const t = setTimeout(() => {
-      setState((s) => moveEnemy(s, FREEZE_KING_SQUARE, FREEZE_KING_STEP));
-      void playMoveSound();
-      haptic('light');
-      setFreezePhase('explain');
-    }, STEP_UP_AT);
+      stopSadMusic(sadMusicRef.current, 0);
+      sadMusicRef.current = startSadMusic();
+      setState((s) => ({
+        ...moveEnemy(s, FREEZE_BISHOP_SQUARE, FREEZE_BAIT_SQUARE),
+        status: 'lost',
+        kingStunTurns: 0,
+      }));
+      void playCaptureSound();
+      haptic('heavy');
+      setFreezePhase('captured');
+    }, BISHOP_TAKES_AT);
     return () => clearTimeout(t);
   }, [beat, freezePhase]);
 
@@ -662,7 +735,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       setTempoStep(0);
       setTempoGlow(false);
       setTempoOffer(false);
+      setCast(false);
+      setStuck(false);
     }
+    if (b === 11) setState(dangerState());
     setBeat(b);
   }, []);
 
@@ -701,10 +777,12 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (beat < LAST_BEAT) goTo((beat + 1) as Beat);
   }, [beat, phase, drill, hopPhase, goTo]);
 
-  // Beat 9: Next after the demo rewinds — Rookie back to h5, the king back
-  // to e1 — and the player is on (Freeze Ray first).
+  // Beat 9: Next after the demo rewinds — Rookie back to h5, the knight back
+  // on h1 — and the player is on (Freeze Ray first).
   const goToFreezeReady = useCallback(() => {
     haptic('light');
+    stopSadMusic(sadMusicRef.current);
+    sadMusicRef.current = null;
     setState(lentState(FREEZE_PUZZLE));
     setCast(false);
     setStuck(false);
@@ -715,15 +793,17 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const lent = LENT[beat];
   const won = state.status === 'won';
   const freezeDemo = beat === 9 && freezePhase === 'demo';
-  const freezeWaiting = beat === 9 && (freezePhase === 'stepped' || freezePhase === 'explain');
+  const freezeWaiting = beat === 9 && (freezePhase === 'taken' || freezePhase === 'captured');
   const tempoDone = beat === 10 && tempoStep >= TEMPO_PATH.length;
+  // Beat 10: the queen step needs Knight Hop first.
+  const tempoNeedsHop = beat === 10 && tempoStep === TEMPO_HOP_STEP && !cast;
   const interactive =
     beat === 5
       ? !won && (drill === 0 || drill === 3 || drill === 6)
       : beat === 7
         ? !won && hopPhase === 'hop'
         : beat === 10
-          ? !tempoDone
+          ? !tempoDone && !stuck
           : lent
             ? !won && !stuck && !freezeWaiting
             : false;
@@ -773,21 +853,23 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       }
 
       if (beat === 9) {
-        // Demo: the player drops to h1 (any move works) and he steps up.
+        // Demo: only the knight on h1 — the engine's REAL capture-stun lands
+        // on the king, then the bishop answers (effect above).
         if (freezeDemo) {
-          land({ ...nextState, turn: 'rookie', pendingOffer: null, kingStunTurns: 0 });
-          setFreezePhase('stepped');
+          if (targetSq !== FREEZE_BAIT_SQUARE) return false;
+          land({ ...nextState, turn: 'rookie', pendingOffer: null });
+          setFreezePhase('taken');
           return true;
         }
-        // Freeze Ray: moving before freezing him = he escapes = stuck.
+        // Freeze Ray: moving before the bishop is frozen = he's still
+        // watching = stuck.
         if (!cast) {
-          land({ ...nextState, turn: 'rookie' });
-          setState((s) => moveEnemy(s, FREEZE_KING_SQUARE, FREEZE_KING_STEP));
+          land({ ...nextState, turn: 'rookie', pendingOffer: null });
           setStuck(true);
           return true;
         }
         if (nextState.status === 'won') playKingCaptureTheme(false);
-        land({ ...nextState, turn: 'rookie', pendingOffer: null, kingStunTurns: 0 });
+        land({ ...nextState, turn: 'rookie', pendingOffer: null });
         if (nextState.status === 'won') trackEvent('run_onboarding_freeze_win');
         return true;
       }
@@ -806,11 +888,22 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       }
 
       if (beat === 10) {
-        // The player takes each piece; the bar glows with the gain.
-        land({ ...nextState, turn: 'rookie', pendingOffer: null, kingStunTurns: 0 });
+        // The player takes each piece; the bar glows with the gain. The queen
+        // step is a knight capture — hold knight form so she doesn't blink
+        // back into a rook mid-capture (same as beat 7); a miss is a reset.
+        const hopping = tempoStep === TEMPO_HOP_STEP;
+        land({
+          ...nextState,
+          turn: 'rookie',
+          pendingOffer: null,
+          kingStunTurns: 0,
+          ...(hopping ? { form: 'knight' as const, formMovesLeft: 0 } : {}),
+        });
         if (wasCapture) {
           setTempoStep((n) => n + 1);
           setTempoGlow(true);
+        } else if (hopping) {
+          setStuck(true);
         }
         return true;
       }
@@ -827,14 +920,19 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       }
       return true;
     },
-    [beat, cast, drill, freezeDemo, interactive, playKingCaptureTheme, state],
+    [beat, cast, drill, freezeDemo, interactive, playKingCaptureTheme, state, tempoStep],
   );
 
   const onSquareClick = useCallback(
     (square: string) => {
       if (!interactive) return;
-      // Beat 9: second tap of Freeze Ray picks the target (the king).
+      // Beat 9: second tap of Freeze Ray picks the target (the bishop).
       if (state.activeAbility?.step === 'pick-enemy') {
+        if (beat === 9 && square !== FREEZE_BISHOP_SQUARE) {
+          setNudge(true);
+          haptic('medium');
+          return;
+        }
         const nextState = applyAbilityTargeted(state, state.activeAbility.id, fromSquare(square));
         if (nextState !== state) {
           haptic('medium');
@@ -847,7 +945,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       }
       const rookieSq = toSquare(state.rookie);
       if (square === rookieSq) {
-        if (beat === 8 && !cast) {
+        if ((beat === 8 && !cast) || tempoNeedsHop) {
           setNudge(true);
           haptic('medium');
           return;
@@ -859,7 +957,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         if (!tryMove(square)) setSelected(null);
       }
     },
-    [beat, cast, interactive, selected, state, tryMove],
+    [beat, cast, interactive, selected, state, tempoNeedsHop, tryMove],
   );
 
   const onPieceDrop = useCallback(
@@ -912,6 +1010,19 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         return;
       }
       if (!interactive) return;
+      if (beat === 10) {
+        // The queen step: Knight Hop so she takes her from off the line.
+        if (!tempoNeedsHop || id !== 'knight-hop') return;
+        const nextState = applyAbilityActivate(state, 'knight-hop');
+        if (nextState === state) return;
+        setState(nextState);
+        setCast(true);
+        setNudge(false);
+        void playTransformIntoSound();
+        haptic('medium');
+        glitch();
+        return;
+      }
       if (state.activeAbility?.id === id) {
         setState((s) => applyAbilityCancel(s));
         return;
@@ -927,7 +1038,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       }
       // freeze-ray: cast flips when the king is actually tapped (onSquareClick).
     },
-    [beat, glitch, hopPhase, interactive, lent, state],
+    [beat, glitch, hopPhase, interactive, lent, state, tempoNeedsHop],
   );
 
   const resetBeat = useCallback(() => goTo(beat), [beat, goTo]);
@@ -989,7 +1100,11 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
 
   // Colour drains the moment the king falls and stays gone through beat 2;
   // it returns in beat 3 as Rookie wakes.
-  const desaturated = (beat === 1 && phase >= 4) || beat === 2 || (beat === 3 && phase < 1);
+  const desaturated =
+    (beat === 1 && phase >= 4) ||
+    beat === 2 ||
+    (beat === 3 && phase < 1) ||
+    (beat === 9 && freezePhase === 'captured');
   const gameOver = beat === 1 && phase >= 5;
 
   // ---- Overlays (arrows + comic bursts) --------------------------------------
@@ -1016,46 +1131,42 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         : [{ from: rookieSq, to: SURGE_KING_SQUARE }];
     }
     if (beat === 9 && !won) {
-      if (freezePhase === 'demo') return [{ from: FREEZE_ROOKIE_START, to: 'h1' }];
-      // A knight hop from h1 lands on f2 — one square short of him on e2.
-      if (freezePhase === 'explain') return [{ from: rookieSq, to: FREEZE_HOP_MISS, kind: 'ghost', path: 'L' }];
-      if (freezePhase === 'ready' && cast) {
-        // Two routes to e1: down the h-file then along the rank, or along
-        // the 5th rank then down the e-file. Once she shares a line with
-        // him, one arrow onto him.
-        const file = rookieSq[0];
-        const rank = rookieSq[1];
-        if (file === FREEZE_KING_SQUARE[0] || rank === FREEZE_KING_SQUARE[1]) {
-          return [{ from: rookieSq, to: FREEZE_KING_SQUARE }];
-        }
-        return [
-          { from: rookieSq, to: `${file}${FREEZE_KING_SQUARE[1]}` },
-          { from: rookieSq, to: `${FREEZE_KING_SQUARE[0]}${rank}` },
-        ];
+      if (freezePhase === 'demo') return [{ from: FREEZE_ROOKIE_START, to: FREEZE_BAIT_SQUARE }];
+      // The bishop's line onto h1 — what she walked into.
+      if (freezePhase === 'taken') return [{ from: FREEZE_BISHOP_SQUARE, to: FREEZE_BAIT_SQUARE, color: '#FFC800' }];
+      if (freezePhase === 'ready' && cast && !stuck) {
+        const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
+        if (baitAlive) return rookieSq[0] === 'h' ? [{ from: rookieSq, to: FREEZE_BAIT_SQUARE }] : [];
+        if (rookieSq[1] === '1' || rookieSq[0] === 'e') return [{ from: rookieSq, to: FREEZE_KING_SQUARE }];
       }
+      return [];
     }
-    if (beat === 10 && !tempoDone) {
-      return [{ from: rookieSq, to: TEMPO_PATH[tempoStep] }];
+    if (beat === 10 && !tempoDone && !stuck) {
+      if (tempoNeedsHop) return [];
+      return [{ from: rookieSq, to: TEMPO_PATH[tempoStep], ...(tempoStep === TEMPO_HOP_STEP ? { path: 'L' as const } : {}) }];
     }
+    if (beat === 11) return [{ from: DANGER_BISHOP_SQUARE, to: DANGER_ROOKIE_SQUARE, color: '#FFC800' }];
     return [];
   })();
   const bursts: OverlayBurst[] = (() => {
     if (beat === 5 && !won && drill >= 4) return [{ square: KING_SQUARE, text: '!!' }];
     if (beat === 7 && !won && hopPhase === 'stepped') return [{ square: HOP_KING_TO, text: 'ha!' }];
     if (beat === 8) {
-      if (won && revengeLine) return [{ square: rookieSq, text: revengeLine }];
+      if (won && revengeLine) return [{ square: rookieSq, text: revengeLine, speech: true }];
       if (!won && cast && !stuck && rookieSq !== 'a1') {
-        return [{ square: SURGE_KING_SQUARE, text: 'Oh no. I don’t get a move.' }];
+        return [{ square: SURGE_KING_SQUARE, text: 'Oh no. I don’t get a move.', speech: true }];
       }
       return [];
     }
-    if (beat === 9 && !won && stuck) return [{ square: FREEZE_KING_STEP, text: 'ha!' }];
+    if (beat === 9 && !won && (stuck || freezePhase === 'captured')) {
+      return [{ square: freezePhase === 'captured' ? FREEZE_BAIT_SQUARE : FREEZE_BISHOP_SQUARE, text: 'ha!' }];
+    }
     return [];
   })();
   const shakes: string[] = beat === 5 && !won && drill >= 4 ? [KING_SQUARE] : [];
-  // Blue pointer on the board: the king to freeze.
+  // Blue pointer on the board: the bishop to freeze.
   const pointers: string[] =
-    beat === 9 && !won && state.activeAbility?.step === 'pick-enemy' ? [FREEZE_KING_SQUARE] : [];
+    beat === 9 && !won && state.activeAbility?.step === 'pick-enemy' ? [FREEZE_BISHOP_SQUARE] : [];
 
   // Blue pointer over an ability card in the rack (power beats, before cast).
   const rackPointId: AbilityId | null = (() => {
@@ -1063,6 +1174,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (beat === 7 && hopPhase === 'armed') return 'knight-hop';
     if (beat === 8 && !cast) return 'surge';
     if (beat === 9 && freezePhase === 'ready' && !cast && !state.activeAbility) return 'freeze-ray';
+    if (tempoNeedsHop) return 'knight-hop';
     return null;
   })();
 
@@ -1112,7 +1224,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         return 'Rookie is going to finish this game. That means she has to capture the black king.';
       case 5:
         if (won) return 'Got him. Rooks can capture anything in a straight line.';
-        if (drill === 0) return 'Rooks move in straight lines. That pawn on a7 is hanging.';
+        if (drill === 0) return 'Rooks move in straight lines. Help Rookie capture that pawn on a7.';
         if (drill === 1) return 'Every capture stuns the king. Take a piece and he can’t run.';
         if (drill === 2) return 'The knight hurries back. Too late.';
         if (drill === 3) return 'Up to a8. Then she’s on the 8th rank.';
@@ -1127,28 +1239,36 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         if (hopPhase === 'line') return 'The rook is looking at the king.';
         if (hopPhase === 'stepped' || hopPhase === 'offer') return 'But the king steps out of the way.';
         if (hopPhase === 'armed') return 'Knight Hop is in her rack. Tap it.';
-        return 'Rookie is a knight. Have no mercy. Move in an ‘L’ shape. Capture the king!';
+        return 'Rookie transforms into a knight. Have no mercy. Move in an L-shape and capture the king.';
       case 8:
         if (won) return 'Two moves, one turn. He never saw it.';
         if (stuck) return 'One move, then it’s his turn. Surge first — then move twice.';
         if (cast) return 'Two moves. Get on his line, then take him.';
         if (nudge) return 'Tap Surge first. Then she moves twice.';
         return 'The next ability: Surge. It moves you twice in a row. Tap Surge.';
-      case 9:
+      case 9: {
+        const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
         if (won) return 'Frozen. Got him. Revenge is a dish best served cold.';
-        if (stuck) return 'He stepped up. Freeze him first.';
-        if (freezePhase === 'demo') return 'He’s on the back rank. Drop Rookie down to h1.';
-        if (freezePhase === 'stepped') return 'She’s looking right at him…';
-        if (freezePhase === 'explain') return 'He steps up. And he’s too far for Knight Hop.';
-        if (cast) return 'He can’t move. Two ways onto him — pick one.';
-        if (state.activeAbility?.step === 'pick-enemy') return 'Now tap the king.';
+        if (stuck) return 'The bishop is still watching h1. Freeze him first.';
+        if (freezePhase === 'demo') return 'That knight on h1 is free. Take it, and the king is stunned.';
+        if (freezePhase === 'taken') return 'The king is stunned. But the bishop was watching h1…';
+        if (freezePhase === 'captured') return 'The bishop takes Rookie. If you lose her, you lose the game.';
+        if (cast) return baitAlive ? 'The bishop is frozen. Now take the knight on h1.' : 'The king is stunned. Take him.';
+        if (state.activeAbility?.step === 'pick-enemy') return 'Now tap the bishop on g2.';
         return 'This is where Freeze Ray comes in handy. Tap Freeze Ray.';
+      }
       case 10:
+        if (stuck) return 'Missed her. Reset and land on the queen.';
         if (tempoStep === 0) return 'One more thing. Every capture fills the tempo bar.';
         if (tempoStep === 1) return `A pawn fills it by ${TEMPO_REWARD.pawn}.`;
-        if (tempoStep === 2) return `A minor piece (knight or bishop) fills it by ${TEMPO_REWARD.knight}.`;
+        if (tempoStep === 2) {
+          if (cast) return 'Rookie is a knight. Take the queen.';
+          return `A minor piece (knight or bishop) fills it by ${TEMPO_REWARD.knight}. The queen is next.`;
+        }
         return `A queen fills it by ${TEMPO_REWARD.queen}. Full bar: Rookie picks a new power, or upgrades one.`;
       case 11:
+        return 'When Rookie is attacked, she turns red.';
+      case 12:
         return 'You’re ready to play';
     }
   })();
@@ -1160,11 +1280,17 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (beat === 7 && hopPhase === 'hop') return 'Two up, one over.';
     if (beat === 8 && !cast) return 'Surge moves twice in a row.';
     if (beat === 9 && freezePhase === 'ready' && !cast && !state.activeAbility) {
-      return 'Freeze Ray stops one piece for a turn.';
+      return 'Freeze Ray stops one piece for a turn. A frozen bishop can’t take her.';
     }
     if (beat === 9 && freezePhase === 'ready' && cast) {
-      return 'Down the h-file then along the rank, or along the rank then down the e-file.';
+      const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
+      return baitAlive
+        ? 'Take the knight on h1 first. Then along the rank to the king.'
+        : 'A frozen bishop can’t touch her. Along the rank — take him.';
     }
+    if (tempoNeedsHop) return 'A rook on the queen’s line is in her sights. Tap Knight Hop and take her from the side.';
+    if (beat === 10 && tempoStep === TEMPO_HOP_STEP && cast) return 'One up, one over, one up.';
+    if (beat === 11) return 'If you lose her, you lose the game. Move her somewhere safe, or take the attacker.';
     return null;
   })();
 
@@ -1185,6 +1311,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         return won ? null : 'Powers live in the rack. Tap to cast.';
       case 10:
         return tempoDone ? 'Capture pieces. Claim powers. Take the king.' : 'Captures charge tempo.';
+      case 11:
+        return 'Red = danger. Keep her safe.';
       default:
         return null;
     }
@@ -1207,40 +1335,49 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         return null; // Next button takes over
       case 8:
         return cast ? 'Tap Rookie, then e1. Then the king.' : 'Tap the Surge card.';
-      case 9:
-        if (freezePhase === 'explain') return null; // Next button takes over
-        if (freezePhase === 'demo') return 'Tap Rookie, then h1.';
-        if (freezePhase === 'stepped') return ' ';
-        if (cast) return 'Tap Rookie, then h1 or e5. Then the king.';
+      case 9: {
+        if (freezePhase === 'captured') return null; // Next button takes over
+        if (freezePhase === 'demo') return 'Tap Rookie, then the knight on h1.';
+        if (freezePhase === 'taken') return ' ';
+        if (cast) {
+          const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
+          return baitAlive ? 'Tap Rookie, then h1.' : 'Tap Rookie, then the king on e1.';
+        }
         return state.activeAbility?.step === 'pick-enemy'
-          ? 'Tap the king on e1.'
+          ? 'Tap the bishop on g2.'
           : 'Tap the Freeze Ray card.';
+      }
       case 10:
         if (tempoDone) return null;
+        if (tempoNeedsHop) return 'Tap the Knight Hop card.';
         return `Tap Rookie, then ${TEMPO_PATH[tempoStep]}.`;
+      case 11:
+        return null; // Next button takes over
       default:
         return null;
     }
   })();
 
   const showOffer = beat === 7 && hopPhase === 'offer';
-  const showRunBoard = beat === 5 || beat === 6 || beat === 10 || lent !== undefined;
+  const showRunBoard = beat === 5 || beat === 6 || beat === 10 || beat === 11 || lent !== undefined;
   const runBoardKey =
     beat === 5 || beat === 6
       ? 'onboarding-drill'
       : beat === 10
         ? 'onboarding-tempo'
-        : lent?.key ?? 'onboarding';
+        : beat === 11
+          ? 'onboarding-danger'
+          : lent?.key ?? 'onboarding';
+  useNavyShell(true);
   // Beat 1 hides Next while the queen's arrow lands and during the slow-mo capture.
   const showNext = !(beat === 1 && (phase === 1 || phase === 4));
   const finalScreen = beat === LAST_BEAT;
 
   return (
     <div
-      className="relative min-h-full w-full text-chess-text flex items-center justify-center px-3 py-4 overflow-hidden"
+      className="relative min-h-full w-full text-white flex items-center justify-center px-3 py-4 overflow-hidden"
       style={{
-        background:
-          'radial-gradient(120% 80% at 50% 0%, #ffffff 0%, #eef6fc 55%, #dbeaf5 100%)',
+        background: `linear-gradient(180deg, ${NAVY_2} 0%, ${NAVY} 100%)`,
       }}
     >
       <style>{`
@@ -1286,7 +1423,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(45deg, rgba(42,60,69,0.045) 25%, transparent 25%, transparent 75%, rgba(42,60,69,0.045) 75%), linear-gradient(45deg, rgba(42,60,69,0.045) 25%, transparent 25%, transparent 75%, rgba(42,60,69,0.045) 75%)',
+            'linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%), linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%)',
           backgroundSize: '96px 96px',
           backgroundPosition: '0 0, 48px 48px',
           maskImage: 'radial-gradient(80% 70% at 50% 45%, transparent 35%, #000 100%)',
@@ -1296,20 +1433,27 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       <div
         aria-hidden
         className="absolute pointer-events-none"
-        style={{ right: -70, bottom: -70, opacity: 0.07 }}
+        style={{ right: -70, bottom: -70, opacity: 0.12 }}
       >
         <RevengeMarkSvg size={300} />
       </div>
 
-      <div className="relative w-full max-w-[360px] bg-white rounded-2xl p-3 shadow-[0_10px_30px_rgba(42,60,69,0.12)] border border-chess-text/10 flex flex-col gap-2.5">
+      <div
+        className="relative w-full max-w-[360px] rounded-2xl p-3 flex flex-col gap-2.5"
+        style={{
+          background: `linear-gradient(180deg, ${PANEL} 0%, ${NAVY} 100%)`,
+          border: `2px solid ${PANEL_EDGE}`,
+          boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.12), 0 10px 26px rgba(0,0,0,0.45)',
+        }}
+      >
         {/* Header: logo + skip */}
         <div className="flex items-center justify-between">
-          <RookiesRevengeLogo scale={0.3} />
+          <RookiesRevengeLogo scale={0.3} dark />
           {!finalScreen && (
             <button
               type="button"
               onClick={() => finish('skipped')}
-              className="min-h-[44px] min-w-[44px] px-2 -mr-2 text-[11px] uppercase tracking-[0.18em] font-bold text-chess-text-muted active:opacity-60"
+              className="min-h-[44px] min-w-[44px] px-2 -mr-2 text-[11px] uppercase tracking-[0.18em] font-bold text-white/60 active:opacity-60"
             >
               Skip
             </button>
@@ -1323,12 +1467,12 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             style={{ animation: 'rrOnbFinalIn 480ms cubic-bezier(0.2, 1.4, 0.4, 1) both' }}
           >
             <RevengeLockOn />
-            <p className="text-[22px] font-black leading-tight text-chess-text text-center px-2 -mt-1">
+            <p className="text-[22px] font-black leading-tight text-white text-center px-2 -mt-1">
               {caption}
             </p>
             {/* Brand lockup wordmark — same recipe as RookiesRevengeLogoStacked */}
             <div className="flex flex-col items-center leading-none -mt-1">
-              <div className="font-black tracking-tight" style={{ fontSize: 26, color: '#3C3C3C' }}>
+              <div className="font-black tracking-tight" style={{ fontSize: 26, color: '#fff' }}>
                 Rookie&rsquo;s
               </div>
               <div
@@ -1346,13 +1490,13 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
                 REVENGE
               </div>
             </div>
-            <p className="text-[12px] font-bold text-chess-text-muted text-center">
+            <p className="text-[12px] font-bold text-white/70 text-center">
               Capture pieces. Claim powers. Take the king.
             </p>
             <button
               type="button"
               onClick={() => finish('completed')}
-              className="w-full py-4 min-h-[56px] rounded-2xl bg-chess-text text-white font-black text-[17px] tracking-wide active:translate-y-px transition-transform"
+              className="w-full py-4 min-h-[56px] rounded-2xl text-white font-black text-[17px] tracking-wide active:translate-y-px transition-transform"
               style={CTA_STYLE}
             >
               Play Rookie’s Revenge <span className="opacity-80">&rarr;</span>
@@ -1363,7 +1507,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             {/* Caption */}
             <p
               key={caption}
-              className="text-[15px] font-black leading-snug text-chess-text min-h-[42px]"
+              className="text-[15px] font-black leading-snug text-white min-h-[42px]"
               style={{ animation: 'rrOnbCaptionIn 320ms ease-out both' }}
             >
               {caption}
@@ -1371,7 +1515,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             {explain && (
               <p
                 key={explain}
-                className="-mt-1 text-[12px] font-bold leading-snug text-chess-text-muted"
+                className="-mt-1 text-[12px] font-bold leading-snug text-white/70"
                 style={{ animation: 'rrOnbCaptionIn 320ms ease-out both' }}
               >
                 {explain}
@@ -1456,7 +1600,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             )}
 
             {/* Ability rack — lent-power beats (pulses until the power is cast) */}
-            {lent && !(beat === 7 && hopPhase !== 'hop' && hopPhase !== 'armed') && (
+            {(lent || beat === 10) && !(beat === 7 && hopPhase !== 'hop' && hopPhase !== 'armed') && (
               <div
                 ref={rackRef}
                 className={`relative${rackPointId ? ' rr-onb-pulse' : ''}`}
@@ -1465,7 +1609,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
                 <AbilityRack
                   abilities={state.abilities}
                   activeId={state.activeAbility?.id ?? null}
-                  disabledIds={STARTERS.filter((id) => id !== lent.id)}
+                  disabledIds={lent ? STARTERS.filter((id) => id !== lent.id) : []}
                   onActivate={onActivateAbility}
                 />
                 {rackPoint && (
@@ -1481,7 +1625,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
               {chip && (
                 <span
                   key={chip}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-chess-page border border-chess-text/10 px-3 py-1 text-[11px] font-bold text-chess-text"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[#0a1230] border border-[#3a4f8f] px-3 py-1 text-[11px] font-bold text-white"
                   style={{ animation: 'rrOnbCaptionIn 320ms ease-out both' }}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FFC800]" />
@@ -1495,12 +1639,12 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
               <button type="button" onClick={resetBeat} className={CTA_CLASS} style={CTA_STYLE}>
                 Reset
               </button>
-            ) : beat === 9 && freezePhase === 'explain' ? (
+            ) : beat === 9 && freezePhase === 'captured' ? (
               <button type="button" onClick={goToFreezeReady} className={CTA_CLASS} style={CTA_STYLE}>
                 Next <span className="opacity-80">&rarr;</span>
               </button>
             ) : hint && !won ? (
-              <p className="text-center text-[11px] text-chess-text-muted italic min-h-[44px] flex items-center justify-center">
+              <p className="text-center text-[11px] text-white/60 italic min-h-[44px] flex items-center justify-center">
                 {hint}
               </p>
             ) : beat === 10 && !tempoDone ? (

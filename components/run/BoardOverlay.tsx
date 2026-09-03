@@ -24,6 +24,12 @@ export interface OverlayArrow {
 
 export interface OverlayBurst {
   square: string;
+  /**
+   * A line of dialogue FROM the piece on `square`: the bubble sits fully
+   * above the square, centred, with its tail pointing straight down at the
+   * speaker (a burst like "!!" hangs off the square's shoulder instead).
+   */
+  speech?: boolean;
   text: string; // '!!', '?!', ...
 }
 
@@ -252,8 +258,8 @@ export function BoardOverlay({ arrows = [], bursts = [], shakes = [], pointers =
             key={b.square + b.text}
             style={{
               position: 'absolute',
-              left: `${(c.x / 8) * 100 + 5}%`,
-              top: `${(c.y / 8) * 100 - 4}%`,
+              left: `${(c.x / 8) * 100 + (b.speech ? 0 : 5)}%`,
+              top: b.speech ? `${((c.y - 0.5) / 8) * 100 - 1.5}%` : `${(c.y / 8) * 100 - 4}%`,
               transform: 'translate(-50%, -100%)',
               animation: 'rrOvBurstIn 480ms cubic-bezier(0.2, 1.4, 0.4, 1) both, rrOvShake 220ms ease-in-out 480ms 4',
               transformOrigin: '50% 100%',
@@ -266,11 +272,11 @@ export function BoardOverlay({ arrows = [], bursts = [], shakes = [], pointers =
                 color: BLOCKED,
                 border: `2.5px solid ${GO}`,
                 borderRadius: 999,
-                padding: '2px 9px',
+                padding: b.speech ? '4px 10px' : '2px 9px',
                 fontWeight: 900,
-                fontSize: 15,
+                fontSize: b.speech ? 13 : 15,
                 lineHeight: 1.1,
-                letterSpacing: '0.04em',
+                letterSpacing: b.speech ? 0 : '0.04em',
                 boxShadow: '2px 2px 0 #2A3C45',
                 whiteSpace: 'nowrap',
               }}
@@ -279,7 +285,7 @@ export function BoardOverlay({ arrows = [], bursts = [], shakes = [], pointers =
               <span
                 style={{
                   position: 'absolute',
-                  left: 8,
+                  left: b.speech ? 'calc(50% - 5px)' : 8,
                   bottom: -8,
                   width: 0,
                   height: 0,
