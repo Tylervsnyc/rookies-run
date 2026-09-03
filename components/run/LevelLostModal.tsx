@@ -15,8 +15,11 @@ interface LevelLostModalProps {
   totalLevels: number;
   /** Retries remaining for this level AFTER this loss. Infinity = unlimited. */
   retriesLeft: number;
-  /** 'unwinnable' = the solver proved the king was out of reach. */
-  reason?: 'unwinnable';
+  /**
+   * 'unwinnable' = the solver proved the king was out of reach.
+   * 'out-of-moves' = the move budget ran out (nobody captured her).
+   */
+  reason?: 'unwinnable' | 'out-of-moves';
   difficultyLabel?: string;
   onRetry: () => void;
   onGiveUp: () => void;
@@ -30,7 +33,7 @@ export function LevelLostModal({ level, totalLevels, retriesLeft, reason, diffic
       kicker={`Level ${level} of ${totalLevels}`}
       level={level}
       totalLevels={totalLevels}
-      stamp={reason === 'unwinnable' ? 'No way through' : 'Captured'}
+      stamp={reason === 'unwinnable' ? 'No way through' : reason === 'out-of-moves' ? 'Out of moves' : 'Captured'}
       tone="lost"
       testId="level-lost-modal"
       chips={

@@ -10,8 +10,17 @@
  * The chip in the header keeps its own behavior from 3 left; this layer
  * is the escalation on top of it.
  */
-export function LowMovesEmergency({ left }: { left: number }) {
+export function LowMovesEmergency({ left, summonCostsMove = false }: { left: number; summonCostsMove?: boolean }) {
   const lastMove = left <= 1;
+  // Plain words under the glow (Tyler 2026-09-03: "be more clear about the
+  // number of moves left"). The last move has to take the king.
+  const line = lastMove
+    ? summonCostsMove
+      ? 'LAST MOVE. A summon\u2019s move ends the run.'
+      : 'LAST MOVE. Take the king or the run is over.'
+    : summonCostsMove
+      ? `${left} moves left. The summon\u2019s move counts as one.`
+      : `${left} moves left. The last one has to take the king.`;
   return (
     <>
       <style>{`
@@ -35,6 +44,23 @@ export function LowMovesEmergency({ left }: { left: number }) {
           animation: 'rrEmergencyBreathe 1.2s ease-in-out infinite',
         }}
       />
+      <div
+        aria-live="polite"
+        className="pointer-events-none fixed left-0 right-0 z-40 flex justify-center px-4"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
+      >
+        <div
+          key={line}
+          className="rounded-full px-4 py-2 text-[12px] font-black text-white text-center"
+          style={{
+            background: lastMove ? 'rgba(220,38,38,0.95)' : 'rgba(220,38,38,0.8)',
+            boxShadow: '0 4px 0 rgba(120,10,10,0.8), 0 8px 20px rgba(0,0,0,0.4)',
+            animation: 'rrMovesPulse 420ms ease-out',
+          }}
+        >
+          {line}
+        </div>
+      </div>
     </>
   );
 }

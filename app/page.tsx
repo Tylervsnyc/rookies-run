@@ -53,6 +53,7 @@ import {
   applyControlledAllyMove,
   canMoveAllyAt,
   controlledAllyAt,
+  allyHasFreeMove,
   abilitiesForRetry,
   applyDismissOffer,
   applyOfferPick,
@@ -825,6 +826,21 @@ export default function RookiesRunPage() {
   const rookieCaptured =
     state.status === 'lost' &&
     state.pieces.some((p) => p.file === state.rookie.file && p.rank === state.rookie.rank);
+  // Out of moves: the budget hit the limit and nobody touched her. Named on
+  // the loss card so "it said I had moves left" never reads as a mystery
+  // capture (Tyler 2026-09-03).
+  const outOfMoves =
+    state.status === 'lost' &&
+    !rookieCaptured &&
+    state.moveLimit !== null &&
+    state.moveCount >= state.moveLimit;
+  // A selected summon whose move will cost one of Rookie's moves ("one body
+  // per turn") — the chip says so BEFORE the tap lands.
+  const selectedAllyCostsMove = (() => {
+    if (!selectedSquare || state.status !== 'playing') return false;
+    const ally = controlledAllyAt(state, fromSquare(selectedSquare));
+    return !!ally && !allyHasFreeMove(state, ally);
+  })();
   const sadTrackRef = useRef<TrackHandle | null>(null);
   useEffect(() => {
     if (state.status !== 'lost') {
@@ -1638,7 +1654,7 @@ export default function RookiesRunPage() {
         state.winCondition === 'king' &&
         state.moveLimit !== null &&
         state.moveLimit - state.moveCount <= 2 && (
-          <LowMovesEmergency left={state.moveLimit - state.moveCount} />
+          <LowMovesEmergency left={state.moveLimit - state.moveCount} summonCostsMove={selectedAllyCostsMove} />
         )}
       <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[calc(env(safe-area-inset-top)+6px)]'}`}>
         <header className="flex items-start justify-between gap-3">
@@ -1725,8 +1741,16 @@ export default function RookiesRunPage() {
                 >
                   <span className="text-sm font-black tabular-nums">{left}</span>
                   <span className="text-[9px] font-black uppercase tracking-[0.14em] opacity-70">
-                    {left === 1 ? 'move' : 'moves'}
+                    {left === 1 ? 'move left' : 'moves left'}
                   </span>
+                  {selectedAllyCostsMove && left > 0 && (
+                    <span
+                      className="ml-1 rounded px-1 py-[2px] text-[9px] font-black uppercase tracking-[0.08em]"
+                      style={{ background: 'rgba(0,0,0,0.25)', animation: 'rrMovesPulse 420ms ease-out' }}
+                    >
+                      &minus;1 for the summon
+                    </span>
+                  )}
                 </div>
               );
             })()}
@@ -1900,7 +1924,7 @@ export default function RookiesRunPage() {
           level={levelIndex + 1}
           totalLevels={totalLevels}
           retriesLeft={retriesLeft}
-          reason={lossReason ?? undefined}
+          reason={lossReason ?? (outOfMoves ? 'out-of-moves' : undefined)}
           difficultyLabel={isStc ? undefined : difficultyDef.name}
           onRetry={retryLevel}
           onGiveUp={() => setGaveUp(true)}
@@ -1909,6 +1933,7 @@ export default function RookiesRunPage() {
 
       {((state.status === 'lost' && deathSettled && !canRetry) || runComplete) && (
         <RunSummaryModal
+          outOfMoves={!runComplete && outOfMoves}
           difficultyLabel={isStc ? undefined : difficultyDef.name}
           iso={meta.iso}
           totalLevels={totalLevels}

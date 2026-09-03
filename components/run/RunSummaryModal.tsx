@@ -20,6 +20,8 @@ interface RunSummaryModalProps {
   levelReached: number;
   /** True when the run was completed (all levels cleared). */
   completed: boolean;
+  /** The run ended on the move budget, not a capture. */
+  outOfMoves?: boolean;
   stats: RunStats;
   shareString: string;
   onReplay: () => void;
@@ -43,6 +45,7 @@ export function RunSummaryModal({
   totalLevels,
   levelReached,
   completed,
+  outOfMoves = false,
   stats,
   shareString,
   onReplay,
@@ -91,7 +94,7 @@ export function RunSummaryModal({
       kicker={`${iso}${difficultyLabel ? ` · ${difficultyLabel}` : ''}`}
       level={completed ? totalLevels : levelReached}
       totalLevels={totalLevels}
-      stamp={completed ? 'Run complete' : 'Captured'}
+      stamp={completed ? 'Run complete' : outOfMoves ? 'Out of moves' : 'Captured'}
       tone={completed ? 'won' : 'lost'}
       chips={
         <>
