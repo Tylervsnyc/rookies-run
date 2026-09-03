@@ -76,7 +76,6 @@ import { isUnwinnable } from '@/lib/run/solver';
 import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
-  DEFAULT_RUN_ID,
   getNextRevengeRunId,
   getRunById,
   isKnownRunId,
@@ -204,11 +203,6 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
 /** Slow-motion enemy slide onto Rookie when she gets captured (ms). */
 const CAPTURE_SLOWMO_MS = 1600;
 
-function readSavedRunId(): string {
-  if (typeof window === 'undefined') return DEFAULT_RUN_ID;
-  return localStorage.getItem('rookies-run-current') ?? DEFAULT_RUN_ID;
-}
-
 interface RunMeta {
   iso: string;
   runId: string;
@@ -269,7 +263,11 @@ function freshRun(
   // shows (lib/run/daily-kit.ts). It rides the testkit offer-pool mechanism
   // (kit = the whole pool, unlocks ignored) but is NOT a playtest: meta.testkit
   // stays null, so scores, streak and daily completion still record.
-  const isDaily = !testkit && !loadout && forceDifficulty === null && runId === getRunIdForDate(iso);
+  // Not just the pinned daily: ANY run launched from the home screen gets the
+  // kit the home just showed for it (Tyler 2026-09-03: "you're still not
+  // updating today's abilities with what is in the daily revenge"). Ladder
+  // launches (forceDifficulty) and playtests keep the player's unlocks.
+  const isDaily = !testkit && !loadout && forceDifficulty === null;
   const kit = testkit ?? (isDaily ? todaysAbilities(iso, runId) : null);
   return {
     state: puzzleToBoardState(puzzle, {
@@ -301,7 +299,11 @@ export default function RookiesRunPage() {
     if (url.date) {
       runId = url.runId && isKnownRunId(url.runId) ? url.runId : dailyRunForDate;
     } else {
-      runId = url.runId || readSavedRunId();
+      // A bare open (no ?run=) is ALWAYS today's daily. The saved run id is
+      // only for explicit ?run= navigations (next run / run picker), never a
+      // stale override of the pinned daily — otherwise the home card said
+      // "Daily Revenge" over yesterday's run with a kit the game didn't use.
+      runId = url.runId || dailyRunForDate;
       // Surface separation: a bare /run with no ?run= must never resolve to an
       // STC run from a stale localStorage entry — STC lives behind /run/stc only.
       if (!url.runId && runId.startsWith('stc-')) {
@@ -310,13 +312,6 @@ export default function RookiesRunPage() {
       // Rookie's Revenge is the game now: a stale classic-run id in
       // localStorage must not keep a returning player on rank-8 runs.
       if (!url.runId && !REVENGE_RUN_IDS.includes(runId)) {
-        runId = dailyRunForDate;
-      }
-      if (
-        !url.runId &&
-        typeof window !== 'undefined' &&
-        !localStorage.getItem('rookies-run-current')
-      ) {
         runId = dailyRunForDate;
       }
     }
