@@ -189,3 +189,49 @@ export function computeScore(input: ScoreInput): ScoreBreakdown {
     total: Math.max(0, raw),
   };
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Stars (per RUN, 2026-09-03 — docs/stars-research.md). Two legible signals:
+// retries and total moves vs the run's par. Never built on the raw score.
+//   1 star  = finished the run
+//   2 stars = finished with no retries
+//   3 stars = no retries AND movesUsed <= parMoves
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Generic par when a run has no bot data (RunDef.parMoves unset). Par per
+ * run = round(0.8 × the realistic bot's average moves over a full run); the
+ * realistic bot lands at 42–46 moves on every Revenge run, so 35 is the
+ * floor-ish default. Regeneration: the nightly playtest writes
+ * `matrix-<run>-realistic.json`; par = round(0.8 × Σ per-level win-weighted
+ * avgMoves) — copy the number into the run's `parMoves` (not automated yet).
+ */
+export const DEFAULT_PAR_MOVES = 35;
+
+export type RunStars = 0 | 1 | 2 | 3;
+
+export interface StarInput {
+  completed: boolean;
+  retriesUsed: number;
+  /** Total Rookie moves over the clearing attempt of every level. */
+  movesUsed: number;
+  parMoves: number;
+}
+
+export function starsForRun(i: StarInput): RunStars {
+  if (!i.completed) return 0;
+  if (i.retriesUsed > 0) return 1;
+  return i.movesUsed <= i.parMoves ? 3 : 2;
+}
+
+/** One-line explanation shown under the stars on the run-complete card. */
+export function starRuleLine(i: StarInput, stars: RunStars): string {
+  if (stars === 0) return '';
+  const retries = i.retriesUsed === 0 ? 'No retries' : `${i.retriesUsed} ${i.retriesUsed === 1 ? 'retry' : 'retries'}`;
+  const moves = `${i.movesUsed} moves, par ${i.parMoves}`;
+  if (stars === 2) {
+    const over = i.movesUsed - i.parMoves;
+    return `${retries} · ${moves} → ${over} fewer for 3 stars`;
+  }
+  return `${retries} · ${moves}`;
+}

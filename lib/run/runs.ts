@@ -10,6 +10,7 @@
  */
 
 import { DAILY_LEVELS } from './daily-levels';
+import { DEFAULT_PAR_MOVES } from './scoring';
 import { isPlayerFacing, stageOf } from '../content/pipeline';
 import type {
   Coord,
@@ -59,6 +60,14 @@ export interface RunDef {
    * abilities). For playtesting new abilities, never for shipped runs.
    */
   ignoreUnlocks?: boolean;
+  /**
+   * Star par — total Rookie moves for a 3-star run (lib/run/scoring
+   * starsForRun). round(0.8 × the realistic playtest bot's average moves over
+   * the run). Unset = DEFAULT_PAR_MOVES. To refresh: run the nightly playtest,
+   * read `data/run-playtest/revenge/raw/<date>/matrix-<run>-realistic.json`,
+   * sum the win-weighted per-level avgMoves, × 0.8, round.
+   */
+  parMoves?: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -4018,6 +4027,7 @@ export const REVENGE_CORE: ReadonlyArray<string> = [
  */
 const RUN_REVENGE_1: RunDef = {
   id: 'revenge-1',
+  parMoves: 35, // realistic bot 2026-09-02
   name: "Rookie's Revenge",
   blurb: 'Rank 8 is just a row. Take the king.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -4186,6 +4196,7 @@ const RUN_REVENGE_1: RunDef = {
  */
 const RUN_REVENGE_2: RunDef = {
   id: 'revenge-2',
+  parMoves: 35, // realistic bot 2026-09-02
   name: 'Pawn Storm',
   blurb: 'More pawns every level. Bodies, not brains.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -4349,6 +4360,7 @@ const RUN_REVENGE_2: RunDef = {
  */
 const RUN_REVENGE_3: RunDef = {
   id: 'revenge-3',
+  parMoves: 37, // realistic bot 2026-09-02
   name: 'The Royal Guard',
   blurb: 'Few pawns. Heavy pieces. Every line is watched.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -4505,6 +4517,7 @@ const RUN_REVENGE_3: RunDef = {
  */
 const RUN_REVENGE_4: RunDef = {
   id: 'revenge-4',
+  parMoves: 36, // realistic bot 2026-09-02
   name: 'The Fortress',
   blurb: 'Walls make the room. Pawns make the door.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -4664,6 +4677,7 @@ const RUN_REVENGE_4: RunDef = {
  */
 const RUN_REVENGE_5: RunDef = {
   id: 'revenge-5',
+  parMoves: 34, // realistic bot 2026-09-02
   name: 'Stonework',
   blurb: 'Every level is a building. Find the door.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -4920,6 +4934,7 @@ const RUN_ABILITY_LAB: RunDef = {
  */
 const RUN_REVENGE_6: RunDef = {
   id: 'revenge-6',
+  parMoves: 34, // realistic bot 2026-09-02
   name: 'Two Keys',
   blurb: 'Every door has two locks. Find the second one.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -5103,6 +5118,7 @@ const RUN_REVENGE_6: RunDef = {
  */
 const RUN_REVENGE_7: RunDef = {
   id: 'revenge-7',
+  parMoves: 33, // realistic bot 2026-09-02
   name: 'Bramble Crown',
   blurb: 'Pawns first. Then the court comes out.',
   allowedAbilities: REVENGE_ABILITIES,
@@ -6393,6 +6409,11 @@ export const RUNS: ReadonlyArray<RunDef> = [
 ];
 
 export const DEFAULT_RUN_ID = RUNS[0].id;
+
+/** Star par for a run (RunDef.parMoves, else DEFAULT_PAR_MOVES). */
+export function parMovesForRun(runId: string): number {
+  return getRunById(runId).parMoves ?? DEFAULT_PAR_MOVES;
+}
 
 export function getRunById(id: string): RunDef {
   return (

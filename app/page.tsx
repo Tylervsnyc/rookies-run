@@ -29,10 +29,10 @@ import { RunAchievementPop } from '@/components/achievements/RunAchievementPop';
 import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
-import { readProfile, recordBest, recordLadderResult, setDifficulty as persistDifficulty } from '@/lib/run/profile';
+import { readProfile, recordBest, recordBestStars, recordLadderResult, setDifficulty as persistDifficulty } from '@/lib/run/profile';
 import { isLadderRunId } from '@/lib/run/ladder';
 import { DIFFICULTIES, isDifficultyId, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
-import { computeScore, computeTimedScore, tempoMaxFor, type LevelSplit } from '@/lib/run/scoring';
+import { computeScore, computeTimedScore, starRuleLine, starsForRun, tempoMaxFor, type LevelSplit } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
   playAllyCaptureSound,
@@ -79,6 +79,7 @@ import {
   getNextRevengeRunId,
   getRunById,
   isKnownRunId,
+  parMovesForRun,
 } from '@/lib/run/runs';
 import {
   puzzleForDate,
@@ -1521,6 +1522,18 @@ export default function RookiesRunPage() {
       );
       progress.setProfile(readProfile());
     }
+    if (runComplete) {
+      recordBestStars(
+        state.difficulty ?? 'normal',
+        meta.runId,
+        starsForRun({
+          completed: true,
+          retriesUsed: Object.values(retriesUsedRef.current).reduce((n, v) => n + v, 0),
+          movesUsed: splitsRef.current.reduce((n, s) => n + s.moves, 0),
+          parMoves: parMovesForRun(meta.runId),
+        }),
+      );
+    }
     setHistoryVersion((v) => v + 1);
     // Global daily board (anonymous handle). Fails soft; never blocks the game.
     if (!isStc) {
@@ -1553,9 +1566,18 @@ export default function RookiesRunPage() {
       tempoRemaining: state.tempo,
     }).total;
     const timed = computeTimedScore(splits).total;
-    return { classic, timed };
+    // Stars: movesUsed = the clearing attempt's moves per level (same as the
+    // classic score); retriesUsed = every level retry taken this run.
+    const starInput = {
+      completed: runComplete,
+      retriesUsed: Object.values(retriesUsedRef.current).reduce((n, v) => n + v, 0),
+      movesUsed: splits.reduce((n, s) => n + s.moves, 0),
+      parMoves: parMovesForRun(meta.runId),
+    };
+    const stars = starsForRun(starInput);
+    return { classic, timed, stars, starLine: starRuleLine(starInput, stars) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runFinished, state.tempo]);
+  }, [runFinished, runComplete, state.tempo]);
 
   const shareString = buildShareString({
     iso: meta.iso,
@@ -1910,6 +1932,8 @@ export default function RookiesRunPage() {
           totalLevels={totalLevels}
           tempo={state.tempo}
           runName={runDef.name}
+          moves={state.moveCount}
+          levelPar={Math.max(1, Math.round(parMovesForRun(meta.runId) / totalLevels))}
           onNext={goToNextLevel}
         />
       )}
@@ -1939,6 +1963,8 @@ export default function RookiesRunPage() {
           score={scorePair?.classic}
           timedScore={scorePair?.timed}
           timeMs={Math.round(activeMsRef.current)}
+          stars={scorePair?.stars}
+          starLine={scorePair?.starLine}
           onReplay={resetRun}
           nextRunName={nextRunId !== meta.runId ? getRunById(nextRunId).name : undefined}
           onNextRun={nextRunId !== meta.runId ? goToNextRun : undefined}

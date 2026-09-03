@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { fireConfetti } from '@/lib/confetti';
 import type { RunStats } from '@/lib/run/history';
+import type { RunStars } from '@/lib/run/scoring';
 import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
 import { StampButton, StampCard, StampChip } from './StampCard';
 
@@ -35,6 +36,10 @@ interface RunSummaryModalProps {
   timedScore?: number;
   /** Total active-play ms for the run (the header clock's final reading). */
   timeMs?: number;
+  /** Run stars (lib/run/scoring starsForRun). Only shown on a completed run. */
+  stars?: RunStars;
+  /** One-line star rule, e.g. "No retries · 32 moves, par 35". */
+  starLine?: string;
 }
 
 const GOLD = '#FFC800';
@@ -55,18 +60,32 @@ export function RunSummaryModal({
   score,
   timedScore,
   timeMs,
+  stars,
+  starLine,
 }: RunSummaryModalProps) {
   const [shareCopied, setShareCopied] = useState(false);
 
+  // Confetti scales with stars: 1 star none, 2 stars the usual pair of
+  // cannons, 3 stars a double burst (second wave lands with the third star).
+  // No stars passed (STC runs) = the usual pair.
   useEffect(() => {
-    if (!completed) return;
+    if (!completed || stars === 1) return;
     const palette = [GOLD, '#ffffff', REVENGE_RED, '#f5cf5a'];
-    const t = setTimeout(() => {
+    const burst = () => {
       fireConfetti({ particleCount: 80, angle: 60, spread: 65, origin: { x: 0.15, y: 0.55 }, colors: palette, gravity: 1.1, ticks: 180 });
       fireConfetti({ particleCount: 80, angle: 120, spread: 65, origin: { x: 0.85, y: 0.55 }, colors: palette, gravity: 1.1, ticks: 180 });
-    }, 650);
-    return () => clearTimeout(t);
-  }, [completed]);
+    };
+    const timers = [setTimeout(burst, 650)];
+    if (stars === 3) {
+      timers.push(
+        setTimeout(() => {
+          burst();
+          fireConfetti({ particleCount: 120, spread: 100, startVelocity: 40, origin: { x: 0.5, y: 0.4 }, colors: [GOLD, '#f5cf5a', '#ffffff'], gravity: 0.9, ticks: 220 });
+        }, 1900),
+      );
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [completed, stars]);
 
   const handleCopy = async () => {
     try {
@@ -96,6 +115,8 @@ export function RunSummaryModal({
       totalLevels={totalLevels}
       stamp={completed ? 'Run complete' : outOfMoves ? 'Out of moves' : 'Captured'}
       tone={completed ? 'won' : 'lost'}
+      stars={completed ? stars : undefined}
+      starLine={completed ? starLine : undefined}
       chips={
         <>
           {score !== undefined && <StampChip gold>{score} pts</StampChip>}

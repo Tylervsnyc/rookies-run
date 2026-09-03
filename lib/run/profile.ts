@@ -69,6 +69,8 @@ export interface PlayerProfile {
   bestByDifficulty: Partial<Record<DifficultyId, { levels: number; score: number }>>;
   /** The Ladder — best result per rung run id (see lib/run/ladder.ts). */
   ladder: Record<string, LadderRungResult>;
+  /** Best star count per difficulty per run id (lib/run/scoring starsForRun). */
+  bestStars?: Record<string, Record<string, number>>;
 }
 
 export function freshProfile(now = new Date()): PlayerProfile {
@@ -117,6 +119,16 @@ function sanitize(raw: unknown): PlayerProfile {
   }
   if (r.bestByDifficulty && typeof r.bestByDifficulty === 'object') {
     p.bestByDifficulty = { ...(r.bestByDifficulty as PlayerProfile['bestByDifficulty']) };
+  }
+  if (r.bestStars && typeof r.bestStars === 'object') {
+    const out: Record<string, Record<string, number>> = {};
+    for (const [d, runs] of Object.entries(r.bestStars)) {
+      if (!runs || typeof runs !== 'object') continue;
+      for (const [runId, n] of Object.entries(runs as Record<string, unknown>)) {
+        if (typeof n === 'number' && Number.isFinite(n) && n > 0) (out[d] ??= {})[runId] = Math.min(3, Math.round(n));
+      }
+    }
+    if (Object.keys(out).length > 0) p.bestStars = out;
   }
   if (r.ladder && typeof r.ladder === 'object') {
     for (const [runId, entry] of Object.entries(r.ladder)) {
@@ -233,6 +245,16 @@ export function recordBest(d: DifficultyId, levels: number, score: number): void
     const cur = p.bestByDifficulty[d];
     if (cur && (cur.levels > levels || (cur.levels === levels && cur.score >= score))) return p;
     return { ...p, bestByDifficulty: { ...p.bestByDifficulty, [d]: { levels, score } } };
+  });
+}
+
+/** Stars on a completed run — keeps the max per difficulty per run id. */
+export function recordBestStars(d: DifficultyId, runId: string, stars: number): void {
+  if (stars <= 0) return;
+  updateProfile((p) => {
+    const cur = p.bestStars?.[d]?.[runId] ?? 0;
+    if (cur >= stars) return p;
+    return { ...p, bestStars: { ...(p.bestStars ?? {}), [d]: { ...(p.bestStars?.[d] ?? {}), [runId]: stars } } };
   });
 }
 
