@@ -26,6 +26,8 @@ interface RunSummaryModalProps {
   stats: RunStats;
   shareString: string;
   onReplay: () => void;
+  /** X in the corner: leave the card (back to the home screen). */
+  onClose?: () => void;
   nextRunName?: string;
   onNextRun?: () => void;
   /** Difficulty mode name (e.g. "Hard") — shown as a small chip under the pips. */
@@ -54,6 +56,7 @@ export function RunSummaryModal({
   stats,
   shareString,
   onReplay,
+  onClose,
   nextRunName,
   onNextRun,
   difficultyLabel,
@@ -117,6 +120,7 @@ export function RunSummaryModal({
       tone={completed ? 'won' : 'lost'}
       stars={completed ? stars : undefined}
       starLine={completed ? starLine : undefined}
+      onClose={onClose}
       chips={
         <>
           {score !== undefined && <StampChip gold>{score} pts</StampChip>}

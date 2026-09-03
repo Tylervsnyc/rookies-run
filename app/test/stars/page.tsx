@@ -113,6 +113,7 @@ export default function StarsTestPage() {
       {view?.kind === 'summary' && (
         <RunSummaryModal
           key={view.key}
+          onClose={() => setView(null)}
           iso="2026-09-03"
           totalLevels={10}
           levelReached={view.stars === 0 ? 4 : 10}

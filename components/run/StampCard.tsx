@@ -51,9 +51,11 @@ interface StampCardProps {
   starLine?: string;
   children: ReactNode;
   testId?: string;
+  /** Optional X in the top-right corner (Tyler 2026-09-03: the celebration needs a way out). */
+  onClose?: () => void;
 }
 
-export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, stars, starLine, children, testId }: StampCardProps) {
+export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, stars, starLine, children, testId, onClose }: StampCardProps) {
   const won = tone === 'won';
   const filled = won ? level : level - 1;
   const showStars = stars !== undefined;
@@ -95,6 +97,17 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
       `}</style>
 
       <div className="rr-stamp-card relative w-full max-w-sm rounded-[24px] p-4 [@media(min-height:760px)]:p-6 text-center overflow-y-auto overscroll-contain text-white" style={{ ...CARD, maxHeight: 'calc(100dvh - 2rem)' }} data-testid={testId}>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-2 right-2 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-[22px] font-black leading-none active:scale-90 transition-transform"
+            style={{ color: 'rgba(255,255,255,0.7)', background: 'rgba(0,0,0,0.25)' }}
+          >
+            &times;
+          </button>
+        )}
         <div className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.55)' }}>{kicker}</div>
 
         <div className="relative mt-2 h-[118px] [@media(min-height:760px)]:h-[150px] flex items-center justify-center">

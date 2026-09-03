@@ -179,9 +179,9 @@ function readParityHook(params: URLSearchParams): ParityHook | null {
   };
 }
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null } {
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; go: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '', ladder: false, refresh: false, loadout: null, testkit: null, parity: null };
+    return { runId: '', startLevelIndex: 0, date: '', ladder: false, go: false, refresh: false, loadout: null, testkit: null, parity: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -194,11 +194,13 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
     if (!Number.isNaN(n) && n >= 1) startLevelIndex = n - 1;
   }
   const ladder = params.get('ladder') === '1';
+  // `?go=1`: board straight away, no home screen (the "Next run" button).
+  const go = params.get('go') === '1';
   const refresh = params.get('refresh') === '1';
   const parity = readParityHook(params);
   // Parity wins: a parity session never combines with a testkit.
   const testkit = parity ? null : readTestkitParam(params);
-  return { runId, startLevelIndex, date, ladder, refresh, loadout: readLoadoutParam(params), testkit, parity };
+  return { runId, startLevelIndex, date, ladder, go, refresh, loadout: readLoadoutParam(params), testkit, parity };
 }
 
 /** Slow-motion enemy slide onto Rookie when she gets captured (ms). */
@@ -213,6 +215,8 @@ interface RunMeta {
    * home screen, force Normal rules, and record the result to profile.ladder.
    */
   ladder: boolean;
+  /** `?go=1`: skip the home screen and board immediately ("Next run" from the summary card). */
+  go: boolean;
   /** Standalone `?loadout=` starting kit (works in production); parity wins over it. */
   loadout: OwnedAbility[] | null;
   /** Dev-only; null in production and whenever `?parity=1` is absent. */
@@ -330,6 +334,7 @@ export default function RookiesRunPage() {
       runId: validRunId,
       startLevelIndex,
       ladder,
+      go: url.go,
       loadout: url.loadout,
       parity: url.parity,
       levelJump: startLevelIndex > 0,
@@ -636,6 +641,8 @@ export default function RookiesRunPage() {
     // A Ladder launch (?ladder=1&run=<id>) goes straight to the board — the
     // player just tapped the rung on the home screen.
     if (meta.ladder) return;
+    // "Next run" from the summary card: the player already chose to play.
+    if (meta.go) return;
     // A playtest deep link (?level=N with ?loadout=, /playtest's PLAY button)
     // also boards directly — the funnel already picked the level + kit.
     // Parity keeps its own flow untouched.
@@ -648,7 +655,7 @@ export default function RookiesRunPage() {
     if (!localStorage.getItem(key)) {
       setShowIntro(true);
     }
-  }, [meta.iso, meta.ladder, meta.levelJump, meta.loadout, meta.parity, usesClassicLanding]);
+  }, [meta.iso, meta.ladder, meta.go, meta.levelJump, meta.loadout, meta.parity, usesClassicLanding]);
 
   const resetRunRef = useRef<() => void>(() => {});
   // Optionally starts under a specific difficulty (ArenaHome's PLAY and
@@ -1378,7 +1385,9 @@ export default function RookiesRunPage() {
       trackEvent('run_advanced', { from: meta.runId, to: nextRunId });
       // Navigate explicitly so STC runs land back inside the STC surface.
       // A bare /run with no ?run= would kick STC runs back to DEFAULT_RUN_ID.
-      window.location.href = `/?run=${encodeURIComponent(nextRunId)}`;
+      // Straight onto the board — a cold open lands on the home screen,
+      // which read as "the button did nothing" (Tyler 2026-09-03).
+      window.location.href = `/?run=${encodeURIComponent(nextRunId)}&go=1`;
       return;
     }
     trackEvent('run_advanced', { from: meta.runId, to: nextRunId });
@@ -1968,6 +1977,10 @@ export default function RookiesRunPage() {
           onReplay={resetRun}
           nextRunName={nextRunId !== meta.runId ? getRunById(nextRunId).name : undefined}
           onNextRun={nextRunId !== meta.runId ? goToNextRun : undefined}
+          onClose={() => {
+            // A fresh cold open = the home screen, with today's daily up.
+            window.location.href = '/';
+          }}
         />
       )}
     </div>
