@@ -92,12 +92,12 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
         }
       `}</style>
 
-      <div className="rr-stamp-card relative w-full max-w-sm rounded-[24px] p-6 text-center overflow-y-auto overscroll-contain text-white" style={{ ...CARD, maxHeight: 'calc(100dvh - 3rem)' }} data-testid={testId}>
+      <div className="rr-stamp-card relative w-full max-w-sm rounded-[24px] p-4 [@media(min-height:760px)]:p-6 text-center overflow-y-auto overscroll-contain text-white" style={{ ...CARD, maxHeight: 'calc(100dvh - 2rem)' }} data-testid={testId}>
         <div className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.55)' }}>{kicker}</div>
 
-        <div className="relative mt-3 h-[150px] flex items-center justify-center">
-          <div className="rr-stamp-ring absolute rounded-full" style={{ width: 150, height: 150, border: `4px solid ${won ? GOLD : '#FF6B66'}` }} />
-          <div className="rr-stamp-slam text-[132px] leading-none font-black tabular-nums" style={won ? GOLD_TEXT : { ...GOLD_TEXT, color: 'rgba(255,255,255,0.28)' }}>{level}</div>
+        <div className="relative mt-2 h-[118px] [@media(min-height:760px)]:h-[150px] flex items-center justify-center">
+          <div className="rr-stamp-ring absolute rounded-full" style={{ height: '100%', aspectRatio: '1 / 1', width: 'auto', border: `4px solid ${won ? GOLD : '#FF6B66'}` }} />
+          <div className="rr-stamp-slam text-[104px] [@media(min-height:760px)]:text-[132px] leading-none font-black tabular-nums" style={won ? GOLD_TEXT : { ...GOLD_TEXT, color: 'rgba(255,255,255,0.28)' }}>{level}</div>
           <div
             className="rr-stamp-ink absolute px-4 py-1.5 rounded-lg font-black uppercase tracking-[0.06em] whitespace-nowrap"
             style={{ fontSize: stamp.length > 9 ? 22 : 34, border: `5px solid ${INK}`, color: INK, transform: 'rotate(-10deg)', background: 'rgba(15,28,63,0.75)', mixBlendMode: 'screen' }}
@@ -123,12 +123,12 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
         {showStars && <StampStars stars={stars} line={starLine} />}
 
         {chips && (
-          <div className="rr-stamp-rise mt-4 flex items-center justify-center gap-1.5" style={{ animationDelay: `${750 + afterStars}ms` }}>
+          <div className="rr-stamp-rise mt-3 flex items-center justify-center gap-1.5" style={{ animationDelay: `${750 + afterStars}ms` }}>
             {chips}
           </div>
         )}
 
-        <div className="rr-stamp-rise mt-5 flex flex-col gap-2" style={{ animationDelay: `${850 + afterStars}ms` }}>
+        <div className="rr-stamp-rise mt-3 flex flex-col gap-2" style={{ animationDelay: `${850 + afterStars}ms` }}>
           {children}
         </div>
       </div>
@@ -165,7 +165,7 @@ function StampStars({ stars, line }: { stars: 0 | 1 | 2 | 3; line?: string }) {
   }, [stars]);
 
   return (
-    <div className="mt-4" data-testid="stamp-stars" aria-label={`${stars} of 3 stars`}>
+    <div className="mt-3" data-testid="stamp-stars" aria-label={`${stars} of 3 stars`}>
       <div className="flex justify-center gap-3">
         {[0, 1, 2].map((i) => {
           const earned = i < stars;

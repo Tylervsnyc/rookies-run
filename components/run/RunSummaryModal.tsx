@@ -132,41 +132,42 @@ export function RunSummaryModal({
         <Stat value={stats.maxStreak} label="Max" />
       </div>
 
+      {/* Levels reached — ONE compact strip (Tyler 2026-09-03: the card must
+          fit one phone screen). Ten columns, bar height = share of runs that
+          ended on that level; today's level is lit. */}
       <div className="mt-2 text-left">
-        <div className="text-[10px] font-black uppercase tracking-[0.18em] mb-1.5 px-1" style={{ color: MUTED }}>
-          Levels reached
+        <div className="flex items-center justify-between px-1 mb-1">
+          <span className="text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: MUTED }}>Levels reached</span>
+          <span className="text-[10px] font-bold tabular-nums" style={{ color: MUTED }}>{stats.played} runs</span>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="grid grid-cols-10 gap-1 items-end px-1" style={{ height: 44 }}>
           {rows.map((r, idx) => (
-            <div key={r.level} className="flex items-center gap-2 text-sm">
-              <div className="w-5 text-right text-[11px] font-black tabular-nums" style={{ color: MUTED }}>
-                {r.level}
-              </div>
-              <div className="flex-1 h-5 rounded overflow-hidden relative" style={{ background: 'rgba(0,0,0,0.35)' }}>
-                <div
-                  className="h-full flex items-center justify-end pr-2 text-[10px] font-black tabular-nums"
-                  style={{
-                    width: `${Math.max(r.count > 0 ? 10 : 0, r.pct)}%`,
-                    background: r.isToday ? (completed ? GOLD : REVENGE_RED) : 'rgba(255,255,255,0.22)',
-                    color: r.isToday && completed ? '#3a2a00' : '#fff',
-                    transformOrigin: 'left center',
-                    animation: 'rrStampBar 500ms cubic-bezier(0.16, 1, 0.3, 1) both',
-                    animationDelay: `${900 + idx * 40}ms`,
-                  }}
-                >
-                  {r.count > 0 ? r.count : ''}
-                </div>
-                {r.count === 0 && r.isToday && (
-                  <div className="absolute inset-0 flex items-center px-2 text-[10px] font-black" style={{ color: '#FF6B66' }}>
-                    ← you
-                  </div>
-                )}
-              </div>
+            <div key={r.level} className="relative h-full flex items-end rounded-sm overflow-hidden" style={{ background: 'rgba(0,0,0,0.35)' }}>
+              <div
+                className="w-full rounded-sm"
+                style={{
+                  height: `${Math.max(r.count > 0 ? 18 : 0, r.pct)}%`,
+                  background: r.isToday ? (completed ? GOLD : REVENGE_RED) : 'rgba(255,255,255,0.22)',
+                  transformOrigin: 'bottom center',
+                  animation: 'rrStampBar 500ms cubic-bezier(0.16, 1, 0.3, 1) both',
+                  animationDelay: `${900 + idx * 40}ms`,
+                }}
+              />
+              {r.isToday && r.count === 0 && (
+                <div className="absolute inset-x-0 bottom-0 h-[3px]" style={{ background: completed ? GOLD : REVENGE_RED }} />
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-10 gap-1 px-1 mt-0.5">
+          {rows.map((r) => (
+            <div key={r.level} className="text-center text-[9px] font-black tabular-nums" style={{ color: r.isToday ? (completed ? GOLD : '#FF6B66') : MUTED }}>
+              {r.level}
             </div>
           ))}
         </div>
         <style>{`
-          @keyframes rrStampBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+          @keyframes rrStampBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
           @media (prefers-reduced-motion: reduce) { [style*="rrStampBar"] { animation: none !important; } }
         `}</style>
       </div>
