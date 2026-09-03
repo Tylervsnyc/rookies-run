@@ -742,9 +742,16 @@
       "id": "revenge-11",
       "kind": "run",
       "name": "Dead Bolt",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-03",
-      "notes": "Hard run: every key double-locked, tight budgets, two queens from L8. Built 2026-09-03 because all live runs clear 71-96% on Normal."
+      "notes": "Hard run: every key double-locked, tight budgets, two queens from L8. Built 2026-09-03 because all live runs clear 71-96% on Normal.",
+      "approved": {
+        "at": "2026-09-03",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-03"
+      }
     }
   ]
 }

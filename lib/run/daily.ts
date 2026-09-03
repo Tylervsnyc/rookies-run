@@ -18,7 +18,19 @@ function daysSinceEpoch(yyyyMmDd: string): number {
   return Math.floor((a - b) / 86400000);
 }
 
+/**
+ * Pinned dailies — a specific run on a specific date, ahead of the rotation.
+ * Tyler 2026-09-03: "give me a new harder run as the daily revenge" → Dead
+ * Bolt (revenge-11) today and tomorrow. Remove entries once they've passed.
+ */
+const DAILY_OVERRIDES: Readonly<Record<string, string>> = {
+  '2026-09-03': 'revenge-11',
+  '2026-09-04': 'revenge-11',
+};
+
 export function getRunIdForDate(yyyyMmDd: string): string {
+  const pinned = DAILY_OVERRIDES[yyyyMmDd];
+  if (pinned && DAILY_POOL.some((r) => r.id === pinned)) return pinned;
   if (DAILY_POOL.length === 0) return RUNS[0].id;
   const idx = ((daysSinceEpoch(yyyyMmDd) % DAILY_POOL.length) + DAILY_POOL.length) % DAILY_POOL.length;
   return DAILY_POOL[idx].id;
