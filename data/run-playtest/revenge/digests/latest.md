@@ -1,299 +1,86 @@
 # Rookie's Revenge — Morning Report
 
-**Date:** 2026-09-02 · **Mode:** full · **Wall time:** 104.6 min
-**Bot:** T5 MCTS · **Live run:** 40 trials per cell at realistic tiers, 15 per difficulty mode, 80 full runs per mode · **Experiments:** 40 trials · candidates run lighter (see each run)
+**Date:** 2026-09-02 · **Mode:** full · **Wall time:** 267.9 min
+**Bot:** T5 MCTS · **Live run:** 16 trials per cell at realistic tiers, 8 per difficulty mode, 16 full runs per mode · **Experiments:** 16 trials · candidates run lighter (see each run)
 
 ## Headline
 
-Rookie's Revenge: a new player (3 starters) clears the run 90% of the time on Normal and 95% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 93% / 100%. Powers carry you by +33 points (no-ability averages 67%, finishers 99%). Zero stalls. Pawn Storm: a new player (3 starters) clears the run 88% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +24 points (no-ability averages 75%, finishers 99%). Weak finishers: freeze-ray 75% on L9. Zero stalls. The Royal Guard: a new player (3 starters) clears the run 88% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 95% / 100%. Powers carry you by +33 points (no-ability averages 66%, finishers 99%). Weak finishers: knight-hop 78% on L7. Zero stalls. The Fortress: a new player (3 starters) clears the run 98% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 98% / 100%. Powers carry you by +26 points (no-ability averages 73%, finishers 98%). Weak finishers: freeze-ray 78% on L9. Zero stalls. Stonework: a new player (3 starters) clears the run 98% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +23 points (no-ability averages 77%, finishers 100%). Zero stalls. Two Keys: a new player (3 starters) clears the run 100% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 98% / 100%. Powers carry you by +27 points (no-ability averages 72%, finishers 99%). Zero stalls. Versus last night: 131 cells moved more than 15 points since 2026-09-01 (biggest: L10 surge 7→87% [hard]; L10 freeze-ray 0→73% [normal]); L9 left its band (38→48%, too easy), L10 left its band (30→13%, too hard). Candidate runs: 1 tested, 0 ready to promote. 38 human runs on revenge-1 since 2026-08-03, 15 won.
+The Crucible: a new player (3 starters) clears the run 88% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 88% / 100%. Powers carry you by +37 points (no-ability averages 63%, finishers 100%). Zero stalls. Rookie's Revenge: a new player (3 starters) clears the run 88% of the time on Normal and 96% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 83% / 100%. Powers carry you by +36 points (no-ability averages 63%, finishers 99%). Weak finishers: knight-hop 75% on L10. Zero stalls. The Vault: a new player (3 starters) clears the run 83% of the time on Normal and 100% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 96% / 100%. Powers carry you by +41 points (no-ability averages 57%, finishers 98%). Weak finishers: freeze-ray 75% on L6. 1 stall (king unreachable — look at this first). Pawn Storm: a new player (3 starters) clears the run 88% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +22 points (no-ability averages 76%, finishers 98%). Weak finishers: bishop-step 75% on L3. 7 stalls (king unreachable — look at this first). The Royal Guard: a new player (3 starters) clears the run 75% of the time on Normal and 100% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 83% / 100%. Powers carry you by +36 points (no-ability averages 62%, finishers 98%). Weak finishers: freeze-ray 75% on L8. Zero stalls. The Fortress: a new player (3 starters) clears the run 71% of the time on Normal and 100% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 92% / 100%. Powers carry you by +26 points (no-ability averages 72%, finishers 98%). Weak finishers: freeze-ray 75% on L9, freeze-ray 75% on L10. Zero stalls. Stonework: a new player (3 starters) clears the run 83% of the time on Normal and 100% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +22 points (no-ability averages 78%, finishers 100%). Zero stalls. Two Keys: a new player (3 starters) clears the run 96% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 100% / 100%. Powers carry you by +22 points (no-ability averages 78%, finishers 99%). Zero stalls. Bramble Crown: a new player (3 starters) clears the run 92% of the time on Normal and 100% on Rookie — TOO EASY (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 96% / 100%. Powers carry you by +28 points (no-ability averages 71%, finishers 99%). 5 stalls (king unreachable — look at this first). The Rampart: a new player (3 starters) clears the run 79% of the time on Normal and 96% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 88% / 100%. Powers carry you by +27 points (no-ability averages 73%, finishers 100%). Zero stalls. Cold Court: a new player (3 starters) clears the run 67% of the time on Normal and 100% on Rookie — too easy (target 40-60% on Normal, 70%+ on Rookie). A veteran with every ability clears 71% / 100%. Powers carry you by +33 points (no-ability averages 64%, finishers 97%). Weak finishers: queen-pulse 50% on L3. 15 stalls (king unreachable — look at this first). Versus last night: 186 cells moved more than 15 points since 2026-09-01 (biggest: L10 surge 7→88% [hard]; L10 rewind 8→88% [realistic]); 5 NEW stalls; L7 left its band (53→38%, too hard), L9 left its band (20→13%, too hard), L6 left its band (55→69%, too easy), L9 left its band (38→13%, too hard), L6 left its band (53→69%, too easy), L7 left its band (50→38%, too hard), L9 left its band (38→50%, too easy), L6 left its band (60→69%, too easy), L9 left its band (28→63%, too easy). Ran 28 experiments on level tweaks: 12 predictions confirmed, 5 falsified. No candidate runs in the queue tonight. 3 human runs on crucible since 2026-08-04, 2 won.
 
 ## Run difficulty and ability tiers
 
 Difficulty is measured on the player who actually exists: a **new player** with only the 3 starters (knight-hop, surge, freeze-ray), taking the offers the app forces (never dismissing), with the mode's retries (Rookie unlimited, Normal 3). Target: 40-60% full-run clear on Normal, 70%+ on Rookie; over 85% on Normal is TOO EASY.
 
+**The Crucible** (`crucible`)
+
+- **New player clears this run 88% of the time on Normal / 100% on Rookie — TOO EASY.** (24 runs per mode; retries used: Normal 8, Rookie 1.)
+- Veteran (all 24 abilities): 88% on Normal / 100% on Rookie.
+- Powers carry you by **+37 points**: no-ability averages 63% across L1-L10, the five finishers average 100%. Hard levels without powers (no-ability under 60%): L6 56%, L7 25%, L8 31%, L9 25%, L10 6%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 96% (23/24) | 6 | 100% (24/24) | 1 | 88% |
+| 9 | 100% (23/23) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 91% (21/23) | 5 | 100% (24/24) | 0 | 100% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | aegis | 100% | +62 | L5 100% | 100% |
+| S | become-king | 100% | +62 | L5 100% | 99% |
+| S | bishop-step | 100% | +62 | L5 100% | 92% |
+| S | decoy | 100% | +62 | L5 100% | 100% |
+| S | dragon | 100% | +62 | L5 100% | 97% |
+| S | freeze-ray | 100% | +62 | L5 100% | 95% |
+| S | queen-pulse | 100% | +62 | L5 100% | 97% |
+| S | rabies-dart | 100% | +62 | L5 100% | 100% |
+| S | rewind | 100% | +62 | L5 100% | 91% |
+| S | smoke | 100% | +62 | L5 100% | 88% |
+| S | vanguard | 100% | +62 | L5 100% | 97% |
+| S | boulder | 99% | +61 | L10 94% | 100% |
+| S | duchess | 99% | +61 | L7 94% | 92% |
+| S | knight-hop | 99% | +61 | L10 94% | 89% |
+| S | twin | 99% | +61 | L10 94% | 91% |
+| S | bishop-squire | 98% | +60 | L9 94% | 95% |
+| S | convert | 98% | +60 | L8 94% | 98% |
+| S | squad † | 97% | +59 | L6 88% | 0% |
+| S | summon-knight | 97% | +58 | L8 81% | 92% |
+| A | poison-dart | 95% | +56 | L6 81% | 96% |
+| A | page | 88% | +49 | L10 56% | 78% |
+| A | magnet | 87% | +48 | L7 69% | 70% |
+| D | swap † | 48% | +10 | L10 6% | 0% |
+| D | sacrifice † | 40% | +1 | L9 19% | 0% |
+
+† squad, swap, sacrifice: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
 **Rookie's Revenge** (`revenge-1`)
 
-- **New player clears this run 90% of the time on Normal / 95% on Rookie — TOO EASY.** (40 runs per mode; retries used: Normal 40, Rookie 25.)
-- Veteran (all 25 abilities): 93% on Normal / 100% on Rookie.
-- Powers carry you by **+33 points**: no-ability averages 67% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L6 55%, L7 50%, L8 33%, L9 18%, L10 23%.
+- **New player clears this run 88% of the time on Normal / 96% on Rookie — TOO EASY.** (24 runs per mode; retries used: Normal 11, Rookie 11.)
+- Veteran (all 24 abilities): 83% on Normal / 100% on Rookie.
+- Powers carry you by **+36 points**: no-ability averages 63% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L6 31%, L7 25%, L8 38%, L9 6%, L10 25%.
 
 | L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
 |---|---|---|---|---|---|
-| 1 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 2 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 3 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 4 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 5 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 6 | 100% (40/40) | 1 | 100% (40/40) | 0 | 100% |
-| 7 | 100% (40/40) | 0 | 100% (40/40) | 1 | 100% |
-| 8 | 98% (39/40) | 14 | 100% (40/40) | 4 | 98% |
-| 9 | 100% (39/39) | 2 | 100% (40/40) | 1 | 100% |
-| 10 | 92% (36/39) | 27 | 95% (38/40) | 21 | 95% |
-
-"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
-
-Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
-
-| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
-|---|---|---|---|---|---|
-| S | aegis | 100% | +56 | L5 100% | 98% |
-| S | become-king | 100% | +56 | L5 100% | 90% |
-| S | bishop-step | 100% | +56 | L5 100% | 97% |
-| S | decoy | 100% | +56 | L5 100% | 100% |
-| S | rabies-dart | 100% | +56 | L5 100% | 100% |
-| S | queen-pulse | 100% | +55 | L8 98% | 98% |
-| S | squad † | 99% | +55 | L7 98% | 0% |
-| S | vanguard | 99% | +55 | L10 95% | 100% |
-| S | duchess | 99% | +54 | L6 98% | 100% |
-| S | knight-hop | 99% | +54 | L10 93% | 100% |
-| S | bishop-squire | 97% | +53 | L6 88% | 98% |
-| S | freeze-ray | 97% | +52 | L10 88% | 98% |
-| S | summon-knight | 96% | +52 | L8 90% | 98% |
-| S | twin | 96% | +51 | L6 90% | 99% |
-| S | convert | 95% | +51 | L6 90% | 100% |
-| A | poison-dart | 95% | +50 | L10 85% | 98% |
-| A | bodyguard | 93% | +48 | L10 60% | 99% |
-| A | page | 89% | +44 | L10 73% | 98% |
-| A | smoke | 89% | +44 | L10 60% | 98% |
-| A | boulder | 85% | +41 | L10 35% | 96% |
-| C | magnet | 66% | +22 | L10 28% | 61% |
-| D | swap † | 49% | +5 | L10 28% | 0% |
-| D | knighting † | 48% | +4 | L9 23% | 0% |
-| D | rewind † | 47% | +3 | L9 25% | 0% |
-| D | sacrifice † | 47% | +3 | L10 25% | 0% |
-
-† squad, swap, knighting, rewind, sacrifice: bot never casts this (cast rate under 10%) — floor, not a verdict.
-
-**Pawn Storm** (`revenge-2`)
-
-- **New player clears this run 88% of the time on Normal / 100% on Rookie — TOO EASY.** (40 runs per mode; retries used: Normal 51, Rookie 8.)
-- Veteran (all 25 abilities): 100% on Normal / 100% on Rookie.
-- Powers carry you by **+24 points**: no-ability averages 75% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L8 53%, L9 33%, L10 45%.
-
-| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
-|---|---|---|---|---|---|
-| 1 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 2 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 3 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 4 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 5 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 6 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 7 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 8 | 100% (40/40) | 17 | 100% (40/40) | 0 | 100% |
-| 9 | 100% (40/40) | 1 | 100% (40/40) | 1 | 100% |
-| 10 | 88% (35/40) | 38 | 100% (40/40) | 7 | 100% |
-
-"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
-
-Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
-
-| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
-|---|---|---|---|---|---|
-| S | become-king | 100% | +41 | L5 100% | 98% |
-| S | bishop-step | 100% | +41 | L10 98% | 98% |
-| S | decoy | 100% | +41 | L5 100% | 98% |
-| S | duchess | 100% | +41 | L10 98% | 97% |
-| S | queen-pulse | 100% | +41 | L5 100% | 99% |
-| S | rabies-dart | 100% | +41 | L9 98% | 98% |
-| S | vanguard | 100% | +41 | L5 100% | 98% |
-| S | bodyguard | 99% | +40 | L10 93% | 95% |
-| S | convert | 99% | +40 | L10 95% | 100% |
-| S | summon-knight | 99% | +40 | L10 93% | 95% |
-| S | twin | 99% | +40 | L10 93% | 97% |
-| S | bishop-squire | 98% | +39 | L10 88% | 99% |
-| S | knight-hop | 98% | +39 | L10 85% | 95% |
-| S | poison-dart | 97% | +38 | L10 80% | 99% |
-| S | smoke | 96% | +38 | L9 85% | 89% |
-| S | aegis | 96% | +37 | L10 73% | 98% |
-| S | boulder | 95% | +37 | L10 75% | 99% |
-| A | freeze-ray | 95% | +36 | L9 75% | 98% |
-| A | squad † | 95% | +36 | L10 73% | 0% |
-| A | page | 90% | +31 | L10 70% | 93% |
-| C | magnet | 69% | +11 | L8 53% | 47% |
-| C | swap † | 56% | -2 | L9 33% | 0% |
-| C | sacrifice † | 56% | -3 | L9 35% | 0% |
-| C | knighting † | 55% | -4 | L9 40% | 0% |
-| C | rewind † | 52% | -7 | L9 18% | 0% |
-
-† squad, swap, sacrifice, knighting, rewind: bot never casts this (cast rate under 10%) — floor, not a verdict.
-
-**The Royal Guard** (`revenge-3`)
-
-- **New player clears this run 88% of the time on Normal / 100% on Rookie — TOO EASY.** (40 runs per mode; retries used: Normal 53, Rookie 4.)
-- Veteran (all 25 abilities): 95% on Normal / 100% on Rookie.
-- Powers carry you by **+33 points**: no-ability averages 66% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L6 55%, L7 45%, L8 3%, L9 28%, L10 38%.
-
-| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
-|---|---|---|---|---|---|
-| 1 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 2 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 3 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 4 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 5 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 6 | 100% (40/40) | 1 | 100% (40/40) | 0 | 100% |
-| 7 | 100% (40/40) | 5 | 100% (40/40) | 1 | 100% |
-| 8 | 88% (35/40) | 46 | 100% (40/40) | 1 | 95% |
-| 9 | 100% (35/35) | 0 | 100% (40/40) | 0 | 100% |
-| 10 | 100% (35/35) | 6 | 100% (40/40) | 2 | 100% |
-
-"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
-
-Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
-
-| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
-|---|---|---|---|---|---|
-| S | aegis | 100% | +57 | L5 100% | 98% |
-| S | become-king | 100% | +57 | L5 100% | 100% |
-| S | bishop-step | 100% | +57 | L8 98% | 100% |
-| S | decoy | 100% | +57 | L5 100% | 99% |
-| S | queen-pulse | 100% | +57 | L5 100% | 100% |
-| S | rabies-dart | 100% | +57 | L5 100% | 99% |
-| S | vanguard | 100% | +57 | L5 100% | 98% |
-| S | twin | 98% | +55 | L6 95% | 97% |
-| S | convert | 97% | +54 | L9 90% | 100% |
-| S | freeze-ray | 97% | +54 | L8 93% | 97% |
-| S | duchess | 97% | +53 | L8 88% | 100% |
-| S | bodyguard | 96% | +53 | L8 85% | 97% |
-| S | bishop-squire | 95% | +52 | L10 78% | 96% |
-| S | knight-hop | 95% | +52 | L7 78% | 99% |
-| S | poison-dart | 95% | +52 | L6 93% | 97% |
-| S | summon-knight | 95% | +52 | L7 93% | 96% |
-| A | smoke | 93% | +50 | L6 75% | 86% |
-| A | squad † | 86% | +43 | L8 53% | 0% |
-| B | boulder | 84% | +41 | L8 55% | 85% |
-| B | page | 84% | +41 | L8 60% | 92% |
-| C | magnet | 60% | +17 | L8 28% | 51% |
-| D | sacrifice † | 48% | +5 | L8 5% | 0% |
-| D | knighting † | 41% | -2 | L8 10% | 0% |
-| D | rewind † | 39% | -4 | L8 8% | 0% |
-| D | swap † | 38% | -5 | L8 8% | 0% |
-
-† squad, sacrifice, knighting, rewind, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
-
-**The Fortress** (`revenge-4`)
-
-- **New player clears this run 98% of the time on Normal / 100% on Rookie — TOO EASY.** (40 runs per mode; retries used: Normal 30, Rookie 9.)
-- Veteran (all 25 abilities): 98% on Normal / 100% on Rookie.
-- Powers carry you by **+26 points**: no-ability averages 73% across L1-L10, the five finishers average 98%. Hard levels without powers (no-ability under 60%): L6 53%, L7 43%, L8 53%, L9 38%, L10 43%.
-
-| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
-|---|---|---|---|---|---|
-| 1 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 2 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 3 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 4 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 5 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 6 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 7 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 8 | 100% (40/40) | 9 | 100% (40/40) | 1 | 100% |
-| 9 | 100% (40/40) | 9 | 100% (40/40) | 6 | 100% |
-| 10 | 98% (39/40) | 13 | 100% (40/40) | 2 | 98% |
-
-"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
-
-Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
-
-| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
-|---|---|---|---|---|---|
-| S | become-king | 100% | +45 | L5 100% | 100% |
-| S | bishop-step | 100% | +45 | L9 98% | 87% |
-| S | decoy | 100% | +45 | L5 100% | 100% |
-| S | rabies-dart | 100% | +45 | L5 100% | 99% |
-| S | vanguard | 100% | +45 | L5 100% | 100% |
-| S | aegis | 99% | +44 | L10 93% | 96% |
-| S | convert | 99% | +44 | L8 95% | 100% |
-| S | duchess | 97% | +43 | L9 85% | 99% |
-| S | queen-pulse | 97% | +43 | L10 85% | 88% |
-| S | twin | 97% | +43 | L9 90% | 98% |
-| S | smoke | 97% | +42 | L8 93% | 93% |
-| S | knight-hop | 96% | +42 | L9 85% | 97% |
-| S | freeze-ray | 96% | +41 | L9 78% | 98% |
-| S | poison-dart | 96% | +41 | L10 78% | 100% |
-| A | bodyguard | 91% | +36 | L10 50% | 98% |
-| A | summon-knight | 90% | +35 | L9 68% | 92% |
-| A | bishop-squire | 86% | +31 | L9 65% | 92% |
-| B | squad † | 85% | +30 | L9 33% | 0% |
-| B | boulder | 84% | +30 | L10 57% | 95% |
-| B | magnet | 80% | +26 | L9 53% | 66% |
-| B | page | 80% | +26 | L6 63% | 92% |
-| C | sacrifice † | 54% | -1 | L9 30% | 0% |
-| C | knighting † | 53% | -1 | L9 25% | 0% |
-| C | rewind † | 53% | -1 | L9 38% | 0% |
-| C | swap † | 50% | -4 | L7 33% | 0% |
-
-† squad, sacrifice, knighting, rewind, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
-
-**Stonework** (`revenge-5`)
-
-- **New player clears this run 98% of the time on Normal / 100% on Rookie — TOO EASY.** (40 runs per mode; retries used: Normal 23, Rookie 5.)
-- Veteran (all 25 abilities): 100% on Normal / 100% on Rookie.
-- Powers carry you by **+23 points**: no-ability averages 77% across L1-L10, the five finishers average 100%. Hard levels without powers (no-ability under 60%): L6 55%, L7 53%, L9 48%, L10 13%.
-
-| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
-|---|---|---|---|---|---|
-| 1 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 2 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 3 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 4 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 5 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 6 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 7 | 100% (40/40) | 1 | 100% (40/40) | 1 | 100% |
-| 8 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 9 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 10 | 98% (39/40) | 23 | 100% (40/40) | 4 | 100% |
-
-"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
-
-Ability tier list, realistic tiers, scored over the 4 levels where no-ability is under 100% (L6, L7, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
-
-| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
-|---|---|---|---|---|---|
-| S | aegis | 100% | +58 | L6 100% | 97% |
-| S | become-king | 100% | +58 | L6 100% | 96% |
-| S | bishop-step | 100% | +58 | L6 100% | 98% |
-| S | decoy | 100% | +58 | L6 100% | 100% |
-| S | knight-hop | 100% | +58 | L6 100% | 99% |
-| S | queen-pulse | 100% | +58 | L6 100% | 96% |
-| S | vanguard | 100% | +58 | L6 100% | 100% |
-| S | duchess | 100% | +57 | L9 98% | 94% |
-| S | rabies-dart | 99% | +57 | L6 95% | 100% |
-| S | summon-knight | 99% | +57 | L6 98% | 93% |
-| S | twin | 99% | +57 | L9 98% | 94% |
-| S | bodyguard | 98% | +56 | L9 95% | 93% |
-| S | convert | 98% | +56 | L10 95% | 99% |
-| S | freeze-ray | 98% | +56 | L10 93% | 98% |
-| S | smoke | 98% | +56 | L7 95% | 90% |
-| A | poison-dart | 93% | +51 | L6 80% | 92% |
-| A | bishop-squire | 92% | +50 | L10 80% | 89% |
-| A | squad † | 87% | +44 | L7 73% | 0% |
-| A | magnet | 86% | +44 | L7 73% | 67% |
-| B | boulder | 80% | +38 | L9 63% | 86% |
-| C | page | 63% | +21 | L7 55% | 88% |
-| D | swap † | 43% | +1 | L10 23% | 0% |
-| D | rewind † | 39% | -3 | L10 23% | 0% |
-| D | knighting † | 38% | -5 | L10 20% | 0% |
-| D | sacrifice † | 36% | -6 | L10 18% | 0% |
-
-† squad, swap, rewind, knighting, sacrifice: bot never casts this (cast rate under 10%) — floor, not a verdict.
-
-**Two Keys** (`revenge-6`)
-
-- **New player clears this run 100% of the time on Normal / 100% on Rookie — TOO EASY.** (40 runs per mode; retries used: Normal 13, Rookie 4.)
-- Veteran (all 25 abilities): 98% on Normal / 100% on Rookie.
-- Powers carry you by **+27 points**: no-ability averages 72% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L8 35%, L9 30%, L10 30%.
-
-| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
-|---|---|---|---|---|---|
-| 1 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 2 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 3 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 4 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 5 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 6 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 7 | 100% (40/40) | 0 | 100% (40/40) | 0 | 100% |
-| 8 | 100% (40/40) | 5 | 100% (40/40) | 3 | 100% |
-| 9 | 100% (40/40) | 0 | 100% (40/40) | 0 | 98% |
-| 10 | 100% (40/40) | 8 | 100% (40/40) | 1 | 100% |
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 1 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 96% (23/24) | 5 | 100% (24/24) | 1 | 92% |
+| 9 | 100% (23/23) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 91% (21/23) | 8 | 96% (23/24) | 11 | 91% |
 
 "Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
 
@@ -301,52 +88,51 @@ Ability tier list, realistic tiers, scored over the 5 levels where no-ability is
 
 | Tier | Ability | Avg win | Lift | Worst level | Cast rate |
 |---|---|---|---|---|---|
-| S | aegis | 100% | +55 | L6 100% | 99% |
-| S | become-king | 100% | +55 | L6 100% | 99% |
-| S | bishop-step | 100% | +55 | L6 100% | 92% |
-| S | decoy | 100% | +55 | L6 100% | 100% |
-| S | duchess | 100% | +55 | L8 98% | 100% |
-| S | knight-hop | 100% | +55 | L10 98% | 100% |
-| S | queen-pulse | 100% | +55 | L6 100% | 96% |
-| S | rabies-dart | 100% | +55 | L6 100% | 100% |
-| S | vanguard | 100% | +55 | L6 100% | 100% |
-| S | convert | 99% | +55 | L6 98% | 100% |
-| S | summon-knight | 99% | +55 | L6 98% | 100% |
-| S | twin | 99% | +54 | L10 95% | 100% |
-| S | bodyguard | 98% | +54 | L10 93% | 100% |
-| S | poison-dart | 97% | +52 | L6 93% | 96% |
-| S | smoke | 97% | +52 | L8 88% | 97% |
-| S | freeze-ray | 96% | +52 | L8 88% | 99% |
-| A | squad † | 94% | +50 | L10 78% | 0% |
-| A | bishop-squire | 89% | +44 | L10 78% | 95% |
-| A | boulder | 86% | +41 | L8 75% | 92% |
-| B | magnet | 84% | +39 | L7 78% | 66% |
-| B | page | 81% | +36 | L8 73% | 94% |
-| C | knighting † | 51% | +6 | L10 25% | 0% |
-| C | rewind † | 51% | +6 | L10 30% | 0% |
-| D | sacrifice † | 49% | +4 | L8 33% | 0% |
-| D | swap † | 48% | +3 | L8 30% | 0% |
+| S | aegis | 100% | +75 | L6 100% | 100% |
+| S | become-king | 100% | +75 | L6 100% | 99% |
+| S | bishop-squire | 100% | +75 | L6 100% | 100% |
+| S | bishop-step | 100% | +75 | L6 100% | 98% |
+| S | decoy | 100% | +75 | L6 100% | 100% |
+| S | dragon | 100% | +75 | L6 100% | 100% |
+| S | duchess | 100% | +75 | L6 100% | 100% |
+| S | queen-pulse | 100% | +75 | L6 100% | 99% |
+| S | rabies-dart | 100% | +75 | L6 100% | 100% |
+| S | smoke | 98% | +73 | L6 94% | 96% |
+| S | squad † | 98% | +73 | L7 88% | 0% |
+| S | twin | 98% | +73 | L6 88% | 98% |
+| S | vanguard | 98% | +73 | L10 88% | 100% |
+| S | summon-knight | 96% | +71 | L9 88% | 99% |
+| S | freeze-ray | 95% | +70 | L8 88% | 100% |
+| S | knight-hop | 95% | +70 | L10 75% | 99% |
+| A | convert | 91% | +66 | L6 81% | 100% |
+| A | rewind | 91% | +66 | L10 75% | 93% |
+| A | boulder | 89% | +64 | L10 56% | 100% |
+| A | poison-dart | 88% | +63 | L10 63% | 96% |
+| A | page | 87% | +62 | L10 63% | 94% |
+| C | magnet | 64% | +39 | L10 31% | 64% |
+| D | swap † | 38% | +13 | L9 19% | 0% |
+| D | sacrifice † | 35% | +10 | L8 25% | 0% |
 
-† squad, knighting, rewind, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+† squad, swap, sacrifice: bot never casts this (cast rate under 10%) — floor, not a verdict.
 
-**Bramble Crown** (`revenge-7`, candidate)
+**The Vault** (`revenge-10`)
 
-- **New player clears this run 100% of the time on Normal / 100% on Rookie — TOO EASY.** (20 runs per mode; retries used: Normal 3, Rookie 2.)
-- Veteran (all 25 abilities): 100% on Normal / 100% on Rookie.
-- Powers carry you by **+30 points**: no-ability averages 69% across L1-L10, the five finishers average 100%. Hard levels without powers (no-ability under 60%): L6 46%, L7 58%, L8 46%, L9 13%, L10 33%.
+- **New player clears this run 83% of the time on Normal / 100% on Rookie — too easy.** (24 runs per mode; retries used: Normal 17, Rookie 3.)
+- Veteran (all 24 abilities): 96% on Normal / 100% on Rookie.
+- Powers carry you by **+41 points**: no-ability averages 57% across L1-L10, the five finishers average 98%. Hard levels without powers (no-ability under 60%): L5 44%, L6 38%, L7 13%, L8 25%, L9 25%, L10 25%.
 
 | L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
 |---|---|---|---|---|---|
-| 1 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 2 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 3 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 4 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 5 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 6 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 7 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 8 | 100% (20/20) | 2 | 100% (20/20) | 1 | 100% |
-| 9 | 100% (20/20) | 0 | 100% (20/20) | 0 | 100% |
-| 10 | 100% (20/20) | 1 | 100% (20/20) | 1 | 100% |
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 1 | 100% (24/24) | 1 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 96% (23/24) | 6 | 100% (24/24) | 1 | 100% |
+| 8 | 91% (21/23) | 9 | 100% (24/24) | 1 | 100% |
+| 9 | 100% (21/21) | 1 | 100% (24/24) | 0 | 96% |
+| 10 | 95% (20/21) | 4 | 100% (24/24) | 0 | 100% |
 
 "Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
 
@@ -354,469 +140,1029 @@ Ability tier list, realistic tiers, scored over the 6 levels where no-ability is
 
 | Tier | Ability | Avg win | Lift | Worst level | Cast rate |
 |---|---|---|---|---|---|
-| S | become-king | 100% | +51 | L5 100% | 90% |
-| S | bishop-step | 100% | +51 | L5 100% | 91% |
-| S | decoy | 100% | +51 | L5 100% | 93% |
-| S | knight-hop | 100% | +51 | L5 100% | 94% |
-| S | queen-pulse | 100% | +51 | L5 100% | 85% |
-| S | rabies-dart | 100% | +51 | L5 100% | 93% |
-| S | vanguard | 100% | +51 | L5 100% | 95% |
-| S | aegis | 99% | +51 | L9 96% | 91% |
-| S | bodyguard | 99% | +50 | L9 96% | 94% |
-| S | duchess | 99% | +50 | L9 92% | 91% |
-| S | poison-dart | 99% | +50 | L9 92% | 93% |
-| S | convert | 97% | +49 | L9 92% | 96% |
-| S | freeze-ray | 97% | +49 | L10 92% | 95% |
-| S | smoke | 97% | +49 | L9 88% | 87% |
-| S | summon-knight | 97% | +49 | L9 92% | 90% |
-| S | twin | 97% | +49 | L10 88% | 90% |
-| A | squad † | 91% | +42 | L9 58% | 0% |
-| A | bishop-squire | 88% | +40 | L9 71% | 92% |
-| A | magnet | 88% | +40 | L9 71% | 67% |
-| A | boulder | 88% | +39 | L8 67% | 90% |
-| B | page | 79% | +30 | L6 46% | 90% |
-| C | sacrifice † | 56% | +7 | L9 21% | 0% |
-| C | knighting † | 53% | +4 | L9 21% | 0% |
-| C | swap † | 51% | +2 | L10 8% | 0% |
-| D | rewind † | 48% | -1 | L9 17% | 0% |
+| S | aegis | 100% | +72 | L5 100% | 100% |
+| S | become-king | 100% | +72 | L5 100% | 99% |
+| S | decoy | 100% | +72 | L5 100% | 100% |
+| S | queen-pulse | 100% | +72 | L5 100% | 97% |
+| S | rabies-dart | 100% | +72 | L5 100% | 98% |
+| S | vanguard | 100% | +72 | L5 100% | 98% |
+| S | dragon | 99% | +71 | L7 94% | 97% |
+| S | bishop-squire | 98% | +70 | L10 88% | 99% |
+| S | bishop-step | 98% | +70 | L8 88% | 100% |
+| S | summon-knight | 98% | +70 | L7 94% | 100% |
+| S | twin | 98% | +70 | L6 94% | 96% |
+| S | duchess | 96% | +68 | L8 81% | 98% |
+| S | poison-dart | 96% | +68 | L8 88% | 100% |
+| S | smoke | 96% | +68 | L10 88% | 93% |
+| A | rewind | 95% | +67 | L7 75% | 91% |
+| A | convert | 94% | +66 | L6 88% | 100% |
+| A | knight-hop | 94% | +65 | L7 81% | 99% |
+| A | boulder | 93% | +65 | L8 81% | 97% |
+| A | freeze-ray | 93% | +65 | L6 75% | 91% |
+| A | squad † | 93% | +64 | L9 75% | 0% |
+| A | page | 92% | +64 | L9 81% | 89% |
+| A | magnet | 90% | +61 | L7 75% | 76% |
+| D | sacrifice † | 38% | +9 | L8 6% | 0% |
+| D | swap † | 36% | +7 | L8 13% | 0% |
 
-† squad, sacrifice, knighting, swap, rewind: bot never casts this (cast rate under 10%) — floor, not a verdict.
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**Pawn Storm** (`revenge-2`)
+
+- **New player clears this run 88% of the time on Normal / 100% on Rookie — TOO EASY.** (24 runs per mode; retries used: Normal 14, Rookie 1.)
+- Veteran (all 24 abilities): 100% on Normal / 100% on Rookie.
+- Powers carry you by **+22 points**: no-ability averages 76% across L1-L10, the five finishers average 98%. Hard levels without powers (no-ability under 60%): L9 25%, L10 44%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 96% (23/24) | 7 | 100% (24/24) | 0 | 100% |
+| 9 | 100% (23/23) | 1 | 100% (24/24) | 0 | 100% |
+| 10 | 91% (21/23) | 9 | 100% (24/24) | 1 | 100% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 5 levels where no-ability is under 100% (L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | become-king | 100% | +47 | L6 100% | 96% |
+| S | bishop-step | 100% | +47 | L6 100% | 94% |
+| S | decoy | 100% | +47 | L6 100% | 100% |
+| S | duchess | 100% | +47 | L6 100% | 99% |
+| S | queen-pulse | 100% | +47 | L6 100% | 91% |
+| S | rabies-dart | 100% | +47 | L6 100% | 100% |
+| S | vanguard | 100% | +47 | L6 100% | 100% |
+| S | aegis | 99% | +46 | L10 94% | 96% |
+| S | dragon | 99% | +46 | L10 94% | 99% |
+| S | knight-hop | 99% | +46 | L10 94% | 94% |
+| S | twin | 99% | +46 | L10 94% | 96% |
+| S | rewind | 98% | +45 | L10 88% | 95% |
+| S | smoke | 98% | +45 | L10 88% | 100% |
+| S | convert | 96% | +44 | L10 88% | 100% |
+| S | bishop-squire | 96% | +43 | L10 81% | 100% |
+| S | freeze-ray | 96% | +43 | L9 81% | 99% |
+| S | poison-dart | 96% | +43 | L10 81% | 100% |
+| S | summon-knight | 96% | +43 | L10 81% | 100% |
+| S | squad † | 95% | +42 | L9 81% | 0% |
+| A | boulder | 93% | +40 | L10 69% | 100% |
+| B | page | 84% | +31 | L10 63% | 94% |
+| C | magnet | 65% | +12 | L8 56% | 54% |
+| C | sacrifice † | 50% | -3 | L10 25% | 0% |
+| D | swap † | 44% | -9 | L9 19% | 0% |
+
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**The Royal Guard** (`revenge-3`)
+
+- **New player clears this run 75% of the time on Normal / 100% on Rookie — too easy.** (24 runs per mode; retries used: Normal 13, Rookie 4.)
+- Veteran (all 24 abilities): 83% on Normal / 100% on Rookie.
+- Powers carry you by **+36 points**: no-ability averages 62% across L1-L10, the five finishers average 98%. Hard levels without powers (no-ability under 60%): L6 38%, L7 38%, L8 19%, L9 13%, L10 19%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 96% (23/24) | 3 | 100% (24/24) | 0 | 100% |
+| 8 | 83% (19/23) | 11 | 100% (24/24) | 1 | 92% |
+| 9 | 100% (19/19) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 95% (18/19) | 5 | 100% (24/24) | 3 | 91% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | become-king | 100% | +64 | L5 100% | 100% |
+| S | decoy | 100% | +64 | L5 100% | 99% |
+| S | queen-pulse | 100% | +64 | L5 100% | 100% |
+| S | aegis | 99% | +63 | L9 94% | 97% |
+| S | dragon | 99% | +63 | L7 94% | 99% |
+| S | rabies-dart | 99% | +63 | L8 94% | 99% |
+| S | bishop-step | 98% | +62 | L8 94% | 98% |
+| S | duchess | 98% | +62 | L7 94% | 98% |
+| S | summon-knight | 98% | +62 | L8 94% | 89% |
+| S | vanguard | 98% | +62 | L8 88% | 94% |
+| S | convert | 97% | +61 | L8 81% | 100% |
+| S | poison-dart | 96% | +60 | L6 94% | 97% |
+| S | rewind | 96% | +60 | L9 88% | 89% |
+| S | smoke | 96% | +60 | L6 88% | 89% |
+| S | twin | 96% | +60 | L10 88% | 93% |
+| A | boulder | 95% | +59 | L8 81% | 98% |
+| A | freeze-ray | 93% | +57 | L8 75% | 96% |
+| A | knight-hop | 93% | +57 | L7 81% | 99% |
+| A | bishop-squire | 91% | +55 | L10 63% | 96% |
+| A | squad † | 88% | +52 | L8 56% | 0% |
+| A | page | 87% | +51 | L8 63% | 94% |
+| C | magnet | 64% | +28 | L8 31% | 59% |
+| D | sacrifice † | 48% | +13 | L8 13% | 0% |
+| D | swap † | 34% | -2 | L8 13% | 0% |
+
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**The Fortress** (`revenge-4`)
+
+- **New player clears this run 71% of the time on Normal / 100% on Rookie — too easy.** (24 runs per mode; retries used: Normal 13, Rookie 8.)
+- Veteran (all 24 abilities): 92% on Normal / 100% on Rookie.
+- Powers carry you by **+26 points**: no-ability averages 72% across L1-L10, the five finishers average 98%. Hard levels without powers (no-ability under 60%): L7 44%, L9 13%, L10 44%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 88% (21/24) | 6 | 100% (24/24) | 0 | 100% |
+| 9 | 90% (19/21) | 6 | 100% (24/24) | 2 | 96% |
+| 10 | 89% (17/19) | 8 | 100% (24/24) | 6 | 96% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | become-king | 100% | +47 | L5 100% | 98% |
+| S | bishop-step | 100% | +47 | L5 100% | 84% |
+| S | decoy | 100% | +47 | L5 100% | 99% |
+| S | duchess | 100% | +47 | L5 100% | 98% |
+| S | rabies-dart | 100% | +47 | L5 100% | 99% |
+| S | aegis | 99% | +46 | L10 94% | 98% |
+| S | queen-pulse | 99% | +46 | L10 94% | 81% |
+| S | vanguard | 99% | +46 | L10 94% | 100% |
+| S | smoke | 98% | +45 | L9 88% | 93% |
+| S | convert | 97% | +44 | L10 88% | 100% |
+| S | dragon | 97% | +44 | L9 88% | 94% |
+| S | rewind | 97% | +44 | L10 88% | 97% |
+| S | twin | 97% | +44 | L9 88% | 97% |
+| S | poison-dart | 97% | +43 | L10 81% | 99% |
+| A | knight-hop | 95% | +41 | L9 75% | 92% |
+| A | summon-knight | 93% | +39 | L8 75% | 94% |
+| A | freeze-ray | 92% | +38 | L9 75% | 99% |
+| A | boulder | 90% | +36 | L9 50% | 95% |
+| A | bishop-squire | 88% | +34 | L9 50% | 95% |
+| A | magnet | 88% | +34 | L9 63% | 65% |
+| A | squad † | 88% | +34 | L9 63% | 0% |
+| B | page | 81% | +28 | L9 50% | 88% |
+| C | sacrifice † | 60% | +6 | L9 31% | 0% |
+| C | swap † | 59% | +5 | L9 31% | 0% |
+
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**Stonework** (`revenge-5`)
+
+- **New player clears this run 83% of the time on Normal / 100% on Rookie — too easy.** (24 runs per mode; retries used: Normal 10, Rookie 0.)
+- Veteran (all 24 abilities): 100% on Normal / 100% on Rookie.
+- Powers carry you by **+22 points**: no-ability averages 78% across L1-L10, the five finishers average 100%. Hard levels without powers (no-ability under 60%): L7 38%, L9 50%, L10 19%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 9 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 83% (20/24) | 14 | 100% (24/24) | 0 | 100% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 4 levels where no-ability is under 100% (L6, L7, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | aegis | 100% | +56 | L6 100% | 97% |
+| S | become-king | 100% | +56 | L6 100% | 98% |
+| S | bishop-step | 100% | +56 | L6 100% | 97% |
+| S | convert | 100% | +56 | L6 100% | 98% |
+| S | decoy | 100% | +56 | L6 100% | 100% |
+| S | dragon | 100% | +56 | L6 100% | 92% |
+| S | duchess | 100% | +56 | L6 100% | 88% |
+| S | knight-hop | 100% | +56 | L6 100% | 100% |
+| S | queen-pulse | 100% | +56 | L6 100% | 94% |
+| S | rewind | 100% | +56 | L6 100% | 100% |
+| S | smoke | 100% | +56 | L6 100% | 89% |
+| S | twin | 100% | +56 | L6 100% | 94% |
+| S | vanguard | 100% | +56 | L6 100% | 92% |
+| S | rabies-dart | 99% | +55 | L6 94% | 100% |
+| S | summon-knight | 99% | +55 | L7 94% | 91% |
+| S | bishop-squire | 97% | +53 | L10 88% | 92% |
+| S | boulder | 97% | +53 | L7 94% | 98% |
+| S | freeze-ray | 97% | +53 | L10 88% | 97% |
+| S | poison-dart | 97% | +53 | L10 88% | 94% |
+| A | squad † | 88% | +44 | L6 81% | 0% |
+| A | magnet | 86% | +42 | L7 81% | 59% |
+| B | page | 77% | +33 | L9 50% | 84% |
+| C | sacrifice † | 50% | +6 | L9 38% | 0% |
+| D | swap † | 47% | +3 | L10 19% | 0% |
+
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**Two Keys** (`revenge-6`)
+
+- **New player clears this run 96% of the time on Normal / 100% on Rookie — TOO EASY.** (24 runs per mode; retries used: Normal 4, Rookie 0.)
+- Veteran (all 24 abilities): 100% on Normal / 100% on Rookie.
+- Powers carry you by **+22 points**: no-ability averages 78% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L8 44%, L10 25%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 96% (23/24) | 4 | 100% (24/24) | 0 | 100% |
+| 9 | 100% (23/23) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 100% (23/23) | 1 | 100% (24/24) | 0 | 100% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 5 levels where no-ability is under 100% (L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | aegis | 100% | +45 | L6 100% | 99% |
+| S | become-king | 100% | +45 | L6 100% | 98% |
+| S | bishop-step | 100% | +45 | L6 100% | 89% |
+| S | decoy | 100% | +45 | L6 100% | 100% |
+| S | dragon | 100% | +45 | L6 100% | 99% |
+| S | queen-pulse | 100% | +45 | L6 100% | 94% |
+| S | rabies-dart | 100% | +45 | L6 100% | 100% |
+| S | rewind | 100% | +45 | L6 100% | 98% |
+| S | summon-knight | 100% | +45 | L6 100% | 99% |
+| S | vanguard | 100% | +45 | L6 100% | 100% |
+| S | bishop-squire | 99% | +44 | L6 94% | 95% |
+| S | convert | 99% | +44 | L8 94% | 100% |
+| S | duchess | 99% | +44 | L9 94% | 99% |
+| S | poison-dart | 99% | +44 | L10 94% | 99% |
+| S | twin | 99% | +44 | L8 94% | 100% |
+| S | boulder | 98% | +42 | L8 88% | 100% |
+| S | freeze-ray | 98% | +42 | L6 94% | 99% |
+| S | knight-hop | 98% | +42 | L8 94% | 98% |
+| S | smoke | 98% | +42 | L8 94% | 96% |
+| S | squad † | 95% | +40 | L10 81% | 0% |
+| B | magnet | 83% | +27 | L6 75% | 60% |
+| B | page | 83% | +27 | L9 69% | 91% |
+| D | swap † | 49% | -6 | L8 38% | 0% |
+| D | sacrifice † | 46% | -9 | L10 25% | 0% |
+
+† squad, swap, sacrifice: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**Bramble Crown** (`revenge-7`)
+
+- **New player clears this run 92% of the time on Normal / 100% on Rookie — TOO EASY.** (24 runs per mode; retries used: Normal 4, Rookie 0.)
+- Veteran (all 24 abilities): 96% on Normal / 100% on Rookie.
+- Powers carry you by **+28 points**: no-ability averages 71% across L1-L10, the five finishers average 99%. Hard levels without powers (no-ability under 60%): L8 31%, L9 19%, L10 19%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 100% (24/24) | 1 | 100% (24/24) | 0 | 100% |
+| 9 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 92% (22/24) | 5 | 100% (24/24) | 0 | 96% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 5 levels where no-ability is under 100% (L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | become-king | 100% | +57 | L6 100% | 99% |
+| S | bishop-step | 100% | +57 | L6 100% | 86% |
+| S | decoy | 100% | +57 | L6 100% | 100% |
+| S | dragon | 100% | +57 | L6 100% | 100% |
+| S | duchess | 100% | +57 | L6 100% | 98% |
+| S | knight-hop | 100% | +57 | L6 100% | 100% |
+| S | poison-dart | 100% | +57 | L6 100% | 100% |
+| S | queen-pulse | 100% | +57 | L6 100% | 86% |
+| S | rabies-dart | 100% | +57 | L6 100% | 100% |
+| S | rewind | 100% | +57 | L6 100% | 100% |
+| S | summon-knight | 100% | +57 | L6 100% | 99% |
+| S | twin | 100% | +57 | L6 100% | 100% |
+| S | vanguard | 100% | +57 | L6 100% | 100% |
+| S | aegis | 99% | +56 | L9 94% | 98% |
+| S | freeze-ray | 99% | +56 | L8 94% | 100% |
+| S | convert | 98% | +55 | L9 94% | 100% |
+| S | smoke | 98% | +55 | L9 88% | 98% |
+| S | boulder | 95% | +52 | L8 81% | 100% |
+| A | bishop-squire | 90% | +47 | L9 69% | 94% |
+| A | squad † | 89% | +46 | L9 63% | 0% |
+| A | magnet | 85% | +43 | L7 69% | 79% |
+| B | page | 76% | +34 | L6 56% | 96% |
+| D | swap † | 38% | -5 | L10 13% | 0% |
+| D | sacrifice † | 35% | -7 | L8 13% | 0% |
+
+† squad, swap, sacrifice: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**The Rampart** (`revenge-8`)
+
+- **New player clears this run 79% of the time on Normal / 96% on Rookie — too easy.** (24 runs per mode; retries used: Normal 10, Rookie 13.)
+- Veteran (all 24 abilities): 88% on Normal / 100% on Rookie.
+- Powers carry you by **+27 points**: no-ability averages 73% across L1-L10, the five finishers average 100%. Hard levels without powers (no-ability under 60%): L7 50%, L9 25%, L10 44%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 8 | 96% (23/24) | 4 | 100% (24/24) | 0 | 96% |
+| 9 | 100% (23/23) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 83% (19/23) | 11 | 96% (23/24) | 14 | 91% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | aegis | 100% | +46 | L5 100% | 96% |
+| S | become-king | 100% | +46 | L5 100% | 94% |
+| S | decoy | 100% | +46 | L5 100% | 100% |
+| S | dragon | 100% | +46 | L5 100% | 95% |
+| S | duchess | 100% | +46 | L5 100% | 98% |
+| S | knight-hop | 100% | +46 | L5 100% | 96% |
+| S | queen-pulse | 100% | +46 | L5 100% | 90% |
+| S | rabies-dart | 100% | +46 | L5 100% | 100% |
+| S | vanguard | 100% | +46 | L5 100% | 94% |
+| S | bishop-step | 99% | +45 | L10 94% | 93% |
+| S | boulder | 99% | +45 | L10 94% | 99% |
+| S | convert | 99% | +45 | L6 94% | 100% |
+| S | smoke | 99% | +45 | L9 94% | 92% |
+| S | twin | 99% | +45 | L10 94% | 92% |
+| S | freeze-ray | 98% | +44 | L10 88% | 97% |
+| S | poison-dart | 98% | +44 | L10 88% | 99% |
+| S | bishop-squire | 97% | +43 | L10 81% | 97% |
+| A | rewind | 95% | +41 | L10 75% | 95% |
+| A | summon-knight | 95% | +41 | L10 75% | 92% |
+| A | page | 88% | +33 | L10 56% | 80% |
+| A | squad † | 87% | +32 | L10 25% | 0% |
+| B | magnet | 81% | +27 | L6 56% | 58% |
+| C | sacrifice † | 61% | +6 | L9 25% | 0% |
+| C | swap † | 58% | +3 | L8 38% | 0% |
+
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+**Cold Court** (`revenge-9`)
+
+- **New player clears this run 67% of the time on Normal / 100% on Rookie — too easy.** (24 runs per mode; retries used: Normal 12, Rookie 3.)
+- Veteran (all 24 abilities): 71% on Normal / 100% on Rookie.
+- Powers carry you by **+33 points**: no-ability averages 64% across L1-L10, the five finishers average 97%. Hard levels without powers (no-ability under 60%): L6 50%, L7 25%, L8 50%, L9 25%, L10 31%.
+
+| L | New player, Normal (clear %) | Deaths (Normal) | New player, Rookie (clear %) | Deaths (Rookie) | Veteran, Normal |
+|---|---|---|---|---|---|
+| 1 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 2 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 3 | 100% (24/24) | 0 | 100% (24/24) | 0 | 88% |
+| 4 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 5 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 6 | 100% (24/24) | 0 | 100% (24/24) | 0 | 100% |
+| 7 | 100% (24/24) | 1 | 100% (24/24) | 0 | 95% |
+| 8 | 83% (20/24) | 10 | 100% (24/24) | 3 | 85% |
+| 9 | 100% (20/20) | 0 | 100% (24/24) | 0 | 100% |
+| 10 | 80% (16/20) | 9 | 100% (24/24) | 0 | 100% |
+
+"Deaths" counts every level loss, including the ones a retry rescued — where deaths pile up but clear % stays high, retries are doing the work.
+
+Ability tier list, realistic tiers, scored over the 6 levels where no-ability is under 100% (L5, L6, L7, L8, L9, L10). Lift = points over no-ability on those levels. S ≥ 95, A ≥ 85, B ≥ 70, C ≥ 50, D below.
+
+| Tier | Ability | Avg win | Lift | Worst level | Cast rate |
+|---|---|---|---|---|---|
+| S | aegis | 100% | +59 | L5 100% | 99% |
+| S | become-king | 100% | +59 | L5 100% | 98% |
+| S | bishop-step | 100% | +59 | L5 100% | 90% |
+| S | decoy | 100% | +59 | L5 100% | 100% |
+| S | knight-hop | 100% | +59 | L5 100% | 99% |
+| S | rabies-dart | 100% | +59 | L5 100% | 100% |
+| S | rewind | 100% | +59 | L5 100% | 99% |
+| S | vanguard | 100% | +59 | L5 100% | 99% |
+| S | freeze-ray | 99% | +58 | L8 94% | 99% |
+| S | queen-pulse | 99% | +58 | L9 94% | 91% |
+| S | twin | 99% | +58 | L9 94% | 98% |
+| S | dragon | 98% | +57 | L9 94% | 100% |
+| S | poison-dart | 98% | +57 | L6 88% | 98% |
+| S | boulder | 97% | +56 | L8 88% | 99% |
+| S | convert | 97% | +56 | L9 88% | 100% |
+| S | duchess | 97% | +56 | L9 81% | 98% |
+| S | summon-knight | 97% | +56 | L8 88% | 99% |
+| S | smoke | 96% | +55 | L9 81% | 95% |
+| A | bishop-squire | 94% | +53 | L9 81% | 98% |
+| A | page | 88% | +47 | L8 69% | 94% |
+| B | magnet | 77% | +37 | L9 50% | 70% |
+| B | squad † | 76% | +35 | L9 19% | 0% |
+| D | sacrifice † | 34% | -7 | L10 6% | 0% |
+| D | swap † | 29% | -12 | L7 13% | 0% |
+
+† squad, sacrifice, swap: bot never casts this (cast rate under 10%) — floor, not a verdict.
+
+## The Crucible (`crucible`)
+
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+
+| L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.6 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | 14 | 3.6 | - |
+| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | 13 | 3.9 | - |
+| 5 | 75-100% | **88%** (m2) | 4 tied 100% | bishop-step 100% | sacrifice 63% | - | 13 | 8.6 | - |
+| 6 | 35-65% | **56%** (c1,m6) | 4 tied 100% | bishop-step 100% | sacrifice 63% | - | 7 | 6.6 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **25%** (c3,m9) **too hard** | 4 tied 100% | bishop-step 100% | sacrifice 38% | - | 13 | 11.1 | none no6, 4/4 finishers proven |
+| 8 | 35-65% | **31%** (c4,m7) **too hard** | 4 tied 100% | bishop-step 100% | sacrifice 25% | - | 12 | 10.6 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **25%** (c1,m11) | 4 tied 100% | bishop-step 100% | sacrifice 19% | - | 9 | 8.3 | none W6, 4/4 finishers proven |
+| 10 | 15-45% | **6%** (c2,m13) **too hard** | 3 tied 100% | knight-hop 94% | swap 6% | - | 12 | 11.3 | none no6, 4/4 finishers proven |
+
+Every ability, win % at realistic tiers:
+
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 88% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 63% | 100% | 94% | 100% | 94% | 100% | 100% |
+| 6 | 56% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 94% | 81% | 100% | 100% | 100% | 63% | 100% | 88% | 100% | 69% | 100% | 100% |
+| 7 | 25% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 69% | 94% | 100% | 100% | 100% | 100% | 38% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 8 | 31% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 88% | 88% | 100% | 100% | 100% | 100% | 25% | 100% | 100% | 81% | 44% | 100% | 100% |
+| 9 | 25% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 81% | 94% | 100% | 100% | 100% | 100% | 19% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 10 | 6% | 100% | 100% | 94% | 100% | 94% | 94% | 100% | 100% | 100% | 100% | 94% | 88% | 56% | 88% | 100% | 100% | 100% | 31% | 100% | 100% | 100% | 6% | 94% | 100% |
+
+**Verdict:** needs a look 
+- TOO EASY — a new player clears 88% of runs on Normal (target 40-60%)
+
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L7 no-ability 25% is too hard for the legacy band (40-70%); L8 no-ability 31% is too hard for the legacy band (35-65%); L10 no-ability 6% is too hard for the legacy band (15-45%).
+
+### Difficulty modes — The Crucible
+
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+
+| Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
+|---|---|---|---|---|---|
+| Rookie | 100/100/100/100/88/100/75/75/63/38 | L10 38% | bishop-step 100% on L1 | - | 15/16 |
+| Normal | 100/100/100/100/75/50/50/50/25/13 | L10 13% | knight-hop 63% on L10 | - | 13/16 |
+| Hard | 100/100/100/100/88/50/25/25/25/13 | L10 13% | freeze-ray 88% on L6 | - | 11/16 |
+| Nightmare | 100/100/100/100/100/38/13/50/13/0 | L10 0% | freeze-ray 50% on L10 | - | 10/16 |
+
+### Full runs — The Crucible (authored, random picks)
+
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **12/16 full clears.**
+
+| L | Reached | Cleared | Clear % | Losses |
+|---|---|---|---|---|
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 16 | 100% | - |
+| 8 | 16 | 14 | 88% | captured 2 |
+| 9 | 14 | 14 | 100% | - |
+| 10 | 14 | 12 | 86% | move-limit 2 |
+
+Most-picked cards: bishop-step 30, queen-pulse 19, knight-hop 16, vanguard 9, freeze-ray 7, dragon 5, aegis 4, convert 3.
 
 ## Rookie's Revenge (`revenge-1`)
 
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 40 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
 
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.6 | - |
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.7 | - |
 | 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.6 | - |
 | 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
 | 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.8 | - |
-| 5 | 75-100% | **88%** (c2,m3) | 4 tied 100% | bishop-step 100% | knighting 90% | - | 12 | 8.3 | - |
-| 6 | 35-65% | **55%** (c4,m14) | 3 tied 100% | freeze-ray 98% | sacrifice 43% | - | 12 | 9.1 | none no6, 4/4 finishers proven |
-| 7 | 40-70% | **50%** (c1,m19) | 4 tied 100% | bishop-step 100% | sacrifice 48% | - | 12 | 10.2 | none no6, 4/4 finishers proven |
-| 8 | 35-65% | **33%** (c7,m20) **too hard** | 2 tied 100% | freeze-ray 95% | swap 35% | - | 14 | 10.6 | none no6, 2/4 finishers proven |
-| 9 | 15-45% | **18%** (c4,m29) | 4 tied 100% | bishop-step 100% | knighting 23% | - | 14 | 13.2 | none no6, 4/4 finishers proven |
-| 10 | 15-45% | **23%** (c5,m26) | 2 tied 100% | freeze-ray 88% | knighting 25% | - | 18 | 15.2 | none no6, 0/4 finishers proven |
+| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | swap 88% | - | 12 | 8.6 | - |
+| 6 | 35-65% | **31%** (c1,m10) **too hard** | 3 tied 100% | freeze-ray 94% | magnet 50% | - | 12 | 10.5 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **25%** (c1,m11) **too hard** | 4 tied 100% | bishop-step 100% | sacrifice 44% | - | 12 | 11.1 | none no6, 4/4 finishers proven |
+| 8 | 35-65% | **38%** (c3,m7) | 3 tied 100% | freeze-ray 88% | sacrifice 25% | - | 14 | 10.3 | none no6, 2/4 finishers proven |
+| 9 | 15-45% | **6%** (c3,m12) **too hard** | 4 tied 100% | bishop-step 100% | swap 19% | - | 14 | 12.9 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **25%** (c1,m11) | 2 tied 100% | knight-hop 75% **low** | swap 19% | - | 18 | 16.5 | none no6, 0/4 finishers proven |
 
 Every ability, win % at realistic tiers:
 
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 88% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 90% | 95% | 100% | 100% | 100% | 100% | 90% | 98% | 100% | 100% | 95% | 93% | 100% | 100% |
-| 6 | 55% | 100% | 100% | 88% | 100% | 98% | 98% | 90% | 100% | 98% | 98% | 100% | 50% | 65% | 80% | 93% | 100% | 100% | 48% | 43% | 93% | 100% | 100% | 50% | 90% | 100% |
-| 7 | 50% | 100% | 100% | 100% | 100% | 100% | 95% | 98% | 100% | 98% | 100% | 100% | 60% | 68% | 90% | 100% | 100% | 100% | 50% | 48% | 93% | 98% | 100% | 53% | 98% | 100% |
-| 8 | 33% | 100% | 100% | 95% | 100% | 100% | 88% | 100% | 100% | 98% | 95% | 100% | 40% | 53% | 95% | 90% | 98% | 100% | 45% | 40% | 93% | 100% | 90% | 35% | 98% | 100% |
-| 9 | 18% | 100% | 100% | 100% | 100% | 98% | 95% | 93% | 100% | 98% | 100% | 100% | 23% | 88% | 93% | 100% | 100% | 100% | 25% | 30% | 93% | 100% | 98% | 35% | 95% | 100% |
-| 10 | 23% | 100% | 100% | 100% | 100% | 60% | 35% | 90% | 100% | 100% | 88% | 93% | 25% | 28% | 73% | 85% | 100% | 100% | 25% | 25% | 60% | 98% | 95% | 28% | 93% | 95% |
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 88% | 100% | 100% |
+| 6 | 31% | 100% | 100% | 100% | 100% | 100% | 81% | 100% | 100% | 100% | 94% | 100% | 50% | 88% | 88% | 100% | 100% | 100% | 50% | 94% | 100% | 100% | 50% | 88% | 100% |
+| 7 | 25% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 75% | 94% | 100% | 100% | 100% | 100% | 44% | 100% | 88% | 100% | 50% | 100% | 100% |
+| 8 | 38% | 100% | 100% | 100% | 100% | 94% | 94% | 100% | 100% | 100% | 88% | 100% | 81% | 88% | 88% | 100% | 100% | 81% | 25% | 100% | 100% | 100% | 50% | 100% | 100% |
+| 9 | 6% | 100% | 100% | 100% | 100% | 94% | 94% | 100% | 100% | 100% | 100% | 100% | 81% | 100% | 100% | 100% | 100% | 100% | 25% | 100% | 100% | 88% | 19% | 100% | 100% |
+| 10 | 25% | 100% | 100% | 100% | 100% | 56% | 94% | 100% | 100% | 100% | 94% | **75%** | 31% | 63% | 63% | 100% | 100% | 75% | 31% | 94% | 100% | 94% | 19% | 100% | 88% |
 
 **Verdict:** needs a look 
-- TOO EASY — a new player clears 90% of runs on Normal (target 40-60%)
+- TOO EASY — a new player clears 88% of runs on Normal (target 40-60%)
+- L10 knight-hop only 75% (every finisher must be at least 80%)
 
-No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L8 no-ability 33% is too hard for the legacy band (35-65%).
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L6 no-ability 31% is too hard for the legacy band (35-65%); L7 no-ability 25% is too hard for the legacy band (40-70%); L9 no-ability 6% is too hard for the legacy band (15-45%).
 
 ### Difficulty modes — Rookie's Revenge
 
-T1 loadouts, no-ability + the five finishers, 15 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/100/67/40/47/60/33 | L10 33% | knight-hop 67% on L10 | - | 72/80 |
-| Normal | 100/100/100/100/100/40/47/33/20/53 | L9 20% | freeze-ray 67% on L10 | - | 61/80 |
-| Hard | 100/100/100/100/80/93/47/40/27/20 | L10 20% | knight-hop 40% on L10 | - | 63/80 |
-| Nightmare | 100/100/100/100/60/93/53/33/13/13 | L9 13% | freeze-ray 53% on L10 | - | 58/80 |
+| Rookie | 100/100/100/100/100/63/75/63/25/13 | L10 13% | freeze-ray 50% on L10 | - | 15/16 |
+| Normal | 100/100/100/100/100/50/50/75/38/13 | L10 13% | knight-hop 63% on L10 | - | 13/16 |
+| Hard | 100/100/100/100/88/88/50/25/0/38 | L9 0% | knight-hop 50% on L10 | - | 14/16 |
+| Nightmare | 100/100/100/100/88/100/63/63/13/38 | L9 13% | freeze-ray 50% on L10 | - | 9/16 |
 
 ### Full runs — Rookie's Revenge (authored, random picks)
 
-80 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **64/80 full clears.**
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **10/16 full clears.**
 
 | L | Reached | Cleared | Clear % | Losses |
 |---|---|---|---|---|
-| 1 | 80 | 80 | 100% | - |
-| 2 | 80 | 80 | 100% | - |
-| 3 | 80 | 80 | 100% | - |
-| 4 | 80 | 80 | 100% | - |
-| 5 | 80 | 80 | 100% | - |
-| 6 | 80 | 79 | 99% | move-limit 1 |
-| 7 | 79 | 79 | 100% | - |
-| 8 | 79 | 76 | 96% | move-limit 2, captured 1 |
-| 9 | 76 | 75 | 99% | move-limit 1 |
-| 10 | 75 | 64 | 85% | move-limit 7, captured 4 |
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 16 | 100% | - |
+| 8 | 16 | 14 | 88% | move-limit 1, captured 1 |
+| 9 | 14 | 14 | 100% | - |
+| 10 | 14 | 10 | 71% | captured 2, move-limit 2 |
 
-Most-picked cards: bishop-step 109, knight-hop 105, queen-pulse 95, freeze-ray 82, bodyguard 46, rabies-dart 27, convert 20, aegis 19.
+Most-picked cards: bishop-step 25, queen-pulse 23, knight-hop 16, freeze-ray 11, aegis 5, vanguard 5, smoke 5, squad 5.
+
+## The Vault (`revenge-10`)
+
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+
+| L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
+| 2 | 85-100% | **100%** | 3 tied 100% | knight-hop 94% | knight-hop 94% | 1 | - | 4.5 | - |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.9 | - |
+| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
+| 5 | 75-100% | **44%** (c1,m8) **too hard** | 4 tied 100% | bishop-step 100% | swap 56% | - | 12 | 9.3 | - |
+| 6 | 35-65% | **38%** (c1,m9) | 3 tied 100% | freeze-ray 75% **low** | swap 38% | - | 12 | 10.6 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **13%** (c3,m11) **too hard** | 2 tied 100% | knight-hop 81% | sacrifice 31% | - | 13 | 10.6 | none no6, 4/4 finishers proven |
+| 8 | 35-65% | **25%** (c3,m9) **too hard** | 2 tied 100% | knight-hop 81% | sacrifice 6% | - | 15 | 11.8 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **25%** (c1,m11) | 3 tied 100% | freeze-ray 94% | swap 13% | - | 8 | 7.1 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **25%** (m12) | 3 tied 100% | freeze-ray 94% | sacrifice 31% | - | 9 | 8.4 | none no6, 4/4 finishers proven |
+
+Every ability, win % at realistic tiers:
+
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% s1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 44% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 75% | 100% | 100% | 100% | 56% | 100% | 100% |
+| 6 | 38% | 100% | 100% | 100% | 100% | 88% | 88% | 100% | 100% | 100% | **75%** | 100% | 94% | 94% | 100% | 100% | 100% | 100% | 44% | 100% | 100% | 100% | 38% | 94% | 100% |
+| 7 | 13% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 94% | 94% | 94% | 81% | 75% | 94% | 100% | 100% | 100% | 75% | 31% | 100% | 100% | 94% | 44% | 94% | 100% |
+| 8 | 25% | 100% | 100% | 100% | 88% | 81% | 88% | 100% | 100% | 81% | 100% | 81% | 75% | 94% | 88% | 100% | 100% | 94% | 6% | 94% | 81% | 94% | 13% | 100% | 100% |
+| 9 | 25% | 100% | 100% | 100% | 100% | 94% | 94% | 100% | 100% | 100% | 94% | 100% | 94% | 81% | 100% | 100% | 100% | 100% | 38% | 94% | 75% | 100% | 13% | 100% | 100% |
+| 10 | 25% | 100% | 100% | 88% | 100% | 100% | 94% | 100% | 100% | 100% | 94% | 100% | 100% | 88% | 88% | 100% | 100% | 100% | 31% | 88% | 100% | 100% | 50% | 100% | 100% |
+
+**Verdict:** needs a look 
+- too easy — new player clears 83% on Normal (target 40-60%)
+- L2 has 1 stall (king unreachable)
+- L6 freeze-ray only 75% (every finisher must be at least 80%)
+
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L5 no-ability 44% is too hard for the legacy band (75-100%); L7 no-ability 13% is too hard for the legacy band (40-70%); L8 no-ability 25% is too hard for the legacy band (35-65%).
+
+### Difficulty modes — The Vault
+
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+
+| Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
+|---|---|---|---|---|---|
+| Rookie | 100/100/100/100/88/75/50/13/50/75 | L8 13% | freeze-ray 88% on L6 | - | 15/16 |
+| Normal | 100/100/100/100/75/50/13/13/25/13 | L7 13% | knight-hop 75% on L2 | 3 | 13/16 |
+| Hard | 100/100/100/100/63/0/38/0/25/13 | L6 0% | knight-hop 75% on L2 | 2 | 9/16 |
+| Nightmare | 100/100/100/100/50/25/38/0/0/0 | L8 0% | freeze-ray 75% on L6 | 1 | 11/16 |
+
+### Full runs — The Vault (authored, random picks)
+
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **12/16 full clears.**
+
+| L | Reached | Cleared | Clear % | Losses |
+|---|---|---|---|---|
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 15 | 94% | move-limit 1 |
+| 7 | 15 | 14 | 93% | move-limit 1 |
+| 8 | 14 | 13 | 93% | move-limit 1 |
+| 9 | 13 | 13 | 100% | - |
+| 10 | 13 | 12 | 92% | captured 1 |
+
+Most-picked cards: knight-hop 27, queen-pulse 22, bishop-step 13, freeze-ray 12, rewind 6, aegis 4, squad 4, dragon 3.
 
 ## Pawn Storm (`revenge-2`)
 
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 40 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
 
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.6 | - |
-| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.8 | - |
-| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
-| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 9.2 | - |
-| 5 | 75-100% | **98%** (m1) | 4 tied 100% | bishop-step 100% | knighting 90% | - | 12 | 6.6 | - |
-| 6 | 35-65% | **63%** (m15) | 4 tied 100% | bishop-step 100% | rewind 40% | - | 11 | 8.9 | none W6, 4/4 finishers proven |
-| 7 | 40-70% | **60%** (c1,m15) | 4 tied 100% | bishop-step 100% | knighting 63% | - | 14 | 10.8 | none W6, 4/4 finishers proven |
-| 8 | 35-65% | **53%** (c2,m17) | 4 tied 100% | bishop-step 100% | knighting 45% | - | 10 | 8 | none W6, 4/4 finishers proven |
-| 9 | 15-45% | **33%** (c5,m22) | 3 tied 100% | freeze-ray 75% **low** | rewind 18% | - | 16 | 13.4 | none no6, 4/4 finishers proven |
-| 10 | 15-45% | **45%** (c12,m10) | queen-pulse 100% | knight-hop 85% | rewind 30% | - | 18 | 11.2 | none no6, 4/4 finishers proven |
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.5 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
+| 3 | 85-100% | **100%** | 2 tied 100% | bishop-step 75% **low** | bishop-step 75% | 6 | - | 2.8 | - |
+| 4 | 85-100% | **100%** | 3 tied 100% | bishop-step 94% | bishop-step 94% | 1 | - | 9.1 | - |
+| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | swap 88% | - | 12 | 7 | - |
+| 6 | 35-65% | **63%** (m6) | 4 tied 100% | bishop-step 100% | sacrifice 44% | - | 11 | 8.8 | none W6, 4/4 finishers proven |
+| 7 | 40-70% | **69%** (m5) | 4 tied 100% | bishop-step 100% | magnet 63% | - | 14 | 10.4 | none W6, 4/4 finishers proven |
+| 8 | 35-65% | **63%** (c4,m2) | 4 tied 100% | bishop-step 100% | swap 50% | - | 10 | 6.6 | none W6, 4/4 finishers proven |
+| 9 | 15-45% | **25%** (c4,m8) | 3 tied 100% | freeze-ray 81% | swap 19% | - | 16 | 11.9 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **44%** (c7,m2) | 3 tied 100% | knight-hop 94% | sacrifice 25% | - | 18 | 11.2 | none no6, 4/4 finishers proven |
 
 Every ability, win % at realistic tiers:
 
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 98% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 90% | 98% | 100% | 100% | 100% | 100% | 100% | 95% | 100% | 100% | 100% | 93% | 100% | 100% |
-| 6 | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 50% | 73% | 88% | 100% | 100% | 100% | 40% | 55% | 100% | 100% | 100% | 45% | 100% | 100% |
-| 7 | 60% | 100% | 100% | 98% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 63% | 75% | 95% | 100% | 100% | 100% | 70% | 65% | 98% | 100% | 100% | 70% | 100% | 100% |
-| 8 | 53% | 100% | 100% | 100% | 100% | 100% | 98% | 98% | 100% | 100% | 100% | 100% | 45% | 53% | 100% | 100% | 100% | 100% | 53% | 45% | 100% | 100% | 100% | 63% | 100% | 100% |
-| 9 | 33% | 100% | 100% | 100% | 100% | 100% | 98% | 100% | 100% | 100% | **75%** | 100% | 40% | 53% | 85% | 100% | 100% | 98% | 18% | 35% | 85% | 95% | 100% | 33% | 98% | 100% |
-| 10 | 45% | 73% | 100% | 88% | 98% | 93% | 75% | 95% | 100% | 98% | 93% | 85% | 40% | 63% | 70% | 80% | 100% | 100% | 30% | 40% | 95% | 73% | 93% | 33% | 93% | 100% |
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | **75%** s4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 88% s2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 94% s1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 88% | 100% | 100% |
+| 6 | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 63% | 88% | 100% | 100% | 100% | 100% | 44% | 100% | 100% | 100% | 44% | 100% | 100% |
+| 7 | 69% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 63% | 94% | 100% | 100% | 100% | 100% | 69% | 100% | 100% | 100% | 69% | 100% | 100% |
+| 8 | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 56% | 94% | 100% | 100% | 100% | 100% | 81% | 100% | 100% | 100% | 50% | 100% | 100% |
+| 9 | 25% | 100% | 100% | 100% | 100% | 94% | 94% | 100% | 100% | 100% | 81% | 100% | 75% | 81% | 100% | 100% | 100% | 100% | 31% | 100% | 81% | 100% | 19% | 100% | 100% |
+| 10 | 44% | 94% | 100% | 81% | 100% | 69% | 88% | 100% | 94% | 100% | 100% | 94% | 69% | 63% | 81% | 100% | 100% | 88% | 25% | 88% | 94% | 81% | 38% | 94% | 100% |
 
 **Verdict:** needs a look 
 - TOO EASY — a new player clears 88% of runs on Normal (target 40-60%)
-- L9 freeze-ray only 75% (every finisher must be at least 80%)
+- L3 bishop-step only 75% (every finisher must be at least 80%)
+- L3 has 6 stalls (king unreachable)
+- L4 has 1 stall (king unreachable)
 
 ### Difficulty modes — Pawn Storm
 
-T1 loadouts, no-ability + the five finishers, 15 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/100/67/73/80/47/47 | L9 47% | freeze-ray 60% on L9 | - | 73/80 |
-| Normal | 100/100/100/100/80/67/47/47/53/60 | L7 47% | freeze-ray 73% on L10 | - | 68/80 |
-| Hard | 100/100/100/100/100/67/60/13/40/13 | L8 13% | freeze-ray 47% on L9 | - | 64/80 |
-| Nightmare | 100/100/100/100/100/67/40/20/13/13 | L9 13% | freeze-ray 47% on L9 | - | 63/80 |
+| Rookie | 100/100/100/100/100/88/38/75/25/75 | L9 25% | freeze-ray 63% on L9 | - | 15/16 |
+| Normal | 100/100/100/100/88/63/38/63/0/25 | L9 0% | freeze-ray 25% on L9 | 1 | 14/16 |
+| Hard | 100/100/100/100/100/100/75/13/13/13 | L8 13% | freeze-ray 75% on L8 | - | 13/16 |
+| Nightmare | 100/100/100/100/100/63/63/38/13/13 | L9 13% | freeze-ray 38% on L9 | - | 12/16 |
 
 ### Full runs — Pawn Storm (authored, random picks)
 
-80 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **67/80 full clears.**
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **12/16 full clears.**
 
 | L | Reached | Cleared | Clear % | Losses |
 |---|---|---|---|---|
-| 1 | 80 | 80 | 100% | - |
-| 2 | 80 | 80 | 100% | - |
-| 3 | 80 | 80 | 100% | - |
-| 4 | 80 | 80 | 100% | - |
-| 5 | 80 | 80 | 100% | - |
-| 6 | 80 | 78 | 98% | move-limit 2 |
-| 7 | 78 | 78 | 100% | - |
-| 8 | 78 | 73 | 94% | move-limit 5 |
-| 9 | 73 | 73 | 100% | - |
-| 10 | 73 | 67 | 92% | captured 6 |
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 15 | 94% | stall 1 |
+| 4 | 15 | 15 | 100% | - |
+| 5 | 15 | 15 | 100% | - |
+| 6 | 15 | 15 | 100% | - |
+| 7 | 15 | 15 | 100% | - |
+| 8 | 15 | 15 | 100% | - |
+| 9 | 15 | 15 | 100% | - |
+| 10 | 15 | 12 | 80% | captured 3 |
 
-Most-picked cards: bishop-step 127, knight-hop 85, queen-pulse 83, freeze-ray 65, bodyguard 60, decoy 20, aegis 17, convert 15.
+Most-picked cards: queen-pulse 21, bishop-step 18, freeze-ray 17, vanguard 11, knight-hop 10, squad 6, aegis 4, dragon 3.
 
 ## The Royal Guard (`revenge-3`)
 
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 40 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
 
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.7 | - |
-| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
-| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.2 | - |
-| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 7.4 | - |
-| 5 | 75-100% | **90%** (c1,m3) | 4 tied 100% | bishop-step 100% | knighting 83% | - | 13 | 8.2 | - |
-| 6 | 35-65% | **55%** (m18) | 3 tied 100% | freeze-ray 98% | swap 33% | - | 14 | 12.3 | none no6, 4/4 finishers proven |
-| 7 | 40-70% | **45%** (c12,m10) | 2 tied 100% | knight-hop 78% **low** | knighting 40% | - | 18 | 10.9 | none no6, 3/4 finishers proven |
-| 8 | 35-65% | **3%** (c20,m19) **too hard** | queen-pulse 100% | freeze-ray 93% | sacrifice 5% | - | 14 | 11.3 | none no6, 0/4 finishers proven |
-| 9 | 15-45% | **28%** (c4,m25) | 3 tied 100% | freeze-ray 95% | swap 20% | - | 14 | 12.6 | none no6, 4/4 finishers proven |
-| 10 | 15-45% | **38%** (c5,m20) | 3 tied 100% | freeze-ray 98% | rewind 20% | - | 19 | 14.5 | none no6, 3/4 finishers proven |
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.5 | - |
+| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 7.1 | - |
+| 5 | 75-100% | **88%** (m2) | 4 tied 100% | bishop-step 100% | swap 75% | - | 13 | 8.7 | - |
+| 6 | 35-65% | **38%** (m10) | 4 tied 100% | bishop-step 100% | swap 25% | - | 14 | 12.7 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **38%** (c4,m6) **too hard** | 2 tied 100% | knight-hop 81% | sacrifice 38% | - | 18 | 10.9 | none no6, 3/4 finishers proven |
+| 8 | 35-65% | **19%** (c8,m5) **too hard** | queen-pulse 100% | freeze-ray 75% **low** | sacrifice 13% | - | 14 | 10.5 | none no6, 0/4 finishers proven |
+| 9 | 15-45% | **13%** (c1,m13) **too hard** | queen-pulse 100% | bishop-step 94% | swap 19% | - | 14 | 13.7 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **19%** (c3,m10) | 4 tied 100% | bishop-step 100% | swap 31% | - | 19 | 14.7 | none no6, 3/4 finishers proven |
 
 Every ability, win % at realistic tiers:
 
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 90% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 83% | 100% | 100% | 100% | 100% | 100% | 85% | 90% | 100% | 98% | 98% | 93% | 100% | 100% |
-| 6 | 55% | 100% | 100% | 100% | 100% | 100% | 83% | 100% | 100% | 100% | 98% | 100% | 40% | 57% | 85% | 93% | 100% | 100% | 50% | 60% | 75% | 98% | 95% | 33% | 95% | 100% |
-| 7 | 45% | 100% | 100% | 95% | 100% | 93% | 90% | 100% | 100% | 98% | 98% | **78%** | 40% | 48% | 100% | 95% | 100% | 100% | 45% | 60% | 100% | 100% | 93% | 50% | 100% | 100% |
-| 8 | 3% | 100% | 100% | 100% | 98% | 85% | 55% | 95% | 100% | 88% | 93% | 93% | 10% | 28% | 60% | 93% | 100% | 100% | 8% | 5% | 98% | 53% | 93% | 8% | 98% | 100% |
-| 9 | 28% | 100% | 100% | 98% | 100% | 98% | 98% | 90% | 100% | 93% | 95% | 100% | 30% | 50% | 88% | 98% | 100% | 100% | 28% | 33% | 93% | 93% | 95% | 20% | 95% | 100% |
-| 10 | 38% | 100% | 100% | 78% | 100% | 98% | 80% | 95% | 100% | 100% | 98% | 100% | 43% | 75% | 73% | 93% | 100% | 100% | 20% | 40% | 90% | 73% | 98% | 23% | 98% | 100% |
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 88% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 88% | 100% | 94% | 100% | 75% | 100% | 100% |
+| 6 | 38% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 81% | 100% | 94% | 100% | 100% | 100% | 63% | 88% | 100% | 100% | 25% | 94% | 100% |
+| 7 | 38% | 100% | 100% | 88% | 100% | 94% | 100% | 100% | 94% | 94% | 88% | 81% | 44% | 88% | 94% | 100% | 100% | 100% | 38% | 100% | 100% | 100% | 38% | 94% | 100% |
+| 8 | 19% | 100% | 100% | 94% | 94% | 81% | 81% | 100% | 100% | 94% | **75%** | 81% | 31% | 63% | 94% | 100% | 94% | 94% | 13% | 100% | 56% | 94% | 13% | 100% | 88% |
+| 9 | 13% | 94% | 100% | 100% | 94% | 94% | 100% | 100% | 100% | 100% | 94% | 94% | 50% | 94% | 100% | 100% | 100% | 88% | 38% | 88% | 94% | 94% | 19% | 100% | 100% |
+| 10 | 19% | 100% | 100% | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 81% | 75% | 94% | 100% | 100% | 94% | 50% | 100% | 81% | 100% | 31% | 88% | 100% |
 
 **Verdict:** needs a look 
-- TOO EASY — a new player clears 88% of runs on Normal (target 40-60%)
-- L7 knight-hop only 78% (every finisher must be at least 80%)
+- too easy — new player clears 75% on Normal (target 40-60%)
+- L8 freeze-ray only 75% (every finisher must be at least 80%)
 
-No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L8 no-ability 3% is too hard for the legacy band (35-65%).
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L7 no-ability 38% is too hard for the legacy band (40-70%); L8 no-ability 19% is too hard for the legacy band (35-65%); L9 no-ability 13% is too hard for the legacy band (15-45%).
 
 ### Difficulty modes — The Royal Guard
 
-T1 loadouts, no-ability + the five finishers, 15 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/93/47/47/33/33/53 | L8 33% | knight-hop 73% on L8 | - | 69/80 |
-| Normal | 100/100/100/100/100/27/47/7/20/20 | L8 7% | freeze-ray 60% on L8 | - | 62/80 |
-| Hard | 100/100/100/100/87/53/40/7/7/27 | L8 7% | freeze-ray 67% on L10 | - | 60/80 |
-| Nightmare | 100/100/100/100/100/73/40/20/7/20 | L9 7% | freeze-ray 53% on L9 | - | 51/80 |
+| Rookie | 100/100/100/100/88/88/75/38/25/50 | L9 25% | freeze-ray 88% on L7 | - | 12/16 |
+| Normal | 100/100/100/100/100/25/38/0/25/25 | L8 0% | freeze-ray 63% on L8 | - | 11/16 |
+| Hard | 100/100/100/100/100/50/50/13/13/38 | L8 13% | freeze-ray 38% on L8 | 1 | 12/16 |
+| Nightmare | 100/100/100/100/100/38/88/13/0/50 | L9 0% | freeze-ray 50% on L8 | - | 11/16 |
 
 ### Full runs — The Royal Guard (authored, random picks)
 
-80 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **60/80 full clears.**
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **10/16 full clears.**
 
 | L | Reached | Cleared | Clear % | Losses |
 |---|---|---|---|---|
-| 1 | 80 | 80 | 100% | - |
-| 2 | 80 | 80 | 100% | - |
-| 3 | 80 | 80 | 100% | - |
-| 4 | 80 | 80 | 100% | - |
-| 5 | 80 | 80 | 100% | - |
-| 6 | 80 | 79 | 99% | move-limit 1 |
-| 7 | 79 | 74 | 94% | captured 4, move-limit 1 |
-| 8 | 74 | 64 | 86% | move-limit 8, captured 2 |
-| 9 | 64 | 62 | 97% | move-limit 1, captured 1 |
-| 10 | 62 | 60 | 97% | captured 2 |
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 15 | 94% | captured 1 |
+| 8 | 15 | 11 | 73% | move-limit 3, captured 1 |
+| 9 | 11 | 10 | 91% | captured 1 |
+| 10 | 10 | 10 | 100% | - |
 
-Most-picked cards: bishop-step 103, knight-hop 102, queen-pulse 90, freeze-ray 71, smoke 49, poison-dart 21, decoy 19, magnet 13.
+Most-picked cards: knight-hop 25, bishop-step 18, queen-pulse 16, freeze-ray 9, convert 7, aegis 4, dragon 4, boulder 3.
 
 ## The Fortress (`revenge-4`)
 
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 40 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
 
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.1 | - |
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
 | 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
-| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.4 | - |
-| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 4.6 | - |
-| 5 | 75-100% | **98%** (m1) | 4 tied 100% | bishop-step 100% | rewind 85% | - | 14 | 8.7 | - |
-| 6 | 35-65% | **53%** (m19) | 4 tied 100% | bishop-step 100% | knighting 50% | - | 11 | 9.6 | none no6, 4/4 finishers proven |
-| 7 | 40-70% | **43%** (c5,m18) | 4 tied 100% | bishop-step 100% | swap 33% | - | 14 | 11.4 | none W6, 4/4 finishers proven |
-| 8 | 35-65% | **53%** (m19) | 3 tied 100% | queen-pulse 98% | rewind 53% | - | 10 | 8.8 | none no6, 4/4 finishers proven |
-| 9 | 15-45% | **38%** (c5,m20) | queen-pulse 100% | freeze-ray 78% **low** | knighting 25% | - | 17 | 12.8 | none no6, 0/4 finishers proven |
-| 10 | 15-45% | **43%** (c9,m14) | bishop-step 100% | queen-pulse 85% | sacrifice 35% | - | 14 | 9.4 | none no6, 0/4 finishers proven |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.3 | - |
+| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 4.9 | - |
+| 5 | 75-100% | **88%** (m2) | 4 tied 100% | bishop-step 100% | sacrifice 88% | - | 14 | 8.4 | - |
+| 6 | 35-65% | **69%** (m5) **too easy** | 4 tied 100% | bishop-step 100% | sacrifice 50% | - | 11 | 8.4 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **44%** (c3,m6) | 4 tied 100% | bishop-step 100% | swap 50% | - | 14 | 10.9 | none W6, 4/4 finishers proven |
+| 8 | 35-65% | **63%** (m6) | 4 tied 100% | bishop-step 100% | sacrifice 44% | - | 10 | 8.6 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **13%** (c8,m6) **too hard** | 2 tied 100% | freeze-ray 75% **low** | sacrifice 31% | - | 17 | 10.8 | none no6, 0/4 finishers proven |
+| 10 | 15-45% | **44%** (c3,m6) | bishop-step 100% | freeze-ray 75% **low** | swap 50% | - | 14 | 9.3 | none no6, 0/4 finishers proven |
 
 Every ability, win % at realistic tiers:
 
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 98% | 100% | 100% | 100% | 100% | 100% | 100% | 98% | 100% | 100% | 100% | 100% | 90% | 95% | 93% | 100% | 100% | 100% | 85% | 88% | 100% | 98% | 100% | 85% | 100% | 100% |
-| 6 | 53% | 100% | 100% | 83% | 100% | 95% | 100% | 100% | 100% | 100% | 100% | 100% | 50% | 98% | 63% | 100% | 100% | 100% | 53% | 60% | 100% | 100% | 100% | 53% | 100% | 100% |
-| 7 | 43% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 55% | 85% | 100% | 100% | 100% | 100% | 48% | 48% | 98% | 100% | 98% | 33% | 100% | 100% |
-| 8 | 53% | 98% | 100% | 85% | 100% | 100% | 83% | 95% | 100% | 100% | 100% | 100% | 60% | 85% | 90% | 100% | 98% | 100% | 53% | 63% | 93% | 98% | 90% | 55% | 100% | 100% |
-| 9 | 38% | 100% | 100% | 65% | 98% | 100% | 65% | 100% | 100% | 85% | **78%** | 85% | 25% | 53% | 63% | 98% | 100% | 100% | 38% | 30% | 93% | 33% | 68% | 38% | 90% | 100% |
-| 10 | 43% | 93% | 100% | 83% | 100% | 50% | 57% | 98% | 100% | 98% | 98% | 93% | 40% | 65% | 73% | 78% | 85% | 100% | 43% | 35% | 95% | 80% | 83% | 38% | 93% | 100% |
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 88% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 88% | 100% | 94% | 100% | 88% | 100% | 100% |
+| 6 | 69% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 69% | 100% | 100% | 100% | 100% | 50% | 100% | 100% | 100% | 63% | 100% | 100% |
+| 7 | 44% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 88% | 100% | 100% | 100% | 100% | 100% | 81% | 100% | 100% | 100% | 50% | 100% | 100% |
+| 8 | 63% | 100% | 100% | 94% | 100% | 94% | 94% | 100% | 100% | 100% | 100% | 100% | 94% | 88% | 100% | 100% | 100% | 100% | 44% | 100% | 100% | 75% | 69% | 100% | 100% |
+| 9 | 13% | 100% | 100% | 50% | 100% | 50% | 100% | 100% | 88% | 100% | **75%** | **75%** | 63% | 50% | 100% | 100% | 100% | 94% | 31% | 88% | 63% | 94% | 31% | 88% | 100% |
+| 10 | 44% | 94% | 100% | 88% | 100% | 94% | 88% | 100% | 94% | 100% | **75%** | 94% | 81% | 81% | 81% | 94% | 100% | 88% | 63% | 100% | 69% | 88% | 50% | 94% | 94% |
 
 **Verdict:** needs a look 
-- TOO EASY — a new player clears 98% of runs on Normal (target 40-60%)
-- L9 freeze-ray only 78% (every finisher must be at least 80%)
+- too easy — new player clears 71% on Normal (target 40-60%)
+- L9 freeze-ray only 75% (every finisher must be at least 80%)
+- L10 freeze-ray only 75% (every finisher must be at least 80%)
+
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L6 no-ability 69% is too easy for the legacy band (35-65%); L9 no-ability 13% is too hard for the legacy band (15-45%).
 
 ### Difficulty modes — The Fortress
 
-T1 loadouts, no-ability + the five finishers, 15 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/87/73/47/73/13/27 | L9 13% | freeze-ray 67% on L9 | - | 71/80 |
-| Normal | 100/100/100/100/87/53/40/67/33/13 | L10 13% | freeze-ray 67% on L9 | - | 57/80 |
-| Hard | 100/100/100/100/87/80/40/13/20/40 | L8 13% | freeze-ray 60% on L9 | - | 50/80 |
-| Nightmare | 100/100/100/100/100/60/47/33/20/33 | L9 20% | knight-hop 53% on L9 | - | 54/80 |
+| Rookie | 100/100/100/100/88/75/38/88/38/38 | L7 38% | freeze-ray 63% on L9 | - | 14/16 |
+| Normal | 100/100/100/100/88/38/50/75/38/38 | L6 38% | knight-hop 50% on L9 | - | 12/16 |
+| Hard | 100/100/100/100/75/75/75/38/0/25 | L9 0% | queen-pulse 38% on L9 | - | 11/16 |
+| Nightmare | 100/100/100/100/100/88/63/13/13/13 | L8 13% | freeze-ray 50% on L9 | - | 10/16 |
 
 ### Full runs — The Fortress (authored, random picks)
 
-80 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **57/80 full clears.**
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **14/16 full clears.**
 
 | L | Reached | Cleared | Clear % | Losses |
 |---|---|---|---|---|
-| 1 | 80 | 80 | 100% | - |
-| 2 | 80 | 80 | 100% | - |
-| 3 | 80 | 80 | 100% | - |
-| 4 | 80 | 80 | 100% | - |
-| 5 | 80 | 80 | 100% | - |
-| 6 | 80 | 80 | 100% | - |
-| 7 | 80 | 80 | 100% | - |
-| 8 | 80 | 75 | 94% | move-limit 5 |
-| 9 | 75 | 71 | 95% | move-limit 1, captured 3 |
-| 10 | 71 | 57 | 80% | move-limit 8, captured 6 |
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 16 | 100% | - |
+| 8 | 16 | 15 | 94% | move-limit 1 |
+| 9 | 15 | 14 | 93% | captured 1 |
+| 10 | 14 | 14 | 100% | - |
 
-Most-picked cards: bishop-step 111, queen-pulse 90, knight-hop 87, freeze-ray 77, magnet 37, poison-dart 25, rabies-dart 17, boulder 16.
+Most-picked cards: bishop-step 25, queen-pulse 21, knight-hop 12, freeze-ray 10, bishop-squire 8, convert 6, dragon 5, vanguard 5.
 
 ## Stonework (`revenge-5`)
 
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 40 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
 
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 1.8 | - |
-| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.8 | - |
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 1.6 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.7 | - |
 | 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
 | 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 5 | - |
-| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | rewind 95% | - | 11 | 5.5 | - |
-| 6 | 35-65% | **55%** (c3,m15) | 4 tied 100% | bishop-step 100% | rewind 43% | - | 11 | 7.8 | none no6, 4/4 finishers proven |
-| 7 | 40-70% | **53%** (m19) | 3 tied 100% | freeze-ray 98% | knighting 40% | - | 12 | 10.2 | none no6, 4/4 finishers proven |
-| 8 | 35-65% | **100%** **too easy** | 4 tied 100% | bishop-step 100% | squad 28% | - | 11 | 6.6 | none W6, 4/4 finishers proven |
-| 9 | 15-45% | **48%** (m21) **too easy** | 4 tied 100% | bishop-step 100% | sacrifice 30% | - | 15 | 13 | none no6, 4/4 finishers proven |
-| 10 | 15-45% | **13%** (c23,m12) **too hard** | 3 tied 100% | freeze-ray 93% | sacrifice 18% | - | 21 | 13.1 | none no6, 4/4 finishers proven |
+| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | 11 | 5.3 | - |
+| 6 | 35-65% | **69%** (m5) **too easy** | 4 tied 100% | bishop-step 100% | sacrifice 56% | - | 11 | 8.5 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **38%** (m10) **too hard** | 4 tied 100% | bishop-step 100% | sacrifice 56% | - | 12 | 11.1 | none no6, 4/4 finishers proven |
+| 8 | 35-65% | **100%** **too easy** | 4 tied 100% | bishop-step 100% | squad 31% | - | 11 | 5.8 | none W6, 4/4 finishers proven |
+| 9 | 15-45% | **50%** (m8) **too easy** | 4 tied 100% | bishop-step 100% | sacrifice 38% | - | 15 | 12.1 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **19%** (c7,m6) | 3 tied 100% | freeze-ray 88% | swap 19% | - | 21 | 14 | none no6, 4/4 finishers proven |
 
 Every ability, win % at realistic tiers:
 
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 100% | 100% | 100% | 98% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 95% | 100% | 100% | 100% | 100% | 98% | 100% | 100% |
-| 6 | 55% | 100% | 100% | 95% | 100% | 100% | 93% | 98% | 100% | 100% | 100% | 100% | 45% | 83% | 78% | 80% | 100% | 95% | 43% | 50% | 98% | 85% | 98% | 57% | 100% | 100% |
-| 7 | 53% | 100% | 100% | 93% | 100% | 98% | 90% | 100% | 100% | 100% | 98% | 100% | 40% | 73% | 55% | 100% | 100% | 100% | 45% | 45% | 95% | 73% | 98% | 48% | 100% | 100% |
-| 8 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 98% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 28% | 100% | 100% | 100% | 100% |
-| 9 | 48% | 100% | 100% | 100% | 100% | 95% | 63% | 98% | 100% | 98% | 100% | 100% | 45% | 90% | 63% | 98% | 100% | 100% | 45% | 30% | 100% | 100% | 100% | 43% | 98% | 100% |
-| 10 | 13% | 100% | 100% | 80% | 100% | 98% | 73% | 95% | 100% | 100% | 93% | 100% | 20% | 98% | 55% | 95% | 100% | 100% | 23% | 18% | 98% | 88% | 100% | 23% | 98% | 100% |
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 6 | 69% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 88% | 88% | 100% | 100% | 94% | 100% | 56% | 100% | 81% | 100% | 75% | 100% | 100% |
+| 7 | 38% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 81% | 88% | 100% | 100% | 100% | 100% | 56% | 100% | 81% | 94% | 56% | 100% | 100% |
+| 8 | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 31% | 100% | 100% | 100% | 100% |
+| 9 | 50% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 81% | 50% | 100% | 100% | 100% | 100% | 38% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 10 | 19% | 100% | 100% | 88% | 100% | 94% | 100% | 100% | 100% | 100% | 88% | 100% | 94% | 81% | 88% | 100% | 100% | 100% | 50% | 100% | 88% | 100% | 19% | 100% | 100% |
 
 **Verdict:** needs a look 
-- TOO EASY — a new player clears 98% of runs on Normal (target 40-60%)
+- too easy — new player clears 83% on Normal (target 40-60%)
 
-No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L8 no-ability 100% is too easy for the legacy band (35-65%); L9 no-ability 48% is too easy for the legacy band (15-45%); L10 no-ability 13% is too hard for the legacy band (15-45%).
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L6 no-ability 69% is too easy for the legacy band (35-65%); L7 no-ability 38% is too hard for the legacy band (40-70%); L8 no-ability 100% is too easy for the legacy band (35-65%); L9 no-ability 50% is too easy for the legacy band (15-45%).
 
 ### Difficulty modes — Stonework
 
-T1 loadouts, no-ability + the five finishers, 15 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/100/80/47/100/60/40 | L10 40% | freeze-ray 93% on L7 | - | 68/80 |
-| Normal | 100/100/100/100/93/67/67/100/40/27 | L10 27% | freeze-ray 80% on L10 | - | 70/80 |
-| Hard | 100/100/100/100/100/47/80/100/33/20 | L10 20% | freeze-ray 87% on L10 | - | 65/80 |
-| Nightmare | 100/100/100/100/100/53/67/100/33/47 | L9 33% | freeze-ray 80% on L9 | - | 70/80 |
+| Rookie | 100/100/100/100/100/63/63/100/50/38 | L10 38% | freeze-ray 75% on L10 | - | 13/16 |
+| Normal | 100/100/100/100/88/50/38/100/75/13 | L10 13% | bishop-step 100% on L1 | - | 12/16 |
+| Hard | 100/100/100/100/100/75/88/100/38/50 | L9 38% | freeze-ray 88% on L10 | - | 14/16 |
+| Nightmare | 100/100/100/100/100/38/100/100/25/50 | L9 25% | freeze-ray 63% on L10 | - | 13/16 |
 
 ### Full runs — Stonework (authored, random picks)
 
-80 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **61/80 full clears.**
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **14/16 full clears.**
 
 | L | Reached | Cleared | Clear % | Losses |
 |---|---|---|---|---|
-| 1 | 80 | 80 | 100% | - |
-| 2 | 80 | 80 | 100% | - |
-| 3 | 80 | 80 | 100% | - |
-| 4 | 80 | 80 | 100% | - |
-| 5 | 80 | 80 | 100% | - |
-| 6 | 80 | 78 | 98% | captured 1, move-limit 1 |
-| 7 | 78 | 77 | 99% | move-limit 1 |
-| 8 | 77 | 76 | 99% | captured 1 |
-| 9 | 76 | 75 | 99% | move-limit 1 |
-| 10 | 75 | 61 | 81% | captured 10, move-limit 4 |
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 15 | 94% | move-limit 1 |
+| 8 | 15 | 14 | 93% | move-limit 1 |
+| 9 | 14 | 14 | 100% | - |
+| 10 | 14 | 14 | 100% | - |
 
-Most-picked cards: bishop-step 111, freeze-ray 87, knight-hop 86, queen-pulse 77, magnet 34, aegis 33, smoke 27, rabies-dart 12.
+Most-picked cards: bishop-step 23, queen-pulse 20, knight-hop 17, freeze-ray 12, vanguard 6, dragon 5, duchess 5, aegis 4.
 
 ## Two Keys (`revenge-6`)
 
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 40 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
-
-| L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.7 | - |
-| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.9 | - |
-| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
-| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 4.1 | - |
-| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | 12 | 3.8 | - |
-| 6 | 35-65% | **60%** (m16) | 4 tied 100% | bishop-step 100% | rewind 50% | - | 12 | 9.7 | none no6, 4/4 finishers proven |
-| 7 | 40-70% | **68%** (m13) | 4 tied 100% | bishop-step 100% | knighting 70% | - | 11 | 9.1 | none no6, 4/4 finishers proven |
-| 8 | 35-65% | **35%** (c2,m24) | 3 tied 100% | freeze-ray 88% | swap 30% | - | 15 | 12.4 | none no6, 4/4 finishers proven |
-| 9 | 15-45% | **30%** (c2,m26) | 4 tied 100% | bishop-step 100% | sacrifice 35% | - | 15 | 12.9 | none no6, 4/4 finishers proven |
-| 10 | 15-45% | **30%** (c6,m22) | 2 tied 100% | freeze-ray 93% | knighting 25% | - | 19 | 15.4 | none no6, 3/4 finishers proven |
-
-Every ability, win % at realistic tiers:
-
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 6 | 60% | 100% | 100% | 80% | 100% | 100% | 95% | 98% | 100% | 100% | 100% | 100% | 65% | 88% | 85% | 93% | 100% | 100% | 50% | 63% | 100% | 93% | 98% | 55% | 100% | 100% |
-| 7 | 68% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 70% | 78% | 98% | 100% | 100% | 100% | 90% | 78% | 100% | 100% | 100% | 73% | 100% | 100% |
-| 8 | 35% | 100% | 100% | 85% | 100% | 100% | 75% | 100% | 100% | 98% | 88% | 100% | 43% | 85% | 73% | 100% | 100% | 100% | 38% | 33% | 88% | 100% | 100% | 30% | 98% | 100% |
-| 9 | 30% | 100% | 100% | 100% | 100% | 98% | 75% | 100% | 100% | 100% | 100% | 100% | 50% | 88% | 75% | 95% | 100% | 100% | 45% | 35% | 100% | 100% | 98% | 45% | 100% | 100% |
-| 10 | 30% | 100% | 100% | 78% | 100% | 93% | 83% | 98% | 100% | 100% | 93% | 98% | 25% | 80% | 73% | 95% | 100% | 100% | 30% | 35% | 95% | 78% | 100% | 35% | 95% | 100% |
-
-**Verdict:** needs a look 
-- TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)
-
-### Difficulty modes — Two Keys
-
-T1 loadouts, no-ability + the five finishers, 15 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
-
-| Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
-|---|---|---|---|---|---|
-| Rookie | 100/100/100/100/100/67/100/47/53/27 | L10 27% | freeze-ray 67% on L8 | - | 76/80 |
-| Normal | 100/100/100/100/100/67/87/33/33/7 | L10 7% | freeze-ray 80% on L8 | - | 67/80 |
-| Hard | 100/100/100/100/100/60/80/20/13/33 | L9 13% | freeze-ray 67% on L8 | - | 64/80 |
-| Nightmare | 100/100/100/100/100/67/93/67/33/60 | L9 33% | freeze-ray 87% on L8 | - | 65/80 |
-
-### Full runs — Two Keys (authored, random picks)
-
-80 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **76/80 full clears.**
-
-| L | Reached | Cleared | Clear % | Losses |
-|---|---|---|---|---|
-| 1 | 80 | 80 | 100% | - |
-| 2 | 80 | 80 | 100% | - |
-| 3 | 80 | 80 | 100% | - |
-| 4 | 80 | 80 | 100% | - |
-| 5 | 80 | 80 | 100% | - |
-| 6 | 80 | 80 | 100% | - |
-| 7 | 80 | 79 | 99% | move-limit 1 |
-| 8 | 79 | 78 | 99% | move-limit 1 |
-| 9 | 78 | 78 | 100% | - |
-| 10 | 78 | 76 | 97% | move-limit 1, captured 1 |
-
-Most-picked cards: bishop-step 120, knight-hop 105, queen-pulse 93, freeze-ray 82, smoke 39, magnet 30, aegis 18, decoy 17.
-
-## Bramble Crown (`revenge-7`) — CANDIDATE
-
-Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 24 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
 
 | L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.7 | - |
 | 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.8 | - |
-| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.7 | - |
-| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 4.2 | - |
-| 5 | 75-100% | **96%** (m1) | 4 tied 100% | bishop-step 100% | convert 96% | - | 11 | 5.2 | - |
-| 6 | 35-65% | **46%** (m13) | 4 tied 100% | bishop-step 100% | page 46% | - | 12 | 10.5 | none no6, 5/5 finishers proven |
-| 7 | 40-70% | **58%** (c3,m7) | 4 tied 100% | bishop-step 100% | rewind 54% | - | 13 | 9.5 | none W6, 5/5 finishers proven |
-| 8 | 35-65% | **46%** (c2,m11) | 3 tied 100% | freeze-ray 96% | knighting 29% | - | 15 | 12 | none no6, 5/5 finishers proven |
-| 9 | 15-45% | **13%** (c9,m12) **too hard** | 3 tied 100% | freeze-ray 96% | rewind 17% | - | 14 | 9.2 | none no6, 5/5 finishers proven |
-| 10 | 15-45% | **33%** (c6,m10) | 3 tied 100% | freeze-ray 92% | swap 8% | - | 21 | 14.9 | none no6, 5/5 finishers proven |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 4.6 | - |
+| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | 12 | 3.9 | - |
+| 6 | 35-65% | **69%** (m5) **too easy** | 3 tied 100% | freeze-ray 94% | swap 56% | - | 12 | 9.9 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **75%** (m4) **too easy** | 4 tied 100% | bishop-step 100% | swap 63% | - | 11 | 9.6 | none no6, 4/4 finishers proven |
+| 8 | 35-65% | **44%** (c1,m8) | 2 tied 100% | freeze-ray 94% | sacrifice 38% | - | 15 | 12.8 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **63%** (m6) **too easy** | 4 tied 100% | bishop-step 100% | sacrifice 31% | - | 15 | 12 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **25%** (c4,m8) | 3 tied 100% | knight-hop 94% | sacrifice 25% | - | 19 | 15.6 | none no6, 3/4 finishers proven |
 
 Every ability, win % at realistic tiers:
 
-| L | none | aegis | become-king | bishop-squire | bishop-step | bodyguard | boulder | convert | decoy | duchess | freeze-ray | knight-hop | knighting | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 5 | 96% | 100% | 100% | 100% | 100% | 100% | 100% | 96% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
-| 6 | 46% | 100% | 100% | 88% | 100% | 100% | 96% | 100% | 100% | 100% | 100% | 100% | 75% | 100% | 46% | 100% | 100% | 100% | 67% | 67% | 100% | 100% | 100% | 46% | 100% | 100% |
-| 7 | 58% | 100% | 100% | 100% | 100% | 100% | 96% | 100% | 100% | 100% | 100% | 100% | 67% | 79% | 96% | 100% | 100% | 100% | 54% | 67% | 100% | 100% | 100% | 92% | 100% | 100% |
-| 8 | 46% | 100% | 100% | 88% | 100% | 100% | 67% | 100% | 100% | 100% | 96% | 100% | 29% | 79% | 79% | 100% | 100% | 100% | 33% | 58% | 96% | 100% | 100% | 33% | 96% | 100% |
-| 9 | 13% | 96% | 100% | 71% | 100% | 96% | 88% | 92% | 100% | 92% | 96% | 100% | 21% | 71% | 83% | 92% | 100% | 100% | 17% | 21% | 88% | 58% | 92% | 25% | 100% | 100% |
-| 10 | 33% | 100% | 100% | 83% | 100% | 96% | 79% | 96% | 100% | 100% | 92% | 100% | 25% | 100% | 67% | 100% | 100% | 100% | 17% | 21% | 100% | 88% | 92% | 8% | 88% | 100% |
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 6 | 69% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 75% | 81% | 100% | 100% | 100% | 100% | 63% | 100% | 94% | 100% | 56% | 100% | 100% |
+| 7 | 75% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 81% | 94% | 100% | 100% | 100% | 100% | 75% | 100% | 100% | 100% | 63% | 100% | 100% |
+| 8 | 44% | 100% | 100% | 100% | 100% | 88% | 94% | 100% | 100% | 100% | 94% | 94% | 88% | 75% | 100% | 100% | 100% | 100% | 38% | 94% | 100% | 100% | 38% | 94% | 100% |
+| 9 | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 75% | 69% | 100% | 100% | 100% | 100% | 31% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 10 | 25% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 94% | 94% | 94% | 100% | 100% | 100% | 25% | 94% | 81% | 100% | 50% | 100% | 100% |
 
-**Verdict:** HOLD 
-- TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)
+**Verdict:** needs a look 
+- TOO EASY — a new player clears 96% of runs on Normal (target 40-60%)
 
-No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L9 no-ability 13% is too hard for the legacy band (15-45%).
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L6 no-ability 69% is too easy for the legacy band (35-65%); L7 no-ability 75% is too easy for the legacy band (40-70%); L9 no-ability 63% is too easy for the legacy band (15-45%).
+
+### Difficulty modes — Two Keys
+
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+
+| Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
+|---|---|---|---|---|---|
+| Rookie | 100/100/100/100/100/100/88/50/50/63 | L8 50% | freeze-ray 75% on L8 | - | 14/16 |
+| Normal | 100/100/100/100/100/50/75/13/25/63 | L8 13% | knight-hop 88% on L10 | - | 16/16 |
+| Hard | 100/100/100/100/100/100/88/50/13/50 | L9 13% | freeze-ray 75% on L8 | - | 15/16 |
+| Nightmare | 100/100/100/100/100/88/88/63/25/38 | L9 25% | knight-hop 88% on L9 | - | 16/16 |
+
+### Full runs — Two Keys (authored, random picks)
+
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **13/16 full clears.**
+
+| L | Reached | Cleared | Clear % | Losses |
+|---|---|---|---|---|
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 16 | 100% | - |
+| 8 | 16 | 16 | 100% | - |
+| 9 | 16 | 16 | 100% | - |
+| 10 | 16 | 13 | 81% | move-limit 3 |
+
+Most-picked cards: bishop-step 25, queen-pulse 21, knight-hop 19, squad 8, duchess 7, freeze-ray 6, dragon 5, aegis 4.
+
+## Bramble Crown (`revenge-7`)
+
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+
+| L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.4 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 4 | 85-100% | **100%** | 2 tied 100% | bishop-step 81% | bishop-step 81% | 5 | - | 3.9 | - |
+| 5 | 75-100% | **100%** | 4 tied 100% | bishop-step 100% | magnet 94% | - | 11 | 5.6 | - |
+| 6 | 35-65% | **75%** (c2,m2) **too easy** | 4 tied 100% | bishop-step 100% | swap 38% | - | 12 | 8.1 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **69%** (m5) | 4 tied 100% | bishop-step 100% | sacrifice 56% | - | 13 | 9.8 | none W6, 4/4 finishers proven |
+| 8 | 35-65% | **31%** (c1,m10) **too hard** | 3 tied 100% | freeze-ray 94% | sacrifice 13% | - | 15 | 13 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **19%** (c6,m7) | 4 tied 100% | bishop-step 100% | sacrifice 19% | - | 14 | 10.3 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **19%** (c4,m9) | 4 tied 100% | bishop-step 100% | sacrifice 13% | - | 21 | 16.4 | none no6, 4/4 finishers proven |
+
+Every ability, win % at realistic tiers:
+
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 81% s3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 88% s2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% |
+| 6 | 75% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 56% | 100% | 100% | 100% | 100% | 75% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 7 | 69% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 69% | 100% | 100% | 100% | 100% | 100% | 56% | 100% | 100% | 100% | 81% | 100% | 100% |
+| 8 | 31% | 100% | 100% | 100% | 100% | 81% | 100% | 100% | 100% | 100% | 94% | 100% | 88% | 69% | 100% | 100% | 100% | 100% | 13% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 9 | 19% | 94% | 100% | 69% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 81% | 94% | 100% | 100% | 100% | 100% | 19% | 88% | 63% | 100% | 19% | 100% | 100% |
+| 10 | 19% | 100% | 100% | 81% | 100% | 94% | 94% | 100% | 100% | 100% | 100% | 100% | 88% | 63% | 100% | 100% | 100% | 100% | 13% | 100% | 81% | 100% | 13% | 100% | 100% |
+
+**Verdict:** needs a look 
+- TOO EASY — a new player clears 92% of runs on Normal (target 40-60%)
+- L4 has 5 stalls (king unreachable)
+
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L6 no-ability 75% is too easy for the legacy band (35-65%); L8 no-ability 31% is too hard for the legacy band (35-65%).
 
 ### Difficulty modes — Bramble Crown
 
@@ -824,138 +1170,297 @@ T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is
 
 | Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
 |---|---|---|---|---|---|
-| Rookie | 100/100/100/100/100/100/25/38/13/50 | L9 13% | freeze-ray 50% on L8 | - | 39/40 |
-| Normal | 100/100/100/100/100/63/63/13/13/38 | L8 13% | bishop-step 100% on L1 | - | 33/40 |
-| Hard | 100/100/100/100/100/88/75/50/38/13 | L10 13% | freeze-ray 63% on L8 | - | 31/40 |
-| Nightmare | 100/100/100/100/100/100/75/63/25/13 | L10 13% | freeze-ray 88% on L8 | - | 30/40 |
+| Rookie | 100/100/100/100/100/63/50/88/13/13 | L9 13% | freeze-ray 75% on L8 | - | 16/16 |
+| Normal | 100/100/100/100/100/25/88/63/0/25 | L9 0% | queen-pulse 75% on L4 | 2 | 14/16 |
+| Hard | 100/100/100/100/100/100/50/50/25/13 | L10 13% | bishop-step 63% on L3 | 5 | 10/16 |
+| Nightmare | 100/100/100/100/100/88/50/50/25/25 | L9 25% | queen-pulse 50% on L3 | 5 | 10/16 |
 
 ### Full runs — Bramble Crown (authored, random picks)
 
-40 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **33/40 full clears.**
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **12/16 full clears.**
 
 | L | Reached | Cleared | Clear % | Losses |
 |---|---|---|---|---|
-| 1 | 40 | 40 | 100% | - |
-| 2 | 40 | 40 | 100% | - |
-| 3 | 40 | 40 | 100% | - |
-| 4 | 40 | 40 | 100% | - |
-| 5 | 40 | 40 | 100% | - |
-| 6 | 40 | 40 | 100% | - |
-| 7 | 40 | 39 | 98% | move-limit 1 |
-| 8 | 39 | 35 | 90% | move-limit 4 |
-| 9 | 35 | 34 | 97% | move-limit 1 |
-| 10 | 34 | 33 | 97% | captured 1 |
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 15 | 94% | stall 1 |
+| 5 | 15 | 15 | 100% | - |
+| 6 | 15 | 15 | 100% | - |
+| 7 | 15 | 15 | 100% | - |
+| 8 | 15 | 14 | 93% | move-limit 1 |
+| 9 | 14 | 13 | 93% | captured 1 |
+| 10 | 13 | 12 | 92% | captured 1 |
 
-Most-picked cards: queen-pulse 56, bishop-step 53, knight-hop 40, freeze-ray 36, magnet 18, squad 13, rabies-dart 10, become-king 8.
+Most-picked cards: queen-pulse 20, bishop-step 20, knight-hop 18, freeze-ray 16, duchess 13, aegis 5, dragon 4, bishop-squire 4.
+
+## The Rampart (`revenge-8`)
+
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+
+| L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 1.9 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 2.8 | - |
+| 3 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 8.9 | - |
+| 4 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3.8 | - |
+| 5 | 75-100% | **81%** (m3) | 4 tied 100% | bishop-step 100% | sacrifice 94% | - | 11 | 7.3 | - |
+| 6 | 35-65% | **63%** (m6) | 4 tied 100% | bishop-step 100% | swap 50% | - | 10 | 7.8 | none W6, 4/4 finishers proven |
+| 7 | 40-70% | **50%** (c1,m7) | 4 tied 100% | bishop-step 100% | swap 63% | - | 11 | 9.6 | none W6, 4/4 finishers proven |
+| 8 | 35-65% | **63%** (c2,m4) | 4 tied 100% | bishop-step 100% | sacrifice 38% | - | 13 | 11.4 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **25%** (m12) | 4 tied 100% | bishop-step 100% | sacrifice 25% | - | 14 | 13.3 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **44%** (c3,m6) | 2 tied 100% | freeze-ray 88% | squad 25% | - | 16 | 11.3 | none no6, 0/4 finishers proven |
+
+Every ability, win % at realistic tiers:
+
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 81% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 6 | 63% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 56% | 88% | 100% | 100% | 100% | 100% | 81% | 100% | 100% | 100% | 50% | 100% | 100% |
+| 7 | 50% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 75% | 100% | 100% | 100% | 63% | 100% | 100% |
+| 8 | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 88% | 100% | 100% | 100% | 100% | 100% | 38% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 9 | 25% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 75% | 81% | 100% | 100% | 100% | 94% | 25% | 94% | 94% | 94% | 50% | 100% | 100% |
+| 10 | 44% | 100% | 100% | 81% | 94% | 94% | 100% | 100% | 100% | 100% | 88% | 100% | 75% | 56% | 88% | 100% | 100% | 75% | 50% | 100% | 25% | 75% | 44% | 94% | 100% |
+
+**Verdict:** needs a look 
+- too easy — new player clears 79% on Normal (target 40-60%)
+
+### Difficulty modes — The Rampart
+
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+
+| Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
+|---|---|---|---|---|---|
+| Rookie | 100/100/100/100/88/63/88/38/75/38 | L8 38% | freeze-ray 75% on L9 | - | 14/16 |
+| Normal | 100/100/100/100/88/63/63/63/38/63 | L9 38% | bishop-step 63% on L10 | 2 | 10/16 |
+| Hard | 100/100/100/100/100/63/75/75/0/0 | L9 0% | freeze-ray 50% on L10 | - | 11/16 |
+| Nightmare | 100/100/100/100/100/88/63/75/0/13 | L9 0% | freeze-ray 63% on L10 | - | 11/16 |
+
+### Full runs — The Rampart (authored, random picks)
+
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **14/16 full clears.**
+
+| L | Reached | Cleared | Clear % | Losses |
+|---|---|---|---|---|
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 16 | 100% | - |
+| 4 | 16 | 16 | 100% | - |
+| 5 | 16 | 16 | 100% | - |
+| 6 | 16 | 16 | 100% | - |
+| 7 | 16 | 16 | 100% | - |
+| 8 | 16 | 15 | 94% | move-limit 1 |
+| 9 | 15 | 15 | 100% | - |
+| 10 | 15 | 14 | 93% | move-limit 1 |
+
+Most-picked cards: queen-pulse 23, bishop-step 17, freeze-ray 15, knight-hop 12, vanguard 8, convert 7, aegis 4, dragon 4.
+
+## Cold Court (`revenge-9`)
+
+Normal difficulty (= the authored level), realistic tiers (T1 on L1-3, T2 on L4-6, T3 on L7-9, T4 on L10), offers dismissed, 16 trials per cell. Band = the no-ability target for that level ±15. Loss codes: c captured, m out of moves (the app calls this "No way through" when its solver proves it early — same bucket), s stall, d dead end.
+
+| L | Band | No ability | Best finisher | Worst finisher | Worst any | Stalls | Budget | Avg moves (none) | Solver |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 2 | 85-100% | **100%** | 4 tied 100% | bishop-step 100% | aegis 100% | - | - | 3 | - |
+| 3 | 85-100% | **100%** | 2 tied 100% | queen-pulse 50% **low** | queen-pulse 50% | 14 | - | 3.4 | - |
+| 4 | 85-100% | **100%** | 3 tied 100% | queen-pulse 94% | convert 94% | 1 | - | 5.8 | - |
+| 5 | 75-100% | **63%** (m6) **too hard** | 4 tied 100% | bishop-step 100% | swap 44% | - | 16 | 11.9 | - |
+| 6 | 35-65% | **50%** (m8) | 4 tied 100% | bishop-step 100% | sacrifice 38% | - | 12 | 10.6 | none no6, 4/4 finishers proven |
+| 7 | 40-70% | **25%** (m12) **too hard** | 4 tied 100% | bishop-step 100% | swap 13% | - | 11 | 10.1 | none no6, 4/4 finishers proven |
+| 8 | 35-65% | **50%** (c2,m6) | 3 tied 100% | freeze-ray 94% | swap 38% | - | 12 | 9 | none no6, 4/4 finishers proven |
+| 9 | 15-45% | **25%** (c2,m10) | 3 tied 100% | queen-pulse 94% | sacrifice 13% | - | 13 | 11.1 | none no6, 4/4 finishers proven |
+| 10 | 15-45% | **31%** (c3,m8) | 4 tied 100% | bishop-step 100% | sacrifice 6% | - | 13 | 11.5 | none no6, 4/4 finishers proven |
+
+Every ability, win % at realistic tiers:
+
+| L | none | aegis | become-king | bishop-squire | bishop-step | boulder | convert | decoy | dragon | duchess | freeze-ray | knight-hop | magnet | page | poison-dart | queen-pulse | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 2 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 3 | 100% | 100% | 100% | 100% | **63%** s6 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | **50%** s8 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 4 | 100% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 94% s1 | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% |
+| 5 | 63% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 75% | 100% | 100% | 100% | 100% | 100% | 69% | 100% | 100% | 100% | 44% | 100% | 100% |
+| 6 | 50% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 100% | 94% | 100% | 88% | 100% | 100% | 100% | 38% | 100% | 100% | 100% | 38% | 100% | 100% |
+| 7 | 25% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 75% | 94% | 100% | 100% | 100% | 100% | 31% | 94% | 100% | 100% | 13% | 100% | 100% |
+| 8 | 50% | 100% | 100% | 88% | 100% | 88% | 100% | 100% | 100% | 100% | 94% | 100% | 88% | 69% | 100% | 100% | 100% | 100% | 44% | 100% | 81% | 88% | 38% | 100% | 100% |
+| 9 | 25% | 100% | 100% | 81% | 100% | 94% | 88% | 100% | 94% | 81% | 100% | 100% | 50% | 69% | 100% | 94% | 100% | 100% | 13% | 81% | 19% | 100% | 25% | 94% | 100% |
+| 10 | 31% | 100% | 100% | 94% | 100% | 100% | 100% | 100% | 94% | 100% | 100% | 100% | 81% | 94% | 100% | 100% | 100% | 100% | 6% | 100% | 56% | 94% | 13% | 100% | 100% |
+
+**Verdict:** needs a look 
+- too easy — new player clears 67% on Normal (target 40-60%)
+- L3 queen-pulse only 50% (every finisher must be at least 80%)
+- L3 has 14 stalls (king unreachable)
+- L4 has 1 stall (king unreachable)
+
+No-ability vs the legacy band (informational only — this column measures a player who cannot exist, since offers on L1/3/6/9 are forced): L5 no-ability 63% is too hard for the legacy band (75-100%); L7 no-ability 25% is too hard for the legacy band (40-70%).
+
+### Difficulty modes — Cold Court
+
+T1 loadouts, no-ability + the five finishers, 8 trials per cell. "No ability" is what a beginner who ignores powers feels; "worst finisher" is the safety net. A new profile starts on **Rookie** (still king on L1-4, +4 moves, unlimited retries) — that row is what most first-time players actually meet; the big table above is Normal.
+
+| Mode | No-ability curve L1→L10 | Hardest level (none) | Worst finisher | Stalls | Full runs (random picks) |
+|---|---|---|---|---|---|
+| Rookie | 100/100/100/100/38/63/63/63/25/38 | L9 25% | bishop-step 88% on L9 | - | 15/16 |
+| Normal | 100/100/100/100/63/50/50/50/13/50 | L9 13% | queen-pulse 13% on L3 | 9 | 8/16 |
+| Hard | 100/100/100/100/50/100/50/88/25/0 | L10 0% | bishop-step 63% on L3 | 5 | 12/16 |
+| Nightmare | 100/100/100/100/75/75/13/75/25/25 | L7 13% | queen-pulse 63% on L3 | 3 | 10/16 |
+
+### Full runs — Cold Court (authored, random picks)
+
+16 runs L1→L10, a random card from every offer, abilities and tempo carried like the app. **8/16 full clears.**
+
+| L | Reached | Cleared | Clear % | Losses |
+|---|---|---|---|---|
+| 1 | 16 | 16 | 100% | - |
+| 2 | 16 | 16 | 100% | - |
+| 3 | 16 | 14 | 88% | stall 2 |
+| 4 | 14 | 13 | 93% | stall 1 |
+| 5 | 13 | 13 | 100% | - |
+| 6 | 13 | 13 | 100% | - |
+| 7 | 13 | 12 | 92% | move-limit 1 |
+| 8 | 12 | 11 | 92% | move-limit 1 |
+| 9 | 11 | 10 | 91% | move-limit 1 |
+| 10 | 10 | 8 | 80% | captured 1, move-limit 1 |
+
+Most-picked cards: queen-pulse 18, knight-hop 17, bishop-step 15, freeze-ray 13, vanguard 6, aegis 4, dragon 4, duchess 4.
 
 ## Biggest movers vs last night
 
-Compared 2390 cells against 2026-09-01. Anything over 15 points is listed; with 40 trials a 15-point move is about two standard errors, so treat single cells with suspicion and clusters as real.
+Compared 2340 cells against 2026-09-01. Anything over 15 points is listed; with 16 trials a 15-point move is about two standard errors, so treat single cells with suspicion and clusters as real.
 
 | Run | Mode | L | Loadout | Before | After | Change |
 |---|---|---|---|---|---|---|
-| revenge-2 | hard | 10 | surge | 7% | 87% | +80 |
-| revenge-2 | normal | 10 | freeze-ray | 0% | 73% | +73 |
-| revenge-2 | rookie | 10 | queen-pulse | 27% | 93% | +66 |
-| revenge-2 | realistic | 10 | freeze-ray | 28% | 93% | +65 |
-| revenge-2 | rookie | 10 | bishop-step | 27% | 87% | +60 |
-| revenge-2 | rookie | 10 | freeze-ray | 20% | 80% | +60 |
-| revenge-2 | normal | 10 | queen-pulse | 40% | 100% | +60 |
-| revenge-2 | normal | 10 | surge | 40% | 100% | +60 |
-| revenge-2 | nightmare | 10 | surge | 33% | 93% | +60 |
-| revenge-1 | normal | 6 | freeze-ray | 33% | 87% | +54 |
-| revenge-1 | rookie | 8 | none | 100% | 47% | -53 |
-| revenge-1 | normal | 7 | none | 100% | 47% | -53 |
-| revenge-1 | normal | 10 | none | 0% | 53% | +53 |
-| revenge-2 | normal | 10 | knight-hop | 27% | 80% | +53 |
-| revenge-2 | hard | 10 | knight-hop | 40% | 93% | +53 |
-| revenge-2 | realistic | 10 | smoke | 43% | 95% | +52 |
-| revenge-1 | hard | 7 | none | 0% | 47% | +47 |
-| revenge-2 | realistic | 10 | boulder | 28% | 75% | +47 |
-| revenge-2 | normal | 10 | none | 13% | 60% | +47 |
-| revenge-5 | normal | 7 | none | 20% | 67% | +47 |
-| … | | | | | | 111 more |
+| revenge-2 | hard | 10 | surge | 7% | 88% | +81 |
+| revenge-2 | realistic | 10 | rewind | 8% | 88% | +80 |
+| revenge-2 | rookie | 10 | freeze-ray | 20% | 100% | +80 |
+| revenge-3 | realistic | 8 | rewind | 15% | 94% | +79 |
+| revenge-2 | normal | 10 | freeze-ray | 0% | 75% | +75 |
+| revenge-5 | realistic | 10 | rewind | 25% | 100% | +75 |
+| revenge-2 | rookie | 10 | bishop-step | 27% | 100% | +73 |
+| revenge-2 | realistic | 10 | freeze-ray | 28% | 100% | +72 |
+| revenge-5 | realistic | 7 | rewind | 30% | 100% | +70 |
+| revenge-6 | realistic | 10 | rewind | 30% | 100% | +70 |
+| revenge-3 | realistic | 6 | rewind | 33% | 100% | +67 |
+| revenge-3 | realistic | 10 | rewind | 30% | 94% | +64 |
+| revenge-2 | rookie | 10 | none | 13% | 75% | +62 |
+| revenge-2 | rookie | 10 | queen-pulse | 27% | 88% | +61 |
+| revenge-2 | normal | 10 | bishop-step | 40% | 100% | +60 |
+| revenge-5 | realistic | 9 | rewind | 40% | 100% | +60 |
+| revenge-2 | realistic | 8 | rewind | 43% | 100% | +57 |
+| revenge-2 | realistic | 9 | rewind | 45% | 100% | +55 |
+| revenge-2 | hard | 10 | freeze-ray | 20% | 75% | +55 |
+| revenge-2 | nightmare | 10 | freeze-ray | 20% | 75% | +55 |
+| … | | | | | | 166 more |
 
-- **Left its band:** revenge-5 L9 no-ability 38% → 48% (too easy).
-- **Left its band:** revenge-5 L10 no-ability 30% → 13% (too hard).
-- Back in band: revenge-1 L6 no-ability 25% → 55%.
-- Back in band: revenge-1 L7 no-ability 25% → 50%.
-- Back in band: revenge-1 L9 no-ability 0% → 18%.
-- Back in band: revenge-1 L10 no-ability 0% → 23%.
-- Back in band: revenge-2 L10 no-ability 3% → 45%.
-- Back in band: revenge-6 L7 no-ability 80% → 68%.
-- Back in band: revenge-6 L10 no-ability 13% → 30%.
+- **NEW STALL** revenge-2 realistic L3 bishop-step: 4 games timed out with the king alive.
+- **NEW STALL** revenge-2 realistic L3 queen-pulse: 2 games timed out with the king alive.
+- **NEW STALL** revenge-2 realistic L4 bishop-step: 1 game timed out with the king alive.
+- **NEW STALL** revenge-2 normal L3 bishop-step: 1 game timed out with the king alive.
+- **NEW STALL** revenge-3 hard L4 knight-hop: 1 game timed out with the king alive.
+- **Left its band:** revenge-3 L7 no-ability 53% → 38% (too hard).
+- **Left its band:** revenge-3 L9 no-ability 20% → 13% (too hard).
+- **Left its band:** revenge-4 L6 no-ability 55% → 69% (too easy).
+- **Left its band:** revenge-4 L9 no-ability 38% → 13% (too hard).
+- **Left its band:** revenge-5 L6 no-ability 53% → 69% (too easy).
+- **Left its band:** revenge-5 L7 no-ability 50% → 38% (too hard).
+- **Left its band:** revenge-5 L9 no-ability 38% → 50% (too easy).
+- **Left its band:** revenge-6 L6 no-ability 60% → 69% (too easy).
+- **Left its band:** revenge-6 L9 no-ability 28% → 63% (too easy).
+- Back in band: revenge-1 L8 no-ability 25% → 38%.
+- Back in band: revenge-1 L10 no-ability 0% → 25%.
+- Back in band: revenge-2 L10 no-ability 3% → 44%.
+- Back in band: revenge-6 L10 no-ability 13% → 25%.
 
 ## What makes a level hard (feature findings)
 
-350 level snapshots (every level × authored + each difficulty mode, across all runs). Features are counted from the starting board — total enemies, hunters vs marchers, keys on the king's lines, pen size, move budget, and so on.
+550 level snapshots (every level × authored + each difficulty mode, across all runs). Features are counted from the starting board — total enemies, hunters vs marchers, keys on the king's lines, pen size, move budget, and so on.
 
 **Plain-English splits (no-ability win %):**
 
-- Levels with 23+ total material average **55 points lower** no-ability win than the rest (30% vs 85%, 80 vs 270 snapshots).
-- Levels with 21+ hunter power (3 per minor, 9 per queen) average **54 points lower** no-ability win than the rest (29% vs 82%, 65 vs 285 snapshots).
-- Levels with 9+ move budget average **53 points higher** no-ability win than the rest (73% vs 20%, 346 vs 4 snapshots).
-- Levels with 2+ queens average **53 points lower** no-ability win than the rest (27% vs 80%, 50 vs 300 snapshots).
-- Levels with 5+ pen squares under enemy fire average **52 points lower** no-ability win than the rest (22% vs 74%, 10 vs 340 snapshots).
-- Levels with 10+ total enemies average **52 points lower** no-ability win than the rest (32% vs 84%, 80 vs 270 snapshots).
+- Levels with 23+ total material average **55 points lower** no-ability win than the rest (28% vs 84%, 125 vs 425 snapshots).
+- Levels with 5+ pen squares under enemy fire average **54 points lower** no-ability win than the rest (18% vs 72%, 10 vs 540 snapshots).
+- Levels with 2+ queens average **54 points lower** no-ability win than the rest (25% vs 79%, 80 vs 470 snapshots).
+- Levels with 21+ hunter power (3 per minor, 9 per queen) average **54 points lower** no-ability win than the rest (27% vs 81%, 95 vs 455 snapshots).
+- Levels with 16+ approach squares under fire (ranks 2-5) average **53 points lower** no-ability win than the rest (43% vs 96%, 255 vs 295 snapshots).
+- Levels with 23+ squares under enemy fire average **52 points lower** no-ability win than the rest (43% vs 95%, 250 vs 300 snapshots).
 
 **Same, for the weakest finisher's win % (the safety net):**
 
-- 2+ enemies inside the pen: finisher floor **32 points lower** (63% vs 95%).
-- 5+ pen squares under enemy fire: finisher floor **23 points lower** (73% vs 95%).
-- 27+ hunter power (3 per minor, 9 per queen): finisher floor **19 points lower** (76% vs 95%).
-- 11+ pawns: finisher floor **19 points lower** (76% vs 96%).
+- 2+ enemies inside the pen: finisher floor **37 points lower** (58% vs 94%).
+- 5+ pen squares under enemy fire: finisher floor **26 points lower** (68% vs 94%).
+- 11+ total enemies: finisher floor **15 points lower** (81% vs 97%).
+- 24+ approach squares under fire (ranks 2-5): finisher floor **15 points lower** (81% vs 96%).
 
 **Strongest single correlations:**
 
 | Feature | vs no-ability | vs finisher floor | High-quartile avg (none) | Low-quartile avg (none) |
 |---|---|---|---|---|
-| total material | -0.85 | -0.55 | 33% | 100% |
-| hunter power (3 per minor, 9 per queen) | -0.83 | -0.51 | 37% | 96% |
-| queens | -0.80 | -0.47 | 39% | 87% |
-| squares under enemy fire | -0.80 | -0.50 | 36% | 100% |
-| approach squares under fire (ranks 2-5) | -0.79 | -0.46 | 36% | 100% |
-| hunters (non-pawn pieces that chase Rookie) | -0.78 | -0.49 | 41% | 96% |
-| total enemies | -0.75 | -0.56 | 36% | 99% |
-| pen size | -0.61 | -0.38 | 51% | 100% |
-| empty pen squares | -0.60 | -0.35 | 51% | 100% |
-| pen squares under enemy fire | -0.60 | -0.44 | 41% | 79% |
+| total material | -0.83 | -0.39 | 32% | 100% |
+| hunter power (3 per minor, 9 per queen) | -0.81 | -0.38 | 36% | 98% |
+| queens | -0.80 | -0.36 | 38% | 92% |
+| squares under enemy fire | -0.77 | -0.34 | 38% | 100% |
+| approach squares under fire (ranks 2-5) | -0.76 | -0.33 | 39% | 100% |
+| hunters (non-pawn pieces that chase Rookie) | -0.75 | -0.37 | 40% | 98% |
+| total enemies | -0.72 | -0.35 | 37% | 100% |
+| pen squares under enemy fire | -0.61 | -0.32 | 41% | 85% |
+| move budget | 0.61 | 0.14 | 100% | 61% |
+| budget slack (moves minus distance to king) | 0.61 | 0.14 | 100% | 61% |
 
 Reading: −1 means "more of this, harder level"; +1 means "more of this, easier". Anything past ±0.5 is worth believing at this sample size.
 
-**All features together (ridge regression, no-ability %):** fit R² 0.84 on 350 snapshots, held-out R² 0.74 on 70.
+**All features together (ridge regression, no-ability %):** fit R² 0.76 on 550 snapshots, held-out R² 0.73 on 110.
 
 | Feature | Points per +1 unit | Points per +1 std dev |
 |---|---|---|
-| approach squares under fire (ranks 2-5) | +3.1 | +25 |
-| squares under enemy fire | -1.4 | -18 |
-| guards next to the king | +10.0 | +12 |
-| queens | -13.0 | -10 |
-| walls | +3.0 | +8 |
-| total material | -0.7 | -7 |
+| approach squares under fire (ranks 2-5) | +2.7 | +19 |
+| squares under enemy fire | -1.4 | -16 |
+| queens | -11.7 | -9 |
+| guards next to the king | +7.0 | +7 |
+| empty squares on the king's lines | +3.8 | +6 |
+| total material | -0.6 | -6 |
 
 With this few snapshots the coefficients are directional, not gospel. They firm up as more runs enter the pool.
 
 ## Humans vs bot
 
-Human runs since 2026-08-03 (supabase+disk). "Cleared" is the share of human runs that got past the level; the bot column is the random-pick full-run clear rate on the authored level.
+Human runs since 2026-08-04 (supabase+disk). "Cleared" is the share of human runs that got past the level; the bot column is the random-pick full-run clear rate on the authored level.
 
-**revenge-1** — 38 runs, 15 won.
+**crucible** — 3 runs, 2 won.
 
 | L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
 |---|---|---|---|---|---|
-| 1 | 38 | 37 | 97% | 100% | -3 |
-| 2 | 37 | 37 | 100% | 100% | 0 |
-| 3 | 37 | 37 | 100% | 100% | 0 |
-| 4 | 37 | 36 | 97% | 100% | -3 |
-| 5 | 36 | 29 | 81% | 100% | -19 |
-| 6 | 29 | 28 | 97% | 99% | -2 |
-| 7 | 28 | 25 | 89% | 100% | -11 |
-| 8 | 25 | 19 | 76% | 96% | -20 |
-| 9 | 19 | 16 | 84% | 99% | -15 |
-| 10 | 16 | 15 | 94% | 85% | +9 |
+| 1 | 3 | 3 | 100% | 100% | 0 |
+| 2 | 2 | 2 | 100% | 100% | 0 |
+| 3 | 2 | 2 | 100% | 100% | 0 |
+| 4 | 2 | 2 | 100% | 100% | 0 |
+| 5 | 2 | 2 | 100% | 100% | 0 |
+| 6 | 2 | 2 | 100% | 100% | 0 |
+| 7 | 2 | 2 | 100% | 100% | 0 |
+| 8 | 2 | 1 | 50% | 88% | -38 |
+| 9 | 1 | 1 | 100% | 100% | 0 |
+| 10 | 1 | 1 | 100% | 86% | +14 |
 
-**revenge-3** — 2 runs, 0 won.
+**revenge-1** — 20 runs, 6 won.
+
+| L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
+|---|---|---|---|---|---|
+| 1 | 20 | 19 | 95% | 100% | -5 |
+| 2 | 19 | 19 | 100% | 100% | 0 |
+| 3 | 19 | 19 | 100% | 100% | 0 |
+| 4 | 19 | 18 | 95% | 100% | -5 |
+| 5 | 18 | 16 | 89% | 100% | -11 |
+| 6 | 16 | 15 | 94% | 100% | -6 |
+| 7 | 15 | 12 | 80% | 100% | -20 |
+| 8 | 12 | 10 | 83% | 88% | -5 |
+| 9 | 10 | 7 | 70% | 100% | -30 |
+| 10 | 7 | 6 | 86% | 71% | +15 |
+
+**revenge-10** — 2 runs, 1 won.
 
 | L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
 |---|---|---|---|---|---|
@@ -964,13 +1469,28 @@ Human runs since 2026-08-03 (supabase+disk). "Cleared" is the share of human run
 | 3 | 2 | 2 | 100% | 100% | 0 |
 | 4 | 2 | 2 | 100% | 100% | 0 |
 | 5 | 2 | 2 | 100% | 100% | 0 |
-| 6 | 2 | 2 | 100% | 99% | +1 |
-| 7 | 2 | 2 | 100% | 94% | +6 |
-| 8 | 2 | 2 | 100% | 86% | +14 |
-| 9 | 2 | 1 | 50% | 97% | -47 |
-| 10 | 1 | 0 | 0% | 97% | -97 |
+| 6 | 2 | 2 | 100% | 94% | +6 |
+| 7 | 2 | 2 | 100% | 93% | +7 |
+| 8 | 2 | 2 | 100% | 93% | +7 |
+| 9 | 2 | 1 | 50% | 100% | -50 |
+| 10 | 1 | 1 | 100% | 92% | +8 |
 
-**revenge-4** — 1 run, 1 won.
+**revenge-7** — 2 runs, 0 won.
+
+| L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
+|---|---|---|---|---|---|
+| 1 | 2 | 2 | 100% | 100% | 0 |
+| 2 | 2 | 2 | 100% | 100% | 0 |
+| 3 | 2 | 2 | 100% | 100% | 0 |
+| 4 | 2 | 2 | 100% | 94% | +6 |
+| 5 | 2 | 2 | 100% | 100% | 0 |
+| 6 | 2 | 2 | 100% | 100% | 0 |
+| 7 | 2 | 2 | 100% | 100% | 0 |
+| 8 | 2 | 2 | 100% | 93% | +7 |
+| 9 | 2 | 0 | 0% | 93% | -93 |
+| 10 | 0 | 0 | - | 92% | - |
+
+**revenge-8** — 1 run, 0 won.
 
 | L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
 |---|---|---|---|---|---|
@@ -979,46 +1499,113 @@ Human runs since 2026-08-03 (supabase+disk). "Cleared" is the share of human run
 | 3 | 1 | 1 | 100% | 100% | 0 |
 | 4 | 1 | 1 | 100% | 100% | 0 |
 | 5 | 1 | 1 | 100% | 100% | 0 |
-| 6 | 1 | 1 | 100% | 100% | 0 |
-| 7 | 1 | 1 | 100% | 100% | 0 |
-| 8 | 1 | 1 | 100% | 94% | +6 |
-| 9 | 1 | 1 | 100% | 95% | +5 |
-| 10 | 1 | 1 | 100% | 80% | +20 |
+| 6 | 1 | 0 | 0% | 100% | -100 |
+| 7 | 0 | 0 | - | 100% | - |
+| 8 | 0 | 0 | - | 94% | - |
+| 9 | 0 | 0 | - | 100% | - |
+| 10 | 0 | 0 | - | 93% | - |
 
-**revenge-5** — 3 runs, 0 won.
+**revenge-9** — 1 run, 0 won.
 
 | L | Humans reached | Humans cleared | Human clear % | Bot clear % | Gap |
 |---|---|---|---|---|---|
-| 1 | 3 | 3 | 100% | 100% | 0 |
-| 2 | 3 | 3 | 100% | 100% | 0 |
-| 3 | 3 | 3 | 100% | 100% | 0 |
-| 4 | 3 | 3 | 100% | 100% | 0 |
-| 5 | 3 | 3 | 100% | 100% | 0 |
-| 6 | 3 | 3 | 100% | 98% | +2 |
-| 7 | 3 | 3 | 100% | 99% | +1 |
-| 8 | 3 | 3 | 100% | 99% | +1 |
-| 9 | 3 | 3 | 100% | 99% | +1 |
-| 10 | 3 | 0 | 0% | 81% | -81 |
+| 1 | 1 | 1 | 100% | 100% | 0 |
+| 2 | 1 | 1 | 100% | 100% | 0 |
+| 3 | 1 | 1 | 100% | 88% | +12 |
+| 4 | 1 | 1 | 100% | 93% | +7 |
+| 5 | 1 | 1 | 100% | 100% | 0 |
+| 6 | 1 | 1 | 100% | 100% | 0 |
+| 7 | 1 | 1 | 100% | 92% | +8 |
+| 8 | 1 | 0 | 0% | 92% | -92 |
+| 9 | 0 | 0 | - | 91% | - |
+| 10 | 0 | 0 | - | 80% | - |
 
 Where humans fall well below the bot on a level the bot clears ability-free, the level is probably reading badly (unclear key, hidden hunter) rather than being tight. Caveat: traces written by a dev server (`data/run-playtest/human-traces/`) also include games the parity driver played through the real app — those are bot games wearing a human label.
 
+## Watching Tyler
+
+Replayed Tyler's real runs through the engine and asked T5 what IT would play at every verifiably reconstructed decision (learn-from-tyler.ts).
+
+- **27 runs watched** since 2026-08-27 (8 won, 19 lost); 54% of his actions reconstructed exactly.
+- **Bot agreement: 38%** across 788 decision points.
+- Top lesson: The bot under-casts: at 61% of Tyler's 119 verified casts, T5 would have moved instead
+- Full board-by-board report: `data/run-playtest/revenge/tyler-lessons/2026-09-03.md`
+
 ## Experiments run tonight
 
-None ran.
+Each one takes a level, makes ONE change, and replays the cell at realistic tier (16 trials). Predicted vs actual tells us whether the model understands the level.
+
+| Run | L | Change | Loadout | Baseline | Predicted | Actual | Verdict | Prediction from |
+|---|---|---|---|---|---|---|---|---|
+| crucible | 7 | budget +2 | none | 25% | 50% | **50%** | confirmed | mode-slope |
+| crucible | 10 | remove queen a4 | knight-hop | 94% | 97% | **100%** | confirmed | regression |
+| crucible | 5 | add knight d3 | none | 88% | 81% | **56%** | falsified | regression |
+| revenge-10 | 5 | budget +2 | none | 44% | 66% | **63%** | confirmed | mode-slope |
+| revenge-10 | 6 | remove queen g3 | freeze-ray | 75% | 78% | **100%** | falsified | regression |
+| revenge-10 | 5 | add knight d3 | none | 44% | 37% | **25%** | inconclusive | regression |
+| revenge-2 | 9 | budget +2 | none | 25% | 27% | **50%** | falsified | regression |
+| revenge-2 | 5 | add knight d3 | none | 100% | 93% | **75%** | inconclusive | regression |
+| revenge-2 | 10 | remove queen e3 | none | 44% | 59% | **50%** | confirmed | regression |
+| revenge-3 | 8 | remove knight g4 | freeze-ray | 75% | 77% | **88%** | inconclusive | regression |
+| revenge-3 | 9 | budget +2 | none | 13% | 19% | **31%** | inconclusive | mode-slope |
+| revenge-3 | 6 | remove bishop a5 | none | 38% | 45% | **38%** | inconclusive | regression |
+| revenge-4 | 7 | remove bishop d5 | none | 44% | 51% | **56%** | confirmed | regression |
+| revenge-5 | 8 | budget -2 | none | 100% | 98% | **100%** | confirmed | regression |
+| revenge-5 | 10 | remove knight h4 | freeze-ray | 88% | 90% | **100%** | confirmed | regression |
+| revenge-5 | 5 | add knight d3 | none | 100% | 93% | **94%** | confirmed | regression |
+| revenge-6 | 9 | budget -2 | none | 63% | 61% | **31%** | falsified | regression |
+| revenge-6 | 6 | remove queen c4 | freeze-ray | 94% | 97% | **94%** | confirmed | regression |
+| revenge-6 | 5 | add knight d3 | none | 100% | 93% | **100%** | inconclusive | regression |
+| revenge-7 | 6 | budget -2 | none | 75% | 73% | **31%** | falsified | regression |
+| revenge-7 | 4 | remove knight c4 | bishop-step | 81% | 83% | **100%** | inconclusive | regression |
+| revenge-7 | 5 | add knight d3 | none | 100% | 93% | **94%** | confirmed | regression |
+| revenge-8 | 9 | budget +2 | none | 25% | 50% | **63%** | inconclusive | mode-slope |
+| revenge-8 | 10 | remove queen d4 | freeze-ray | 88% | 91% | **100%** | confirmed | regression |
+| revenge-8 | 5 | add knight d3 | none | 81% | 74% | **88%** | inconclusive | regression |
+| revenge-9 | 7 | budget +2 | none | 25% | 44% | **31%** | inconclusive | mode-slope |
+| revenge-9 | 3 | remove bishop a2 | queen-pulse | 50% | 52% | **69%** | inconclusive | regression |
+| revenge-9 | 5 | add knight d3 | none | 63% | 56% | **56%** | confirmed | regression |
+
+- L7 no-ability is 25%, too hard for its band (40-70%). The move budget is the cleanest knob.
+- knight-hop is the weakest finisher anywhere (94% on L10). The queen on a4 is the hunter closest to the king.
+- L5 is the softest late level at 88% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- L5 no-ability is 44%, too hard for its band (75-100%). The move budget is the cleanest knob.
+- freeze-ray is the weakest finisher anywhere (75% on L6, below the 80% floor). The queen on g3 is the hunter closest to the king.
+- L5 is the softest late level at 44% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- Every level is in band. L9 is the tightest (25% no-ability) — measuring what +2 moves buys tells us how much room the budget knob has.
+- L5 is the softest late level at 100% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- L10 sits mid-curve (44%); removing its closest hunter (queen e3) measures one piece's worth.
+- freeze-ray is the weakest finisher anywhere (75% on L8, below the 80% floor). The knight on g4 is the hunter closest to the king.
+- L9 is the hardest level (13% no-ability); +2 moves shows how far the budget knob moves it.
+- L6 sits mid-curve (38%); removing its closest hunter (bishop a5) measures one piece's worth.
+- L7 sits mid-curve (44%); removing its closest hunter (bishop d5) measures one piece's worth.
+- L8 no-ability is 100%, too easy for its band (35-65%). The move budget is the cleanest knob.
+- freeze-ray is the weakest finisher anywhere (88% on L10). The knight on h4 is the hunter closest to the king.
+- L5 is the softest late level at 100% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- L9 no-ability is 63%, too easy for its band (15-45%). The move budget is the cleanest knob.
+- freeze-ray is the weakest finisher anywhere (94% on L6). The queen on c4 is the hunter closest to the king.
+- L5 is the softest late level at 100% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- L6 no-ability is 75%, too easy for its band (35-65%). The move budget is the cleanest knob.
+- bishop-step is the weakest finisher anywhere (81% on L4). The knight on c4 is the hunter closest to the king.
+- L5 is the softest late level at 100% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- Every level is in band. L9 is the tightest (25% no-ability) — measuring what +2 moves buys tells us how much room the budget knob has.
+- freeze-ray is the weakest finisher anywhere (88% on L10). The queen on d4 is the hunter closest to the king.
+- L5 is the softest late level at 81% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
+- L7 no-ability is 25%, too hard for its band (40-70%). The move budget is the cleanest knob.
+- queen-pulse is the weakest finisher anywhere (50% on L3, below the 80% floor). The bishop on a2 is the hunter closest to the king.
+- L5 is the softest late level at 63% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is.
 
 ## Top 3 hypotheses for tonight
 
-1. **L8: raise the move budget by 2 → no-ability win goes 33% → about 40%.** L8 no-ability is 33%, too hard for its band (35-65%). The move budget is the cleanest knob.
-2. **L7: remove the bishop on d4 → no-ability win goes 50% → about 58%.** L7 sits mid-curve (50%); removing its closest hunter (bishop d4) measures one piece's worth.
-3. **L9: raise the move budget by 2 → no-ability win goes 33% → about 40%.** Every level is in band. L9 is the tightest (33% no-ability) — measuring what +2 moves buys tells us how much room the budget knob has.
+1. **L7: raise the move budget by 2 → no-ability win goes 25% → about 50%.** L7 no-ability is 25%, too hard for its band (40-70%). The move budget is the cleanest knob. Tested tonight: actual 50% (confirmed).
+2. **L10: remove the queen on a4 → knight-hop win goes 94% → about 97%.** knight-hop is the weakest finisher anywhere (94% on L10). The queen on a4 is the hunter closest to the king. Tested tonight: actual 100% (confirmed).
+3. **L5: add a knight on d3 → no-ability win goes 88% → about 81%.** L5 is the softest late level at 88% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is. Tested tonight: actual 56% (falsified).
 
 These are measurements, not changes — nothing in `lib/run/runs.ts` was touched. A confirmed hypothesis is a tweak worth making by hand.
 
 ## Candidate runs
 
-| Run | Recommendation | New player, Normal | New player, Rookie | Veteran, Normal | Finisher floor | Stalls | No-ability curve | Why |
-|---|---|---|---|---|---|---|---|---|
-| revenge-7 | **HOLD** | 100% | 100% | 100% | 92% | 0 | 100/100/100/100/96/46/58/46/13/33 | TOO EASY — a new player clears 100% of runs on Normal (target 40-60%) |
+None in `REVENGE_CANDIDATE_RUN_IDS` tonight. When the generator adds one, it shows up here with a promote/hold call: new-player clear 40-60% on Normal and 70%+ on Rookie, every finisher ≥80%, zero stalls.
 
 ## Content pipeline
 
@@ -1026,100 +1613,129 @@ Registry: `data/content/pipeline.json` · approve with `npx tsx scripts/pipeline
 
 | Stage | idea | built | testing | approved | live | retired |
 |---|---|---|---|---|---|---|
-| Count | 2 | 0 | 12 | 0 | 22 | 3 |
+| Count | 4 | 0 | 0 | 0 | 35 | 4 |
 
-**Waiting on Tyler (12)** — READY first:
+**Waiting on Tyler (0)** — READY first:
 
-- **READY** Bishop Squire (`bishop-squire`, ability) — Tier S on revenge-1, S on revenge-2, S on revenge-3, A on revenge-4, A on revenge-5, A on revenge-6, A on revenge-7; avg win 92% at realistic tiers (lift +44 vs no ability), cast in 94% of games (2026-09-02)
-- **READY** Duchess (`duchess`, ability) — Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 99% at realistic tiers (lift +50 vs no ability), cast in 97% of games (2026-09-02)
-- **READY** Page (`page`, ability) — Tier A on revenge-1, A on revenge-2, B on revenge-3, B on revenge-4, C on revenge-5, B on revenge-6, B on revenge-7; avg win 81% at realistic tiers (lift +33 vs no ability), cast in 92% of games (2026-09-02)
-- **READY** Twin (`twin`, ability) — Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 98% at realistic tiers (lift +50 vs no ability), cast in 96% of games (2026-09-02)
-- **READY** Vanguard (`vanguard`, ability) — Tier S on revenge-1, S on revenge-2, S on revenge-3, S on revenge-4, S on revenge-5, S on revenge-6, S on revenge-7; avg win 100% at realistic tiers (lift +52 vs no ability), cast in 99% of games (2026-09-02)
-- HOLD Knighting (`knighting`, ability) — bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, C on revenge-6, C on … (2026-09-02)
-- HOLD Bramble Crown (`revenge-7`, run) — TOO EASY — a new player clears 100% of runs on Normal (target 40-60%) (2026-09-02)
-- HOLD Sacrifice (`sacrifice`, ability) — bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on … (2026-09-02)
-- HOLD Swap (`swap`, ability) — bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on … (2026-09-02)
-- The Vault (`revenge-10`, run) — not graded yet.
-- The Rampart (`revenge-8`, run) — not graded yet.
-- Cold Court (`revenge-9`, run) — not graded yet.
+- nothing in testing.
 
-**Went live in the last 7 days (6):** Squire (`summon-knight`, ability) 2026-09-01, Pawn Storm (`revenge-2`, run) 2026-09-01, The Royal Guard (`revenge-3`, run) 2026-09-01, The Fortress (`revenge-4`, run) 2026-09-01, Stonework (`revenge-5`, run) 2026-09-01, Two Keys (`revenge-6`, run) 2026-09-01
+**Went live in the last 7 days (19):** Squire (`summon-knight`, ability) 2026-09-01, Pawn Storm (`revenge-2`, run) 2026-09-01, The Royal Guard (`revenge-3`, run) 2026-09-01, The Fortress (`revenge-4`, run) 2026-09-01, Stonework (`revenge-5`, run) 2026-09-01, Page (`page`, ability) 2026-09-02, Twin (`twin`, ability) 2026-09-02, Bishop Squire (`bishop-squire`, ability) 2026-09-02, Swap (`swap`, ability) 2026-09-02, Sacrifice (`sacrifice`, ability) 2026-09-02, Two Keys (`revenge-6`, run) 2026-09-01, Duchess (`duchess`, ability) 2026-09-02, Vanguard (`vanguard`, ability) 2026-09-02, Bramble Crown (`revenge-7`, run) 2026-09-02, The Rampart (`revenge-8`, run) 2026-09-02, Cold Court (`revenge-9`, run) 2026-09-02, The Vault (`revenge-10`, run) 2026-09-02, The Crucible (`crucible`, run) 2026-09-02, Dragon (`dragon`, ability) 2026-09-02
 
-**Idea backlog (2):** War Banner — DESIGN ONLY: while active, each of your summons moves as a free action once per turn. Needs turn-loop work. · Phalanx — DESIGN ONLY: summon 2-3 controllable pawns as a wall. Generic engine supports it; fun value unproven.
+**Idea backlog (4):** War Banner — DESIGN ONLY: while active, each of your summons moves as a free action once per turn. Needs turn-loop work. · Phalanx — DESIGN ONLY: summon 2-3 controllable pawns as a wall. Generic engine supports it; fun value unproven. · Griffin — Controllable summon, movement TBD — Tyler's nerdy-friend bestiary (Tyler, 2026-09-02). · Vanguard Pawn — A pawn that can also capture straight forward (Tyler, 2026-09-02). Movement/economy TBD.
 
 ## Solver — forced captures on the late levels
 
 AND-OR search, depth 6, 120,000 nodes, worst case over every start file. W4 = forced win in 4 moves; no6 = no forced line found within the depth (not "impossible" — the bot's win % is the practical answer).
 
+**crucible**
+
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W5 | W3 | W3 | W3 | W3 | W3 | W3 | no6 | W4 | W3 | W3 | W3 | no6 | W3 | W4 | no6 | W5 | no6 | W3 | no6 | W3 | no6 | W3 | W3 |
+| 7 | no6 | W3 | W3 | W3 | W3 | W3 | W3 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W5 | no6 | W4 | no6 | W3 | no6 | W3 | no6 | W3 | W3 |
+| 8 | no6 | W3 | W3 | W3 | W3 | W3 | W3 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W5 | no6 | W4 | no6 | W3 | no6 | W3 | no6 | W3 | W3 |
+| 9 | W6 | W4 | W4 | W3 | W3 | W3 | W3 | W4 | W6 | W4 | W3 | W3 | W3 | W4 | W4 | W4 | W6 | W4 | W6 | W5 | no6 | W3 | W6 | W3 | W3 |
+| 10 | no6 | W4 | W4 | W3 | W3 | W3 | W3 | W4 | no6 | W3 | W3 | W3 | W3 | W5 | W4 | W4 | no6 | W6 | no6 | W3 | no6 | W3 | no6 | W3 | W3 |
+
 **revenge-1**
 
-| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | bodyguard | boulder | convert | decoy | duchess | knighting | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 6 | no6 | W5 | W3 | W3 | W3 | W4 | W3 | W4 | W5 | no6 | W5 | W4 | W3 | no6 | no6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
-| 7 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W4 | no6 | W4 | W3 | W3 | no6 | W5 | W3 | W4 | W2 | no6 | no6 | no6 | no6 | W4 | no6 | W3 | W4 |
-| 8 | no6 | no6 | no6 | W6 | W6 | W6 | no6 | W3 | no6 | no6 | W6 | W3 | W3 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | W4 |
-| 9 | no6 | W6 | W5 | W5 | W5 | W5 | W4 | W3 | W6 | no6 | W6 | W4 | W3 | no6 | no6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W6 | no6 | W3 | W5 |
-| 10 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W5 | W3 | W3 | W3 | W4 | W3 | W4 | no6 | W4 | W4 | W3 | W3 | no6 | W4 | W5 | no6 | W5 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 7 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W4 | W2 | W5 | no6 | no6 | no6 | W4 | no6 | W3 | W4 |
+| 8 | no6 | no6 | no6 | W6 | W6 | W6 | no6 | W3 | no6 | W6 | W3 | W3 | W3 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | W4 |
+| 9 | no6 | W6 | W5 | W5 | W5 | W5 | W4 | W3 | no6 | W6 | W4 | W3 | W3 | no6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W6 | no6 | W3 | W5 |
+| 10 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 |
+
+**revenge-10**
+
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W5 | W4 | W4 | W4 | W3 | W5 | W3 | no6 | W3 | W3 | W2 | W3 | W3 | W4 | W4 | no6 | W5 | no6 | no6 | no6 | W5 | no6 | W4 | W5 |
+| 7 | no6 | W3 | W4 | W5 | W5 | W3 | W4 | W4 | no6 | W3 | W3 | W3 | W3 | no6 | W4 | W4 | no6 | W5 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
+| 8 | no6 | W6 | W6 | W6 | W6 | no6 | W5 | W6 | no6 | W6 | W4 | W4 | W4 | no6 | no6 | W5 | no6 | W6 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
+| 9 | no6 | W5 | W4 | W3 | W3 | W3 | W3 | W5 | no6 | W3 | W3 | W3 | W3 | W4 | W5 | W4 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 10 | no6 | W4 | W3 | W3 | W3 | W3 | W3 | W4 | no6 | W3 | W3 | W3 | W3 | W4 | W4 | W5 | no6 | W4 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
 
 **revenge-2**
 
-| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | bodyguard | boulder | convert | decoy | duchess | knighting | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 6 | W6 | W4 | W3 | W4 | W4 | W4 | W4 | W3 | W4 | W6 | W3 | W3 | W3 | W6 | W4 | W3 | W4 | W6 | W6 | W6 | W6 | W6 | W4 | W6 | W3 | W3 |
-| 7 | W6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W4 | W6 | W3 | W3 | W3 | W6 | W3 | W3 | W4 | W6 | W6 | W6 | W6 | W6 | W4 | W6 | W3 | W4 |
-| 8 | W6 | W4 | W3 | W4 | W4 | W4 | W4 | W3 | W4 | W6 | W4 | W3 | W3 | W6 | W5 | W3 | W4 | W6 | W6 | W6 | W6 | no6 | W4 | W6 | W3 | W4 |
-| 9 | no6 | W6 | W5 | W4 | W4 | W6 | W6 | W4 | W6 | no6 | W6 | W4 | W4 | no6 | no6 | W5 | W5 | no6 | no6 | no6 | no6 | no6 | W4 | no6 | W5 | W4 |
-| 10 | no6 | W5 | W5 | W4 | W4 | W6 | W5 | W4 | W5 | no6 | W6 | W3 | W4 | no6 | no6 | W5 | W5 | W2 | no6 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | W6 | W4 | W3 | W4 | W4 | W4 | W4 | W3 | W6 | W3 | W3 | W3 | W3 | W4 | W3 | W4 | W6 | W4 | W6 | W6 | no6 | W4 | W6 | W3 | W3 |
+| 7 | W6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W6 | W4 | W3 | W3 | W3 | W3 | W3 | W4 | W6 | W4 | W6 | W6 | no6 | W4 | W6 | W3 | W4 |
+| 8 | W6 | W4 | W3 | W4 | W4 | W4 | W4 | W3 | W6 | W4 | W3 | W3 | W3 | W5 | W3 | W4 | W6 | W4 | W6 | W6 | no6 | W4 | W6 | W3 | W4 |
+| 9 | no6 | W6 | W5 | W4 | W4 | W6 | W6 | W4 | no6 | W4 | W4 | W4 | W4 | no6 | W5 | W5 | no6 | W6 | no6 | no6 | no6 | W4 | no6 | W5 | W4 |
+| 10 | no6 | W5 | W5 | W4 | W4 | W6 | W5 | W4 | no6 | W5 | W3 | W4 | W4 | no6 | W5 | W5 | W2 | no6 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
 
 **revenge-3**
 
-| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | bodyguard | boulder | convert | decoy | duchess | knighting | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 6 | no6 | W4 | W3 | W3 | W3 | W3 | W4 | W3 | W4 | no6 | W4 | W3 | W3 | no6 | W5 | W3 | W4 | no6 | no6 | no6 | no6 | no6 | W4 | no6 | W3 | W4 |
-| 7 | no6 | no6 | W6 | W3 | W3 | W3 | W4 | W3 | W6 | no6 | W3 | W3 | W3 | no6 | no6 | W3 | W6 | no6 | no6 | no6 | W3 | no6 | no6 | no6 | W6 | W6 |
-| 8 | no6 | no6 | no6 | no6 | no6 | W5 | no6 | no6 | no6 | no6 | no6 | W5 | W4 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 |
-| 9 | no6 | W5 | W5 | W6 | W6 | W3 | W5 | W5 | W5 | no6 | W3 | W3 | W4 | no6 | no6 | W6 | W4 | no6 | no6 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
-| 10 | no6 | no6 | W5 | W3 | W3 | W3 | W3 | W4 | W6 | no6 | W3 | W3 | W3 | no6 | W6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W4 | W3 | W3 | W3 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W4 | no6 | W4 | no6 | no6 | no6 | W4 | no6 | W3 | W4 |
+| 7 | no6 | no6 | W6 | W3 | W3 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | no6 | W3 | W6 | no6 | no6 | no6 | W3 | no6 | no6 | no6 | W6 | W6 |
+| 8 | no6 | no6 | no6 | no6 | no6 | W5 | no6 | no6 | no6 | no6 | W5 | W4 | W4 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 |
+| 9 | no6 | W5 | W5 | W6 | W6 | W3 | W5 | W5 | no6 | W4 | W3 | W4 | W4 | no6 | W6 | W4 | no6 | W6 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
+| 10 | no6 | no6 | W5 | W3 | W3 | W3 | W3 | W4 | no6 | W3 | W3 | W3 | W3 | W6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
 
 **revenge-4**
 
-| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | bodyguard | boulder | convert | decoy | duchess | knighting | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 6 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W4 | no6 | W3 | W3 | W3 | no6 | W5 | W3 | W4 | no6 | no6 | no6 | W6 | W6 | W4 | no6 | W3 | W3 |
-| 7 | W6 | W3 | W3 | W3 | W3 | W3 | W3 | W3 | W3 | W6 | W3 | W3 | W3 | W6 | W5 | W3 | W4 | W6 | W6 | W6 | W3 | no6 | W4 | W6 | W3 | W3 |
-| 8 | no6 | W4 | W4 | W4 | W4 | W4 | W4 | W4 | W4 | no6 | W4 | W4 | W3 | no6 | no6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
-| 9 | no6 | no6 | no6 | no6 | no6 | W6 | no6 | no6 | no6 | no6 | W6 | W3 | W6 | no6 | no6 | no6 | W6 | no6 | no6 | no6 | W6 | no6 | W6 | no6 | W6 | W4 |
-| 10 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | W3 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W4 | no6 | W5 | no6 | W6 | W6 | W4 | no6 | W3 | W3 |
+| 7 | W6 | W3 | W3 | W3 | W3 | W3 | W3 | W3 | W6 | W3 | W3 | W3 | W3 | W5 | W3 | W4 | W6 | W3 | W6 | W3 | no6 | W4 | W6 | W3 | W3 |
+| 8 | no6 | W4 | W4 | W4 | W4 | W4 | W4 | W4 | no6 | W4 | W4 | W3 | W3 | no6 | W4 | W5 | no6 | W4 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 9 | no6 | no6 | no6 | no6 | no6 | W6 | no6 | no6 | no6 | W6 | W3 | W3 | W6 | no6 | no6 | W6 | no6 | no6 | no6 | W6 | no6 | W6 | no6 | W6 | W6 |
+| 10 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 |
 
 **revenge-5**
 
-| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | bodyguard | boulder | convert | decoy | duchess | knighting | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 6 | no6 | W4 | W4 | W3 | W3 | W4 | W3 | W4 | W5 | W6 | W3 | W3 | W3 | no6 | W5 | W4 | W4 | no6 | no6 | no6 | W5 | no6 | W3 | no6 | W3 | W3 |
-| 7 | no6 | W4 | W4 | W4 | W4 | W3 | W4 | W4 | W4 | no6 | W3 | W3 | W3 | no6 | W4 | W5 | W4 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
-| 8 | W6 | W5 | W5 | W6 | W6 | W6 | W6 | W6 | W5 | W6 | W6 | W5 | W6 | W6 | W6 | W6 | W5 | W6 | W6 | W6 | W6 | no6 | W4 | W6 | W6 | W4 |
-| 9 | no6 | W4 | W5 | W3 | W3 | W6 | W4 | W3 | W4 | no6 | W5 | W4 | W3 | no6 | W6 | W5 | W5 | no6 | no6 | no6 | W4 | W6 | W4 | no6 | W4 | W3 |
-| 10 | no6 | W6 | W4 | W5 | W5 | W3 | W3 | W6 | W6 | no6 | W4 | W3 | W3 | no6 | W4 | W6 | W4 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W4 | W4 | W3 | W3 | W4 | W3 | W4 | W6 | W3 | W3 | W3 | W3 | W5 | W4 | W4 | no6 | W5 | no6 | W5 | no6 | W3 | no6 | W3 | W3 |
+| 7 | no6 | W4 | W4 | W4 | W4 | W3 | W4 | W4 | no6 | W3 | W3 | W3 | W3 | W4 | W5 | W4 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 8 | W6 | W5 | W5 | W6 | W6 | W6 | W6 | W6 | W6 | W6 | W5 | W4 | W6 | W6 | W6 | W5 | W6 | W6 | W6 | W6 | no6 | W4 | W6 | W6 | W4 |
+| 9 | no6 | W4 | W5 | W3 | W3 | W6 | W4 | W3 | no6 | W5 | W4 | W3 | W3 | W6 | W5 | W5 | no6 | W6 | no6 | W4 | no6 | W4 | no6 | W4 | W3 |
+| 10 | no6 | W6 | W4 | W5 | W5 | W3 | W3 | W6 | no6 | W3 | W3 | W3 | W3 | W4 | W6 | W4 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
 
 **revenge-6**
 
-| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | bodyguard | boulder | convert | decoy | duchess | knighting | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 6 | no6 | W4 | W3 | W5 | W5 | W3 | W4 | W3 | W4 | no6 | W3 | W3 | W3 | no6 | W3 | W3 | W4 | no6 | no6 | no6 | W4 | no6 | W4 | no6 | W3 | W4 |
-| 7 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W4 | ?6 | W3 | W3 | W3 | no6 | W4 | W3 | W4 | no6 | no6 | no6 | W5 | no6 | W4 | no6 | W3 | W3 |
-| 8 | no6 | W5 | W4 | W3 | W3 | W5 | W3 | W5 | W6 | no6 | W3 | W4 | W4 | no6 | W5 | W5 | W4 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W4 | W3 |
-| 9 | no6 | W4 | W5 | W3 | W3 | W6 | W4 | W3 | W4 | no6 | W5 | W4 | W3 | no6 | W6 | W5 | W5 | no6 | no6 | no6 | W4 | no6 | W4 | no6 | W4 | W3 |
-| 10 | no6 | no6 | W5 | W3 | W3 | W3 | W3 | W4 | W6 | no6 | W3 | W3 | W3 | no6 | W6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W4 | W3 | W5 | W5 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W3 | W3 | W4 | no6 | W5 | no6 | W4 | no6 | W4 | no6 | W3 | W4 |
+| 7 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | ?6 | W3 | W3 | W3 | W3 | W4 | W3 | W4 | no6 | W6 | no6 | W5 | W6 | W4 | no6 | W3 | W3 |
+| 8 | no6 | W5 | W4 | W3 | W3 | W5 | W3 | W5 | no6 | W3 | W4 | W3 | W4 | W5 | W5 | W4 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W4 | W3 |
+| 9 | no6 | W4 | W5 | W3 | W3 | W6 | W4 | W3 | no6 | W5 | W4 | W3 | W3 | W6 | W5 | W5 | no6 | W6 | no6 | W4 | no6 | W4 | no6 | W4 | W3 |
+| 10 | no6 | no6 | W5 | W3 | W3 | W3 | W3 | W4 | no6 | W3 | W3 | W3 | W3 | W6 | W4 | W5 | no6 | no6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
 
 **revenge-7**
 
-| L | none | surge | freeze-ray | knight-hop | bishop-step | queen-pulse |
-|---|---|---|---|---|---|---|
-| 6 | no6 | W3 | W4 | W3 | W4 | W4 |
-| 7 | W6 | W3 | W4 | W3 | W4 | W4 |
-| 8 | no6 | W4 | W5 | W4 | W3 | W3 |
-| 9 | no6 | W4 | W4 | W4 | W4 | W4 |
-| 10 | no6 | W3 | W6 | W4 | W5 | W5 |
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W4 | no6 | W5 | no6 | W6 | W6 | W4 | no6 | W3 | W3 |
+| 7 | W6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W6 | W4 | W3 | W3 | W3 | W3 | W3 | W4 | W6 | W4 | W6 | W6 | no6 | W4 | W6 | W3 | W4 |
+| 8 | no6 | W5 | W4 | W3 | W3 | W5 | W3 | W5 | no6 | W3 | W4 | W3 | W4 | W5 | W5 | W4 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W4 | W3 |
+| 9 | no6 | W4 | W4 | W4 | W4 | W6 | W4 | W4 | no6 | W4 | W3 | W3 | W3 | W4 | W4 | W5 | no6 | W5 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 10 | no6 | W6 | W4 | W5 | W5 | W3 | W3 | W6 | no6 | W3 | W3 | W3 | W3 | W4 | W6 | W4 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+
+**revenge-8**
+
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | W6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W6 | W3 | W3 | W3 | W3 | W3 | W3 | W4 | W6 | W4 | W6 | W6 | no6 | W4 | W6 | W3 | W4 |
+| 7 | W6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | W6 | W3 | W3 | W3 | W3 | W4 | W3 | W4 | W6 | W4 | W6 | W6 | W6 | W4 | W6 | W3 | W3 |
+| 8 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W6 | W3 | W4 | no6 | W5 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 9 | no6 | W3 | W6 | W2 | W2 | W3 | W4 | W2 | no6 | W3 | W3 | W2 | W2 | W4 | W6 | W4 | W2 | W6 | no6 | no6 | no6 | W4 | no6 | W4 | W4 |
+| 10 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | W3 | W6 | W6 | no6 | no6 | W6 | W2 | no6 | no6 | no6 | no6 | no6 | no6 | no6 | no6 |
+
+**revenge-9**
+
+| L | none | freeze-ray | knight-hop | bishop-step | queen-pulse | aegis | become-king | bishop-squire | boulder | convert | decoy | dragon | duchess | magnet | page | poison-dart | rabies-dart | rewind | sacrifice | smoke | squad | summon-knight | swap | twin | vanguard |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 6 | no6 | W4 | W3 | W4 | W4 | W4 | W4 | W3 | no6 | W4 | W4 | W3 | W3 | W4 | W3 | W4 | no6 | W4 | no6 | no6 | no6 | W4 | no6 | W3 | W4 |
+| 7 | no6 | W4 | W3 | W4 | W4 | W3 | W4 | W3 | no6 | W3 | W3 | W3 | W3 | W5 | W3 | W4 | no6 | W5 | no6 | no6 | no6 | W4 | no6 | W3 | W4 |
+| 8 | no6 | W4 | W4 | W4 | W4 | W3 | W4 | W4 | no6 | W3 | W3 | W3 | W3 | W3 | W5 | W4 | no6 | W5 | no6 | W6 | no6 | W3 | no6 | W3 | W3 |
+| 9 | no6 | W4 | W4 | W4 | W4 | W6 | W4 | W4 | no6 | W5 | W4 | W3 | W3 | no6 | W5 | W5 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
+| 10 | no6 | W4 | W4 | W5 | W5 | W5 | W4 | W4 | no6 | W5 | W4 | W3 | W3 | no6 | W5 | W5 | no6 | W6 | no6 | no6 | no6 | W3 | no6 | W3 | W3 |
 
 ## How to read this
 
@@ -1127,17 +1743,14 @@ AND-OR search, depth 6, 120,000 nodes, worst case over every start file. W4 = fo
 - **Finishers** = surge, freeze-ray, knight-hop, bishop-step, queen-pulse — the cards that take the king directly. Every offer slate carries at least two, so the worst finisher is the run's safety net.
 - **Stall** = 300 turns with the king alive. Always a bug or an unreachable pen; the target is zero.
 - **Difficulty** = the new-player sim (3 starters, forced offers, mode retries): 40-60% full-run clear on Normal is the target, 70%+ on Rookie, over 85% on Normal is too easy. The old no-ability band (100/100/100/100/90/50/55/50/30/30 ±15) is shown per level for reference only.
-- Start files are random per game, so a single cell wobbles ±10 between nights at 40 trials (more on the lighter candidate passes). Trust clusters and repeated nights.
+- Start files are random per game, so a single cell wobbles ±10 between nights at 16 trials (more on the lighter candidate passes). Trust clusters and repeated nights.
 
 **How to read these numbers** (the harness plays the exact engine the app does — verified ply-for-ply, see `docs/revenge-parity.md` — but it skips five app-side rules):
 
 1. **Free offers are not skippable in the app.** On L1, L3, L6 and L9 a real player MUST take a card before moving; the harness dismisses it. So the "none" and single-ability cells on those levels UNDERSTATE a real player's kit — the random-pick full runs are the honest number there.
 2. **Retries.** The app gives Rookie unlimited, Normal 3, Hard 1, Nightmare 0 retries per level, each with a fresh start file and seed. Every full-run clear rate here is a LOWER bound on what a player with retries sees.
-3. **Offer pool.** The app rolls only the player's unlocked abilities (a new player has Knight Hop, Surge and Freeze Ray; Drones is retired). The harness draws from all 250 — so full-run pick mixes are wider than a new player's.
+3. **Offer pool.** The app rolls only the player's unlocked abilities (a new player has Knight Hop, Surge and Freeze Ray; Drones is retired). The harness draws from all 240 — so full-run pick mixes are wider than a new player's.
 4. **Default difficulty.** A fresh profile plays Rookie; the main table is Normal. The four modes are swept explicitly above — read the Rookie row for the new-player experience.
 5. **"Out of moves" vs "No way through".** The app's solver ends a proven-dead level early; the harness plays on to the move limit. Same loss, two labels — counted together as m.
-
-Caveats tonight:
-- Experiments skipped (--skip-experiments).
 
 Reproduce: `npx tsx scripts/run-playtest/revenge-nightly.ts` (add `--quick` for a 2-minute smoke). Raw JSON: `data/run-playtest/revenge/raw/2026-09-02/`.

@@ -308,7 +308,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 90% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L10 knight-hop only 75% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
@@ -322,7 +322,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L9 freeze-ray only 75% (every finisher must be at least 80%)",
+        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L3 bishop-step only 75% (every finisher must be at least 80%); L3 has 6 stalls (king unreachable); L4 has 1 stall (king unreachable)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -343,7 +343,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%); L7 knight-hop only 78% (every finisher must be at least 80%)",
+        "summary": "too easy — new player clears 75% on Normal (target 40-60%); L8 freeze-ray only 75% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -364,7 +364,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 98% of runs on Normal (target 40-60%); L9 freeze-ray only 78% (every finisher must be at least 80%)",
+        "summary": "too easy — new player clears 71% on Normal (target 40-60%); L9 freeze-ray only 75% (every finisher must be at least 80%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -385,7 +385,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 98% of runs on Normal (target 40-60%)",
+        "summary": "too easy — new player clears 83% on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -518,7 +518,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY — a new player clears 96% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
@@ -608,7 +608,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY — a new player clears 92% of runs on Normal (target 40-60%); L4 has 5 stalls (king unreachable)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -632,6 +632,12 @@
       },
       "live": {
         "at": "2026-09-02"
+      },
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "too easy — new player clears 79% on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
     {
@@ -647,6 +653,12 @@
       },
       "live": {
         "at": "2026-09-02"
+      },
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "too easy — new player clears 67% on Normal (target 40-60%); L3 queen-pulse only 50% (every finisher must be at least 80%); L3 has 14 stalls (king unreachable); L4 has 1 stall (king unreachable)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
     {
@@ -662,6 +674,12 @@
       },
       "live": {
         "at": "2026-09-02"
+      },
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "too easy — new player clears 83% on Normal (target 40-60%); L2 has 1 stall (king unreachable); L6 freeze-ray only 75% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
     {
@@ -677,6 +695,12 @@
       },
       "live": {
         "at": "2026-09-02"
+      },
+      "testing": {
+        "lastRun": "2026-09-02",
+        "verdict": "HOLD",
+        "summary": "TOO EASY — a new player clears 88% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       }
     },
     {
