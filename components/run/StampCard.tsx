@@ -69,7 +69,9 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
         .rr-stamp-slam { animation: rrStampSlam 360ms ${EXPO} 250ms both; }
         @keyframes rrStampSlam { from { opacity: 0; transform: scale(2.4); } to { opacity: 1; transform: scale(1); } }
         .rr-stamp-ring { animation: rrStampRing 600ms ${EXPO} 380ms both; }
-        @keyframes rrStampRing { from { opacity: 0.9; transform: scale(0.6); } to { opacity: 0; transform: scale(1.8); } }
+        /* Starts (and holds, during its delay) INVISIBLE — 'both' fill would
+           otherwise park the ring at its first frame around every star. */
+        @keyframes rrStampRing { 0% { opacity: 0; transform: scale(0.6); } 12% { opacity: 0.9; transform: scale(0.7); } 100% { opacity: 0; transform: scale(1.8); } }
         .rr-stamp-ink { animation: rrStampInk 220ms ${EXPO} 620ms both; }
         @keyframes rrStampInk { from { opacity: 0; transform: rotate(-10deg) scale(2); } to { opacity: 1; transform: rotate(-10deg) scale(1); } }
         .rr-stamp-pip { animation: rrStampPip 240ms ${EXPO} both; animation-delay: calc(700ms + var(--i, 0) * 45ms); }
@@ -79,7 +81,7 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
         .rr-stamp-star { opacity: 0.25; }
         .rr-stamp-star-fill { opacity: 0; transform: scale(0.2); animation: rrStampStar 220ms ${POP} both; animation-delay: calc(${STAR_START_MS}ms + var(--i, 0) * ${STAR_GAP_MS}ms); }
         @keyframes rrStampStar { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: scale(1); } }
-        .rr-stamp-star-ring { animation: rrStampRing 520ms ${EXPO} both; animation-delay: calc(${STAR_START_MS}ms + var(--i, 0) * ${STAR_GAP_MS}ms); }
+        .rr-stamp-star-ring { opacity: 0; animation: rrStampRing 520ms ${EXPO} both; animation-delay: calc(${STAR_START_MS}ms + var(--i, 0) * ${STAR_GAP_MS}ms); }
         .rr-stamp-shake { animation: rrStampFade 220ms ease-out both, rrStampShake 420ms ease-out 200ms both; }
         @keyframes rrStampShake { 0%,100% { transform: none; } 20% { transform: translate(-6px, 2px); } 40% { transform: translate(5px, -2px); } 60% { transform: translate(-3px, 1px); } 80% { transform: translate(2px, 0); } }
         .rr-stamp-press { transition: transform 80ms ease-out, box-shadow 80ms ease-out; }
