@@ -70,7 +70,14 @@ function cellPos(sq: string): CSSProperties {
 // Mario-lake lava, slow rolling flow (6–10s loops, transform only), an
 // occasional bubble, and a thin bevelled stone rim drawn only on edges that do
 // NOT touch another lava square — so a moat reads as one river with a bank.
-type Treatment = 'current' | 'classic' | 'glow' | 'pixel';
+type Treatment = 'current' | 'classic' | 'glow' | 'pixel' | 'paintLake' | 'paintRim' | 'paintPixel';
+
+// Painted tiles (gpt-image-1, 2026-09-04). Source PNGs in public/hazards/concepts/, 512px webp served.
+const ART = {
+  lake: '/hazards/lava-mario-seamless.webp',
+  rim: '/hazards/lava-mario-stone-rim.webp',
+  pixel: '/hazards/lava-pixel-seamless.webp',
+};
 
 interface Edges { top: boolean; right: boolean; bottom: boolean; left: boolean }
 
@@ -207,9 +214,70 @@ function PixelFlow() {
   );
 }
 
-function LavaCell({ kind, index, edges }: { kind: Treatment; index: number; edges: Edges }) {
+/**
+ * Painted seamless tile as one continuous lake across the board. Each cell
+ * holds a board-sized span (10 squares wide, 8 tall) shifted by the cell's
+ * own offset, so every cell samples the SAME tiled image at the same origin.
+ * The drift translates that span by exactly one tile width, in lock-step
+ * across cells, so the lake stays continuous while it moves.
+ */
+const TILE_SQUARES = 1.75; // one painted tile spans ~1.75 squares
+function PaintedLake({ src, sq, stepped }: { src: string; sq: string; stepped?: boolean }) {
+  const file = sq.charCodeAt(0) - 97;
+  const row = 8 - Number(sq[1]);
+  const tilePct = (TILE_SQUARES / 10) * 100; // tile width as % of the 10-square span
+  return (
+    <span
+      aria-hidden
+      className="lava-anim absolute"
+      style={{
+        left: `${-file * 100}%`,
+        top: `${-row * 100}%`,
+        width: '1000%',
+        height: '800%',
+        backgroundImage: `url(${src})`,
+        backgroundSize: `${tilePct}% auto`,
+        backgroundRepeat: 'repeat',
+        imageRendering: stepped ? 'pixelated' : undefined,
+        // CSS var so the keyframe knows one tile width in this span's units.
+        ['--tile' as string]: `${tilePct}%`,
+        animation: stepped ? 'lavaTileDrift 8s steps(16, end) infinite' : 'lavaTileDrift 12s linear infinite',
+      }}
+    />
+  );
+}
+
+function LavaCell({ kind, index, edges, sq }: { kind: Treatment; index: number; edges: Edges; sq: string }) {
   if (kind === 'current') {
     return <div className="absolute inset-0" style={{ backgroundColor: HAZARD_BG, backgroundImage: HAZARD_PATTERN }} />;
+  }
+  if (kind === 'paintLake' || kind === 'paintPixel') {
+    const px = kind === 'paintPixel';
+    return (
+      <div className="absolute inset-0 overflow-hidden" style={{ background: MARIO.deep }}>
+        <PaintedLake src={px ? ART.pixel : ART.lake} sq={sq} stepped={px} />
+        <Bubble index={index} square={px} />
+        <StoneRim edges={edges} />
+      </div>
+    );
+  }
+  if (kind === 'paintRim') {
+    return (
+      <div className="absolute inset-0 overflow-hidden" style={{ background: '#3a3a3f' }}>
+        {/* 106% crops the dark margin the generator left outside the cobble rim. */}
+        <span
+          aria-hidden
+          className="lava-anim absolute inset-0"
+          style={{
+            backgroundImage: `url(${ART.rim})`,
+            backgroundSize: '106% 106%',
+            backgroundPosition: 'center',
+            transformOrigin: 'center',
+            animation: 'lavaBreathe 8s ease-in-out infinite alternate',
+          }}
+        />
+      </div>
+    );
   }
   if (kind === 'pixel') {
     return (
@@ -260,6 +328,24 @@ const OPTIONS: Array<{ id: Treatment; name: string; pitch: string; use: string }
     pitch: 'Blocky 8x8 pixel lava: yellow crest, orange, red, dark blobs, stepping left one pixel per second like a NES scroll. Square bubbles. Same stone bank.',
     use: 'One SVG of 128 rects per square on a steps() loop — fine for a moat, 20+ squares is ~2.5k rects (still OK, but the heaviest). Best match for Rookie\'s block sprite; the stepping motion is the most "alive" without being busy.',
   },
+  {
+    id: 'paintLake',
+    name: 'D · Painted lake (seamless art)',
+    pitch: 'The gpt-image-1 Mario lava tile, tiled as ONE lake across the board (shared origin, ~1.75 squares per tile), drifting slowly, with the CSS stone bank on open edges and a rare bubble.',
+    use: 'One 16KB webp, one transform loop per square (12s). Richest look for the cost; the painted swirls carry it, so the bubble is optional. Needs the stone-bank neighbour logic (trivial in Board.tsx).',
+  },
+  {
+    id: 'paintRim',
+    name: 'E · Painted tile with baked-in rim',
+    pitch: 'The generator\'s own cobblestone rim, one tile per square, no merging, a very slow scale breathe.',
+    use: 'Simplest to ship (one background-image, no neighbour logic) but the rim is ~10% of the square — at phone size that is a fat frame, and a moat reads as seven framed windows, not a river. Static-safe.',
+  },
+  {
+    id: 'paintPixel',
+    name: 'F · Painted 8-bit lake',
+    pitch: 'The 8-bit tile as one continuous lake, stepping sideways 16 steps per 8s loop, pixelated scaling, CSS stone bank, square bubble.',
+    use: '61KB webp (the pixel art compresses worst). Same cost as D otherwise. Reads well tiny and matches Rookie\'s blocks; the stepped scroll is charming but the busiest of D-F.',
+  },
 ];
 
 // ── Board card ───────────────────────────────────────────────────────────────
@@ -298,7 +384,7 @@ function LavaBoard({ kind, layout }: { kind: Treatment; layout: Layout }) {
       <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ borderRadius: 8 }} aria-hidden>
         {L.hazards.map((sq, i) => (
           <div key={sq} className="absolute" style={cellPos(sq)}>
-            <LavaCell kind={kind} index={i} edges={openEdges(sq, hz)} />
+            <LavaCell kind={kind} index={i} edges={openEdges(sq, hz)} sq={sq} />
           </div>
         ))}
       </div>
@@ -317,6 +403,8 @@ export default function LavaSquaresPage() {
         /* Rolling flow: layer is 200% wide with a 1-square pattern period, so -50% loops seamlessly. */
         @keyframes lavaDriftL { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         @keyframes lavaDriftR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+        @keyframes lavaTileDrift { from { transform: translateX(0); } to { transform: translateX(calc(-1 * var(--tile))); } }
+        @keyframes lavaBreathe { from { transform: scale(1); } to { transform: scale(1.035); } }
         /* One bubble per cycle: dormant ~78% of the period, swell, pop. */
         @keyframes lavaBubble {
           0%, 78% { transform: scale(0.2); opacity: 0; }
