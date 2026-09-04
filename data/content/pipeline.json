@@ -758,6 +758,14 @@
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L8 knight-hop only 69% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
+    },
+    {
+      "id": "revenge-12",
+      "kind": "run",
+      "name": "The Moat",
+      "stage": "testing",
+      "created": "2026-09-04",
+      "notes": "Hard run for the swap/bishop-squire/knight-hop/poison-dart kit: rank 5 is water on every level; each level asks HOW you cross, not which pawn to dart. Built 2026-09-04 after Tyler: 'I keep darting the guard pawn on every level.'"
     }
   ]
 }

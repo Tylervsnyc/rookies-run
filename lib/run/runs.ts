@@ -6334,7 +6334,250 @@ const RUN_REVENGE_11: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11];
+/**
+ * revenge-12 — THE MOAT. Built 2026-09-04 for the daily kit
+ * swap / bishop-squire / knight-hop / poison-dart (`allowedAbilities` IS the
+ * kit — daily-kit.ts draws all four). Tyler's playtest note: "I keep
+ * rabies-darting the pawn that's protecting the pawn to clear a path." So
+ * the constant signature here is WATER, not guards: rank 5 is a moat of
+ * hazards on every level, the king's room sits beyond it, and the question
+ * each level asks is HOW YOU CROSS — a ford, a far bridge, a knight's jump,
+ * a bishop-only sluice, a teleport — not which pawn to dart. Levels where a
+ * dart is the answer: L4 (the slow lock) and L9 (two darts under a queen).
+ * Everywhere else a dart is a clock you can't afford, a shield you just
+ * removed, or a rook that still can't reach his line.
+ *
+ * Kit roles: knight-hop KEY on L3/L8 (jump the water onto his rank), trap
+ * on L4/L9 (landing recaptured / rank 4 raked). bishop-squire KEY on L5
+ * (diagonal cell) and L7 (two-body pincer), trap on L9. swap KEY on L6
+ * (bishop through the sluice, trade places) and L10. poison-dart KEY on
+ * L4/L9, trap on L3 (7-move clock) and L6 (the c4 pawn is the shield from
+ * queen a4, not a lock). L10 needs a pair: squire+swap through the sluice
+ * then a poisoned lock, or knight-hop + poison.
+ */
+const MOAT = (...gaps: number[]): Coord[] =>
+  [1, 2, 3, 4, 5, 6, 7, 8].filter((f) => !gaps.includes(f)).map((f) => X(f, 5));
+
+const RUN_REVENGE_12: RunDef = {
+  id: 'revenge-12',
+  name: 'The Moat',
+  blurb: 'Water on every side. He thinks water is a wall.',
+  allowedAbilities: ['swap', 'bishop-squire', 'knight-hop', 'poison-dart'],
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — THE FORD. Still king e8 behind a two-square ford (d5/e5). Key e6
+    // on his file, undefended (shell c7/g7 sits off its diagonals). Slide the
+    // ford, take the key, take him.
+    make(
+      1,
+      [
+        pawn(5, 6),
+        pawn(3, 7), pawn(7, 7),
+        king(5, 8),
+      ],
+      { ...STILL, moveLimit: 7, hazards: MOAT(4, 5) },
+    ),
+    // L2 — TWO BRIDGES. Still king d8. The near bridge (b5) leads to a
+    // defended pawn b6 (held by c7); the far bridge (g5) is open but longer
+    // and knight f6 covers g8/e8. Count the moves before you pick a bridge.
+    make(
+      2,
+      [
+        pawn(2, 6), pawn(3, 7), pawn(4, 7), pawn(5, 7),
+        knight(6, 6),
+        king(4, 8),
+      ],
+      { ...STILL, moveLimit: 8, hazards: MOAT(2, 7) },
+    ),
+    // L3 — THE CORRIDOR. First flee king: g6 in a rank-6 corridor f6-h6
+    // (walls f7/g7/h7). A rook ON rank 6 is lethal (every flee square shares
+    // the rank) — but the only bridge is a5 and rank 6 is barred by pawn b6
+    // (held by c7). Knight-hop from d4/b4 lands on c6/e6 over the water:
+    // KEY. Bishop h2 rakes f4. Nine moves: darting c7 and walking the
+    // a-file, or Squire a5xb6 + Swap, also get there — two moves slower.
+    make(
+      3,
+      [
+        pawn(2, 6), pawn(3, 7),
+        bishop(8, 2),
+        king(7, 6),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 9,
+        hazards: [...MOAT(1), X(6, 7), X(7, 7), X(8, 7)],
+        kingPen: ['f6', 'g6', 'h6'],
+      },
+    ),
+    // L4 — THE SLOW LOCK. King e8 in a 2x2 room (walls c7/c8/f7/f8), ford
+    // d5/e5. Key e6 on his file is held by KNIGHT g7 — take it and the
+    // knight takes you; hop onto it and the knight takes you. Poison the
+    // knight, wait on the e-file, take the key when it dies: KEY. Bishop b2
+    // rakes the d4/e5 diagonal, marcher h3. Nine moves — the wait fits.
+    make(
+      4,
+      [
+        pawn(5, 6),
+        knight(7, 7),
+        bishop(2, 2),
+        pawn(8, 3),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 9,
+        hazards: [...MOAT(4, 5), X(3, 7), X(3, 8), X(6, 7), X(6, 8)],
+        kingPen: ['d7', 'e7', 'd8', 'e8'],
+      },
+    ),
+    // L5 — THE DIAGONAL CELL. King g7 in a cell that is a DIAGONAL
+    // (f6/g7/h8; walls g6/h7/f7/g8). No rook line ever touches g7 and h8 is
+    // unreachable, so a lone rook can never take him. A bishop on f6
+    // attacks both squares he can stand on: Bishop Squire through the c5
+    // bridge (c5-d6-e7-f6) is the KEY. Pawns e6/d7 bar rank 6; a knight-hop
+    // capture on e6 is recaptured by d7 unless it was darted first.
+    make(
+      5,
+      [
+        pawn(5, 6), pawn(4, 7),
+        knight(8, 3),
+        pawn(1, 3),
+        king(7, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [...MOAT(3), X(7, 6), X(8, 7), X(6, 7), X(7, 8)],
+        kingPen: ['f6', 'g7', 'h8'],
+      },
+    ),
+    // L6 — THE SLUICE. No bridge. The one gap (e5) has walls above and
+    // below it (e4/e6): only a DIAGONAL crosses — d4-e5-f6. Walk the Bishop
+    // Squire through, then SWAP: Rookie is on f6 beyond the water (KEY).
+    // King g8 in the corner room (walls f7/f8); key g6 on his file is held
+    // by knight e7, whose only jumps are c6/c8 — it never crosses to become
+    // a free stun, so a hop-capture on g6 is recaptured. The bishop takes
+    // it from f6 (f6xe7, stun), or you dart it while the bishop walks.
+    // Queen a4 rakes rank 4 but pawn c4 shields d4-h4: dart THAT pawn and
+    // the whole bank is hers. Ten moves.
+    make(
+      6,
+      [
+        pawn(7, 6),
+        knight(5, 7),
+        queen(1, 4), pawn(3, 4),
+        pawn(8, 2),
+        king(7, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [...MOAT(5), X(5, 4), X(5, 6), X(6, 7), X(6, 8)],
+        kingPen: ['g7', 'h7', 'g8', 'h8'],
+      },
+    ),
+    // L7 — TWO A TURN. King e8 on a rank-8 strip d8-f8 (walls d7/e7/f7): a
+    // rook on rank 8 is lethal. Both bridges (a5/h5) lead up the edge files
+    // to rank 8, where pawns c8/g8 block, each held by a bishop (b7/h7)
+    // that the pawn holds back (g8 defends h7, c8 defends b7): a mutual
+    // lock. The bishops are walled in (a8/a6/c6 and g6) so they can never
+    // wander off their posts and become free stuns; queen d3 hunts alone
+    // (one enemy a turn — at two the rank-8 pawns march off their posts).
+    // Seven moves: a dart on g8/c8 buys the edge file, but only if the
+    // queen doesn't find you first. Hard adds the second enemy.
+    make(
+      7,
+      [
+        pawn(3, 8), pawn(7, 8),
+        bishop(2, 7), bishop(8, 7),
+        queen(4, 3),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 7,
+        hazards: [...MOAT(1, 8), X(4, 7), X(5, 7), X(6, 7), X(1, 8), X(1, 6), X(3, 6), X(7, 6)],
+        kingPen: ['d8', 'e8', 'f8'],
+      },
+    ),
+    // L8 — THE OPEN ROOM. King f7 in a 3x3 room e6-g8 (walls d6-d8 /
+    // h6-h8, pillar f6) — he has space, so one rook only chases him. No
+    // bridge: the f5 gap is a sluice (walls f4/f6), bishop-only. Knight-hop
+    // from c4/d4 lands on e6 INSIDE the room over the water: KEY. Then it
+    // is two bodies (Squire) or a stun (dart a knight as it comes) to close
+    // the room — the knights e4/g4/d3 hunt her across the water. Ten moves.
+    make(
+      8,
+      [
+        knight(5, 4), knight(7, 4), knight(4, 3),
+        pawn(2, 3),
+        king(6, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [...MOAT(6), X(6, 4), X(6, 6), X(4, 6), X(4, 7), X(4, 8), X(8, 6), X(8, 7), X(8, 8)],
+        kingPen: ['e6', 'g6', 'e7', 'f7', 'g7', 'e8', 'f8', 'g8'],
+      },
+    ),
+    // L9 — THE QUEEN'S BANK. King h8 in the corner (walls f7/f8), bridge g5.
+    // Key h6 on his file is held twice: bishop e3 (through the bridge) and
+    // knight g4. Queen a4 rakes rank 4, so no knight-hop launches and no
+    // bishop reaches the bridge. Two darts (T3) then g-file, take the key,
+    // take him — KEY — under two enemies a turn and an eight-move clock.
+    make(
+      9,
+      [
+        pawn(8, 6),
+        bishop(5, 3), knight(7, 4),
+        queen(1, 4),
+        pawn(2, 2),
+        king(8, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 8,
+        hazards: [...MOAT(7), X(6, 7), X(6, 8)],
+        kingPen: ['g7', 'h7', 'g8', 'h8'],
+      },
+    ),
+    // L10 — THE KEEP. King g8 in the 2x2 corner room (walls f7/f8) — a room
+    // one rook can never lock. No bridge; the sluice c5 (walls c4/c6) is
+    // bishop-only, and it is a DARK square: the two hunters are LIGHT
+    // bishops (a2/g2), so nothing on her side can ever cross the water and
+    // become a free stun on his. Key g6 on his file is held by knight e7,
+    // which has NO legal jump (c6/c8 walls, d5/f5 water) — it can never
+    // hunt off its post (v4: with c8 open it stepped there and g6 was a
+    // free hop-capture, knight-hop 100%). Two enemies a turn,
+    // ten moves. Squire b4-c5-d6, SWAP, rook along rank 6, poisoned knight
+    // dies, take the key, take him — or knight-hop onto g6 with e7 already
+    // darted. Every single card alone reads ~0% (v1-v3 tuning: a queen /
+    // marcher that could cross the sluice fed knight-hop a stun, 70-95%).
+    make(
+      10,
+      [
+        pawn(7, 6),
+        knight(5, 7),
+        bishop(1, 2), bishop(7, 2),
+        king(7, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 10,
+        hazards: [...MOAT(3), X(3, 4), X(3, 6), X(3, 8), X(6, 7), X(6, 8)],
+        kingPen: ['g7', 'h7', 'g8', 'h8'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11, RUN_REVENGE_12];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));
