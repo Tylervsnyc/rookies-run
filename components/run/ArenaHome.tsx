@@ -62,7 +62,7 @@ const FRAME: CSSProperties = { background: 'linear-gradient(180deg,#3d5297 0%,#1
 const TABS = ['Ladder', 'Ranks', 'Revenge', 'Codex'] as const;
 type Tab = (typeof TABS)[number];
 // Painted-relic set (Tyler 2026-09-03: the cartoon icons clashed with the illustrated ability art above them).
-const TAB_ART: Record<Tab, string> = { Ladder: 'ladder-p1', Ranks: 'ranks-p1', Revenge: 'revenge-p1', Codex: 'codex-p1' };
+const TAB_ART: Record<Tab, string> = { Ladder: 'ladder-x1', Ranks: 'ranks-p1', Revenge: 'revenge-x1', Codex: 'codex-p1' };
 
 function useCountdownToMidnight(): string {
   const [now, setNow] = useState(() => Date.now());
@@ -189,13 +189,28 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize, difficultyName }:
   );
 }
 
-// ── Tab bar (option A, Tyler 2026-09-03): big icons, gold-edged raised pill
-// on the active tab, label only on the active tab ─────────────────────────
+// ── Tab bar (Clash-style, Tyler 2026-09-04): full-bleed stone bar, the active
+// tab is a lighter raised column that pokes up above the bar with a bigger
+// icon and its label; little arrows on the neighbours point at it ──────────
+const BAR_H = 72;
 function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
+  const idx = TABS.indexOf(active);
   return (
-    <div className="grid grid-cols-4 rounded-2xl p-1.5 gap-1" role="tablist" aria-label="Home sections" style={{ background: '#0a1230', border: `2px solid ${PANEL_EDGE}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.08), 0 4px 0 rgba(0,0,0,0.35)' }}>
-      {TABS.map((t) => {
+    <div
+      className="relative grid grid-cols-4 -mx-3 -mb-[max(env(safe-area-inset-bottom),12px)] pb-[env(safe-area-inset-bottom)]"
+      role="tablist"
+      aria-label="Home sections"
+      style={{
+        height: `calc(${BAR_H}px + env(safe-area-inset-bottom))`,
+        background: 'linear-gradient(180deg,#4b5f88 0%,#3e5178 55%,#354669 100%)',
+        boxShadow: 'inset 0 3px 0 rgba(255,255,255,0.14), inset 0 -2px 0 rgba(0,0,0,0.35), 0 -6px 14px rgba(0,0,0,0.35)',
+        borderTop: '2px solid #22305a',
+      }}
+    >
+      {TABS.map((t, i) => {
         const on = t === active;
+        const leftOfActive = i === idx - 1;
+        const rightOfActive = i === idx + 1;
         return (
           <button
             key={t}
@@ -204,12 +219,36 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
             aria-selected={on}
             aria-label={t}
             onClick={() => onChange(t)}
-            className="min-h-[76px] rounded-xl flex flex-col items-center justify-center gap-1"
-            style={on ? { background: 'linear-gradient(180deg,#4a63b0,#24397a)', border: `2px solid ${GOLD}`, boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), 0 3px 0 rgba(0,0,0,0.45)' } : undefined}
+            className="relative flex flex-col items-center justify-end select-none"
+            style={{
+              height: on ? BAR_H + 14 : BAR_H,
+              marginTop: on ? -14 : 0,
+              paddingBottom: on ? 11 : 10,
+              background: on ? 'linear-gradient(180deg,#8ea3d3 0%,#6a83bd 40%,#5a72a9 100%)' : 'transparent',
+              boxShadow: on ? 'inset 0 3px 0 rgba(255,255,255,0.35), inset 2px 0 0 rgba(255,255,255,0.12), inset -2px 0 0 rgba(0,0,0,0.25)' : 'none',
+              borderLeft: on || i === 0 ? 'none' : '1px solid rgba(0,0,0,0.28)',
+              borderRadius: on ? '10px 10px 0 0' : 0,
+              transition: 'background 160ms, height 160ms, margin 160ms',
+            }}
           >
+            {/* side arrows on the neighbours, pointing at the active column */}
+            {leftOfActive && <span aria-hidden className="absolute right-1 top-1/2 -translate-y-1/2" style={{ width: 0, height: 0, borderTop: '7px solid transparent', borderBottom: '7px solid transparent', borderLeft: '8px solid #a7c4ff', filter: 'drop-shadow(0 1px 0 rgba(0,0,0,0.5))' }} />}
+            {rightOfActive && <span aria-hidden className="absolute left-1 top-1/2 -translate-y-1/2" style={{ width: 0, height: 0, borderTop: '7px solid transparent', borderBottom: '7px solid transparent', borderRight: '8px solid #a7c4ff', filter: 'drop-shadow(0 1px 0 rgba(0,0,0,0.5))' }} />}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/ui/tabs/${TAB_ART[t]}.webp`} alt="" width={56} height={56} style={{ width: on ? 50 : 56, height: on ? 50 : 56, transform: on ? 'translateY(-2px) scale(1.1)' : 'none', filter: on ? 'drop-shadow(0 0 8px rgba(255,200,0,0.6))' : 'saturate(0.5) brightness(0.6)', transition: 'transform 200ms cubic-bezier(.22,1,.36,1), filter 200ms' }} />
-            {on && <span className="text-[11px] font-black uppercase tracking-wide" style={{ ...OUTLINE, color: GOLD }}>{t}</span>}
+            <img
+              src={`/ui/tabs/${TAB_ART[t]}.webp`}
+              alt=""
+              width={56}
+              height={56}
+              style={{
+                width: 56,
+                height: 56,
+                transform: on ? 'translateY(-10px) scale(1.3)' : 'translateY(2px)',
+                filter: on ? 'drop-shadow(0 4px 4px rgba(0,0,0,0.5))' : 'brightness(0.72) saturate(0.75) drop-shadow(0 2px 2px rgba(0,0,0,0.5))',
+                transition: 'transform 200ms cubic-bezier(.22,1,.36,1), filter 200ms',
+              }}
+            />
+            {on && <span className="text-[13px] font-black leading-none -mt-1" style={OUTLINE}>{t}</span>}
           </button>
         );
       })}
@@ -417,7 +456,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
           </div>
         </div>
 
-        <div className="mt-2"><TabBar active={tab} onChange={(t) => { if (t !== tab) void playTabSwitchSound(); setTab(t); setFlipped(false); }} /></div>
+        <div className="mt-3 pt-3"><TabBar active={tab} onChange={(t) => { if (t !== tab) void playTabSwitchSound(); setTab(t); setFlipped(false); }} /></div>
       </div>
     </div>
   );
