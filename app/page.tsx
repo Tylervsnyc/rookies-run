@@ -73,7 +73,7 @@ import {
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
 import { isUnwinnable } from '@/lib/run/solver';
-import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_SLIDE_MS, ENEMY_TICK_MS } from '@/components/run/timing';
+import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_FX_MS, ENEMY_TICK_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
   getNextRevengeRunId,
@@ -531,20 +531,26 @@ export default function RookiesRunPage() {
   }, [poisonDeathFx]);
 
   // Enemy-on-enemy capture VFX — overlay slide of the attacker sprite from
-  // its origin square to the victim's square. Triggered by rabid friendly fire.
+  // its origin square to the victim's square. Triggered by rabid friendly fire
+  // and decoy lures. Derived SYNCHRONOUSLY from state (not via an effect) so
+  // the very first render after the capture already hides the attacker on its
+  // landing square — an effect-driven copy lagged one frame, which showed the
+  // attacker snapping onto the square, blinking out, then sliding in again.
   type EnemyCaptureFx = NonNullable<BoardState['lastEnemyCaptureFx']>;
-  const [enemyCaptureFx, setEnemyCaptureFx] = useState<EnemyCaptureFx | null>(null);
-  const lastEnemyCaptureIdRef = useRef<number | null>(null);
-  useEffect(() => {
-    const sig = state.lastEnemyCaptureFx;
-    if (!sig) return;
-    if (lastEnemyCaptureIdRef.current === sig.id) return;
-    lastEnemyCaptureIdRef.current = sig.id;
-    setEnemyCaptureFx({ ...sig });
-  }, [state.lastEnemyCaptureFx]);
+  const finishedEnemyCaptureIds = useRef<Set<number>>(new Set());
+  const [, bumpEnemyCaptureFx] = useState(0);
+  const enemyCaptureFx: EnemyCaptureFx | null =
+    state.lastEnemyCaptureFx &&
+    !finishedEnemyCaptureIds.current.has(state.lastEnemyCaptureFx.id)
+      ? state.lastEnemyCaptureFx
+      : null;
   useEffect(() => {
     if (!enemyCaptureFx) return;
-    const t = setTimeout(() => setEnemyCaptureFx(null), ENEMY_CAPTURE_SLIDE_MS + 20);
+    const id = enemyCaptureFx.id;
+    const t = setTimeout(() => {
+      finishedEnemyCaptureIds.current.add(id);
+      bumpEnemyCaptureFx((n) => n + 1);
+    }, ENEMY_CAPTURE_FX_MS);
     return () => clearTimeout(t);
   }, [enemyCaptureFx]);
 

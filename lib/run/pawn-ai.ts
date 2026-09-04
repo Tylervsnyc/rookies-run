@@ -876,6 +876,7 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
         fromSq,
         toSq,
         pieceType: mover.type,
+        victimType: capturedType,
         id: Date.now() + Math.random(),
       },
     };
@@ -910,6 +911,7 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
         fromSq,
         toSq,
         pieceType: mover.type,
+        victimType: capturedType,
         id: Date.now() + Math.random(),
       },
     };

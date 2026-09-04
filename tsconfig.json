@@ -39,6 +39,7 @@
     "node_modules",
     "ios",
     "capacitor-shell",
-    "scripts/run-playtest"
+    "scripts/run-playtest",
+    "scratch"
   ]
 }

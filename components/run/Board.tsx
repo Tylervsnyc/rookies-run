@@ -42,6 +42,7 @@ interface BoardProps {
     fromSq: string;
     toSq: string;
     pieceType: PieceType;
+    victimType?: PieceType | null;
     id: number;
   } | null;
   /** Enemy piece currently selected as the telekinesis source (step 1 → 2).
@@ -526,7 +527,14 @@ export function RunBoard({
     }
 
     // Rabid-piece highlight — angry crimson wash with a vibrating ring.
-    for (const sq of state.rabidSquares) {
+    // While a rabid friendly-fire slide is playing, state already has the
+    // marker on the landing square; draw it on the origin so the wash travels
+    // WITH the sprite instead of jumping ahead of it.
+    for (const rawSq of state.rabidSquares) {
+      const sq =
+        enemyCaptureFx && rawSq === enemyCaptureFx.toSq
+          ? enemyCaptureFx.fromSq
+          : rawSq;
       styles[sq] = {
         ...styles[sq],
         backgroundColor: 'rgba(220, 38, 38, 0.45)',
@@ -551,7 +559,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
+  }, [state, enemyCaptureFx, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
 
   // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring
@@ -1823,17 +1831,30 @@ function SacrificeBlastLayer({
 function EnemyCaptureSlide({
   fx,
 }: {
-  fx: { fromSq: string; toSq: string; pieceType: PieceType; id: number };
+  fx: {
+    fromSq: string;
+    toSq: string;
+    pieceType: PieceType;
+    victimType?: PieceType | null;
+    id: number;
+  };
 }) {
   const from = fromSquare(fx.fromSq);
   const to = fromSquare(fx.toSq);
   const fromX = (from.file - 1) * 12.5;
   const fromY = (8 - from.rank) * 12.5;
-  const dx = (to.file - from.file) * 12.5;
-  const dy = -(to.rank - from.rank) * 12.5;
-  const PieceComp =
+  const toX = (to.file - 1) * 12.5;
+  const toY = (8 - to.rank) * 12.5;
+  // Percent of the sprite's own box (translate % is relative to the element).
+  const dx = (to.file - from.file) * 100;
+  const dy = -(to.rank - from.rank) * 100;
+  const AttackerComp =
     defaultPieces[ENEMY_SPRITE[fx.pieceType] as keyof typeof defaultPieces];
+  const VictimComp = fx.victimType
+    ? defaultPieces[ENEMY_SPRITE[fx.victimType] as keyof typeof defaultPieces]
+    : null;
   const idKey = Math.floor(fx.id);
+  const slide = ENEMY_CAPTURE_SLIDE_MS;
   return (
     <div
       aria-hidden
@@ -1846,10 +1867,58 @@ function EnemyCaptureSlide({
     >
       <style>{`
         @keyframes rrEnemyCaptureSlide-${idKey} {
-          0%   { transform: translate(0, 0); }
-          100% { transform: translate(${dx / 12.5 * 100}%, ${dy / 12.5 * 100}%); }
+          0%   { transform: translate(0, 0) scale(1); }
+          70%  { transform: translate(${dx * 0.92}%, ${dy * 0.92}%) scale(1.12); }
+          100% { transform: translate(${dx}%, ${dy}%) scale(1); }
+        }
+        @keyframes rrEnemyCaptureVictim-${idKey} {
+          0%   { transform: scale(1); opacity: 1; filter: none; }
+          75%  { transform: scale(1); opacity: 1; filter: none; }
+          82%  { transform: scale(1.15); opacity: 1; filter: brightness(1.6) sepia(1) saturate(6) hue-rotate(-20deg); }
+          100% { transform: scale(0.3); opacity: 0; filter: brightness(1.6) sepia(1) saturate(6) hue-rotate(-20deg); }
+        }
+        @keyframes rrEnemyCaptureBurst-${idKey} {
+          0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.95; }
+          100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+        }
+        @keyframes rrEnemyCaptureShake-${idKey} {
+          0%, 100% { transform: translate(0, 0); }
+          25% { transform: translate(-3%, 1%); }
+          50% { transform: translate(3%, -1%); }
+          75% { transform: translate(-2%, 0); }
         }
       `}</style>
+      {/* Victim: sits on its square until the attacker lands, then crunches. */}
+      {VictimComp && (
+        <div
+          style={{
+            position: 'absolute',
+            left: `${toX}%`,
+            top: `${toY}%`,
+            width: '12.5%',
+            height: '12.5%',
+            animation: `rrEnemyCaptureVictim-${idKey} ${slide + 120}ms ease-in forwards`,
+          }}
+        >
+          <VictimComp />
+        </div>
+      )}
+      {/* Impact burst on the landing square. */}
+      <div
+        style={{
+          position: 'absolute',
+          left: `${toX + 6.25}%`,
+          top: `${toY + 6.25}%`,
+          width: '20%',
+          height: '20%',
+          borderRadius: '50%',
+          background:
+            'radial-gradient(circle, rgba(254,202,202,1) 0%, rgba(220,38,38,0.85) 40%, transparent 78%)',
+          animation: `rrEnemyCaptureBurst-${idKey} 260ms ease-out ${slide - 40}ms forwards`,
+          opacity: 0,
+        }}
+      />
+      {/* Attacker: slides in, pops on landing, shakes off the bite. */}
       <div
         style={{
           position: 'absolute',
@@ -1857,10 +1926,19 @@ function EnemyCaptureSlide({
           top: `${fromY}%`,
           width: '12.5%',
           height: '12.5%',
-          animation: `rrEnemyCaptureSlide-${idKey} ${ENEMY_CAPTURE_SLIDE_MS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+          animation: `rrEnemyCaptureSlide-${idKey} ${slide}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+          filter: 'drop-shadow(0 0 6px rgba(220,38,38,0.7))',
         }}
       >
-        {PieceComp ? <PieceComp /> : null}
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            animation: `rrEnemyCaptureShake-${idKey} 220ms ease-in-out ${slide}ms 1`,
+          }}
+        >
+          {AttackerComp ? <AttackerComp /> : null}
+        </div>
       </div>
     </div>
   );

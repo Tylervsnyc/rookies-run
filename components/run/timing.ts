@@ -11,3 +11,5 @@ export const ENEMY_TICK_MS = 420;
 export const ALLY_TICK_MS = 440;
 export const DRONE_TICK_MS = 520;
 export const ENEMY_CAPTURE_SLIDE_MS = 420;
+/** Slide + the victim's crunch/burst on impact. The overlay lives this long. */
+export const ENEMY_CAPTURE_FX_MS = ENEMY_CAPTURE_SLIDE_MS + 260;

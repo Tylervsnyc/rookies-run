@@ -283,6 +283,8 @@ export interface BoardState {
     fromSq: string;
     toSq: string;
     pieceType: PieceType;
+    /** The piece that got eaten — drawn on toSq until the attacker lands. */
+    victimType: PieceType | null;
     id: number;
   };
   /**
