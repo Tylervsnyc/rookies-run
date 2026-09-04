@@ -50,6 +50,7 @@ let transformBackBuffer: AudioBuffer | null = null;
 let transformIntoBuffer: AudioBuffer | null = null;
 let freezeBuffer: AudioBuffer | null = null;
 let surgeBuffer: AudioBuffer | null = null;
+let tabSwitchBuffer: AudioBuffer | null = null;
 let buffersLoading = false;
 let buffersLoaded = false;
 
@@ -95,14 +96,16 @@ async function preloadSounds(): Promise<void> {
   if (buffersLoaded || buffersLoading) return;
   buffersLoading = true;
 
-  const [move, capture, transformBack, transformInto, freeze, surge] = await Promise.all([
+  const [move, capture, transformBack, transformInto, freeze, surge, tabSwitch] = await Promise.all([
     loadBuffer('/sounds/move.mp3'),
     loadBuffer('/sounds/capture.mp3'),
     loadBuffer('/sounds/transform-back.mp3'),
     loadBuffer('/sounds/transform-into.mp3'),
     loadBuffer('/sounds/freeze.mp3'),
     loadBuffer('/sounds/surge.mp3'),
+    loadBuffer('/sounds/tab-switch.mp3'),
   ]);
+  tabSwitchBuffer = tabSwitch;
   freezeBuffer = freeze;
   surgeBuffer = surge;
 
@@ -337,6 +340,11 @@ export async function playTransformBackSound(): Promise<void> {
 /** Dark whoosh — Surge activates (two moves in a row). */
 export async function playSurgeSound(): Promise<void> {
   return playBuffer(surgeBuffer);
+}
+
+/** Camera-flash click — switching modes in the home tab bar (Tyler's ElevenLabs SFX, 2026-09-04). */
+export async function playTabSwitchSound(): Promise<void> {
+  return playBuffer(tabSwitchBuffer);
 }
 
 /** Magical freeze — Freeze Ray lands on a piece. */

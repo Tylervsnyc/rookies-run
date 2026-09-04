@@ -5,6 +5,7 @@ import { DemoBoard } from './DemoBoard';
 import { REVENGE_RED, REVENGE_RED_DARK, RevengeMarkSvg } from './RookiesRevengeLogo';
 import { artFile } from './AbilityCard';
 import { ABILITY_DEFS, type AbilityId } from '@/lib/run/abilities';
+import { playTabSwitchSound } from '@/lib/sounds';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
@@ -416,7 +417,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
           </div>
         </div>
 
-        <div className="mt-2"><TabBar active={tab} onChange={(t) => { setTab(t); setFlipped(false); }} /></div>
+        <div className="mt-2"><TabBar active={tab} onChange={(t) => { if (t !== tab) void playTabSwitchSound(); setTab(t); setFlipped(false); }} /></div>
       </div>
     </div>
   );
