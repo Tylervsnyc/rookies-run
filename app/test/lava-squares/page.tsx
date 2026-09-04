@@ -2,8 +2,8 @@
 
 /**
  * DESIGN PAGE — lava hazard squares (Tyler 2026-09-04: "Lava is really funny,
- * and people know." then "too annoying, it should be a subtle lava that slowly
- * bubbles"). One quiet idea at four intensities, shown on the real board renderer (ChessPathBoard + RookieCell) with
+ * and people know." → "too annoying" → "think lava like Mario, with a small
+ * stone border holding it in"). Three Mario-lake variations, shown on the real board renderer (ChessPathBoard + RookieCell) with
  * enemies on adjacent squares and Rookie's legal-move dots visible, so we can
  * check legibility and that lava never reads as a legal target.
  *
@@ -65,124 +65,202 @@ function cellPos(sq: string): CSSProperties {
 }
 
 // ── Lava treatments ──────────────────────────────────────────────────────────
-// Tyler 2026-09-04 v2: "these are all too annoying, it should be a subtle lava
-// that slowly bubbles." ONE idea, four intensities: quiet, dim lava with a dark
-// crust rim, and a single small bubble that swells and pops every 4–8s per
-// square, de-synced so the board never pulses together. Transform/opacity only.
-type Treatment = 'current' | 'ember' | 'simmer' | 'lowboil' | 'brightrare';
+// Tyler 2026-09-04 v3: "think lava like Mario. Make something awesome. Make a
+// stone border, very small, so it looks like it's holding it in." Saturated
+// Mario-lake lava, slow rolling flow (6–10s loops, transform only), an
+// occasional bubble, and a thin bevelled stone rim drawn only on edges that do
+// NOT touch another lava square — so a moat reads as one river with a bank.
+type Treatment = 'current' | 'classic' | 'glow' | 'pixel';
 
-interface Intensity {
-  id: Treatment;
-  name: string;
-  pitch: string;
-  use: string;
-  /** Lava gradient (low saturation, deep red/orange). */
-  base: string;
-  rim: string;
-  crack: string;
-  /** Bubble diameter as % of square. */
-  bubble: number;
-  /** Period range in seconds: [min, max]. Each square picks inside it. */
-  period: [number, number];
-}
+interface Edges { top: boolean; right: boolean; bottom: boolean; left: boolean }
 
-const INTENSITIES: Intensity[] = [
-  {
-    id: 'ember',
-    name: 'A · Ember (dimmest)',
-    pitch: 'Deep, almost brown-red lava. One small bubble every 6–9s. You notice it only when you look for it.',
-    use: 'Quietest. Safe for boards with 20+ hazards and never competes with pieces. Risk: on a dim phone screen it can read as "mud" rather than lava.',
-    base: 'linear-gradient(160deg, #7a2812 0%, #5e1c0e 60%, #4a150b 100%)',
-    rim: '#2b0d06',
-    crack: 'rgba(30,10,5,0.55)',
-    bubble: 13,
-    period: [6, 9],
-  },
-  {
-    id: 'simmer',
-    name: 'B · Simmer',
-    pitch: 'A notch warmer. One bubble every 5–8s, a little bigger. Still background.',
-    use: 'The middle. Reads as lava at a glance without pulling the eye off Rookie. My pick for the default.',
-    base: 'linear-gradient(160deg, #9a3316 0%, #7a2610 60%, #5e1c0c 100%)',
-    rim: '#30100a',
-    crack: 'rgba(35,10,5,0.5)',
-    bubble: 17,
-    period: [5, 8],
-  },
-  {
-    id: 'lowboil',
-    name: 'C · Low boil',
-    pitch: 'Brightest of the set (still muted orange-red), bubble every 4–6s and larger. The most "alive."',
-    use: 'Good for a 7-square moat; on a scattered 15+ layout the eye starts counting bubbles. Use only if A/B feel dead.',
-    base: 'linear-gradient(160deg, #b8421a 0%, #963012 60%, #722210 100%)',
-    rim: '#361208',
-    crack: 'rgba(40,12,5,0.45)',
-    bubble: 21,
-    period: [4, 6],
-  },
-  {
-    id: 'brightrare',
-    name: 'D · Bright, rare',
-    pitch: 'Lava as bright as C, but the bubble is small and only every 7–10s. Tests whether brightness or motion is the annoying part.',
-    use: 'Control case. If this feels fine and C feels busy, motion is the lever, not color — ship B/C colors with D timing.',
-    base: 'linear-gradient(160deg, #b8421a 0%, #963012 60%, #722210 100%)',
-    rim: '#361208',
-    crack: 'rgba(40,12,5,0.45)',
-    bubble: 13,
-    period: [7, 10],
-  },
-];
+const MARIO = {
+  hot: '#ffd23a',      // crest highlight
+  bright: '#ffa322',   // surface
+  mid: '#ff7a14',      // body
+  deep: '#e8460f',     // underlayer
+  blob: '#c93408',     // dark rolling blobs
+  bubbleRim: '#c63e08',
+};
 
-/** Faint crust cracks — low contrast, they only help the square read as rock. */
-function Cracks({ color }: { color: string }) {
+/** Thin stone rim — only on open edges. Bricks run along the edge; outer face lit, inner face shadowed. */
+function StoneRim({ edges, glow }: { edges: Edges; glow?: boolean }) {
+  const W = 'var(--rim)';
+  const stone = 'linear-gradient(180deg, #b9bcc2 0%, #8d9198 55%, #6b6f76 100%)';
+  const stoneV = 'linear-gradient(90deg, #b9bcc2 0%, #8d9198 55%, #6b6f76 100%)';
+  const jointsH = 'repeating-linear-gradient(90deg, transparent 0 9px, rgba(20,20,28,0.55) 9px 10px)';
+  const jointsV = 'repeating-linear-gradient(180deg, transparent 0 9px, rgba(20,20,28,0.55) 9px 10px)';
+  const bevel = 'inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.5)';
+  const bevelV = 'inset 1px 0 0 rgba(255,255,255,0.55), inset -1px 0 0 rgba(0,0,0,0.5)';
+  const hot = glow ? '0 0 6px 1px rgba(255,170,40,0.9)' : undefined;
+  const strip = (side: keyof Edges, style: CSSProperties) =>
+    edges[side] ? <span key={side} aria-hidden className="absolute" style={{ ...style, zIndex: 2 }} /> : null;
   return (
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="absolute inset-0 h-full w-full">
-      <g fill="none" stroke={color} strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M-2 30 L18 38 L30 22 L45 40 L62 30 L80 45 L102 38" />
-        <path d="M20 102 L28 78 L45 85 L55 65 L75 78 L102 70" />
-        <path d="M62 -2 L70 12 L86 6" />
-      </g>
-    </svg>
+    <>
+      {strip('top', { left: 0, right: 0, top: 0, height: W, backgroundImage: `${jointsH}, ${stone}`, boxShadow: [bevel, hot].filter(Boolean).join(', ') })}
+      {strip('bottom', { left: 0, right: 0, bottom: 0, height: W, backgroundImage: `${jointsH}, ${stone}`, boxShadow: [bevel, hot].filter(Boolean).join(', ') })}
+      {strip('left', { top: 0, bottom: 0, left: 0, width: W, backgroundImage: `${jointsV}, ${stoneV}`, boxShadow: [bevelV, hot].filter(Boolean).join(', ') })}
+      {strip('right', { top: 0, bottom: 0, right: 0, width: W, backgroundImage: `${jointsV}, ${stoneV}`, boxShadow: [bevelV, hot].filter(Boolean).join(', ') })}
+    </>
   );
 }
 
-/** Deterministic per-square jitter so squares never bubble in sync (stable across renders). */
+/** Deterministic per-square jitter so bubbles never sync (stable across renders). */
 function jitter(seed: number, salt: number): number {
   const x = Math.sin(seed * 12.9898 + salt * 78.233) * 43758.5453;
   return x - Math.floor(x);
 }
 
-function LavaCell({ kind, index }: { kind: Treatment; index: number }) {
+function Bubble({ index, square }: { index: number; square?: boolean }) {
+  const period = 5 + 4 * jitter(index, 1);
+  const delay = -period * jitter(index, 2);
+  const size = square ? 12.5 : 16;
+  const left = 30 + 40 * jitter(index, 3) - size / 2;
+  const top = 30 + 40 * jitter(index, 4) - size / 2;
+  return (
+    <span
+      aria-hidden
+      className={`lava-anim absolute ${square ? '' : 'rounded-full'}`}
+      style={{
+        left: `${left}%`, top: `${top}%`, width: `${size}%`, height: `${size}%`,
+        border: square ? undefined : `2px solid ${MARIO.bubbleRim}`,
+        background: square ? MARIO.hot : `radial-gradient(circle at 35% 35%, #fff2a0, ${MARIO.hot} 70%)`,
+        transformOrigin: 'center',
+        animation: `lavaBubble ${period.toFixed(2)}s ease-in-out ${delay.toFixed(2)}s infinite`,
+        zIndex: 1,
+      }}
+    />
+  );
+}
+
+/**
+ * Rolling flow — two layers, each 200% wide with a pattern period of exactly
+ * one square, translated by -50% on a long linear loop. Because the period
+ * equals the square width and every square shares the same phase, the bands
+ * line up across adjacent lava squares and the moat reads as one river.
+ */
+function Flow() {
+  return (
+    <>
+      {/* dark underlayer blobs, drifting left, slow */}
+      <span
+        aria-hidden
+        className="lava-anim absolute top-0 bottom-0 left-0"
+        style={{
+          width: '200%',
+          backgroundImage:
+            `radial-gradient(ellipse 30% 22% at 20% 70%, ${MARIO.blob} 0 98%, transparent 100%),` +
+            `radial-gradient(ellipse 26% 18% at 62% 30%, ${MARIO.blob} 0 98%, transparent 100%),` +
+            `radial-gradient(ellipse 22% 16% at 84% 78%, ${MARIO.deep} 0 98%, transparent 100%)`,
+          backgroundSize: '50% 100%',
+          opacity: 0.85,
+          animation: 'lavaDriftL 13s linear infinite',
+        }}
+      />
+      {/* bright highlight bands, drifting right, a touch faster */}
+      <span
+        aria-hidden
+        className="lava-anim absolute top-0 bottom-0 left-0"
+        style={{
+          width: '200%',
+          backgroundImage:
+            `radial-gradient(ellipse 34% 14% at 30% 28%, ${MARIO.hot} 0 98%, transparent 100%),` +
+            `radial-gradient(ellipse 24% 11% at 72% 58%, ${MARIO.hot} 0 98%, transparent 100%),` +
+            `radial-gradient(ellipse 18% 9% at 48% 84%, #fff0a0 0 98%, transparent 100%)`,
+          backgroundSize: '50% 100%',
+          opacity: 0.9,
+          animation: 'lavaDriftR 9s linear infinite',
+        }}
+      />
+    </>
+  );
+}
+
+// 8-bit lava: 16x8 pixel tile (period 8 px wide) — crest line of yellow over
+// orange, red body, a few dark blobs. Steps left one pixel per second.
+const PIX_CREST = [1, 2, 3, 3, 2, 1, 0, 0];
+const PIX_BLOBS = new Set(['2,5', '3,6', '6,6', '7,5', '0,7', '5,4']);
+function PixelFlow() {
+  const rects: React.ReactNode[] = [];
+  for (let x = 0; x < 16; x++) {
+    const c = PIX_CREST[x % 8];
+    for (let y = 0; y < 8; y++) {
+      let fill = MARIO.bright;
+      if (y < c) fill = MARIO.mid;
+      else if (y === c) fill = MARIO.hot;
+      else if (y === c + 1) fill = MARIO.bright;
+      else fill = PIX_BLOBS.has(`${x % 8},${y}`) ? MARIO.blob : MARIO.deep;
+      rects.push(<rect key={`${x},${y}`} x={x} y={y} width={1} height={1} fill={fill} />);
+    }
+  }
+  return (
+    <svg
+      viewBox="0 0 16 8"
+      preserveAspectRatio="none"
+      shapeRendering="crispEdges"
+      aria-hidden
+      className="lava-anim absolute top-0 bottom-0 left-0 h-full"
+      style={{ width: '200%', animation: 'lavaDriftL 8s steps(8, end) infinite' }}
+    >
+      {rects}
+    </svg>
+  );
+}
+
+function LavaCell({ kind, index, edges }: { kind: Treatment; index: number; edges: Edges }) {
   if (kind === 'current') {
     return <div className="absolute inset-0" style={{ backgroundColor: HAZARD_BG, backgroundImage: HAZARD_PATTERN }} />;
   }
-  const v = INTENSITIES.find((i) => i.id === kind)!;
-  const [pMin, pMax] = v.period;
-  const period = pMin + (pMax - pMin) * jitter(index, 1);
-  const delay = -period * jitter(index, 2);
-  // Bubble sits somewhere in the middle 50% of the square, never on the rim.
-  const left = 28 + 44 * jitter(index, 3) - v.bubble / 2;
-  const top = 28 + 44 * jitter(index, 4) - v.bubble / 2;
+  if (kind === 'pixel') {
+    return (
+      <div className="absolute inset-0 overflow-hidden" style={{ background: MARIO.deep }}>
+        <PixelFlow />
+        <Bubble index={index} square />
+        <StoneRim edges={edges} />
+      </div>
+    );
+  }
+  const glow = kind === 'glow';
   return (
-    <div className="absolute inset-0 overflow-hidden" style={{ backgroundImage: v.base, boxShadow: `inset 0 0 0 2px ${v.rim}` }}>
-      <Cracks color={v.crack} />
-      <span
-        aria-hidden
-        className="lava-bubble absolute rounded-full"
-        style={{
-          left: `${left}%`, top: `${top}%`, width: `${v.bubble}%`, height: `${v.bubble}%`,
-          border: `1.5px solid ${v.rim}`,
-          background: 'radial-gradient(circle at 35% 35%, rgba(255,200,140,0.55), rgba(255,120,60,0.25) 70%)',
-          transformOrigin: 'center',
-          animation: `lavaBubble ${period.toFixed(2)}s ease-in-out ${delay.toFixed(2)}s infinite`,
-        }}
-      />
+    <div
+      className="absolute inset-0 overflow-hidden"
+      style={{ backgroundImage: `linear-gradient(180deg, ${MARIO.bright} 0%, ${MARIO.mid} 55%, ${MARIO.deep} 100%)` }}
+    >
+      <Flow />
+      {glow && (
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{ boxShadow: 'inset 0 0 10px 2px rgba(255,236,120,0.85)', zIndex: 1 }}
+        />
+      )}
+      <Bubble index={index} />
+      <StoneRim edges={edges} glow={glow} />
     </div>
   );
 }
 
 // ── Option catalogue ─────────────────────────────────────────────────────────
-const OPTIONS = INTENSITIES;
+const OPTIONS: Array<{ id: Treatment; name: string; pitch: string; use: string }> = [
+  {
+    id: 'classic',
+    name: 'A · Mario classic',
+    pitch: 'Flat two-tone lake: bright orange surface over a red underlayer, yellow highlight bands drifting one way, dark blobs the other, a bubble now and then. Stone bank holds it in.',
+    use: 'Cheapest of the three: two gradient layers on transform loops (9s / 13s) + one bubble per square. The rim only draws on open edges, so the moat is one river. This is the pick.',
+  },
+  {
+    id: 'glow',
+    name: 'B · Classic + rim glow',
+    pitch: 'Same lake, plus a warm glow licking the inside of the stone rim so the stone looks heated.',
+    use: 'Same cost (one static inset shadow + a 6px halo on the rim strips). Slightly stronger "hot" read; slightly busier against cream squares. Use if A feels flat next to the gold goal row.',
+  },
+  {
+    id: 'pixel',
+    name: 'C · 8-bit Mario',
+    pitch: 'Blocky 8x8 pixel lava: yellow crest, orange, red, dark blobs, stepping left one pixel per second like a NES scroll. Square bubbles. Same stone bank.',
+    use: 'One SVG of 128 rects per square on a steps() loop — fine for a moat, 20+ squares is ~2.5k rects (still OK, but the heaviest). Best match for Rookie\'s block sprite; the stepping motion is the most "alive" without being busy.',
+  },
+];
 
 // ── Board card ───────────────────────────────────────────────────────────────
 const PIECES = {
@@ -190,12 +268,20 @@ const PIECES = {
   wR: () => <RookieCell form="rook" />,
 };
 
+function openEdges(sq: string, hazards: Set<string>): Edges {
+  const f = sq.charCodeAt(0);
+  const r = Number(sq[1]);
+  const has = (df: number, dr: number) => hazards.has(`${String.fromCharCode(f + df)}${r + dr}`);
+  return { top: !has(0, 1), bottom: !has(0, -1), left: !has(-1, 0), right: !has(1, 0) };
+}
+
 function LavaBoard({ kind, layout }: { kind: Treatment; layout: Layout }) {
   const L = LAYOUTS[layout];
+  const hz = new Set(L.hazards);
   const squareStyles: Record<string, CSSProperties> = {};
   for (const sq of L.dots) squareStyles[sq] = { backgroundImage: MOVE_DOT };
   return (
-    <div className="relative">
+    <div className="relative" style={{ '--rim': '3px' } as CSSProperties}>
       <ChessPathBoard
         options={{
           id: `lava-${kind}-${layout}`,
@@ -212,7 +298,7 @@ function LavaBoard({ kind, layout }: { kind: Treatment; layout: Layout }) {
       <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ borderRadius: 8 }} aria-hidden>
         {L.hazards.map((sq, i) => (
           <div key={sq} className="absolute" style={cellPos(sq)}>
-            <LavaCell kind={kind} index={i} />
+            <LavaCell kind={kind} index={i} edges={openEdges(sq, hz)} />
           </div>
         ))}
       </div>
@@ -228,16 +314,19 @@ export default function LavaSquaresPage() {
   return (
     <div className="h-full overflow-auto text-white" style={{ background: BG }}>
       <style>{`
-        /* One bubble per cycle: dormant ~78% of the period, swell ~18%, pop ~4%. */
+        /* Rolling flow: layer is 200% wide with a 1-square pattern period, so -50% loops seamlessly. */
+        @keyframes lavaDriftL { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes lavaDriftR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+        /* One bubble per cycle: dormant ~78% of the period, swell, pop. */
         @keyframes lavaBubble {
           0%, 78% { transform: scale(0.2); opacity: 0; }
-          88%     { transform: scale(0.85); opacity: 0.9; }
+          88%     { transform: scale(0.85); opacity: 1; }
           95%     { transform: scale(1);    opacity: 1; }
-          97%     { transform: scale(1.12); opacity: 0; }
+          97%     { transform: scale(1.15); opacity: 0; }
           100%    { transform: scale(0.2);  opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .lava-bubble { animation: none !important; opacity: 0.35; transform: scale(0.8); }
+          .lava-anim { animation: none !important; }
         }
       `}</style>
 
@@ -246,8 +335,8 @@ export default function LavaSquaresPage() {
           <div className="text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: GOLD }}>Design page · not production</div>
           <h1 className="mt-1 text-[24px] font-black leading-tight md:text-[30px]">Lava squares</h1>
           <p className="mt-1 max-w-[62ch] text-[14px]" style={MUTED}>
-            One idea at four intensities for the squares Rookie can&rsquo;t land on. Real board renderer, enemies next to the lava,
-            Rookie&rsquo;s legal-move dots on. Quiet, dim lava; one small bubble every 4&ndash;8s per square, de-synced. A lava square must never look like a place you can go.
+            Mario-lake lava for the squares Rookie can&rsquo;t land on. Real board renderer, enemies next to the lava,
+            Rookie&rsquo;s legal-move dots on. Slow rolling flow, an occasional bubble, and a thin stone bank that only draws on edges not touching other lava, so a moat is one river. A lava square must never look like a place you can go.
           </p>
         </header>
 
@@ -294,7 +383,7 @@ export default function LavaSquaresPage() {
           </section>
         )}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {OPTIONS.map((o) => (
             <section
               key={o.id}
@@ -319,8 +408,9 @@ export default function LavaSquaresPage() {
           <ul className="mt-1 list-disc space-y-1 pl-5">
             <li>No green, no blue, no highlight tint on lava — the legal-move dots (Rookie on d3) are the only &ldquo;you can go here&rdquo; signal.</li>
             <li>Enemy pieces sit on squares touching the lava (a6, c6, f6, b4, e4, g4 on the moat) to check the pieces still pop.</li>
-            <li>Gradients + one inline SVG + a single transform/opacity keyframe per square. No images, no deps, no filters, no glow. Honors prefers-reduced-motion (bubble goes static).</li>
-            <li>Each square picks its own period + phase from a seeded hash, so the moat never bubbles in sync.</li>
+            <li>Gradients + inline SVG, transform/opacity loops only (9s / 13s flow, 5&ndash;9s bubbles), no filters. prefers-reduced-motion freezes everything.</li>
+            <li>Flow layers share one phase and a one-square pattern period, so bands line up across neighbours; bubbles are de-synced by a seeded hash.</li>
+            <li>Stone rim = 3px bevelled strips per open edge (neighbour lookup is a Set of hazard squares; Board.tsx has the same list in `state.hazards`).</li>
             <li>Production hook: Board.tsx `squareStyles` hazard block (HAZARD_BG / HAZARD_PATTERN) plus an overlay like the goal-row motes.</li>
           </ul>
         </footer>
