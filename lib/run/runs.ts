@@ -6577,7 +6577,249 @@ const RUN_REVENGE_12: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11, RUN_REVENGE_12];
+/**
+ * revenge-13 — THE COLONNADE. Built 2026-09-04, the sister run to The Moat
+ * (Tyler: L8-10 "the most fun I've ever had"). Constant signature: ranks 4
+ * and 5 are a hall of PILLARS on the dark squares (b4 d4 f4 h4 / a5 c5 e5
+ * g5) — every file is plugged exactly once, so a rook can only pass where a
+ * pillar is missing (a DOOR), while a light-squared bishop glides through
+ * the columns untouched and a dark bishop can never cross. Every level asks
+ * HOW YOU GET THROUGH THE COLUMNS: a door, the far door, a bishop's slip,
+ * a gate you drag open, a trade of places. Kit = swap / bishop-squire /
+ * magnet / boulder (`allowedAbilities` IS the daily kit).
+ *
+ * Kit roles: bishop-squire KEY on L3 (the slip), L5 (lantern), L6-L8/L10
+ * (the only body that crosses when there is no door), TRAP on L2/L4 (his
+ * squares are dark — a light bishop can never touch him). swap KEY on L6,
+ * L8, L10 (the bishop crosses, then you trade places), TRAP on L1-L5 (a rook
+ * beyond the columns with no line to him is just stranded). magnet KEY on
+ * L4 (drag the gate pawn through the door), L9 (drag the stone bishop off
+ * the h-file), TRAP on L5/L7 (a pulled hunter is not captured — it lands
+ * beside you and eats you next turn). boulder KEY on L9 (crush the pawn
+ * that holds rank 7) and L10 (the double crush), TRAP on L1-L8 (a stone in a
+ * pillared hall walls YOUR line, never his — and a crushed key is a stun you
+ * cannot use from the wrong side of the columns).
+ *
+ * MEASURED (24 trials/cell, Normal, 2026-09-04 — matrix + full-run sim):
+ * L1-L2 free (teaching the hall). L3 squire 92%. L4 squire 100% / magnet 71%.
+ * L5 squire 100% / boulder 92%. L6 squire 100% / magnet 92%. L7-L10 are the
+ * finale and every SINGLE card reads 0% on L8/L9/L10 (L7: squire alone 17%):
+ * squire+swap is the crossing — 100% / 100% / 100% / 71%. Boulder on L10
+ * actively HURTS (33% with it vs 71% without): a stone in a pillared hall
+ * walls your own line. Full runs: 12% clear with random picks, 55% when the
+ * player takes squire+swap — pick wrong and the run ends at L7/L8, which is
+ * the point. Calibrated against The Moat (25% random, singles 0% on its
+ * finale). L8's king sits on d8 (DARK) so the light squire can never take
+ * him alone — that is what forces the trade of places.
+ */
+const PILLARS: ReadonlyArray<Coord> = [X(2, 4), X(4, 4), X(6, 4), X(8, 4), X(1, 5), X(3, 5), X(5, 5), X(7, 5)];
+/** The colonnade with a DOOR on each listed file (that file's pillar removed). */
+const COLONNADE = (...doors: number[]): Coord[] => PILLARS.filter((p) => !doors.includes(p.file)).map((p) => ({ ...p }));
+
+const RUN_REVENGE_13: RunDef = {
+  id: 'revenge-13',
+  name: 'The Colonnade',
+  blurb: 'A hall of pillars. He thinks stone is a wall.',
+  allowedAbilities: ['swap', 'bishop-squire', 'magnet', 'boulder'],
+  offerEveryLevel: true,
+  offerOnLevels: [1, 3, 6, 9],
+  offerSize: 3,
+  offerCore: REVENGE_CORE,
+  offerCoreMin: 2,
+  levels: [
+    // L1 — THE DOOR. Still king d8; the d pillar is missing. Key d6 on his
+    // file, undefended (shell b7/g7 sits off its diagonals). Slide the door,
+    // take the key, take him.
+    make(
+      1,
+      [
+        pawn(4, 6),
+        pawn(2, 7), pawn(6, 7),
+        king(4, 8),
+      ],
+      { ...STILL, moveLimit: 6, hazards: COLONNADE(4) },
+    ),
+    // L2 — THE FAR DOOR. Still king b8 on a DARK square (no bishop ever
+    // touches him). The only door is g; key b6 is held by a7/c7 and c7 by
+    // d8; wall c8 cuts rank 8. The line is the long way round: g8, take d8,
+    // drop to d7, take c7, b7, take him. Count it before you go.
+    make(
+      2,
+      [
+        pawn(2, 6), pawn(1, 7), pawn(3, 7), pawn(4, 8),
+        king(2, 8),
+      ],
+      { ...STILL, moveLimit: 8, hazards: [...COLONNADE(7), X(3, 8)] },
+    ),
+    // L3 — THE SLIP. No door at all: a rook can never pass. Still king h7 on
+    // a LIGHT square. Summon the Bishop Squire and walk him through the
+    // columns: e6, take f7, take g6, take him. KEY = bishop-squire.
+    make(
+      3,
+      [
+        pawn(7, 6), pawn(6, 7),
+        king(8, 7),
+      ],
+      { ...STILL, moveLimit: 8, hazards: COLONNADE() },
+    ),
+    // L4 — THE GATE. First flee king: e8 on a rank-8 strip d8-f8 (walls
+    // c8/g8) — a rook on rank 8 is lethal. Door c is barred by the GATE pawn
+    // c6, held by knight a7 and pawn d7; rank 7 is pawns d7/e7/f7. Magnet
+    // from the c-file drags the gate down through the door to c4: take it
+    // there, ride c6, rank 6 to e6, take e7 (stun), take him. KEY = magnet.
+    // The bishop can't touch d8/f8 (dark) — but squire + swap onto d5 works
+    // too: take d7, take e7, take him.
+    make(
+      4,
+      [
+        pawn(3, 6),
+        pawn(4, 7), pawn(5, 7), pawn(6, 7),
+        knight(1, 7),
+        pawn(8, 3),
+        king(5, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 8,
+        hazards: [...COLONNADE(3), X(3, 8), X(7, 8)],
+        kingPen: ['d8', 'e8', 'f8'],
+      },
+    ),
+    // L5 — THE LANTERN. King f7 in a two-square DIAGONAL cell (f7/g8, both
+    // light; walls f8/g7). No rook line reaches g8, so a lone rook can only
+    // chase him. A light bishop on d5 attacks both squares at once — but e6
+    // sits on that diagonal, held by d7, and h7 guards g6. Two bodies: the
+    // rook rides door b to b7, takes d7 on rank 7; the bishop takes e6 and
+    // pins the cell. Dark bishop a3 hunts her on her side of the columns.
+    make(
+      5,
+      [
+        pawn(5, 6), pawn(4, 7), pawn(8, 7),
+        bishop(1, 3),
+        king(6, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [...COLONNADE(2), X(6, 8), X(7, 7)],
+        kingPen: ['f7', 'g8'],
+      },
+    ),
+    // L6 — THE POSTERN. King c8 on a strip b8-d8 (walls a8/e8), keys b7/c7/d7
+    // on rank 7. The only door is a, and it is shut by pawn a6 (held by b7).
+    // Three ways in: magnet drags a6 down through the door and you take it
+    // on a4; the Bishop Squire crosses and you SWAP onto rank 6; or you wait
+    // for the hunters (light bishop h5, knight f6) to leave their posts.
+    make(
+      6,
+      [
+        pawn(1, 6),
+        pawn(2, 7), pawn(3, 7), pawn(4, 7),
+        bishop(8, 5), knight(6, 6),
+        king(3, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 9,
+        hazards: [...COLONNADE(1), X(1, 8), X(5, 8)],
+        kingPen: ['b8', 'c8', 'd8'],
+      },
+    ),
+    // L7 — THE PINCER. Two doors (b and g). King f8 in an L-cell e8/f8/f7
+    // (walls d8/e7/g8). Pawn g7 (wall g6 behind it: it never marches) holds
+    // f6 forever and knight h7 (only jump f6) guards f8. So the rook's lock
+    // square is f5 — the f-file through an EMPTY f6 covers f7 and f8 — and
+    // the bishop on d7 covers e8: rook f5 + bishop d7 is the pincer. A lone
+    // rook can only chase him round the cell. Knight c3 hunts her side.
+    make(
+      7,
+      [
+        pawn(7, 7), knight(8, 7),
+        knight(3, 3),
+        king(6, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 11,
+        hazards: [...COLONNADE(2), X(4, 8), X(5, 7), X(7, 8), X(7, 6)],
+        kingPen: ['e8', 'f8', 'f7'],
+      },
+    ),
+    // L8 — THE OPEN HALL. No door. King e8 on a rank-8 strip d8-f8 behind
+    // keys d7/e7/f7. The LIGHT keys (d7, f7) are held by pawns c8/g8 that
+    // can never march (walls c7/g7); the dark key e7 is free — but a light
+    // bishop can never take a dark square. Beyond the columns a rook wins
+    // in three (e6, take e7 = stun, take him); a bishop alone dies on d7 or
+    // f7. Squire + SWAP is the crossing. Knights c6/f6 hunt whatever
+    // crosses.
+    make(
+      8,
+      [
+        pawn(4, 7), pawn(5, 7), pawn(6, 7),
+        pawn(3, 8), pawn(7, 8),
+        knight(3, 6), knight(6, 6),
+        king(4, 8),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 10,
+        hazards: [...COLONNADE(), X(3, 7), X(7, 7), X(8, 8)],
+        kingPen: ['d8', 'e8', 'f8'],
+      },
+    ),
+    // L9 — THE QUEEN'S HALL. Door h — shut by a STONE bishop h6 (dark: no
+    // move, and no boulder crushes it), held by pawn g7 (wall g6: it never
+    // marches). Knight e6 has NO jump (pillars, walls d8/f8, its own pawns)
+    // and holds g7 AND c7. King b8 on a8-c8 (wall d8); keys a7/b7/c7 can't
+    // march (walls a6/c6, queen b6). Magnet drags the bishop down the
+    // h-file and you take it; boulder crushes g7 (stun); rank 7 to d7, drop
+    // to d6, take the knight, e7, take c7, c8, take him. Or squire takes the
+    // knight from d5 and you SWAP onto e6. Queen b6 leaves by b5 and hunts;
+    // two enemies a turn.
+    make(
+      9,
+      [
+        pawn(1, 7), pawn(2, 7), pawn(3, 7),
+        bishop(8, 6), pawn(7, 7), knight(5, 6),
+        queen(2, 6),
+        king(2, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 2,
+        moveLimit: 11,
+        hazards: [...COLONNADE(8), X(1, 6), X(3, 6), X(7, 6), X(4, 8), X(6, 8), X(7, 8)],
+        kingPen: ['a8', 'b8', 'c8'],
+      },
+    ),
+    // L10 — THE KEEP. No door. King g8 in the 2x2 corner room (walls f7/f8)
+    // — a room no rook + bishop pair can lock (g7/h8 dark, h7/g8 light, and
+    // every bishop line to h7 runs through g6). Key g6 on his file is held
+    // by pawn h7, which can never march (wall h6) and which no rook or
+    // bishop can reach. Two light bishops (a2/g2) hunt her side and cross
+    // after the squire; two enemies a turn. The line: squire crosses, SWAP
+    // onto e6, ONE boulder use crushes g6 AND h7 (stun), step to g6 while
+    // he cannot flee, take him. Magnet is the trap here: a dragged key is
+    // still a key with h7 behind it.
+    make(
+      10,
+      [
+        pawn(7, 6), pawn(8, 7),
+        bishop(1, 2),
+        king(7, 8),
+      ],
+      {
+        ...FLEE,
+        enemiesPerTurn: 1,
+        moveLimit: 14,
+        hazards: [...COLONNADE(), X(6, 7), X(6, 8), X(8, 6)],
+        kingPen: ['g7', 'h7', 'g8', 'h8'],
+      },
+    ),
+  ],
+};
+
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11, RUN_REVENGE_12, RUN_REVENGE_13];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));

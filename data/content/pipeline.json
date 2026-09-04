@@ -770,6 +770,14 @@
         "at": "2026-09-04",
         "by": "Tyler"
       }
+    },
+    {
+      "id": "revenge-13",
+      "kind": "run",
+      "name": "The Colonnade",
+      "stage": "testing",
+      "created": "2026-09-04",
+      "notes": "Hard veteran run for the swap/bishop-squire/magnet/boulder kit: ranks 4-5 are dark-square pillars on every level (a light bishop passes, a rook needs a door). Sister run to The Moat, built 2026-09-04."
     }
   ]
 }
