@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { fireConfetti } from '@/lib/confetti';
 import type { RunStats } from '@/lib/run/history';
 import type { RunStars } from '@/lib/run/scoring';
+import { SHARE_URL, buildShareText, encodeShareCard, type ShareCardData } from '@/lib/run/share';
 import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
+import { SHARE_CARD_H, SHARE_CARD_W, ShareCard } from './ShareCard';
 import { StampButton, StampCard, StampChip } from './StampCard';
 
 /**
@@ -24,7 +26,14 @@ interface RunSummaryModalProps {
   /** The run ended on the move budget, not a capture. */
   outOfMoves?: boolean;
   stats: RunStats;
+  /** Plain-text share line — the last-resort fallback (clipboard). */
   shareString: string;
+  /**
+   * The share IMAGE's data (final board, kit, moves, stars). When set, Share
+   * sends the rendered card (`/api/og/run`) through the share sheet and a
+   * thumbnail in the button row opens a full preview.
+   */
+  shareCard?: ShareCardData | null;
   onReplay: () => void;
   /** X in the corner: leave the card (back to the home screen). */
   onClose?: () => void;
@@ -55,6 +64,7 @@ export function RunSummaryModal({
   outOfMoves = false,
   stats,
   shareString,
+  shareCard,
   onReplay,
   onClose,
   nextRunName,
@@ -66,7 +76,16 @@ export function RunSummaryModal({
   stars,
   starLine,
 }: RunSummaryModalProps) {
-  const [shareCopied, setShareCopied] = useState(false);
+  const [shareState, setShareState] = useState<'idle' | 'busy' | 'shared' | 'copied'>('idle');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const imageUrl = shareCard ? `/api/og/run?${encodeShareCard(shareCard)}` : null;
+  const shareText = shareCard ? buildShareText(shareCard) : shareString;
+
+  // Warm the card render (immutable-cached) so the share sheet opens fast.
+  useEffect(() => {
+    if (!imageUrl) return;
+    fetch(imageUrl).catch(() => {});
+  }, [imageUrl]);
 
   // Confetti scales with stars: 1 star none, 2 stars the usual pair of
   // cannons, 3 stars a double burst (second wave lands with the third star).
@@ -90,15 +109,59 @@ export function RunSummaryModal({
     return () => timers.forEach(clearTimeout);
   }, [completed, stars]);
 
-  const handleCopy = async () => {
+  /**
+   * Share, best effort first: the card as a PNG file through the share sheet
+   * (iOS/Android), then text + link through the share sheet, then the
+   * clipboard. A dismissed sheet (AbortError) is not a failure — stop there.
+   */
+  const handleShare = async () => {
+    if (shareState === 'busy') return;
+    setShareState('busy');
+    const settle = (next: 'idle' | 'shared' | 'copied') => {
+      setShareState(next);
+      if (next !== 'idle') setTimeout(() => setShareState('idle'), 1500);
+    };
+    const nav = navigator as Navigator & { canShare?: (data?: ShareData) => boolean };
+    const aborted = (e: unknown) => (e as { name?: string } | null)?.name === 'AbortError';
+
+    if (imageUrl && shareCard && typeof nav.share === 'function' && typeof nav.canShare === 'function') {
+      try {
+        const res = await fetch(imageUrl);
+        if (res.ok) {
+          const file = new File([await res.blob()], `rookies-revenge-${shareCard.iso}.png`, { type: 'image/png' });
+          if (nav.canShare({ files: [file] })) {
+            await nav.share({ files: [file], text: shareText, url: SHARE_URL });
+            settle('shared');
+            return;
+          }
+        }
+      } catch (e) {
+        if (aborted(e)) {
+          settle('idle');
+          return;
+        }
+      }
+    }
+    if (typeof nav.share === 'function') {
+      try {
+        await nav.share({ text: shareText, url: SHARE_URL });
+        settle('shared');
+        return;
+      } catch (e) {
+        if (aborted(e)) {
+          settle('idle');
+          return;
+        }
+      }
+    }
     try {
-      await navigator.clipboard.writeText(shareString);
-      setShareCopied(true);
-      setTimeout(() => setShareCopied(false), 1500);
+      await navigator.clipboard.writeText(`${shareText} ${SHARE_URL}`);
+      settle('copied');
     } catch {
-      /* no clipboard */
+      settle('idle');
     }
   };
+  const shareLabel = shareState === 'busy' ? 'Sharing…' : shareState === 'shared' ? 'Shared!' : shareState === 'copied' ? 'Copied!' : 'Share';
 
   // Build distribution rows: one per level, 1..totalLevels.
   const rows = Array.from({ length: totalLevels }, (_, i) => {
@@ -186,9 +249,20 @@ export function RunSummaryModal({
             {completed ? 'Play again' : 'Try again'}
           </StampButton>
         )}
-        <div className="flex gap-2 justify-center">
-          <button type="button" onClick={handleCopy} className="min-h-[40px] px-4 text-[12px] font-black rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}>
-            {shareCopied ? 'Copied!' : 'Share'}
+        <div className="flex gap-2 justify-center items-center">
+          {shareCard && (
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(true)}
+              aria-label="Preview share card"
+              className="rounded-md overflow-hidden active:scale-95 transition-transform"
+              style={{ width: 44, height: 55, boxShadow: '0 0 0 2px rgba(255,255,255,0.25)' }}
+            >
+              <ShareCardScaled data={shareCard} width={44} />
+            </button>
+          )}
+          <button type="button" onClick={handleShare} disabled={shareState === 'busy'} className="min-h-[40px] px-4 text-[12px] font-black rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}>
+            {shareLabel}
           </button>
           {completed && nextRunName && onNextRun && (
             <button type="button" onClick={onReplay} className="min-h-[40px] px-4 text-[12px] font-black" style={{ color: MUTED }}>
@@ -197,7 +271,57 @@ export function RunSummaryModal({
           )}
         </div>
       </div>
+
+      {previewOpen && shareCard && (
+        <SharePreview data={shareCard} shareLabel={shareLabel} onShare={handleShare} onClose={() => setPreviewOpen(false)} />
+      )}
     </StampCard>
+  );
+}
+
+/** The card at a given width (the 1080x1350 renderer, CSS-scaled). */
+function ShareCardScaled({ data, width }: { data: ShareCardData; width: number }) {
+  const scale = width / SHARE_CARD_W;
+  return (
+    <div style={{ width, height: SHARE_CARD_H * scale, position: 'relative', overflow: 'hidden', pointerEvents: 'none' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, transform: `scale(${scale})`, transformOrigin: 'top left' }}>
+        <ShareCard data={data} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Tap-to-preview: the card as large as the phone allows, with Share under it.
+ * A thumbnail is all the summary card has room for (it must fit one screen).
+ */
+function SharePreview({ data, shareLabel, onShare, onClose }: { data: ShareCardData; shareLabel: string; onShare: () => void; onClose: () => void }) {
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const measure = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // Leave room for the buttons (≈130px) and side padding.
+      setWidth(Math.floor(Math.min(vw - 32, ((vh - 150) * SHARE_CARD_W) / SHARE_CARD_H, 520)));
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+  return (
+    <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-3 px-4" style={{ background: 'rgba(0,0,0,0.85)' }} onClick={onClose} role="dialog" aria-label="Share card preview">
+      <div className="rounded-xl overflow-hidden" style={{ boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }} onClick={(e) => e.stopPropagation()}>
+        {width > 0 && <ShareCardScaled data={data} width={width} />}
+      </div>
+      <div className="flex gap-2 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+        <StampButton color={REVENGE_RED} shadow={REVENGE_RED_DARK} onClick={onShare}>
+          {shareLabel}
+        </StampButton>
+      </div>
+      <button type="button" onClick={onClose} className="min-h-[44px] px-4 text-[13px] font-black" style={{ color: MUTED }}>
+        Close
+      </button>
+    </div>
   );
 }
 

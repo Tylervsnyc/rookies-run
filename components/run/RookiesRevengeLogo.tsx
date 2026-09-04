@@ -1,6 +1,7 @@
 'use client';
 
 import { ROOK_BLOCKS, lighten, darken } from '@/lib/daily-rook-blocks';
+import { REVENGE_RED, REVENGE_RED_DARK } from '@/lib/brand';
 
 /**
  * Rookie's Revenge — canonical mark.
@@ -12,8 +13,7 @@ import { ROOK_BLOCKS, lighten, darken } from '@/lib/daily-rook-blocks';
  */
 
 export const REVENGE_TAGLINE = 'The game ended. And Rookie took that personally.';
-export const REVENGE_RED = '#E53935';
-export const REVENGE_RED_DARK = '#B71C1C';
+export { REVENGE_RED, REVENGE_RED_DARK } from '@/lib/brand';
 
 const COLS = 5;
 const ROWS = 6;

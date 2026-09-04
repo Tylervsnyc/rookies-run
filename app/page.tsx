@@ -89,7 +89,7 @@ import {
 } from '@/lib/run/seed';
 import { getRunIdForDate, getTodayInTZ, isValidDate } from '@/lib/run/daily';
 import { todaysAbilities } from '@/lib/run/daily-kit';
-import { buildShareString } from '@/lib/run/share';
+import { buildShareString, sharePiecesFrom, type ShareCardData } from '@/lib/run/share';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import type { BoardState, Coord, RunPuzzle } from '@/lib/run/types';
 
@@ -1602,6 +1602,32 @@ export default function RookiesRunPage() {
     currentStreak: stats.currentStreak,
   });
 
+  // The share IMAGE (components/run/ShareCard via /api/og/run): the final
+  // board, the day's kit, moves vs par, stars, streak. Built once the run is
+  // over; `state` is then the last level's final position (on a completed run,
+  // Rookie sits where the king was).
+  const shareCard = useMemo<ShareCardData | null>(() => {
+    if (!runFinished) return null;
+    const splits = splitsRef.current;
+    const kitIds = state.testkit ?? Array.from(new Set(state.abilities.map((a) => a.id)));
+    return {
+      runName: runDef.name,
+      iso: meta.iso,
+      difficulty: isStc ? undefined : difficultyDef.name,
+      completed: runComplete,
+      levelReached,
+      totalLevels,
+      moves: splits.reduce((n, s) => n + s.moves, 0) + (runComplete ? 0 : state.moveCount),
+      par: parMovesForRun(meta.runId),
+      stars: scorePair?.stars ?? 0,
+      kit: kitIds.slice(0, 4),
+      rookie: toSquare(state.rookie),
+      enemies: sharePiecesFrom(state.pieces),
+      allies: sharePiecesFrom(state.allies),
+      streak: stats.currentStreak,
+    };
+  }, [runFinished, runComplete, state, runDef.name, meta.iso, meta.runId, isStc, difficultyDef.name, levelReached, totalLevels, scorePair, stats.currentStreak]);
+
   void puzzle;
 
   if (showOnboarding) {
@@ -1975,6 +2001,7 @@ export default function RookiesRunPage() {
           completed={runComplete}
           stats={stats}
           shareString={shareString}
+          shareCard={shareCard}
           score={scorePair?.classic}
           timedScore={scorePair?.timed}
           timeMs={Math.round(activeMsRef.current)}

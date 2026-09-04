@@ -12,12 +12,14 @@
  * All five use the same fake run data (RUN below).
  */
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 import { defaultPieces } from 'react-chessboard';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { artFile } from '@/components/run/AbilityCard';
 import { REVENGE_RED, REVENGE_RED_DARK, REVENGE_TAGLINE, RevengeMarkSvg, RevengeReticleSvg } from '@/components/run/RookiesRevengeLogo';
 import { ABILITY_DEFS, type AbilityId } from '@/lib/run/abilities';
+import { ShareCard } from '@/components/run/ShareCard';
+import { encodeShareCard, type ShareCardData } from '@/lib/run/share';
 
 // ---------------------------------------------------------------------------
 // Fake run data (shared by all five cards).
@@ -227,53 +229,38 @@ function FinalPositionCard() {
 // Option 2 — The kit.
 // ---------------------------------------------------------------------------
 
+/**
+ * Option 2 is the REAL share (2026-09-04): `components/run/ShareCard` is the
+ * renderer the game ships — RunSummaryModal previews it and `/api/og/run`
+ * rasterises it for the share sheet. Same fake run, expressed as ShareCardData.
+ * The mockup's looping replay is gone: a still can't loop, so it's the final
+ * position (the server PNG is shown next to the DOM render below the grid).
+ */
+const SHARE_DATA: ShareCardData = {
+  runName: RUN.name,
+  iso: '2026-09-03',
+  difficulty: 'Hard',
+  completed: true,
+  levelReached: RUN.level,
+  totalLevels: RUN.totalLevels,
+  moves: RUN.moves,
+  par: RUN.par,
+  stars: RUN.stars,
+  kit: RUN.kit,
+  rookie: 'e8',
+  enemies: [
+    { type: 'p', sq: 'a7' },
+    { type: 'p', sq: 'f6' },
+    { type: 'n', sq: 'c6' },
+    { type: 'b', sq: 'g5' },
+  ],
+  allies: [],
+  streak: 4,
+};
+const SHARE_OG_URL = `/api/og/run?${encodeShareCard(SHARE_DATA)}`;
+
 function KitFanCard() {
-  // "GIF of the last run": the board steps through the final level's last
-  // positions and loops (this is the preview; the real share would encode
-  // these frames as an animated GIF).
-  const [frame, setFrame] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setFrame((f) => (f + 1) % (REPLAY.length + 1)), 900);
-    return () => clearInterval(t);
-  }, []);
-  const last = frame >= REPLAY.length;
-  const pos = last ? FINAL : REPLAY[frame].pos;
-  return (
-    <div style={{ width: 1080, height: 1350, background: `radial-gradient(ellipse at 50% 30%, #5a3d0d 0%, ${NAVY_MID} 45%, ${NAVY} 100%)`, color: '#fff', padding: 48, boxSizing: 'border-box', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ fontSize: 64, fontWeight: 900, lineHeight: 1.05 }}>{RUN.name}</div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: 6 }}>{RUN.difficulty} &middot; {RUN.date}</div>
-        </div>
-        <Stars stars={RUN.stars} size={72} gap={6} />
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-        <MiniBoard pos={pos} size={600} lit={last} radius={20} border="10px solid rgba(0,0,0,0.45)" />
-      </div>
-      <div style={{ textAlign: 'center', marginTop: 10, fontSize: 28, fontWeight: 800, color: 'rgba(255,255,255,0.7)', minHeight: 36 }}>
-        {last ? `Got him. ${RUN.moves} moves · par ${RUN.par}` : REPLAY[frame].caption}
-      </div>
-
-      <div style={{ marginTop: 10, textAlign: 'center', fontSize: 24, fontWeight: 900, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.3em' }}>Rookie&rsquo;s Abilities</div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 20, marginTop: 8 }}>
-        {RUN.kit.map((id) => (
-          <KitCard key={id} id={id} width={176} />
-        ))}
-      </div>
-
-      {/* CTA — a challenge, not a logo (Tyler 2026-09-03: "needs a stronger CTA"). */}
-      <div style={{ position: 'absolute', left: 48, right: 48, bottom: 36, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, padding: '18px 22px 18px 28px', borderRadius: 28, background: REVENGE_RED, boxShadow: `0 10px 0 ${REVENGE_RED_DARK}, 0 24px 40px rgba(0,0,0,0.45)` }}>
-        <div>
-          <div style={{ fontSize: 40, fontWeight: 900, lineHeight: 1, letterSpacing: '-0.01em' }}>Beat my {RUN.moves} moves.</div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#FFD6D6', marginTop: 8 }}>Same run, same abilities. Today only.</div>
-        </div>
-        <div style={{ flexShrink: 0, background: '#fff', color: REVENGE_RED, borderRadius: 18, padding: '18px 26px', fontSize: 28, fontWeight: 900, letterSpacing: '0.04em', textTransform: 'uppercase', boxShadow: '0 6px 0 rgba(0,0,0,0.25)', textAlign: 'center', lineHeight: 1.1 }}>
-          Play free<br /><span style={{ fontSize: 20, fontWeight: 800, letterSpacing: 0, textTransform: 'none', color: '#8a1f1a' }}>run.chesspath.app</span>
-        </div>
-      </div>
-    </div>
-  );
+  return <ShareCard data={SHARE_DATA} />;
 }
 
 // ---------------------------------------------------------------------------
@@ -439,7 +426,7 @@ function ReplayStripCard() {
 
 const OPTIONS: { name: string; pitch: string; render: () => ReactNode }[] = [
   { name: '1. Final position', pitch: 'The last board, big. Rookie lit red on the king’s square, RUN COMPLETE stamp, stars. The proof shot.', render: () => <FinalPositionCard /> },
-  { name: '2. Rookie’s Abilities (picked)', pitch: 'Big board replaying the last level as a looping GIF, the three abilities under it.', render: () => <KitFanCard /> },
+  { name: '2. Rookie’s Abilities (SHIPPED)', pitch: 'The real share card (components/run/ShareCard): final board, the day’s abilities, challenge CTA. Wired into the run-complete popup + /api/og/run.', render: () => <KitFanCard /> },
   { name: '3. The stat card', pitch: 'The Stamp popup as a card: level 10, CAPTURED, pips, stars, chips, kit icons and a moves-per-level strip. For people who like numbers.', render: () => <StatCard /> },
   { name: '4. The taunt', pitch: 'Poster. The tagline as the hero, a struck-through king, stars and the kit as tiny icons. Minimal, brand-first, works even if you know nothing about the game.', render: () => <TauntCard /> },
   { name: '5. The replay strip', pitch: 'Comic strip of the last four positions of level 10, ending in the capture. Tells the story instead of showing the score.', render: () => <ReplayStripCard /> },
@@ -469,6 +456,13 @@ export default function ShareOptionsPage() {
             </div>
           ))}
         </div>
+
+        <h2 className="mt-12 text-xl font-black" style={{ color: NAVY }}>Option 2, server-rendered</h2>
+        <p className="mt-1 text-sm max-w-2xl" style={{ color: '#3a4a7a' }}>
+          The PNG the share sheet actually sends, from <code>{SHARE_OG_URL.slice(0, 60)}…</code> (next/og + DM Sans). Should match the DOM card above.
+        </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={SHARE_OG_URL} alt="Server-rendered share card" width={360} height={450} className="mt-4 rounded-[14px]" style={{ width: 360, height: 450, boxShadow: '0 14px 36px rgba(15,28,63,0.25)' }} />
       </div>
     </div>
   );
