@@ -14,6 +14,7 @@ import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { PieceBlocks } from './PieceBlocks';
+import { LAVA_CSS, LAVA_SRC, LavaBubbles, lavaReducedMotionCss, lavaSquareStyle } from './LavaHazards';
 
 /** Red alarms Rookie cycles through, one per time she lands in check. */
 const ROOKIE_ALARM_CYCLE: RookieAlarm[] = ['siren', 'heartbeat', 'sos', 'shiver', 'ringPulse', 'flickerOut'];
@@ -101,10 +102,7 @@ const GOAL_MOTES: Array<[number, number, number, number, number]> = [
   [75, 25, 3, 2.1, 4.8], [79, 60, 2, 0.8, 4.0], [84, 15, 4, 1.5, 5.0],
   [88, 70, 3, 0.2, 4.5], [93, 40, 2, 1.9, 4.4], [97, 85, 3, 1.0, 4.6],
 ];
-// Hazard squares — dark crimson wash with a subtle no-entry vibe.
-const HAZARD_BG = 'rgba(190, 18, 60, 0.45)';
-const HAZARD_PATTERN =
-  'repeating-linear-gradient(45deg, rgba(0,0,0,0.18) 0 6px, transparent 6px 12px)';
+// Hazard squares — painted Mario lava lake + stone bank (see LavaHazards.tsx).
 // Selected-piece highlight — same blue as /learn (BasicsTutorial pattern).
 const SELECTED_BG = 'rgba(28, 176, 246, 0.18)';
 const SELECTED_RING = 'inset 0 0 0 3px rgba(28, 176, 246, 0.75)';
@@ -387,14 +385,11 @@ export function RunBoard({
       };
     }
 
-    // Hazard squares — dark wash + hatched pattern.
-    for (const h of state.hazards) {
-      const sq = toSquare(h);
-      styles[sq] = {
-        ...styles[sq],
-        backgroundColor: HAZARD_BG,
-        backgroundImage: HAZARD_PATTERN,
-      };
+    // Hazard squares — one continuous lava lake with a stone bank on the
+    // edges that don't touch other lava. Dots/rings below layer on top of it.
+    const hazardSet = new Set(state.hazards.map(toSquare));
+    for (const sq of hazardSet) {
+      styles[sq] = { ...styles[sq], ...lavaSquareStyle(sq, hazardSet) };
     }
 
     // Controlled summons (Squire family): a soft rainbow ring says "tap me"
@@ -783,6 +778,8 @@ export function RunBoard({
           0%, 100% { opacity: 0; transform: translate(0, 0) scale(0.5); }
           50%      { opacity: 1; transform: translate(4px, -6px) scale(1); }
         }
+        ${LAVA_CSS}
+        ${lavaReducedMotionCss(state.hazards.map(toSquare))}
         @keyframes rookiesRunAegisShieldPulse {
           0%, 100% { filter: drop-shadow(0 0 6px rgba(125, 211, 252, 1)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.85)); }
           50%      { filter: drop-shadow(0 0 12px rgba(125, 211, 252, 1)) drop-shadow(0 0 22px rgba(56, 189, 248, 1)); }
@@ -1009,6 +1006,12 @@ export function RunBoard({
             animationDurationInMs: slideMs ?? PIECE_SLIDE_MS,
           }}
         />
+        {state.hazards.length > 0 && (
+          <>
+            <link rel="preload" as="image" href={LAVA_SRC} />
+            <LavaBubbles hazards={state.hazards.map(toSquare)} />
+          </>
+        )}
         {state.status === 'playing' && kingGoal && kingSquare && (
           <KingGoalLabel
             square={kingSquare}

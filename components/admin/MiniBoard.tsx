@@ -4,6 +4,7 @@
  */
 
 import type { LevelView } from '@/lib/admin/content-data';
+import { lavaSquareStyle } from '@/lib/run/lava-style';
 
 const GLYPH: Record<string, string> = {
   pawn: '♟',
@@ -32,13 +33,15 @@ export function MiniBoard({ level, size = 112 }: { level: LevelView; size?: numb
       const dark = (file + rank) % 2 === 0;
       let bg = dark ? '#cfe0f0' : '#f4f8fc';
       if (pen.has(id)) bg = dark ? '#f5d58a' : '#fbe7b3';
-      if (hazards.has(id)) bg = '#4b5563';
       const piece = pieces.get(id);
       const isRookie = id === rookie;
       cellsOut.push(
         <div
           key={id}
-          style={{ width: cell, height: cell, background: bg, fontSize: cell * 0.78, lineHeight: `${cell}px` }}
+          style={{
+            width: cell, height: cell, background: bg, fontSize: cell * 0.78, lineHeight: `${cell}px`,
+            ...(hazards.has(id) ? lavaSquareStyle(id, hazards, { animate: false, rimPx: 1 }) : null),
+          }}
           className="flex items-center justify-center select-none"
           title={id}
         >

@@ -20,6 +20,7 @@ import type {
 } from '@/lib/run/abilities';
 import type { SerializedBoard } from '@/scripts/run-playtest/types';
 import { toSquare } from '@/lib/run/types';
+import { lavaSquareStyle } from '@/lib/run/lava-style';
 import type { PieceType, RookieForm } from '@/lib/run/types';
 
 // White-piece glyphs for Rookie (she's our player → light side).
@@ -64,7 +65,6 @@ const GOAL_BG =
   'linear-gradient(180deg, #fff1b8 0%, #ffd56a 45%, #e89c1a 100%)';
 
 // Hazard wash.
-const HAZARD_BG = 'rgba(190, 18, 60, 0.55)';
 
 // Frozen square wash.
 const FROZEN_BG = 'rgba(125, 211, 252, 0.55)';
@@ -108,8 +108,9 @@ export function ReplayBoard({
         background = GOAL_BG;
         backgroundColor = undefined;
       } else if (isHazard) {
+        // Painted lava lake + stone bank, static (no drift) for replays.
         background = '';
-        backgroundColor = HAZARD_BG;
+        backgroundColor = undefined;
       } else if (isFrozen) {
         background = '';
         backgroundColor = FROZEN_BG;
@@ -150,6 +151,7 @@ export function ReplayBoard({
             background,
             backgroundColor,
             boxShadow,
+            ...(isHazard ? lavaSquareStyle(sq, hazardSet, { animate: false, rimPx: 2 }) : null),
           }}
         >
           {glyph && (
