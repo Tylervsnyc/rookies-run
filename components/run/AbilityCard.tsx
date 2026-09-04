@@ -14,7 +14,7 @@
  * uses the `.foil-card` class from globals.css.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type {
   AbilityBlurb,
   AbilityId,
@@ -617,7 +617,10 @@ export function AbilityCardMini({
 }
 
 // ---------------------------------------------------------------------------
-// FULL — used in the offer modal.
+// FULL — the big reveal card (AbilityUnlockModal). Sized by its parent:
+// every internal measurement is in container-query units of the card
+// width, so the same markup renders at 200px or 420px wide. The offer
+// modal draws its own cards (AbilityOfferModal) and does NOT use this.
 // ---------------------------------------------------------------------------
 
 interface FullProps {
@@ -628,6 +631,19 @@ interface FullProps {
   badge?: string;
   onClick: () => void;
 }
+
+/**
+ * Safari/WebKit drops `overflow: hidden` + `border-radius` clipping on
+ * descendants of a 3D-transformed ancestor (the flip-in animation), so the
+ * art poked past the rounded frame on iOS. A mask + isolated layer forces
+ * a real compositing clip. Chrome never needed it; harmless there.
+ */
+const CLIP: CSSProperties = {
+  overflow: 'hidden',
+  isolation: 'isolate',
+  WebkitMaskImage: '-webkit-radial-gradient(white, black)',
+  transform: 'translateZ(0)',
+};
 
 export function AbilityCardFull({
   id,
@@ -643,22 +659,23 @@ export function AbilityCardFull({
     <button
       type="button"
       onClick={onClick}
-      className="relative w-full max-w-[200px] mx-auto group active:scale-[0.98] transition-transform"
+      className="relative block w-full mx-auto group active:scale-[0.98] transition-transform"
       style={{
-        aspectRatio: '4 / 7',
+        aspectRatio: '5 / 7',
         background: t.border,
-        borderRadius: 14,
-        padding: 5,
+        borderRadius: '5cqw',
+        padding: '2cqw',
+        containerType: 'inline-size',
         boxShadow: t.halo
-          ? `${t.halo}, 0 6px 18px rgba(0,0,0,0.35)`
-          : '0 6px 18px rgba(0,0,0,0.35)',
+          ? `${t.halo}, 0 10px 30px rgba(0,0,0,0.45)`
+          : '0 10px 30px rgba(0,0,0,0.45)',
       }}
     >
       <div
-        className={`relative w-full h-full rounded-[10px] flex flex-col overflow-hidden ${
-          t.foil ? 'foil-card' : ''
-        }`}
+        className={`relative w-full h-full flex flex-col ${t.foil ? 'foil-card' : ''}`}
         style={{
+          ...CLIP,
+          borderRadius: '3.5cqw',
           background: t.foil ? undefined : t.face,
           color: t.text,
         }}
@@ -666,8 +683,12 @@ export function AbilityCardFull({
         {/* Badge (upgrade only — new cards have no badge) */}
         {badge ? (
           <div
-            className="absolute top-1.5 right-1.5 z-10 text-[9px] font-black uppercase tracking-[0.08em] px-1.5 py-0.5 rounded"
+            className="absolute z-10 font-black uppercase tracking-[0.08em] rounded"
             style={{
+              top: '2cqw',
+              right: '2cqw',
+              fontSize: 'clamp(8px, 3.2cqw, 12px)',
+              padding: '0.6cqw 2cqw',
               background: t.gem,
               color: t.face,
             }}
@@ -676,34 +697,36 @@ export function AbilityCardFull({
           </div>
         ) : null}
 
-        {/* Top banner — fixed height so name length never shifts the art. */}
+        {/* Name banner — fixed height, flex-centered both ways (no
+            -webkit-box here: it overrides flex and pins the text to the
+            top edge, which is the "Smoke isn't centered" bug). */}
         <div
-          className="px-3 text-center flex items-center justify-center shrink-0"
+          className="shrink-0 flex items-center justify-center text-center"
           style={{
-            height: '12%',
+            height: '11%',
+            padding: '0 4cqw',
             fontFamily: "'DM Sans', system-ui, sans-serif",
             fontWeight: 900,
-            fontSize: 'clamp(13px, 3.6cqw, 17px)',
-            lineHeight: 1.05,
+            fontSize: 'clamp(14px, 8cqw, 34px)',
+            lineHeight: 1,
             letterSpacing: '0.01em',
             color: t.text,
             textShadow: t.foil ? '0 1px 2px rgba(255,255,255,0.7)' : 'none',
-            containerType: 'inline-size',
             overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-            WebkitLineClamp: 2,
           }}
         >
-          {def.name}
+          <span className="block w-full truncate">{def.name}</span>
         </div>
 
-        {/* Art window — fixed height so all cards line up. */}
+        {/* Art window — the hero. Inset from the frame, own rounded clip. */}
         <div
-          className="mx-2.5 rounded-md overflow-hidden relative shrink-0"
+          className="relative shrink-0"
           style={{
+            ...CLIP,
+            margin: '0 4cqw',
+            height: '60%',
+            borderRadius: '2.5cqw',
             background: t.art,
-            height: '54%',
             boxShadow:
               'inset 0 0 14px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(0,0,0,0.18)',
           }}
@@ -712,47 +735,46 @@ export function AbilityCardFull({
           <img
             src={`/abilities/${artFile(id)}`}
             alt=""
-            className="w-full h-full object-cover"
+            className="block w-full h-full object-cover"
             loading="eager"
             decoding="async"
             draggable={false}
           />
         </div>
 
-        {/* Text box — fills remaining space; text shrinks to fit. */}
+        {/* Text box — fills remaining space. */}
         <div
-          className="mx-2.5 mt-2 mb-7 flex-1 min-h-0 rounded-md px-2.5 py-1.5 flex flex-col gap-1 overflow-hidden"
+          className="flex-1 min-h-0 flex flex-col text-left overflow-hidden"
           style={{
+            margin: '3cqw 4cqw',
+            marginBottom: '9cqw',
+            padding: '2.5cqw 3.5cqw',
+            gap: '1cqw',
+            borderRadius: '2.5cqw',
             background: 'rgba(255,255,255,0.6)',
             boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.12)',
-            containerType: 'inline-size',
           }}
         >
           <p
             className="leading-snug font-black"
-            style={{
-              color: '#241b08',
-              fontSize: 'clamp(9.5px, 2.6cqw, 11.5px)',
-            }}
+            style={{ color: '#241b08', fontSize: 'clamp(10px, 4.4cqw, 17px)' }}
           >
             {description.what}
           </p>
           <p
             className="leading-snug font-medium"
-            style={{
-              color: '#4a3a18',
-              fontSize: 'clamp(8.5px, 2.3cqw, 10px)',
-            }}
+            style={{ color: '#4a3a18', fontSize: 'clamp(9px, 3.8cqw, 15px)' }}
           >
             {description.how}
           </p>
           {description.limit ? (
             <p
-              className="leading-none font-bold uppercase tracking-wider mt-auto pt-0.5"
+              className="leading-none font-bold uppercase tracking-wider mt-auto"
               style={{
                 color: '#6b5223',
                 opacity: 0.8,
-                fontSize: 'clamp(7.5px, 2cqw, 9px)',
+                paddingTop: '1cqw',
+                fontSize: 'clamp(7.5px, 3cqw, 12px)',
               }}
             >
               {description.limit}
@@ -761,24 +783,27 @@ export function AbilityCardFull({
         </div>
 
         {/* Footer — tier gem bottom-right */}
-        <div className="absolute bottom-1.5 right-2 flex items-center gap-1">
-          <span
-            className="text-[10px] font-black"
-            style={{
-              width: 18,
-              height: 18,
-              borderRadius: 999,
-              background: t.gem,
-              color: t.face,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 0 0 1.5px rgba(0,0,0,0.18)',
-            }}
-          >
-            {tier}
-          </span>
-        </div>
+        <span
+          className="absolute font-black"
+          style={{
+            bottom: '2.5cqw',
+            right: '3.5cqw',
+            width: '7cqw',
+            height: '7cqw',
+            minWidth: 18,
+            minHeight: 18,
+            fontSize: 'clamp(10px, 4cqw, 16px)',
+            borderRadius: 999,
+            background: t.gem,
+            color: t.face,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 0 0 1.5px rgba(0,0,0,0.18)',
+          }}
+        >
+          {tier}
+        </span>
       </div>
     </button>
   );

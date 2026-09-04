@@ -7,6 +7,8 @@ import { BreathingRook } from '@/components/ui/BreathingRook';
 import { fireConfetti } from '@/lib/confetti';
 import { LevelClearedModal } from '@/components/run/LevelClearedModal';
 import { LevelLostModal } from '@/components/run/LevelLostModal';
+import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
+import type { AbilityId } from '@/lib/run/abilities';
 
 /**
  * MOCK — five animated "level cleared" popups + the matching "captured"
@@ -388,6 +390,22 @@ export default function RevengePopupsMock() {
             <Phone label="Cleared" onReplay={() => replay('real')}><div key={`real-c-${seed.real ?? 0}`} className="absolute inset-0"><Backdrop /><LevelClearedModal level={4} totalLevels={10} tempo={5} runName="The Fortress" onNext={() => {}} /></div></Phone>
             <Phone label="Captured" onReplay={() => replay('real')}><div key={`real-l-${seed.real ?? 0}`} className="absolute inset-0"><Backdrop /><LevelLostModal level={5} totalLevels={10} retriesLeft={2} difficultyLabel="Normal" onRetry={() => {}} onGiveUp={() => {}} /></div></Phone>
             <Phone label="No way through" onReplay={() => replay('real')}><div key={`real-u-${seed.real ?? 0}`} className="absolute inset-0"><Backdrop /><LevelLostModal level={7} totalLevels={10} retriesLeft={Infinity} reason="unwinnable" difficultyLabel="Rookie" onRetry={() => {}} onGiveUp={() => {}} /></div></Phone>
+          </div>
+        </section>
+        <section className="flex flex-col gap-4">
+          <div>
+            <div className="text-lg font-black" style={GOLD_TEXT}>SHIPPED · Ability unlocked (real component)</div>
+            <div className="text-sm max-w-[70ch]" style={{ color: 'rgba(255,255,255,0.65)' }}>AbilityUnlockModal as it renders after a run earns a new card. Replay re-runs the reveal.</div>
+          </div>
+          <div className="flex flex-wrap justify-center gap-8">
+            {(['smoke', 'boulder', 'rewind', 'duchess'] as AbilityId[]).map((id) => (
+              <Phone key={id} label={id} onReplay={() => replay(`unlock-${id}`)}>
+                <div key={`unlock-${id}-${seed[`unlock-${id}`] ?? 0}`} className="absolute inset-0">
+                  <Backdrop />
+                  <AbilityUnlockModal abilityId={id} onClose={() => replay(`unlock-${id}`)} />
+                </div>
+              </Phone>
+            ))}
           </div>
         </section>
         {OPTIONS.map(({ key, label, blurb, C }) => (
