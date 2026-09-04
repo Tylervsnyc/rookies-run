@@ -310,10 +310,10 @@
         "at": "2026-08-18"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     },
     {
@@ -324,10 +324,10 @@
       "created": "2026-08-30",
       "notes": "More pawns every level. Bodies, not brains. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L9 freeze-ray only 69% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -345,10 +345,10 @@
       "created": "2026-08-30",
       "notes": "Few pawns, heavy pieces. Every line is watched. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L7 knight-hop only 75% (every finisher must be at least 80%); L8 freeze-ray only 75% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -366,10 +366,10 @@
       "created": "2026-08-30",
       "notes": "Walls make the room. Pawns make the door. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L9 freeze-ray only 75% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -387,10 +387,10 @@
       "created": "2026-08-30",
       "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable — a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
         "at": "2026-09-01",
@@ -520,10 +520,10 @@
         "at": "2026-09-01"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     },
     {
@@ -610,10 +610,10 @@
       "created": "2026-09-01",
       "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell).",
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
         "at": "2026-09-02",
@@ -638,10 +638,10 @@
         "at": "2026-09-02"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     },
     {
@@ -659,10 +659,10 @@
         "at": "2026-09-02"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     },
     {
@@ -680,10 +680,10 @@
         "at": "2026-09-02"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     },
     {
@@ -701,10 +701,10 @@
         "at": "2026-09-02"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
         "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     },
     {
@@ -753,10 +753,10 @@
         "at": "2026-09-03"
       },
       "testing": {
-        "lastRun": "2026-09-03",
+        "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L8 knight-hop only 50% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-03.md"
+        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L8 knight-hop only 69% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       }
     }
   ]
