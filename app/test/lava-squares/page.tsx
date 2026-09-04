@@ -2,8 +2,8 @@
 
 /**
  * DESIGN PAGE — lava hazard squares (Tyler 2026-09-04: "Lava is really funny,
- * and people know."). Six pure-CSS/SVG treatments for the squares Rookie can't
- * land on, shown on the real board renderer (ChessPathBoard + RookieCell) with
+ * and people know." then "too annoying, it should be a subtle lava that slowly
+ * bubbles"). One quiet idea at four intensities, shown on the real board renderer (ChessPathBoard + RookieCell) with
  * enemies on adjacent squares and Rookie's legal-move dots visible, so we can
  * check legibility and that lava never reads as a legal target.
  *
@@ -65,229 +65,124 @@ function cellPos(sq: string): CSSProperties {
 }
 
 // ── Lava treatments ──────────────────────────────────────────────────────────
-type Treatment = 'current' | 'flat' | 'glow' | 'bubbles' | 'crust' | 'cooled' | 'pixel';
+// Tyler 2026-09-04 v2: "these are all too annoying, it should be a subtle lava
+// that slowly bubbles." ONE idea, four intensities: quiet, dim lava with a dark
+// crust rim, and a single small bubble that swells and pops every 4–8s per
+// square, de-synced so the board never pulses together. Transform/opacity only.
+type Treatment = 'current' | 'ember' | 'simmer' | 'lowboil' | 'brightrare';
 
-const CRUST_DARK = '#4a1206';
-const FLAT_BASE =
-  'radial-gradient(circle at 30% 35%, #ffe066 0%, #ffb020 26%, transparent 29%),' +
-  'radial-gradient(circle at 72% 68%, #ffcf3d 0%, #ff9a1c 20%, transparent 23%),' +
-  'linear-gradient(160deg, #ff7a12 0%, #ec4a0c 55%, #c9300a 100%)';
+interface Intensity {
+  id: Treatment;
+  name: string;
+  pitch: string;
+  use: string;
+  /** Lava gradient (low saturation, deep red/orange). */
+  base: string;
+  rim: string;
+  crack: string;
+  /** Bubble diameter as % of square. */
+  bubble: number;
+  /** Period range in seconds: [min, max]. Each square picks inside it. */
+  period: [number, number];
+}
 
-/** Dark crust cracks — one SVG, reused by flat / glow / bubbles. */
-function Cracks({ color = CRUST_DARK, width = 5 }: { color?: string; width?: number }) {
+const INTENSITIES: Intensity[] = [
+  {
+    id: 'ember',
+    name: 'A · Ember (dimmest)',
+    pitch: 'Deep, almost brown-red lava. One small bubble every 6–9s. You notice it only when you look for it.',
+    use: 'Quietest. Safe for boards with 20+ hazards and never competes with pieces. Risk: on a dim phone screen it can read as "mud" rather than lava.',
+    base: 'linear-gradient(160deg, #7a2812 0%, #5e1c0e 60%, #4a150b 100%)',
+    rim: '#2b0d06',
+    crack: 'rgba(30,10,5,0.55)',
+    bubble: 13,
+    period: [6, 9],
+  },
+  {
+    id: 'simmer',
+    name: 'B · Simmer',
+    pitch: 'A notch warmer. One bubble every 5–8s, a little bigger. Still background.',
+    use: 'The middle. Reads as lava at a glance without pulling the eye off Rookie. My pick for the default.',
+    base: 'linear-gradient(160deg, #9a3316 0%, #7a2610 60%, #5e1c0c 100%)',
+    rim: '#30100a',
+    crack: 'rgba(35,10,5,0.5)',
+    bubble: 17,
+    period: [5, 8],
+  },
+  {
+    id: 'lowboil',
+    name: 'C · Low boil',
+    pitch: 'Brightest of the set (still muted orange-red), bubble every 4–6s and larger. The most "alive."',
+    use: 'Good for a 7-square moat; on a scattered 15+ layout the eye starts counting bubbles. Use only if A/B feel dead.',
+    base: 'linear-gradient(160deg, #b8421a 0%, #963012 60%, #722210 100%)',
+    rim: '#361208',
+    crack: 'rgba(40,12,5,0.45)',
+    bubble: 21,
+    period: [4, 6],
+  },
+  {
+    id: 'brightrare',
+    name: 'D · Bright, rare',
+    pitch: 'Lava as bright as C, but the bubble is small and only every 7–10s. Tests whether brightness or motion is the annoying part.',
+    use: 'Control case. If this feels fine and C feels busy, motion is the lever, not color — ship B/C colors with D timing.',
+    base: 'linear-gradient(160deg, #b8421a 0%, #963012 60%, #722210 100%)',
+    rim: '#361208',
+    crack: 'rgba(40,12,5,0.45)',
+    bubble: 13,
+    period: [7, 10],
+  },
+];
+
+/** Faint crust cracks — low contrast, they only help the square read as rock. */
+function Cracks({ color }: { color: string }) {
   return (
     <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="absolute inset-0 h-full w-full">
-      <g fill="none" stroke={color} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round">
+      <g fill="none" stroke={color} strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
         <path d="M-2 30 L18 38 L30 22 L45 40 L62 30 L80 45 L102 38" />
         <path d="M20 102 L28 78 L45 85 L55 65 L75 78 L102 70" />
-        <path d="M-2 62 L14 70 L26 58" />
         <path d="M62 -2 L70 12 L86 6" />
       </g>
     </svg>
   );
 }
 
-/** Glowing seams — shared by crust / cooled. Three strokes: halo, seam, hot core. */
-function Seams({ halo, seam, core, dim = false }: { halo: string; seam: string; core: string; dim?: boolean }) {
-  const d1 = 'M-2 34 L16 42 L30 24 L46 44 L64 32 L82 48 L102 40';
-  const d2 = 'M22 102 L30 80 L48 88 L58 66 L78 80 L102 72';
-  const d3 = 'M-2 66 L14 74 L28 60';
-  const d4 = 'M60 -2 L70 14 L88 8';
-  return (
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden className="absolute inset-0 h-full w-full">
-      {!dim && (
-        <g fill="none" stroke={halo} strokeWidth={11} strokeLinecap="round" strokeLinejoin="round" opacity={0.8}>
-          <path d={d1} /><path d={d2} /><path d={d3} /><path d={d4} />
-        </g>
-      )}
-      <g fill="none" stroke={seam} strokeWidth={dim ? 2.6 : 4.2} strokeLinecap="round" strokeLinejoin="round">
-        <path d={d1} /><path d={d2} /><path d={d3} /><path d={d4} />
-      </g>
-      <g fill="none" stroke={core} strokeWidth={dim ? 0.9 : 1.3} strokeLinecap="round" strokeLinejoin="round">
-        <path d={d1} /><path d={d2} /><path d={d3} /><path d={d4} />
-      </g>
-    </svg>
-  );
+/** Deterministic per-square jitter so squares never bubble in sync (stable across renders). */
+function jitter(seed: number, salt: number): number {
+  const x = Math.sin(seed * 12.9898 + salt * 78.233) * 43758.5453;
+  return x - Math.floor(x);
 }
 
-// Fixed bubble/spark slots so the pattern isn't identical on every square: we
-// rotate through 3 phase sets by square index.
-const BUBBLES: Array<[number, number, number, number]> = [
-  // [left%, top%, sizePct, delayS]
-  [22, 62, 22, 0.0], [66, 30, 16, 0.7], [58, 72, 13, 1.3],
-];
-const SPARKS: Array<[number, number, number]> = [[30, 40, 0.2], [72, 55, 0.9]];
-
 function LavaCell({ kind, index }: { kind: Treatment; index: number }) {
-  const phase = (index % 3) * 0.45;
-
   if (kind === 'current') {
     return <div className="absolute inset-0" style={{ backgroundColor: HAZARD_BG, backgroundImage: HAZARD_PATTERN }} />;
   }
-
-  if (kind === 'flat') {
-    return (
-      <div className="absolute inset-0" style={{ backgroundImage: FLAT_BASE, boxShadow: `inset 0 0 0 3px ${CRUST_DARK}` }}>
-        <Cracks />
-      </div>
-    );
-  }
-
-  if (kind === 'glow') {
-    return (
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: FLAT_BASE,
-          boxShadow: `inset 0 0 0 3px ${CRUST_DARK}`,
-          animation: `lavaGlow 2.8s ease-in-out ${-phase}s infinite`,
-        }}
-      >
-        {/* Hot-spot layer: only opacity animates (compositor-cheap). */}
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 40% 45%, rgba(255,240,150,0.95) 0%, rgba(255,200,60,0.5) 30%, transparent 55%)',
-            animation: `lavaHot 2.8s ease-in-out ${-phase}s infinite`,
-          }}
-        />
-        <Cracks />
-      </div>
-    );
-  }
-
-  if (kind === 'bubbles') {
-    return (
-      <div className="absolute inset-0 overflow-hidden" style={{ backgroundImage: FLAT_BASE, boxShadow: `inset 0 0 0 3px ${CRUST_DARK}` }}>
-        <Cracks />
-        {BUBBLES.map(([l, t, s, d], i) => (
-          <span
-            key={i}
-            aria-hidden
-            className="absolute rounded-full"
-            style={{
-              left: `${l}%`, top: `${t}%`, width: `${s}%`, height: `${s}%`,
-              border: '2px solid rgba(80,20,6,0.85)',
-              background: 'radial-gradient(circle at 35% 35%, rgba(255,235,150,0.9), rgba(255,140,30,0.5))',
-              transformOrigin: 'center',
-              animation: `lavaBubble 1.9s ease-out ${-(d + phase)}s infinite`,
-            }}
-          />
-        ))}
-        {SPARKS.map(([l, t, d], i) => (
-          <span
-            key={`s${i}`}
-            aria-hidden
-            className="absolute"
-            style={{
-              left: `${l}%`, top: `${t}%`, width: 3, height: 3,
-              background: '#fff4b0',
-              boxShadow: '0 0 4px 1px rgba(255,220,90,0.9)',
-              animation: `lavaSpark 1.5s ease-out ${-(d + phase)}s infinite`,
-            }}
-          />
-        ))}
-      </div>
-    );
-  }
-
-  if (kind === 'crust') {
-    return (
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 50% 50%, rgba(255,110,20,0.28) 0%, transparent 60%), linear-gradient(160deg, #2a130e 0%, #1b0b08 100%)',
-          boxShadow: 'inset 0 0 0 2px #120705',
-        }}
-      >
-        <div className="absolute inset-0" style={{ animation: `lavaSeam 3.2s ease-in-out ${-phase}s infinite` }}>
-          <Seams halo="#ff7a1a" seam="#ff8f1f" core="#ffe27a" />
-        </div>
-      </div>
-    );
-  }
-
-  if (kind === 'cooled') {
-    return (
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: 'linear-gradient(160deg, #3d1a12 0%, #2c120d 100%)',
-          boxShadow: 'inset 0 0 0 2px #1a0906',
-        }}
-      >
-        <Seams dim halo="" seam="#b8451a" core="#e8843a" />
-      </div>
-    );
-  }
-
-  // pixel — 4x4 blocks in Rookie's block language; a few blocks breathe.
-  const PIX = [
-    ['#e8420c', '#ff8a1c', '#ffb020', '#c9300a'],
-    ['#ff7a12', '#5a1a0a', '#ff6a0c', '#ffcf3d'],
-    ['#ffb020', '#ff8a1c', '#4a1206', '#ff7a12'],
-    ['#c9300a', '#ff6a0c', '#ffb020', '#e8420c'],
-  ];
-  const BREATHE = new Set(['0,2', '1,3', '2,0', '3,2', '1,0']);
+  const v = INTENSITIES.find((i) => i.id === kind)!;
+  const [pMin, pMax] = v.period;
+  const period = pMin + (pMax - pMin) * jitter(index, 1);
+  const delay = -period * jitter(index, 2);
+  // Bubble sits somewhere in the middle 50% of the square, never on the rim.
+  const left = 28 + 44 * jitter(index, 3) - v.bubble / 2;
+  const top = 28 + 44 * jitter(index, 4) - v.bubble / 2;
   return (
-    <div className="absolute inset-0 grid grid-cols-4 grid-rows-4 gap-[1px] p-[2px]" style={{ background: '#2a0e07' }}>
-      {PIX.flatMap((row, y) =>
-        row.map((c, x) => (
-          <span
-            key={`${x},${y}`}
-            aria-hidden
-            style={{
-              background: c,
-              animation: BREATHE.has(`${x},${y}`) ? `lavaPix 2.2s ease-in-out ${-((x + y) * 0.35 + phase)}s infinite` : undefined,
-            }}
-          />
-        )),
-      )}
+    <div className="absolute inset-0 overflow-hidden" style={{ backgroundImage: v.base, boxShadow: `inset 0 0 0 2px ${v.rim}` }}>
+      <Cracks color={v.crack} />
+      <span
+        aria-hidden
+        className="lava-bubble absolute rounded-full"
+        style={{
+          left: `${left}%`, top: `${top}%`, width: `${v.bubble}%`, height: `${v.bubble}%`,
+          border: `1.5px solid ${v.rim}`,
+          background: 'radial-gradient(circle at 35% 35%, rgba(255,200,140,0.55), rgba(255,120,60,0.25) 70%)',
+          transformOrigin: 'center',
+          animation: `lavaBubble ${period.toFixed(2)}s ease-in-out ${delay.toFixed(2)}s infinite`,
+        }}
+      />
     </div>
   );
 }
 
 // ── Option catalogue ─────────────────────────────────────────────────────────
-const OPTIONS: Array<{ id: Treatment; name: string; pitch: string; use: string }> = [
-  {
-    id: 'flat',
-    name: '1 · Flat cartoon lava',
-    pitch: 'Orange-red pit with a dark crust rim and cracks. Zero motion. Reads "lava" from across the room.',
-    use: 'Cheapest: one gradient + one 4-path SVG per square, no animation. Best baseline. The dark rim is what makes it read as a pit, not a highlight.',
-  },
-  {
-    id: 'glow',
-    name: '2 · Slow pulse',
-    pitch: 'Same pit, but it breathes — a hot spot brightens and the rim glows every ~3s, offset per square.',
-    use: 'Cheap: only opacity + box-shadow animate (compositor). 7 squares pulsing is fine; 20+ starts to feel like a warning light. Pair with option 5 for dense levels.',
-  },
-  {
-    id: 'bubbles',
-    name: '3 · Bubbles + sparks',
-    pitch: 'Blorp. Three bubbles swell and pop, two sparks jump. This is the one that is actually funny.',
-    use: 'Still cheap (transform/opacity only, ~5 extra spans per square), but the busiest — on a moat of 7 it is charming, on 20 pits it competes with the pieces. Cap it at ~10 squares or fall back to 5.',
-  },
-  {
-    id: 'crust',
-    name: '4 · Cracked crust, glowing seams',
-    pitch: 'Dark cooled rock with molten seams glowing through the cracks. Moodier, more Rookie\'s Revenge.',
-    use: 'Cheap (one SVG, opacity pulse). Best contrast with pieces: the dark base sits under the green/cream board without fighting it. Weakest "instant lava" read at small sizes — the seams need ~40px squares.',
-  },
-  {
-    id: 'cooled',
-    name: '5 · Cooled (dense-level variant)',
-    pitch: 'Same crust, dimmer seams, no motion. For levels with 15+ hazards so the board does not scream.',
-    use: 'Cheapest of the dark set, static. Not meant to stand alone — it is the quiet sibling of 4 (or of 1) that the renderer swaps to when hazard count is high.',
-  },
-  {
-    id: 'pixel',
-    name: '6 · Pixel lava (Rookie block language)',
-    pitch: '4x4 blocks of orange/red/yellow that breathe like Rookie\'s sprite. Lava in the same dialect as the mascot.',
-    use: 'Cheap (16 divs, 5 opacity animations). Most on-brand and reads well tiny. Risk: the yellow blocks are the same value as the goal-row gold — keep goal rank and pixel lava apart.',
-  },
-];
+const OPTIONS = INTENSITIES;
 
 // ── Board card ───────────────────────────────────────────────────────────────
 const PIECES = {
@@ -333,33 +228,16 @@ export default function LavaSquaresPage() {
   return (
     <div className="h-full overflow-auto text-white" style={{ background: BG }}>
       <style>{`
-        @keyframes lavaGlow {
-          0%, 100% { box-shadow: inset 0 0 0 3px ${CRUST_DARK}, inset 0 0 10px rgba(255,190,60,0.25); }
-          50%      { box-shadow: inset 0 0 0 3px ${CRUST_DARK}, inset 0 0 22px rgba(255,220,90,0.8); }
-        }
-        @keyframes lavaHot {
-          0%, 100% { opacity: 0.15; }
-          50%      { opacity: 1; }
-        }
+        /* One bubble per cycle: dormant ~78% of the period, swell ~18%, pop ~4%. */
         @keyframes lavaBubble {
-          0%   { transform: scale(0.25); opacity: 0; }
-          55%  { transform: scale(1);    opacity: 1; }
-          80%  { transform: scale(1.15); opacity: 0.9; }
-          86%  { transform: scale(1.3);  opacity: 0; }
-          100% { transform: scale(0.25); opacity: 0; }
+          0%, 78% { transform: scale(0.2); opacity: 0; }
+          88%     { transform: scale(0.85); opacity: 0.9; }
+          95%     { transform: scale(1);    opacity: 1; }
+          97%     { transform: scale(1.12); opacity: 0; }
+          100%    { transform: scale(0.2);  opacity: 0; }
         }
-        @keyframes lavaSpark {
-          0%   { transform: translate(0, 0) scale(1);       opacity: 0; }
-          15%  { opacity: 1; }
-          100% { transform: translate(6px, -34px) scale(0.4); opacity: 0; }
-        }
-        @keyframes lavaSeam {
-          0%, 100% { opacity: 0.62; }
-          50%      { opacity: 1; }
-        }
-        @keyframes lavaPix {
-          0%, 100% { opacity: 1; filter: brightness(1); }
-          50%      { opacity: 0.55; filter: brightness(1.35); }
+        @media (prefers-reduced-motion: reduce) {
+          .lava-bubble { animation: none !important; opacity: 0.35; transform: scale(0.8); }
         }
       `}</style>
 
@@ -368,8 +246,8 @@ export default function LavaSquaresPage() {
           <div className="text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: GOLD }}>Design page · not production</div>
           <h1 className="mt-1 text-[24px] font-black leading-tight md:text-[30px]">Lava squares</h1>
           <p className="mt-1 max-w-[62ch] text-[14px]" style={MUTED}>
-            Six treatments for the squares Rookie can&rsquo;t land on. Real board renderer, enemies next to the lava,
-            Rookie&rsquo;s legal-move dots on. A lava square must never look like a place you can go.
+            One idea at four intensities for the squares Rookie can&rsquo;t land on. Real board renderer, enemies next to the lava,
+            Rookie&rsquo;s legal-move dots on. Quiet, dim lava; one small bubble every 4&ndash;8s per square, de-synced. A lava square must never look like a place you can go.
           </p>
         </header>
 
@@ -416,7 +294,7 @@ export default function LavaSquaresPage() {
           </section>
         )}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {OPTIONS.map((o) => (
             <section
               key={o.id}
@@ -441,7 +319,8 @@ export default function LavaSquaresPage() {
           <ul className="mt-1 list-disc space-y-1 pl-5">
             <li>No green, no blue, no highlight tint on lava — the legal-move dots (Rookie on d3) are the only &ldquo;you can go here&rdquo; signal.</li>
             <li>Enemy pieces sit on squares touching the lava (a6, c6, f6, b4, e4, g4 on the moat) to check the pieces still pop.</li>
-            <li>All treatments are gradients + inline SVG + opacity/transform keyframes. No images, no deps, no filters except the pixel pulse.</li>
+            <li>Gradients + one inline SVG + a single transform/opacity keyframe per square. No images, no deps, no filters, no glow. Honors prefers-reduced-motion (bubble goes static).</li>
+            <li>Each square picks its own period + phase from a seeded hash, so the moat never bubbles in sync.</li>
             <li>Production hook: Board.tsx `squareStyles` hazard block (HAZARD_BG / HAZARD_PATTERN) plus an overlay like the goal-row motes.</li>
           </ul>
         </footer>
