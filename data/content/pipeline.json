@@ -793,6 +793,14 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Vanguard+Swap body-then-become run. Signature: the king lives in a sealed stone strongbox; knight-jump squares are walled so a dropped body can only create a landing. Finale L7-L10: every single kit card 0%, vanguard+swap 81-97%. Full runs 28% random / 53% with the pair."
+    },
+    {
+      "id": "revenge-16",
+      "kind": "run",
+      "name": "The Switchback",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Poison Dart + Bishop Squire free-capture-stun run. Signature: two stone bars on ranks 3 and 6 with offset openings, so every level charges moves to arrive. Finale: a sealed diagonal room reached only through a corridor guarded by an uncapturable pawn — dart it, and summon the Squire into the corridor the turn it dies. L7-L10: every single kit card 0%, pair 63-100%. Full runs 18% random / 33% with the pair (below target; L8 is the drag)."
     }
   ]
 }
