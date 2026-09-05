@@ -48,7 +48,7 @@ Fewer winning pairs is better; a level with exactly one answer is the best kind.
 
 **Mechanics that make pairs work (read `docs/ability-pairs.md`):** almost every ability is a free action — only a body moving ends the turn — so the scarce resource is body-moves, not casts. Any capture credited to your side stuns the king, whatever made it (Rookie, a summon, a Boulder crush, a poison death). Swap is the socket most pairs plug into ("body-then-become"); Boulder and Magnet have so far never gated a level with any partner.
 
-**Authoring order:** write the design header FIRST — signature, a per-card KEY/TRAP map by level, the intended line for each of L7-L10 — then build, then let the bots falsify it, then append a MEASURED block with the final numbers (see The Moat / The Colonnade / The Vault headers). Measure with compound loadouts: `revenge.ts matrix --run=<id> --difficulty=normal --loadouts=none,<kit ids>,<a+b>`; sanity-check the ladder with `revenge.ts runs --run=<id> --runs=40` (10-25% random) and `--pool=<pair>` (45-65%).
+**Authoring order:** write the design header FIRST — signature, a per-card KEY/TRAP map by level, the intended line for each of L7-L10 — then build, then let the bots falsify it, then append a MEASURED block with the final numbers (see The Moat / The Colonnade / The Vault headers). Measure with compound loadouts: `revenge.ts matrix --run=<id> --difficulty=normal --loadouts=none,<kit ids>,<a+b>`. Matrix cells CROSS-TALK when several bot jobs share the machine (Briar L7 no-ability: 44% in a parallel sweep, 0% in three serial reads of the same file) — iterate with `--jobs=2` for direction, take the numbers of record with `--jobs=1 --trials=32`. Sanity-check the ladder with `revenge.ts runs --run=<id> --runs=40` and `--pool=<pair>`. The 10-25% random-pick target from the Moat is NOT being met by combo-gated runs (Vault 28%, Briar 55%, Glasshouse 43%) for a structural reason: with the pair as half of a 4-card kit and offers on L1/L3/L6/L9, a random picker nearly always holds both halves by L7. Report the number and explain it; whether to change kit size or offer cadence is Tyler's call (open question, 2026-09-05).
 
 New runs live in their own file under `lib/run/runs/` (builders from `lib/run/run-kit.ts`, one line in `lib/run/extra-runs.ts`) so several can be authored in parallel without touching `runs.ts`.
 
@@ -90,6 +90,12 @@ Bishop Squire summons a light-squared bishop. With the king on e8 (light) the sq
 
 ### Two doors in the wall (Colonnade L7 v1, 2026-09-05)
 A colonnade with two gaps was free for a bare rook (100% no-ability, in the finale slot). One gap, on the far file, with 11 moves: singles 0-17%, pair 100%. A barrier with a second opening is not a barrier.
+
+### Provable but unfindable (Glasshouse L7 v1-v3, 2026-09-05)
+Three finale builds asked for a PRE-EMPTIVE freeze: freeze the watcher, then step into the square it covered. The AND-OR solver proved them (forced W3) but the playtest bot read the pair at 0-21% with perfect geometry — it will not spend a card on a piece that is not attacking it yet. Reframed as "freeze the KING where he stands, then arrive" (the same idea one level up), the pair read 72-100%. A level the bot cannot find is not shippable, and the same limit applies to delayed fuses: the Switchback's bot only found poison-dart + squire when the payoff became one summon-and-strike down an already open corridor. Design the pair's payoff as a reaction to a present threat, resolved in one turn.
+
+### Pawn walls march (Briar, 2026-09-05)
+Pawn priority is `-rank`, so the front row of any pawn wall advances one pawn per enemy turn and drains files open for free; a baited recapture vacates a square too. Dragon-alone leaked 38-88% through three revisions. Fixes: a crown of rank-8 pawns that re-seals a drained file, stumps (rank-7 hazards) in front of his room, and a self-blocking runner column on the far flank that out-priorities the wall for ~6 turns and then jams. Corollary: `enemiesPerTurn: 2` makes a marching wall EASIER (twice the drain) until the wall is pinned.
 
 ## Patterns that work
 
