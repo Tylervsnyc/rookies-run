@@ -104,3 +104,38 @@ jobs:
             git pull --rebase origin main
             git push origin main
           fi
+
+  # Combo-gate discovery (2026-09-05, Tyler: "find more combinations of
+  # abilities and build a LOT of levels"). Independent job so it never delays
+  # the playtest digest. Generates terrain candidates, screens them against
+  # 4-card kits, and files levels that no single kit card beats but one pair
+  # does under data/run-playtest/combo-library/ (SYNERGY.md = the pair map).
+  # The ledger makes nightly runs additive: least-tried pairs first. The seed
+  # is the day-of-year so each night explores different candidates.
+  combo-discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Discover combo-gated levels
+        run: |
+          npx tsx scripts/run-playtest/combo-discover.ts --from-terrain --slots=7-10 --variants=20 --max-kits=8 --jobs=3 --minutes=150 --seed=$(date -u +%j)
+      - name: Commit the library and push
+        run: |
+          git config user.name "Rookie Playtest Bot"
+          git config user.email "playtest@rookies-run.local"
+          git add data/run-playtest/combo-library/ || true
+          if git diff --cached --quiet; then
+            echo "nothing new discovered"
+          else
+            N=$(ls -d data/run-playtest/combo-library/*+*/ 2>/dev/null | wc -l | tr -d ' ')
+            git commit -m "Rookie's Revenge: nightly combo discovery $(date -u +%Y-%m-%d) ($N gating pairs in library)"
+            git restore .
+            git pull --rebase origin main
+            git push origin main
+          fi

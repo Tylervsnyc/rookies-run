@@ -100,6 +100,9 @@ Pawn priority is `-rank`, so the front row of any pawn wall advances one pawn pe
 ### Upgraded Boulder walls the player (Stacks, 2026-09-05)
 With only magnet + boulder in the offer pool the offers keep UPGRADING them, and T4 Boulder forces two stones per use, T5 unlimited — in a one-wide shaft those stones wall Rookie's own route. Result: the pair-only pool cleared 25% of full runs while random picks cleared 35%. The Colonnade's boulder + bishop-squire anti-pair is the same self-block; it is a TIER problem as much as a partner problem. When Boulder is a signature card, pin its tier or give the pool a third card to absorb upgrades. Also from the Stacks: two adjacent rank-7 alcoves are not a dodge (a rook in one attacks the other) — a pen must be the full 2x2; and Decoy turns a frozen bishop into a pawn that can march, which re-opens a shaft.
 
+### The gate depends on ability TIER (harness ground truth, 2026-09-05)
+Runs are validated with T1 cards, but offers UPGRADE cards during a run. The discovery harness, scoring the shipped runs under their own kits, found Colonnade L10 is NOT gated once Bishop Squire is T4 — it solos the level at 100% — and that The Moat's finale is not gated at all because its own kit contains `knight-hop`, a solvent (the Moat's L7-L10 only feel gated at low tier). Same family as the Stacks' upgraded-Boulder self-block. Open decision for Tyler: either validate finales at the tier a player will realistically hold by L7-L10 (T3-T4), pin signature-card tiers per run, or cap upgrades in combo runs. Until decided, report the finale matrix at T1 AND at the highest tier the offers can reach.
+
 ## Patterns that work
 
 ### The gated finale (Moat / Colonnade / Vault, 2026-09-04..05)
