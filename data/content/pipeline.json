@@ -817,6 +817,14 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Freeze Ray + Vanguard pin-and-parachute run. Signature: a box of hazards around the king's corner with one missing pane that something is watching; from L7 he bricks the window up and the only sightline left is his. Finale: freeze him where he stands, drop the knight, walk it on, take him inside the pin. L7-L10: every single kit card 0%, pair 72-100% (serial reads). Full runs 43% random / 70% with the pair."
+    },
+    {
+      "id": "revenge-15",
+      "kind": "run",
+      "name": "The Stacks",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Magnet + Boulder reposition-then-seal run. Signature: ranks 3-7 are solid stone with one-wide shafts, so one piece closes a whole route and every level asks which square an enemy stands on. A bishop in a shaft is frozen (a plug only a pull can move); the king's 2x2 corner room can never be held by a lone rook. Finale: boulder a stone into the room, magnet the plug off its defenders, take it free. L7-L10: every single kit card 0%, pair 97-100% (serial). Full runs 35% random / 25% with the pair — the pair pool is LOWER than random because upgraded high-tier Boulder walls Rookie's own shaft."
     }
   ]
 }
