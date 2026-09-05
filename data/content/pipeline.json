@@ -825,6 +825,14 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Magnet + Boulder reposition-then-seal run. Signature: ranks 3-7 are solid stone with one-wide shafts, so one piece closes a whole route and every level asks which square an enemy stands on. A bishop in a shaft is frozen (a plug only a pull can move); the king's 2x2 corner room can never be held by a lone rook. Finale: boulder a stone into the room, magnet the plug off its defenders, take it free. L7-L10: every single kit card 0%, pair 97-100% (serial). Full runs 35% random / 25% with the pair — the pair pool is LOWER than random because upgraded high-tier Boulder walls Rookie's own shaft."
+    },
+    {
+      "id": "revenge-19",
+      "kind": "run",
+      "name": "The Cliff",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Convert + Summon Knight cage-and-take run, a pair the discovery harness found. Signature: one diagonal of stone a rook can never cross and a knight steps over. Finale: convert the pawn under the king's pen so his own guard becomes the cage, then the Squire jumps in and takes him. L7-L10: every single kit card 0%, pair 75-88% (serial). Full runs 8% random / 13% with the pair (L3 is a Squire-or-nothing gate)."
     }
   ]
 }
