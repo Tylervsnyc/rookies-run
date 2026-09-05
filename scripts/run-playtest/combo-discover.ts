@@ -374,19 +374,27 @@ function planKits(kitSize: number, maxKits: number, attempts: Record<string, num
     const anchors = [a.pair];
     const reasons = [a.reason];
     // Seat further disjoint low-attempt anchors, then fall back to single cards.
+    // A universal solvent may sit in a kit ONLY as an anchor-pair card
+    // (knight-hop+twin, boulder+knight-hop are legitimate pairs). A kit whose
+    // first anchor has no solvent must contain none at all — measured: with
+    // solvents seated as fillers, every kit on a terrain candidate was
+    // disqualified by become-king / knight-hop before any pair got tested.
+    const anchorHasSolvent = [x, y].some((c) => SOLVENT_PRESET.includes(c));
     for (const b of order) {
       if (kit.length + 2 > kitSize) break;
       if (b.pair === a.pair || used.has(b.pair)) continue;
       const [u, v] = b.pair.split('+');
       if (kit.includes(u) || kit.includes(v)) continue;
+      if (!anchorHasSolvent && [u, v].some((c) => SOLVENT_PRESET.includes(c))) continue;
       if ([u, v].some((c) => kit.some((k) => HYP.anti.has(pairKey(k, c))))) continue;
       kit.push(u, v);
       anchors.push(b.pair);
       reasons.push(b.reason);
     }
+    // Fillers: never a solvent, never an anti-pair with anything already seated.
     for (const f of POOL) {
       if (kit.length >= kitSize) break;
-      if (kit.includes(f)) continue;
+      if (kit.includes(f) || SOLVENT_PRESET.includes(f)) continue;
       if (kit.some((c) => HYP.anti.has(pairKey(c, f)))) continue;
       kit.push(f);
     }
