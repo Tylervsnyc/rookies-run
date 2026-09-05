@@ -10,6 +10,7 @@
  */
 
 import { DAILY_LEVELS } from './daily-levels';
+import { EXTRA_REVENGE_RUNS } from './extra-runs';
 import { DEFAULT_PAR_MOVES } from './scoring';
 import { isPlayerFacing, stageOf } from '../content/pipeline';
 import type {
@@ -6819,7 +6820,7 @@ const RUN_REVENGE_13: RunDef = {
   ],
 };
 
-const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11, RUN_REVENGE_12, RUN_REVENGE_13];
+const REVENGE_RUN_CATALOG: ReadonlyArray<RunDef> = [...EXTRA_REVENGE_RUNS, RUN_REVENGE_1, RUN_REVENGE_2, RUN_REVENGE_3, RUN_REVENGE_4, RUN_REVENGE_5, RUN_REVENGE_6, RUN_REVENGE_7, RUN_REVENGE_8, RUN_REVENGE_9, RUN_REVENGE_10, RUN_CRUCIBLE, RUN_REVENGE_11, RUN_REVENGE_12, RUN_REVENGE_13];
 
 /** Player-facing Revenge runs (approved|live) — the daily rotation + picker. */
 const REVENGE_RUNS: ReadonlyArray<RunDef> = REVENGE_RUN_CATALOG.filter((r) => isPlayerFacing(r.id));
