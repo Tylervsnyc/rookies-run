@@ -97,6 +97,9 @@ Three finale builds asked for a PRE-EMPTIVE freeze: freeze the watcher, then ste
 ### Pawn walls march (Briar, 2026-09-05)
 Pawn priority is `-rank`, so the front row of any pawn wall advances one pawn per enemy turn and drains files open for free; a baited recapture vacates a square too. Dragon-alone leaked 38-88% through three revisions. Fixes: a crown of rank-8 pawns that re-seals a drained file, stumps (rank-7 hazards) in front of his room, and a self-blocking runner column on the far flank that out-priorities the wall for ~6 turns and then jams. Corollary: `enemiesPerTurn: 2` makes a marching wall EASIER (twice the drain) until the wall is pinned.
 
+### Upgraded Boulder walls the player (Stacks, 2026-09-05)
+With only magnet + boulder in the offer pool the offers keep UPGRADING them, and T4 Boulder forces two stones per use, T5 unlimited — in a one-wide shaft those stones wall Rookie's own route. Result: the pair-only pool cleared 25% of full runs while random picks cleared 35%. The Colonnade's boulder + bishop-squire anti-pair is the same self-block; it is a TIER problem as much as a partner problem. When Boulder is a signature card, pin its tier or give the pool a third card to absorb upgrades. Also from the Stacks: two adjacent rank-7 alcoves are not a dodge (a rook in one attacks the other) — a pen must be the full 2x2; and Decoy turns a frozen bishop into a pawn that can march, which re-opens a shaft.
+
 ## Patterns that work
 
 ### The gated finale (Moat / Colonnade / Vault, 2026-09-04..05)
