@@ -1,0 +1,76 @@
+{"key":"revenge-13-L1","date":"2026-09-05","verdict":"died-single","slot":1,"detail":"every kit has a solo answer (worst swap 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L2","date":"2026-09-05","verdict":"died-single","slot":2,"detail":"every kit has a solo answer (worst swap 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L3","date":"2026-09-05","verdict":"died-single","slot":3,"detail":"every kit has a solo answer (worst bishop-squire 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L4","date":"2026-09-05","verdict":"died-single","slot":4,"detail":"every kit has a solo answer (worst bishop-squire 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L5","date":"2026-09-05","verdict":"died-single","slot":5,"detail":"every kit has a solo answer (worst bishop-squire 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L6","date":"2026-09-05","verdict":"died-single","slot":6,"detail":"every kit has a solo answer (worst bishop-squire 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L7","date":"2026-09-05","verdict":"died-single","slot":7,"detail":"every kit has a solo answer (worst boulder 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L8","date":"2026-09-05","verdict":"accepted","slot":8,"winningPairs":["bishop-squire+swap"],"kitsTested":10,"kitsGating":1,"pairsTested":["bishop-squire+swap","magnet+swap","boulder+swap","bishop-squire+magnet","bishop-squire+boulder","boulder+magnet"],"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L9","date":"2026-09-05","verdict":"accepted","slot":9,"winningPairs":["bishop-squire+swap"],"kitsTested":10,"kitsGating":1,"pairsTested":["bishop-squire+swap","magnet+swap","boulder+swap","bishop-squire+magnet","bishop-squire+boulder","boulder+magnet"],"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-13-L10","date":"2026-09-05","verdict":"died-single","slot":10,"detail":"every kit has a solo answer (worst bishop-squire 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L1","date":"2026-09-05","verdict":"died-single","slot":1,"detail":"every kit has a solo answer (worst swap 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L2","date":"2026-09-05","verdict":"died-single","slot":2,"detail":"every kit has a solo answer (worst swap 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L3","date":"2026-09-05","verdict":"died-single","slot":3,"detail":"every kit has a solo answer (worst knight-hop 100%)","kitsTested":10,"solvents":["knight-hop"]}
+{"key":"revenge-12-L4","date":"2026-09-05","verdict":"died-single","slot":4,"detail":"every kit has a solo answer (worst swap 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L5","date":"2026-09-05","verdict":"died-single","slot":5,"detail":"every kit has a solo answer (worst knight-hop 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L6","date":"2026-09-05","verdict":"accepted","slot":6,"winningPairs":["summon-knight+swap","dragon+duchess","duchess+swap"],"kitsTested":10,"kitsGating":3,"pairsTested":["bishop-squire+swap","knight-hop+swap","poison-dart+swap","bishop-squire+knight-hop","bishop-squire+poison-dart","knight-hop+poison-dart","bishop-squire+dragon","bishop-squire+duchess","dragon+swap","duchess+swap","dragon+duchess","dragon+sacrifice","bishop-squire+sacrifice","duchess+sacrifice","summon-knight+swap","bishop-squire+summon-knight","dragon+summon-knight","page+swap","bishop-squire+page","dragon+page","sacrifice+summon-knight","boulder+knight-hop","boulder+sacrifice","boulder+dragon","knight-hop+sacrifice","dragon+knight-hop","boulder+freeze-ray","freeze-ray+sacrifice","dragon+freeze-ray"],"solvents":[]}
+{"key":"revenge-12-L7","date":"2026-09-05","verdict":"died-single","slot":7,"detail":"every kit has a solo answer (worst knight-hop 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L8","date":"2026-09-05","verdict":"died-single","slot":8,"detail":"every kit has a solo answer (worst knight-hop 92%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L9","date":"2026-09-05","verdict":"died-single","slot":9,"detail":"every kit has a solo answer (worst poison-dart 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"revenge-12-L10","date":"2026-09-05","verdict":"died-single","slot":10,"detail":"every kit has a solo answer (worst vanguard 100%)","kitsTested":10,"solvents":["bishop-step","knight-hop","become-king"]}
+{"key":"swarm-L5-v1-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 100%"}
+{"key":"swarm-L5-v2-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 90%"}
+{"key":"swarm-L5-v3-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 90%"}
+{"key":"swarm-L5-v4-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 100%"}
+{"key":"swarm-L5-v5-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 100%"}
+{"key":"swarm-L5-v6-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 100%"}
+{"key":"swarm-L5-v7-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 100%"}
+{"key":"swarm-L5-v8-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 100%"}
+{"key":"swarm-L6-v1-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 100%"}
+{"key":"swarm-L6-v2-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 100%"}
+{"key":"swarm-L6-v3-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 100%"}
+{"key":"swarm-L6-v4-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 100%"}
+{"key":"swarm-L6-v5-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 100%"}
+{"key":"swarm-L6-v6-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 90%"}
+{"key":"swarm-L6-v7-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 90%"}
+{"key":"swarm-L6-v8-s31","date":"2026-09-05","verdict":"died-none","slot":6,"detail":"none 90%"}
+{"key":"swarm-L7-v1-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 90%"}
+{"key":"swarm-L7-v2-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 100%"}
+{"key":"swarm-L7-v3-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 60%"}
+{"key":"swarm-L7-v4-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 80%"}
+{"key":"swarm-L7-v5-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 100%"}
+{"key":"swarm-L7-v6-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 70%"}
+{"key":"swarm-L7-v7-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 90%"}
+{"key":"swarm-L7-v8-s31","date":"2026-09-05","verdict":"died-none","slot":7,"detail":"none 60%"}
+{"key":"swarm-L8-v1-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 80%"}
+{"key":"swarm-L8-v2-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 70%"}
+{"key":"swarm-L8-v3-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 40%"}
+{"key":"swarm-L8-v4-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 40%"}
+{"key":"swarm-L8-v5-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 70%"}
+{"key":"swarm-L8-v6-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 60%"}
+{"key":"swarm-L8-v7-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 80%"}
+{"key":"swarm-L8-v8-s31","date":"2026-09-05","verdict":"died-none","slot":8,"detail":"none 80%"}
+{"key":"swarm-L9-v1-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 70%"}
+{"key":"swarm-L9-v2-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 90%"}
+{"key":"swarm-L9-v3-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 90%"}
+{"key":"swarm-L9-v4-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 70%"}
+{"key":"swarm-L9-v5-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 50%"}
+{"key":"swarm-L9-v6-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 50%"}
+{"key":"swarm-L9-v7-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 80%"}
+{"key":"swarm-L9-v8-s31","date":"2026-09-05","verdict":"died-none","slot":9,"detail":"none 100%"}
+{"key":"swarm-L10-v1-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 70%"}
+{"key":"swarm-L10-v2-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 60%"}
+{"key":"swarm-L10-v3-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 80%"}
+{"key":"swarm-L10-v4-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 80%"}
+{"key":"swarm-L10-v5-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 30%"}
+{"key":"swarm-L10-v6-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 60%"}
+{"key":"swarm-L10-v7-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 100%"}
+{"key":"swarm-L10-v8-s31","date":"2026-09-05","verdict":"died-none","slot":10,"detail":"none 80%"}
+{"key":"royal-guard-L5-v1-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 50%"}
+{"key":"royal-guard-L5-v2-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 50%"}
+{"key":"royal-guard-L5-v3-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 60%"}
+{"key":"royal-guard-L5-v4-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 90%"}
+{"key":"royal-guard-L5-v5-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 80%"}
+{"key":"royal-guard-L5-v6-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 50%"}
+{"key":"royal-guard-L5-v7-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 50%"}
+{"key":"royal-guard-L5-v8-s31","date":"2026-09-05","verdict":"died-none","slot":5,"detail":"none 40%"}

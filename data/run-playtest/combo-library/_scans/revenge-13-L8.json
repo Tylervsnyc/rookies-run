@@ -1,0 +1,332 @@
+{
+ "id": "revenge-13-L8",
+ "title": "The Colonnade L8",
+ "slot": 8,
+ "verdict": "accepted",
+ "gatedUnder": [
+  {
+   "kit": [
+    "swap",
+    "bishop-squire",
+    "magnet",
+    "boulder"
+   ],
+   "anchor": "revenge-13 allowedAbilities",
+   "reason": "the kit The Colonnade actually offers",
+   "winningPairs": [
+    {
+     "pair": "bishop-squire+swap",
+     "winPct": 100
+    }
+   ]
+  }
+ ],
+ "pure": false,
+ "solvents": [
+  "bishop-step",
+  "knight-hop",
+  "become-king"
+ ],
+ "matrix": {
+  "none": {
+   "winPct": 0,
+   "trials": 30,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 30,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-step": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.5
+  },
+  "knight-hop": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.9
+  },
+  "become-king": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.4
+  },
+  "swap": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "magnet": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "boulder": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "vanguard": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 3
+  },
+  "dragon": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 3.8
+  },
+  "duchess": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.5
+  },
+  "sacrifice": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "summon-knight": {
+   "winPct": 8,
+   "trials": 12,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 11,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.8
+  },
+  "page": {
+   "winPct": 17,
+   "trials": 12,
+   "wins": 2,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 10,
+   "avgMoves": 3.1
+  },
+  "freeze-ray": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+swap": {
+   "winPct": 100,
+   "trials": 30,
+   "wins": 30,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.5
+  },
+  "magnet+swap": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "boulder+swap": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+magnet": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+boulder": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 6,
+   "avgMoves": 6.8
+  },
+  "boulder+magnet": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "queen-pulse": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.5
+  },
+  "aegis": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "convert": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 7,
+   "stall": 0,
+   "deadEnd": 5,
+   "avgMoves": 7
+  },
+  "poison-dart": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "decoy": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "rabies-dart": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "smoke": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "rewind": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "twin": {
+   "winPct": 75,
+   "trials": 12,
+   "wins": 9,
+   "captured": 0,
+   "moveLimit": 3,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.6
+  }
+ }
+}

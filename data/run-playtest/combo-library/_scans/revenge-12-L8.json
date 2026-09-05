@@ -1,0 +1,163 @@
+{
+ "id": "revenge-12-L8",
+ "title": "The Moat L8",
+ "slot": 8,
+ "verdict": "not-gated",
+ "solvents": [
+  "bishop-step",
+  "knight-hop",
+  "become-king"
+ ],
+ "matrix": {
+  "none": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 1,
+   "moveLimit": 11,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.9
+  },
+  "bishop-step": {
+   "winPct": 100,
+   "trials": 12,
+   "wins": 12,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.3
+  },
+  "knight-hop": {
+   "winPct": 92,
+   "trials": 12,
+   "wins": 11,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 1,
+   "avgMoves": 6.3
+  },
+  "become-king": {
+   "winPct": 83,
+   "trials": 12,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 2,
+   "avgMoves": 6.2
+  },
+  "swap": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "poison-dart": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "vanguard": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 4,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.1
+  },
+  "dragon": {
+   "winPct": 67,
+   "trials": 12,
+   "wins": 8,
+   "captured": 0,
+   "moveLimit": 4,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.8
+  },
+  "duchess": {
+   "winPct": 25,
+   "trials": 12,
+   "wins": 3,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.6
+  },
+  "sacrifice": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "summon-knight": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "page": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "boulder": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 1,
+   "moveLimit": 11,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.8
+  },
+  "freeze-ray": {
+   "winPct": 0,
+   "trials": 12,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 12,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  }
+ }
+}

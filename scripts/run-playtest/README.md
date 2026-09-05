@@ -29,6 +29,41 @@ The morning report (`revenge-digest.ts`) goes to `data/run-playtest/revenge/dige
 
 Band the report grades against (no-ability, realistic tiers): 100/100/100/100/90/50/55/50/30/30 ±15 across L1–L10, every finisher ≥ 80 %, zero stalls. Candidate runs get a PROMOTE / HOLD call on exactly that.
 
+## Combo-gated level discovery (`combo-discover.ts`, 2026-09-05)
+
+Tyler's favourite levels are the ones **no single ability solves and one PAIR
+does** (The Moat, The Colonnade). 23 abilities are built = 253 pairs, so the
+search is automated:
+
+```bash
+# ground truth on a shipped run, under its own allowedAbilities kit
+npx tsx scripts/run-playtest/combo-discover.ts --run=revenge-13 --levels=1-10 --score-all
+
+# discovery over generated candidates (revenge-generate.ts archetypes)
+npx tsx scripts/run-playtest/combo-discover.ts --from-generator --slots=6-10 --variants=6
+```
+
+**Combo-gating is KIT-relative.** `bishop-step`, `knight-hop` and `become-king`
+are universal solvents — they change what Rookie's geometry *is*, so they cross
+any terrain and solo almost every level (measured 2026-09-05; the first pass
+using an all-23 definition accepted 0 of the 20 shipped Moat/Colonnade levels).
+The gate is therefore defined against a 4-card kit: no-ability ~0 %, every card
+in the kit ~0 %, at least one pair from the kit >= 60 %. Kits are planned from
+`data/run-playtest/pair-hypotheses.json` (ranked pairs + anti-pairs).
+
+Funnel, cheapest first: structural lint (free) -> no-ability screen -> solvent
+probe -> kit singles in one batched round (a kit dies the moment one of its own
+cards solos the level) -> pair sweep on surviving kits only -> high-trial
+confirm. Resumable via `_ledger.jsonl`, sharded across CPUs like the matrix
+driver. Output: `data/run-playtest/combo-library/<pair>/<id>.json` (level def +
+paste-ready snippet + full matrix row + every gating kit), per-pair `INDEX.md`,
+and a top-level `SYNERGY.md`. It never writes to `lib/run`.
+
+Nightly wiring (not enabled): add a `combo` step to
+`.github/workflows/revenge-nightly.yml` running `--from-generator --minutes=N
+--seed=$(date +%j)`; the ledger makes repeated runs additive rather than
+duplicative.
+
 One-off tools (same engine): `revenge.ts matrix|runs|solve|trace|lint` — `--run=<id>`, `--difficulty=<mode>`, `--json`. The hand-written v2 report is `docs/revenge-playtest.md`.
 
 ---
