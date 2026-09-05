@@ -1,5 +1,5 @@
 'use client';
-import { ENEMY_CAPTURE_SLIDE_MS, PIECE_SLIDE_MS } from './timing';
+import { PIECE_SLIDE_MS } from './timing';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
@@ -138,6 +138,42 @@ const ENEMY_SPRITE: Record<PieceType, string> = {
   king: 'bK',
 };
 
+// Status variants of the enemy sprites. A rabid piece renders as `bPr`, the
+// decoy-marked piece as `bPd` (registered in `pieces` below, same art with a
+// tint). They exist so react-chessboard can SEE a friendly-fire capture:
+// its position diff only animates a piece whose sprite key disappears from
+// one square and reappears on another, so a plain pawn taking a plain pawn
+// is invisible to it (the landing square never changes) and the mover
+// snaps. With the mover keyed `bPr`, every rabid / decoy capture is a normal
+// slide — the same animation every other capture on the board gets.
+const RABID_SUFFIX = 'r';
+const DECOY_SUFFIX = 'd';
+function enemySprite(type: PieceType, rabid: boolean, decoy: boolean): string {
+  const base = ENEMY_SPRITE[type];
+  if (rabid) return base + RABID_SUFFIX;
+  if (decoy) return base + DECOY_SUFFIX;
+  return base;
+}
+function tintedPiece(base: string, filter: string) {
+  const Base = defaultPieces[base as keyof typeof defaultPieces];
+  const Tinted = () => (
+    <div style={{ width: '100%', height: '100%', filter }}>
+      {Base ? <Base /> : null}
+    </div>
+  );
+  Tinted.displayName = `Tinted-${base}`;
+  return Tinted;
+}
+const RABID_FILTER =
+  'sepia(1) saturate(8) hue-rotate(-25deg) brightness(0.95) drop-shadow(0 0 4px rgba(220,38,38,0.9))';
+const DECOY_FILTER =
+  'sepia(1) saturate(4) hue-rotate(230deg) brightness(1.05) drop-shadow(0 0 4px rgba(217,70,239,0.85))';
+const STATUS_PIECES: Record<string, () => React.JSX.Element> = {};
+for (const base of Object.values(ENEMY_SPRITE)) {
+  STATUS_PIECES[base + RABID_SUFFIX] = tintedPiece(base, RABID_FILTER);
+  STATUS_PIECES[base + DECOY_SUFFIX] = tintedPiece(base, DECOY_FILTER);
+}
+
 // Module-scoped guard against React StrictMode's double-mount in dev. The
 // CSS keyframe started by the first effect run can't be canceled, so we'd
 // see the emerge + strobe play twice. A simple "did we just play the
@@ -272,15 +308,21 @@ export function RunBoard({
   const positionRef = useRef<Record<string, { pieceType: string }>>({});
   const position = useMemo(() => {
     const map: Record<string, { pieceType: string }> = {};
+    const rabidSet = new Set(state.rabidSquares);
     for (const p of state.pieces) {
       const sq = toSquare(p);
       // The attacker on Rookie's square is rendered as a static overlay
       // (below) so the chessboard's piece-animation can't hide it.
       if (state.status === 'lost' && sq === rookieSq) continue;
-      // During a rabid friendly-fire slide, hide the moved piece at its
-      // destination so the overlay's animated slide doesn't double-render.
-      if (enemyCaptureFx && sq === enemyCaptureFx.toSq) continue;
-      map[sq] = { pieceType: ENEMY_SPRITE[p.type] };
+      // Rabid / decoy pieces get their own sprite key so a friendly-fire
+      // capture slides natively (see STATUS_PIECES).
+      map[sq] = {
+        pieceType: enemySprite(
+          p.type,
+          rabidSet.has(sq),
+          state.decoyTarget === sq,
+        ),
+      };
     }
     if (state.status !== 'lost' && introFile === null) {
       map[rookieSq] = { pieceType: rookieSprite };
@@ -300,7 +342,7 @@ export function RunBoard({
     }
     positionRef.current = map;
     return map;
-  }, [state.pieces, rookieSprite, state.status, rookieSq, enemyCaptureFx, introFile]);
+  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile]);
 
   const wiggleSquares = useMemo(() => {
     if (state.status !== 'playing' || state.turn !== 'rookie') return [];
@@ -521,15 +563,10 @@ export function RunBoard({
       };
     }
 
-    // Rabid-piece highlight — angry crimson wash with a vibrating ring.
-    // While a rabid friendly-fire slide is playing, state already has the
-    // marker on the landing square; draw it on the origin so the wash travels
-    // WITH the sprite instead of jumping ahead of it.
-    for (const rawSq of state.rabidSquares) {
-      const sq =
-        enemyCaptureFx && rawSq === enemyCaptureFx.toSq
-          ? enemyCaptureFx.fromSq
-          : rawSq;
+    // Rabid-piece highlight — angry crimson wash with a vibrating ring. The
+    // sprite itself is tinted (STATUS_PIECES) so the rabid identity travels
+    // with the piece during a slide; the wash marks the square it owns.
+    for (const sq of state.rabidSquares) {
       styles[sq] = {
         ...styles[sq],
         backgroundColor: 'rgba(220, 38, 38, 0.45)',
@@ -554,7 +591,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, enemyCaptureFx, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
 
   // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring
@@ -658,8 +695,9 @@ export function RunBoard({
   }, [threatened]);
 
   const pieces = useMemo(
-    () => vanillaPieces ? { ...defaultPieces } : ({
+    () => vanillaPieces ? { ...defaultPieces, ...STATUS_PIECES } : ({
       ...defaultPieces,
+      ...STATUS_PIECES,
       // Custom Rookie sprite for each of her three forms.
       wR: () => (
         <RookieCell
@@ -1138,7 +1176,7 @@ export function RunBoard({
         )}
         {poisonDeathFx && <PoisonDeathLayer fx={poisonDeathFx} />}
         {enemyCaptureFx && (
-          <EnemyCaptureSlide fx={enemyCaptureFx} />
+          <EnemyCaptureImpact fx={enemyCaptureFx} />
         )}
         {state.status === 'lost' && (
           <>
@@ -1831,7 +1869,7 @@ function SacrificeBlastLayer({
   );
 }
 
-function EnemyCaptureSlide({
+function EnemyCaptureImpact({
   fx,
 }: {
   fx: {
@@ -1842,22 +1880,25 @@ function EnemyCaptureSlide({
     id: number;
   };
 }) {
-  const from = fromSquare(fx.fromSq);
+  // Enemy-on-enemy capture (rabid friendly fire, decoy lure). The attacker
+  // is NOT drawn here — react-chessboard slides it natively, exactly like
+  // every other capture on the board (its sprite key is unique while rabid /
+  // decoy, so the diff always finds it). This layer only adds the impact:
+  // the victim crunches the moment the slide lands, plus a red burst.
+  //
+  // Why not an overlay slide (the previous version): the chessboard applies
+  // every position change on a PIECE_SLIDE_MS delay even when it can't
+  // animate it, so hiding the mover and sliding a copy left a stale ghost on
+  // the origin square for 320ms and an empty landing square for another
+  // 320ms after the copy unmounted — two visible hitches per capture.
   const to = fromSquare(fx.toSq);
-  const fromX = (from.file - 1) * 12.5;
-  const fromY = (8 - from.rank) * 12.5;
   const toX = (to.file - 1) * 12.5;
   const toY = (8 - to.rank) * 12.5;
-  // Percent of the sprite's own box (translate % is relative to the element).
-  const dx = (to.file - from.file) * 100;
-  const dy = -(to.rank - from.rank) * 100;
-  const AttackerComp =
-    defaultPieces[ENEMY_SPRITE[fx.pieceType] as keyof typeof defaultPieces];
   const VictimComp = fx.victimType
     ? defaultPieces[ENEMY_SPRITE[fx.victimType] as keyof typeof defaultPieces]
     : null;
   const idKey = Math.floor(fx.id);
-  const slide = ENEMY_CAPTURE_SLIDE_MS;
+  const slide = PIECE_SLIDE_MS;
   return (
     <div
       aria-hidden
@@ -1869,29 +1910,17 @@ function EnemyCaptureSlide({
       }}
     >
       <style>{`
-        @keyframes rrEnemyCaptureSlide-${idKey} {
-          0%   { transform: translate(0, 0) scale(1); }
-          70%  { transform: translate(${dx * 0.92}%, ${dy * 0.92}%) scale(1.12); }
-          100% { transform: translate(${dx}%, ${dy}%) scale(1); }
-        }
         @keyframes rrEnemyCaptureVictim-${idKey} {
-          0%   { transform: scale(1); opacity: 1; filter: none; }
-          75%  { transform: scale(1); opacity: 1; filter: none; }
-          82%  { transform: scale(1.15); opacity: 1; filter: brightness(1.6) sepia(1) saturate(6) hue-rotate(-20deg); }
+          0%   { transform: scale(1.15); opacity: 1; filter: brightness(1.6) sepia(1) saturate(6) hue-rotate(-20deg); }
           100% { transform: scale(0.3); opacity: 0; filter: brightness(1.6) sepia(1) saturate(6) hue-rotate(-20deg); }
         }
         @keyframes rrEnemyCaptureBurst-${idKey} {
           0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.95; }
           100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
         }
-        @keyframes rrEnemyCaptureShake-${idKey} {
-          0%, 100% { transform: translate(0, 0); }
-          25% { transform: translate(-3%, 1%); }
-          50% { transform: translate(3%, -1%); }
-          75% { transform: translate(-2%, 0); }
-        }
       `}</style>
-      {/* Victim: sits on its square until the attacker lands, then crunches. */}
+      {/* Victim: the chessboard draws it on its square until the slide lands
+          and swaps it out; this copy takes over at that instant and crunches. */}
       {VictimComp && (
         <div
           style={{
@@ -1900,7 +1929,8 @@ function EnemyCaptureSlide({
             top: `${toY}%`,
             width: '12.5%',
             height: '12.5%',
-            animation: `rrEnemyCaptureVictim-${idKey} ${slide + 120}ms ease-in forwards`,
+            opacity: 0,
+            animation: `rrEnemyCaptureVictim-${idKey} 160ms ease-in ${slide}ms forwards`,
           }}
         >
           <VictimComp />
@@ -1921,28 +1951,6 @@ function EnemyCaptureSlide({
           opacity: 0,
         }}
       />
-      {/* Attacker: slides in, pops on landing, shakes off the bite. */}
-      <div
-        style={{
-          position: 'absolute',
-          left: `${fromX}%`,
-          top: `${fromY}%`,
-          width: '12.5%',
-          height: '12.5%',
-          animation: `rrEnemyCaptureSlide-${idKey} ${slide}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
-          filter: 'drop-shadow(0 0 6px rgba(220,38,38,0.7))',
-        }}
-      >
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            animation: `rrEnemyCaptureShake-${idKey} 220ms ease-in-out ${slide}ms 1`,
-          }}
-        >
-          {AttackerComp ? <AttackerComp /> : null}
-        </div>
-      </div>
     </div>
   );
 }
