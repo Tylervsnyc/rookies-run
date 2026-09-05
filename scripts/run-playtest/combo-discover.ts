@@ -120,6 +120,8 @@
  *     --screen-trials=N (10) --pair-trials=N (10) --confirm-trials=N (30)
  *     --screen-kill=P (20) --none-max=P (8) --single-max=P (8) --pair-min=P (60)
  *     --tier=T5|T6 (T5)  --realistic (default on; --realistic=off pins T1)
+ *     --pure-check                also measure all 23 singles on each hit, to
+ *                                 flag the rare "pure" level (23 extra cells)
  *     --jobs=N  --limit=N  --minutes=N  --fresh  --out=dir
  *
  * Nothing here writes to lib/run — like generate-levels.ts this emits
@@ -745,7 +747,7 @@ interface Opts {
   screenTrials: number; pairTrials: number; confirmTrials: number;
   screenKill: number; noneMax: number; singleMax: number; pairMin: number;
   tier: string; realistic: boolean; jobs: number;
-  scoreAll: boolean; limit: number; minutes: number; fresh: boolean;
+  scoreAll: boolean; pureCheck: boolean; limit: number; minutes: number; fresh: boolean;
 }
 
 function readOpts(): Opts {
@@ -778,6 +780,7 @@ function readOpts(): Opts {
     realistic: r !== 'off' && r !== 'false',
     jobs: defaultJobs(num('jobs', 8)),
     scoreAll: flag('score-all'),
+    pureCheck: flag('pure-check'),
     limit: num('limit', Number.MAX_SAFE_INTEGER),
     minutes: num('minutes', 0),
     fresh: flag('fresh'),
@@ -924,9 +927,15 @@ async function main(): Promise<void> {
         continue;
       }
 
-      // Bonus tier: is it gated against EVERY card in the game?
-      await meas(ALL_ABILITIES, o.screenTrials);
-      const pure = ALL_ABILITIES.every((a) => matrix[a].winPct <= o.singleMax);
+      // Bonus tier: is it gated against EVERY card in the game? Opt-in — this
+      // is 23 extra cells on every hit, and the solvent finding says it will
+      // almost always be false on a terrain level (all three solvents crack
+      // them). Turn it on with --pure-check when hunting that rarity.
+      let pure = false;
+      if (o.pureCheck) {
+        await meas(ALL_ABILITIES, o.screenTrials);
+        pure = ALL_ABILITIES.every((a) => matrix[a].winPct <= o.singleMax);
+      }
 
       const winningPairs = [...new Map(gated.flatMap((g) => g.winningPairs).map((w) => [w.pair, w])).values()].sort((a, b) => b.winPct - a.winPct);
       const cand = s.kind === 'gen' ? cands![s.idx!] : null;

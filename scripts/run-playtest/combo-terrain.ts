@@ -103,7 +103,9 @@ function court(rng: RNG, kf: number, wide: boolean): { pen: string[]; kingAt: Co
  * A dropped knight (Vanguard) lands anywhere in range and can take the king in
  * one jump, which solos the level — measured 100% on the first terrain pass.
  * Stoning the knight-jump squares closes that; leaving them open is what makes
- * a level a VANGUARD level. Randomised, so the search covers both.
+ * a level a VANGUARD level. Randomised, so the search covers both — but a HALF
+ * seal is useless (vanguard soloed 8 of the first 11 kills through the squares
+ * left open), so when it fires it seals every jump square at once.
  */
 function sealKnightSquares(kingAt: Coord, taken: Set<string>, rng: RNG, howMany: number): Coord[] {
   const jumps: Coord[] = [];
@@ -180,7 +182,7 @@ function buildChecker(rng: RNG, slot: number): Build {
   const pieces: EnemyPiece[] = [king(c.kingAt.file, c.kingAt.rank), ...c.wall];
   for (const p of pieces) taken.add(sq(p.file, p.rank));
   for (const h of [...hazards, ...c.sealed]) taken.add(sq(h.file, h.rank));
-  const knightSeal = rng() < 0.5 ? sealKnightSquares(c.kingAt, taken, rng, randInt(rng, 2, 4)) : [];
+  const knightSeal = rng() < 0.75 ? sealKnightSquares(c.kingAt, taken, rng, 8) : [];
   pieces.push(...upperGuards(rng, taken, c.kingAt, base));
   pieces.push(...hunters(rng, randInt(rng, 0, 2), taken, c.kingAt));
   return {
@@ -210,7 +212,7 @@ function buildMoat(rng: RNG, slot: number): Build {
   if (!taken.has(sq(gate, r + 2)) && inB(gate, r + 2)) pieces.push(pawn(gate, r + 2));
   for (const p of pieces) taken.add(sq(p.file, p.rank));
   for (const h of [...hazards, ...c.sealed]) taken.add(sq(h.file, h.rank));
-  const knightSeal = rng() < 0.5 ? sealKnightSquares(c.kingAt, taken, rng, randInt(rng, 2, 4)) : [];
+  const knightSeal = rng() < 0.75 ? sealKnightSquares(c.kingAt, taken, rng, 8) : [];
   pieces.push(...upperGuards(rng, taken, c.kingAt, r));
   pieces.push(...hunters(rng, randInt(rng, 0, 2), taken, c.kingAt));
   return {
@@ -249,7 +251,7 @@ function buildVault(rng: RNG, slot: number): Build {
   if (rng() < 0.7 && inB(f0, 5)) pieces.push(pawn(f0, 5));
   for (const p of pieces) taken.add(sq(p.file, p.rank));
   for (const h of hazards) taken.add(sq(h.file, h.rank));
-  const knightSeal = rng() < 0.5 ? sealKnightSquares(kingAt, taken, rng, randInt(rng, 2, 4)) : [];
+  const knightSeal = rng() < 0.75 ? sealKnightSquares(kingAt, taken, rng, 8) : [];
   pieces.push(...upperGuards(rng, taken, kingAt, 5));
   pieces.push(...hunters(rng, randInt(rng, 1, 2), taken, kingAt));
   return {
@@ -285,7 +287,7 @@ function buildComb(rng: RNG, slot: number): Build {
     if ((f - off) % step === 0) continue;
     if (rng() < 0.55 && !taken.has(sq(f, rHi))) { pieces.push(pawn(f, rHi)); taken.add(sq(f, rHi)); }
   }
-  const knightSeal = rng() < 0.5 ? sealKnightSquares(c.kingAt, taken, rng, randInt(rng, 2, 4)) : [];
+  const knightSeal = rng() < 0.75 ? sealKnightSquares(c.kingAt, taken, rng, 8) : [];
   pieces.push(...upperGuards(rng, taken, c.kingAt, rHi));
   pieces.push(...hunters(rng, randInt(rng, 0, 1), taken, c.kingAt));
   return {
