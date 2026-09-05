@@ -785,6 +785,14 @@
       "live": {
         "at": "2026-09-05"
       }
+    },
+    {
+      "id": "revenge-14",
+      "kind": "run",
+      "name": "The Vault",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Vanguard+Swap body-then-become run. Signature: the king lives in a sealed stone strongbox; knight-jump squares are walled so a dropped body can only create a landing. Finale L7-L10: every single kit card 0%, vanguard+swap 81-97%. Full runs 28% random / 53% with the pair."
     }
   ]
 }
