@@ -67,7 +67,7 @@ export interface TerrainOpts {
   families?: string[];
 }
 
-export const TERRAIN_FAMILIES = ['checker', 'moat', 'vault', 'comb'];
+export const TERRAIN_FAMILIES = ['checker', 'moat', 'vault', 'comb', 'court', 'open', 'recapture'];
 
 interface Build {
   title: string;
@@ -300,8 +300,105 @@ function buildComb(rng: RNG, slot: number): Build {
   };
 }
 
+/**
+ * Barriers that are NOT terrain a knight jumps (Tyler wants UNIQUE
+ * combinations, and walls make every knight-hop partner "necessary"):
+ *   court      no wall at all — a pawn-defended key on the king's line plus a
+ *              queen raking the approach. The problem is a SIGHTLINE and a
+ *              DEFENDED KEY, so decoy / aegis / poison / freeze / rewind are
+ *              the kind of answer.
+ *   open       a fleeing king in a big open pen with a tight budget — a rook
+ *              cannot corner him alone, so cage-building cards matter.
+ *   recapture  the only key is covered by a queen that recaptures whatever
+ *              takes it — a one-charge-body situation, so rewind / aegis /
+ *              sacrifice matter.
+ */
+function buildCourt(rng: RNG, slot: number): Build {
+  const kf = randInt(rng, 2, 7);
+  const c = court(rng, kf, false);
+  const taken = new Set<string>();
+  const pieces: EnemyPiece[] = [king(c.kingAt.file, c.kingAt.rank), ...c.wall];
+  for (const p of pieces) taken.add(sq(p.file, p.rank));
+  for (const h of c.sealed) taken.add(sq(h.file, h.rank));
+  // Second pawn rank defending the wall — every key is pawn-defended.
+  for (const w of c.wall) {
+    const f = w.file + (rng() < 0.5 ? 1 : -1);
+    if (inB(f, 6) && !taken.has(sq(f, 6)) && rng() < 0.6) { pieces.push(pawn(f, 6)); taken.add(sq(f, 6)); }
+  }
+  // The sightline: a queen raking rank 5 or the key file from the far side.
+  const qf = c.kingAt.file <= 4 ? 8 : 1;
+  if (!taken.has(sq(qf, 5))) { pieces.push(queen(qf, 5)); taken.add(sq(qf, 5)); }
+  if (rng() < 0.5) { const bf = qf === 8 ? 1 : 8; if (!taken.has(sq(bf, 4))) { pieces.push(bishop(bf, 4)); taken.add(sq(bf, 4)); } }
+  pieces.push(...hunters(rng, randInt(rng, 0, 1), taken, c.kingAt));
+  return {
+    title: 'THE COURT',
+    idea: 'No walls. A defended key on his line and a queen watching every approach.',
+    hazards: [...c.sealed],
+    pieces,
+    pen: c.pen,
+    moveLimit: randInt(rng, 6, 9) + (slot >= 9 ? 1 : 0),
+  };
+}
+
+function buildOpen(rng: RNG, slot: number): Build {
+  // A 3x3 or 4x2 pen in the open upper board; he flees, and the budget is tight.
+  const wide = rng() < 0.5;
+  const f0 = randInt(rng, 1, wide ? 5 : 6);
+  const pen: string[] = [];
+  const ranks = wide ? [7, 8] : [6, 7, 8];
+  const files = wide ? [f0, f0 + 1, f0 + 2, f0 + 3] : [f0, f0 + 1, f0 + 2];
+  for (const r of ranks) for (const f of files) pen.push(toSquare({ file: f, rank: r }));
+  const kingAt = { file: files[Math.floor(files.length / 2)], rank: 8 };
+  const taken = new Set<string>([sq(kingAt.file, kingAt.rank)]);
+  const pieces: EnemyPiece[] = [king(kingAt.file, kingAt.rank)];
+  // Guards OUTSIDE the pen covering the files into it.
+  const put = (p: EnemyPiece) => { if (inB(p.file, p.rank) && !taken.has(sq(p.file, p.rank)) && !pen.includes(toSquare(p))) { taken.add(sq(p.file, p.rank)); pieces.push(p); } };
+  put(knight(files[0] - 1 >= 1 ? files[0] - 1 : files[files.length - 1] + 1, 6));
+  if (rng() < 0.6) put(bishop(kingAt.file <= 4 ? 8 : 1, 5));
+  if (rng() < 0.5) put(queen(kingAt.file <= 4 ? 8 : 1, 3));
+  pieces.push(...hunters(rng, randInt(rng, 0, 1), taken, kingAt));
+  return {
+    title: 'THE OPEN FIELD',
+    idea: 'He runs. No walls to pin him against — build the cage yourself.',
+    hazards: [],
+    pieces,
+    pen,
+    moveLimit: randInt(rng, 6, 8) + (slot >= 9 ? 1 : 0),
+  };
+}
+
+function buildRecapture(rng: RNG, slot: number): Build {
+  // One key on the king's file, and a queen that recaptures on it — whatever
+  // takes the key dies. A one-charge-body problem.
+  const kf = randInt(rng, 2, 7);
+  const pen = [toSquare({ file: kf - 1, rank: 8 }), toSquare({ file: kf, rank: 8 }), toSquare({ file: kf + 1, rank: 8 })];
+  const kingAt = { file: kf, rank: 8 };
+  const taken = new Set<string>([sq(kf, 8)]);
+  const pieces: EnemyPiece[] = [king(kf, 8)];
+  const hazards: Coord[] = [];
+  // Seal the pen sides with stone; the key pawn sits on his file.
+  for (const f of [kf - 2, kf + 2]) if (inB(f, 8)) { hazards.push({ file: f, rank: 8 }); taken.add(sq(f, 8)); }
+  for (const f of [kf - 1, kf + 1]) if (inB(f, 7)) { hazards.push({ file: f, rank: 7 }); taken.add(sq(f, 7)); }
+  const keyRank = randInt(rng, 5, 7);
+  pieces.push(pawn(kf, keyRank)); taken.add(sq(kf, keyRank));
+  // The recapturing queen, on the key's rank or diagonal, off the king's file.
+  const qf = kf <= 4 ? Math.min(8, kf + randInt(rng, 2, 4)) : Math.max(1, kf - randInt(rng, 2, 4));
+  pieces.push(queen(qf, keyRank)); taken.add(sq(qf, keyRank));
+  if (rng() < 0.5) { const d = keyRank - 1; const bf = qf === 8 ? 1 : 8; if (inB(bf, d) && !taken.has(sq(bf, d))) { pieces.push(bishop(bf, d)); taken.add(sq(bf, d)); } }
+  pieces.push(...hunters(rng, randInt(rng, 0, 1), taken, kingAt));
+  return {
+    title: 'THE TOLL',
+    idea: 'One key. The queen takes back whatever takes it. Spend a body, or spend the move twice.',
+    hazards,
+    pieces,
+    pen,
+    moveLimit: randInt(rng, 5, 8) + (slot >= 9 ? 1 : 0),
+  };
+}
+
 const BUILDERS: Record<string, (rng: RNG, slot: number) => Build> = {
   checker: buildChecker, moat: buildMoat, vault: buildVault, comb: buildComb,
+  court: buildCourt, open: buildOpen, recapture: buildRecapture,
 };
 
 /** Structural sanity — the subset of revenge-generate's lint that applies here. */

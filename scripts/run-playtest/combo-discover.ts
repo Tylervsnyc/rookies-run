@@ -352,6 +352,9 @@ function saveAttempts(a: Record<string, number>): void {
   writeFileSync(ATTEMPTS_FILE, JSON.stringify(a, null, 1));
 }
 
+/** Cards that already have plenty of gating pairs — they yield the rotation head to the ones that do not. */
+const OVERUSED = ['knight-hop', 'swap'];
+
 interface KitPlan { kit: string[]; anchors: string[]; reason: string; }
 
 /**
@@ -363,13 +366,24 @@ function planKits(kitSize: number, maxKits: number, attempts: Record<string, num
   const out: KitPlan[] = [...seedKits];
   const seenKit = new Set(out.map((k) => [...k.kit].sort().join(',')));
   const used = new Set<string>(); // anchors already seated in THIS subject's kits
+  // UNIQUE combinations first (Tyler, 2026-09-05): 14 of the first 21 gating
+  // pairs were knight-hop + X — one verb with different partners. Pairs that
+  // contain NEITHER knight-hop nor swap go to the head of the rotation, and
+  // knight-hop may anchor at most ~20% of a subject's kits.
+  const overused = (pair: string) => pair.split('+').some((c) => OVERUSED.includes(c));
   const order = [...ANCHOR_UNIVERSE].sort(
-    (a, b) => (attempts[a.pair] ?? 0) - (attempts[b.pair] ?? 0) || a.rank - b.rank,
+    (a, b) => Number(overused(a.pair)) - Number(overused(b.pair)) || (attempts[a.pair] ?? 0) - (attempts[b.pair] ?? 0) || a.rank - b.rank,
   );
+  const khCap = Math.max(1, Math.ceil(maxKits * 0.2));
+  let khKits = 0;
   for (const a of order) {
     if (out.length >= maxKits) break;
     if (used.has(a.pair)) continue;
     const [x, y] = a.pair.split('+');
+    if ([x, y].includes('knight-hop')) {
+      if (khKits >= khCap) continue;
+      khKits++;
+    }
     const kit = [x, y];
     const anchors = [a.pair];
     const reasons = [a.reason];
@@ -386,6 +400,7 @@ function planKits(kitSize: number, maxKits: number, attempts: Record<string, num
       const [u, v] = b.pair.split('+');
       if (kit.includes(u) || kit.includes(v)) continue;
       if (!anchorHasSolvent && [u, v].some((c) => SOLVENT_PRESET.includes(c))) continue;
+      if (!overused(a.pair) && overused(b.pair)) continue; // keep a unique kit unique
       if ([u, v].some((c) => kit.some((k) => HYP.anti.has(pairKey(k, c))))) continue;
       kit.push(u, v);
       anchors.push(b.pair);
