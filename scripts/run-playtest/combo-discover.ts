@@ -93,6 +93,13 @@
  *       --slots=6-10 --variants=6 --max-kits=12
  *
  *   Flags:
+ *     --from-terrain              generate TERRAIN candidates via
+ *                                 combo-terrain.ts (checker / moat / vault /
+ *                                 comb barrier families). This is the source
+ *                                 that actually produces gates — see that
+ *                                 file's header for why revenge-generate's
+ *                                 density archetypes cannot.
+ *     --families=a,b | all        terrain families (default all four)
  *     --from-generator            generate candidates via revenge-generate.ts
  *     --run=<id> --levels=1,2,3   score EXISTING levels of a shipped run. The
  *                                 run's own `allowedAbilities` is tested as kit
@@ -138,6 +145,7 @@ import {
   type RevengeCfg,
 } from './revenge-core';
 import { buildCandidates, renderSnippet, type Candidate } from './revenge-generate';
+import { buildTerrainCandidates, TERRAIN_FAMILIES, type TerrainCandidate, type TerrainOpts } from './combo-terrain';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Args
@@ -396,7 +404,7 @@ interface GenOpts { slots: number[]; archetypes: string[]; variants: number; see
 
 interface Subject {
   key: string;
-  kind: 'gen' | 'run';
+  kind: 'gen' | 'run' | 'terrain';
   slot: number;
   idx?: number;      // generator mode: index into buildCandidates(genOpts)
   runId?: string;    // run mode
@@ -423,6 +431,7 @@ function genOptsFromArgs(): GenOpts {
 interface Task { key: string; loadout: string; }
 interface TaskFile {
   genOpts: GenOpts | null;
+  terrainOpts: TerrainOpts | null;
   subjects: Subject[];
   tasks: Task[];
   trials: number;
@@ -431,8 +440,11 @@ interface TaskFile {
 }
 interface CellOut { key: string; loadout: string; cell: Cell; }
 
-function cfgForSubject(s: Subject, cands: Candidate[] | null): { cfg: RevengeCfg; level: number } {
+function cfgForSubject(s: Subject, cands: Candidate[] | null, terrain: TerrainCandidate[] | null): { cfg: RevengeCfg; level: number } {
   if (s.kind === 'run') return { cfg: { runId: s.runId! }, level: s.level! };
+  if (s.kind === 'terrain') {
+    return { cfg: { runId: 'revenge-1', puzzles: { [s.slot]: terrain![s.idx!].puzzle } }, level: s.slot };
+  }
   const c = cands![s.idx!];
   // Generated puzzles ride in as a per-level override on revenge-1 — the same
   // trick experiments/mutations use, which is why these cells must be measured
@@ -443,11 +455,12 @@ function cfgForSubject(s: Subject, cands: Candidate[] | null): { cfg: RevengeCfg
 function workerMain(): void {
   const payload = JSON.parse(readFileSync(arg('task-file')!, 'utf8')) as TaskFile;
   const cands = payload.genOpts ? buildCandidates(payload.genOpts) : null;
+  const terrain = payload.terrainOpts ? buildTerrainCandidates(payload.terrainOpts) : null;
   const byKey = new Map(payload.subjects.map((s) => [s.key, s]));
   const out: CellOut[] = [];
   for (const t of payload.tasks) {
     const s = byKey.get(t.key)!;
-    const { cfg, level } = cfgForSubject(s, cands);
+    const { cfg, level } = cfgForSubject(s, cands, terrain);
     const cell = runMatrixCell(cfg, level, t.loadout, payload.trials, payload.tier, payload.realistic, `combo:${s.key}`);
     out.push({ key: t.key, loadout: t.loadout, cell });
   }
@@ -481,7 +494,7 @@ function spawnWorker(payload: TaskFile): Promise<CellOut[]> {
  * workers, so every number is reproducible from its seed.
  */
 async function measure(
-  tasks: Task[], subjects: Subject[], genOpts: GenOpts | null,
+  tasks: Task[], subjects: Subject[], genOpts: GenOpts | null, terrainOpts: TerrainOpts | null,
   trials: number, tier: string, realistic: boolean, jobs: number,
 ): Promise<Map<string, Cell>> {
   const result = new Map<string, Cell>();
@@ -492,7 +505,7 @@ async function measure(
   const used = new Set(tasks.map((t) => t.key));
   const subs = subjects.filter((s) => used.has(s.key));
   const all = await Promise.all(
-    shards.filter((s) => s.length).map((s) => spawnWorker({ genOpts, subjects: subs, tasks: s, trials, tier, realistic })),
+    shards.filter((s) => s.length).map((s) => spawnWorker({ genOpts, terrainOpts, subjects: subs, tasks: s, trials, tier, realistic })),
   );
   for (const batch of all) for (const c of batch) result.set(`${c.key}|${c.loadout}`, c.cell);
   return result;
@@ -517,7 +530,7 @@ interface LibraryEntry {
   id: string;
   date: string;
   slot: number;
-  source: { kind: 'gen' | 'run'; runId?: string; level?: number; archetype?: string; genSeed?: number };
+  source: { kind: 'gen' | 'run' | 'terrain'; runId?: string; level?: number; archetype?: string; genSeed?: number };
   title: string;
   /** Every kit under which this level is combo-gated. More = more runs can ship it. */
   gatedUnder: GatedKit[];
@@ -722,8 +735,9 @@ function writeSynergy(): void {
 // Main
 
 interface Opts {
-  mode: 'gen' | 'run';
+  mode: 'gen' | 'run' | 'terrain';
   genOpts: GenOpts | null;
+  terrainOpts: TerrainOpts | null;
   runId: string | null;
   levels: number[];
   kitSize: number;
@@ -736,11 +750,19 @@ interface Opts {
 
 function readOpts(): Opts {
   const runId = arg('run') ?? null;
-  const fromGen = flag('from-generator') || !runId;
+  const fromTerrain = flag('from-terrain');
+  const fromGen = !fromTerrain && (flag('from-generator') || !runId);
   const r = arg('realistic', 'true');
+  const fam = arg('families', 'all')!;
   return {
-    mode: fromGen ? 'gen' : 'run',
+    mode: fromTerrain ? 'terrain' : fromGen ? 'gen' : 'run',
     genOpts: fromGen ? genOptsFromArgs() : null,
+    terrainOpts: fromTerrain ? {
+      slots: parseRange(arg('slots'), [7, 8, 9, 10]),
+      variants: num('variants', 8),
+      seed: num('seed', 0),
+      families: fam === 'all' ? TERRAIN_FAMILIES : fam.split(',').map((x) => x.trim()).filter(Boolean),
+    } : null,
     runId,
     levels: runId ? parseRange(arg('levels'), Array.from({ length: levelCountFor(runId) }, (_, i) => i + 1)) : [],
     kitSize: num('kit-size', 4),
@@ -781,7 +803,14 @@ async function main(): Promise<void> {
   let cands: Candidate[] | null = null;
   let lintFails = 0;
   const seedKits: KitPlan[] = [];
-  if (o.mode === 'gen') {
+  let terrain: TerrainCandidate[] | null = null;
+  if (o.mode === 'terrain') {
+    terrain = buildTerrainCandidates(o.terrainOpts!);
+    terrain.forEach((c, idx) => {
+      if (c.lintErrors.length) { lintFails++; return; }
+      subjects.push({ key: `${c.id}-s${o.terrainOpts!.seed}`, kind: 'terrain', slot: c.slot, idx, title: c.title, archetype: c.family });
+    });
+  } else if (o.mode === 'gen') {
     cands = buildCandidates(o.genOpts!);
     cands.forEach((c, idx) => {
       if (c.lint.errors.length) { lintFails++; return; } // stage 0 — free kill
@@ -818,7 +847,7 @@ async function main(): Promise<void> {
   for (const group of chunk(subjects, o.jobs * 2)) {
     if (stop()) break;
     // ── (a) no-ability screen, batched across the whole group ───────────────
-    const noneCells = await measure(group.map((s) => ({ key: s.key, loadout: 'none' })), subjects, o.genOpts, o.screenTrials, o.tier, o.realistic, o.jobs);
+    const noneCells = await measure(group.map((s) => ({ key: s.key, loadout: 'none' })), subjects, o.genOpts, o.terrainOpts, o.screenTrials, o.tier, o.realistic, o.jobs);
 
     for (const s of group) {
       if (stop()) break;
@@ -830,7 +859,7 @@ async function main(): Promise<void> {
       const meas = async (loadouts: string[], trials: number) => {
         const todo = [...new Set(loadouts)].filter((lo) => !(lo in matrix) || matrix[lo].trials < trials);
         if (!todo.length) return;
-        const cells = await measure(todo.map((lo) => ({ key: s.key, loadout: lo })), subjects, o.genOpts, trials, o.tier, o.realistic, o.jobs);
+        const cells = await measure(todo.map((lo) => ({ key: s.key, loadout: lo })), subjects, o.genOpts, o.terrainOpts, trials, o.tier, o.realistic, o.jobs);
         for (const lo of todo) matrix[lo] = toRow(cells.get(`${s.key}|${lo}`)!);
       };
       matrix.none = toRow(noneCells.get(`${s.key}|none`)!);
@@ -901,11 +930,12 @@ async function main(): Promise<void> {
 
       const winningPairs = [...new Map(gated.flatMap((g) => g.winningPairs).map((w) => [w.pair, w])).values()].sort((a, b) => b.winPct - a.winPct);
       const cand = s.kind === 'gen' ? cands![s.idx!] : null;
+      const terr = s.kind === 'terrain' ? terrain![s.idx!] : null;
       const entry: LibraryEntry = {
         id: s.key, date: today(), slot: s.slot,
-        source: s.kind === 'gen'
-          ? { kind: 'gen', archetype: s.archetype, genSeed: o.genOpts!.seed }
-          : { kind: 'run', runId: s.runId!, level: s.level! },
+        source: s.kind === 'run'
+          ? { kind: 'run', runId: s.runId!, level: s.level! }
+          : { kind: s.kind, archetype: s.archetype, genSeed: (o.genOpts ?? o.terrainOpts)!.seed },
         title: s.title ?? s.key,
         gatedUnder: gated,
         kitsGating: gated.length,
@@ -920,8 +950,8 @@ async function main(): Promise<void> {
           tier: o.tier, realistic: o.realistic,
         },
         pool: { abilities: [...POOL], excluded: [...EXCLUDED] },
-        puzzle: cand ? cand.puzzle : puzzleFor({ runId: s.runId! }, s.level!),
-        snippet: cand ? renderSnippet(cand.spec) : null,
+        puzzle: cand ? cand.puzzle : terr ? terr.puzzle : puzzleFor({ runId: s.runId! }, s.level!),
+        snippet: cand ? renderSnippet(cand.spec) : terr ? terr.snippet : null,
       };
       writeEntry(entry);
       if (o.scoreAll) writeScan(s.key, { id: s.key, title: s.title, slot: s.slot, verdict: 'accepted', gatedUnder: gated, pure, solvents, matrix });
