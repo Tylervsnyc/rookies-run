@@ -809,6 +809,14 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Dragon + Sacrifice parachute-the-bomb run. Signature: a two-deep pawn hedge on ranks 6-7 where the back row defends the front and a rook capture is always recaptured. A dragon spawned beside the hedge and detonated the same turn opens the two files beside Rookie top to bottom and stuns the king. L7-L10: every single kit card 0-3%, pair 78-84%. Full runs 55% random / 50% with the pair (random converges on the pair since it is half the kit)."
+    },
+    {
+      "id": "revenge-18",
+      "kind": "run",
+      "name": "The Glasshouse",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Freeze Ray + Vanguard pin-and-parachute run. Signature: a box of hazards around the king's corner with one missing pane that something is watching; from L7 he bricks the window up and the only sightline left is his. Finale: freeze him where he stands, drop the knight, walk it on, take him inside the pin. L7-L10: every single kit card 0%, pair 72-100% (serial reads). Full runs 43% random / 70% with the pair."
     }
   ]
 }
