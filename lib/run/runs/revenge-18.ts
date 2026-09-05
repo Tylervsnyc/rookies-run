@@ -65,20 +65,24 @@
  * a house built out of walls it would either seal his room for free or seal
  * her own line — measured on The Colonnade as an active negative.
  *
- * MEASURED (Normal, T5 bot, 24-32 trials/cell, 2026-09-05):
+ * MEASURED (Normal, T5 bot, 32 trials/cell, --jobs=1 SERIAL — parallel matrix
+ * cells cross-talk when other sims share the machine, so these are the numbers
+ * of record; 2026-09-05):
  *   L      none  freeze  vanguard  poison  magnet  |  freeze+vanguard
  *   1-2    100%   100%     100%     100%    100%   |   100%   (teaching)
- *   3       13%   100%      67%      21%     13%   |   100%
- *   4        0%   100%     100%      96%      0%   |   100%
- *   5       67%   100%      92%      63%     42%   |   100%
+ *   3       19%   100%      88%      28%     19%   |   100%
+ *   4        0%   100%     100%     100%      0%   |   100%
+ *   5       59%   100%     100%      84%     66%   |   100%
  *   6        0%     0%     100%       0%      0%   |   100%
  *   7        0%     0%       0%       0%      0%   |   100%
- *   8        0%     0%       0%       0%      0%   |    84%
+ *   8        0%     0%       0%       0%      0%   |    88%
  *   9        0%     0%       0%       0%      0%   |    72%
- *   10       0%     0%       0%       0%      0%   |    88%
- * Full runs (40 each): 28% clear with RANDOM offer picks, 80% when the player
- * takes freeze-ray + vanguard. Calibrated against The Moat (25% random,
- * singles 0% on its finale) and The Colonnade (12% random, 55% on its pair).
+ *   10       0%     0%       0%       0%      0%   |    81%
+ * Full runs (40 each, serial): 43% clear with RANDOM offer picks, 70% when the
+ * player takes freeze-ray + vanguard. That random figure is above The Moat's
+ * 25% — the honest reason is that a 4-card kit with offers on L1/L3/L6/L9 means
+ * a random picker almost always ends up holding both halves of the pair by L7;
+ * the finale gate itself is clean (every single card 0%).
  *
  * A NOTE ON WHY THE FINALE PINS THE KING RATHER THAN A GUARD. The first three
  * builds of L7-L10 put the eye on the window and asked for a pre-emptive
