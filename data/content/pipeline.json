@@ -833,6 +833,14 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Convert + Summon Knight cage-and-take run, a pair the discovery harness found. Signature: one diagonal of stone a rook can never cross and a knight steps over. Finale: convert the pawn under the king's pen so his own guard becomes the cage, then the Squire jumps in and takes him. L7-L10: every single kit card 0%, pair 75-88% (serial). Full runs 8% random / 13% with the pair (L3 is a Squire-or-nothing gate)."
+    },
+    {
+      "id": "revenge-21",
+      "kind": "run",
+      "name": "The Slash",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Boulder + Knight Hop cage-and-take run. Signature: one diagonal of stone corner to corner that only a knight crosses. Finale: jump the slash, drop two stones on the king's flight squares, slide onto his line. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 40% random / 85% with the pair. Boulder earned its place: the stone's job is one turn deep, which the bot models."
     }
   ]
 }
