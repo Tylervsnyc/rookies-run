@@ -34,7 +34,7 @@ export interface DailyOverride {
 const DAILY_OVERRIDES: Readonly<Record<string, DailyOverride>> = {
   '2026-09-03': { runId: 'revenge-11', difficulty: 'hard', kitSeed: '2026-09-03-hard' },
   '2026-09-04': { runId: 'revenge-12', difficulty: 'normal', kitSeed: '2026-09-04-moat' }, // The Moat, pinned so Tyler can try it on TestFlight today
-  '2026-09-05': { runId: 'revenge-12', difficulty: 'normal', kitSeed: '2026-09-05-moat' },
+  '2026-09-05': { runId: 'revenge-13', difficulty: 'normal', kitSeed: '2026-09-05-colonnade' }, // The Colonnade — Tyler approved it into the pool 2026-09-05
 };
 
 export function getDailyOverride(yyyyMmDd: string): DailyOverride | null {
