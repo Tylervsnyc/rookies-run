@@ -1,0 +1,540 @@
+{
+  "generated": "2026-09-05",
+  "source": "Read from lib/run/abilities.ts, lib/run/pawn-ai.ts, lib/run/engine.ts, lib/run/movement.ts, lib/run/runs.ts (The Colonnade). Built abilities = isBuilt() in lib/content/pipeline.ts (23 of them).",
+  "notes": [
+    "TEMPO FACT that drives most of this list: almost every ability is a FREE action. Summoning, Swap, Sacrifice, Boulder, all three darts, Convert, Magnet, Smoke, Rewind, Aegis and the transforms all resolve without ending the turn. The only things that end the turn are Rookie moving and a summon moving (below T5). So the scarce resource is BODY-MOVES, not casts: a pair is strong when it converts free casts into a capture, a stun, or a relocation that would otherwise have cost a move.",
+    "KING FACT: any capture credited to Rookie's side (her move, a summon's move, a Boulder crush on a pawn, a poison death, friendly fire on a Decoy, a Sacrifice blast) sets kingStunTurns, and a stunned king cannot flee. The king flees only from Rookie's CURRENT form, from controlled summons, and (nightmare) from ally cover; he never leaves his pen and never steps onto a hazard, an ally-covered square, or a square Rookie's form attacks.",
+    "SELF-BLOCK FACT: Rookie's own allies and her own boulders block her rays exactly like enemies do (lib/run/movement.ts slideMoves breaks on isAlly and isHazard). Most anti-pairs below are a version of this."
+  ],
+  "primitives": {
+    "bishop-step": ["moves-rookie", "changes-legal-squares", "changes-what-king-fears", "changes-magnet-lines", "colour-bound"],
+    "knight-hop": ["moves-rookie", "ignores-blockers-and-walls", "changes-what-king-fears"],
+    "queen-pulse": ["moves-rookie", "all-lines", "changes-what-king-fears", "changes-magnet-lines"],
+    "become-king": ["makes-rookie-uncapturable", "reach-drops-to-one-square", "royal-aura-pushes-enemies-back"],
+    "freeze-ray": ["disables-enemy", "only-dart-that-may-hit-the-king", "pins-king-tier+1-turns", "free-action"],
+    "poison-dart": ["removes-enemy-on-a-timer", "death-counts-as-rookie-capture", "delayed-king-stun", "free-action"],
+    "rabies-dart": ["turns-enemy-against-its-own-side", "removes-piece-from-normal-ai", "never-takes-the-king", "free-action"],
+    "convert": ["removes-enemy", "creates-ai-ally-where-it-stood", "ally-cover-cuts-king-escapes", "any-range", "free-action"],
+    "aegis": ["absorbs-one-capture-on-rookie", "T3-stuns-attacker", "T5-kills-attacker", "free-action"],
+    "decoy": ["redirects-enemy-capture-priority", "friendly-fire-is-a-rookie-capture", "free-action"],
+    "boulder": ["creates-permanent-terrain-anywhere-on-board", "blocks-everyone-including-rookie", "T2+-crush-a-pawn-equals-a-capture", "free-action"],
+    "smoke": ["rookie-unseeable", "king-does-not-flee-while-smoked", "her-own-capture-ends-it-below-T5", "free-action"],
+    "rewind": ["undoes-the-enemy-turn", "restores-allies-the-enemies-just-ate", "T3+-stuns-king", "castable-only-before-she-moves", "free-action"],
+    "magnet": ["moves-an-enemy", "pull-line-follows-rookie's-current-form", "player-chooses-distance", "free-action"],
+    "summon-knight": ["creates-controllable-body", "knight-geometry", "may-take-the-king", "T5-move-is-free", "spawn-is-a-free-action"],
+    "bishop-squire": ["creates-controllable-body", "diagonal-geometry-crosses-what-a-rook-cannot", "may-take-the-king", "spawn-is-a-free-action"],
+    "page": ["creates-permanent-controllable-body", "promotes-to-queen", "slow", "spawn-is-a-free-action"],
+    "twin": ["creates-controllable-body", "rook-geometry", "spawn-is-a-free-action"],
+    "duchess": ["creates-controllable-body", "queen-geometry", "short-clock", "spawn-is-a-free-action"],
+    "dragon": ["creates-controllable-body", "queen+knight-geometry", "shortest-clock", "T4+-captures-stun-king-2", "spawn-is-a-free-action"],
+    "vanguard": ["creates-controllable-body-AT-RANGE", "drop-ignores-all-board-geometry-within-2..5-chebyshev", "spawn-is-a-free-action"],
+    "swap": ["teleports-rookie-into-a-summon's-square", "preserves-her-turn", "T2+-winds-the-summon's-clock-+2", "T4+-targets-ANY-rainbow-ally", "free-action"],
+    "sacrifice": ["mass-removal-on-the-summon's-attack-set", "T3+-adds-the-ring", "T4+-ring-2", "stuns-king-2-3", "consumes-the-summon", "free-action"]
+  },
+  "archetypes": {
+    "body-then-become": "Create a body on a square Rookie cannot reach, then become that body. The summon is the delivery vehicle; Swap is the payload transfer. Neither half crosses the barrier alone.",
+    "parachute-the-bomb": "Place a body inside the enemy cluster (free action) and detonate it the same turn (free action). A board clear plus a 2-3 turn king stun, before Rookie has moved.",
+    "cage-and-take": "Remove the king's flight squares with terrain or ally cover, then threaten him with a form he cannot outrun. He only survives because he has somewhere to step.",
+    "free-capture-stun": "Land a capture that costs no move, so the king is stunned on the exact turn Rookie arrives on his line.",
+    "blind-the-court": "Smoke stops the hunt AND stops the king reacting. Pair it with any plan that is too slow to survive being seen.",
+    "new-lines-for-line-tools": "Magnet's pull lines are Rookie's CURRENT form's lines. A transform gives Magnet directions it does not otherwise have.",
+    "reposition-then-seal": "Drag a guard out of the doorway, then close the doorway behind it so it cannot come back.",
+    "pin-and-parachute": "Stop the king moving (Freeze) while a body is delivered next to him. Freeze alone can't reach; the body alone can't catch a fleeing king.",
+    "buy-the-body-time": "Summons draw hunters (enemies value an ally as highly as Rookie). Redirect or blind the hunt so the fragile body survives long enough to matter.",
+    "tank-the-recapture": "Aegis makes a defended key takeable: capture it anyway, eat the reply, keep the stun.",
+    "insurance-on-a-one-charge-body": "Rewind restores allies the enemies just ate, including a summon that cost a whole charge.",
+    "untouchable-engineer": "Become King makes Rookie uncapturable but nearly immobile. Pair it with something that works without moving, or that moves her without walking."
+  },
+  "pairs": [
+    {
+      "a": "vanguard",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "Vanguard's drop ignores board geometry entirely (any free square within 2-5 Chebyshev, no path needed), and Swap then puts Rookie on that square with her move still in hand, so the pair teleports Rookie past any wall, pen or blockade that no single card crosses.",
+      "confidence": 5,
+      "geometry": "A pen or hall with no door on Rookie's side: an unbroken wall of hazards or a defended pawn shell where no rook, bishop or knight line reaches the far room, but a free square exists inside it within 4 of her.",
+      "tierNote": "Range 2/3/4/4/5; Swap works at any tier on a controlled summon."
+    },
+    {
+      "a": "bishop-squire",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "The bishop crosses on diagonals through pillared terrain a rook can never pass, and Swap converts his position into Rookie's position with her turn intact — the archetype Tyler named.",
+      "confidence": 5,
+      "geometry": "Pillar or colonnade walls that block every file and rank into the room but leave a diagonal open; the king on the colour the bishop travels, or a key only reachable diagonally.",
+      "tierNote": "Colonnade L10 measured 71% with this pair."
+    },
+    {
+      "a": "vanguard",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "Both the drop and the detonation are free actions, so a knight materialises inside the guard cluster and explodes in the same turn — every enemy on its eight knight-squares dies (plus the ring at T3+), the king is stunned 2-3 turns, and Rookie has not moved yet.",
+      "confidence": 5,
+      "geometry": "A tight pawn shell or key cluster around the pen, three or more enemies within a knight's reach of one free square, with a hard move limit that makes taking them one at a time impossible."
+    },
+    {
+      "a": "dragon",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "The Dragon's attack set is queen rays plus knight squares, so detonating her is the largest blast in the game (attack set + ring 2 at T4+); the pair converts the game's shortest-lived summon into an immediate room clear plus a 2-3 turn stun.",
+      "confidence": 5,
+      "geometry": "A crowded throne room: enemies on ranks, files, diagonals and knight squares around one spawnable square beside Rookie."
+    },
+    {
+      "a": "summon-knight",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "The Squire jumps over walls and blockers that stop every sliding form; Swap then makes his landing square Rookie's, which is the only way she crosses a fully blocked rank without spending a knight transform.",
+      "confidence": 4,
+      "geometry": "A solid rank of pawns or hazards with a free square behind it, one knight-jump from Rookie."
+    },
+    {
+      "a": "duchess",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "The Duchess reaches deep on queen lines but her clock is 2-4 turns; Swap both winds it +2 and hands Rookie the deep square while the queen inherits Rookie's safe one — reach and survivability that neither card has alone.",
+      "confidence": 4,
+      "geometry": "A long open diagonal or file into the pen that a rook cannot use, guarded well enough that a body left there dies before it gets a second move."
+    },
+    {
+      "a": "dragon",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "Same trade with the deepest-reaching body in the game, and Swap's +2 turns is proportionally the biggest rescue because the Dragon's leash is only 2-5 turns.",
+      "confidence": 4,
+      "geometry": "Deep pen with mixed line and knight-square approaches; the winning square is one the Dragon reaches and Rookie cannot."
+    },
+    {
+      "a": "page",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "The Page is the only permanent summon and the only one that promotes; Swap lets Rookie hand him her safe square and take his advanced one, and later swap onto the promoted queen — a slow ladder up the board that costs no Rookie moves.",
+      "confidence": 4,
+      "geometry": "A long approach with a defended near side: somewhere safe behind, a promotion lane that a lone rook cannot walk without being taken."
+    },
+    {
+      "a": "summon-knight",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "A knight's attack set is eight squares that no line covers, so detonating the Squire kills exactly the pawn shell and knight guards that sliders cannot touch, and stuns the king while Rookie walks in.",
+      "confidence": 4,
+      "geometry": "A ring of pawn keys around the pen where each key is defended by another, so no capture is safe and no line reaches them all."
+    },
+    {
+      "a": "duchess",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "Spawning her beside Rookie and detonating the same turn clears every enemy on the queen lines out of that square plus the ring, for one free action pair and a 2-3 turn stun.",
+      "confidence": 4,
+      "geometry": "Guards lined up on a rank, file and diagonal through one square adjacent to Rookie."
+    },
+    {
+      "a": "boulder",
+      "b": "knight-hop",
+      "archetype": "cage-and-take",
+      "mechanism": "Boulder walls squares for everyone, including Rookie's own rays — except the knight, the one form that jumps over hazards, so the pair lets her brick up the pen's exits and the guards' approach lanes without shutting her own route.",
+      "confidence": 4,
+      "geometry": "A pen with one or two exits and a guard corridor, where the winning square is a knight-jump from a wall Rookie can build."
+    },
+    {
+      "a": "boulder",
+      "b": "freeze-ray",
+      "archetype": "cage-and-take",
+      "mechanism": "Freeze is the only dart that may hit the king (pin = tier+1 turns) and Boulder removes the squares he would have fled to; together they turn a flee-king level into a still-king level for as long as Rookie needs to arrive.",
+      "confidence": 4,
+      "geometry": "A wide pen (3+ flight squares) where a single freeze expires before Rookie can get on his line."
+    },
+    {
+      "a": "boulder",
+      "b": "convert",
+      "archetype": "cage-and-take",
+      "mechanism": "A converted pen pawn becomes a rainbow ally standing inside the room whose attack squares the king refuses to enter, and Boulder seals whatever squares the ally does not cover; between them the king's flight set can be driven to zero without a capture.",
+      "confidence": 4,
+      "geometry": "A pen of 3-4 squares with a pawn key inside or adjacent to it."
+    },
+    {
+      "a": "convert",
+      "b": "swap",
+      "archetype": "body-then-become",
+      "mechanism": "At Swap T4+ any rainbow ally is a valid partner, so Convert can make a body out of an enemy standing anywhere on the board and Swap teleports Rookie into it — unlimited range, no summon charge, and the guard is removed in the same beat.",
+      "confidence": 4,
+      "geometry": "A far room with an enemy pawn or minor inside it and no line in; only works with Swap at T4 or higher (T1-T3 Swap sees controlled summons only).",
+      "tierNote": "GATED: requires swap tier >= 4 and convert tier high enough for the piece type."
+    },
+    {
+      "a": "smoke",
+      "b": "rabies-dart",
+      "archetype": "blind-the-court",
+      "mechanism": "A rabid piece picks the nearest target and Smoke deletes Rookie from its target list entirely (rabidAction returns no Rookie target while smoked), so the maddened piece can only eat its own side while nothing hunts Rookie and the king does not flee.",
+      "confidence": 4,
+      "geometry": "A dense guard cluster around the pen where a big rabid piece has several of its own within reach and Rookie would otherwise be the nearest thing to it."
+    },
+    {
+      "a": "smoke",
+      "b": "duchess",
+      "archetype": "buy-the-body-time",
+      "mechanism": "Enemies rate an ally queen as highly as Rookie, so a Duchess normally dies in a turn; while Rookie is smoked the king cannot flee her threats and the summon's captures do NOT break the smoke (only Rookie's own do), so the queen can carve while Rookie stays invisible.",
+      "confidence": 4,
+      "geometry": "Fast, capture-happy guards (knights and bishops with many targets) around a pen that a single body can reach in 2-3 moves."
+    },
+    {
+      "a": "smoke",
+      "b": "bishop-step",
+      "archetype": "blind-the-court",
+      "mechanism": "The king only flees a threat he can see and Smoke blinds him, so Rookie can step onto his diagonal in the open, in the wrong form, and transform-and-take next turn instead of losing the tempo to his sidestep.",
+      "confidence": 4,
+      "geometry": "A flee king with a wide pen, on a diagonal Rookie can reach but only by standing somewhere he would normally react to."
+    },
+    {
+      "a": "freeze-ray",
+      "b": "vanguard",
+      "archetype": "pin-and-parachute",
+      "mechanism": "Freeze pins the king in place for tier+1 turns and Vanguard drops a body that may take him inside that window — the freeze alone cannot reach him and the knight alone cannot catch a fleeing king.",
+      "confidence": 4,
+      "geometry": "A distant pen: the king 4-5 squares from Rookie behind guards, reachable by a drop but not by her lines."
+    },
+    {
+      "a": "freeze-ray",
+      "b": "duchess",
+      "archetype": "pin-and-parachute",
+      "mechanism": "A frozen king cannot step off the queen's ray, so the Duchess's short clock is enough: freeze, spawn, one move, done.",
+      "confidence": 4,
+      "geometry": "Open lines into the pen but a king who would otherwise sidestep them every turn."
+    },
+    {
+      "a": "poison-dart",
+      "b": "bishop-squire",
+      "archetype": "free-capture-stun",
+      "mechanism": "Poison kills the key defender on a timer and the death is credited to Rookie, so the king is stunned on exactly the turn the bishop arrives — the pair times a stun to a body that needs one turn of stillness to land.",
+      "confidence": 4,
+      "geometry": "A defended key on the king's diagonal: capturing it directly loses the piece to the defender, so it has to die on its own."
+    },
+    {
+      "a": "poison-dart",
+      "b": "queen-pulse",
+      "archetype": "free-capture-stun",
+      "mechanism": "Poison removes the blocker sitting on the winning ray without costing a move, and its death stuns the king the same turn the transform opens the line, so he never gets his free reaction.",
+      "confidence": 4,
+      "geometry": "One blocker standing between Rookie and the king on a rank, file or diagonal, defended so a direct capture is fatal."
+    },
+    {
+      "a": "magnet",
+      "b": "bishop-step",
+      "archetype": "new-lines-for-line-tools",
+      "mechanism": "Magnet's grab lines are Rookie's current form's lines (magnetDirs reads state.form), so in bishop form she can drag a guard along a diagonal — a pull that is simply illegal in rook form.",
+      "confidence": 4,
+      "geometry": "A guard holding the key square that is only ever on a diagonal from any square Rookie can safely stand on."
+    },
+    {
+      "a": "magnet",
+      "b": "queen-pulse",
+      "archetype": "new-lines-for-line-tools",
+      "mechanism": "Queen form gives Magnet all eight directions at once, which usually turns 'no legal grab' into a choice of grabs, and the pull can be aimed to dump the guard onto a square Rookie's queen form already attacks.",
+      "confidence": 4,
+      "geometry": "Guards scattered off the rook lines; a key defender reachable only diagonally."
+    },
+    {
+      "a": "magnet",
+      "b": "boulder",
+      "archetype": "reposition-then-seal",
+      "mechanism": "Magnet drags the door guard out of the doorway and Boulder drops a permanent stone into the square it left, so the guard can never return and the lane it was holding is now a lane only Rookie's plan uses.",
+      "confidence": 4,
+      "geometry": "A single-door pen or corridor where one pawn or knight holds the entrance and re-occupies it if it is merely captured or bypassed."
+    },
+    {
+      "a": "magnet",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "Magnet is the only card that moves enemies, so it can drag a straggler into the summon's attack set before detonation, converting a two-victim blast into a three- or four-victim one and a longer stun.",
+      "confidence": 3,
+      "geometry": "Guards spread just outside one blast radius, with an open pull line from Rookie to the outlier.",
+      "requires": "any summon in the kit for Sacrifice to consume"
+    },
+    {
+      "a": "aegis",
+      "b": "bishop-step",
+      "archetype": "tank-the-recapture",
+      "mechanism": "The key on the king's diagonal is usually defended, which makes the bishop capture suicide; with the shield up she takes it anyway, absorbs the recapture, keeps the capture-stun and takes the king on the next move.",
+      "confidence": 4,
+      "geometry": "A defended-chain key sitting on the only diagonal into the pen."
+    },
+    {
+      "a": "aegis",
+      "b": "queen-pulse",
+      "archetype": "tank-the-recapture",
+      "mechanism": "Same trade on any line: the shield converts a defended blocker into a takeable one, and queen form means the capture square is also the square that threatens the king.",
+      "confidence": 3,
+      "geometry": "A defended key that sits on the king's rank, file or diagonal."
+    },
+    {
+      "a": "aegis",
+      "b": "magnet",
+      "archetype": "tank-the-recapture",
+      "mechanism": "Magnet pulls a defended guard off its chain to a square next to Rookie (it is not auto-captured), and Aegis covers the one reply she eats for taking it — the pair converts an untouchable defended piece into a free capture-stun.",
+      "confidence": 3,
+      "geometry": "Defended pawn chains where every capture is answered."
+    },
+    {
+      "a": "rewind",
+      "b": "dragon",
+      "archetype": "insurance-on-a-one-charge-body",
+      "mechanism": "Rewind restores the enemy side to the start of their last turn, which brings back an ally they just ate — so the single-charge Dragon can be replayed after a mistake instead of ending the run, and at T3+ the rewind also stuns the king.",
+      "confidence": 4,
+      "geometry": "High-guard-density levels where a summon dropped in range dies immediately to a reply the player cannot see coming."
+    },
+    {
+      "a": "rewind",
+      "b": "duchess",
+      "archetype": "insurance-on-a-one-charge-body",
+      "mechanism": "Same rescue on the other one-charge queen: an eaten Duchess comes back with her clock as it stood, and Rookie's move, tempo and charges are untouched.",
+      "confidence": 4,
+      "geometry": "Levels where the correct summon square is only findable by trying it."
+    },
+    {
+      "a": "rewind",
+      "b": "twin",
+      "archetype": "insurance-on-a-one-charge-body",
+      "mechanism": "The Twin is the strongest body per charge and the most hunted (enemies value a rook ally at major-piece level); Rewind is the only card that gives her back.",
+      "confidence": 3,
+      "geometry": "Open boards with several sliders that can reach any square a second rook stands on."
+    },
+    {
+      "a": "become-king",
+      "b": "swap",
+      "archetype": "untouchable-engineer",
+      "mechanism": "King form makes Rookie uncapturable but drops her reach to one square; Swap is movement that is not a walk, so the pair crosses the board while nothing on it can touch her.",
+      "confidence": 4,
+      "geometry": "A long, fully covered approach where every route square is attacked, with a summonable body ahead.",
+      "requires": "a summon in the kit (or swap T4+ with a converted ally)"
+    },
+    {
+      "a": "become-king",
+      "b": "boulder",
+      "archetype": "untouchable-engineer",
+      "mechanism": "Boulder needs no movement and King form needs no safety, so Rookie can stand in the middle of the guard set, immune, and spend turns bricking the pen shut — the only real cost is the move limit.",
+      "confidence": 4,
+      "geometry": "A pen with several exits on a level with a generous move budget and heavy guard coverage."
+    },
+    {
+      "a": "become-king",
+      "b": "vanguard",
+      "archetype": "untouchable-engineer",
+      "mechanism": "King form cannot cover ground, so the body has to do the travelling: the drop puts a knight up to 5 squares ahead while Rookie is untakeable, and the knight may take the king himself.",
+      "confidence": 3,
+      "geometry": "Distant pen, dense coverage of the approach."
+    },
+    {
+      "a": "become-king",
+      "b": "magnet",
+      "archetype": "untouchable-engineer",
+      "mechanism": "Instead of walking to the guards, drag them to her: while impervious she pulls the key defender onto an adjacent square and takes it next move for the stun, with no risk from the reply.",
+      "confidence": 3,
+      "geometry": "Guards on her rook lines that are otherwise defended or too far to reach in the move budget."
+    },
+    {
+      "a": "decoy",
+      "b": "duchess",
+      "archetype": "buy-the-body-time",
+      "mechanism": "The army's capture priority is the mark, not the ally, so a Decoy laid the same turn the queen appears buys her the two or three turns her clock is worth — and any friendly fire on the mark is itself a capture-stun on the king.",
+      "confidence": 4,
+      "geometry": "Several enemies able to reach the summon's square immediately, with an expendable enemy standing among them."
+    },
+    {
+      "a": "decoy",
+      "b": "twin",
+      "archetype": "buy-the-body-time",
+      "mechanism": "Same protection for the most-hunted body; the Twin's value is entirely in surviving long enough to hold a second line.",
+      "confidence": 3,
+      "geometry": "Two-line lock geometry (a pincer cell) where the king only escapes if one of the two lines drops."
+    },
+    {
+      "a": "decoy",
+      "b": "page",
+      "archetype": "buy-the-body-time",
+      "mechanism": "The Page's whole plan is a slow walk to promotion, which fails the moment anything looks at him; the mark points the army somewhere else for the length of the walk.",
+      "confidence": 3,
+      "geometry": "Long promotion lane, guards that would otherwise pick the pawn off in one or two turns."
+    },
+    {
+      "a": "smoke",
+      "b": "page",
+      "archetype": "blind-the-court",
+      "mechanism": "Smoke stops the hunt for Rookie and the king's reactions while the Page walks; his captures do not break her cover, so the slowest body in the game gets a quiet window.",
+      "confidence": 3,
+      "geometry": "Open lane to the far rank, guards positioned to trade Rookie down while she escorts."
+    },
+    {
+      "a": "smoke",
+      "b": "boulder",
+      "archetype": "blind-the-court",
+      "mechanism": "Bricking a pen shut takes several turns of standing still, which is normally fatal; while smoked nothing hunts her and the king stays put, so the wall goes up unopposed.",
+      "confidence": 3,
+      "geometry": "Multi-exit pen with hunters that punish a stationary rook."
+    },
+    {
+      "a": "smoke",
+      "b": "magnet",
+      "archetype": "blind-the-court",
+      "mechanism": "Magnet leaves the pulled guard standing next to Rookie, which normally means it takes her; under Smoke it cannot see her, so she takes it instead on her own terms.",
+      "confidence": 3,
+      "geometry": "A guard that must be removed but is stronger than Rookie in a straight trade."
+    },
+    {
+      "a": "boulder",
+      "b": "queen-pulse",
+      "archetype": "cage-and-take",
+      "mechanism": "Queen form collapses the king's safe-square set to almost nothing on its own; Boulder deletes whatever corner squares remain off her lines, so the flee has no answer.",
+      "confidence": 3,
+      "geometry": "A pen shaped so that exactly one or two squares sit off every queen ray from the approach square."
+    },
+    {
+      "a": "convert",
+      "b": "knight-hop",
+      "archetype": "cage-and-take",
+      "mechanism": "The converted piece both stops guarding and starts covering squares the king will not step on, and the knight reaches the pen over the wall that the ally is now standing behind.",
+      "confidence": 3,
+      "geometry": "A walled pen with a pawn inside or beside it, and a knight-jump entry square."
+    },
+    {
+      "a": "freeze-ray",
+      "b": "knight-hop",
+      "archetype": "pin-and-parachute",
+      "mechanism": "A frozen king cannot use the one defence against a knight (stepping off the L-squares), and the knight is the form that ignores the pen wall between them.",
+      "confidence": 3,
+      "geometry": "Sealed pen with a knight-jump entry and a king whose pen is wide enough to dodge for several turns."
+    },
+    {
+      "a": "twin",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "A rook's attack set is a whole rank and file, so detonating the Twin clears both lines at once — the widest non-queen blast, and the strongest way to open a corridor into the pen in one free action.",
+      "confidence": 3,
+      "geometry": "Guards strung along one rank and one file crossing at a square adjacent to Rookie."
+    },
+    {
+      "a": "bishop-squire",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "mechanism": "The bishop's blast is the two crossing diagonals, which is exactly the shape of a defended pawn chain, so it removes a chain that cannot be captured piece by piece.",
+      "confidence": 3,
+      "geometry": "Diagonal defended chains guarding the keys."
+    },
+    {
+      "a": "page",
+      "b": "boulder",
+      "archetype": "reposition-then-seal",
+      "mechanism": "Boulders are permanent and block everyone, so a pair of stones either side of the Page's file builds a corridor no enemy can enter, turning an unescorted promotion walk into a safe one.",
+      "confidence": 3,
+      "geometry": "A promotion lane crossed by enemy diagonals or ranks that can be severed with one or two stones."
+    },
+    {
+      "a": "poison-dart",
+      "b": "smoke",
+      "archetype": "free-capture-stun",
+      "mechanism": "Poison needs the target to stay alive and unmoved for two or three turns while Rookie gets into position; Smoke stops the hunt that would otherwise force her to spend those turns running.",
+      "confidence": 3,
+      "geometry": "Long approach, one blocker that has to die on a schedule."
+    },
+    {
+      "a": "rewind",
+      "b": "vanguard",
+      "archetype": "insurance-on-a-one-charge-body",
+      "mechanism": "Vanguard's value is the drop square, which is a guess about the enemy reply; Rewind lets that guess be wrong once, restoring the knight and stunning the king at T3+.",
+      "confidence": 3,
+      "geometry": "Deep drops behind guard lines where a wrong square is instantly punished."
+    },
+    {
+      "a": "aegis",
+      "b": "knight-hop",
+      "archetype": "tank-the-recapture",
+      "mechanism": "The knight's entry square inside the pen is usually covered; the shield lets her land on it anyway and take the king from a square she could not otherwise survive.",
+      "confidence": 3,
+      "geometry": "A pen whose only knight-entry square is guarded once."
+    }
+  ],
+  "antiPairs": [
+    {
+      "a": "boulder",
+      "b": "bishop-squire",
+      "reason": "MEASURED 2026-09-05: adding Boulder to bishop-squire + swap on The Colonnade L10 dropped the win rate from 71% to 33%. Boulders are hazards, and hazards block Rookie's and her summons' rays exactly like enemies. In a pillared hall the free diagonals ARE the plan, so every stone is as likely to wall the player's own crossing as the king's exit.",
+      "scope": "pillared or corridor geometry; harmless on open boards"
+    },
+    {
+      "a": "boulder",
+      "b": "twin",
+      "reason": "Same self-block failure on rook lines: the Twin's only asset is long ranks and files, and a permanent stone is the one thing that can never be captured out of the way."
+    },
+    {
+      "a": "swap",
+      "b": "sacrifice",
+      "reason": "Both are support cards that operate ON a summon and neither creates one. With no summon ability in the kit the pair is two dead charges; with one summon they compete for the same body (Sacrifice consumes what Swap wants to become)."
+    },
+    {
+      "a": "convert",
+      "b": "sacrifice",
+      "reason": "Sacrifice targets controlled summons only (sacrificeTargets reads controlledAllies), and a converted piece is an AI-driven ally with source 'convert'. The obvious play — convert something deep, then detonate it — is simply not legal."
+    },
+    {
+      "a": "convert",
+      "b": "poison-dart",
+      "reason": "Converting a piece calls clearStatusOnSquare, which wipes the poison marker. Poisoning a piece and then converting it heals it and wastes both charges; they are also two ways of solving the same 'remove one guard' problem."
+    },
+    {
+      "a": "bishop-step",
+      "b": "queen-pulse",
+      "reason": "Queen form is a strict superset of bishop form. Two finisher slots buy one capability."
+    },
+    {
+      "a": "become-king",
+      "b": "aegis",
+      "reason": "Both spend a card on 'do not get captured'. King form already makes her impervious for its whole duration, so the shield never fires while it matters."
+    },
+    {
+      "a": "become-king",
+      "b": "smoke",
+      "reason": "Redundant defence: while impervious nothing can take her anyway. Smoke's extra value (the king stops fleeing) is real but is bought at the price of a card that duplicates the defensive half."
+    },
+    {
+      "a": "aegis",
+      "b": "smoke",
+      "reason": "Two anti-capture cards for one threat. Smoke already suppresses every attack on Rookie for its duration; the shield sits up unused and neither helps a summon, which is what the enemies will actually be eating."
+    },
+    {
+      "a": "decoy",
+      "b": "rabies-dart",
+      "reason": "Both are 'make the guards attack their own side'. Decoy runs the whole army against one mark, Rabies runs one piece against the army; owning both mostly duplicates the effect on the same turn budget (this is why Rabies was originally cut from the pool)."
+    },
+    {
+      "a": "aegis",
+      "b": "rewind",
+      "reason": "Both are insurance against the same enemy reply. Rewind is strictly broader (it also restores an eaten ally), so the shield is the wasted slot."
+    },
+    {
+      "a": "freeze-ray",
+      "b": "smoke",
+      "reason": "Overlapping purpose: freezing the king and smoking Rookie both stop the king reacting to her approach. Freeze already gets +1 turn on the king, so the second card buys duration, not a new capability."
+    },
+    {
+      "a": "page",
+      "b": "sacrifice",
+      "reason": "A pawn's attack set is two squares, so detonating the Page is the smallest blast in the family, and he is the only permanent summon — spending him is strictly worse than spending any other body."
+    },
+    {
+      "a": "rabies-dart",
+      "b": "summon-knight",
+      "reason": "A rabid piece attacks whatever is NEAREST, and a summon parked beside the enemy is usually the nearest thing to it. The madness lands on the player's own body. Applies to every summon in the family, not only the Squire.",
+      "scope": "any rabies + summon combination"
+    },
+    {
+      "a": "twin",
+      "b": "duchess",
+      "reason": "Two summons, one body-move per turn (below T5). The second body idles on the board, draws hunters at ally-value priority, blocks Rookie's own rays, and burns a charge that could have been Swap or Sacrifice. Generalises to any two summon abilities in one kit.",
+      "scope": "any two of summon-knight / bishop-squire / page / twin / duchess / dragon / vanguard"
+    },
+    {
+      "a": "knight-hop",
+      "b": "magnet",
+      "reason": "Magnet's pull lines fall back to rook directions in knight form (magnetDirs has no knight case), so the transform gives Magnet nothing — unlike bishop or queen form, which unlock new pull directions."
+    }
+  ]
+}
