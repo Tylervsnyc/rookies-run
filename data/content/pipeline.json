@@ -801,6 +801,14 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Poison Dart + Bishop Squire free-capture-stun run. Signature: two stone bars on ranks 3 and 6 with offset openings, so every level charges moves to arrive. Finale: a sealed diagonal room reached only through a corridor guarded by an uncapturable pawn — dart it, and summon the Squire into the corridor the turn it dies. L7-L10: every single kit card 0%, pair 63-100%. Full runs 18% random / 33% with the pair (below target; L8 is the drag)."
+    },
+    {
+      "id": "revenge-17",
+      "kind": "run",
+      "name": "The Briar",
+      "stage": "testing",
+      "created": "2026-09-05",
+      "notes": "Dragon + Sacrifice parachute-the-bomb run. Signature: a two-deep pawn hedge on ranks 6-7 where the back row defends the front and a rook capture is always recaptured. A dragon spawned beside the hedge and detonated the same turn opens the two files beside Rookie top to bottom and stuns the king. L7-L10: every single kit card 0-3%, pair 78-84%. Full runs 55% random / 50% with the pair (random converges on the pair since it is half the kit)."
     }
   ]
 }
