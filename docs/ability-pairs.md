@@ -183,3 +183,12 @@ now), Rewind (turn the glass, watch the reply, undo it, move knowing what
 they do), Rabies Dart (take the bite now). Anti-pairs: Duchess, Dragon,
 Bodyguard (their clocks burn), Smoke and Become King (the glass burns the
 window), Convert (the daze never clears on a glass-turn, by design).
+
+**Scarecrow** — pairs: Knight Hop (hop onto the line of his flight square,
+straw on the line to his current square, he flees onto her; Slash L7
+measured none 0 / knight-hop 0 / scarecrow 0 / pair 100), Twin (two lines
+held, the straw drives him onto one), Duchess or any body (the straw draws
+the hunters off it for a turn). Anti-pairs: Decoy (two dummies, one turn
+budget; the straw wins the view), Smoke, Rabies Dart, Freeze Ray on the
+king (he does not step; the steer is wasted), Become King (her aura is not
+read while the straw stands).

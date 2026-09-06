@@ -323,7 +323,10 @@ function kingReaction(state: BoardState): BoardState | null {
   if (!king) return null;
   const kingSq = toSquare(king);
   if (state.frozenSquares.includes(kingSq)) return null;
-  const target = kingFleeMove(king, state, aiRng(state));
+  // Scarecrow: he reads the STRAW's lines as the threat and hers as harmless
+  // (the view shares `pieces`, so `king` is the same object inside it).
+  const straw = scarecrowViewState(state);
+  const target = kingFleeMove(king, straw ?? state, aiRng(state));
   if (!target) return null;
   const fled: BoardState = {
     ...state,
@@ -466,12 +469,34 @@ function decoyViewState(state: BoardState): {
   };
 }
 
+/**
+ * Scarecrow view (2026-09-06): while a straw Rookie stands, the court and
+ * the king plan against a board where the straw's square IS Rookie (rook-
+ * form, or queen-form from T4) and the real Rookie is a HAZARD — a blocker
+ * nothing captures, hunts, lands on or slides through. `pieces` is shared,
+ * so a mover chosen in the view is the same object in the real state.
+ * Returns null when no straw stands.
+ */
+function scarecrowViewState(state: BoardState): BoardState | null {
+  const straw = state.scarecrow;
+  if (!straw || straw.turnsLeft <= 0) return null;
+  return {
+    ...state,
+    rookie: fromSquare(straw.square),
+    form: straw.form,
+    formMovesLeft: 0,
+    hazards: [...state.hazards, { file: state.rookie.file, rank: state.rookie.rank }],
+  };
+}
+
 type EnemyAction = {
   mover: EnemyPiece;
   target: Coord;
   isCapture: boolean;
   isDecoyCapture?: boolean;
   isRabidCapture?: boolean;
+  /** The mover struck the straw Rookie (Scarecrow) — no loss, no credit. */
+  isScarecrowCapture?: boolean;
 };
 
 /** Pick the enemy that will act, and the move they'll make. */
@@ -479,6 +504,19 @@ function chooseEnemyAction(
   state: BoardState,
   excludeSquares: ReadonlySet<string> = new Set(),
 ): EnemyAction | null {
+  // Scarecrow first (it outranks a Decoy mark; never ship both in one kit):
+  // the whole court plays against the straw view. A "capture of Rookie"
+  // there is a strike on the straw. Nothing falls through to the real
+  // Rookie — she is a blocker they cannot see as prey.
+  const straw = scarecrowViewState(state);
+  if (straw) {
+    const inner = chooseEnemyActionAgainst(straw, excludeSquares);
+    if (!inner) return null;
+    if (inner.isCapture) {
+      return { mover: inner.mover, target: inner.target, isCapture: false, isScarecrowCapture: true };
+    }
+    return inner;
+  }
   // If a decoy mark is active, run the existing capture/approach logic on a
   // view where the marked piece IS Rookie. Any capture returned is a friendly
   // fire against the decoy, not a loss.
@@ -831,9 +869,41 @@ function promotionPool(level: number): PieceType[] {
 
 /** Apply a single chosen action to the state, returning the new state. */
 function applyAction(state: BoardState, action: EnemyAction): BoardState {
-  const { mover, target, isCapture, isDecoyCapture, isRabidCapture } = action;
+  const { mover, target, isCapture, isDecoyCapture, isRabidCapture, isScarecrowCapture } = action;
   const fromSq = toSquare({ file: mover.file, rank: mover.rank });
   const toSq = toSquare(target);
+
+  // Scarecrow struck: the straw is destroyed and the army's action is spent.
+  // No capture credited, no stun. T5: the striker dies instead (a Rookie
+  // capture, king stunned) and the straw keeps standing.
+  if (isScarecrowCapture) {
+    const owned = state.abilities.find((a) => a.id === 'scarecrow');
+    const kills = !!owned && owned.tier === 5;
+    if (kills) {
+      const cleared = clearStatusOnSquare(state, fromSq);
+      return {
+        ...state,
+        ...cleared,
+        pieces: state.pieces.filter((p) => p !== mover),
+        captures: [...state.captures, mover.type],
+        tempo: Math.min(tempoMaxFor(state), state.tempo + (TEMPO_REWARD[mover.type] ?? 0)),
+        decoyTarget: state.decoyTarget === fromSq ? null : state.decoyTarget,
+        ...stunKingAfterCapture(state),
+        lastScarecrowStrike: { square: toSq, attackerSquare: fromSq, attackerDied: true, id: Date.now() + Math.random() },
+      };
+    }
+    const relocated = relocateStatusMarkers(state, fromSq, toSq);
+    return {
+      ...state,
+      ...relocated,
+      pieces: state.pieces.map((p) =>
+        p === mover ? { ...p, file: target.file, rank: target.rank } : { ...p },
+      ),
+      decoyTarget: state.decoyTarget === fromSq ? toSq : state.decoyTarget,
+      scarecrow: undefined,
+      lastScarecrowStrike: { square: toSq, attackerSquare: fromSq, attackerDied: false, id: Date.now() + Math.random() },
+    };
+  }
 
   // Defensive backstop: if Rookie is in king form and this is a real capture
   // (not friendly fire), refuse to apply the move. The intended guard lives
@@ -1074,6 +1144,10 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     // Smoke ticks down at end of enemy turn.
     const smokePatch =
       (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
+    // Scarecrow: the straw stands one enemy turn fewer; gone at 0.
+    const scarecrowPatch = s.scarecrow
+      ? { scarecrow: s.scarecrow.turnsLeft > 1 ? { ...s.scarecrow, turnsLeft: s.scarecrow.turnsLeft - 1 } : undefined }
+      : {};
     // Bodyguard / timed summons dissolve when their turns run out; free-move
     // summons (T5 Squire family) get their once-per-turn move back; a piece
     // stolen by Convert this turn wakes from its daze.
@@ -1098,6 +1172,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       tempo,
       allies: nextAllies,
       ...smokePatch,
+      ...scarecrowPatch,
       squireMovedThisTurn: false,
       glassTurn: undefined,
       // One glass per Rookie turn: the flag survives the glass-turn itself

@@ -687,6 +687,31 @@
       "rating": 2,
       "mechanism": "The bite is the enemy turn; take the bite now while her move is still in hand.",
       "confidence": 2
+    },
+    {
+      "a": "scarecrow",
+      "b": "knight-hop",
+      "archetype": "cage-and-take",
+      "rating": 4,
+      "mechanism": "Hop over the wall onto the line of his FLIGHT square (a rook there does not threaten him, he stands), put the straw on the window line to his CURRENT square, he flees the straw onto her line, take. The Slash and Parapet finales without a stone or a second rook.",
+      "confidence": 4,
+      "note": "MEASURED 2026-09-06: The Slash L7 none 0 / knight-hop 0 / scarecrow 0 / scarecrow+knight-hop 100% (12 trials, T5 bot). Scarecrow alone: Glasshouse L3 17->100, L4 0->33, L5 50->100; Slash L5 8->92; Vault L5 33->100."
+    },
+    {
+      "a": "scarecrow",
+      "b": "twin",
+      "archetype": "cage-and-take",
+      "rating": 3,
+      "mechanism": "The Twin holds one line of a three-square room, she holds another, the straw drives him onto one of them.",
+      "confidence": 3
+    },
+    {
+      "a": "scarecrow",
+      "b": "duchess",
+      "archetype": "buy-the-body-time",
+      "rating": 3,
+      "mechanism": "The straw draws the hunters' single action away from the body for one turn (the Lattice's 'buy the body time' without a decoy tie-break).",
+      "confidence": 3
     }
   ],
   "antiPairs": [
@@ -859,6 +884,31 @@
       "a": "hourglass",
       "b": "convert",
       "reason": "The daze does not clear on a glass-turn, by design (Tyler's same-turn king kill stays closed), so the pair does nothing extra."
+    },
+    {
+      "a": "scarecrow",
+      "b": "decoy",
+      "reason": "Same turn budget, two dummies. If both stand, the straw wins the view; never ship them in one kit."
+    },
+    {
+      "a": "scarecrow",
+      "b": "smoke",
+      "reason": "Nobody sees her anyway; the straw's only extra is the steer."
+    },
+    {
+      "a": "scarecrow",
+      "b": "rabies-dart",
+      "reason": "A rabid piece chases the straw at Rookie value; targeting gets muddy."
+    },
+    {
+      "a": "scarecrow",
+      "b": "freeze-ray",
+      "reason": "A frozen king does not step; the steer is wasted."
+    },
+    {
+      "a": "scarecrow",
+      "b": "become-king",
+      "reason": "The view runs on the straw's form, so her royal aura is not read by the court while the straw stands."
     }
   ]
 }

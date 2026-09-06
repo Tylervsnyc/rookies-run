@@ -328,6 +328,11 @@ export interface BoardState {
    */
   lastSnareSpring?: { square: string; pieceType: PieceType; bit: boolean; id: number };
   /**
+   * Transient signal: set when an enemy strikes the straw Rookie (Scarecrow).
+   * UI watches `id` to burst the straw; `attackerDied` = the T5 punishment.
+   */
+  lastScarecrowStrike?: { square: string; attackerSquare: string; attackerDied: boolean; id: number };
+  /**
    * Transient signal: set when an enemy piece captures another enemy piece
    * (rabid friendly-fire or decoy-mark lure). The UI uses it to slide the
    * attacker sprite from fromSq -> toSq, since the chessboard's built-in diff

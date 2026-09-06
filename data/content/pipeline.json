@@ -921,6 +921,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Turn the glass (free action): the enemies take a full turn now and Rookie's move is still in hand. The clock does not tick. Everything that ticks at the end of an enemy turn ticks (freeze, poison, rabies, decoy, smoke, king stun, summon clocks) except the daze on a freshly converted piece, so convert + hourglass is not a same-turn king kill. One cast per turn below T5. T3+ the king stands still through the glass-turn; T4+ your summons' clocks do not run during it; T5 turn it as often as you like. The card that lets you wait without spending a body-move: a poison death lands and stuns him with your move to come, a decoy gets eaten now, a marching pawn walks off its post. Design: docs/new-abilities-2026-09-06.md."
+    },
+    {
+      "id": "scarecrow",
+      "kind": "ability",
+      "name": "Scarecrow",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Stand a straw Rookie on an empty square (free action). For 1/2/2/2/3 enemy turns the court and the king plan against a view where the straw IS Rookie (rook-form; a queen from T4) and the real Rookie is a blocker nothing can capture or hunt: hunters charge the straw, guards fear its lines, and the king flees from IT, which steers him because his flee is deterministic (farthest safe square from the threat). Striking the straw destroys it and wastes the army's action, no credit, no stun; at T5 the striker dies instead. The straw blocks Rookie's own moves and her summons like a body. One straw at a time. Design: docs/new-abilities-2026-09-06.md."
     }
   ]
 }

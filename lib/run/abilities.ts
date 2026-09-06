@@ -61,7 +61,8 @@ export type AbilityId =
   | 'snare'
   | 'shove'
   | 'coup'
-  | 'hourglass';
+  | 'hourglass'
+  | 'scarecrow';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -322,6 +323,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Instant · Time',
     description: 'Turn the glass. The enemies take a turn now. You have not moved.',
   },
+  scarecrow: {
+    id: 'scarecrow',
+    name: 'Scarecrow',
+    activation: 'targeted',
+    typeLine: 'Targeted · Trick',
+    description: 'Stand a straw Rookie on an empty square. For a turn, the court and the king believe it.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -478,6 +486,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 1) return 1;
       if (tier <= 4) return 2;
       return 3;
+    case 'scarecrow':
+      // 1/1/2/2/2.
+      if (tier <= 2) return 1;
+      return 2;
   }
 }
 
@@ -562,6 +574,7 @@ const HOW: Record<AbilityId, string> = {
   shove: 'Tap card, then tap a stone beside you. It rolls one square away from you.',
   coup: 'Tap card, then tap a guard near the king. They trade squares.',
   hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand.',
+  scarecrow: 'Tap card, then tap an empty square. They hunt the straw. He runs from it.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -761,6 +774,12 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 4) return "The enemies take a turn now, the king stands still, and your summons' clocks do not run.";
       if (tier === 3) return 'The enemies take a turn now, and the king stands still through it.';
       return 'The enemies take a turn now. You have not moved.';
+    case 'scarecrow':
+      if (tier === 5) return 'A straw queen for 3 turns. Whatever strikes it dies on the spot.';
+      if (tier === 4) return 'A straw QUEEN for 2 turns. He runs from her diagonals too.';
+      if (tier === 3) return 'A straw Rookie for 2 turns.';
+      if (tier === 2) return 'A straw Rookie for 2 turns. They hunt it. He runs from it.';
+      return 'A straw Rookie on an empty square, for 1 turn. They hunt it. He runs from it.';
   }
 }
 
@@ -958,6 +977,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Glass; the king stands still. 2/level.';
       if (tier === 2) return 'Enemies take a turn now. 2/level.';
       return 'Enemies take a turn now. 1/level.';
+    case 'scarecrow':
+      if (tier === 5) return 'Straw queen 3 turns; attackers die. 2/level.';
+      if (tier === 4) return 'Straw queen, 2 turns. 2/level.';
+      if (tier === 3) return 'Straw Rookie, 2 turns. 2/level.';
+      if (tier === 2) return 'Straw Rookie, 2 turns. 1/level.';
+      return 'Straw Rookie, 1 turn. 1/level.';
   }
 }
 
@@ -1166,6 +1191,12 @@ export const UPGRADE_NOTES: Record<
     3: 'The king is held for the glass-turn',
     4: 'Your summons do not age during it',
     5: 'Turn it as often as you like each turn',
+  },
+  scarecrow: {
+    2: 'Stands 1 turn → 2',
+    3: '',
+    4: 'The straw is a queen: he fears diagonals too',
+    5: 'Stands 3 turns. Attackers die (a capture, and a stun)',
   },
 };
 
@@ -1428,6 +1459,7 @@ export function abilityLegalMoves(
   if (abilityId === 'knighting') return knightingTargets(state);
   if (abilityId === 'snare') return snareTargets(state);
   if (abilityId === 'shove') return shoveTargets(state).map((t) => t.stone);
+  if (abilityId === 'scarecrow') return scarecrowTargets(state);
   return [];
 }
 
@@ -1534,7 +1566,8 @@ export function applyAbilityActivate(
     abilityId === 'sacrifice' ||
     abilityId === 'knighting' ||
     abilityId === 'snare' ||
-    abilityId === 'shove';
+    abilityId === 'shove' ||
+    abilityId === 'scarecrow';
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
   if (def.activation === 'targeted' && !picksSquare) step = 'pick-enemy';
   if (picksSquare && abilityLegalMoves(state, abilityId).length === 0) return state;
@@ -1932,6 +1965,9 @@ export function applyAbilityTargeted(
   }
   if (abilityId === 'coup') {
     return applyCoup(state, target);
+  }
+  if (abilityId === 'scarecrow') {
+    return applyScarecrow(state, target);
   }
 
   if (abilityId === 'magnet') {
@@ -2486,6 +2522,72 @@ function applyHourglass(state: BoardState): BoardState {
 }
 
 // ---------------------------------------------------------------------------
+// Scarecrow (2026-09-06) — information. A straw Rookie on an empty square:
+// for N enemy phases the court and the king plan against a VIEW in which the
+// straw's square IS Rookie (rook-form; queen-form from T4) and the real
+// Rookie is an uncapturable blocker (see scarecrowViewState in pawn-ai.ts).
+// Hunters charge it, guards fear its lines, the king flees from IT — which
+// is a steering wheel, because his flee is deterministic. Striking the straw
+// destroys it and wastes the action; at T5 the striker dies instead. The
+// straw blocks Rookie's own moves and her summons like a body.
+// Design: docs/new-abilities-2026-09-06.md §2.5.
+// ---------------------------------------------------------------------------
+
+/** Enemy turns the straw stands. 1/2/2/2/3. */
+export function scarecrowTurns(tier: AbilityTier): number {
+  if (tier === 1) return 1;
+  if (tier <= 4) return 2;
+  return 3;
+}
+
+/** T4+: the straw is a queen — he fears its diagonals too. */
+export function scarecrowForm(tier: AbilityTier): 'rook' | 'queen' {
+  return tier >= 4 ? 'queen' : 'rook';
+}
+
+/** T5: whatever strikes the straw dies on the spot (a Rookie capture). */
+export function scarecrowKillsAttackers(tier: AbilityTier): boolean {
+  return tier === 5;
+}
+
+/** Empty squares a straw may stand on (one straw at a time). */
+export function scarecrowTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'scarecrow');
+  if (!owned) return [];
+  if (state.scarecrow) return [];
+  const armed = new Set((state.snares ?? []).map((sn) => sn.square));
+  const out: Coord[] = [];
+  for (let f = 1; f <= 8; f++) {
+    for (let r = 1; r <= 8; r++) {
+      if (!squareIsFreeForSummon(state, f, r)) continue;
+      if (armed.has(toSquare({ file: f, rank: r }))) continue;
+      out.push({ file: f, rank: r });
+    }
+  }
+  return out;
+}
+
+function applyScarecrow(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'scarecrow');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  if (!scarecrowTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
+  const sq = toSquare(target);
+  return {
+    ...state,
+    scarecrow: { square: sq, turnsLeft: scarecrowTurns(owned.tier), form: scarecrowForm(owned.tier) },
+    abilities: decrementUse(state.abilities, 'scarecrow'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'scarecrow',
+      from: toSquare(state.rookie),
+      to: sq,
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Smoke — Rookie is invisible for N enemy turns.
 // ---------------------------------------------------------------------------
 
@@ -2753,6 +2855,7 @@ export function magnetTargets(state: BoardState): Coord[] {
     while (allyInBounds(f, r)) {
       if (allyIsHazard(state, f, r)) break;
       if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) break;
+      if (state.scarecrow?.square === toSquare({ file: f, rank: r })) break;
       const enemy = state.pieces.find((p) => p.file === f && p.rank === r);
       if (enemy) {
         // T5 signature: even the KING can be grabbed (magnetLandingSquares caps his
@@ -2797,6 +2900,7 @@ export function magnetLandingSquares(
     if (state.pieces.some((p) => p.file === nf && p.rank === nr)) break;
     if ((state.allies ?? []).some((a) => a.file === nf && a.rank === nr)) break;
     if (allyIsHazard(state, nf, nr)) break;
+    if (state.scarecrow?.square === toSquare({ file: nf, rank: nr })) break;
     f = nf;
     r = nr;
     steps += 1;
@@ -3136,6 +3240,7 @@ export function vanguardRangeFor(tier: AbilityTier): number {
 function squareIsFreeForSummon(state: BoardState, f: number, r: number): boolean {
   if (!allyInBounds(f, r)) return false;
   if (allyIsHazard(state, f, r)) return false;
+  if (state.scarecrow?.square === toSquare({ file: f, rank: r })) return false;
   if (state.rookie.file === f && state.rookie.rank === r) return false;
   if (state.pieces.some((p) => p.file === f && p.rank === r)) return false;
   if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) return false;
@@ -4120,6 +4225,7 @@ const ALLY_QUEEN_DIRS: ReadonlyArray<[number, number]> = [
 
 function allyOccupied(state: BoardState, file: number, rank: number, self: AllyPiece): boolean {
   if (state.rookie.file === file && state.rookie.rank === rank) return true;
+  if (state.scarecrow?.square === toSquare({ file, rank })) return true; // the straw is a body
   if (state.allies.some((a) => a !== self && a.file === file && a.rank === rank)) return true;
   return false;
 }

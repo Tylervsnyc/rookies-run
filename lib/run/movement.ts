@@ -8,7 +8,7 @@
  */
 
 import type { BoardState, Coord, EnemyPiece, RookieForm } from './types';
-import { coordEq } from './types';
+import { coordEq, toSquare } from './types';
 
 const ROOK_DIRS: ReadonlyArray<[number, number]> = [
   [1, 0],
@@ -57,6 +57,7 @@ function isHazard(hazards: Coord[], at: Coord): boolean {
 
 /** True if a friendly ally occupies this square — blocks Rookie's movement. */
 function isAlly(state: BoardState, at: Coord): boolean {
+  if (state.scarecrow && state.scarecrow.square === toSquare(at)) return true; // the straw is a body
   return (state.allies ?? []).some((a) => a.file === at.file && a.rank === at.rank);
 }
 

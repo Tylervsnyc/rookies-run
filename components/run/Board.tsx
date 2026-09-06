@@ -725,6 +725,20 @@ export function RunBoard({
     const t = setTimeout(() => setSnareSpringFx(null), 900);
     return () => clearTimeout(t);
   }, [state.lastSnareSpring]);
+  // Scarecrow strike — the straw was hit: burst it (or the striker, at T5).
+  type StrawStrikeFx = NonNullable<BoardState['lastScarecrowStrike']>;
+  const [strawStrikeFx, setStrawStrikeFx] = useState<StrawStrikeFx | null>(null);
+  const lastStrawStrikeIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    const sig = state.lastScarecrowStrike;
+    if (!sig) return;
+    if (lastStrawStrikeIdRef.current === sig.id) return;
+    lastStrawStrikeIdRef.current = sig.id;
+    setStrawStrikeFx(sig);
+    const t = setTimeout(() => setStrawStrikeFx(null), 800);
+    return () => clearTimeout(t);
+  }, [state.lastScarecrowStrike]);
+
   const snareTier = useMemo(
     () => (state.abilities.find((a) => a.id === 'snare')?.tier ?? 1) as AbilityTier,
     [state.abilities],
@@ -1277,6 +1291,10 @@ export function RunBoard({
           <SnareOverlay snares={state.snares!.map((sn) => sn.square)} tier={snareTier} />
         )}
         {snareSpringFx && <SnareSpringLayer fx={snareSpringFx} />}
+        {state.scarecrow && state.status === 'playing' && (
+          <ScarecrowOverlay straw={state.scarecrow} />
+        )}
+        {strawStrikeFx && <ScarecrowStrikeLayer fx={strawStrikeFx} />}
         {convertTargets && convertTargets.length > 0 && (
           <ConvertTargetsOverlay targets={convertTargets} />
         )}
@@ -1794,6 +1812,23 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
             <path d="M9.5 6.5h5L12 10z" fill="rgba(251,191,36,0.95)" />
           </svg>
         </div>
+      </div>
+    );
+  }
+
+  if (fx.kind === 'scarecrow') {
+    // Straw scatters up out of the square as the doll is planted.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxStrawPlant-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            50%  { transform: translate(-50%, -50%) scale(1.6); opacity: 0.9; }
+            100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '12%', height: '12%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(253,224,71,0.95) 0%, rgba(217,119,6,0.6) 45%, transparent 75%)', animation: `rrFxStrawPlant-${k} 600ms ease-out forwards` }} />
       </div>
     );
   }
@@ -2540,6 +2575,62 @@ function PoisonCounterOverlay({ squares, turnsLeft }: { squares: string[]; turns
 // DroneOverlay — mini-Rookies (BreathingRook at 0.5 scale) sliding between
 // squares while the drone phase runs.
 // ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The straw Rookie: her own block-art rook (or queen from T4), sepia-washed
+ * and stitched, with a "Straw · N" chip so the player never confuses it for
+ * her. The court and the king cannot tell the difference — that is the card.
+ */
+function ScarecrowOverlay({ straw }: { straw: { square: string; turnsLeft: number; form: 'rook' | 'queen' } }) {
+  const { file, rank } = fromSquare(straw.square);
+  return (
+    <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: `${(file - 1) * 12.5}%`,
+          top: `${(8 - rank) * 12.5}%`,
+          width: '12.5%',
+          height: '12.5%',
+          filter: 'sepia(1) saturate(1.6) hue-rotate(-8deg) brightness(1.05) drop-shadow(0 0 5px rgba(217,119,6,0.75))',
+          opacity: 0.92,
+        }}
+      >
+        <RookieCell form={straw.form} />
+      </div>
+      <SquareChip
+        square={straw.square}
+        label={`Straw · ${straw.turnsLeft}`}
+        palette={{ color: '#78350f', background: 'rgba(254,243,199,0.95)', border: 'rgba(217,119,6,0.9)' }}
+      />
+    </div>
+  );
+}
+
+/** The straw was struck: a burst of straw on its square (and on the striker at T5). */
+function ScarecrowStrikeLayer({ fx }: { fx: { square: string; attackerSquare: string; attackerDied: boolean; id: number } }) {
+  const k = Math.floor(fx.id);
+  const at = fx.attackerDied ? fx.attackerSquare : fx.square;
+  const { file, rank } = fromSquare(at);
+  const cx = (file - 0.5) * 12.5;
+  const cy = (8 - rank + 0.5) * 12.5;
+  return (
+    <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+      <style>{`
+        @keyframes rrStrawBurst-${k} {
+          0%   { transform: translate(-50%, -50%) scale(0.5) rotate(0deg); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(2.4) rotate(90deg); opacity: 0; }
+        }
+      `}</style>
+      <div style={{ position: 'absolute', left: `${cx}%`, top: `${cy}%`, width: '12%', height: '12%', borderRadius: '30%', background: 'repeating-conic-gradient(rgba(253,224,71,0.9) 0 12deg, transparent 12deg 30deg)', animation: `rrStrawBurst-${k} 700ms ease-out forwards` }} />
+      <SquareChip
+        square={at}
+        label={fx.attackerDied ? 'Straw bites' : 'Straw'}
+        palette={{ color: '#78350f', background: 'rgba(254,243,199,0.95)', border: 'rgba(217,119,6,0.9)' }}
+      />
+    </div>
+  );
+}
 
 /** The Snare marker: a small red X. */
 function SnareGlyph({ color }: { color: string }) {

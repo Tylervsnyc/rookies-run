@@ -32,6 +32,7 @@ import {
   magnetLandingSquares,
   magnetTargets,
   sacrificeTargets,
+  scarecrowTargets,
   shoveTargets,
   snareTargets,
   summonSpawnSquares,
@@ -618,6 +619,37 @@ function candidatesForAbility(
       // glass-turn — the first card that lets the bot wait without a move.
       if (canTurnHourglass(state)) out.push({ kind: 'activate-ability', abilityId: 'hourglass' });
       return out;
+    case 'scarecrow': {
+      // Empty squares with an OPEN rook line to the king (at most 14) plus
+      // empty squares within 2 of Rookie, capped at 16. The fooled flee is
+      // modelled by the rollouts because the view lives inside pawn-ai.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      const openLineToKing = (c: Coord): boolean => {
+        if (!king) return false;
+        if (c.file !== king.file && c.rank !== king.rank) return false;
+        const df = Math.sign(king.file - c.file);
+        const dr = Math.sign(king.rank - c.rank);
+        let f = c.file + df;
+        let r = c.rank + dr;
+        while (f !== king.file || r !== king.rank) {
+          if (state.pieces.some((p) => p.file === f && p.rank === r)) return false;
+          if (state.hazards.some((h) => h.file === f && h.rank === r)) return false;
+          if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) return false;
+          if (state.rookie.file === f && state.rookie.rank === r) return false;
+          f += df;
+          r += dr;
+        }
+        return true;
+      };
+      let n = 0;
+      for (const c of scarecrowTargets(state)) {
+        if (!openLineToKing(c) && cheb(c, state.rookie) > 2) continue;
+        out.push({ kind: 'ability-target', abilityId: 'scarecrow', target: c });
+        if (++n >= 16) break;
+      }
+      return out;
+    }
   }
   return out;
 }
