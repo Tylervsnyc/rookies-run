@@ -23,6 +23,7 @@ import {
   controlledAllies,
   controlledAllyLegalMoves,
   convertTargets,
+  coupTargets,
   canRewind,
   isSmoked,
   knightingTargets,
@@ -600,6 +601,14 @@ function candidatesForAbility(
       // candidate each — the direction is implied.
       for (const t of shoveTargets(state)) {
         out.push({ kind: 'ability-target', abilityId: 'shove', target: t.stone });
+      }
+      return out;
+    }
+    case 'coup': {
+      // One candidate per eligible enemy: at most 8 at T1-T2, the pen's
+      // occupants / within 2 at T3+, all enemies at T5.
+      for (const c of coupTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'coup', target: c });
       }
       return out;
     }

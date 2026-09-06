@@ -167,3 +167,12 @@ Squire (a moved stone blocks a summon's line as surely as a dropped one),
 Boulder (two stone cards, the Stacks' self-block twice), Knight Hop (two
 openers is a skeleton-key kit). Terrain runs that want to refuse it mark
 stones `fixed: true` in the puzzle def.
+
+**Coup** — pairs: Boulder (swap him onto the post, stone his step back,
+slide onto the post's line), Duchess or any body with a line to the post
+(Millstone L7 measured: none 0, duchess 0, coup 0, coup+duchess 100), Freeze
+Ray (freeze, coup onto a post on her line, take; possibly too strong).
+Anti-pairs: Convert (same guard, two answers; a converted guard is no longer
+an enemy), Magnet T5 (both "move the king one square"), Rabies Dart (eats the
+guard that just became the door), Smoke (a pair, but Coup + Smoke + anything
+is a skeleton key; keep apart in kits).

@@ -1744,6 +1744,31 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
+  if (fx.kind === 'coup') {
+    // The two pieces trade places with a flourish: gold rings bloom on both
+    // squares and a bright arc sweeps between them.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxCoupRing-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.4) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.9) rotate(180deg); opacity: 0; }
+          }
+          @keyframes rrFxCoupArc-${k} {
+            0%   { transform: translate(0, -50%) rotate(${angleDeg}deg) scaleX(0); opacity: 1; }
+            60%  { transform: translate(0, -50%) rotate(${angleDeg}deg) scaleX(1); opacity: 1; }
+            100% { transform: translate(0, -50%) rotate(${angleDeg}deg) scaleX(1); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${fromX}%`, top: `${fromY}%`, width: `${Math.max(length, 4)}%`, height: '3%', transformOrigin: '0% 50%', borderRadius: 999, background: 'linear-gradient(90deg, rgba(255,214,90,0) 0%, rgba(232,156,26,0.95) 50%, rgba(255,214,90,0) 100%)', filter: 'drop-shadow(0 0 8px rgba(232,156,26,0.9))', animation: `rrFxCoupArc-${k} 600ms ease-in-out forwards` }} />
+        {[[fromX, fromY], [toX, toY]].map(([x, y], i) => (
+          <div key={i} style={{ position: 'absolute', left: `${x}%`, top: `${y}%`, width: '12%', height: '12%', borderRadius: '50%', border: '3px solid rgba(255,214,90,0.95)', boxShadow: '0 0 14px rgba(232,156,26,0.85), inset 0 0 10px rgba(255,214,90,0.6)', animation: `rrFxCoupRing-${k} 650ms ease-out ${i * 120}ms forwards`, opacity: 0 }} />
+        ))}
+      </div>
+    );
+  }
+
   if (fx.kind === 'smoke') {
     // Grey puffs bloom out of Rookie's square.
     const k = Math.floor(fx.id);

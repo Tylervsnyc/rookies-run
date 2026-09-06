@@ -628,6 +628,32 @@
       "rating": 3,
       "mechanism": "Walk to the wall unseen, shove, and because he does not flee while she is smoked, the gap she opened is a line he does not step off. Two free actions and a slide.",
       "confidence": 3
+    },
+    {
+      "a": "coup",
+      "b": "boulder",
+      "archetype": "cage-and-take",
+      "rating": 4,
+      "mechanism": "Swap him onto the post, drop a stone on the one square he would step back to, slide onto the post's line. Cage-and-take where the cage is his own court.",
+      "confidence": 4,
+      "note": "Designed 2026-09-06. Coup alone: The Alley L6 0% -> 75% (12 trials, T5 bot)."
+    },
+    {
+      "a": "coup",
+      "b": "duchess",
+      "archetype": "cage-and-take",
+      "rating": 4,
+      "mechanism": "In rooms no rook line enters (Millstone, Lattice), the post IS the square a body attacks. Swap him onto it, summon the body on the line, he cannot step (the guard now fills his throne), the body takes him.",
+      "confidence": 4,
+      "note": "MEASURED 2026-09-06: The Millstone L7 none 0 / duchess 0 / coup 0 / coup+duchess 100% (12 trials, T5 bot)."
+    },
+    {
+      "a": "coup",
+      "b": "freeze-ray",
+      "archetype": "pin-and-parachute",
+      "rating": 3,
+      "mechanism": "Freeze him where he stands, coup him onto a post on her line, take him. Two free actions and a move from anywhere a post has a line, which is nearly everywhere; possibly too strong, let the matrix decide.",
+      "confidence": 3
     }
   ],
   "antiPairs": [
@@ -749,6 +775,27 @@
       "a": "shove",
       "b": "knight-hop",
       "reason": "Two openers in one kit is a skeleton-key kit."
+    },
+    {
+      "a": "coup",
+      "b": "convert",
+      "reason": "Same target, two answers; a converted guard is no longer an enemy so Coup has nothing to swap."
+    },
+    {
+      "a": "coup",
+      "b": "magnet",
+      "reason": "T5 Magnet is also 'move the king one square'."
+    },
+    {
+      "a": "coup",
+      "b": "rabies-dart",
+      "reason": "A rabid guard at range 1 eats the guard that just became the door; targeting gets muddy."
+    },
+    {
+      "a": "coup",
+      "b": "smoke",
+      "reason": "A pair, not an anti (he does not flee after the swap), but Coup + Smoke + anything is a skeleton key; keep apart in kits.",
+      "scope": "kit design, not a measured failure"
     }
   ]
 }

@@ -59,7 +59,8 @@ export type AbilityId =
   // docs/new-abilities-2026-09-06.md — each is a distinct verb: trap a
   // square, move a stone, move the king, pass a turn, fake a Rookie.
   | 'snare'
-  | 'shove';
+  | 'shove'
+  | 'coup';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -306,6 +307,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Terrain',
     description: 'Push a stone beside you one square away. It moves. It does not disappear.',
   },
+  coup: {
+    id: 'coup',
+    name: 'Coup',
+    activation: 'targeted',
+    typeLine: 'Targeted · Royal',
+    description: "Trade the king's square with one of his own guards. His man takes the throne. He takes the post.",
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -453,6 +461,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 1) return 1;
       if (tier <= 4) return 2;
       return -1;
+    case 'coup':
+      // 1/1/2/2/2.
+      if (tier <= 2) return 1;
+      return 2;
   }
 }
 
@@ -535,6 +547,7 @@ const HOW: Record<AbilityId, string> = {
   knighting: 'Tap card, then tap one of your summons.',
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
   shove: 'Tap card, then tap a stone beside you. It rolls one square away from you.',
+  coup: 'Tap card, then tap a guard near the king. They trade squares.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -723,6 +736,12 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 4) return 'Push a stone on your line, up to 2 away, one square. Crushes pawns.';
       if (tier === 3) return 'Push a stone one square. A pawn it lands on is crushed.';
       return 'Push a stone beside you one square away.';
+    case 'coup':
+      if (tier === 5) return 'Swap the king with ANY enemy on the board. He is stunned a turn.';
+      if (tier === 4) return 'Swap the king with any guard in his room or within 2. Swapping stuns him a turn.';
+      if (tier === 3) return 'Swap the king with any guard in his room or within 2 of him.';
+      if (tier === 2) return 'Swap the king with any guard standing beside him.';
+      return 'Swap the king with a pawn standing beside him.';
   }
 }
 
@@ -908,6 +927,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Shove a stone; crushes a pawn. 2/level.';
       if (tier === 2) return 'Shove a stone one square. 2/level.';
       return 'Shove a stone one square. 1/level.';
+    case 'coup':
+      if (tier === 5) return 'Swap him with any enemy; stuns him. 2/level.';
+      if (tier === 4) return 'Swap him within 2; stuns him. 2/level.';
+      if (tier === 3) return 'Swap him with a guard within 2. 2/level.';
+      if (tier === 2) return 'Swap him with any guard beside him. 1/level.';
+      return 'Swap him with a pawn beside him. 1/level.';
   }
 }
 
@@ -1104,6 +1129,12 @@ export const UPGRADE_NOTES: Record<
     3: 'The stone crushes a pawn it lands on',
     4: 'Reach: shove from 2 squares off',
     5: 'Unlimited shoves',
+  },
+  coup: {
+    2: 'Any guard beside him, not only pawns',
+    3: 'Reach: his whole room, or 2 squares',
+    4: 'The swap stuns him for a turn',
+    5: 'Any enemy, anywhere',
   },
 };
 
@@ -1474,6 +1505,7 @@ export function applyAbilityActivate(
   if (def.activation === 'targeted' && !picksSquare) step = 'pick-enemy';
   if (picksSquare && abilityLegalMoves(state, abilityId).length === 0) return state;
   if (abilityId === 'magnet' && magnetTargets(state).length === 0) return state;
+  if (abilityId === 'coup' && coupTargets(state).length === 0) return state;
   return { ...state, activeAbility: { id: abilityId, step } };
 }
 
@@ -1864,6 +1896,9 @@ export function applyAbilityTargeted(
   if (abilityId === 'shove') {
     return applyShove(state, target);
   }
+  if (abilityId === 'coup') {
+    return applyCoup(state, target);
+  }
 
   if (abilityId === 'magnet') {
     // Two taps: first pick the enemy to grab, THEN pick how far it comes —
@@ -2253,6 +2288,108 @@ function applyShove(state: BoardState, target: Coord): BoardState {
       id: Date.now() + Math.random(),
     },
   };
+}
+
+// ---------------------------------------------------------------------------
+// Coup (2026-09-06) — move the king himself: swap him with one of his own
+// guards. His man takes the throne, he takes the post — and guards stand on
+// posts because posts have lines to them. Everything that belongs to a
+// square rides with its piece (poison, rabies, frozen, decoy). The pen
+// gains his new square if it was outside, so he is never stuck outside the
+// rules, but he can only walk back through squares already in the pen.
+// Design: docs/new-abilities-2026-09-06.md §2.3.
+// ---------------------------------------------------------------------------
+
+/** T4+: the swap stuns him for a turn. */
+export function coupStuns(tier: AbilityTier): boolean {
+  return tier >= 4;
+}
+
+/** Enemies Coup may swap with the king at this tier (never the king). */
+export function coupTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'coup');
+  if (!owned || state.winCondition !== 'king') return [];
+  const king = state.pieces.find((p) => p.type === 'king');
+  if (!king) return [];
+  const pen = state.kingPen ? new Set(state.kingPen) : null;
+  const cheb = (p: Coord) => Math.max(Math.abs(p.file - king.file), Math.abs(p.rank - king.rank));
+  return state.pieces
+    .filter((p) => {
+      if (p.type === 'king') return false;
+      if (owned.tier === 1) return p.type === 'pawn' && cheb(p) === 1;
+      if (owned.tier === 2) return cheb(p) === 1;
+      if (owned.tier <= 4) return cheb(p) <= 2 || (!!pen && pen.has(toSquare(p)));
+      return true;
+    })
+    .map((p) => ({ file: p.file, rank: p.rank }));
+}
+
+/** Trade every square-keyed marker between two squares (poison / rabies / frozen / decoy). */
+function swapStatusMarkers(
+  state: BoardState,
+  a: string,
+  b: string,
+): Pick<
+  BoardState,
+  'poisonedSquares' | 'poisonedTurnsLeft' | 'rabidSquares' | 'rabidTurnsLeft' | 'frozenSquares' | 'frozenTurnsLeft' | 'decoyTarget'
+> {
+  const swapList = (list: string[]): string[] =>
+    list.map((sq) => (sq === a ? b : sq === b ? a : sq));
+  const swapMap = (m: Record<string, number>): Record<string, number> => {
+    const out: Record<string, number> = { ...m };
+    delete out[a];
+    delete out[b];
+    if (m[a] !== undefined) out[b] = m[a];
+    if (m[b] !== undefined) out[a] = m[b];
+    return out;
+  };
+  return {
+    poisonedSquares: swapList(state.poisonedSquares),
+    poisonedTurnsLeft: swapMap(state.poisonedTurnsLeft),
+    rabidSquares: swapList(state.rabidSquares),
+    rabidTurnsLeft: swapMap(state.rabidTurnsLeft),
+    frozenSquares: swapList(state.frozenSquares),
+    frozenTurnsLeft: swapMap(state.frozenTurnsLeft),
+    decoyTarget: state.decoyTarget === a ? b : state.decoyTarget === b ? a : state.decoyTarget,
+  };
+}
+
+function applyCoup(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'coup');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  if (!coupTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
+  const king = state.pieces.find((p) => p.type === 'king');
+  const guard = state.pieces.find((p) => p.file === target.file && p.rank === target.rank);
+  if (!king || !guard) return state;
+  const kingSq = toSquare(king);
+  const guardSq = toSquare(guard);
+  const pen = state.kingPen;
+  const swapped: BoardState = {
+    ...state,
+    ...swapStatusMarkers(state, kingSq, guardSq),
+    pieces: state.pieces.map((p) =>
+      p === king
+        ? { ...p, file: guard.file, rank: guard.rank }
+        : p === guard
+          ? { ...p, file: king.file, rank: king.rank }
+          : p,
+    ),
+    // His pen grows to include the post if it was outside — he is never
+    // stuck outside the rules, and the post is usually a cell of one.
+    kingPen: pen && !pen.includes(guardSq) ? [...pen, guardSq] : pen,
+    abilities: decrementUse(state.abilities, 'coup'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    ...(coupStuns(owned.tier) ? stunKingAfterCapture(state, 1) : {}),
+    lastAbilityFx: {
+      kind: 'coup',
+      from: guardSq,
+      to: kingSq,
+      id: Date.now() + Math.random(),
+    },
+  };
+  // Snare: a king (or guard) swapped onto a trap springs it.
+  return springSnaresAt(swapped, [guardSq, kingSq]);
 }
 
 // ---------------------------------------------------------------------------

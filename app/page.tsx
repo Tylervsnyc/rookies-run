@@ -62,6 +62,7 @@ import {
   swapTargets,
   canRewind,
   convertTargets as computeConvertTargets,
+  coupTargets,
   magnetTargets as computeMagnetTargets,
   maxUsesForTier,
   refreshAbilityUses,
@@ -1057,6 +1058,7 @@ export default function RookiesRunPage() {
     if (state.activeAbility?.id === 'convert') return computeConvertTargets(state);
     if (state.activeAbility?.id === 'magnet' && state.activeAbility.step === 'pick-enemy')
       return computeMagnetTargets(state);
+    if (state.activeAbility?.id === 'coup') return coupTargets(state);
     return undefined;
   }, [state]);
 
@@ -1898,7 +1900,9 @@ export default function RookiesRunPage() {
               {state.activeAbility.step === 'pick-enemy'
                 ? state.activeAbility.id === 'magnet'
                   ? 'tap an enemy on your line'
-                  : 'tap an enemy'
+                  : state.activeAbility.id === 'coup'
+                    ? 'tap a guard near the king'
+                    : 'tap an enemy'
                 : state.activeAbility.id === 'magnet'
                   ? 'tap the square it lands on'
                   : state.activeAbility.id === 'shove'

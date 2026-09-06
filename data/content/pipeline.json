@@ -905,6 +905,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Push a stone beside Rookie one square directly away from her (free action). It moves; it does not disappear: a gap opens where it was, a square dies where it lands (a pen square becomes a hazard he cannot step to). Legal only when the landing square is empty; from T3 a pawn it lands on is crushed (a Rookie capture with the king stun); T4 reaches stones two squares off on her rook lines; T5 unlimited. Never a shove that leaves Rookie with no move; never into a stone (two-thick walls are shove-proof); authored stones marked fixed cannot be pushed. Universal-solvent class: keep out of terrain kits unless it is half the signature pair. Design: docs/new-abilities-2026-09-06.md."
+    },
+    {
+      "id": "coup",
+      "kind": "ability",
+      "name": "Coup",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Trade the king's square with one of his own guards (free action): his man takes the throne, he takes the post. T1 a pawn beside him; T2 any guard beside him; T3-T4 any guard in his room or within 2; T5 any enemy on the board. T4+ the swap stuns him a turn. Poison, rabies, frozen and decoy markers ride with their pieces; his pen gains the post square so he is never outside the rules, but his throne is now plugged by his own guard. Guards stand on posts because posts have lines to them; the second beat is a line he cannot step off, a stone on his step back, a snare, or a body's cover. Design: docs/new-abilities-2026-09-06.md."
     }
   ]
 }
