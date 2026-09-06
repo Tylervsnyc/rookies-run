@@ -841,6 +841,30 @@
       "stage": "testing",
       "created": "2026-09-05",
       "notes": "Boulder + Knight Hop cage-and-take run. Signature: one diagonal of stone corner to corner that only a knight crosses. Finale: jump the slash, drop two stones on the king's flight squares, slide onto his line. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 40% random / 85% with the pair. Boulder earned its place: the stone's job is one turn deep, which the bot models."
+    },
+    {
+      "id": "revenge-22",
+      "kind": "run",
+      "name": "The Millstone",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Dragon + Duchess double-door run. Signature: the king lives on a four-square diamond around a stone pillar; the finale is a double door where one body opens it once and dies, and the second body walks through. L7-L10: every single kit card 0%, pair 72-88% (serial). Full runs 18% random / 45% with the pair. Tier caveat: at 2 charges one summon can trade twice alone."
+    },
+    {
+      "id": "revenge-23",
+      "kind": "run",
+      "name": "The Parapet",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Knight Hop + Twin run. Signature: rank 6 is solid stone every level; the court is ranks 7-8. Finale: hop onto a square no rook line reaches, summon the Twin beside her, two rooks close the 2x2. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 33% random / 65% with the pair. TIER CAVEAT: knight-hop at T4 (two uses) solos L7-L9 at 78-97%; the gate holds at T1-T3 and T5."
+    },
+    {
+      "id": "revenge-20",
+      "kind": "run",
+      "name": "The Alley",
+      "stage": "idea",
+      "created": "2026-09-06",
+      "notes": "Smoke + Rabies Dart (blind the court). HONEST MISS: the finale does not meet the combo gate at T1 cards (rabies alone 53% on L7; pair 63/9/6/9). The pair is a T5 story the harness cannot measure and the bot cannot plan cast-then-wait lines. Kept as idea; reachable via ?run=revenge-20, not on the playtest page."
     }
   ]
 }
