@@ -35,6 +35,36 @@ export interface Coord {
   rank: number; // 1-8
 }
 
+/**
+ * A stone (hazard square). `fixed: true` marks an AUTHORED wall stone that
+ * Shove may never push (2026-09-06) — a run's way of refusing the card square
+ * by square. Default (absent) = loose: every stone, authored or dropped by
+ * Boulder, can be shoved.
+ */
+export interface Hazard extends Coord {
+  fixed?: boolean;
+}
+
+/**
+ * Snare (2026-09-06) — an armed trap on an empty square. Invisible to the
+ * enemy AI; springs when an ENEMY arrives on it (see springSnaresAt in
+ * abilities.ts). Consumed on springing unless the tier re-arms it.
+ */
+export interface Snare {
+  square: string;
+}
+
+/**
+ * Scarecrow (2026-09-06) — a straw Rookie. For `turnsLeft` enemy phases the
+ * enemy AI plans against a view where this square IS Rookie (rook-form, or
+ * queen-form from T4) and the real Rookie is an uncapturable blocker.
+ */
+export interface Scarecrow {
+  square: string;
+  turnsLeft: number;
+  form: 'rook' | 'queen';
+}
+
 export interface EnemyPiece {
   type: PieceType;
   color: PieceColor;
@@ -129,7 +159,7 @@ export interface BoardState {
   drones: Drone[];
   // (allies is required, but legacy fixture states in /test pages may omit it;
   // see harden notes — we keep it required for runtime invariants.)
-  hazards: Coord[]; // no-go squares for Rookie (introduced level 8+)
+  hazards: Hazard[]; // no-go squares for Rookie (introduced level 8+)
   turn: Turn;
   status: GameStatus;
   moveCount: number; // counts Rookie's moves only
@@ -271,7 +301,13 @@ export interface BoardState {
       | 'rewind'
       | 'magnet'
       | 'bodyguard'
-      | 'summon-knight';
+      | 'summon-knight'
+      // The five of 2026-09-06 (docs/new-abilities-2026-09-06.md).
+      | 'snare'
+      | 'shove'
+      | 'coup'
+      | 'hourglass'
+      | 'scarecrow';
     from: string;
     to: string;
     id: number;
@@ -286,6 +322,11 @@ export interface BoardState {
     deaths: { square: string; pieceType: PieceType }[];
     id: number;
   };
+  /**
+   * Transient signal: set when a Snare springs under an enemy (held, or
+   * bitten = captured at T4+). UI watches `id` to flash the trap square.
+   */
+  lastSnareSpring?: { square: string; pieceType: PieceType; bit: boolean; id: number };
   /**
    * Transient signal: set when an enemy piece captures another enemy piece
    * (rabid friendly-fire or decoy-mark lure). The UI uses it to slide the
@@ -369,6 +410,28 @@ export interface BoardState {
    * cleared when control comes back to Rookie after the enemy turn.
    */
   squireMovedThisTurn?: boolean;
+  /**
+   * Snare — armed traps. Part of the Rewind snapshot (restored unsprung).
+   * Absent/empty = none. Never persists across levels.
+   */
+  snares?: Snare[];
+  /**
+   * Scarecrow — the one straw Rookie standing right now (absent = none).
+   * Ticks down at the end of each enemy turn; removed when captured.
+   */
+  scarecrow?: Scarecrow;
+  /**
+   * Hourglass — set while the enemy phase it triggered is resolving (a
+   * "glass-turn"). endTurn reads it (no daze wake-up, optionally no summon
+   * clocks, the king held at T3+) and clears it. Absent = a normal phase.
+   */
+  glassTurn?: { holdKing: boolean; freezeSummonClocks: boolean };
+  /**
+   * Hourglass — true once the glass has been turned during the current
+   * Rookie turn (one cast per turn below T5). Cleared by the end of the
+   * enemy phase that follows a REAL Rookie action.
+   */
+  hourglassUsedThisTurn?: boolean;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {
@@ -385,7 +448,7 @@ export interface RunPuzzle {
   level: number; // 1..10
   rookieStart: Coord;
   pieces: EnemyPiece[];
-  hazards?: Coord[];
+  hazards?: Hazard[];
   moveLimit?: number;
   /** Pieces Rookie is allowed to transform into on this level. */
   allowedForms?: RookieForm[];

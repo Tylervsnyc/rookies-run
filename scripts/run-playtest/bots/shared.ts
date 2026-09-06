@@ -30,6 +30,7 @@ import {
   magnetLandingSquares,
   magnetTargets,
   sacrificeTargets,
+  snareTargets,
   summonSpawnSquares,
   squireSpawnSquares,
   swapTargets,
@@ -572,6 +573,24 @@ function candidatesForAbility(
     case 'knighting': {
       for (const c of knightingTargets(state)) {
         out.push({ kind: 'ability-target', abilityId: 'knighting', target: c });
+      }
+      return out;
+    }
+    case 'snare': {
+      // Empty squares Chebyshev 1 from the king (his flight set) plus
+      // Chebyshev 1 from every non-pawn hunter (its next landing set), capped
+      // at 16 — the Boulder / Vanguard pattern. The rollouts run the real
+      // pawn-ai, so the flee onto the trap and the hold are modelled.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      const hunters = state.pieces.filter((p) => p.type !== 'pawn' && p.type !== 'king');
+      let n = 0;
+      for (const c of snareTargets(state)) {
+        const nearKing = king ? cheb(c, king) <= 1 : false;
+        const nearHunter = hunters.some((h) => cheb(c, h) <= 1);
+        if (!nearKing && !nearHunter) continue;
+        out.push({ kind: 'ability-target', abilityId: 'snare', target: c });
+        if (++n >= 16) break;
       }
       return out;
     }

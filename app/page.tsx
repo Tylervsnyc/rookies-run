@@ -507,6 +507,11 @@ export default function RookiesRunPage() {
       magnet: 700,
       bodyguard: 600,
       'summon-knight': 600,
+      snare: 600,
+      shove: 600,
+      coup: 700,
+      hourglass: 900,
+      scarecrow: 600,
     };
     const t = setTimeout(() => setAbilityFx(null), durations[abilityFx.kind]);
     return () => clearTimeout(t);

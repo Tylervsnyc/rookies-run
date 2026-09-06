@@ -578,6 +578,31 @@
       "mechanism": "Since the 2026-09-06 rework a converted piece is a CONTROLLED summon, so Sacrifice may detonate it. Steal a guard standing inside the court (unlimited range, free) and blow it up where it stands: the blast is the stolen piece's own attack set (a pawn's two forward diagonals, a knight's eight squares, a queen's rays) plus the ring at T3+, and every capture in the blast stuns the king. Was listed as ILLEGAL before the rework (sacrificeTargets only read controlled summons and a converted piece was an AI ally). Detonation is not gated by the daze (Sacrifice targets the body, it does not move it), so steal-then-blow-up stays a same-turn play.",
       "tierNote": "Convert T1 steals pawns only — a pawn blast is two squares. Real value from Convert T2+ (minors) or Sacrifice T3+ (ring).",
       "note": "Untested in the harness as of 2026-09-06; added when convert+sacrifice moved off antiPairs."
+    },
+    {
+      "a": "snare",
+      "b": "boulder",
+      "archetype": "cage-and-take",
+      "rating": 4,
+      "mechanism": "A room with two equidistant exits is a coin flip for one snare; stone one, trap the other, threaten, he steps into the trap. The stone goes where a stone never walls her line (it is the exit she does not want him to take), which fixes Boulder's self-block.",
+      "confidence": 4,
+      "note": "Designed 2026-09-06 (docs/new-abilities-2026-09-06.md). Snare alone: Vault L5 25% -> 100% (12 trials, T5 bot)."
+    },
+    {
+      "a": "snare",
+      "b": "knight-hop",
+      "archetype": "cage-and-take",
+      "rating": 4,
+      "mechanism": "Cross the wall on one knight move, land as a rook attacking one column of a 2x2, snare the other column, take him next turn. The Slash's finale with one cast instead of two stones.",
+      "confidence": 4
+    },
+    {
+      "a": "snare",
+      "b": "magnet",
+      "archetype": "reposition-then-seal",
+      "rating": 3,
+      "mechanism": "Pull a guard onto a snared square: a guard that cannot be captured (stone-backed, twice defended) is held for two turns, or dies at T4, without Rookie standing anywhere. Poison Dart is the slow version of this pair.",
+      "confidence": 3
     }
   ],
   "antiPairs": [
@@ -658,6 +683,27 @@
       "a": "knight-hop",
       "b": "magnet",
       "reason": "Magnet's pull lines fall back to rook directions in knight form (magnetDirs has no knight case), so the transform gives Magnet nothing — unlike bishop or queen form, which unlock new pull directions."
+    },
+    {
+      "a": "snare",
+      "b": "freeze-ray",
+      "reason": "Same outcome; Freeze reaches him directly. Two cards for one job."
+    },
+    {
+      "a": "snare",
+      "b": "smoke",
+      "reason": "He never steps while smoked, so a snare never springs."
+    },
+    {
+      "a": "snare",
+      "b": "twin",
+      "reason": "Cover on the trapped square deletes it from his flight set; he steps elsewhere. Applies to any summon covering the trap.",
+      "scope": "any summon whose cover lands on the trapped square"
+    },
+    {
+      "a": "snare",
+      "b": "duchess",
+      "reason": "Same cover problem as Twin."
     }
   ]
 }

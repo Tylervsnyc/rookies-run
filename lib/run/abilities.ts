@@ -12,7 +12,7 @@ import { isWinningMove, rookieLegalMoves } from './movement';
 import { getRunById } from './runs';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
-import { toSquare } from './types';
+import { fromSquare, toSquare } from './types';
 import type {
   AllyPiece,
   BoardState,
@@ -53,7 +53,11 @@ export type AbilityId =
   | 'vanguard'
   | 'swap'
   | 'sacrifice'
-  | 'knighting';
+  | 'knighting'
+  // The five of 2026-09-06, mined from the level library (testing). See
+  // docs/new-abilities-2026-09-06.md — each is a distinct verb: trap a
+  // square, move a stone, move the king, pass a turn, fake a Rookie.
+  | 'snare';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -286,6 +290,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Rank',
     description: 'Promote one of your summons into a bigger piece.',
   },
+  snare: {
+    id: 'snare',
+    name: 'Snare',
+    activation: 'targeted',
+    typeLine: 'Targeted · Trap',
+    description: 'Set a trap on an empty square. The first enemy to step on it is held.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -424,6 +435,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/1/2/2 — support, refreshes every level.
       if (tier <= 3) return 1;
       return 2;
+    case 'snare':
+      // 1/1/2/2/2 — the spec's ladder (docs/new-abilities-2026-09-06.md).
+      if (tier <= 2) return 1;
+      return 2;
   }
 }
 
@@ -504,6 +519,7 @@ const HOW: Record<AbilityId, string> = {
   swap: 'Tap card, then tap one of your summons.',
   sacrifice: 'Tap card, then tap one of your summons.',
   knighting: 'Tap card, then tap one of your summons.',
+  snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -682,6 +698,11 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Promote a summon two steps up (pawn to bishop, knight to rook).';
       if (tier === 2) return 'Promote a summon one step up. Its clock gains 3 turns.';
       return 'Promote a summon one step: pawn, knight, bishop, rook, queen.';
+    case 'snare':
+      if (tier === 5) return 'Set a trap that never wears out. Guards die on it, the king is held 3 turns.';
+      if (tier === 4) return 'Set a trap. A guard that steps on it is captured; the king is held 3 turns.';
+      if (tier >= 2) return 'Set a trap. Whoever steps on it is held for 2 turns.';
+      return 'Set a trap on an empty square. The first enemy to step on it is held for 1 turn.';
   }
 }
 
@@ -855,6 +876,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Two steps up. 1/level.';
       if (tier === 2) return 'One step up, +3 turns. 1/level.';
       return 'One step up. 1/level.';
+    case 'snare':
+      if (tier === 5) return 'Trap re-arms. Guards die, king held 3. 2/level.';
+      if (tier === 4) return 'Trap bites guards; king held 3. 2/level.';
+      if (tier === 3) return 'Trap holds 2 turns. 2/level.';
+      if (tier === 2) return 'Trap holds 2 turns. 1/level.';
+      return 'Trap holds 1 turn. 1/level.';
   }
 }
 
@@ -1039,6 +1066,12 @@ export const UPGRADE_NOTES: Record<
     3: 'Promotes two steps up, not one',
     4: 'Works on ANY rainbow ally',
     5: 'Straight to queen',
+  },
+  snare: {
+    2: 'Holds 1 turn → 2',
+    3: '',
+    4: 'The trap bites: guards die on it',
+    5: 'The trap re-arms after every spring',
   },
 };
 
@@ -1299,6 +1332,7 @@ export function abilityLegalMoves(
   if (abilityId === 'swap') return swapTargets(state);
   if (abilityId === 'sacrifice') return sacrificeTargets(state);
   if (abilityId === 'knighting') return knightingTargets(state);
+  if (abilityId === 'snare') return snareTargets(state);
   return [];
 }
 
@@ -1400,7 +1434,8 @@ export function applyAbilityActivate(
     isSummonAbility(abilityId) ||
     abilityId === 'swap' ||
     abilityId === 'sacrifice' ||
-    abilityId === 'knighting';
+    abilityId === 'knighting' ||
+    abilityId === 'snare';
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
   if (def.activation === 'targeted' && !picksSquare) step = 'pick-enemy';
   if (picksSquare && abilityLegalMoves(state, abilityId).length === 0) return state;
@@ -1789,6 +1824,9 @@ export function applyAbilityTargeted(
   if (abilityId === 'knighting') {
     return applyKnighting(state, target);
   }
+  if (abilityId === 'snare') {
+    return applySnare(state, target);
+  }
 
   if (abilityId === 'magnet') {
     // Two taps: first pick the enemy to grab, THEN pick how far it comes —
@@ -1821,7 +1859,7 @@ export function applyAbilityTargeted(
       delete frozenTurnsLeft[fromSq];
       frozenTurnsLeft[toSq] = turns;
     }
-    return {
+    const pulled: BoardState = {
       ...state,
       ...relocated,
       frozenSquares,
@@ -1840,6 +1878,8 @@ export function applyAbilityTargeted(
         id: Date.now() + Math.random(),
       },
     };
+    // Snare: a pulled piece landing on a trap springs it ("reposition then trap").
+    return springSnaresAt(pulled, [toSq]);
   }
 
   if (abilityId === 'rabies-dart') {
@@ -1932,6 +1972,8 @@ export function boulderTargets(state: BoardState): Coord[] {
       if ((state.allies ?? []).some((a) => a.file === file && a.rank === rank)) continue;
       if ((state.drones ?? []).some((d) => d.alive && d.file === file && d.rank === rank)) continue;
       if (state.hazards.some((h) => h.file === file && h.rank === rank)) continue;
+      // Never on a snared square (a stone would bury the trap).
+      if ((state.snares ?? []).some((sn) => sn.square === toSquare({ file, rank }))) continue;
       const walled: BoardState = {
         ...state,
         pieces: enemy ? state.pieces.filter((p) => p !== enemy) : state.pieces,
@@ -1942,6 +1984,124 @@ export function boulderTargets(state: BoardState): Coord[] {
     }
   }
   return out;
+}
+
+// ---------------------------------------------------------------------------
+// Snare (2026-09-06) — trap a square. The boulder trick with the sign
+// flipped: instead of deleting his flight square you let him take it and keep
+// him there. Invisible to the enemy AI (nothing paths around it); springs
+// when an ENEMY arrives on it during the enemy phase by any means except
+// Rewind: a flee step, an approach / push / capture landing, a Magnet pull, a
+// Coup swap. Design: docs/new-abilities-2026-09-06.md §2.1.
+// ---------------------------------------------------------------------------
+
+/** Enemy turns a sprung piece is held. 1/2/2/3/3. */
+export function snareHoldTurns(tier: AbilityTier): number {
+  if (tier === 1) return 1;
+  if (tier <= 3) return 2;
+  return 3;
+}
+
+/** T4+: a non-king piece that springs the trap is captured instead of held. */
+export function snareBites(tier: AbilityTier): boolean {
+  return tier >= 4;
+}
+
+/** T5: the trap re-arms after every spring. */
+export function snareRearms(tier: AbilityTier): boolean {
+  return tier === 5;
+}
+
+/** Squares Snare may be set on: empty, no snare yet, not Rookie's square. */
+export function snareTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'snare');
+  if (!owned) return [];
+  const armed = new Set((state.snares ?? []).map((sn) => sn.square));
+  const out: Coord[] = [];
+  for (let f = 1; f <= 8; f++) {
+    for (let r = 1; r <= 8; r++) {
+      if (!squareIsFreeForSummon(state, f, r)) continue;
+      if (armed.has(toSquare({ file: f, rank: r }))) continue;
+      if (state.scarecrow?.square === toSquare({ file: f, rank: r })) continue;
+      out.push({ file: f, rank: r });
+    }
+  }
+  return out;
+}
+
+function applySnare(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'snare');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  if (!snareTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
+  const sq = toSquare(target);
+  return {
+    ...state,
+    snares: [...(state.snares ?? []), { square: sq }],
+    abilities: decrementUse(state.abilities, 'snare'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'snare',
+      from: toSquare(state.rookie),
+      to: sq,
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/**
+ * Spring every armed snare on `arrivals` that now holds an ENEMY piece.
+ * Called right after any enemy relocation (pawn-ai's applyAction and
+ * kingReaction, Magnet's landing, Coup's swap). Arrival semantics, not
+ * occupancy: a piece standing still on a re-armed trap is never re-bitten.
+ *
+ *  - Held: frozen for holdTurns + 1 (the Freeze Ray +1 trick — the spring is
+ *    mid-turn and endTurn decrements at once, so "1 turn" still covers the
+ *    NEXT enemy turn, the one Rookie needs to get onto his line).
+ *  - T4+ bite: a non-king piece is CAPTURED instead (credited to Rookie:
+ *    tempo, markers cleared, and kingStunTurns = 2 so the stun survives this
+ *    turn's endTurn, the way a poison death is handled). The king is only
+ *    ever held.
+ *  - Consumed on springing; T5 re-arms.
+ */
+export function springSnaresAt(state: BoardState, arrivals: ReadonlyArray<string>): BoardState {
+  const snares = state.snares ?? [];
+  if (snares.length === 0) return state;
+  const owned = state.abilities.find((a) => a.id === 'snare');
+  const tier = owned?.tier ?? 1;
+  let cur = state;
+  for (const sq of new Set(arrivals)) {
+    if (!(cur.snares ?? []).some((sn) => sn.square === sq)) continue;
+    const c = fromSquare(sq);
+    const piece = cur.pieces.find((p) => p.file === c.file && p.rank === c.rank);
+    if (!piece) continue;
+    const remaining = snareRearms(tier) ? cur.snares ?? [] : (cur.snares ?? []).filter((sn) => sn.square !== sq);
+    if (piece.type !== 'king' && snareBites(tier)) {
+      const cleared = clearStatusOnSquare(cur, sq);
+      cur = {
+        ...cur,
+        ...cleared,
+        snares: remaining,
+        pieces: cur.pieces.filter((p) => p !== piece),
+        captures: [...cur.captures, piece.type],
+        tempo: Math.min(tempoMaxFor(cur), cur.tempo + (TEMPO_REWARD[piece.type] ?? 0)),
+        decoyTarget: cur.decoyTarget === sq ? null : cur.decoyTarget,
+        decoyTurnsLeft: cur.decoyTarget === sq ? 0 : cur.decoyTurnsLeft,
+        ...stunKingAfterCapture(cur, 2),
+        lastSnareSpring: { square: sq, pieceType: piece.type, bit: true, id: Date.now() + Math.random() },
+      };
+      continue;
+    }
+    const turns = snareHoldTurns(tier) + 1;
+    cur = {
+      ...cur,
+      snares: remaining,
+      frozenSquares: cur.frozenSquares.includes(sq) ? cur.frozenSquares : [...cur.frozenSquares, sq],
+      frozenTurnsLeft: { ...cur.frozenTurnsLeft, [sq]: Math.max(cur.frozenTurnsLeft[sq] ?? 0, turns) },
+      lastSnareSpring: { square: sq, pieceType: piece.type, bit: false, id: Date.now() + Math.random() },
+    };
+  }
+  return cur;
 }
 
 // ---------------------------------------------------------------------------

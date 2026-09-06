@@ -255,6 +255,9 @@ export function isUnwinnable(state: BoardState): boolean {
   if (state.poisonedSquares.length > 0 || state.rabidSquares.length > 0) return false;
   if (state.decoyTarget) return false;
   if ((state.smokeTurnsLeft ?? 0) > 0) return false;
+  // An armed Snare or a standing Scarecrow changes where the king can be held
+  // or steered — neither is modelled, so never call such a board dead.
+  if ((state.snares?.length ?? 0) > 0 || state.scarecrow) return false;
   if (state.activeAbility || state.pendingOffer) return false;
   if (state.abilities.some((a) => a.id === 'squad')) return false;
 

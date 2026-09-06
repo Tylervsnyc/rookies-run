@@ -711,6 +711,25 @@ export function RunBoard({
     };
   }, [imperviousFx]);
 
+  // Snare spring — the trap under an enemy just fired (held, or bitten). Flash
+  // the square; the frozen wash / the missing piece carries the aftermath.
+  type SnareSpringFx = NonNullable<BoardState['lastSnareSpring']>;
+  const [snareSpringFx, setSnareSpringFx] = useState<SnareSpringFx | null>(null);
+  const lastSnareSpringIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    const sig = state.lastSnareSpring;
+    if (!sig) return;
+    if (lastSnareSpringIdRef.current === sig.id) return;
+    lastSnareSpringIdRef.current = sig.id;
+    setSnareSpringFx(sig);
+    const t = setTimeout(() => setSnareSpringFx(null), 900);
+    return () => clearTimeout(t);
+  }, [state.lastSnareSpring]);
+  const snareTier = useMemo(
+    () => (state.abilities.find((a) => a.id === 'snare')?.tier ?? 1) as AbilityTier,
+    [state.abilities],
+  );
+
   // Convert from→to squares into board-percentage centers for overlay VFX.
   // Board is rendered white-orientation: file 1 = leftmost, rank 8 = topmost.
   const fxGeom = useMemo(() => {
@@ -1254,6 +1273,10 @@ export function RunBoard({
           />
         )}
         {state.drones.length > 0 && <DroneOverlay drones={state.drones} />}
+        {(state.snares?.length ?? 0) > 0 && state.status === 'playing' && (
+          <SnareOverlay snares={state.snares!.map((sn) => sn.square)} tier={snareTier} />
+        )}
+        {snareSpringFx && <SnareSpringLayer fx={snareSpringFx} />}
         {convertTargets && convertTargets.length > 0 && (
           <ConvertTargetsOverlay targets={convertTargets} />
         )}
@@ -1672,6 +1695,26 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
         `}</style>
         <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '11%', height: '11%', borderRadius: '45% 55% 50% 50%', background: 'radial-gradient(circle at 35% 30%, #a8a29e 0%, #57534e 45%, #292524 100%)', boxShadow: '0 4px 8px rgba(0,0,0,0.5)', animation: `rrFxBoulderDrop-${k} 520ms cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards` }} />
         <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '14%', height: '14%', borderRadius: '50%', border: '3px solid rgba(168,162,158,0.8)', animation: `rrFxBoulderDust-${k} 520ms ease-out 240ms forwards`, opacity: 0 }} />
+      </div>
+    );
+  }
+
+  if (fx.kind === 'snare') {
+    // A red X stamps down onto the trapped square, then settles into the
+    // persistent SnareOverlay marker.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxSnareStamp-${k} {
+            0%   { transform: translate(-50%, -50%) scale(2.2) rotate(-20deg); opacity: 0; }
+            60%  { transform: translate(-50%, -50%) scale(0.9) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '9%', height: '9%', animation: `rrFxSnareStamp-${k} 480ms cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards`, opacity: 0 }}>
+          <SnareGlyph color="rgba(220,38,38,0.95)" />
+        </div>
       </div>
     );
   }
@@ -2418,6 +2461,75 @@ function PoisonCounterOverlay({ squares, turnsLeft }: { squares: string[]; turns
 // DroneOverlay — mini-Rookies (BreathingRook at 0.5 scale) sliding between
 // squares while the drone phase runs.
 // ─────────────────────────────────────────────────────────────────────────────
+
+/** The Snare marker: a small red X. */
+function SnareGlyph({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden>
+      <path d="M5 5 L19 19 M19 5 L5 19" stroke={color} strokeWidth="4.5" strokeLinecap="round" />
+      <path d="M5 5 L19 19 M19 5 L5 19" stroke="rgba(255,255,255,0.75)" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/**
+ * Armed snares — visible to the PLAYER only (the AI never paths around
+ * them). A red X in the square's lower-right corner, ringed in the tier
+ * colour, so the square still reads as empty and a piece stepping in stays
+ * legible.
+ */
+function SnareOverlay({ snares, tier }: { snares: ReadonlyArray<string>; tier: AbilityTier }) {
+  const ring = ABILITY_TIER_DOT[tier];
+  return (
+    <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2 }}>
+      {snares.map((sq) => {
+        const { file, rank } = fromSquare(sq);
+        return (
+          <div
+            key={sq}
+            style={{
+              position: 'absolute',
+              left: `${(file - 1) * 12.5 + 7.2}%`,
+              top: `${(8 - rank) * 12.5 + 7.2}%`,
+              width: '4.6%',
+              height: '4.6%',
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.85)',
+              boxShadow: `0 0 0 1.5px ${ring}, 0 1px 3px rgba(0,0,0,0.35)`,
+              padding: '0.4%',
+            }}
+          >
+            <SnareGlyph color="rgba(220,38,38,0.95)" />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** A snare just sprang: red ring bursts on the square + a chip naming it. */
+function SnareSpringLayer({ fx }: { fx: { square: string; bit: boolean; id: number } }) {
+  const { file, rank } = fromSquare(fx.square);
+  const k = Math.floor(fx.id);
+  const cx = (file - 0.5) * 12.5;
+  const cy = (8 - rank + 0.5) * 12.5;
+  return (
+    <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+      <style>{`
+        @keyframes rrSnareBurst-${k} {
+          0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+        }
+      `}</style>
+      <div style={{ position: 'absolute', left: `${cx}%`, top: `${cy}%`, width: '12%', height: '12%', borderRadius: '50%', border: '3px solid rgba(220,38,38,0.95)', boxShadow: '0 0 14px rgba(220,38,38,0.8)', animation: `rrSnareBurst-${k} 700ms ease-out forwards` }} />
+      <SquareChip
+        square={fx.square}
+        label={fx.bit ? 'Bitten' : 'Snared'}
+        palette={{ color: '#7f1d1d', background: 'rgba(254,226,226,0.95)', border: 'rgba(220,38,38,0.9)' }}
+      />
+    </div>
+  );
+}
 
 function DroneOverlay({ drones }: { drones: ReadonlyArray<Drone> }) {
   return (

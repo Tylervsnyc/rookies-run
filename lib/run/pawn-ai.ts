@@ -23,6 +23,7 @@ import {
   stunKingAfterCapture,
   tryAegisIntercept,
   pushEnemyPhaseSnapshot,
+  springSnaresAt,
 } from './abilities';
 import { DIFFICULTIES } from './difficulty';
 import { enemyAt, rookieLegalMoves } from './movement';
@@ -323,7 +324,7 @@ function kingReaction(state: BoardState): BoardState | null {
   if (state.frozenSquares.includes(kingSq)) return null;
   const target = kingFleeMove(king, state, aiRng(state));
   if (!target) return null;
-  return {
+  const fled: BoardState = {
     ...state,
     pieces: state.pieces.map((p) =>
       p === king ? { ...p, file: target.file, rank: target.rank } : { ...p },
@@ -332,6 +333,8 @@ function kingReaction(state: BoardState): BoardState | null {
     // other vacated square.
     enemyVacatedSquares: [...(state.enemyVacatedSquares ?? []), kingSq],
   };
+  // Snare: he cannot see the trap; a flee step onto it holds him there.
+  return springSnaresAt(fled, [toSquare(target)]);
 }
 
 function slidingMoves(
@@ -1178,6 +1181,9 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
   const originSquare = toSquare({ file: action.mover.file, rank: action.mover.rank });
   let after = applyAction(state, action);
   if (after.status === 'lost') return endTurn(after);
+  // Snare: the mover just ARRIVED somewhere — if that square is trapped, the
+  // trap springs now (held, or bitten at T4+), before the king reads the board.
+  after = springSnaresAt(after, [toSquare(action.target)]);
 
   const nextMoved = [...state.enemyMovedSquares, coordKey(action.target)];
   const nextVacated = [...(after.enemyVacatedSquares ?? []), originSquare];
@@ -1225,7 +1231,7 @@ export function nextEnemyMovers(state: BoardState): EnemyPiece[] {
     if (!action) break;
     movers.push(action.mover);
     const originSquare = toSquare({ file: action.mover.file, rank: action.mover.rank });
-    const after = applyAction(cur, action);
+    const after = springSnaresAt(applyAction(cur, action), [toSquare(action.target)]);
     if (after.status === 'lost') break;
     cur = {
       ...after,

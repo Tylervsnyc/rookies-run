@@ -82,3 +82,13 @@ progress; treat L10 support numbers as a bot floor, not a design ceiling.
 - **Squad** — tested first (Tyler's "second piece"); the T1 pawn is fodder for hunters and too slow to reach the pen: 8–58% on L6–L10 even mustering 3 ranks ahead (`seed.ts` keeps the muster-ahead hook on king levels in case it comes back). Aegis took its slot: 93–100% everywhere.
 - **Rabies Dart** — 100% everywhere in testing, but it duplicates Decoy's "guards eat their own" job; Decoy is the more legible of the two.
 - **Become King** — 92–100%, but it's a defensive walk-through; the pool already had five finishers.
+
+## The five of 2026-09-06 (testing) — mined from the level library
+
+Design doc: `docs/new-abilities-2026-09-06.md` (machine twin
+`data/run-playtest/new-ability-proposals.json`). Each is a distinct verb,
+one tap, one visible consequence, paying off inside one turn.
+
+| # | Ability | Numbers | Why it catches kings | Proof (T5 bot, 12 trials) |
+|---|---------|---------|----------------------|----------------|
+| 17 | **Snare** (`snare`) | Trap an empty square; holds the enemy that arrives on it 1 / 2 / 2 / 3 / 3 turns; 1/1/2/2/2 uses. T4+: a guard that springs it is CAPTURED (king stunned 2); the king is only ever held. T5: the trap re-arms. Invisible to the AI; a red X to the player. Springs on a flee step, an approach / push / capture landing, a Magnet pull, a Coup swap — never on Rewind. Boulder may not drop on it. | The boulder trick with the sign flipped: he always runs to the farthest safe square, so let him take it and keep him there. Threaten one square of a 2x2, snare the other, he steps in and goes stiff. | The Vault L5: none 25% → snare 100% |

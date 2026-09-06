@@ -146,3 +146,15 @@ partner (Smoke) and is an active liability next to any summon; **Squire**,
 make other abilities better — are **Swap, Boulder, Magnet, Smoke and
 Sacrifice**. If the game is going to be built around discovering pairs, those
 five are the sockets everything else plugs into.
+
+---
+
+## 2026-09-06 additions (the five mined from the level library)
+
+**Snare** — pairs: Boulder (two tied exits: stone one, trap the other,
+threaten; the stone goes where it never walls her), Knight Hop (hop the wall,
+hold one column of the 2x2, snare the other), Magnet (pull an uncapturable
+guard onto the trap). Anti-pairs: Freeze Ray (same job, reaches him directly),
+Smoke (he never steps while smoked, nothing springs), Twin / Duchess / any
+summon whose cover lands on the trapped square (cover deletes it from his
+flight set, he steps elsewhere).
