@@ -953,6 +953,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Signature = a blind cell whose throne is sealed on rank, file AND diagonal, with one diagonal DOORSTEP and one long squint-diagonal that reaches the post and never the throne. Kit coup/duchess/aegis/magnet. Finale gate MET at T1: L7-L10 none 0%, every single kit card 0%, pair 94/91/91/94 (32 trials). abilityTierCaps { coup: 2, duchess: 3 } — coup:3 solos the finale 100% (any guard within 2, plus a second charge, lets him be hopped across the board via wandering hunters); duchess:4 reads 31/31/28/56. Four different finale decisions: the line / which guard / the shuttered lane / the throne given back. HONEST MISS: pair is 91-94%, not 60-80 — the pair's line is 2-3 moves from any start and a perfect-information bot does not misstep a walk; every knob measured (clock does nothing, punishers are a cliff at 3-13%). Full runs 10% random, 70% pair-pool. Coup is at TESTING so this run is playtest-only."
+    },
+    {
+      "id": "revenge-31",
+      "kind": "run",
+      "name": "The Hearth",
+      "stage": "idea",
+      "created": "2026-09-06",
+      "notes": "Hourglass + Snare test. COMBO GATE NOT MET: none/hourglass/aegis/magnet all 0% on L6-L10 at every tier, but SNARE ALONE reads 44-75% and adding the glass makes the snare line WORSE on nearly every level (L6 75->66, L9 72->53, L10 44->38, 32 trials). Hourglass cannot extend a snare hold (a glass-turn burns one of the two moves the hold grants), snare is a free action so the flee is already paid for by her threatening move, and at T3+ hourglassHoldsKing stops the king fleeing during a glass-turn at all - the pair is an antiPair. Ships as an honest SINGLE-KEY run on a new signature (a free-standing stone fireplace whose mouth faces away from Rookie); 4/40 full clears random picks, 4/40 pair-pool. Stays at idea - not marked built."
     }
   ]
 }
