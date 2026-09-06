@@ -290,6 +290,63 @@ export function RunBoard({
   }, [state.level]);
 
   const rookieSq = toSquare(state.rookie);
+
+  // Poison death that MOVED first. The engine moves a poisoned piece and
+  // ticks its poison in the same `stepEnemyTurn` call whenever it is the
+  // last mover of the turn (`applyAction` → `endTurn`), so the UI never sees
+  // a state with the piece standing on its destination: it simply vanishes
+  // from its origin while `lastPoisonDeath` points somewhere else. Left
+  // alone, react-chessboard holds the sprite on the origin for a slide's
+  // worth of time while the death ghost already dissolves on the
+  // destination — a teleport-then-die (Tyler 2026-09-06: "the poison
+  // triggers, then it moves, then it dies"). Derived SYNCHRONOUSLY from the
+  // state diff (previous render's pieces vs this one) so the king's stun
+  // badge and the death beat can be held back in the same commit, with no
+  // one-frame flicker. For each death, the origin is a square that was
+  // poisoned last render, holds nothing now, isn't itself a death square,
+  // and had a piece of the dying type. Per-id cache: computed once, on the
+  // first render after the state lands.
+  const prevPoisonRef = useRef<{ poisonedSquares: string[]; pieces: BoardState['pieces'] }>({
+    poisonedSquares: state.poisonedSquares,
+    pieces: state.pieces,
+  });
+  const poisonSlideRef = useRef<{ id: number; deaths: { from: string; to: string; pieceType: PieceType }[] } | null>(null);
+  const poisonDeathId = state.lastPoisonDeath?.id ?? 0;
+  if (state.lastPoisonDeath && poisonSlideRef.current?.id !== poisonDeathId) {
+    const prev = prevPoisonRef.current;
+    const deathSquares = new Set(state.lastPoisonDeath.deaths.map((d) => d.square));
+    const origins = prev.poisonedSquares.filter(
+      (sq) => !deathSquares.has(sq) && !state.pieces.some((p) => toSquare(p) === sq),
+    );
+    const deaths: { from: string; to: string; pieceType: PieceType }[] = [];
+    for (const d of state.lastPoisonDeath.deaths) {
+      const i = origins.findIndex(
+        (sq) => prev.pieces.find((p) => toSquare(p) === sq)?.type === d.pieceType,
+      );
+      if (i < 0) continue;
+      deaths.push({ from: origins[i], to: d.square, pieceType: d.pieceType });
+      origins.splice(i, 1);
+    }
+    poisonSlideRef.current = { id: poisonDeathId, deaths };
+  }
+  useEffect(() => {
+    prevPoisonRef.current = { poisonedSquares: state.poisonedSquares, pieces: state.pieces };
+  });
+  // The slide phase lasts exactly one native piece slide; after that the
+  // death beat plays on the destination square.
+  const [poisonSlideDoneId, setPoisonSlideDoneId] = useState(0);
+  const poisonSlideDeaths =
+    poisonSlideRef.current?.id === poisonDeathId && poisonSlideRef.current.deaths.length > 0
+      ? poisonSlideRef.current.deaths
+      : null;
+  useEffect(() => {
+    if (!poisonSlideDeaths || poisonSlideDoneId === poisonDeathId) return;
+    const t = setTimeout(() => setPoisonSlideDoneId(poisonDeathId), slideMs ?? PIECE_SLIDE_MS);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [poisonDeathId, poisonSlideDeaths]);
+  const poisonSliding = !!poisonSlideDeaths && poisonSlideDoneId !== poisonDeathId;
+
   const attackerAtRookie = useMemo(
     () =>
       state.status === 'lost'
@@ -327,6 +384,15 @@ export function RunBoard({
     if (state.status !== 'lost' && introFile === null) {
       map[rookieSq] = { pieceType: rookieSprite };
     }
+    // Poisoned piece that moved and died in one engine step: stand it on
+    // its destination for one slide so react-chessboard's diff animates the
+    // walk natively (origin → destination), exactly like any other enemy
+    // move. Dropped once the slide lands; the death beat takes over there.
+    if (poisonSliding && poisonSlideDeaths) {
+      for (const d of poisonSlideDeaths) {
+        map[d.to] = { pieceType: enemySprite(d.pieceType, false, false) };
+      }
+    }
     const prev = positionRef.current;
     const prevKeys = Object.keys(prev);
     const nextKeys = Object.keys(map);
@@ -342,7 +408,7 @@ export function RunBoard({
     }
     positionRef.current = map;
     return map;
-  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile]);
+  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile, poisonSliding, poisonSlideDeaths]);
 
   const wiggleSquares = useMemo(() => {
     if (state.status !== 'playing' || state.turn !== 'rookie') return [];
@@ -389,9 +455,17 @@ export function RunBoard({
       else if (poisonId !== prev.poisonId) text = 'poison';
       else if (fxId !== prev.fxId && state.lastAbilityFx?.kind === 'boulder') text = 'boulder';
       else if (fxId !== prev.fxId && state.lastAbilityFx?.kind === 'rewind') text = 'rewind';
-      if (text) setStunCause({ text, id: Date.now() });
+      if (text) {
+        // A poison death that walked first: the label belongs to the death
+        // beat on the destination square, not to the slide.
+        const delay = text === 'poison' && poisonSliding ? (slideMs ?? PIECE_SLIDE_MS) : 0;
+        const stamp = Date.now();
+        if (delay > 0) setTimeout(() => setStunCause({ text, id: stamp }), delay);
+        else setStunCause({ text, id: stamp });
+      }
     }
     stunPrevRef.current = { stun, fxId, poisonId, sacId };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.kingStunTurns, state.lastAbilityFx, state.lastPoisonDeath, sacrificeFx, kingGoal]);
   useEffect(() => {
     if (!stunCause) return;
@@ -552,8 +626,13 @@ export function RunBoard({
       };
     }
 
-    // Poisoned-piece highlight — sickly green wash with diagonal hatch.
-    for (const sq of state.poisonedSquares) {
+    // Poisoned-piece highlight — sickly green wash with diagonal hatch. A
+    // poisoned piece mid-slide to the square it dies on carries its wash
+    // along, so the death beat lands on a visibly poisoned square.
+    const poisonWashSquares = poisonSliding && poisonSlideDeaths
+      ? [...state.poisonedSquares, ...poisonSlideDeaths.map((d) => d.to)]
+      : state.poisonedSquares;
+    for (const sq of poisonWashSquares) {
       styles[sq] = {
         ...styles[sq],
         backgroundColor: 'rgba(132, 204, 22, 0.4)',
@@ -591,7 +670,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring
@@ -1056,7 +1135,7 @@ export function RunBoard({
             status={
               state.frozenSquares.includes(kingSquare)
                 ? 'frozen'
-                : (state.kingStunTurns ?? 0) > 0
+                : (state.kingStunTurns ?? 0) > 0 && !poisonSliding
                   ? 'stunned'
                   : null
             }
@@ -1160,7 +1239,20 @@ export function RunBoard({
           />
         )}
         {state.allies.length > 0 && <AllyOverlay allies={state.allies} />}
-        {state.poisonedSquares.length > 0 && <PoisonCounterOverlay squares={state.poisonedSquares} turnsLeft={state.poisonedTurnsLeft} />}
+        {(state.poisonedSquares.length > 0 || (poisonSliding && poisonSlideDeaths)) && (
+          <PoisonCounterOverlay
+            squares={
+              poisonSliding && poisonSlideDeaths
+                ? [...state.poisonedSquares, ...poisonSlideDeaths.map((d) => d.to)]
+                : state.poisonedSquares
+            }
+            turnsLeft={
+              poisonSliding && poisonSlideDeaths
+                ? { ...state.poisonedTurnsLeft, ...Object.fromEntries(poisonSlideDeaths.map((d) => [d.to, 1])) }
+                : state.poisonedTurnsLeft
+            }
+          />
+        )}
         {state.drones.length > 0 && <DroneOverlay drones={state.drones} />}
         {convertTargets && convertTargets.length > 0 && (
           <ConvertTargetsOverlay targets={convertTargets} />
@@ -1174,7 +1266,7 @@ export function RunBoard({
         {abilityFx && fxGeom && (
           <AbilityFxLayer fx={abilityFx} geom={fxGeom} />
         )}
-        {poisonDeathFx && <PoisonDeathLayer fx={poisonDeathFx} />}
+        {poisonDeathFx && !poisonSliding && <PoisonDeathLayer fx={poisonDeathFx} />}
         {enemyCaptureFx && (
           <EnemyCaptureImpact fx={enemyCaptureFx} />
         )}
@@ -1710,6 +1802,14 @@ function PoisonDeathLayer({
           70%  { transform: translate(-50%, -70%) scale(1.05); opacity: 0.85; }
           100% { transform: translate(-50%, -110%) scale(0.5); opacity: 0; }
         }
+        @keyframes rrPoisonFade-${idKey} {
+          0%   { opacity: 1; filter: saturate(0.4) hue-rotate(100deg); }
+          100% { opacity: 0; filter: saturate(0.4) hue-rotate(100deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .rr-poison-bubble { display: none !important; }
+          .rr-poison-ghost { animation-name: rrPoisonFade-${idKey} !important; }
+        }
       `}</style>
       {fx.deaths.map((d, i) => {
         const c = fromSquare(d.square);
@@ -1737,6 +1837,7 @@ function PoisonDeathLayer({
             {/* Ghost of the dying piece sinking + going green. */}
             {PieceComp && (
               <div
+                className="rr-poison-ghost"
                 style={{
                   position: 'absolute',
                   left: `${cx}%`,
@@ -1754,6 +1855,7 @@ function PoisonDeathLayer({
             {BUBBLES.map((b, bi) => (
               <span
                 key={bi}
+                className="rr-poison-bubble"
                 style={{
                   position: 'absolute',
                   left: `calc(${cx}% + ${b[0] * 0.05}%)`,

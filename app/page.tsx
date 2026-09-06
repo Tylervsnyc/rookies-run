@@ -73,7 +73,7 @@ import {
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
 import { isUnwinnable } from '@/lib/run/solver';
-import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_FX_MS, ENEMY_TICK_MS } from '@/components/run/timing';
+import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_FX_MS, ENEMY_TICK_MS, PIECE_SLIDE_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
   getNextRevengeRunId,
@@ -526,7 +526,11 @@ export default function RookiesRunPage() {
   }, [state.lastPoisonDeath]);
   useEffect(() => {
     if (!poisonDeathFx) return;
-    const t = setTimeout(() => setPoisonDeathFx(null), 1100);
+    // Lifetime covers the 900ms dissolve plus one piece slide: when the
+    // dying piece moved in the same engine step, the board walks it to its
+    // destination first (see RunBoard's poison-slide derivation) and only
+    // then plays the death beat.
+    const t = setTimeout(() => setPoisonDeathFx(null), 1100 + PIECE_SLIDE_MS);
     return () => clearTimeout(t);
   }, [poisonDeathFx]);
 
