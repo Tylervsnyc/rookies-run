@@ -34,7 +34,7 @@ The most fun anyone has had in this game is a finale level that **no single abil
 |---|---|
 | No ability | ~0% |
 | Every single card in the kit, alone | <= 8% |
-| The run's signature pair | >= 60% (aim 70-100%) |
+| The run's signature pair | >= 60%, aim 60-80%. A finale the bot clears 100% is too easy for Tyler once he has the idea (Lattice, Alcove, 2026-09-06) |
 
 Fewer winning pairs is better; a level with exactly one answer is the best kind. Calibration from the runs Tyler rated: Moat finale singles 0% / pair 79-100%, full runs 25% clear with random picks. Colonnade finale singles 0% / pair 100-100-100-71%, full runs 12% random / 55% when the player takes the pair. Vault finale singles 0% / pair 81-97%, 28% random / 53% with the pair. A run where picking the wrong cards early ends you at L7-L8 is correct — that tension is the design.
 
@@ -103,8 +103,8 @@ With only magnet + boulder in the offer pool the offers keep UPGRADING them, and
 ### The gate depends on ability TIER (harness ground truth, 2026-09-05)
 Runs are validated with T1 cards, but offers UPGRADE cards during a run. The discovery harness, scoring the shipped runs under their own kits, found Colonnade L10 is NOT gated once Bishop Squire is T4 — it solos the level at 100% — and that The Moat's finale is not gated at all because its own kit contains `knight-hop`, a solvent (the Moat's L7-L10 only feel gated at low tier). Same family as the Stacks' upgraded-Boulder self-block. Open decision for Tyler: either validate finales at the tier a player will realistically hold by L7-L10 (T3-T4), pin signature-card tiers per run, or cap upgrades in combo runs. Until decided, report the finale matrix at T1 AND at the highest tier the offers can reach.
 
-### One line, four times (Lattice, Tyler 2026-09-06)
-Tyler on The Lattice: "pretty fun, once you solved it you kind of figured it out." Every combo run so far restates ONE finale line on L7-L10 with different geometry; the discovery is the fun and L8-L10 become execution. Inside the finale, each level must still demand a DIFFERENT decision with the same pair: a different order (bait first vs body first), a different target (mark the guard vs mark a hunter), a level where the pair is needed twice, or a level where a trap card briefly becomes the key. The "distinct primary decision" rule applies to L7-L10, not only L1-L6.
+### One line, four times (Lattice and Alcove, Tyler 2026-09-06)
+Tyler on The Lattice: "pretty fun, once you solved it you kind of figured it out." On The Alcove, same comment: "both very good in creativity, but they need more variance and difficulty, once you get the idea you solve it." Two levers: variance (below) and DIFFICULTY: tune the finale so the pair reads 60-80%, not 100%, with the clock and a second enemy per turn as the knobs, and make L8-L10 each add a wrinkle the L7 solution does not cover. Every combo run so far restates ONE finale line on L7-L10 with different geometry; the discovery is the fun and L8-L10 become execution. Inside the finale, each level must still demand a DIFFERENT decision with the same pair: a different order (bait first vs body first), a different target (mark the guard vs mark a hunter), a level where the pair is needed twice, or a level where a trap card briefly becomes the key. The "distinct primary decision" rule applies to L7-L10, not only L1-L6.
 
 ## Patterns that work
 
