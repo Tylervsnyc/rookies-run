@@ -33,6 +33,7 @@ import type { BotContext } from './types';
 import { rngFromString } from './utils/rng';
 import {
   ALL_LOADOUTS,
+  assertValidLoadout,
   botFor,
   defaultJobs,
   levelCountFor,
@@ -85,6 +86,16 @@ function parseList(v: string | undefined, all: string[]): string[] {
   return v.split(',').map((x) => x.trim()).filter(Boolean);
 }
 
+/** Fail LOUD and readable on a bad --loadouts value (see assertValidLoadout). */
+function validateLoadouts(loadouts: string[]): void {
+  try {
+    loadouts.forEach(assertValidLoadout);
+  } catch (e) {
+    console.error(`\n[revenge] BAD LOADOUT — refusing to measure nothing.\n  ${(e as Error).message}\n`);
+    process.exit(2);
+  }
+}
+
 function allLevels(): number[] {
   return Array.from({ length: levelCountFor(RUN_ID) }, (_, i) => i + 1);
 }
@@ -98,8 +109,16 @@ function matrixMain(): void {
   const realistic = arg('realistic') === 'true';
   const levels = parseList(arg('levels'), allLevels().map(String)).map(Number);
   const loadouts = parseList(arg('loadouts'), [...ALL_LOADOUTS]);
+  validateLoadouts(loadouts);
+  const jobs = defaultJobs(parseInt(arg('jobs', '8')!, 10));
+  // Echo what we ACTUALLY resolved, so a mis-expanded shell variable is
+  // visible in the first line of output instead of hiding in plausible
+  // numbers. (See assertValidLoadout for the footgun this guards.)
+  console.error(
+    `[revenge matrix] run=${RUN_ID} levels=${levels.join(',')} loadouts=[${loadouts.join(' | ')}] trials=${trials} tier=${tier} jobs=${jobs}${realistic ? ' realistic' : ''}${DIFFICULTY ? ` difficulty=${DIFFICULTY}` : ''}`,
+  );
   const t0 = Date.now();
-  matrixParallel(CFG, { levels, loadouts, trials, tier, realistic, jobs: defaultJobs(parseInt(arg('jobs', '8')!, 10)) })
+  matrixParallel(CFG, { levels, loadouts, trials, tier, realistic, jobs })
     .then((cells) => {
       const dt = ((Date.now() - t0) / 1000).toFixed(0);
       if (JSON_OUT) {
@@ -147,6 +166,7 @@ function matrixWorkerPairs(): boolean {
     const i = p.indexOf(':');
     const lv = p.slice(0, i);
     const lo = p.slice(i + 1);
+    validateLoadouts([lo]);
     cells.push(runMatrixCell(CFG, Number(lv), lo, trials, tier, realistic));
   }
   process.stdout.write(JSON.stringify(cells));
@@ -185,6 +205,7 @@ function runsMain(): void {
 function solveMain(): void {
   const levels = parseList(arg('levels'), allLevels().map(String)).map(Number);
   const loadouts = parseList(arg('loadouts'), [...ALL_LOADOUTS]);
+  validateLoadouts(loadouts);
   const depth = parseInt(arg('depth', '6')!, 10);
   const nodes = parseInt(arg('nodes', '150000')!, 10);
   const worker = arg('pairs');

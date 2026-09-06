@@ -18,6 +18,7 @@ import * as os from 'node:os';
 import { join } from 'node:path';
 
 import {
+  ALL_ABILITY_IDS,
   applyDismissOffer,
   applyOfferPick,
   abilityTierCapFor,
@@ -96,6 +97,43 @@ export function realisticTierFor(level: number): AbilityTier {
  * with the summon it operates on, since matrix mode otherwise only ever
  * grants one owned ability per cell.
  */
+/**
+ * Validate a `--loadouts=` component and explain exactly what is wrong.
+ *
+ * The footgun this exists for: in zsh `set -- $spec` does NOT word-split, so
+ * a loop like `set -- "revenge-13 bishop-squire"; ... --loadouts=$2:3` sends
+ * `--loadouts=:3` — an EMPTY ability id. loadoutFor happily built a loadout
+ * of one ability whose id is '' (no ability, no uses), the matrix ran fast
+ * and printed plausible-looking win rates that measured nothing at all. The
+ * tell was a 4-cell read finishing in ~8s where an honest read takes ~50s.
+ * Now it throws.
+ */
+export function assertValidLoadout(id: string): void {
+  const where = `--loadouts value ${JSON.stringify(id)}`;
+  if (id.trim() === '') throw new Error(`${where}: empty loadout. Did a shell variable not expand? (zsh 'set -- $spec' does not word-split.)`);
+  if (id === 'none') return;
+  const parts = id.split('+');
+  for (const part of parts) {
+    if (part.trim() === '') {
+      throw new Error(`${where}: empty component in a '+'-joined loadout. Did a shell variable not expand?`);
+    }
+    const [rawId, rawTier, ...rest] = part.split(':');
+    if (rest.length > 0) throw new Error(`${where}: '${part}' has more than one ':' — expected 'id' or 'id:tier'.`);
+    if (!rawId || rawId.trim() === '') {
+      throw new Error(`${where}: '${part}' has an EMPTY ability id before the ':'. Did a shell variable not expand? (zsh 'set -- $spec' does not word-split.)`);
+    }
+    if (!(ALL_ABILITY_IDS as string[]).includes(rawId)) {
+      throw new Error(`${where}: '${rawId}' is not an ability id. Known ids: ${[...ALL_ABILITY_IDS].sort().join(', ')}`);
+    }
+    if (rawTier !== undefined) {
+      const t = Number(rawTier);
+      if (!Number.isInteger(t) || t < 1 || t > 5) {
+        throw new Error(`${where}: '${part}' pins tier '${rawTier}' — expected an integer 1-5.`);
+      }
+    }
+  }
+}
+
 export function loadoutFor(
   id: string,
   level: number,
@@ -132,6 +170,11 @@ export function startState(
     runId: cfg.runId,
     abilities,
     aiRngSeed: (Math.floor(rng() * 0xffffffff) >>> 0) || 1,
+    // Rookie's random start file is seeded off the SAME per-trial seed, so a
+    // cell depends only on (run, level, loadout, trial, tier). Without this
+    // it fell back to Math.random and the same cell read 50%-75% across
+    // identical invocations — the "cross-talk" that made headers unreliable.
+    startRng: rngFromString(`${seed}:start`),
     ...(cfg.difficulty ? { difficulty: cfg.difficulty } : {}),
     ...(cfg.pool ? { unlockedAbilities: cfg.pool } : {}),
   });
@@ -168,6 +211,8 @@ export function playGame(
     forcedAcceptIds: new Set(),
     forcedSkipIds: new Set(),
     rng,
+    // Per-game seed for the MCTS rollout RNG — see createMctsBot.
+    seed,
   };
   let state = start;
   let prev = state;
@@ -361,6 +406,7 @@ export function simulateRuns(cfg: RevengeCfg, n: number, tier: string, opts: Run
           tempo,
           pendingOffer: pending,
           aiRngSeed: (Math.floor(rng() * 0xffffffff) >>> 0) || 1,
+          startRng: rngFromString(`${seed}:start`),
           ...(unlocked ? { unlockedAbilities: unlocked } : {}),
           ...(cfg.difficulty ? { difficulty: cfg.difficulty } : {}),
         });

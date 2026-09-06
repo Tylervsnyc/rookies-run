@@ -52,6 +52,14 @@ export interface BotContext {
   forcedSkipIds: ReadonlySet<AbilityId>;
   /** Optional RNG for tie-breaking; bots may ignore. */
   rng: () => number;
+  /**
+   * Per-GAME seed string. MCTS mixes this into its rollout RNG so a game's
+   * play depends only on its own seed — never on how many decisions the bot
+   * happened to make earlier in the same process. Leave it out and the bot
+   * still plays deterministically, just identically across games that share
+   * a start position.
+   */
+  seed?: string;
 }
 
 /**

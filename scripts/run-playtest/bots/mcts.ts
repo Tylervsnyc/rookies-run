@@ -53,15 +53,28 @@ interface MctsOpts {
 }
 
 export function createMctsBot(opts: MctsOpts): Bot {
-  let decisionIndex = 0;
+  // The decision counter is PER GAME (keyed by the BotContext each game
+  // builds), never per process. It used to be a closure variable on this
+  // module-level singleton, and because it is baked into the rollout RNG
+  // seed below, a game's play depended on how many decisions the bot had
+  // already made in that process. That made every playtest measurement a
+  // function of the invocation shape: the same matrix cell read one number
+  // alone and a different one as column 3 of a 4-column run, or under a
+  // different --jobs sharding. Keep this keyed by ctx.
+  const counters = new WeakMap<BotContext, { n: number }>();
+  const nextIndex = (ctx: BotContext): number => {
+    let c = counters.get(ctx);
+    if (!c) { c = { n: 0 }; counters.set(ctx, c); }
+    return c.n++;
+  };
   const decide = (state: BoardState, ctx: BotContext): BotAction => {
-    return decideMcts(state, ctx, opts, decisionIndex++).action;
+    return decideMcts(state, ctx, opts, nextIndex(ctx)).action;
   };
   return {
     id: opts.id,
     decide,
     decideWithReasoning(state, ctx) {
-      return decideMcts(state, ctx, opts, decisionIndex++);
+      return decideMcts(state, ctx, opts, nextIndex(ctx));
     },
   };
 }
@@ -91,7 +104,7 @@ function decideMcts(
   }
 
   // Seed a fresh RNG per decision for reproducible rollout sampling.
-  const seedStr = `${opts.id}:${decisionIdx}:${state.moveCount}:${state.rookie.file},${state.rookie.rank}`;
+  const seedStr = `${opts.id}:${ctx.seed ?? ''}:${decisionIdx}:${state.moveCount}:${state.rookie.file},${state.rookie.rank}`;
   const rng = mulberry32(hashString(seedStr));
 
   const wins = new Array(candidates.length).fill(0);

@@ -94,8 +94,18 @@ function newAiRngSeed(): number {
 /** Pick a random starting file for Rookie on her designed start rank,
  *  avoiding enemy- and hazard-occupied squares so the level remains
  *  legal. Keeps the puzzle's intended rank so spawn camping / forced
- *  paths designed into the level stay intact. */
-function randomizedRookieStart(puzzle: RunPuzzle): { file: number; rank: number } {
+ *  paths designed into the level stay intact.
+ *
+ *  `rng` defaults to Math.random — that is what the APP wants (a player gets
+ *  a different file every attempt). The PLAYTEST HARNESS must pass a seeded
+ *  rng: the start file is the single largest source of variance in a level,
+ *  and leaving it on Math.random made every matrix cell unreproducible (the
+ *  same cell read 50%-75% across four identical runs). See revenge-core's
+ *  `startState`. */
+function randomizedRookieStart(
+  puzzle: RunPuzzle,
+  rng: () => number = Math.random,
+): { file: number; rank: number } {
   const startRank = puzzle.rookieStart.rank;
   const occupied = new Set<number>();
   for (const p of puzzle.pieces) {
@@ -124,7 +134,7 @@ function randomizedRookieStart(puzzle: RunPuzzle): { file: number; rank: number 
   }
   if (available.length === 0) return { ...puzzle.rookieStart };
   return {
-    file: available[Math.floor(Math.random() * available.length)],
+    file: available[Math.min(available.length - 1, Math.floor(rng() * available.length))],
     rank: startRank,
   };
 }
@@ -143,6 +153,12 @@ export function puzzleToBoardState(
     /** Playtest kit (?testkit=) — exact offer pool; see BoardState.testkit. */
     testkit?: BoardState['testkit'];
     difficulty?: BoardState['difficulty'];
+    /**
+     * Seeded RNG for Rookie's random start file. Omit in the app (players
+     * want a fresh file each attempt); the playtest harness MUST pass one so
+     * a measurement is reproducible.
+     */
+    startRng?: () => number;
   } = {},
 ): BoardState {
   // Difficulty is applied exactly once, here. Downstream code reads the
@@ -155,7 +171,7 @@ export function puzzleToBoardState(
   // hasn't hit one organically, force one so progression doesn't stall.
   let pendingOffer = carry.pendingOffer ?? null;
   let tempo = carry.tempo ?? 0;
-  const rookieStart = randomizedRookieStart(puzzle);
+  const rookieStart = randomizedRookieStart(puzzle, carry.startRng);
   const piecesCopy = puzzle.pieces.map((p) => ({ ...p }));
   const hazardsCopy = (puzzle.hazards ?? []).map((h) => ({ ...h }));
   // Squad is a passive: whenever Rookie owns the squad ability, her roster
