@@ -316,6 +316,14 @@
  *   Bishop Squire (run-level-design.md, "The gate depends on ability TIER") and
  *   the same open decision for Tyler — pinning Become King's tier in this run
  *   would restore the gate at every tier, and nothing else in the kit needs it.
+ *   FIXED 2026-09-06 — `abilityTierCaps: { 'become-king': 1 }`. Sweeping every
+ *   tier one column at a time (32 trials, --jobs=1) moved the break EARLIER
+ *   than the caveat above guessed: T1 0/0/0/0, T2 100/19/94/100,
+ *   T3 100/97/100/100. Become King's ladder is 1/2/2/3/3 uses, so the second
+ *   charge arrives at T2, not T3 — and one extra step is the whole finale.
+ *   The ceiling is therefore T1: in this run the card is offerable and never
+ *   upgradable, which is exactly the tier all four finale lines were built
+ *   and measured against. The forced-loadout matrix is unchanged by design.
  *
  *   FULL RUNS (40 each, never skipping an offer, T5 bot):
  *     RANDOM picks from the kit: 14/40 = 35% clear. Deaths L3 5, L4 9, L5 2,
@@ -448,6 +456,15 @@ const RUN_REVENGE_25: RunDef = {
   name: 'The Alcove',
   blurb: 'Stone on every straight line. He leaves by the corners — so do you.',
   allowedAbilities: ['become-king', 'boulder', 'aegis', 'magnet'],
+  // TIER CAP (2026-09-06). The finale gate is EXACT at T1 and gone the moment
+  // Become King gets its second charge — measured L7-L10, 32 trials, serial:
+  // T1 0/0/0/0, T2 100/19/94/100, T4 100/100/100/100. The header's own "WHY
+  // THE SINGLES FAIL" says why: T1 is ONE king move and the step onto the
+  // doorstep spends it; a second use is a second step, and a second step is
+  // the level. Nothing else in the kit needs a cap (boulder:4, aegis:4,
+  // magnet:4 all still read 0/0/0/0), so this is the smallest cap that makes
+  // the gate tier-proof: Become King is offerable, never upgradable, here.
+  abilityTierCaps: { 'become-king': 1 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

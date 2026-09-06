@@ -73,6 +73,11 @@
  *   (second charge): L7 25%/0%, L8 31%/31%, L9 94%/88%, L10 94%/100% —
  *   the family's known tier break (a second body after the first one is
  *   eaten or dissolves), reported not hidden; the gate holds at T1-T3.
+ *   FIXED 2026-09-06 — `abilityTierCaps: { duchess: 3 }`: the run now never
+ *   offers the fourth tier. Re-measured serially one column at a time to
+ *   choose it (T2 0/0/0/0, T3 0/0/0/0). The forced-loadout matrix above is
+ *   unchanged by the cap on purpose — `--loadouts=duchess:4` still reads
+ *   what T4 would do; the cap only removes it from offer slates.
  *   duchess:2+decoy:2 reads 100/100/94/100.
  *   FULL RUNS (40, Normal, T5, never skipping an offer): 9/40 = 23% with
  *   random picks (was 33%) — deaths are move-limits at L6 (12) and L7 (14),
@@ -298,6 +303,12 @@
  *     the rubric's "the gate depends on ability TIER" case (The Parapet's
  *     knight-hop:4), reported not hidden: the gate holds at T1-T3 and breaks
  *     at T4+ unless the Duchess's tier is pinned.
+ *   FIXED 2026-09-06 — `abilityTierCaps: { duchess: 3 }`. Re-measured one
+ *     tier at a time (32 trials, --jobs=1, one loadout column per run):
+ *     T2 0/0/0/0 and T3 0/0/0/0, confirming the block above, so T3 is the
+ *     ceiling and the second charge is never offered. The forced-loadout
+ *     matrix is unchanged by design — `--loadouts=duchess:4` still reads
+ *     what T4 would do; the cap only removes it from offer slates.
  *   FULL RUNS (40, Normal, T5, never skipping an offer): 13/40 = 33% with
  *     random picks — every death is a move-limit at L6 (10) or L7 (14), i.e.
  *     the player who did not take the Duchess by L6 or Decoy by L7 ends
@@ -380,6 +391,15 @@ const RUN_REVENGE_24: RunDef = {
   name: 'The Lattice',
   blurb: 'Stone on every dark square. Rooks die up there; queens walk.',
   allowedAbilities: ['duchess', 'decoy', 'aegis', 'magnet'],
+  // TIER CAP (2026-09-06) — the caveat this run's MEASURED block ends on, now
+  // enforced. Re-measured per tier, L7-L10, 32 trials, serial: T2 0/0/0/0 and
+  // T3 0/0/0/0, confirming the header, against T4/T5 at 13/6-25/94/100. T4 is
+  // where the Duchess gets a SECOND CHARGE (maxUsesForTier 1/1/1/2/2): the
+  // first body dies on the post, the second takes the pawn and then the king,
+  // with no Decoy at all — and the header proves no geometry closes it,
+  // because the only squares attacking the post are the king's and the
+  // watcher's. Ceiling T3.
+  abilityTierCaps: { duchess: 3 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

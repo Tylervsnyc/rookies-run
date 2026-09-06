@@ -9,7 +9,7 @@
  */
 
 import { isWinningMove, rookieLegalMoves } from './movement';
-import { getRunById } from './runs';
+import { getRunById, type RunDef } from './runs';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { fromSquare, toSquare } from './types';
@@ -1455,6 +1455,33 @@ export type AbilityOffer = AbilityOfferOption[];
  *    (engine, seed) should treat that as "skip the offer, refund tempo".
  *  - All returned options are distinct.
  */
+/** The run this state belongs to, or null. Never throws. */
+function runDefFor(runId: string | undefined): RunDef | null {
+  if (!runId) return null;
+  try {
+    return getRunById(runId);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The HIGHEST tier `id` may be offered / upgraded to in this run.
+ *
+ * Combo runs are validated with T1 cards but offers upgrade them mid-run, and
+ * a middle tier repeatedly turned a gated finale into a one-card solo (see
+ * RunDef.abilityTierCaps for the five measured breaks). A run declares its
+ * ceiling; this is the single reading of it. Defaults to 5 (uncapped).
+ */
+export function abilityTierCapFor(runId: string | undefined, id: string): AbilityTier {
+  // RR_NO_TIER_CAPS=1 lifts every cap, so a before/after full-run read comes
+  // from ONE build (the `matrix` harness can't show this: it forces tiers).
+  if (typeof process !== 'undefined' && process.env?.RR_NO_TIER_CAPS === '1') return 5;
+  const c = runDefFor(runId)?.abilityTierCaps?.[id];
+  if (typeof c !== 'number' || !Number.isFinite(c)) return 5;
+  return Math.max(1, Math.min(5, Math.floor(c))) as AbilityTier;
+}
+
 export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
   const owned = new Map(state.abilities.map((a) => [a.id, a]));
   const ownedCount = owned.size;
@@ -1462,15 +1489,7 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
 
   // Per-run allowlist (e.g. abilities-v2 test run). When set, restrict both
   // new offers AND upgrade offers to listed ids.
-  const runDef = state.runId
-    ? (() => {
-        try {
-          return getRunById(state.runId);
-        } catch {
-          return null;
-        }
-      })()
-    : null;
+  const runDef = runDefFor(state.runId);
   // Playtest kit (/playtest real-run mode): the kit IS the offer pool —
   // it overrides the run allowlist and the unlocked set entirely.
   const testkit = state.testkit && state.testkit.length > 0 ? new Set<string>(state.testkit) : null;
@@ -1505,8 +1524,18 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
     description: blurbDetailForTier(id, 1),
   }));
 
+  // Per-run TIER CAP (RunDef.abilityTierCaps). This is the ONE place an
+  // offered tier is decided, so it is the one place the cap is enforced: a
+  // capped card stays offerable as a new pick (always T1) and upgradable up
+  // to its cap, and an upgrade PAST the cap is simply never built into the
+  // upgrade pool. Because the cap is applied to `upgradePool` itself — not to
+  // the castability-filtered `upgradeLive` — every downstream path honours it,
+  // including the at-cap branch and the `finish()` top-up that draws from the
+  // unfiltered pools. Nothing here mutates a tier the player already holds.
+  const capFor = (id: string): number => abilityTierCapFor(state.runId, id);
+
   const upgradePool: AbilityOfferOption[] = [...owned.values()]
-    .filter((a) => a.tier < 5 && (!runAllowed || runAllowed.has(a.id)))
+    .filter((a) => a.tier < 5 && a.tier < capFor(a.id) && (!runAllowed || runAllowed.has(a.id)))
     .map((a) => {
       const next = (a.tier + 1) as AbilityTier;
       return {
@@ -1611,7 +1640,9 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
 
 export function offerIsExhausted(state: BoardState): boolean {
   if (state.abilities.length < MAX_OWNED_ABILITIES) return false;
-  return state.abilities.every((a) => a.tier === 5);
+  // A capped card is "topped out" at its cap, not at T5 — otherwise a run with
+  // a tier cap would keep rolling offers that come back empty.
+  return state.abilities.every((a) => a.tier >= abilityTierCapFor(state.runId, a.id));
 }
 
 export function applyOfferPick(

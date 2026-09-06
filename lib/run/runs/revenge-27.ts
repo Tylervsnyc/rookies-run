@@ -147,6 +147,15 @@
  *   square is always a jump from SOMEWHERE inside an 18-square loft, and no
  *   geometry short of filling the loft stops that. The gate holds at T1-T3;
  *   at T5 (a permanent knight) the loft is big enough to matter only on L7.
+ *   FIXED 2026-09-06 — `abilityTierCaps: { 'knight-hop': 1 }`, and the sweep
+ *   that chose it CORRECTED the sentence above. One tier per column, 32
+ *   trials, --jobs=1: T1 0/0/0/0, T2 0/47/0/59, T3 0/100/0/88. The gate does
+ *   NOT hold to T3 here. knight-hop's uses are 1/1/1/2/1, so T2 buys no
+ *   second cast — it buys a second TURN as a knight, and inside an
+ *   18-square loft one extra knight turn IS the second jump. That is why
+ *   this run caps the same card at T1 where The Parapet caps it at T3: the
+ *   cap is a property of the geometry, not of the card. The forced-loadout
+ *   matrix above is unchanged by the cap on purpose.
  *   FULL RUNS (40 each, never skipping an offer): 10/40 = 25% clear with
  *   RANDOM picks from the kit — deaths L4 11, L5 4, L6 5, L7 8, L8 2, i.e.
  *   arriving without the card the level asks for. That 25% is the top of the
@@ -220,6 +229,15 @@ const RUN_REVENGE_27: RunDef = {
   name: 'The Hayloft',
   blurb: 'A roof of stone. He runs from the straw, not from you.',
   allowedAbilities: ['scarecrow', 'knight-hop', 'aegis', 'hourglass'],
+  // TIER CAP (2026-09-06). The header reports knight-hop:4 at 100/100/88/94;
+  // re-measuring every tier found the break is EARLIER here than in The
+  // Parapet, which caps the same card at T3. L7-L10, 32 trials, serial:
+  // T1 0/0/0/0, T2 0/47/0/59, T3 0/100/0/69. knight-hop's uses are 1/1/1/2/1,
+  // so T2 buys no second cast — it buys a second TURN as a knight, and one
+  // extra knight turn inside an 18-square loft is a second jump onto his
+  // room. Ceiling T1: in this run the hop is a one-shot key, which is exactly
+  // what the four finale lines were written and measured against.
+  abilityTierCaps: { 'knight-hop': 1 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

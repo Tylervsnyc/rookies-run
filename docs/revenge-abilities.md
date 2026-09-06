@@ -54,6 +54,20 @@ pen. See `lib/run/types.ts` and `lib/run/lava-style.ts`.
 - Every slate carries **at least 2 finishers** (`REVENGE_CORE`), as new picks
   or upgrades of an owned one, so a random pick can never brick the run.
 - Cap is still 3 owned abilities; after that every offer is upgrades.
+- **A run can cap the TIER of specific cards** (`RunDef.abilityTierCaps` in
+  `lib/run/runs.ts`, re-exported via `run-kit.ts`): a map of ability id → the
+  highest tier that run will ever offer or upgrade to. Combo runs are gated
+  with T1 cards but offers upgrade them mid-run, and the tier that grants a
+  card its SECOND use (or second turn) repeatedly turned a gated finale into a
+  one-card solo — measured on five runs. Enforced in one place, `rollOffer`:
+  the card is still offered as a new pick at T1 and upgradable up to its cap;
+  an upgrade past it is never put on a slate, and the slate is topped up with
+  another card instead. Shipped caps: The Colonnade `bishop-squire` T2, The
+  Parapet `knight-hop` T3, The Lattice `duchess` T3, The Alcove `become-king`
+  T1, The Hayloft `knight-hop` T1. The same card caps differently per run —
+  a cap is a property of the level geometry, so measure, never copy. Audit
+  with `npx tsx scripts/run-playtest/tier-cap-audit.ts`; the full rule is in
+  `.claude/run-level-design.md` → "The gate depends on ability TIER".
 
 ## The pool (`REVENGE_ABILITIES` in `lib/run/runs.ts`)
 

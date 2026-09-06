@@ -133,6 +133,12 @@
  *   always a jump from somewhere on the court). This is the rubric's "the
  *   gate depends on ability TIER" case, reported not hidden: the gate holds
  *   at T1-T3 and T5 and breaks at T4 unless knight-hop's tier is pinned.
+ *   FIXED 2026-09-06 — `abilityTierCaps: { 'knight-hop': 3 }`. Re-measured
+ *   one tier at a time (32 trials, --jobs=1, one loadout column per run):
+ *   T2 0/0/0/0 and T3 0/0/0/0, so T3 is the highest tier the gate survives
+ *   and the run now never offers the fourth. The forced-loadout matrix above
+ *   is UNCHANGED by the cap on purpose — `--loadouts=knight-hop:4` still
+ *   measures what T4 would do; the cap only removes it from offer slates.
  *   FULL RUNS (40, Normal, T5, never skipping an offer): 13/40 = 33% with
  *   random picks (deaths at L5-L7, all move-limit — the player who did not
  *   take the hop by L5 or the Twin by L7 ends there), 26/40 = 65% when the
@@ -190,6 +196,15 @@ const RUN_REVENGE_23: RunDef = {
   name: 'The Parapet',
   blurb: 'A wall the whole width of the board. He is on top of it.',
   allowedAbilities: ['knight-hop', 'twin', 'aegis', 'decoy'],
+  // TIER CAP (2026-09-06) — the caveat this run's own MEASURED block ends on,
+  // now enforced instead of only reported. Re-measured per tier, L7-L10, 32
+  // trials, serial: T2 0/0/0/0 and T3 0/0/0/0 (the gate holds), against the
+  // header's T4 97/78/97/31. T4 is knight-hop's only two-use tier
+  // (maxUsesForTier 1/1/1/2/1), and the second hop is the weapon: hop up,
+  // walk to a knight's jump from him, hop onto him. Ceiling T3 — the tier a
+  // player realistically reaches by the finale anyway, and the one the gate
+  // was measured against.
+  abilityTierCaps: { 'knight-hop': 3 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

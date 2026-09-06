@@ -20,6 +20,7 @@ import { join } from 'node:path';
 import {
   applyDismissOffer,
   applyOfferPick,
+  abilityTierCapFor,
   maxUsesForTier,
   refreshAbilityUses,
   type AbilityId,
@@ -95,7 +96,12 @@ export function realisticTierFor(level: number): AbilityTier {
  * with the summon it operates on, since matrix mode otherwise only ever
  * grants one owned ability per cell.
  */
-export function loadoutFor(id: string, level: number, realistic: boolean): OwnedAbility[] {
+export function loadoutFor(
+  id: string,
+  level: number,
+  realistic: boolean,
+  runId?: string,
+): OwnedAbility[] {
   if (id === 'none') return [];
   const defaultTier = realistic ? realisticTierFor(level) : 1;
   return id.split('+').map((part) => {
@@ -103,7 +109,13 @@ export function loadoutFor(id: string, level: number, realistic: boolean): Owned
     const [rawId, rawTier] = part.split(':');
     const aid = rawId as AbilityId;
     const pinned = rawTier ? parseInt(rawTier, 10) : NaN;
-    const tier = (pinned >= 1 && pinned <= 5 ? pinned : defaultTier) as AbilityTier;
+    // An EXPLICIT pin is a forced probe and is never capped — that is the
+    // whole point of `matrix --loadouts=knight-hop:4`: it measures the tier a
+    // run has decided never to hand out, and the number must stay readable.
+    // The tier the harness INFERS (--realistic) is what a player would really
+    // hold, so it honours the run's RunDef.abilityTierCaps.
+    const capped = Math.min(defaultTier, abilityTierCapFor(runId, aid)) as AbilityTier;
+    const tier = (pinned >= 1 && pinned <= 5 ? pinned : capped) as AbilityTier;
     return { id: aid, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(aid, tier) };
   });
 }
@@ -263,7 +275,7 @@ export function runMatrixCell(
   let moves = 0;
   for (let t = 0; t < trials; t++) {
     const seed = `${seedPrefix}:${level}:${loadout}:${t}`;
-    const start = startState(cfg, level, loadoutFor(loadout, level, realistic), seed);
+    const start = startState(cfg, level, loadoutFor(loadout, level, realistic, cfg.runId), seed);
     const { result } = playGame(start, bot, seed, 'dismiss');
     if (result.win) cell.wins++;
     else if (result.failMode === 'captured') cell.captured++;
@@ -505,7 +517,7 @@ function solveLevelFrom(
   nodeBudget: number,
   startFile: number,
 ): SolveResult {
-  const abilities = loadoutFor(loadout, level, false);
+  const abilities = loadoutFor(loadout, level, false, cfg.runId);
   const raw = startState(cfg, level, abilities, `solve:${level}:${loadout}`);
   const start = neutral({ ...raw, rookie: { file: startFile, rank: raw.rookie.rank } });
   let nodes = 0;

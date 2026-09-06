@@ -22,6 +22,17 @@ import type {
 } from './types';
 import type { LevelBuilder, RunDef } from './runs';
 
+/**
+ * `RunDef` is re-exported whole, so every field authored in `runs.ts` is
+ * available to a file-per-run author — including `abilityTierCaps`, the
+ * per-run ceiling on offered/upgraded ability tiers. A combo run whose gate
+ * measurably breaks at a middle tier SHOULD cap its signature card there:
+ *
+ *   abilityTierCaps: { 'knight-hop': 3 },
+ *
+ * See the field's doc comment in `runs.ts` for how to choose the number, and
+ * `.claude/run-level-design.md` → "The gate depends on ability TIER".
+ */
 export type { LevelBuilder, RunDef };
 
 export const pawn = (file: number, rank: number): EnemyPiece => ({ type: 'pawn', color: 'black', file, rank });

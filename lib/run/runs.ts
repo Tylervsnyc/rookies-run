@@ -70,6 +70,36 @@ export interface RunDef {
    * sum the win-weighted per-level avgMoves, × 0.8, round.
    */
   parMoves?: number;
+  /**
+   * Ability id -> the HIGHEST tier this run will ever offer or upgrade to.
+   *
+   * Why this exists (measured five times, 2026-09-05..06): combo runs are
+   * validated with T1 cards, but offers UPGRADE cards during a run, and at a
+   * middle tier a single card often solos the finale the run was built to
+   * gate:
+   *   - The Colonnade  (revenge-13) L10  — bishop-squire:4 alone 100%
+   *   - The Parapet    (revenge-23) L7-9 — knight-hop:4 alone 78-97%
+   *   - The Lattice    (revenge-24) L8-10— duchess:4/5 alone 25-100%
+   *   - The Alcove     (revenge-25) L7-10— become-king:3+ alone 100%
+   *   - The Hayloft    (revenge-27) L7-10— knight-hop:4 alone 88-100%
+   * Every one of those headers ended with the same sentence: pinning the
+   * card's tier is the one decision that makes the gate tier-proof. This is
+   * that decision, expressed per run.
+   *
+   * How to choose a cap: take the run's own MEASURED finale block, find the
+   * highest tier at which every SINGLE kit card still reads <= 8% on L7-L10,
+   * and cap there. Cap only the signature cards whose tier actually breaks
+   * the gate — a cap is a reduction in player agency, so it should be the
+   * smallest one the numbers justify.
+   *
+   * Semantics: enforced in exactly one place, `rollOffer` in abilities.ts,
+   * where an offered tier is decided. A capped card is still offerable as a
+   * NEW pick (always T1) and upgradable up to and including its cap; an
+   * upgrade past the cap is simply never put on a slate, and the existing
+   * short-slate top-up fills the seat with another upgrade or a new card. A
+   * tier the player already legitimately holds is never mutated.
+   */
+  abilityTierCaps?: Readonly<Record<string, number>>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -6637,6 +6667,14 @@ const RUN_REVENGE_13: RunDef = {
   name: 'The Colonnade',
   blurb: 'A hall of pillars. He thinks stone is a wall.',
   allowedAbilities: ['swap', 'bishop-squire', 'magnet', 'boulder'],
+  // TIER CAP (2026-09-06). The break the design doc named first: the discovery
+  // harness found L10 is not gated once Bishop Squire is T4 (100% alone).
+  // Re-measured per tier, L7-L10, 32 trials, serial: T2 9/0/0/0 — the gate
+  // holds — and T3 22/0/0/84. T3 is where the Squire gets its SECOND body
+  // (maxUsesForTier 1/1/2/2/2), and a second body crosses the columns and
+  // then takes the keep without ever needing Swap. So the ceiling is T2:
+  // upgradable once, never into the tier that solos the finale.
+  abilityTierCaps: { 'bishop-squire': 2 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
@@ -6910,6 +6948,14 @@ export const RUNS: ReadonlyArray<RunDef> = [
 ];
 
 export const DEFAULT_RUN_ID = RUNS[0].id;
+
+/**
+ * Every run that can be loaded — player-facing AND hidden (a run in `testing`
+ * is hidden until the pipeline promotes it). Tooling that has to audit the
+ * whole catalogue (scripts/run-playtest/tier-cap-audit.ts) reads this; the app
+ * should keep using RUNS.
+ */
+export const ALL_RUN_DEFS: ReadonlyArray<RunDef> = [...RUNS, ...HIDDEN_RUNS];
 
 /** Star par for a run (RunDef.parMoves, else DEFAULT_PAR_MOVES). */
 export function parMovesForRun(runId: string): number {
