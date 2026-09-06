@@ -961,6 +961,14 @@
       "stage": "idea",
       "created": "2026-09-06",
       "notes": "Hourglass + Snare test. COMBO GATE NOT MET: none/hourglass/aegis/magnet all 0% on L6-L10 at every tier, but SNARE ALONE reads 44-75% and adding the glass makes the snare line WORSE on nearly every level (L6 75->66, L9 72->53, L10 44->38, 32 trials). Hourglass cannot extend a snare hold (a glass-turn burns one of the two moves the hold grants), snare is a free action so the flee is already paid for by her threatening move, and at T3+ hourglassHoldsKing stops the king fleeing during a glass-turn at all - the pair is an antiPair. Ships as an honest SINGLE-KEY run on a new signature (a free-standing stone fireplace whose mouth faces away from Rookie); 4/40 full clears random picks, 4/40 pair-pool. Stays at idea - not marked built."
+    },
+    {
+      "id": "revenge-32",
+      "kind": "run",
+      "name": "The Quarry",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Signature pair SHOVE + MAGNET (pull the plug, roll the wall). Signature: a one-thick vertical FACE on file f with a single CUT, a two-file LEDGE behind it, and exactly one non-fixed stone per level. Gate MET at 32 trials, Normal: L7-L10 no-ability 0%, every kit single (shove/magnet/aegis/hourglass) 0% at EVERY tier T1-T5, pair 72/59/72/66. No abilityTierCaps needed - fixed stones gate Shove better than a cap. Full runs 20% random picks, 10% pair-pool. Shove is TESTING, so playtest-only."
     }
   ]
 }
