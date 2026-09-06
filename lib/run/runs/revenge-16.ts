@@ -102,8 +102,13 @@
  *       other), so a Squire summoned beside the guard is impossible. The
  *       corridor is the whole a1-h8 diagonal and it crosses BOTH bars at
  *       their openings; it starts under Rookie's feet. Two blockers sit on
- *       it: a hunter knight on e5 that leaves by itself (a dart on it is
- *       orphaned — poison is keyed to the square), and the guard on f6 that
+ *       it: a hunter knight on e5 that leaves by itself (a dart spent on it
+ *       is WASTED because the knight walks off the diagonal and takes the
+ *       poison with it — CORRECTION 2026-09-06: poison follows the PIECE,
+ *       not the square; applyAction calls relocateStatusMarkers on every
+ *       enemy move. The earlier claim here that "poison is keyed to the
+ *       square" was wrong, and the Candle (revenge-29) proved it: there is
+ *       no such thing as an orphaned dart), and the guard on f6 that
  *       never moves (dart it on move one). Two enemies a turn, two hunters:
  *       keep them OFF the diagonal or they block the slide.
  *
