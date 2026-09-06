@@ -181,12 +181,27 @@ an enemy), Magnet T5 (both "move the king one square"), Rabies Dart (eats the
 guard that just became the door), Smoke (a pair, but Coup + Smoke + anything
 is a skeleton key; keep apart in kits).
 
-**Hourglass** — pairs: Poison Dart (dart the lock, glass, glass, it dies
-and stuns him with her move still in hand), Decoy (the court eats the mark
-now), Rewind (turn the glass, watch the reply, undo it, move knowing what
-they do), Rabies Dart (take the bite now). Anti-pairs: Duchess, Dragon,
-Bodyguard (their clocks burn), Smoke and Become King (the glass burns the
-window), Convert (the daze never clears on a glass-turn, by design).
+**Hourglass** — REWORKED 2026-09-06. A glass-turn is now a turn taken out of
+Rookie's clock: nothing of hers expires during it (only poison, a fuse, still
+burns), and the king reacts on it at every tier. The rule that decides every
+pairing: **a glass is worth one Rookie move plus the durations that move would
+have burned**, so it pays only when the PARTNER'S PAYOFF LANDS ON AN ENEMY
+PHASE — the one thing she cannot buy with her own move.
+Pairs: **Poison Dart** (dart the lock, glass, it dies and stuns him with her
+move still in hand — Candle L9 13% alone -> 72-81% paired, the one measured
+cell where the glass is the difference), **Decoy** (the court eats the mark
+now — Candle finales 47/44/69/31 alone -> 56/56/91/69 paired), Rewind (turn
+the glass, watch the reply, undo it, move knowing what they do), Rabies Dart
+(take the bite now). The five old "their clocks burn" anti-pairs — Duchess,
+Dragon, Bodyguard, Smoke, Become King — are **CANCELLED by the rework**: those
+clocks now hold through a glass. Convert stays an anti-pair (the daze never
+clears on a glass-turn, by design, so the pair does nothing extra).
+Redundant, not anti: **Snare, Scarecrow, Freeze Ray** — their payoff lands on
+Rookie's own move, which already buys the enemy phase, so the glass measures
+neutral-to-negative beside them (Hearth L6-L10: snare 75/63/69/72/44 alone vs
+69/63/78/53/38 paired; scarecrow 47/50/63/31/28 vs 41/44/81/16/34; freeze-ray
+44/50/88/22/25 vs 41/47/88/16/25). Never a solvent: 0% alone on every finale
+tested, every tier — which makes it the catalogue's best TRAP filler.
 
 **Scarecrow** — pairs: Knight Hop (hop onto the line of his flight square,
 straw on the line to his current square, he flees onto her; Slash L7

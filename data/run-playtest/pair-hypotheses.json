@@ -662,15 +662,16 @@
       "rating": 4,
       "mechanism": "Dart the lock (free), turn the glass twice (T2), it dies, the death stuns him for the coming enemy turn, and she still has her move: onto his line. The Switchback finale compressed into one turn.",
       "confidence": 4,
-      "note": "Designed 2026-09-06. First read (12 trials, T5 bot): The Briar L4 poison 92% -> pair 100%; Moat L9 / Alley L7 / Briar L5 unchanged (poison alone already solves them); Switchback L7-L8 0% for every loadout while that run is being rebuilt."
+      "note": "Designed 2026-09-06. First read (12 trials, T5 bot): The Briar L4 poison 92% -> pair 100%; Moat L9 / Alley L7 / Briar L5 unchanged (poison alone already solves them); Switchback L7-L8 0% for every loadout while that run is being rebuilt. RE-MEASURED 2026-09-06 after the Hourglass rework, 32 trials, difficulty=normal: The Candle (revenge-29) L7-L10 poison alone 78/75/13/78, pair 59/66/72/53 at T1 and 72/81/78/69 at hourglass T3. L9 is the ONE measured cell in the catalogue where the glass is the difference between failing and clearing (13% -> 72-81%) and is the template for any future Hourglass gate: build the FUSE weak, not the trap. The run still misses the combo gate because poison-dart alone solos L7/L8/L10 \u2014 a dart problem (no LOS, no timing limit, so it self-syncs), not a glass problem."
     },
     {
       "a": "hourglass",
       "b": "decoy",
       "archetype": "free-capture-stun",
-      "rating": 3,
+      "rating": 4,
       "mechanism": "Mark a guard, turn the glass, the court eats it (friendly fire: stun 2, the guard's square vacated), then move onto the line. The Lattice's 'buy the body time' becomes 'buy the stun now'.",
-      "confidence": 3
+      "confidence": 4,
+      "note": "MEASURED 2026-09-06 after the Hourglass rework, The Candle (revenge-29) L7-L10, 32 trials: decoy alone 47/44/69/31 -> decoy+hourglass 56/56/91/69 (old rules 47/34/75/66). Same archetype as the dart and for the same reason \u2014 the friendly-fire capture-stun lands on an ENEMY phase, the one payoff Rookie cannot buy with her own move. Not yet a gate anywhere: decoy alone is 31-69% on that geometry."
     },
     {
       "a": "hourglass",
@@ -858,27 +859,32 @@
     {
       "a": "hourglass",
       "b": "duchess",
-      "reason": "Her 2-4 turn clock burns during a glass-turn (below T4)."
+      "reason": "Her 2-4 turn clock burns during a glass-turn (below T4). \u2014 RULES CHANGED 2026-09-06 (Hourglass rework): a glass-turn no longer runs Rookie's own clocks \u2014 this counter now HOLDS through a glass. The anti-pair is CANCELLED; kept here so the old measurement is traceable.",
+      "status": "cancelled by the 2026-09-06 Hourglass rework"
     },
     {
       "a": "hourglass",
       "b": "dragon",
-      "reason": "Shortest clock in the family; same burn."
+      "reason": "Shortest clock in the family; same burn. \u2014 RULES CHANGED 2026-09-06 (Hourglass rework): a glass-turn no longer runs Rookie's own clocks \u2014 this counter now HOLDS through a glass. The anti-pair is CANCELLED; kept here so the old measurement is traceable.",
+      "status": "cancelled by the 2026-09-06 Hourglass rework"
     },
     {
       "a": "hourglass",
       "b": "smoke",
-      "reason": "The glass burns the cover window."
+      "reason": "The glass burns the cover window. \u2014 RULES CHANGED 2026-09-06 (Hourglass rework): a glass-turn no longer runs Rookie's own clocks \u2014 this counter now HOLDS through a glass. The anti-pair is CANCELLED; kept here so the old measurement is traceable.",
+      "status": "cancelled by the 2026-09-06 Hourglass rework"
     },
     {
       "a": "hourglass",
       "b": "become-king",
-      "reason": "Burns a protected enemy turn."
+      "reason": "Burns a protected enemy turn. \u2014 RULES CHANGED 2026-09-06 (Hourglass rework): a glass-turn no longer runs Rookie's own clocks \u2014 this counter now HOLDS through a glass. The anti-pair is CANCELLED; kept here so the old measurement is traceable.",
+      "status": "cancelled by the 2026-09-06 Hourglass rework"
     },
     {
       "a": "hourglass",
       "b": "bodyguard",
-      "reason": "Burns its clock."
+      "reason": "Burns its clock. \u2014 RULES CHANGED 2026-09-06 (Hourglass rework): a glass-turn no longer runs Rookie's own clocks \u2014 this counter now HOLDS through a glass. The anti-pair is CANCELLED; kept here so the old measurement is traceable.",
+      "status": "cancelled by the 2026-09-06 Hourglass rework"
     },
     {
       "a": "hourglass",
@@ -913,9 +919,10 @@
     {
       "a": "hourglass",
       "b": "snare",
-      "archetype": "anti-pair (measured 2026-09-06)",
-      "reason": "Snare is a free action and the king's flee already fires on the enemy phase Rookie's own threatening move buys, so arm-and-step is ONE turn and the glass buys a phase she got free. The glass cannot extend a hold either: springSnaresAt sets frozenTurnsLeft = holdTurns + 1 and endTurn decrements at once, so turning the glass after a spring BURNS one of the two granted moves. And from T3 up, hourglassHoldsKing makes kingReaction return null during the glass, deleting the one line the pair wanted (he walks into the trap on the glass turn). Built and measured as The Hearth (revenge-31): the pair reads at or below snare alone on every level (L9 72 alone vs 53 paired, L10 44 vs 38).",
-      "confidence": 5
+      "archetype": "redundant pair (re-measured 2026-09-06 after the Hourglass rework)",
+      "reason": "AMENDED 2026-09-06 \u2014 the rules changed under this entry, so two of its three mechanisms are gone and the third is the one that still holds. GONE: (a) 'the glass BURNS one of the two granted moves' \u2014 endTurn no longer ticks frozenTurnsLeft on a glass-turn, so a snare hold survives it intact; (b) 'from T3 hourglassHoldsKing makes kingReaction return null' \u2014 that clause is DELETED, the king now flees, steps into snares and runs from the straw on a glass-turn at every tier. STILL TRUE, and it is why the pair is still not a gate: snare is a free action and the king's flee already fires on the enemy phase that Rookie's own threatening move buys, so arm-and-step is ONE turn and the glass buys a phase she got free. Re-measured on The Hearth (revenge-31) L6-L10, 32 trials: snare alone 75/63/69/72/44, pair 69/63/78/53/38 \u2014 the pair now STRADDLES snare alone inside binomial noise instead of sitting below it on every level. So this is a REDUNDANT pair (the second card adds nothing), not an anti-pair (the second card subtracts). Same result for scarecrow+hourglass (47/50/63/31/28 -> 41/44/81/16/34) and freeze-ray+hourglass (44/50/88/22/25 -> 41/47/88/16/25): any partner whose payoff lands on ROOKIE'S move has no use for a glass.",
+      "confidence": 5,
+      "status": "downgraded from anti-pair to REDUNDANT"
     }
   ]
 }

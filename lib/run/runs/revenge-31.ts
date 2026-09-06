@@ -2,6 +2,68 @@
  * revenge-31 — THE HEARTH. Built 2026-09-06 to test the hypothesis
  * HOURGLASS + SNARE ("arm it, then make them walk into it").
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE HOURGLASS REWORK ───────────────────────
+ * Everything below the next divider was written against the OLD Hourglass and
+ * two of its five reasons were rules, not physics. Both were changed today
+ * (lib/run/abilities.ts, lib/run/pawn-ai.ts):
+ *
+ *   - `hourglassHoldsKing` is DELETED. The king now reacts on a glass-turn at
+ *     every tier, so reason 5 below ("the upgrade deletes the line") no longer
+ *     describes the engine.
+ *   - A glass-turn no longer runs ROOKIE'S clocks. `endTurn` holds every
+ *     counter of hers during a glass (freeze/snare holds, the king's stun,
+ *     smoke, the straw, decoy, rabies, king-form, summon clocks, the convert
+ *     daze). Only poison — a fuse, not a protection — still burns. So reason 2
+ *     ("the glass BURNS one of the two granted moves") is also no longer true.
+ *
+ * THE RUN STILL DOES NOT GATE, and the reason is the one the rework could not
+ * touch — reasons 1, 3 and 4 below. Numbers of record, `revenge.ts matrix
+ * --run=revenge-31 --difficulty=normal --trials=32 --jobs=8`
+ * (matrix-determinism-check PASS 10/16 taken first):
+ *
+ *      L    none   snare  hourglass  aegis  magnet | snare+hourglass
+ *      6      0%     75%        0%      0%      0% |   69%
+ *      7      0%     63%        0%      0%      0% |   63%
+ *      8      0%     69%        0%      0%      0% |   78%
+ *      9      0%     72%        0%      0%      0% |   53%
+ *     10      0%     44%        0%      0%      0% |   38%
+ *
+ *   pair at higher glass tiers — snare:1+hourglass:3  75/75/53/59/34
+ *                                snare:1+hourglass:5  66/72/81/66/25
+ *   hourglass alone, T3 and T5:  0/0/0/0/0 (unchanged; never a solvent)
+ *
+ * The pair is no longer a NET NEGATIVE — before the rework it read at or below
+ * snare alone on every single level; it now straddles it (L8 78 vs 69 up, L9
+ * 53 vs 72 down) inside the ~8pp binomial noise of 32 trials. That is the
+ * whole change: `snare + hourglass` moves from ANTI-pair to REDUNDANT pair.
+ * Snare alone is still 44-75% on L6-L10, so "every single card <= 8%" fails
+ * and the run stays `idea` / single-key content, exactly as before.
+ *
+ * WHY NO REWORK COULD HAVE SAVED IT, stated as a theorem about the card:
+ * A GLASS IS WORTH ONE ROOKIE MOVE PLUS THE DURATIONS THAT MOVE WOULD HAVE
+ * BURNED. Reason 1 below is the binding one here — the king only flees when
+ * he is THREATENED, and in this run the threat is Rookie's own body arriving,
+ * which buys the enemy phase for free. A card whose partner's payoff lands on
+ * ROOKIE'S move can never need the glass. Five partners were probed on this
+ * run's own firebox (32 trials, L6-L10) and every one says the same thing:
+ *
+ *      partner        alone            with the glass
+ *      snare          75/63/69/72/44   69/63/78/53/38
+ *      scarecrow      47/50/63/31/28   41/44/81/16/34
+ *      freeze-ray     44/50/88/22/25   41/47/88/16/25
+ *      decoy           0/ 0/ 0/ 0/ 0    0/ 0/ 0/ 0/ 0
+ *      summon-knight  100 on all five  100/97/100/100/100
+ *
+ * The glass pays only when the PARTNER'S PAYOFF LANDS ON AN ENEMY PHASE — a
+ * poison death, a friendly-fire capture — because that is the one payoff
+ * Rookie cannot buy with her own move. Measured on The Candle (revenge-29),
+ * the same day: poison-dart L9 13% alone -> 72-81% paired; decoy L10 31%
+ * alone -> 69% paired. The Hearth has no such clock, so it has no use for it.
+ * The next designer who wants an Hourglass gate should build the fuse, not the
+ * trap. (Recorded in `.claude/run-level-design.md` and
+ * `data/run-playtest/pair-hypotheses.json`.)
+ *
+ * ── EVERYTHING BELOW APPLIES TO THE PRE-REWORK RULES (2026-09-06, earlier) ──
  * ── READ THIS FIRST: THE COMBO GATE IS NOT MET, AND THE PAIR IS THE REASON ──
  * L6-L10 read 0% for no-ability, 0% for hourglass alone AT EVERY TIER, 0% for
  * aegis alone at every tier and 0% for magnet alone at every tier. The terrain

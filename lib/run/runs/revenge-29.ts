@@ -3,6 +3,45 @@
  * Kit = hourglass / poison-dart / magnet / aegis (`allowedAbilities` IS the
  * kit). Hourglass is at the TESTING stage, so this run is /playtest-only.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE HOURGLASS REWORK ───────────────────────
+ * Hourglass was reworked today (the king now reacts on a glass-turn at every
+ * tier; a glass no longer runs Rookie's own clocks — only poison, the fuse,
+ * still burns; the tiers are pure quantity, 1/2/3/4/6 uses and 1/1/1/2/3 casts
+ * a turn). THE VERDICT ON THIS RUN IS UNCHANGED, as expected: the miss here is
+ * poison-dart's, not the glass's. Numbers of record, 32 trials, jobs=8,
+ * difficulty=normal (matrix-determinism-check PASS first):
+ *
+ *      L    none  poison-dart  hourglass  magnet  aegis | poison+hourglass
+ *      7      0%      78%         0%        0%     0%   |   59%
+ *      8      0%      75%         0%        0%     0%   |   66%
+ *      9      0%      13%         0%        0%     0%   |   72%
+ *     10      3%      78%         0%        0%     0%   |   53%
+ *
+ *   pair at higher glass tiers — poison:1+hourglass:3  72/81/78/69
+ *                                poison:1+hourglass:5  53/75/81/75
+ *   hourglass alone T3 and T5: 0/0/0/0 and 0/0/0/6 — still never a solvent.
+ *
+ * TWO THINGS THE REWORK DID PROVE, and they are the reason the card survived:
+ *  - L9 IS AN HOURGLASS GATE. poison alone 13%, the pair 72-81% at every glass
+ *    tier. That is the only cell in the catalogue where the glass is the
+ *    difference between failing and clearing, and it is the template for the
+ *    run that would finally gate on this card: build the FUSE weak, not the
+ *    trap.
+ *  - THE UPGRADE NOW HELPS INSTEAD OF HURTING. T3 reads 72/81/78/69 against
+ *    T1's 59/66/72/53 — pure extra uses. Under the old rules T3 was the tier
+ *    that switched `hourglassHoldsKing` on and deleted the king-steps line.
+ *  - A SECOND PARTNER APPEARED. decoy alone 47/44/69/31 -> decoy+hourglass
+ *    56/56/91/69 (old rules: 47/34/75/66). Mark a guard, turn the glass, the
+ *    court eats it and the stun lands with her move still in hand — the same
+ *    archetype as the dart. `hourglass + decoy` is now a MEASURED pair.
+ *
+ * The 3-of-4 miss below is untouched by any of this: poison-dart has no line
+ * of sight and no timing limit, so it always syncs its own fuse to Rookie's
+ * arrival and solos L7/L8/L10. That is a POISON-DART problem. Fixing it needs
+ * a range limit on the dart (or MOVE_LIMIT_FLOOR lowered to 4-5), not another
+ * Hourglass change. The run stays at `idea`.
+ *
+ * ── EVERYTHING BELOW APPLIES TO THE PRE-REWORK RULES (2026-09-06, earlier) ──
  * ── READ THIS FIRST: THE GATE IS 3-OF-4, AND THE MISS IS STRUCTURAL ──
  * L7-L10 read 0% for no-ability, 0% for hourglass alone (at EVERY tier), 0%
  * for magnet alone and 0% for aegis alone, and 63-78% for the pair. That is

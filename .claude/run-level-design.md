@@ -121,6 +121,48 @@ Note the last two rows: the same card, `knight-hop`, caps at T3 in one run and T
 
 **A combo run SHOULD cap its signature cards** at the highest tier its own measurements support, in the same commit as its MEASURED block. Report the cap in the header with the numbers that chose it. Prove it through the offer path — `npx tsx scripts/run-playtest/tier-cap-audit.ts` rolls every capped run × level × owned tier and fails if any slate ever offers a capped id above its cap. The forced-loadout `matrix` numbers do NOT change when you add a cap, by design; the full-run `runs` read is where a cap shows up.
 
+### A "free wait" is worth one move, and one move is under the noise floor (Hourglass, 2026-09-06)
+Hourglass grants an enemy turn with Rookie's move still in hand. Two runs were
+built to gate on it (The Candle, revenge-29; The Hearth, revenge-31) and neither
+did. The card was then reworked — the T3 "the king is held" clause deleted (an
+upgrade must never remove a card's function), and a glass-turn stopped running
+Rookie's own clocks so it no longer taxed every other card in the game — and the
+finales were re-measured. **The verdict did not move**, and the reason is a
+theorem, not a tuning miss:
+
+> **A glass is worth exactly one Rookie move, plus the durations that move would
+> have burned.** An idle Rookie move produces the same enemy phase.
+
+One move at 32 trials is inside the ~8pp binomial noise, so a card whose whole
+value is one move can essentially never produce the gate's 8% / 60% split.
+Two rules follow, and they apply to any future "free wait", "extra action" or
+"skip your turn" card:
+
+1. **The glass pays only when the PARTNER'S PAYOFF LANDS ON AN ENEMY PHASE** —
+   a poison death, a decoy friendly-fire capture. That is the one payoff Rookie
+   cannot buy with her own move. Measured: Candle L9 poison-dart 13% alone ->
+   72-81% paired (the one cell in the catalogue where the glass decides a
+   level); Candle finales decoy 47/44/69/31 -> 56/56/91/69.
+2. **It is redundant beside any partner whose payoff lands on ROOKIE'S move** —
+   snare, scarecrow, freeze-ray. Her threatening arrival already buys the enemy
+   phase for free. Measured on the Hearth firebox, L6-L10, 32 trials: snare
+   75/63/69/72/44 alone vs 69/63/78/53/38 paired; scarecrow 47/50/63/31/28 vs
+   41/44/81/16/34; freeze-ray 44/50/88/22/25 vs 41/47/88/16/25. Note the sign:
+   *slightly negative*, because a glass hands the whole court a free action.
+
+So: **to gate on a wait card, build the FUSE weak, not the trap.** The gate must
+be a clock whose payoff the player cannot reach in time with her own moves —
+and the partner must be weak ALONE, which is where both runs failed (poison-dart
+has no line of sight and no timing limit, so it self-syncs to her arrival and
+solos 3 of 4 finales; snare solos all five).
+
+The card was NOT retired. It is 0% alone on every finale of every run tested at
+every tier, which is exactly the profile the kit rules demand of the two TRAP
+fillers — and The Hayloft (revenge-27) and The Quarry (revenge-32) already ship
+it in that seat. **A card that can never be a key and can never be a solvent is
+worth a kit slot as a filler even if it is never half of a gate.** Grade a wait
+card on that axis before you build a third run for it.
+
 ### One line, four times (Lattice and Alcove, Tyler 2026-09-06)
 Tyler on The Lattice: "pretty fun, once you solved it you kind of figured it out." On The Alcove, same comment: "both very good in creativity, but they need more variance and difficulty, once you get the idea you solve it." Two levers: variance (below) and DIFFICULTY: tune the finale so the pair reads 60-80%, not 100%, with the clock and a second enemy per turn as the knobs, and make L8-L10 each add a wrinkle the L7 solution does not cover. Every combo run so far restates ONE finale line on L7-L10 with different geometry; the discovery is the fun and L8-L10 become execution. Inside the finale, each level must still demand a DIFFERENT decision with the same pair: a different order (bait first vs body first), a different target (mark the guard vs mark a hunter), a level where the pair is needed twice, or a level where a trap card briefly becomes the key. The "distinct primary decision" rule applies to L7-L10, not only L1-L6.
 
