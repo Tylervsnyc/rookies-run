@@ -1231,6 +1231,209 @@ export function upgradeDeltaForTier(
   return lines;
 }
 
+// ---------------------------------------------------------------------------
+// Castability — "could this card EVER be cast in this level?" (2026-09-06)
+//
+// An offer that shows a card with no possible target is worse than a trap:
+// the player burns a pick on a card that does literally nothing (Shove in a
+// lava-only level; Swap with no summon anywhere in the kit). `rollOffer`
+// filters the pools through `canEverCastInLevel` before it draws.
+//
+// TWO RULES shape the answer:
+//
+//  1. POSITION IS NOT DESTINY. Cards that key off Rookie's square (Shove,
+//     Magnet, the summons-at-her-side, Bodyguard) are judged with Rookie
+//     tried on every free square, because she can walk. Coup is judged with
+//     the king tried on every square, because his guards shuffle around him.
+//     Transient one-at-a-time locks (a straw already standing, a Twin still
+//     alive) are cleared first — they expire.
+//
+//  2. TARGETS CAN APPEAR LATER. A card whose target is MADE by another card
+//     is live whenever that other card is reachable in this level — owned
+//     already, or in the run's own pool (`allowedAbilities` / the playtest
+//     kit). Swap / Sacrifice / Knighting are live in any kit that also
+//     contains a summon; Shove is live in any kit that contains Boulder,
+//     even on a board with no stone on it yet. Filtering those out would
+//     kill the Boulder-then-Shove pairing the runs are built around.
+//
+// Everything here REUSES each ability's real targeting helper (boulderTargets,
+// shoveTargets, magnetTargets, coupTargets, summonSpawnSquares, ...) — there
+// is deliberately no second copy of any targeting rule in this file.
+// ---------------------------------------------------------------------------
+
+// TEMP (remove before commit): lets the playtest harness roll pre-filter
+// slates so the before/after numbers come from one build.
+const OFFER_FILTER_OFF =
+  typeof process !== 'undefined' && process.env?.RR_NO_OFFER_FILTER === '1';
+
+/** Abilities with no target at all: they always resolve. */
+const NO_TARGET_ABILITIES: ReadonlySet<AbilityId> = new Set<AbilityId>([
+  'bishop-step',
+  'knight-hop',
+  'queen-pulse',
+  'become-king',
+  'drones',
+  'squad',
+  'surge',
+  'aegis',
+  'smoke',
+  // Rewind and Hourglass read live turn state (no enemy phase has happened
+  // yet when an offer is on screen), but every level HAS enemy turns — both
+  // become castable on their own.
+  'rewind',
+  'hourglass',
+]);
+
+/** Cards whose target must be MADE by another card (rule 2 above). */
+function targetMakersFor(id: AbilityId): ReadonlyArray<AbilityId> {
+  // Anything that puts a rainbow piece you control on the board. Squad's
+  // allies are NOT controlled, so they only count for the cards that read
+  // every ally at T4+ (Swap, Knighting) — never for Sacrifice.
+  const controlledMakers: AbilityId[] = ['convert', 'summon-knight', ...SUMMON_ABILITIES];
+  if (id === 'sacrifice') return controlledMakers;
+  const withSquad: AbilityId[] = [...controlledMakers, 'squad'];
+  if (id === 'swap') return withSquad;
+  if (id === 'knighting') {
+    // Same makers, minus the ones that only ever produce a queen — a queen
+    // is already top of PROMOTION_ORDER and can never be knighted.
+    return withSquad.filter(
+      (m) => !isSummonAbility(m) || summonPieceFor(m) !== 'queen',
+    );
+  }
+  if (id === 'shove') return ['boulder'];
+  return [];
+}
+
+/** The state as it would be with `id` owned at `tier` (targeting reads tiers). */
+function asIfOwned(state: BoardState, id: AbilityId, tier: AbilityTier): BoardState {
+  return {
+    ...state,
+    abilities: [
+      ...state.abilities.filter((a) => a.id !== id),
+      { id, tier, mutations: [], usesLeftThisLevel: maxUsesForTier(id, tier) },
+    ],
+  };
+}
+
+/** Every square Rookie could plausibly stand on later (current square first). */
+function rookieStandpoints(state: BoardState): BoardState[] {
+  const out: BoardState[] = [state];
+  for (let f = 1; f <= 8; f++) {
+    for (let r = 1; r <= 8; r++) {
+      if (state.rookie.file === f && state.rookie.rank === r) continue;
+      if (state.hazards.some((h) => h.file === f && h.rank === r)) continue;
+      if (state.pieces.some((p) => p.file === f && p.rank === r)) continue;
+      if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) continue;
+      out.push({ ...state, rookie: { file: f, rank: r } });
+    }
+  }
+  return out;
+}
+
+/** Every square the enemy king could plausibly stand on (current square first). */
+function kingStandpoints(state: BoardState): BoardState[] {
+  const king = state.pieces.find((p) => p.type === 'king');
+  if (!king) return [state];
+  const out: BoardState[] = [state];
+  for (let f = 1; f <= 8; f++) {
+    for (let r = 1; r <= 8; r++) {
+      if (king.file === f && king.rank === r) continue;
+      if (state.hazards.some((h) => h.file === f && h.rank === r)) continue;
+      if (state.pieces.some((p) => p.file === f && p.rank === r)) continue;
+      out.push({
+        ...state,
+        pieces: state.pieces.map((p) => (p === king ? { ...p, file: f, rank: r } : p)),
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Is there at least ONE legal cast of this card somewhere in this level as it
+ * stands? `availableIds` is the set of ability ids this level can still hand
+ * the player (run allowlist / playtest kit / already owned) and drives rule 2.
+ *
+ * Conservative by design: when in doubt it answers TRUE, so the filter can
+ * only ever remove cards that are provably dead.
+ */
+export function canEverCastInLevel(
+  state: BoardState,
+  id: AbilityId,
+  tier: AbilityTier = 1,
+  availableIds?: ReadonlySet<string>,
+): boolean {
+  if (NO_TARGET_ABILITIES.has(id)) return true;
+
+  // Rule 2 — a card whose target another reachable card creates is live now.
+  const makers = targetMakersFor(id);
+  if (makers.length > 0) {
+    const reachable = (m: AbilityId) =>
+      state.abilities.some((a) => a.id === m) || (availableIds ? availableIds.has(m) : true);
+    if (makers.some(reachable)) return true;
+  }
+
+  const hypo = asIfOwned(state, id, tier);
+  const anySquare = (states: BoardState[], targets: (s: BoardState) => { length: number }): boolean =>
+    states.some((s) => targets(s).length > 0);
+
+  switch (id) {
+    // Darts and tricks that need an enemy you can see.
+    case 'freeze-ray':
+    case 'poison-dart':
+    case 'rabies-dart':
+    case 'decoy':
+      return visibleEnemySquares(hypo).length > 0;
+
+    case 'convert':
+      return convertTargets(hypo).length > 0;
+
+    // Board-wide square picks — Rookie's square barely matters.
+    case 'boulder':
+      return boulderTargets(hypo).length > 0;
+    case 'snare':
+      return snareTargets(hypo).length > 0;
+    case 'scarecrow':
+      // One straw at a time is transient; judge the level, not this instant.
+      return scarecrowTargets({ ...hypo, scarecrow: undefined }).length > 0;
+
+    // Position-keyed: try Rookie everywhere she could walk.
+    case 'shove':
+      return anySquare(rookieStandpoints(hypo), shoveTargets);
+    case 'magnet':
+      return anySquare(rookieStandpoints(hypo), magnetTargets);
+    case 'bodyguard':
+      return rookieStandpoints(hypo).some((s) => bodyguardSpawnSquare(s) !== null);
+    case 'summon-knight':
+      return anySquare(
+        rookieStandpoints({ ...hypo, allies: (hypo.allies ?? []).filter((a) => a.source !== 'squire') }),
+        squireSpawnSquares,
+      );
+
+    // The king's own court: his guards move, so try the king everywhere.
+    case 'coup':
+      return anySquare(kingStandpoints(hypo), coupTargets);
+
+    // Summon-dependent cards with no maker in the kit (rule 2 already ran):
+    // live only if a controlled summon is on the board right now.
+    case 'swap':
+      return swapTargets(hypo).length > 0;
+    case 'sacrifice':
+      return sacrificeTargets(hypo).length > 0;
+    case 'knighting':
+      return knightingTargets(hypo).length > 0;
+
+    default:
+      if (isSummonAbility(id)) {
+        const source = id as AllyPiece['source'];
+        const cleared = { ...hypo, allies: (hypo.allies ?? []).filter((a) => a.source !== source) };
+        return anySquare(rookieStandpoints(cleared), (s) => summonSpawnSquares(s, id));
+      }
+      // Unknown / new card: never filter what we can't judge.
+      return true;
+  }
+}
+
 export interface AbilityOfferOption {
   kind: 'new' | 'upgrade';
   id: AbilityId;
@@ -1314,6 +1517,28 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
       };
     });
 
+  // Never offer a card that cannot be cast in THIS level (2026-09-06).
+  // See canEverCastInLevel above for the two rules. NOTE: this changes which
+  // slate a given seed produces, so playtest traces recorded before today
+  // will not reproduce their old offers — accepted deliberately.
+  const availableIds = new Set<string>([
+    ...(runAllowed ? [...runAllowed] : (ALL_ABILITY_IDS as string[])),
+    ...owned.keys(),
+  ]);
+  const isCastable = (o: AbilityOfferOption): boolean => {
+    // An upgrade is castable exactly when the card the player already owns
+    // is: a tier changes the power, not whether a target can exist.
+    const tier = o.kind === 'upgrade' ? (owned.get(o.id)?.tier ?? o.tier) : o.tier;
+    return canEverCastInLevel(state, o.id, tier, availableIds);
+  };
+  const liveNew = OFFER_FILTER_OFF ? newPool : newPool.filter(isCastable);
+  const liveUpgrades = OFFER_FILTER_OFF ? upgradePool : upgradePool.filter(isCastable);
+  // If literally nothing is castable, keep the old behaviour rather than
+  // handing the player an empty screen.
+  const anyLive = liveNew.length + liveUpgrades.length > 0;
+  const newLive = anyLive ? liveNew : newPool;
+  const upgradeLive = anyLive ? liveUpgrades : upgradePool;
+
   const pickOne = <T,>(arr: T[]): T | undefined => {
     if (arr.length === 0) return undefined;
     return arr[Math.floor(rng() * arr.length)];
@@ -1336,36 +1561,52 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
   const isCore = (o: AbilityOfferOption) => !!core && core.has(o.id);
   const coreCount = () => offer.filter(isCore).length;
 
+  /**
+   * Never shrink the slate. If the castability filter left fewer live options
+   * than `size`, top up from the UNFILTERED pools — a short slate reads as a
+   * bug, a rare dead card only reads as a bad pick — and honour the core
+   * guarantee first. Draws from an exhausted pool consume no RNG, so this is
+   * a no-op (and determinism-neutral) whenever nothing was filtered.
+   */
+  const finish = (): AbilityOffer => {
+    if (offer.length >= size) return offer;
+    const wide = atCap ? upgradePool : [...upgradePool, ...newPool];
+    const needCore = Math.max(0, coreMin - coreCount());
+    if (needCore > 0) draw(wide.filter(isCore), needCore);
+    draw(wide, size - offer.length);
+    return offer;
+  };
+
   if (atCap) {
     if (upgradePool.length === 0) return [];
     // Owned-only upgrades: seed the core guarantee first, then fill.
-    if (coreMin > 0) draw(upgradePool.filter(isCore), coreMin);
-    draw(upgradePool, size - offer.length);
-    return offer;
+    if (coreMin > 0) draw(upgradeLive.filter(isCore), coreMin);
+    draw(upgradeLive, size - offer.length);
+    return finish();
   }
 
   if (ownedCount === 0) {
-    if (coreMin > 0) draw(newPool.filter(isCore), coreMin);
-    draw(newPool, size - offer.length);
-    return offer;
+    if (coreMin > 0) draw(newLive.filter(isCore), coreMin);
+    draw(newLive, size - offer.length);
+    return finish();
   }
 
-  if (upgradePool.length > 0 && newPool.length > 0) {
+  if (upgradeLive.length > 0 && newLive.length > 0) {
     // One upgrade + the rest new (2-wide keeps the legacy 1+1 shape).
-    draw(upgradePool, 1);
+    draw(upgradeLive, 1);
     // Core guarantee: the new picks must supply whatever core is missing.
     const needCore = Math.max(0, coreMin - coreCount());
-    if (needCore > 0) draw(newPool.filter(isCore), Math.min(needCore, size - offer.length));
-    draw(newPool, size - offer.length);
+    if (needCore > 0) draw(newLive.filter(isCore), Math.min(needCore, size - offer.length));
+    draw(newLive, size - offer.length);
     // Top up from upgrades if the new pool ran dry.
-    if (offer.length < size) draw(upgradePool, size - offer.length);
-    return offer;
+    if (offer.length < size) draw(upgradeLive, size - offer.length);
+    return finish();
   }
 
-  const fallback = newPool.length > 0 ? newPool : upgradePool;
+  const fallback = newLive.length > 0 ? newLive : upgradeLive;
   if (coreMin > 0) draw(fallback.filter(isCore), coreMin);
   draw(fallback, size - offer.length);
-  return offer;
+  return finish();
 }
 
 export function offerIsExhausted(state: BoardState): boolean {
