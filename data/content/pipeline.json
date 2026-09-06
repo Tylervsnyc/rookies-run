@@ -865,6 +865,14 @@
       "stage": "idea",
       "created": "2026-09-06",
       "notes": "Smoke + Rabies Dart (blind the court). HONEST MISS: the finale does not meet the combo gate at T1 cards (rabies alone 53% on L7; pair 63/9/6/9). The pair is a T5 story the harness cannot measure and the bot cannot plan cast-then-wait lines. Kept as idea; reachable via ?run=revenge-20, not on the playtest page."
+    },
+    {
+      "id": "revenge-24",
+      "kind": "run",
+      "name": "The Lattice",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Duchess + Decoy (buy the body time) — the first designed home for either card. Signature: ranks 5-8 are stone on the DARK squares only, a checkerboard of panes, so no rook line survives up there (a king on a light square of ranks 6-8 can never be captured by Rookie) while the light diagonals run straight through and his pawns are frozen but still bite. L1-L2 ride an open channel; L3-L5 a defended cork (aegis/decoy 100%, magnet is the trap at 6-31%); L6 the panes close and the Duchess alone is the only thing that can reach him (100%, everything else 0%). L7-L10 add a WATCHER pawn on the one square that attacks him: the Duchess lands there and is eaten, so mark a pawn defended by a jammed bishop (threat 2 beats the watcher's 1, deterministically) and the court spends its whole turn eating its own man. Finale numbers of record (Normal, T5, --jobs=1 --trials=32): none 0%, aegis 0%, magnet 0%, decoy 0%, duchess 0% on all four levels; duchess+decoy 100/97/100/100. Every other kit pair 0% on all four — four unique-answer levels. Full runs 13/40 = 33% with random picks (all deaths move-limit at L6-L7), 35/40 = 88% with the pair as the pool. TIER CAVEAT: the gate holds at T1-T3 and breaks at T4+, where the Duchess gets a second charge and the body that re-takes the plugged post is unanswerable — the post can never have a spare defender because the only squares attacking it are the king's own and the watcher's."
     }
   ]
 }
