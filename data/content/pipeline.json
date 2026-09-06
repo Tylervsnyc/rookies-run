@@ -929,6 +929,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Stand a straw Rookie on an empty square (free action). For 1/2/2/2/3 enemy turns the court and the king plan against a view where the straw IS Rookie (rook-form; a queen from T4) and the real Rookie is a blocker nothing can capture or hunt: hunters charge the straw, guards fear its lines, and the king flees from IT, which steers him because his flee is deterministic (farthest safe square from the threat). Striking the straw destroys it and wastes the army's action, no credit, no stun; at T5 the striker dies instead. The straw blocks Rookie's own moves and her summons like a body. One straw at a time. Design: docs/new-abilities-2026-09-06.md."
+    },
+    {
+      "id": "revenge-27",
+      "kind": "run",
+      "name": "The Hayloft",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Signature pair SCARECROW + KNIGHT-HOP (he runs the wrong way, onto your line). Signature = a gabled stone roof over ranks 4-6 with an 18-square loft above it; kit scarecrow/knight-hop/aegis/hourglass. Finale gate MET at T1: L7-L10 none 0%, every single kit card 0%, pair 66/69/63/75% (serial, 32 trials). Four different finale decisions: steer / blindfold / which straw / where the straw can stand. Known tier break: knight-hop:4 (two uses) solos the finale 88-100%, the Parapet's caveat. Full runs 25% random, 65% pair-pool. Scarecrow is at TESTING so this run is playtest-only."
     }
   ]
 }
