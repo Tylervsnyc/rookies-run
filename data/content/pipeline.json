@@ -937,6 +937,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Signature pair SCARECROW + KNIGHT-HOP (he runs the wrong way, onto your line). Signature = a gabled stone roof over ranks 4-6 with an 18-square loft above it; kit scarecrow/knight-hop/aegis/hourglass. Finale gate MET at T1: L7-L10 none 0%, every single kit card 0%, pair 66/69/63/75% (serial, 32 trials). Four different finale decisions: steer / blindfold / which straw / where the straw can stand. Known tier break: knight-hop:4 (two uses) solos the finale 88-100%, the Parapet's caveat. Full runs 25% random, 65% pair-pool. Scarecrow is at TESTING so this run is playtest-only."
+    },
+    {
+      "id": "revenge-29",
+      "kind": "run",
+      "name": "The Candle",
+      "stage": "idea",
+      "created": "2026-09-06",
+      "notes": "Hourglass + poison-dart combo run (let the fuse burn). Signature: a stone gallery over ranks 7-8 with a 2x2 turret and ONE stair, a bishop bricked into a niche as the only remote stun, and a procession of pawns as the visible clock. GATE 3-OF-4 at L7-L10 (T1, Normal, 32 trials): no-ability 0/0/0/3, hourglass alone 0 at EVERY tier, magnet 0 at every tier, aegis 0 at every tier, pair 63/69/78/69. MISS: poison-dart alone reads 78/75/13/78 — structural, not tuning: a glass-turn and an idle move produce the same enemy phases (the glass only saves one MOVE), MOVE_LIMIT_FLOOR=6 forbids the moveLimit 5 a one-move gate needs, and the dart has no line of sight or timing limit so the fuse can always be synced to the walk. Full runs 15% random / 10% pair-only."
     }
   ]
 }
