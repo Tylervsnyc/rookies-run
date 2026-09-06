@@ -44,7 +44,7 @@
  *        --runs-filter=id1,id2  (only these run ids)  --all-runs (quick: every run)
  */
 
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -673,6 +673,26 @@ async function main(): Promise<void> {
     caveats.push(`Run id "${x.id}" is listed but not loadable — skipped.`);
     return false;
   });
+  // Preflight: is the harness still telling the truth? A matrix cell must
+  // depend only on (run, level, loadout, trial, tier). It stopped doing so
+  // once (the bot's process-lifetime decision counter, fixed 2026-09-06), and
+  // every number measured while that was true was unreliable. Non-fatal: the
+  // night still runs, but the digest carries the warning.
+  if (!opts.quick) {
+    try {
+      execFileSync('npx', ['tsx', join(__dirname, 'matrix-determinism-check.ts'), '--trials=16'], {
+        stdio: 'ignore',
+      });
+    } catch {
+      caveats.push(
+        'HARNESS DETERMINISM CHECK FAILED — the same matrix cell reads different numbers ' +
+        'depending on the invocation shape, so tonight\'s percentages cannot be trusted. ' +
+        'Run `npx tsx scripts/run-playtest/matrix-determinism-check.ts` and fix the shared ' +
+        'state before acting on anything below.',
+      );
+    }
+  }
+
   log(`${date}: ${ids.length} run(s) — ${ids.map((x) => x.id + (x.candidate ? ' (candidate)' : '')).join(', ')}${opts.quick ? ' [QUICK]' : ''}${opts.simsOnly ? ' [SIMS ONLY]' : ''}`);
 
   // a–e, p per run → raw
