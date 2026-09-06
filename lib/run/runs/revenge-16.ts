@@ -3,6 +3,67 @@
  * poison-dart / bishop-squire / magnet / rabies-dart (`allowedAbilities` IS
  * the kit).
  *
+ * ── 2026-09-06 RE-TUNED ON HONEST NUMBERS ──
+ * The VARIANCE REWORK block below tuned this finale into a "60-80%" band it
+ * never actually occupied. Its numbers (69/63/63/63 for poison-dart +
+ * bishop-squire on L7-L10) were taken with the harness that lied: the MCTS
+ * bot carried a process-lifetime decision counter into its rollout RNG seed
+ * and Rookie's start file was unseeded, so a cell's result depended on the
+ * SHAPE of the command (fixed in 94482af; regression guard at
+ * scripts/run-playtest/matrix-determinism-check.ts). Re-measured honestly,
+ * that shipped build read 97 / 59 / 84 / 47 — L7 a giveaway, L10 over the
+ * top, L8 on the bottom edge. This run is the one in the catalogue whose
+ * shipped tuning was chosen off bad numbers, so it is re-tuned here.
+ *
+ * ONLY THE KNOBS MOVED. All four finale IDEAS are unchanged — L7 THE COUNT,
+ * L8 TWO GUARDS ONE DART, L9 THE BACKSTOP, L10 THE LONG DIAGONAL — same
+ * rooms, corridors, guards, defenders, decoys, stone and kits. What changed:
+ *
+ *   L7  moveLimit 8 → 7. The count was slack by exactly one move: the fuse
+ *       (3 enemy turns) plus the walk to a parking square left a spare, so
+ *       the bot could throw the dart late and still slide. 97% → 78%.
+ *   L8  moveLimit 12 → 13. The long a2-g8 diagonal is the longest walk of
+ *       the four and 12 was one slide short of honest, pinning it at the
+ *       bottom edge. 59% → 81% at 32 trials, 70% at 64 (see the noise note).
+ *   L9  moveLimit 6 → 5, hunter knight g4 → h4. At six moves the reversal
+ *       (dart the recapturer, not the guard) was free — 84%. Five alone
+ *       over-corrected to 56% with the hunter on g4; backing it off one
+ *       file to h4 buys the turn back without buying the decision. 66%.
+ *   L10 moveLimit 14 → 17. No post exists beside the hole, so the Squire
+ *       has to be parked far down the a1-h8 diagonal and BOTH hunters have
+ *       to be waited out — at 14 there was no clock left for the waiting.
+ *       47% → 63%. (16 read 59%, one point short.)
+ *
+ * MEASURED — 2026-09-06 re-tune, numbers of record. Honest harness,
+ * `revenge.ts matrix --run=revenge-16 --levels=7,8,9,10 --loadouts=<none +
+ * each kit card + the pair + rabies+squire> --trials=32 --jobs=8`, Normal.
+ * matrix-determinism-check.ts run first: PASS (all three shapes agree).
+ *
+ *        none  poison  squire  magnet  rabies | poison+squire | rabies+squire
+ *   L7     0%      0%      0%      0%      0% |          78%  |   0%
+ *   L8     0%      0%      0%      0%      0% |          81%  |   0%
+ *   L9     0%      0%      0%      0%      0% |          66%  |  97%  (by design)
+ *   L10    0%      0%      0%      0%      0% |          63%  |   0%
+ *
+ * THE GATE HOLDS AND IS TIGHTER THAN BEFORE: every kit card alone reads 0%
+ * on all four finale levels, no-ability 0%. L9's rabies+squire 97% is the
+ * deliberate shortcut (THE BACKSTOP is the one level where the trap card is
+ * briefly the key). L7's old 3% residual is gone with the shorter clock.
+ *
+ * The same pair at 64 trials (half the binomial noise): 75 / 70 / 61 / 64 —
+ * all four inside 60-80. L8's 81% at 32 trials is the ~8pp noise band, not a
+ * miss; its 64-trial read is 70%.
+ *
+ * Full runs (40 each, Normal, `revenge.ts runs`): 4/40 = 10% clear with
+ * random picks from the kit (the filters are L4 70%, L6 64%, L7 31% — pick
+ * wrong and the run ends at THE COUNT, which is the point), 14/40 = 35% when
+ * the player draws only poison+squire (L4 65%, L6 69%, then 83/93/100/100
+ * across the finale). Was 12% / 22% before the re-tune; the finale is
+ * harder per level and the ladder reads friendlier because the full-run
+ * harness plays upgraded tiers, not the T1-equivalent forced loadouts.
+ * L1-L6 untouched.
+ * ──
+ *
  * ── 2026-09-06 VARIANCE REWORK (Tyler, after playing it: "same thing, it
  * kind of has one gimmick and needs to be made harder" — the note he gave
  * The Lattice and The Alcove). The original finale below was ONE lock in
@@ -197,6 +258,22 @@
  * 9/40 = 22% when the player draws only poison+squire (L4 55%, L6 55%, L7
  * 83%, L8 90%, L9-L10 100%). L1-L6 untouched. Rookie's start file is
  * random on rank 1 (seed.ts), so every finale line works from any file.
+ *
+ * DEAD ENDS — 2026-09-06 RE-TUNE (measured on the honest harness):
+ *   - A CLOCK IS A COARSE KNOB ON A SLIDE LEVEL. One move is one whole
+ *     Squire slide, so a finale's rate steps in ~20-point jumps: L8 read
+ *     59% at 12 and 81% at 32 trials (70% at 64) at 13, with nothing in
+ *     between to reach for. When a level lands a couple of points outside
+ *     the band, re-read it at 64 trials before you reach for another knob —
+ *     32 trials carries ~8pp and you will otherwise "fix" noise.
+ *   - MOVING THE HUNTER DOES NOT MOVE THE RATE ON ITS OWN. L9 at six moves
+ *     read 84% with the knight on g4 AND 84% with it pulled in to e4: with
+ *     a spare turn in hand the bot simply walks around it. The clock is
+ *     what gates THE BACKSTOP; the hunter's square only decides how much
+ *     the clock costs (g4 at five moves = 56%, h4 at five = 66%).
+ *   - L10 AT 16 MOVES IS ONE SHORT (59%). Both hunters have to clear the
+ *     diagonal before the slide, and the waiting is not optional, so the
+ *     longest corridor in the run needs the longest clock: 17.
  *
  * DEAD ENDS (2026-09-06 variance rework; each one measured and thrown away,
  * in the order the bots found them):
@@ -404,7 +481,7 @@ const RUN_REVENGE_16: RunDef = {
       },
     ),
     // L7 — THE COUNT (2026-09-06: room and corridor unchanged, hunter gone,
-    // clock cut 12 → 8, two defenders). King c7 in a two-square diagonal
+    // clock cut 12 → 8 → 7, two defenders). King c7 in a two-square diagonal
     // room c7/b8 (walls b7/d7/a7/a8/c8/d8, and the rank-6 bar plugs both
     // files): no rook line reaches either square, ever, so no number of
     // stuns puts Rookie on him. Exactly one square covers both — d6, the
@@ -421,8 +498,9 @@ const RUN_REVENGE_16: RunDef = {
     // way, and the turn the poison lands slide him up the diagonal onto the
     // king. ONE turn: the knight on e8 jumps into the empty d6 on the very
     // next enemy turn (a vacated square nearer to Rookie is an approach) and
-    // plugs it again until it wanders on. Eight moves is the fuse plus the
-    // walk plus nothing.
+    // plugs it again until it wanders on. Seven moves is the fuse plus the
+    // walk plus nothing — at eight the count was slack (97% on the honest
+    // harness, see the 2026-09-06 RE-TUNE block).
     //
     // The knight on e8 (every jump is pen, guard, bar or the bishop on g7 —
     // it never moves until d6 empties) is the SECOND defender of d6, and the
@@ -446,7 +524,7 @@ const RUN_REVENGE_16: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 8,
+        moveLimit: 7,
         enemiesPerTurn: 2,
         hazards: [
           ...STAIR([6, 7], [4]),
@@ -472,7 +550,8 @@ const RUN_REVENGE_16: RunDef = {
     // Squire on a2/b3/c4 (two landings, b and c, so she can climb without
     // standing on her own corridor), and the turn it dies slide the whole
     // diagonal onto him — before d8 jumps into the hole. Clock-only, like
-    // L7: a hunter here halves the bot's rate without adding a decision.
+    // L7: a hunter here halves the bot's rate without adding a decision, so
+    // the only knob is the count — 13 moves (12 was one slide short, 59%).
     make(
       8,
       [
@@ -482,7 +561,7 @@ const RUN_REVENGE_16: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 12,
+        moveLimit: 13,
         enemiesPerTurn: 2,
         hazards: [
           ...STAIR([2, 3], [5, 7]),
@@ -505,17 +584,20 @@ const RUN_REVENGE_16: RunDef = {
     // moves the turn it appears — and take c6 with him (capture-stun). c7
     // cannot march into an occupied square and cannot capture straight
     // ahead. Keep the knight off c6's landing squares that turn, and next
-    // turn the Squire takes him from inside the corridor.
+    // turn the Squire takes him from inside the corridor. Five moves, and
+    // the hunter starts on h4: at six the reversal was free (84%), and the
+    // hunter one file closer (g4) at five over-corrected to 56% — the clock
+    // is the difficulty here, the knight only sets its distance.
     make(
       9,
       [
         pawn(3, 6), pawn(3, 7), pawn(4, 7),
-        knight(7, 4),
+        knight(8, 4),
         king(2, 7),
       ],
       {
         ...FLEE,
-        moveLimit: 6,
+        moveLimit: 5,
         enemiesPerTurn: 2,
         hazards: [
           ...STAIR([6, 7], [3]),
@@ -540,7 +622,10 @@ const RUN_REVENGE_16: RunDef = {
     // clear of two hunters for three turns without letting either park on
     // c3/d4/e5, and the turn the corridor empties slide the whole length of
     // it onto him — the knight on e8 refills f6 one enemy turn later. Two
-    // enemies a turn. Stone e4: a rabid f6 that eats whatever stands on e5
+    // enemies a turn. Seventeen moves: the longest clock in the run, because
+    // the walk is the whole diagonal and both hunters have to be waited out
+    // (at 14 it read 47%, below the band).
+    // Stone e4: a rabid f6 that eats whatever stands on e5
     // is stuck there. Stones d7/g4/h5: with d5/e4/g8/h7 they make f6
     // unreachable for any knight, so a hunter can never be the rabid piece
     // that eats the guard and walks off.
@@ -553,7 +638,7 @@ const RUN_REVENGE_16: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 14,
+        moveLimit: 17,
         enemiesPerTurn: 2,
         hazards: [
           ...STAIR([3], [6]),
