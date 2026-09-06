@@ -1,0 +1,355 @@
+{
+  "generated": "2026-09-06",
+  "source": "docs/new-abilities-2026-09-06.md. Derived from lib/run/abilities.ts, lib/run/pawn-ai.ts, lib/run/engine.ts, scripts/run-playtest/bots/shared.ts and the design headers of every run in lib/run/runs/ plus revenge-12 and revenge-13 in lib/run/runs.ts. Tyler's brief 2026-09-06: derive five new abilities from the level library; each a distinct verb; none a Convert variant.",
+  "existingVerbs": [
+    "move Rookie differently",
+    "move an enemy",
+    "create a body",
+    "remove or disable an enemy",
+    "alter terrain (add stone)",
+    "preserve tempo",
+    "become untouchable",
+    "undo",
+    "steal a piece",
+    "support a summon"
+  ],
+  "abilities": [
+    {
+      "id": "snare",
+      "name": "Snare",
+      "rank": 1,
+      "verb": "trap a square: the enemy that steps on it is held",
+      "description": "Set a trap on an empty square. The first enemy to step on it is held.",
+      "typeLine": "Targeted · Trap",
+      "activation": "targeted",
+      "targetStep": "pick-square",
+      "targeting": "Any empty square (no enemy, ally, drone, hazard, Rookie). Invisible to the AI, visible to the player. One snare per square.",
+      "effect": "When an enemy (king included) arrives on the square during the enemy phase by any means except Rewind, it is frozen there: frozenTurnsLeft = holdTurns + 1 (the Freeze Ray +1 trick, so the hold survives endTurn). T4+: a non-king piece that springs it is captured instead (credited to Rookie; kingStunTurns set to 2 so the stun survives endTurn). The king is only ever held. Consumed on springing; T5 re-arms.",
+      "edgeCases": {
+        "king": "Held for the hold; his risky-square tie-break does not see the snare.",
+        "summons": "Unaffected; a snare under your own piece is inert until it leaves.",
+        "hazards": "Boulder may not drop on a snared square.",
+        "status": "Frozen piece keeps poison/rabies markers.",
+        "smoke": "He does not step while smoked, so nothing springs (anti-pair).",
+        "magnet": "A pulled piece landing on the snare springs it.",
+        "coup": "A king swapped onto the snare springs it.",
+        "rewind": "Restores the snare unsprung (part of the phase snapshot)."
+      },
+      "tiers": {
+        "1": { "text": "Set a trap on an empty square. The first enemy to step on it is held for 1 turn.", "uses": 1, "holdTurns": 1 },
+        "2": { "text": "Set a trap. Whoever steps on it is held for 2 turns.", "uses": 1, "holdTurns": 2 },
+        "3": { "text": "Set a trap. Whoever steps on it is held for 2 turns.", "uses": 2, "holdTurns": 2 },
+        "4": { "text": "Set a trap. A guard that steps on it is captured; the king is held 3 turns.", "uses": 2, "holdTurns": 3, "bites": true },
+        "5": { "text": "Set a trap that never wears out. Guards die on it, the king is held 3 turns.", "uses": 2, "holdTurns": 3, "bites": true, "rearms": true }
+      },
+      "upgradeNotes": { "2": "Holds 1 turn → 2", "3": "", "4": "The trap bites: guards die on it", "5": "The trap re-arms after every spring" },
+      "botEnumeration": "Empty squares Chebyshev 1 from the king plus Chebyshev 1 from each non-pawn hunter, capped at 16 candidates. Rollouts run the real pawn-ai so the flee onto the snare is modelled. Payoff one turn deep (set, threaten, he steps in, take).",
+      "pairs": [
+        { "with": "boulder", "mechanism": "Two tied exits: stone one, trap the other, threaten. The stone goes where it never walls her line." },
+        { "with": "knight-hop", "mechanism": "Cross on one knight move, land as a rook on one column of a 2x2, snare the other, take next turn. The Slash with one cast instead of two stones." },
+        { "with": "magnet", "mechanism": "Pull an uncapturable guard onto a snared square: held two turns, or dead at T4, without Rookie standing anywhere." }
+      ],
+      "antiPairs": [
+        { "with": "freeze-ray", "reason": "Same outcome; Freeze reaches him directly. Two cards for one job." },
+        { "with": "smoke", "reason": "He never steps while smoked, so a snare never springs." },
+        { "with": "twin", "reason": "Cover on the trapped square deletes it from his flight set; he steps elsewhere. Applies to any summon covering the trap." },
+        { "with": "duchess", "reason": "Same cover problem." }
+      ],
+      "levelsOpened": [
+        { "run": "revenge-14", "name": "The Vault", "levels": [5], "line": "Snare the far square of the 2x2, slide onto his column, he steps in, take. Smoke becomes optional." },
+        { "run": "revenge-15", "name": "The Stacks", "levels": [5, 7, 8, 9, 10], "line": "The Boulder half of every finale without a stone in her one-wide shaft." },
+        { "run": "revenge-21", "name": "The Slash", "levels": [5, 7, 8, 9, 10], "line": "Hop, snare, slide." },
+        { "run": "revenge-23", "name": "The Parapet", "levels": [6, 7, 8, 9, 10], "line": "One rook and a snare hold the 2x2; Twin optional." },
+        { "run": "revenge-13", "name": "The Colonnade", "levels": [10], "line": "The 2x2 corner room." },
+        { "run": "revenge-18", "name": "The Glasshouse", "levels": [3, 4, 5], "line": "Threaten one square of the diagonal cell, snare the other; T2 hold may be needed." },
+        { "run": "revenge-26", "name": "The Keep", "levels": [3, 6], "line": "Short ring: stone one exit, trap the other." }
+      ],
+      "newRun": {
+        "name": "The Warren",
+        "pair": ["snare", "boulder"],
+        "signature": "His pen is a burrow of single squares joined diagonally; no rook line sees two. Every level asks where he runs.",
+        "kit": ["snare", "boulder", "aegis", "magnet"],
+        "finale": {
+          "7": "THE FORK: two tied exits. Stone one, snare the other, threaten.",
+          "8": "THE PATROL: snare a knight's only approach square (a guard, not him), stone his exit, arrive.",
+          "9": "BAIT FIRST: his exits tie only after a guard moves; capture the guard (stun), stone during the stun, snare the vacated square, then threaten.",
+          "10": "TWICE: two chambers; first spring holds him in the door while she crosses, second snare (T3) in the second chamber, stone the door behind him. Two enemies a turn, seven moves."
+        }
+      },
+      "risk": "low-medium",
+      "riskNotes": "New state field snares[]; trigger hook in stepEnemyTurn after applyAction and after each kingReaction; reuse frozen maps; T4 capture copies the Boulder crush code; include snares in the Rewind snapshot."
+    },
+    {
+      "id": "shove",
+      "name": "Shove",
+      "rank": 2,
+      "verb": "move terrain: push a stone one square",
+      "description": "Push a stone beside you one square away. It moves. It does not disappear.",
+      "typeLine": "Targeted · Terrain",
+      "activation": "targeted",
+      "targetStep": "pick-square",
+      "targeting": "A hazard in Rookie's 8-neighbourhood (T4: also a hazard on her rook line within 2 with nothing between). The stone slides one square directly away from Rookie. Destination must be in bounds and free of enemy, ally, drone, hazard, Rookie; T3+ it may hold an enemy pawn (crushed). Never onto the king, a summon or a snare. Never a shove that leaves Rookie with no legal move. Stones marked fixed in the puzzle def cannot be shoved.",
+      "effect": "hazards loses the source square and gains the destination. The vacated square is empty for everyone. A crushed pawn is a Rookie capture (tempo, stun, markers cleared).",
+      "edgeCases": {
+        "king": "Cannot be crushed or shoved.",
+        "summons": "Block the destination.",
+        "hazards": "No chain pushes; a two-thick wall is shove-proof by construction.",
+        "status": "A crushed pawn's markers clear; a decoy mark on it clears.",
+        "moveLimit": "Free action, no tick.",
+        "selfBlock": "A stone shoved onto a square a summon's line needed blocks that summon."
+      },
+      "tiers": {
+        "1": { "text": "Push a stone beside you one square away.", "uses": 1 },
+        "2": { "text": "Push a stone beside you one square away.", "uses": 2 },
+        "3": { "text": "Push a stone one square. A pawn it lands on is crushed.", "uses": 2, "crush": true },
+        "4": { "text": "Push a stone on your line, up to 2 away, one square. Crushes pawns.", "uses": 2, "crush": true, "reach": 2 },
+        "5": { "text": "Push stones all you like. Every one crushes what it lands on.", "uses": -1, "crush": true, "reach": 2 }
+      },
+      "upgradeNotes": { "2": "", "3": "The stone crushes a pawn it lands on", "4": "Reach: shove from 2 squares off", "5": "Unlimited shoves" },
+      "botEnumeration": "Adjacent hazards (at most 8; T4 plus the two-away line stones), one candidate each, direction implied. Payoff one turn deep: shove, then slide into the gap or onto the line.",
+      "universalSolventWarning": "A stone-mover solves any one-thick terrain signature alone, like knight-hop / bishop-step / become-king. Never in a terrain kit unless it is half the signature pair. Designers refuse it with two-thick walls, a piece beyond the stone, or fixed stones.",
+      "pairs": [
+        { "with": "magnet", "mechanism": "Pull the door guard onto her line, take it (stun), shove the wall stone beside her into his cell: his flight square is gone and the gap is her line in." },
+        { "with": "become-king", "mechanism": "Step to the wall impervious, shove the stone into his room, revert on his line. The untouchable engineer with a different second card." },
+        { "with": "smoke", "mechanism": "Walk to the wall unseen, shove, and he does not step off the line she opened while she is smoked." }
+      ],
+      "antiPairs": [
+        { "with": "twin", "reason": "A moved stone blocks a rook summon's line as surely as a dropped one." },
+        { "with": "bishop-squire", "reason": "Same self-block on diagonals (the Colonnade measurement)." },
+        { "with": "boulder", "reason": "Weak pair, not a true anti: two stone cards in one kit is the Stacks' upgrade self-block twice." },
+        { "with": "knight-hop", "reason": "Two openers in one kit is a skeleton-key kit." }
+      ],
+      "levelsOpened": [
+        { "run": "revenge-14", "name": "The Vault", "levels": [6, 7, 8, 9, 10], "line": "Stand under the one-thick box, shove the floor stone into the cell: his second square dies and the file opens. Vanguard + Swap optional." },
+        { "run": "revenge-18", "name": "The Glasshouse", "levels": [6, 7, 8, 9, 10], "line": "A pane pushed into the room removes one of his two squares and opens the sightline." },
+        { "run": "revenge-23", "name": "The Parapet", "levels": [5, 7, 8, 9, 10], "line": "Shove a rank-6 stone diagonally: a stair opens at f6, the stone lands on court square g7." },
+        { "run": "revenge-26", "name": "The Keep", "levels": [5, 6, 7, 8, 9, 10], "line": "The lip stone beside the diagonal door, pushed into the ring, is a door a rook fits through and a ring square deleted." },
+        { "run": "revenge-24", "name": "The Lattice", "levels": [6, 7, 8, 9, 10], "line": "A dark stone pushed one square opens a pane; needs fixed stones to gate." },
+        { "run": "revenge-16", "name": "The Switchback", "levels": [4, 6], "line": "Shove one knot stone off the pocketed bishop so it has a line to be taken on." }
+      ],
+      "shoveProofAsBuilt": ["revenge-13 The Colonnade (a pillar beyond every pillar on the file)", "revenge-25 The Alcove (the sill's diagonals are stone)"],
+      "newRun": {
+        "name": "The Quarry",
+        "pair": ["shove", "magnet"],
+        "signature": "A strongbox of single loose stones with free squares beyond them; his door always plugged by a guard.",
+        "kit": ["shove", "magnet", "aegis", "decoy"],
+        "finale": {
+          "7": "THE DOOR: pull the plug out (stun), shove the stone beside her into his cell, slide in.",
+          "8": "WHICH STONE: two loose stones; only one lands in his cell, the other walls her line.",
+          "9": "SHOVE FIRST: the plug's defender is a bishop whose diagonal runs through a stone's destination; shove first to block it, then pull and take.",
+          "10": "THE CRUSH: the plug is a pawn on a stone's destination and out of Magnet reach; pull another guard for the stun, shove the stone onto the plug (T3 crush). Two enemies a turn, eight moves."
+        }
+      },
+      "risk": "low",
+      "riskNotes": "Two hazards array edits and the existing boulderTargets self-lock check. Optional fixed flag on authored hazards needs a carrier on BoardState (parallel fixedHazards list)."
+    },
+    {
+      "id": "coup",
+      "name": "Coup",
+      "rank": 3,
+      "verb": "move the king: swap him with one of his own guards",
+      "description": "Trade the king's square with one of his own guards. His man takes the throne. He takes the post.",
+      "typeLine": "Targeted · Royal",
+      "activation": "targeted",
+      "targetStep": "pick-enemy",
+      "targeting": "A non-king enemy within Chebyshev 1 of the king (T1 pawns only; T2 any type; T3 any enemy in his pen or within 2 of him; T5 any enemy on the board). King win condition only.",
+      "effect": "The king and the target swap squares. Poison, rabies, frozen and decoy markers ride with their pieces (relocateStatusMarkers plus frozen maps plus decoyTarget). kingPen gains his new square if it was outside. No capture, no stun, no tempo. Free action. T4+: the swap stuns him for a turn.",
+      "edgeCases": {
+        "king": "Never captured by the coup; a frozen king stays frozen on his new square; he flees at the next enemy phase if threatened and not stunned/frozen/smoked.",
+        "summons": "Cannot be targets (enemies only); a converted piece is an ally so Convert and Coup compete for the same guard.",
+        "hazards": "None touched.",
+        "status": "Markers move with the pieces.",
+        "pawns": "A pawn swapped onto rank 1 promotes on the enemy's next action; a stump pawn moved off its stone may march.",
+        "snare": "A king swapped onto a snared square springs it.",
+        "smoke": "Works; he does not flee while smoked.",
+        "rewind": "Restores both pieces; the charge is spent.",
+        "guardOnThrone": "A pawn on his throne attacks the two squares diagonally below it, often Rookie's arrival square: choose the guard, not just the square."
+      },
+      "tiers": {
+        "1": { "text": "Swap the king with a pawn standing beside him.", "uses": 1, "targets": "adjacent pawns" },
+        "2": { "text": "Swap the king with any guard standing beside him.", "uses": 1, "targets": "adjacent any" },
+        "3": { "text": "Swap the king with any guard in his room or within 2 of him.", "uses": 2, "targets": "pen or Chebyshev 2" },
+        "4": { "text": "Swap the king with any guard in his room or within 2. Swapping stuns him a turn.", "uses": 2, "targets": "pen or Chebyshev 2", "stun": 1 },
+        "5": { "text": "Swap the king with ANY enemy on the board. He is stunned a turn.", "uses": 2, "targets": "any enemy", "stun": 1 }
+      },
+      "upgradeNotes": { "2": "Any guard beside him, not only pawns", "3": "Reach: his whole room, or 2 squares", "4": "The swap stuns him for a turn", "5": "Any enemy, anywhere" },
+      "botEnumeration": "One candidate per eligible enemy: at most 8 at T1-T2, the pen's occupants at T3+, all enemies at T5. Payoff one turn deep: swap, then slide or stone/snare/cover his step and slide.",
+      "pairs": [
+        { "with": "boulder", "mechanism": "Swap him onto the post, stone the one square he would step back to, slide onto the post's line. Cage-and-take where the cage is his own court." },
+        { "with": "duchess", "mechanism": "In rooms no rook line enters, the post is the square a body attacks. Swap him onto it, summon the body on the line, the guard fills his throne so he cannot step, the body takes him." },
+        { "with": "freeze-ray", "mechanism": "Freeze him, coup him onto a post on her line, take him. Two free actions and a move from anywhere a post has a line; possibly too strong, measure it." }
+      ],
+      "antiPairs": [
+        { "with": "convert", "reason": "Same target, two answers; a converted guard is no longer an enemy so Coup has nothing to swap." },
+        { "with": "magnet", "reason": "T5 Magnet is also 'move the king one square'." },
+        { "with": "rabies-dart", "reason": "A rabid guard at range 1 eats the guard that just became the door; targeting gets muddy." },
+        { "with": "smoke", "reason": "A pair, not an anti, but Coup + Smoke + anything is a skeleton key; keep apart in kits." }
+      ],
+      "levelsOpened": [
+        { "run": "revenge-22", "name": "The Millstone", "levels": [7, 8, 9, 10], "line": "Swap him with the door pawn: he is in the door f7 on the window line a2-g8; one Duchess takes him, no double door." },
+        { "run": "revenge-24", "name": "The Lattice", "levels": [7, 8, 9, 10], "line": "Swap him with his e6 pawn (L7); Rookie on d4 covers d5, Duchess on f5 attacks e6, he has no square. No Decoy needed." },
+        { "run": "revenge-16", "name": "The Switchback", "levels": [7, 8, 9, 10], "line": "Swap him with the corridor pawn (d6 on L7): he is on the landing, on the Bishop Squire's diagonal. No poison, no waiting." },
+        { "run": "revenge-25", "name": "The Alcove", "levels": [7, 8, 9, 10], "line": "Swap him with the sentry (f7), a knight's jump from launch square e5: stand there, cast Knight Hop, hop onto him." },
+        { "run": "revenge-20", "name": "The Alley", "levels": [6, 7, 8, 9, 10], "line": "Swap him with the crown pawn above him; the gate line reaches him one square higher." },
+        { "run": "revenge-17", "name": "The Briar", "levels": [6], "line": "The corner room a rook never reaches; his crown pawn's square is on the c-file." }
+      ],
+      "newRun": {
+        "name": "The Court",
+        "pair": ["coup", "boulder"],
+        "signature": "A throne with no line to it, ringed by chairs (guard posts) that each have exactly one line. Every level asks which guard you depose.",
+        "kit": ["coup", "boulder", "aegis", "magnet"],
+        "finale": {
+          "7": "THE DOORSTEP: one chair, one step back. Coup, stone, slide.",
+          "8": "THE QUEEN'S CHAIR: a pawn and a queen beside him; the queen's chair has the line but a queen on the throne attacks her arrival square. Choose the pawn.",
+          "9": "STUN FIRST: no step back, but a second guard recaptures on the chair; take a key on the chair's line first (stun and vacate), coup during the stun, the stone goes on the second guard's route.",
+          "10": "TWICE: two thrones joined by a corridor; the first coup only drives him down the corridor, the second (T3) swaps him onto the far chair, stone behind him, take. Two enemies a turn, eight moves."
+        }
+      },
+      "risk": "low-medium",
+      "riskNotes": "Piece swap plus marker relocation plus kingPen extension; pen edge cases need care but are contained. Coup T5 is the tier most likely to break a finale gate; report at T1 and the highest reachable tier."
+    },
+    {
+      "id": "hourglass",
+      "name": "Hourglass",
+      "rank": 4,
+      "verb": "time: the enemies take their turn now, you have not moved",
+      "description": "Turn the glass. The enemies take a turn now. You have not moved.",
+      "typeLine": "Instant · Time",
+      "activation": "instant",
+      "targetStep": null,
+      "targeting": "None. Castable on Rookie's turn with no activeAbility and no pendingOffer. One cast per Rookie turn below T5.",
+      "effect": "Passes the turn to the enemy phase immediately (allies phase first if AI allies exist); moveCount does not tick. A full enemy phase resolves (king reaction, enemiesPerTurn actions, endTurn ticks every counter: freeze, poison, rabies, decoy, smoke, king stun, summon clocks, king-form protection). Control returns with her move still in hand. pushEnemyPhaseSnapshot fires as usual so Rewind can undo the glass-turn. The daze on a converted piece does NOT clear on a glass-turn.",
+      "edgeCases": {
+        "king": "Flees during the glass-turn if threatened and not stunned/frozen/smoked; T3+ he is held for the glass-turn.",
+        "summons": "Clocks tick (T4+ they do not); a free-move summon that already moved keeps movedThisTurn through the glass-turn.",
+        "hazards": "Untouched.",
+        "status": "All counters tick once.",
+        "aegis": "Shield can absorb a capture during the glass-turn.",
+        "surge": "bonusMovesLeft preserved.",
+        "convert": "Dazed piece stays dazed through a glass-turn (keeps Tyler's same-turn king kill closed).",
+        "moveLimit": "No tick."
+      },
+      "tiers": {
+        "1": { "text": "The enemies take a turn now. You have not moved.", "uses": 1 },
+        "2": { "text": "The enemies take a turn now. You have not moved.", "uses": 2 },
+        "3": { "text": "The enemies take a turn now, and the king stands still through it.", "uses": 2, "holdKing": true },
+        "4": { "text": "The enemies take a turn now, the king stands still, and your summons' clocks do not run.", "uses": 2, "holdKing": true, "freezeSummonClocks": true },
+        "5": { "text": "Turn the glass as often as you like. The king stands still each time.", "uses": 3, "holdKing": true, "freezeSummonClocks": true, "multiplePerTurn": true }
+      },
+      "upgradeNotes": { "2": "", "3": "The king is held for the glass-turn", "4": "Your summons do not age during it", "5": "" },
+      "botEnumeration": "One candidate (activate-ability). Rollouts run the real pawn-ai inside the glass-turn. First card that lets the bot wait without a body-move (the Switchback / Alley finding).",
+      "pairs": [
+        { "with": "poison-dart", "mechanism": "Dart the lock, turn the glass twice, it dies and stuns him for the coming enemy turn, and she still has her move onto his line. The Switchback finale in one turn." },
+        { "with": "decoy", "mechanism": "Mark a guard, turn the glass, the court eats it (stun 2, square vacated), then move onto the line." },
+        { "with": "rewind", "mechanism": "Turn the glass, watch the reply, Rewind it, then move knowing what they do. A free look at the enemy turn." },
+        { "with": "rabies-dart", "mechanism": "The bite is the enemy turn; take the bite now while her move is still in hand." }
+      ],
+      "antiPairs": [
+        { "with": "duchess", "reason": "Her 2-4 turn clock burns during a glass-turn." },
+        { "with": "dragon", "reason": "Shortest clock in the family; same burn." },
+        { "with": "smoke", "reason": "The glass burns the cover window." },
+        { "with": "become-king", "reason": "Burns a protected enemy turn." },
+        { "with": "bodyguard", "reason": "Burns its clock." },
+        { "with": "convert", "reason": "The daze rule means the pair does nothing extra, by design." }
+      ],
+      "levelsOpened": [
+        { "run": "revenge-16", "name": "The Switchback", "levels": [7, 8, 9, 10], "line": "Poison the corridor pawn, glass, glass, summon the squire as it dies. The design intent, now findable." },
+        { "run": "revenge-12", "name": "The Moat", "levels": [4, 9], "line": "The poison locks land before the clock runs out." },
+        { "run": "revenge-20", "name": "The Alley", "levels": [6, 7, 8, 9, 10], "line": "Dart the queue, glass, the bite happens now with her move still in hand." },
+        { "run": "revenge-24", "name": "The Lattice", "levels": [3, 4, 5], "line": "Mark the cork's defender, glass, the cork walks out of the doorway, ride the channel this turn." },
+        { "run": "revenge-17", "name": "The Briar", "levels": [4, 5, 7, 8, 9, 10], "line": "Poisoned defenders die in time; two glass-turns drain the front row for free (the runner column is designed against it, so it is a new line, not a break)." }
+      ],
+      "newRun": {
+        "name": "The Fuse",
+        "pair": ["hourglass", "poison-dart"],
+        "signature": "A lock on his line that nothing captures, and a clock too short to wait for.",
+        "kit": ["hourglass", "poison-dart", "aegis", "magnet"],
+        "finale": {
+          "7": "THE FUSE: dart, glass twice, slide.",
+          "8": "WHICH PIECE: the lock is a marching pawn; dart it where it stands, glass to walk it onto the line, glass again to kill it there.",
+          "9": "GLASS FIRST: a hunter guards the lock's line; a glass-turn brings it onto her rank to be taken (stun), then the dart, because the lock only becomes a lock once the hunter is gone.",
+          "10": "TWO FUSES: two locks, one dart each (T2), three glass-turns between them, two enemies a turn, seven moves."
+        }
+      },
+      "risk": "low",
+      "riskNotes": "Set turn to enemy (or allies) and clear the moved/vacated lists. Needs a per-turn cast guard below T5 and a daze exemption flag on the glass-turn's endTurn."
+    },
+    {
+      "id": "scarecrow",
+      "name": "Scarecrow",
+      "rank": 5,
+      "verb": "information: a straw Rookie the court and the king believe in",
+      "description": "Stand a straw Rookie on an empty square. For a turn, the court and the king believe it.",
+      "typeLine": "Targeted · Trick",
+      "activation": "targeted",
+      "targetStep": "pick-square",
+      "targeting": "Any empty square (no enemy, ally, drone, hazard, Rookie, snare). One scarecrow at a time.",
+      "effect": "For scarecrowTurnsLeft enemy phases the AI runs against a view where the straw's square is Rookie (the decoyViewState pattern on an empty square) and the real Rookie is an uncapturable blocker. Capture priority: landing on the straw scores as Rookie; it destroys the straw and wastes the action, no credit, no stun. Approach: hunters approach the straw. kingFleeMove reads the straw's rook lines as the threat and Rookie's real lines as harmless. Guards' caution reads the straw's lines. The straw is rook-form (T4 queen-form) regardless of Rookie's form, blocks sliders like an ally, and vanishes at the end of its last enemy turn or when captured. T5: whatever strikes it is captured (credited, stun).",
+      "edgeCases": {
+        "king": "Fooled, not stunned; still refuses hazards, pen-outside squares and ally-covered squares.",
+        "summons": "Straw at Rookie value is preferred over a summon, so it also buys a body a turn.",
+        "hazards": "Untouched.",
+        "status": "None.",
+        "smoke": "Redundant (anti).",
+        "decoy": "Two dummies in one turn budget (anti); if both live, straw first and never in one kit.",
+        "rabies": "A rabid piece's target list includes the straw at Rookie value.",
+        "rewind": "Restores the straw."
+      },
+      "tiers": {
+        "1": { "text": "A straw Rookie on an empty square, for 1 turn. They hunt it. He runs from it.", "uses": 1, "turns": 1, "form": "rook" },
+        "2": { "text": "A straw Rookie for 2 turns. They hunt it. He runs from it.", "uses": 1, "turns": 2, "form": "rook" },
+        "3": { "text": "A straw Rookie for 2 turns.", "uses": 2, "turns": 2, "form": "rook" },
+        "4": { "text": "A straw QUEEN for 2 turns. He runs from her diagonals too.", "uses": 2, "turns": 2, "form": "queen" },
+        "5": { "text": "A straw queen for 3 turns. Whatever strikes it dies on the spot.", "uses": 2, "turns": 3, "form": "queen", "attackersDie": true }
+      },
+      "upgradeNotes": { "2": "Stands 1 turn → 2", "3": "", "4": "The straw is a queen: he fears diagonals too", "5": "Stands 3 turns. Attackers die (a capture, and a stun)" },
+      "botEnumeration": "Empty squares with an open rook line to the king (at most 14) plus empty squares within 2 of Rookie, capped at 16. Payoff one turn deep; the fooled flee is modelled provided the view lives inside pawn-ai.",
+      "pairs": [
+        { "with": "knight-hop", "mechanism": "Hop onto the line of his flight square (a rook there does not threaten him), straw on the window line to his current square, he flees the straw onto her line, take." },
+        { "with": "twin", "mechanism": "Twin holds one line of a three-square room, she holds another, the straw drives him onto one." },
+        { "with": "duchess", "mechanism": "The straw draws the hunters' single action away from the body for one turn, without Decoy's tie-break." }
+      ],
+      "antiPairs": [
+        { "with": "decoy", "reason": "Same turn budget, two dummies." },
+        { "with": "smoke", "reason": "Nobody sees her anyway; the straw's only extra is the steer." },
+        { "with": "rabies-dart", "reason": "A rabid piece chases the straw at Rookie value; targeting gets muddy." },
+        { "with": "freeze-ray", "reason": "A frozen king does not step; the steer is wasted." }
+      ],
+      "levelsOpened": [
+        { "run": "revenge-18", "name": "The Glasshouse", "levels": [3, 4, 5], "line": "Straw on the line to his square, Rookie on the line to the other square of the diagonal cell; he steps onto her." },
+        { "run": "revenge-21", "name": "The Slash", "levels": [5, 7, 8, 9, 10], "line": "Hop, straw, he steps into the column she holds." },
+        { "run": "revenge-23", "name": "The Parapet", "levels": [6], "line": "A 2x2 held by one rook and a straw; Twin optional." },
+        { "run": "revenge-14", "name": "The Vault", "levels": [5], "line": "Same 2x2 trick; Smoke optional." },
+        { "run": "revenge-15", "name": "The Stacks", "levels": [5, 7, 8, 9, 10], "line": "The 2x2 corner room with the straw in the shaft below." },
+        { "run": "revenge-13", "name": "The Colonnade", "levels": [10], "line": "The corner room, straw in the hall." }
+      ],
+      "newRun": {
+        "name": "The Mirror Hall",
+        "pair": ["scarecrow", "knight-hop"],
+        "signature": "A solid wall with windows (gaps a line passes through but no piece stands in) and a king who watches them.",
+        "kit": ["scarecrow", "knight-hop", "aegis", "magnet"],
+        "finale": {
+          "7": "THE WINDOW: hop over, straw in the window line, he flees onto her.",
+          "8": "TWO WINDOWS: the wrong window drives him into the corner she cannot see; the straw goes on the far window.",
+          "9": "STRAW FIRST: a hunter guards the landing; straw first so it charges the straw (action spent), hop next turn into the landing it left; the straw's second turn (T2) is the steer.",
+          "10": "TWICE: two rooms; first steer puts him in the corridor, second straw (T3) drives him out of the second room onto the line she holds from the first. Two enemies a turn, seven moves."
+        }
+      },
+      "risk": "high",
+      "riskNotes": "A second view-state inside pawn-ai touching chooseEnemyActionAgainst, approachMove, guard caution and kingFleeMove (which calls rookieLegalMoves twice); a straw capture must remove the straw and not be credited. Three known interaction hazards: Decoy view, Smoke, Rabies."
+    }
+  ],
+  "engineNotes": {
+    "newStateFields": ["snares: {square, turnsLeft?}[]", "scarecrow?: {square, turnsLeft}", "fixedHazards?: Coord[] (or a fixed flag on authored hazards)"],
+    "newFxKinds": ["snare", "shove", "coup", "scarecrow", "hourglass"],
+    "hooks": {
+      "snare": "stepEnemyTurn after applyAction and after each kingReaction; magnetPullTo landing; coup swap.",
+      "scarecrow": "chooseEnemyActionAgainst, approachMove, kingFleeMove via a view; endTurn tick.",
+      "hourglass": "applyAbilityActivate sets turn to enemy/allies; endTurn daze exemption.",
+      "coup": "pieces swap + relocateStatusMarkers + frozen maps + decoyTarget + kingPen push.",
+      "shove": "hazards edit + boulderTargets self-lock check + Boulder crush branch."
+    },
+    "rewind": "Phase snapshots must include snares and scarecrow so a rewound turn restores them.",
+    "bot": "Add to candidatesForAbility in scripts/run-playtest/bots/shared.ts per the enumeration rules; all resolve through existing targeted/instant paths in applyBotAction, no new action kinds. Measure pairs with the +-joined compound loadout in revenge-core.ts at T1 and at the highest reachable tier."
+  }
+}
