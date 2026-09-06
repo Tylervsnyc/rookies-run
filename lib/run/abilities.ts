@@ -482,11 +482,15 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier <= 2) return 1;
       return 2;
     case 'hourglass':
-      // 1/2/3/3/unlimited — the ladder is pure quantity (2026-09-06 rework).
+      // 1/2/3/4/6 — the ladder is pure quantity (2026-09-06 rework). It stays
+      // FINITE on purpose: uses are the only thing that bounds a card whose
+      // cast does not end the turn, and an unlimited glass with an unlimited
+      // per-turn count is an infinite loop for the player and for the bot.
       if (tier === 1) return 1;
       if (tier === 2) return 2;
-      if (tier <= 4) return 3;
-      return -1;
+      if (tier === 3) return 3;
+      if (tier === 4) return 4;
+      return 6;
     case 'scarecrow':
       // 1/1/2/2/2.
       if (tier <= 2) return 1;
@@ -771,8 +775,8 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Swap the king with any guard standing beside him.';
       return 'Swap the king with a pawn standing beside him.';
     case 'hourglass':
-      if (tier === 5) return 'Turn the glass as often as you like, as often in a turn as you like. Nothing of yours runs out.';
-      if (tier === 4) return 'The enemies take a turn now — twice in a turn if you want it. Nothing of yours runs out.';
+      if (tier === 5) return 'The enemies take a turn now. Six a level, three of them in one turn. Nothing of yours runs out.';
+      if (tier === 4) return 'The enemies take a turn now. Four a level, two of them in one turn. Nothing of yours runs out.';
       if (tier === 3) return 'The enemies take a turn now. Three a level. Nothing of yours runs out.';
       if (tier === 2) return 'The enemies take a turn now. Twice a level. Nothing of yours runs out.';
       return 'The enemies take a turn now. You have not moved, and nothing of yours runs out.';
@@ -974,8 +978,8 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Swap him with any guard beside him. 1/level.';
       return 'Swap him with a pawn beside him. 1/level.';
     case 'hourglass':
-      if (tier === 5) return 'Unlimited glasses, any number a turn.';
-      if (tier === 4) return 'Two glasses in one turn. 3/level.';
+      if (tier === 5) return 'Three glasses in one turn. 6/level.';
+      if (tier === 4) return 'Two glasses in one turn. 4/level.';
       if (tier === 3) return 'Enemies take a turn now. 3/level.';
       if (tier === 2) return 'Enemies take a turn now. 2/level.';
       return 'Enemies take a turn now. 1/level.';
@@ -1191,8 +1195,8 @@ export const UPGRADE_NOTES: Record<
   hourglass: {
     2: 'Two glasses a level',
     3: 'Three glasses a level',
-    4: 'Turn it twice in one turn',
-    5: 'Unlimited glasses, any number a turn',
+    4: 'Four a level, and two in one turn',
+    5: 'Six a level, and three in one turn',
   },
   scarecrow: {
     2: 'Stands 1 turn → 2',
@@ -2769,7 +2773,7 @@ function applyCoup(state: BoardState, target: Coord): BoardState {
 
 /** How many times the glass may be turned within a single Rookie turn. */
 export function hourglassCastsPerTurn(tier: AbilityTier): number {
-  if (tier >= 5) return Infinity;
+  if (tier >= 5) return 3;
   if (tier === 4) return 2;
   return 1;
 }
