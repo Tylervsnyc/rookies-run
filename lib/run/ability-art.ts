@@ -17,6 +17,7 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   snare: 'decoy-1.webp',
   shove: 'boulder-1.webp',
   coup: 'swap-1.webp',
+  hourglass: 'rewind-1.webp',
 };
 
 export function artFile(id: AbilityId): string {

@@ -20,6 +20,7 @@ import {
   bodyguardSpawnSquare,
   boulderTargets,
   canMoveAllyAt,
+  canTurnHourglass,
   controlledAllies,
   controlledAllyLegalMoves,
   convertTargets,
@@ -612,6 +613,11 @@ function candidatesForAbility(
       }
       return out;
     }
+    case 'hourglass':
+      // One candidate. The rollouts run the real pawn-ai inside the
+      // glass-turn — the first card that lets the bot wait without a move.
+      if (canTurnHourglass(state)) out.push({ kind: 'activate-ability', abilityId: 'hourglass' });
+      return out;
   }
   return out;
 }

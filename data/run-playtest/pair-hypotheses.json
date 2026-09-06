@@ -654,6 +654,39 @@
       "rating": 3,
       "mechanism": "Freeze him where he stands, coup him onto a post on her line, take him. Two free actions and a move from anywhere a post has a line, which is nearly everywhere; possibly too strong, let the matrix decide.",
       "confidence": 3
+    },
+    {
+      "a": "hourglass",
+      "b": "poison-dart",
+      "archetype": "free-capture-stun",
+      "rating": 4,
+      "mechanism": "Dart the lock (free), turn the glass twice (T2), it dies, the death stuns him for the coming enemy turn, and she still has her move: onto his line. The Switchback finale compressed into one turn.",
+      "confidence": 4,
+      "note": "Designed 2026-09-06. First read (12 trials, T5 bot): The Briar L4 poison 92% -> pair 100%; Moat L9 / Alley L7 / Briar L5 unchanged (poison alone already solves them); Switchback L7-L8 0% for every loadout while that run is being rebuilt."
+    },
+    {
+      "a": "hourglass",
+      "b": "decoy",
+      "archetype": "free-capture-stun",
+      "rating": 3,
+      "mechanism": "Mark a guard, turn the glass, the court eats it (friendly fire: stun 2, the guard's square vacated), then move onto the line. The Lattice's 'buy the body time' becomes 'buy the stun now'.",
+      "confidence": 3
+    },
+    {
+      "a": "hourglass",
+      "b": "rewind",
+      "archetype": "information",
+      "rating": 3,
+      "mechanism": "Turn the glass, watch what the court does, Rewind it (the snapshot is armed by the glass-turn and moveCount matches), then move knowing their reply. A free look at the enemy's turn.",
+      "confidence": 3
+    },
+    {
+      "a": "hourglass",
+      "b": "rabies-dart",
+      "archetype": "free-capture-stun",
+      "rating": 2,
+      "mechanism": "The bite is the enemy turn; take the bite now while her move is still in hand.",
+      "confidence": 2
     }
   ],
   "antiPairs": [
@@ -796,6 +829,36 @@
       "b": "smoke",
       "reason": "A pair, not an anti (he does not flee after the swap), but Coup + Smoke + anything is a skeleton key; keep apart in kits.",
       "scope": "kit design, not a measured failure"
+    },
+    {
+      "a": "hourglass",
+      "b": "duchess",
+      "reason": "Her 2-4 turn clock burns during a glass-turn (below T4)."
+    },
+    {
+      "a": "hourglass",
+      "b": "dragon",
+      "reason": "Shortest clock in the family; same burn."
+    },
+    {
+      "a": "hourglass",
+      "b": "smoke",
+      "reason": "The glass burns the cover window."
+    },
+    {
+      "a": "hourglass",
+      "b": "become-king",
+      "reason": "Burns a protected enemy turn."
+    },
+    {
+      "a": "hourglass",
+      "b": "bodyguard",
+      "reason": "Burns its clock."
+    },
+    {
+      "a": "hourglass",
+      "b": "convert",
+      "reason": "The daze does not clear on a glass-turn, by design (Tyler's same-turn king kill stays closed), so the pair does nothing extra."
     }
   ]
 }

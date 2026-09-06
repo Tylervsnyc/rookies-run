@@ -1769,6 +1769,35 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
+  if (fx.kind === 'hourglass') {
+    // Sand-coloured wash over the whole board and an hourglass glyph that
+    // flips on Rookie's square: time passes, she has not moved.
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxGlassWash-${k} {
+            0%   { opacity: 0; }
+            30%  { opacity: 0.45; }
+            100% { opacity: 0; }
+          }
+          @keyframes rrFxGlassFlip-${k} {
+            0%   { transform: translate(-50%, -50%) rotate(0deg) scale(0.6); opacity: 0; }
+            30%  { opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotate(180deg) scale(1.4); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(251,191,36,0.35), rgba(217,119,6,0.25))', animation: `rrFxGlassWash-${k} 900ms ease-out forwards` }} />
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '10%', height: '10%', animation: `rrFxGlassFlip-${k} 900ms ease-in-out forwards`, opacity: 0 }}>
+          <svg viewBox="0 0 24 24" width="100%" height="100%">
+            <path d="M6 3h12M6 21h12M8 3c0 5 4 6 4 9s-4 4-4 9M16 3c0 5-4 6-4 9s4 4 4 9" fill="none" stroke="rgba(120,53,15,0.95)" strokeWidth="2.2" strokeLinecap="round" />
+            <path d="M9.5 6.5h5L12 10z" fill="rgba(251,191,36,0.95)" />
+          </svg>
+        </div>
+      </div>
+    );
+  }
+
   if (fx.kind === 'smoke') {
     // Grey puffs bloom out of Rookie's square.
     const k = Math.floor(fx.id);

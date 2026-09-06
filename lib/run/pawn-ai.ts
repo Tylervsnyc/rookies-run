@@ -318,6 +318,7 @@ export function stepAllyTurnReactive(state: BoardState): BoardState {
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
   if (isSmoked(state)) return null; // Smoke: he can't see the threat
+  if (state.glassTurn?.holdKing) return null; // Hourglass T3+: he stands still
   const king = state.pieces.find((p) => p.type === 'king');
   if (!king) return null;
   const kingSq = toSquare(king);
@@ -1076,12 +1077,17 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     // Bodyguard / timed summons dissolve when their turns run out; free-move
     // summons (T5 Squire family) get their once-per-turn move back; a piece
     // stolen by Convert this turn wakes from its daze.
+    // Hourglass: during a glass-turn the daze never clears (a piece stolen
+    // this turn still acts from the player's NEXT real turn) and, at T4+,
+    // summon clocks do not run.
+    const glass = s.glassTurn;
     const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined || a.movedThisTurn || a.dazed)
       ? s.allies
           .map((a) => {
-            const ticked = a.turnsLeft === undefined ? a : { ...a, turnsLeft: a.turnsLeft - 1 };
+            const ticked =
+              a.turnsLeft === undefined || glass?.freezeSummonClocks ? a : { ...a, turnsLeft: a.turnsLeft - 1 };
             const woke = ticked.movedThisTurn ? { ...ticked, movedThisTurn: false } : ticked;
-            return woke.dazed ? { ...woke, dazed: false } : woke;
+            return woke.dazed && !glass ? { ...woke, dazed: false } : woke;
           })
           .filter((a) => a.turnsLeft === undefined || a.turnsLeft > 0)
       : s.allies;
@@ -1093,6 +1099,10 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       allies: nextAllies,
       ...smokePatch,
       squireMovedThisTurn: false,
+      glassTurn: undefined,
+      // One glass per Rookie turn: the flag survives the glass-turn itself
+      // and resets after the enemy phase that follows a real action.
+      hourglassUsedThisTurn: glass ? s.hourglassUsedThisTurn : false,
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,

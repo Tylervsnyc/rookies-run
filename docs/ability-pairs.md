@@ -176,3 +176,10 @@ Anti-pairs: Convert (same guard, two answers; a converted guard is no longer
 an enemy), Magnet T5 (both "move the king one square"), Rabies Dart (eats the
 guard that just became the door), Smoke (a pair, but Coup + Smoke + anything
 is a skeleton key; keep apart in kits).
+
+**Hourglass** — pairs: Poison Dart (dart the lock, glass, glass, it dies
+and stuns him with her move still in hand), Decoy (the court eats the mark
+now), Rewind (turn the glass, watch the reply, undo it, move knowing what
+they do), Rabies Dart (take the bite now). Anti-pairs: Duchess, Dragon,
+Bodyguard (their clocks burn), Smoke and Become King (the glass burns the
+window), Convert (the daze never clears on a glass-turn, by design).

@@ -60,7 +60,8 @@ export type AbilityId =
   // square, move a stone, move the king, pass a turn, fake a Rookie.
   | 'snare'
   | 'shove'
-  | 'coup';
+  | 'coup'
+  | 'hourglass';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -314,6 +315,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Royal',
     description: "Trade the king's square with one of his own guards. His man takes the throne. He takes the post.",
   },
+  hourglass: {
+    id: 'hourglass',
+    name: 'Hourglass',
+    activation: 'instant',
+    typeLine: 'Instant · Time',
+    description: 'Turn the glass. The enemies take a turn now. You have not moved.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -465,6 +473,11 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/2/2/2.
       if (tier <= 2) return 1;
       return 2;
+    case 'hourglass':
+      // 1/2/2/2/3.
+      if (tier === 1) return 1;
+      if (tier <= 4) return 2;
+      return 3;
   }
 }
 
@@ -548,6 +561,7 @@ const HOW: Record<AbilityId, string> = {
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
   shove: 'Tap card, then tap a stone beside you. It rolls one square away from you.',
   coup: 'Tap card, then tap a guard near the king. They trade squares.',
+  hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -742,6 +756,11 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Swap the king with any guard in his room or within 2 of him.';
       if (tier === 2) return 'Swap the king with any guard standing beside him.';
       return 'Swap the king with a pawn standing beside him.';
+    case 'hourglass':
+      if (tier === 5) return 'Turn the glass as often as you like. The king stands still each time.';
+      if (tier === 4) return "The enemies take a turn now, the king stands still, and your summons' clocks do not run.";
+      if (tier === 3) return 'The enemies take a turn now, and the king stands still through it.';
+      return 'The enemies take a turn now. You have not moved.';
   }
 }
 
@@ -933,6 +952,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Swap him with a guard within 2. 2/level.';
       if (tier === 2) return 'Swap him with any guard beside him. 1/level.';
       return 'Swap him with a pawn beside him. 1/level.';
+    case 'hourglass':
+      if (tier === 5) return 'Glass any time; king held. 3/level.';
+      if (tier === 4) return 'Glass; king held; summons keep. 2/level.';
+      if (tier === 3) return 'Glass; the king stands still. 2/level.';
+      if (tier === 2) return 'Enemies take a turn now. 2/level.';
+      return 'Enemies take a turn now. 1/level.';
   }
 }
 
@@ -1135,6 +1160,12 @@ export const UPGRADE_NOTES: Record<
     3: 'Reach: his whole room, or 2 squares',
     4: 'The swap stuns him for a turn',
     5: 'Any enemy, anywhere',
+  },
+  hourglass: {
+    2: '',
+    3: 'The king is held for the glass-turn',
+    4: 'Your summons do not age during it',
+    5: 'Turn it as often as you like each turn',
   },
 };
 
@@ -1487,6 +1518,9 @@ export function applyAbilityActivate(
   }
   if (abilityId === 'bodyguard') {
     return applyBodyguard(state);
+  }
+  if (abilityId === 'hourglass') {
+    return applyHourglass(state);
   }
 
   // Targeted abilities pick an enemy as their second tap — except Boulder
@@ -2393,6 +2427,65 @@ function applyCoup(state: BoardState, target: Coord): BoardState {
 }
 
 // ---------------------------------------------------------------------------
+// Hourglass (2026-09-06) — time. Turn the glass: the enemies take a full
+// turn NOW, and Rookie's move is still in hand. moveCount does not tick.
+// Everything that ticks at the end of an enemy turn ticks (freeze, poison,
+// rabies, decoy, smoke, king stun, king-form protection, summon clocks
+// below T4) — EXCEPT the daze on a freshly converted piece, which only
+// clears after a REAL Rookie action (convert + hourglass must not reopen
+// the same-turn king kill Tyler closed on 2026-09-06). One cast per Rookie
+// turn below T5. Design: docs/new-abilities-2026-09-06.md §2.4.
+// ---------------------------------------------------------------------------
+
+/** T3+: the king stands still through the glass-turn. */
+export function hourglassHoldsKing(tier: AbilityTier): boolean {
+  return tier >= 3;
+}
+
+/** T4+: summon clocks do not run during the glass-turn. */
+export function hourglassFreezesSummonClocks(tier: AbilityTier): boolean {
+  return tier >= 4;
+}
+
+/** True when the glass may be turned right now. */
+export function canTurnHourglass(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'hourglass');
+  if (!owned || owned.usesLeftThisLevel === 0) return false;
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.activeAbility || state.pendingOffer) return false;
+  if (state.hourglassUsedThisTurn && owned.tier < 5) return false;
+  return true;
+}
+
+function applyHourglass(state: BoardState): BoardState {
+  if (!canTurnHourglass(state)) return state;
+  const owned = state.abilities.find((a) => a.id === 'hourglass')!;
+  const rookieSq = toSquare(state.rookie);
+  const allyPhase = (state.allies ?? []).some((a) => !isControlledAlly(a));
+  return {
+    ...state,
+    turn: allyPhase ? 'allies' : 'enemy',
+    allyTurnIndex: 0,
+    enemyMovedSquares: [],
+    enemyVacatedSquares: [],
+    glassTurn: {
+      holdKing: hourglassHoldsKing(owned.tier),
+      freezeSummonClocks: hourglassFreezesSummonClocks(owned.tier),
+    },
+    hourglassUsedThisTurn: true,
+    abilities: decrementUse(state.abilities, 'hourglass'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'hourglass',
+      from: rookieSq,
+      to: rookieSq,
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Smoke — Rookie is invisible for N enemy turns.
 // ---------------------------------------------------------------------------
 
@@ -2605,6 +2698,9 @@ function applyRewind(state: BoardState): BoardState {
       : {}),
     activeAbility: null,
     cancellableActivation: undefined,
+    // A snapshot taken at the start of a glass-turn carries the Hourglass
+    // flag; the restored board is Rookie's turn again, so drop it.
+    glassTurn: undefined,
     // No chaining: the cast clears the stack; the next enemy phase re-arms it.
     enemyRewindStack: [],
     // Carry the CURRENT transient fx ids so restoring an older state can't

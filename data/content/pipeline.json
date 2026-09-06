@@ -913,6 +913,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Trade the king's square with one of his own guards (free action): his man takes the throne, he takes the post. T1 a pawn beside him; T2 any guard beside him; T3-T4 any guard in his room or within 2; T5 any enemy on the board. T4+ the swap stuns him a turn. Poison, rabies, frozen and decoy markers ride with their pieces; his pen gains the post square so he is never outside the rules, but his throne is now plugged by his own guard. Guards stand on posts because posts have lines to them; the second beat is a line he cannot step off, a stone on his step back, a snare, or a body's cover. Design: docs/new-abilities-2026-09-06.md."
+    },
+    {
+      "id": "hourglass",
+      "kind": "ability",
+      "name": "Hourglass",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Turn the glass (free action): the enemies take a full turn now and Rookie's move is still in hand. The clock does not tick. Everything that ticks at the end of an enemy turn ticks (freeze, poison, rabies, decoy, smoke, king stun, summon clocks) except the daze on a freshly converted piece, so convert + hourglass is not a same-turn king kill. One cast per turn below T5. T3+ the king stands still through the glass-turn; T4+ your summons' clocks do not run during it; T5 turn it as often as you like. The card that lets you wait without spending a body-move: a poison death lands and stuns him with your move to come, a decoy gets eaten now, a marching pawn walks off its post. Design: docs/new-abilities-2026-09-06.md."
     }
   ]
 }
