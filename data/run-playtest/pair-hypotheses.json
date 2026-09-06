@@ -5,7 +5,7 @@
     "TEMPO FACT that drives most of this list: almost every ability is a FREE action. Summoning, Swap, Sacrifice, Boulder, all three darts, Convert, Magnet, Smoke, Rewind, Aegis and the transforms all resolve without ending the turn. The only things that end the turn are Rookie moving and a summon moving (below T5). So the scarce resource is BODY-MOVES, not casts: a pair is strong when it converts free casts into a capture, a stun, or a relocation that would otherwise have cost a move.",
     "KING FACT: any capture credited to Rookie's side (her move, a summon's move, a Boulder crush on a pawn, a poison death, friendly fire on a Decoy, a Sacrifice blast) sets kingStunTurns, and a stunned king cannot flee. The king flees only from Rookie's CURRENT form, from controlled summons, and (nightmare) from ally cover; he never leaves his pen and never steps onto a hazard, an ally-covered square, or a square Rookie's form attacks.",
     "SELF-BLOCK FACT: Rookie's own allies and her own boulders block her rays exactly like enemies do (lib/run/movement.ts slideMoves breaks on isAlly and isHazard). Most anti-pairs below are a version of this.",
-    "2026-09-06 CONVERT REWORK (Tyler): a converted piece is now a CONTROLLED SUMMON (source 'convert' is in CONTROLLED_SOURCES) — the player taps it to move it, it counts as the one body-move per turn, its capture stuns the king, it may take the king, Sacrifice/Swap target it, and it never moves on its own. Consequences for this list: convert+sacrifice moved from antiPairs to pairs; convert+swap no longer needs Swap T4+ (any tier of Swap trades with a controlled summon); 'a converted pawn walks off with its cover' is no longer a failure mode; convert now counts as a BODY for the 'two summons starve each other' rule. DAZE (same day, Tyler: 'some levels too easy where you can just capture the king on the first move'): a stolen piece cannot move or capture on the turn it is stolen — it acts from the player's next turn. Its cover still blocks the king's flight on the enemy turn; Sacrifice/Swap may still target it at once."
+    "2026-09-06 CONVERT REWORK (Tyler): a converted piece is now a CONTROLLED SUMMON (source 'convert' is in CONTROLLED_SOURCES) \u2014 the player taps it to move it, it counts as the one body-move per turn, its capture stuns the king, it may take the king, Sacrifice/Swap target it, and it never moves on its own. Consequences for this list: convert+sacrifice moved from antiPairs to pairs; convert+swap no longer needs Swap T4+ (any tier of Swap trades with a controlled summon); 'a converted pawn walks off with its cover' is no longer a failure mode; convert now counts as a BODY for the 'two summons starve each other' rule. DAZE (same day, Tyler: 'some levels too easy where you can just capture the king on the first move'): a stolen piece cannot move or capture on the turn it is stolen \u2014 it acts from the player's next turn. Its cover still blocks the king's flight on the enemy turn; Sacrifice/Swap may still target it at once."
   ],
   "primitives": {
     "bishop-step": [
@@ -178,7 +178,7 @@
       "a": "bishop-squire",
       "b": "swap",
       "archetype": "body-then-become",
-      "mechanism": "The bishop crosses on diagonals through pillared terrain a rook can never pass, and Swap converts his position into Rookie's position with her turn intact — the archetype Tyler named.",
+      "mechanism": "The bishop crosses on diagonals through pillared terrain a rook can never pass, and Swap converts his position into Rookie's position with her turn intact \u2014 the archetype Tyler named.",
       "confidence": 5,
       "geometry": "Pillar or colonnade walls that block every file and rank into the room but leave a diagonal open; the king on the colour the bishop travels, or a key only reachable diagonally.",
       "tierNote": "Colonnade L10 measured 71% with this pair."
@@ -187,7 +187,7 @@
       "a": "vanguard",
       "b": "sacrifice",
       "archetype": "parachute-the-bomb",
-      "mechanism": "Both the drop and the detonation are free actions, so a knight materialises inside the guard cluster and explodes in the same turn — every enemy on its eight knight-squares dies (plus the ring at T3+), the king is stunned 2-3 turns, and Rookie has not moved yet.",
+      "mechanism": "Both the drop and the detonation are free actions, so a knight materialises inside the guard cluster and explodes in the same turn \u2014 every enemy on its eight knight-squares dies (plus the ring at T3+), the king is stunned 2-3 turns, and Rookie has not moved yet.",
       "confidence": 5,
       "geometry": "A tight pawn shell or key cluster around the pen, three or more enemies within a knight's reach of one free square, with a hard move limit that makes taking them one at a time impossible."
     },
@@ -211,7 +211,7 @@
       "a": "duchess",
       "b": "swap",
       "archetype": "body-then-become",
-      "mechanism": "The Duchess reaches deep on queen lines but her clock is 2-4 turns; Swap both winds it +2 and hands Rookie the deep square while the queen inherits Rookie's safe one — reach and survivability that neither card has alone.",
+      "mechanism": "The Duchess reaches deep on queen lines but her clock is 2-4 turns; Swap both winds it +2 and hands Rookie the deep square while the queen inherits Rookie's safe one \u2014 reach and survivability that neither card has alone.",
       "confidence": 4,
       "geometry": "A long open diagonal or file into the pen that a rook cannot use, guarded well enough that a body left there dies before it gets a second move."
     },
@@ -227,7 +227,7 @@
       "a": "page",
       "b": "swap",
       "archetype": "body-then-become",
-      "mechanism": "The Page is the only permanent summon and the only one that promotes; Swap lets Rookie hand him her safe square and take his advanced one, and later swap onto the promoted queen — a slow ladder up the board that costs no Rookie moves.",
+      "mechanism": "The Page is the only permanent summon and the only one that promotes; Swap lets Rookie hand him her safe square and take his advanced one, and later swap onto the promoted queen \u2014 a slow ladder up the board that costs no Rookie moves.",
       "confidence": 4,
       "geometry": "A long approach with a defended near side: somewhere safe behind, a promotion lane that a lone rook cannot walk without being taken."
     },
@@ -251,7 +251,7 @@
       "a": "boulder",
       "b": "knight-hop",
       "archetype": "cage-and-take",
-      "mechanism": "Boulder walls squares for everyone, including Rookie's own rays — except the knight, the one form that jumps over hazards, so the pair lets her brick up the pen's exits and the guards' approach lanes without shutting her own route.",
+      "mechanism": "Boulder walls squares for everyone, including Rookie's own rays \u2014 except the knight, the one form that jumps over hazards, so the pair lets her brick up the pen's exits and the guards' approach lanes without shutting her own route.",
       "confidence": 4,
       "geometry": "A pen with one or two exits and a guard corridor, where the winning square is a knight-jump from a wall Rookie can build."
     },
@@ -275,7 +275,7 @@
       "a": "convert",
       "b": "swap",
       "archetype": "body-then-become",
-      "mechanism": "At Swap T4+ any rainbow ally is a valid partner, so Convert can make a body out of an enemy standing anywhere on the board and Swap teleports Rookie into it — unlimited range, no summon charge, and the guard is removed in the same beat.",
+      "mechanism": "At Swap T4+ any rainbow ally is a valid partner, so Convert can make a body out of an enemy standing anywhere on the board and Swap teleports Rookie into it \u2014 unlimited range, no summon charge, and the guard is removed in the same beat.",
       "confidence": 4,
       "geometry": "A far room with an enemy pawn or minor inside it and no line in; only works with Swap at T4 or higher (T1-T3 Swap sees controlled summons only).",
       "tierNote": "Since 2026-09-06 a converted piece is a controlled summon, so Swap trades with it at ANY tier (the old 'requires swap tier >= 4' gate is gone). Convert tier still gates which piece types can be stolen."
@@ -308,7 +308,7 @@
       "a": "freeze-ray",
       "b": "vanguard",
       "archetype": "pin-and-parachute",
-      "mechanism": "Freeze pins the king in place for tier+1 turns and Vanguard drops a body that may take him inside that window — the freeze alone cannot reach him and the knight alone cannot catch a fleeing king.",
+      "mechanism": "Freeze pins the king in place for tier+1 turns and Vanguard drops a body that may take him inside that window \u2014 the freeze alone cannot reach him and the knight alone cannot catch a fleeing king.",
       "confidence": 4,
       "geometry": "A distant pen: the king 4-5 squares from Rookie behind guards, reachable by a drop but not by her lines."
     },
@@ -324,7 +324,7 @@
       "a": "poison-dart",
       "b": "bishop-squire",
       "archetype": "free-capture-stun",
-      "mechanism": "Poison kills the key defender on a timer and the death is credited to Rookie, so the king is stunned on exactly the turn the bishop arrives — the pair times a stun to a body that needs one turn of stillness to land.",
+      "mechanism": "Poison kills the key defender on a timer and the death is credited to Rookie, so the king is stunned on exactly the turn the bishop arrives \u2014 the pair times a stun to a body that needs one turn of stillness to land.",
       "confidence": 4,
       "geometry": "A defended key on the king's diagonal: capturing it directly loses the piece to the defender, so it has to die on its own."
     },
@@ -340,7 +340,7 @@
       "a": "magnet",
       "b": "bishop-step",
       "archetype": "new-lines-for-line-tools",
-      "mechanism": "Magnet's grab lines are Rookie's current form's lines (magnetDirs reads state.form), so in bishop form she can drag a guard along a diagonal — a pull that is simply illegal in rook form.",
+      "mechanism": "Magnet's grab lines are Rookie's current form's lines (magnetDirs reads state.form), so in bishop form she can drag a guard along a diagonal \u2014 a pull that is simply illegal in rook form.",
       "confidence": 4,
       "geometry": "A guard holding the key square that is only ever on a diagonal from any square Rookie can safely stand on."
     },
@@ -389,7 +389,7 @@
       "a": "aegis",
       "b": "magnet",
       "archetype": "tank-the-recapture",
-      "mechanism": "Magnet pulls a defended guard off its chain to a square next to Rookie (it is not auto-captured), and Aegis covers the one reply she eats for taking it — the pair converts an untouchable defended piece into a free capture-stun.",
+      "mechanism": "Magnet pulls a defended guard off its chain to a square next to Rookie (it is not auto-captured), and Aegis covers the one reply she eats for taking it \u2014 the pair converts an untouchable defended piece into a free capture-stun.",
       "confidence": 3,
       "geometry": "Defended pawn chains where every capture is answered."
     },
@@ -397,7 +397,7 @@
       "a": "rewind",
       "b": "dragon",
       "archetype": "insurance-on-a-one-charge-body",
-      "mechanism": "Rewind restores the enemy side to the start of their last turn, which brings back an ally they just ate — so the single-charge Dragon can be replayed after a mistake instead of ending the run, and at T3+ the rewind also stuns the king.",
+      "mechanism": "Rewind restores the enemy side to the start of their last turn, which brings back an ally they just ate \u2014 so the single-charge Dragon can be replayed after a mistake instead of ending the run, and at T3+ the rewind also stuns the king.",
       "confidence": 4,
       "geometry": "High-guard-density levels where a summon dropped in range dies immediately to a reply the player cannot see coming."
     },
@@ -430,7 +430,7 @@
       "a": "become-king",
       "b": "boulder",
       "archetype": "untouchable-engineer",
-      "mechanism": "Boulder needs no movement and King form needs no safety, so Rookie can stand in the middle of the guard set, immune, and spend turns bricking the pen shut — the only real cost is the move limit.",
+      "mechanism": "Boulder needs no movement and King form needs no safety, so Rookie can stand in the middle of the guard set, immune, and spend turns bricking the pen shut \u2014 the only real cost is the move limit.",
       "confidence": 4,
       "geometry": "A pen with several exits on a level with a generous move budget and heavy guard coverage."
     },
@@ -454,7 +454,7 @@
       "a": "decoy",
       "b": "duchess",
       "archetype": "buy-the-body-time",
-      "mechanism": "The army's capture priority is the mark, not the ally, so a Decoy laid the same turn the queen appears buys her the two or three turns her clock is worth — and any friendly fire on the mark is itself a capture-stun on the king.",
+      "mechanism": "The army's capture priority is the mark, not the ally, so a Decoy laid the same turn the queen appears buys her the two or three turns her clock is worth \u2014 and any friendly fire on the mark is itself a capture-stun on the king.",
       "confidence": 4,
       "geometry": "Several enemies able to reach the summon's square immediately, with an expendable enemy standing among them."
     },
@@ -526,7 +526,7 @@
       "a": "twin",
       "b": "sacrifice",
       "archetype": "parachute-the-bomb",
-      "mechanism": "A rook's attack set is a whole rank and file, so detonating the Twin clears both lines at once — the widest non-queen blast, and the strongest way to open a corridor into the pen in one free action.",
+      "mechanism": "A rook's attack set is a whole rank and file, so detonating the Twin clears both lines at once \u2014 the widest non-queen blast, and the strongest way to open a corridor into the pen in one free action.",
       "confidence": 3,
       "geometry": "Guards strung along one rank and one file crossing at a square adjacent to Rookie."
     },
@@ -576,7 +576,7 @@
       "archetype": "parachute-the-bomb",
       "rating": 3,
       "mechanism": "Since the 2026-09-06 rework a converted piece is a CONTROLLED summon, so Sacrifice may detonate it. Steal a guard standing inside the court (unlimited range, free) and blow it up where it stands: the blast is the stolen piece's own attack set (a pawn's two forward diagonals, a knight's eight squares, a queen's rays) plus the ring at T3+, and every capture in the blast stuns the king. Was listed as ILLEGAL before the rework (sacrificeTargets only read controlled summons and a converted piece was an AI ally). Detonation is not gated by the daze (Sacrifice targets the body, it does not move it), so steal-then-blow-up stays a same-turn play.",
-      "tierNote": "Convert T1 steals pawns only — a pawn blast is two squares. Real value from Convert T2+ (minors) or Sacrifice T3+ (ring).",
+      "tierNote": "Convert T1 steals pawns only \u2014 a pawn blast is two squares. Real value from Convert T2+ (minors) or Sacrifice T3+ (ring).",
       "note": "Untested in the harness as of 2026-09-06; added when convert+sacrifice moved off antiPairs."
     },
     {
@@ -734,7 +734,7 @@
     {
       "a": "convert",
       "b": "poison-dart",
-      "reason": "Converting a piece calls clearStatusOnSquare, which wipes the poison marker (a stolen piece is cured). Poisoning a piece and then converting it heals it and wastes both charges; they are also two ways of solving the same 'remove one guard' problem. (2026-09-06: still an anti-pair after the Convert rework — converted pieces are now controlled summons, which changed convert+sacrifice, not this.)"
+      "reason": "Converting a piece calls clearStatusOnSquare, which wipes the poison marker (a stolen piece is cured). Poisoning a piece and then converting it heals it and wastes both charges; they are also two ways of solving the same 'remove one guard' problem. (2026-09-06: still an anti-pair after the Convert rework \u2014 converted pieces are now controlled summons, which changed convert+sacrifice, not this.)"
     },
     {
       "a": "bishop-step",
@@ -774,7 +774,7 @@
     {
       "a": "page",
       "b": "sacrifice",
-      "reason": "A pawn's attack set is two squares, so detonating the Page is the smallest blast in the family, and he is the only permanent summon — spending him is strictly worse than spending any other body."
+      "reason": "A pawn's attack set is two squares, so detonating the Page is the smallest blast in the family, and he is the only permanent summon \u2014 spending him is strictly worse than spending any other body."
     },
     {
       "a": "rabies-dart",
@@ -791,7 +791,7 @@
     {
       "a": "knight-hop",
       "b": "magnet",
-      "reason": "Magnet's pull lines fall back to rook directions in knight form (magnetDirs has no knight case), so the transform gives Magnet nothing — unlike bishop or queen form, which unlock new pull directions."
+      "reason": "Magnet's pull lines fall back to rook directions in knight form (magnetDirs has no knight case), so the transform gives Magnet nothing \u2014 unlike bishop or queen form, which unlock new pull directions."
     },
     {
       "a": "snare",
@@ -909,6 +909,13 @@
       "a": "scarecrow",
       "b": "become-king",
       "reason": "The view runs on the straw's form, so her royal aura is not read by the court while the straw stands."
+    },
+    {
+      "a": "hourglass",
+      "b": "snare",
+      "archetype": "anti-pair (measured 2026-09-06)",
+      "reason": "Snare is a free action and the king's flee already fires on the enemy phase Rookie's own threatening move buys, so arm-and-step is ONE turn and the glass buys a phase she got free. The glass cannot extend a hold either: springSnaresAt sets frozenTurnsLeft = holdTurns + 1 and endTurn decrements at once, so turning the glass after a spring BURNS one of the two granted moves. And from T3 up, hourglassHoldsKing makes kingReaction return null during the glass, deleting the one line the pair wanted (he walks into the trap on the glass turn). Built and measured as The Hearth (revenge-31): the pair reads at or below snare alone on every level (L9 72 alone vs 53 paired, L10 44 vs 38).",
+      "confidence": 5
     }
   ]
 }
