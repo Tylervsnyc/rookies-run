@@ -1,75 +1,82 @@
 /**
  * revenge-19 — THE CLIFF. Built 2026-09-05 for the signature pair
+ * CONVERT + SUMMON-KNIGHT (the Squire); redesigned 2026-09-06 for the
+ * controllable Convert.
  *
- * ===== 2026-09-06 CONVERT REWORK — THE GATE IS BROKEN ON L7-L8 =====
- * Tyler: "they need to be controllable summons." A converted piece is now a
- * CONTROLLED SUMMON (source 'convert' is in CONTROLLED_SOURCES): the player
- * taps it to move it, it may TAKE THE KING, and it never walks on its own.
- * Same day, Tyler: "some levels too easy where you can just capture the
- * king on the first move" -> a stolen piece is DAZED the turn it is stolen
- * (no move / capture until the player's next turn; its cover still cuts
- * off his flight). Two premises below are therefore stale: "the ally
- * cannot take him" and "the converted pawn cannot be moved / walks off".
- * Re-measured WITH the daze, same matrix (Normal, T5 bot, T1 cards; L1-L6
- * 16 trials --jobs=6, L7-L10 32 trials --jobs=1 serial):
- *          none convert squire aegis magnet  convert+squire
- *   L1-L2  100%   100%   100%   100%   100%       100%
- *   L3       0%   100%   100%     0%     0%       100%
- *   L4       0%   100%   100%     0%     0%       100%
- *   L5       0%     6%    56%    25%     0%       100%
- *   L6       0%     0%    19%     0%     6%        94%
- *   L7       0%   100%     0%     0%     0%       100%
- *   L8       0%   100%     0%     0%     0%       100%
- *   L9       0%     0%     0%     0%     0%        88%
- *   L10      0%     0%     0%     0%     0%        75%
- * (Without the daze, convert-alone also read 100% on L5/L6; the daze fixed
- * those two but not the finale.) WHY L7/L8 fall: the guard a7 (L8: h7)
- * stands diagonally UNDER the king's square, so once stolen it attacks b8
- * (g8). The daze only delays the strike one turn — he cannot step off (the
- * other pen square is covered by the other guard) and nothing of his can
- * take a pawn standing on stone-backed a7 — so Convert solos L7/L8 with a
- * move to spare. L9/L10 hold because the guard there (a6 / h6) sits two
- * ranks below the pen with stone ahead: it can only cover, never strike.
- * Convert also solos L3-L4 now (a stolen pawn is a body that walks).
- * VERDICT: L9/L10 still meet the combo gate (singles 0%, pair 75-88%);
- * L7/L8 do not. Not redesigned in this task — demoted testing -> built in
- * the pipeline (scripts/pipeline.ts stage revenge-19 built). Fix direction
- * for whoever picks it up: the stolen guard must not attack a pen square
- * (put it two ranks below the pen with stone ahead, like L9/L10).
+ * ===== 2026-09-06 REDESIGN FOR CONTROLLABLE CONVERT =====
+ * Convert changed twice on 2026-09-06 (commits 3b0961b, 2c4e5a2): a stolen
+ * piece is now a CONTROLLED SUMMON — tap it to move it (that is the one
+ * body-move of the turn), it moves as its type (a pawn walks toward rank 8
+ * and captures diagonally forward), it MAY take the king, and it is DAZED
+ * for the turn it is stolen (no move / capture until your next turn; its
+ * cover still cuts the king's flight). Under that rule the v1 finale broke:
+ * the guard on a7 (L8: h7) stood diagonally UNDER the king's square, so
+ * once stolen it attacked him, the daze only delayed the strike a turn, and
+ * he could not step off — Convert alone read 100% on L3, L7 and L8.
+ *
+ * TWO ENGINE FACTS THAT SHAPE EVERY LEVEL BELOW (read from the L3 trace and
+ * lib/run/abilities.ts, not from the card text):
+ *   (P) A stolen pawn PROMOTES to a controlled QUEEN on rank 8 (the trace:
+ *       `pe7 -> qe8`, then Qxd7). So every stealable pawn must have stone,
+ *       the king, or another piece ahead of it, and no enemy may stand on a
+ *       rank-8 square diagonally in front of it (a pawn capture promotes
+ *       too). This is what actually solo'd L3: the crown pawns marched down,
+ *       got stolen, walked back up, and queened.
+ *   (M) Enemy pawns MARCH (toward rank 1) whenever no hunter has a closer
+ *       move — and with two enemies a turn the second action is nearly
+ *       always a pawn push. Every pawn that is part of a lock stands on
+ *       stone (or on the pen, which pawns never advance into).
+ *
+ * THREE MORE FACTS, learned building this (each one killed a draft):
+ *   (S) ANY same-turn capture-stun replaces the daze. A guard standing
+ *       diagonally UNDER the king is a one-turn kill for Convert plus any
+ *       stun — Rookie taking a knight, the Squire eating a queen that
+ *       walked up to her. Hunters always walk into the Squire's reach, so a
+ *       finale can never have a stealable pawn attacking his square.
+ *   (H) The T5 bot finds two body-moves after the free actions (steal +
+ *       summon are free). Walk-then-strike lines (steal, walk, Squire,
+ *       kill) read 13-19% however good the geometry; "self-plug" lines
+ *       (walk twice into a recapture) read 0%. Every finale line below is
+ *       one Squire jump plus one strike.
+ *   (Q) A queen is the only hunter a rook can never take (she attacks back
+ *       along every line she is attacked on, and captures first). Knights
+ *       and bishops are free capture-stuns — fine where the Squire has to
+ *       strike anyway, fatal where a stun alone would finish (fact S).
+ *
+ * THE FOUR FINALE DECISIONS (rubric "One line, four times"): the same pair,
+ * a different Convert target and a different Squire job on every level.
+ *   L7  STEAL THE CAGE. The guard b7 stands BESIDE the king on b8: stolen,
+ *       its cover is a8 — his only flight — and it can never attack b8
+ *       itself. It also watched the post c6; steal it and the Squire lands
+ *       there and takes him. Convert = the cage, Squire = the blade.
+ *   L8  STEAL THE DECOY. The only reachable post (e7) holds a boxed bishop
+ *       whose recapturer is a frozen knight on c8 — nothing Convert can
+ *       steal. Its one jump is onto its own pawn on b6, on the far side of
+ *       the board. Steal that pawn and the knight must eat it, leaving e7
+ *       unguarded: Squire x e7 is a stun with g8 under attack. Convert's
+ *       target has nothing to do with the king; it pulls the guard off.
+ *   L9  STEAL THE ANSWER, NOT THE CAGE. Three stealable pawns around a8/b7:
+ *       a6 (its cover is b7 — the L7 lesson, and here a TRAP), a7 (the
+ *       recapturer of the post b6, where a boxed bishop stands) and the
+ *       crown c8 (inert). Steal a6 and the Squire's capture on b6 is
+ *       answered by a7; steal a7 and Squire x b6 is a stun with a8 under
+ *       attack — a stunned king is a dead king.
+ *   L10 STEAL THE BAIT. The post b6 holds a pawn; its recapturer is a
+ *       knight on d7 boxed by stone on every other jump, so the L9 answer
+ *       is gone. Steal the post pawn: it is dazed where it stands, the
+ *       knight eats it and now STANDS on the post, undefended. Squire x b6
+ *       that very turn (a turn later the knight jumps away) is the stun
+ *       and the threat. The stolen piece is the key that opens the pen by
+ *       being taken.
+ *   Convert's target moves from the pawn beside him (L7) to a pawn far
+ *   from him (L8) to the pawn that would answer the Squire (L9) to the
+ *   pawn the Squire would otherwise take itself (L10); the Squire's job
+ *   moves from an empty post to three different captures.
+ *
+ * L3 FIX: the crown pawns c8/e8 stand on stone (c7/e7) so they never march;
+ * a stolen rank-8 pawn is inert (no forward square, nothing to capture), so
+ * the level stays the Squire's teaching level.
  * ================================================================
- *
- * CONVERT + SUMMON-KNIGHT (the Squire). The pair was not on anyone's list —
- * the discovery harness found it on a generated colonnade (see
- * data/run-playtest/combo-library/convert+summon-knight/), where it read 75%
- * while Convert alone and the Squire alone both read 0%. This run is that
- * accident turned into a design.
- *
- * THE MECHANISM (read from lib/run/abilities.ts + pawn-ai.ts, then verified
- * by hand-playing the line through the engine).
- *   - The Squire is the only body in the kit that can TAKE the king
- *     (controlledAllyLegalMoves may land on him; AI allies never may) and
- *     the only body that jumps terrain. But the king FEARS him: a fleeing
- *     king sidesteps any square a controlled summon attacks
- *     (kingFleeMove -> controlledThreatensSquare), so a knight threat on a
- *     two-square pen is always answered by a step. Alone he chases forever.
- *   - Convert is a FREE action with UNLIMITED range that flips one enemy
- *     into a rainbow ally. The ally is not controlled (Sacrifice cannot
- *     detonate it; it walks on its own), but the fleeing king refuses to
- *     step onto any square an ally attacks (kingFleeMove: `allyCover`), and
- *     a pawn's ally cover is the two squares diagonally ABOVE it. Flip the
- *     pawn standing under his pen and his own guard becomes the bars of his
- *     cage.
- *   - Neither half finishes alone. The ally cannot take him and the rook
- *     cannot reach him; the knight can reach him but he steps away. Flip the
- *     guard so he cannot step, then the knight's threat is a kill. The flip
- *     does double duty: the same pawn that watched the knight's landing
- *     squares (an enemy pawn attacks the two squares diagonally BELOW it)
- *     stops watching them, so Convert both cages the king and opens the
- *     post the Squire needs. Cage-and-take, with his own man as the cage.
- *   - Constraints honoured: Convert clears status on the square (no poison
- *     in the kit), the converted piece is not a summon (no sacrifice), one
- *     body moves per turn below T5, and Convert T1 flips PAWNS only — every
- *     convert target in the run is a pawn.
  *
  * CONSTANT SIGNATURE — THE CLIFF. Every level draws ONE DIAGONAL OF STONE
  * across the board (a2-b3-c4-d5-e6-f7-g8, its mirror h2-g3-f4-e5-d6-c7-b8,
@@ -87,125 +94,124 @@
  * the king dodges a lone knight for as long as the clock runs — until his
  * own guard is turned.
  *
- * WHY A LONE KNIGHT NEVER WINS THE FINALE (the geometry that makes the pair
- * necessary). Write d = rank - file. The cliff is d = k, the lowland d < k,
- * and a knight jump changes d by +-1 or +-3.
- *   1. The pen must not be spawn-adjacent to a post. A Squire appears next
- *      to Rookie and may move the same turn, so a post one square from a
- *      lowland square is an instant kill (L4 v1 read exactly that, and Vault
- *      L7 v1 before it). No lowland square attacks a pen square with
- *      d >= k+3, and no plateau square adjacent to the lowland (d = k+1)
- *      attacks one with d = k+3 or d >= k+5 — so the pens are a8/b8 (d = 7,
- *      6 on the k=1 cliff) and a8/b7 (7, 5 on the k=2 terrace), plus their
- *      mirrors. A Squire has to LAND on a post and give the king an enemy
- *      turn to answer.
- *   2. Every post is watched by a guard pawn while the guard is his (b7
- *      watches c6; a6 watches b6; on L7/L8 the other posts are stone). A
- *      knight that lands there is eaten before it strikes.
- *   3. No CAPTURABLE piece stands on a post (a knight capture stuns the
- *      king, and a stunned king under a knight's attack is dead), and no
- *      mobile piece can wander onto one (L6 v3: a bishop stepped onto d7 and
- *      the Squire took it there for a capture-stun kill).
- *   4. The convert target stands where it cannot MARCH and, once flipped,
- *      cannot ADVANCE: stone beneath it and the king (or stone) above it.
- *      Enemy pawns walk the moment no hunter can approach — with two enemies
- *      a turn the second action is nearly always a pawn push — and an ally
- *      pawn with an empty square ahead walks too, taking its cover with it
- *      (L9 v1: the flipped a6 stepped to a7 and the king walked out).
- *   With the guard flipped, 2 and 1 invert: the post opens and the pen's
- *   second square is ally-covered. That is the whole run.
+ * THE MECHANISM.
+ *   - The Squire is a body that jumps terrain and may take the king, but
+ *     the king FEARS him (kingFleeMove -> controlledThreatensSquare): a
+ *     knight threat on a two-square pen is always answered by a step, so
+ *     alone he chases forever. He wins only when the second pen square is
+ *     denied — ally-covered, ally-occupied, enemy-occupied — or when he
+ *     lands with a capture (stun) and nobody recaptures.
+ *   - Convert is a FREE action with UNLIMITED range that turns one pawn (T1)
+ *     into a controlled body inside his court. Its cover (the two squares
+ *     diagonally above it) is a square the king refuses to step onto; after
+ *     the daze it walks, captures diagonally forward, and can take him.
+ *   - Rules honoured: Convert clears status (no poison in the kit), one body
+ *     moves per turn below T5, Convert T1 flips PAWNS only (every target in
+ *     the run is a pawn), and the daze means a stolen pawn never strikes
+ *     the turn it is taken.
+ *
+ * WHY A LONE KNIGHT NEVER WINS THE FINALE. Write d = rank - file. The cliff
+ * is d = k, the lowland d < k, and a knight jump changes d by +-1 or +-3.
+ *   1. The pen is never spawn-adjacent to a post (a Squire appears next to
+ *      Rookie and moves the same turn). Pens are a8/b8 (k=1), g8/h8
+ *      (mirror), a8/b7 (k=2 terrace).
+ *   2. Every post is stone, watched, occupied-and-defended, or leaves him a
+ *      flight square. No CAPTURABLE piece stands on an undefended post (a
+ *      knight capture stuns him, and a stunned king under attack is dead).
+ *   3. The stolen pawn can never queen: stone, the king, or a guard ahead
+ *      of it, and no enemy on a rank-8 diagonal in front of it.
  *
  * KIT = convert / summon-knight / aegis / magnet (`allowedAbilities` IS the
- * kit). No universal solvents. antiPairs checked: convert+poison-dart and
- * convert+sacrifice are illegal, rabies+summon is a liability, two summons
- * starve each other, and swap / boulder / smoke / freeze-ray / decoy /
- * rewind each make a SECOND pair with the Squire (body-then-become,
- * cage-and-take, pin-and-parachute, a free stun, undoing his step) that
- * would open the finale to a rival answer. Aegis and Magnet do neither: a
- * shield does not cross stone and a pull line stops at it.
+ * kit). No universal solvents. Aegis does not cross stone, a Magnet pull
+ * line stops at it; both are traps on L7-L10 and keys on L5 / L6.
  *
  * KEY / TRAP per level (T5 bot, T1 cards, Normal):
  *   L1  none needed — goat path at e, slide to the top, along rank 8.
  *   L2  none needed — mirrored path at d; a rook on rank 8 kills a rank-8 pen.
- *   L3  summon-knight KEY, alone (100% / everything else 0%): sealed cliff,
- *       STILL king on d7 one jump above the lowland (e5/f6 -> d7).
- *   L4  convert KEY (100%): fleeing king in a diagonal pen (b8/a7) a rook
- *       can attack on one square only; flip the b6 guard so its cover takes
- *       a7 away, then e1-e8. Honest miss: the Squire also reads 100% here —
- *       once the king has stepped to a7, Rookie walks onto b8 and a knight
- *       summoned on c8 takes him at once. Every rook-accessible pen has a
- *       post on rank 8, so a pure Convert key does not exist on this
- *       terrain; L4 is a two-key level (convert or squire), aegis/magnet 0%.
- *   L5  aegis KEY (intended): a plug on e6 the d7 guard takes back, with a
- *       boxed bishop on c8 whose diagonal opens the moment d7 recaptures —
- *       so baiting the recapture with a Squire feeds two bodies to the toll.
- *       Convert on d7 also works (the ally blocks the bishop's ray). The T5
- *       bot rarely finds the shield line (0-13%); convert reads ~90%.
- *   L6  magnet KEY (intended): the plug's square is watched twice by pieces
- *       that never move (guard d7 on a pawn on the cliff, a boxed knight on
- *       d8), two enemies a turn. Pull the plug out, take it, slide THROUGH
- *       the gap with a capture, walk the d-file up through three stuns.
- *       The AND-OR solver finds forced wins for every card here within 8
- *       moves; the T5 bot finds almost none (magnet 13%, convert ~50%).
- *   L7  PAIR. Corner court a8/b8, king on b8, guard a7/b7 and crown d8 all
- *       on stone. Flip b7, Squire d4/e5 -> c6, take him. Knight f3 watches
- *       both spawn squares.
- *   L8  PAIR, mirrored (g8/h8). Flip g7, Squire d5/e4 -> f6. Dark bishop and
- *       a knight hunt the lowland.
- *   L9  PAIR on the high terrace (a3-f8): diagonal pen a8/b7, guard a6
- *       between two stones. Flip a6 (its cover is b7), Squire d5 -> b6 or
- *       d5/e6 -> c7, take him. Two enemies a turn.
- *   L10 PAIR, mirrored terrace (h3-c8): pen h8/g7, guard h6. A queen and a
- *       knight below, two enemies a turn, eight moves.
+ *   L3  summon-knight KEY, alone: sealed cliff, STILL king on d7 one jump
+ *       above the lowland (e5/f6 -> d7). Crown pawns on stone (see L3 FIX).
+ *   L4  convert KEY (and the Squire, two-key, unchanged from v1): fleeing
+ *       king in a diagonal pen (b8/a7); flip the b6 guard so its cover takes
+ *       a7 away, then e1-e8.
+ *   L5  aegis KEY (intended): plug on e6 the d7 guard takes back, boxed
+ *       bishop c8 behind it. Unchanged.
+ *   L6  magnet KEY (intended): pull the plug out, slide through with a
+ *       capture, walk the d-file up. Unchanged.
+ *   L7  PAIR: steal b7 (cage a8), Squire d4/e5 -> c6, x b8. 7 moves.
+ *   L8  PAIR: steal b6 (the knight c8 eats it), Squire c6/d5 x e7 (stun),
+ *       x g8. A queen hunts. 7 moves.
+ *   L9  PAIR: steal a7 (the recapturer), Squire c4/d5 x b6 (stun), x a8.
+ *       Knight + queen hunt, two enemies a turn. 7 moves.
+ *   L10 PAIR: steal b6 (the knight d7 eats it), Squire c4/d5 x b6 (stun),
+ *       x a8. A queen hunts. 8 moves.
  *
- * L7-L10 intended lines (T1 kit: a Squire move ends the turn):
- *   L7  ...e4 (at most two moves from rank 1). Convert b7 (free), Squire on
- *       d4 (free), Squire d4-c6 (turn). Enemy: b8 is threatened and a8 is
- *       ally-covered — he cannot step; nothing of his reaches c6. Squire xb8.
- *   L8  ...d4 / e3. Convert g7, Squire on e4 or d5, Squire -> f6, xg8.
- *   L9  ...c4 / d4 / e4. Convert a6, Squire on d5, Squire -> b6 (or c7),
- *       xa8. He cannot step to b7.
- *   L10 ...d4 / e4 / f4. Convert h6, Squire on e5, Squire -> g6 (or f7),
- *       xh8.
+ * MEASURED — see the dated block at the bottom of this header.
  *
- * MEASURED (Normal, T5 bot, T1 cards, 2026-09-05). Finale = 32 trials/cell
- * with --jobs=1 SERIAL (other agents' sims shared the machine all day, so
- * parallel cells were not trusted); L1-L6 = 16 trials/cell, --jobs=1.
+ * MEASURED 2026-09-06 (Normal, T5 bot, T1 cards; L7-L10 = 32 trials/cell
+ * --jobs=1 SERIAL, L1-L6 = 16 trials/cell --jobs=1; five other agents'
+ * sims shared the machine, so parallel cells were used for direction only):
  *          none convert squire aegis magnet  convert+squire
  *   L1-L2  100%   100%   100%   100%   100%       100%
  *   L3       0%     0%   100%     0%     0%       100%
  *   L4       0%   100%   100%     0%     0%       100%
- *   L5       0%    94%    38%    19%     0%        88%
- *   L6       0%    69%     6%     0%     6%        88%
- *   L7       0%     0%     0%     0%     0%        75%
- *   L8       0%     0%     0%     0%     0%        75%
- *   L9       0%     0%     0%     0%     0%        88%
+ *   L5       0%     0%    25%     0%     0%       100%
+ *   L6       0%     0%    19%     0%     0%        88%
+ *   L7       0%     0%     0%     0%     0%        72%
+ *   L8       0%     0%     0%     0%     0%        66%
+ *   L9       0%     0%     0%     0%     0%        66%
  *   L10      0%     0%     0%     0%     0%        75%
- * The finale is combo-gated on the Moat's standard: no single card in the
- * kit clears L7-L10 (0% on all sixteen cells), the pair clears 75-88%.
- * FULL RUNS (40 each, Normal, T5, never skipping an offer): 3/40 = 8% with
- * random picks, 5/40 = 13% with pool=convert,summon-knight. Both sit under
- * the Moat's 25% because L3 is a hard filter (Squire or nothing: exactly the
- * half of random pickers holding it pass, 20/40) and because the run-mode
- * bot loses ~20% of L3 and ~28% of L5 on the clock even holding the right
- * cards (the same bot reads L3 100% and L5 88% in the matrix) — the pair
- * being the whole pool does not lift it, so the gap is the bot's run
- * policy, not the finale, which clears 52-83% per level in run context.
- * Honest misses: L4 is a two-key level (Squire 100% beside Convert), L5's
- * aegis line is real but the bot rarely plays it (19%) while Convert reads
- * 94%, and on L6 the AND-OR solver (depth 8) finds forced wins for EVERY
- * card (magnet W8, aegis W8, convert W7, squire W6) that the T5 bot does
- * not — L6 is gated by search depth, not by geometry.
+ * The finale meets the combo gate at the 60-80% target: no single card in
+ * the kit clears L7-L10 (0% on all sixteen cells), the pair reads 66-75%.
+ * L9's pair cell wandered 38-66% across five serial reads while the clock
+ * was tuned (5 -> 7 moves); 66% is the read at the shipped clock. L3 is
+ * back to Squire-only (convert alone 100% -> 0%). L4 stays two-key (v1).
+ * Convert alone on L5 fell 94% -> 0%: the stolen d7 pawn used to walk off
+ * and queen; the daze and the clock now stop that line.
+ * FULL RUNS (40 each, Normal, T5, never skipping an offer): 6/40 = 15% with
+ * random picks, 16/40 = 40% with pool=convert,summon-knight. Random picks
+ * die at L3 (Squire or nothing, 63%) and L5-L6 (the bot rarely plays the
+ * aegis / magnet keys); the finale clears 78-100% per level in run context
+ * because a player who reaches it holds the pair. With the pair as the
+ * whole pool the finale reads 79-94% per level.
  *
- * DEAD ENDS, so nobody rebuilds them: (a) a runner column (h3/h4/h5) to pin
- * the court PROMOTES on rank 1 — `ph2 -> qh1` in the trace — it is a queen
- * factory, not a clock; stone under the guard is the fix. (b) Hunters that
- * start on Rookie's rank-1 lines are free captures, after which the court
- * marches twice a turn. (c) A plug in the gap can never be a Magnet-only
- * puzzle when a pawn defends it: the defender's own blocker square is the
- * slide-through square, and any single-defended plug is passed by Aegis or
- * by a Squire bait. (d) A two-jump Squire line (b2 -> a4 -> b6) is beyond
- * the T5 bot's horizon: it never summoned. Finale lines are one jump.
+ * DEAD ENDS, so nobody rebuilds them:
+ *   (a) A runner column to pin the court PROMOTES on rank 1 (`ph2 -> qh1`)
+ *       — a queen factory, not a clock; stone under the guard is the fix.
+ *   (b) Hunters that start on Rookie's rank-1 lines are free captures.
+ *   (c) A plug in the gap is never a Magnet-only puzzle when a pawn defends
+ *       it. (d) A two-jump Squire line is beyond the T5 bot's horizon.
+ *   (e) 2026-09-06: a guard diagonally UNDER the king's square is a
+ *       next-turn kill for Convert plus ANY stun (v1 L7/L8 a7/h7; the
+ *       "chase him into the corner" draft of L8 read 100% because the
+ *       Squire ate the queen that walked up, and a "cover a8 the same
+ *       turn" draft of L10 read 75% for Convert ALONE because Rookie took
+ *       the knight). Guards go BESIDE him (cover = the flight) or below
+ *       the pen with stone ahead.
+ *   (f) 2026-09-06: a stolen pawn QUEENS on rank 8, including by capture.
+ *       Any pawn defending a post from rank 8 (b8/d8 over c7) is a promotion
+ *       target for a stolen post pawn; the recapturer must stand on rank 7
+ *       (a7 over b6) with the king or stone above it. A crown pawn on an
+ *       open file with no hunter nearby marches down, gets stolen, walks
+ *       back and queens (v1 L3).
+ *   (g) 2026-09-06: a piece parked IN the pen to watch the posts (a rook on
+ *       b7) walks out toward Rookie the moment a square is strictly closer;
+ *       only pawns on stone, and knights whose every jump is stone or their
+ *       own man, hold a post. The L8 knight read 56% for the Squire alone
+ *       until a7 was stoned — it had been jumping there.
+ *   (h) 2026-09-06: walk lines are unfindable. "Steal g6, walk g7 (cover
+ *       h8), Squire e7" read 13-19% for the pair on a calm board and on a
+ *       thick one (6+ pieces, cast bump on); "steal b5, walk b6, b7 into
+ *       c8's recapture so his own pawn plugs b7, Squire b6" read 0% — the
+ *       bot never stole. The rollout policy scores Rookie's distance to the
+ *       king; an ally's quiet move is worth nothing to it.
+ *   (i) 2026-09-06: a pawn on a post is ALWAYS bait — its recapturer eats
+ *       it where it stands and can be taken there. So "steal the
+ *       recapturer" (L9) and "steal the post pawn" can never gate the same
+ *       level; L9 puts a bishop on the post, L10 makes the recapturer a
+ *       knight. Any other combination has two answers.
+ *   (j) 2026-09-06: two queens with two enemies a turn make the T5 bot
+ *       stop casting (L10 pair 19% -> 0% while it dodged); one queen is
+ *       the pressure that still lets it think.
  */
 
 import {
@@ -296,19 +302,21 @@ const RUN_REVENGE_19: RunDef = {
     // L3 — THE CLIMB. Sealed cliff. Still king on d7, one knight jump above
     // the lowland (e5 or f6 -> d7). No line ever reaches him: KEY =
     // summon-knight, alone. Knight g3 watches e4/f5, so the launch square
-    // is d4 (spawn e5) or g5 (spawn f6).
+    // is d4 (spawn e5) or g5 (spawn f6). The crown pawns c8/e8 stand on
+    // stone (c7/e7): they never march down to be stolen and walked back
+    // up to queen (fact P) — a stolen rank-8 pawn is inert.
     make(3, [pawn(3, 8), pawn(5, 8), knight(7, 3), king(4, 7)], {
       ...STILL,
       moveLimit: 9,
-      hazards: CLIFF(1),
+      hazards: [...CLIFF(1), X(3, 7), X(5, 7)],
     }),
     // L4 — THE STEP. Path on e. Fleeing king b8 in a DIAGONAL pen (b8/a7)
     // with a8 and b7 stoned: a rook can attack b8 (rank 8) but never a7
     // (the a-file and rank 7 both meet stone), so he steps down and sits
     // there forever. His guard on b6 stands on stone (b5), cannot advance
     // (b7 stone), and its ally cover is exactly a7: flip it FIRST, then
-    // e1-e8 and he has nowhere to step. KEY = convert. b5/c6 are stone so
-    // no knight ever covers a7 for the rook.
+    // e1-e8 and he has nowhere to step. KEY = convert (the Squire also
+    // reads it — a two-key level, accepted in v1).
     make(4, [pawn(2, 6), knight(7, 4), king(2, 8)], {
       ...FLEE,
       moveLimit: 6,
@@ -322,9 +330,7 @@ const RUN_REVENGE_19: RunDef = {
     // recaptures, its diagonal opens and it defends e6 in turn, so BAITING
     // the recapture with a Squire only feeds two bodies to the toll. Take
     // the plug, eat the reply, e6-e8, take the bishop (stun), take him.
-    // KEY = aegis. Magnet can pull the plug out to f6 but you still have to
-    // stand on e6 afterwards. Convert on d7 opens the bishop's diagonal and
-    // promotes your own pawn onto his rank.
+    // KEY = aegis.
     make(
       5,
       [pawn(5, 6), pawn(4, 7), bishop(3, 8), knight(8, 4), king(2, 8)],
@@ -339,14 +345,10 @@ const RUN_REVENGE_19: RunDef = {
     // (e5 beneath, e7 above). The gap square is watched TWICE by pieces that
     // never move: the guard on d7 (standing on d6, which stands on the
     // cliff) and a knight on d8 boxed in by b7/c6 stone, the cliff and its
-    // own pawn. Two enemies act a turn, so a shield eats one bite and the
-    // other kills; baiting the recapture with a Squire only swaps which
-    // piece plugs the hole; a converted plug is stuck under e7 and, if it
-    // takes d7, becomes the plug on the d-file instead. Never stand on e6:
-    // from g6 PULL the plug to f6, take it, then slide THROUGH e6 onto d6
-    // with a capture, and walk the d-file up through d7 and the knight
-    // (three stuns) to his rank. KEY = magnet. The crown pawn on e8 covers
-    // d7 so no Squire capture-stuns his way onto b8.
+    // own pawn. Two enemies act a turn. Never stand on e6: from g6 PULL the
+    // plug to f6, take it, then slide THROUGH e6 onto d6 with a capture, and
+    // walk the d-file up through d7 and the knight (three stuns) to his
+    // rank. KEY = magnet.
     make(
       6,
       [pawn(5, 6), pawn(4, 6), pawn(4, 7), knight(4, 8), pawn(5, 8), knight(2, 4), king(2, 8)],
@@ -358,69 +360,87 @@ const RUN_REVENGE_19: RunDef = {
         kingPen: ['a8', 'b8'],
       },
     ),
-    // L7 — THE CORNER COURT. Sealed cliff, king b8 in the corner pen with
-    // his guard on a7/b7 and the crown on d8, every one of them standing on
-    // stone (a6/b6/d7) so none can ever march. The only post on b8 is c6,
-    // and b7 watches it. Flip b7: a8 is his no longer and c6 is open.
-    // Squire from d4 or e5 onto c6, and take him. Knight f3 watches both
-    // spawn squares (not the launch squares d3/e3/e4/f4).
+    // L7 — THE CORNER COURT (steal-then-cage). Sealed cliff, king b8 in the
+    // corner pen a8/b8. His guard on b7 stands BESIDE him on stone (b6):
+    // it can never march, and stolen it can never attack b8 — its cover is
+    // a8 (his flight) and c8. The crown on d8 stands on stone (d7), a
+    // decoy steal that does nothing. Posts on b8: a6 and d7 are stone, c6
+    // is watched by b7; posts on a8 (b6, c7) are stone. Steal b7: a8 is
+    // his no longer and c6 is unwatched. Squire from d4 or e5 onto c6,
+    // and take him. Knight f3 watches both spawn squares.
     make(
       7,
-      [pawn(1, 7), pawn(2, 7), pawn(4, 8), knight(6, 3), king(2, 8)],
+      [pawn(2, 7), pawn(4, 8), knight(6, 3), king(2, 8)],
       {
         ...FLEE,
-        moveLimit: 8,
-        hazards: [...CLIFF(1), X(1, 6), X(2, 6), X(4, 7)],
+        moveLimit: 7,
+        hazards: [...CLIFF(1), X(1, 6), X(2, 6), X(3, 7), X(4, 7)],
         kingPen: ['a8', 'b8'],
       },
     ),
-    // L8 — THE FAR CORNER. Mirrored: king g8, pen g8/h8, guard g7/h7 on
-    // stone (g6/h6), crown e8 on stone (e7). The only post is f6, watched
-    // by g7. Flip g7, Squire from d5 or e4 onto f6, take him. A dark bishop
-    // and a knight hunt the lowland.
+    // L8 — THE FAR CORNER (the decoy). Mirrored: king g8, pen g8/h8. The
+    // only post the Squire can reach is e7 (c6/d5 -> e7; f6 and h6 are
+    // stone), and a BISHOP stands on it, boxed by stone (d6/f6/f8) — take
+    // it and he is stunned with g8 under attack, but a knight on c8
+    // recaptures. That knight is unstealable and frozen: a7/d6 are stone,
+    // e7 is its bishop, b6 is its own pawn. Steal the b6 pawn — a piece on
+    // the far side of the board with nothing to do with the king — and the
+    // knight's only jump is to eat it; from b6 it no longer guards e7.
+    // Squire x e7, take him. Nothing cages here and nothing walks: Convert's
+    // job is to pull the guard off its post. A queen hunts the lowland.
     make(
       8,
-      [pawn(7, 7), pawn(8, 7), pawn(5, 8), bishop(3, 1), knight(6, 2), king(7, 8)],
+      [bishop(5, 7), knight(3, 8), pawn(2, 6), queen(1, 4), king(7, 8)],
       {
         ...FLEE,
-        moveLimit: 8,
-        hazards: [...MIRROR(10), X(7, 6), X(8, 6), X(5, 7)],
+        moveLimit: 7,
+        hazards: [...MIRROR(10), X(1, 7), X(2, 5), X(6, 6), X(6, 8), X(8, 6)],
         kingPen: ['g8', 'h8'],
       },
     ),
-    // L9 — THE TERRACE. The cliff climbs one rank higher (a3-f8) and his
-    // room is the DIAGONAL corner pair a8/b7 — a rook could never attack
-    // either. His guard on a6 stands between two stones (a5 beneath, a7
-    // above, so it can neither march nor, once flipped, walk off its post)
-    // and its ally cover is b7. The posts on a8 are b6 and c7, both one
-    // jump from the lowland (d5 -> b6, d5/e6 -> c7): alone, a knight there
-    // just sends him to b7, where no knight can ever reach him (a5/c5/d6
-    // stone, d8 two jumps off). Flip a6, Squire d5 -> b6, take him. Two
-    // enemies a turn.
+    // L9 — THE TERRACE (the wrong steal loses). The cliff climbs one rank
+    // higher (a3-f8) and his room is the DIAGONAL corner pair a8/b7. Three
+    // pawns: a6 between two stones (a5 beneath, a7 is a pawn) — its cover
+    // is b7, the cage; a7 under the king, pinned by a6, which RECAPTURES on
+    // b6; and a pawn ON the post b6 (stone b5 beneath it). c7 is stone (no
+    // second post), c6 is stone (a7 and c8 are not knight snacks: the only
+    // jumps onto them start from c6 and from each other), b8 is stone (no
+    // queening square), and the crown pawn c8 stands on stone c7 watching
+    // b7. Trap 1: steal a6 (cage), Squire
+    // b6 — a7 x b6. Trap 2: steal b6, walk b7 — c8 x b7. Key: steal a7,
+    // Squire x b6 (stun, a8 attacked), take him. Two enemies a turn.
     make(
       9,
-      [pawn(1, 6), knight(7, 3), bishop(8, 1), king(1, 8)],
+      [pawn(1, 6), pawn(1, 7), bishop(2, 6), pawn(3, 8), knight(7, 3), queen(8, 6), king(1, 8)],
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 8,
-        hazards: [...CLIFF(2), X(1, 5), X(1, 7)],
+        moveLimit: 7,
+        hazards: [...CLIFF(2), X(1, 5), X(2, 5), X(3, 6), X(3, 7), X(2, 8)],
         kingPen: ['a8', 'b7'],
       },
     ),
-    // L10 — THE HIGH CORNER. Mirror of L9 on the high terrace (h3-c8): king
-    // h8, room h8/g7, guard h6 between stones (h5/h7). Posts on h8 are g6
-    // (e5 -> g6) and f7 (d6/e5 -> f7). A queen and a knight in the lowland,
-    // two enemies a turn, eight moves: flip h6, Squire e5 -> g6, take him.
+    // L10 — THE HIGH CORNER (the stolen pawn strips the recapturer). Same
+    // terrace, same room a8/b7. The post b6 holds a pawn, and its
+    // recapturer is a KNIGHT on d7 — nothing Convert can steal — boxed by
+    // stone on every other jump (b8/c5/e5/f6/f8). The crown pawn c8 (stone
+    // c7) watches b7, so the post pawn walking to b7 is eaten and plugs
+    // nothing useful (the knight still guards b6). Nothing covers b7. The
+    // key is the pawn on e6, standing on stone (e5) with the knight on its
+    // diagonal: stolen, it takes d7 (a capture-stun), the post is
+    // undefended, Squire c4/d5 x b6 is a second stun with a8 under attack,
+    // and he never gets a turn to step. Convert's target is the piece that
+    // can reach the recapturer, not the recapturer. Two queens hunt the
+    // lowland, two enemies a turn.
     make(
       10,
-      [pawn(8, 6), queen(2, 2), knight(2, 4), king(8, 8)],
+      [pawn(2, 6), knight(4, 7), pawn(3, 8), queen(5, 8), king(1, 8)],
       {
         ...FLEE,
         enemiesPerTurn: 2,
         moveLimit: 8,
-        hazards: [...MIRROR(11), X(8, 5), X(8, 7)],
-        kingPen: ['g7', 'h8'],
+        hazards: [...CLIFF(2), X(1, 7), X(2, 5), X(2, 8), X(3, 7), X(5, 5), X(6, 6)],
+        kingPen: ['a8', 'b7'],
       },
     ),
   ],
