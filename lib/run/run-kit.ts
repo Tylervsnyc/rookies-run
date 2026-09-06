@@ -14,6 +14,7 @@
 import type {
   Coord,
   EnemyPiece,
+  Hazard,
   KingBehavior,
   RookieForm,
   RunPuzzle,
@@ -29,8 +30,15 @@ export const bishop = (file: number, rank: number): EnemyPiece => ({ type: 'bish
 export const queen = (file: number, rank: number): EnemyPiece => ({ type: 'queen', color: 'black', file, rank });
 export const king = (file: number, rank: number): EnemyPiece => ({ type: 'king', color: 'black', file, rank });
 
-/** A board coordinate: file 1-8 = a-h, rank 1-8. */
+/**
+ * A board coordinate: file 1-8 = a-h, rank 1-8. Used as a hazard, it is a
+ * STONE block (Hazard.kind defaults to 'stone' — see types.ts): a wall, a
+ * pillar, a sill, a pen. Use LAVA() for terrain that is genuinely molten.
+ */
 export const X = (file: number, rank: number): Coord => ({ file, rank });
+
+/** A LAVA hazard square — deadly terrain, not a block. Shove refuses it. */
+export const LAVA = (file: number, rank: number): Hazard => ({ file, rank, kind: 'lava' });
 
 export const KING_GOAL = { winCondition: 'king' as const };
 /** King stands his ground. */
@@ -42,7 +50,7 @@ export function make(
   level: number,
   pieces: EnemyPiece[],
   opts: {
-    hazards?: Coord[];
+    hazards?: Hazard[];
     moveLimit?: number;
     allowedForms?: RookieForm[];
     enemiesPerTurn?: number;

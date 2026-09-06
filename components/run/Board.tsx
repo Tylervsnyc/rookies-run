@@ -14,7 +14,7 @@ import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { PieceBlocks } from './PieceBlocks';
-import { LAVA_CSS, LAVA_SRC, LavaBubbles, lavaReducedMotionCss, lavaSquareStyle } from './LavaHazards';
+import { LAVA_CSS, LAVA_SRC, LavaBubbles, hazardSquareStyle, lavaReducedMotionCss, splitHazards } from './LavaHazards';
 
 /** Red alarms Rookie cycles through, one per time she lands in check. */
 const ROOKIE_ALARM_CYCLE: RookieAlarm[] = ['siren', 'heartbeat', 'sos', 'shiver', 'ringPulse', 'flickerOut'];
@@ -102,7 +102,8 @@ const GOAL_MOTES: Array<[number, number, number, number, number]> = [
   [75, 25, 3, 2.1, 4.8], [79, 60, 2, 0.8, 4.0], [84, 15, 4, 1.5, 5.0],
   [88, 70, 3, 0.2, 4.5], [93, 40, 2, 1.9, 4.4], [97, 85, 3, 1.0, 4.6],
 ];
-// Hazard squares — painted Mario lava lake + stone bank (see LavaHazards.tsx).
+// Hazard squares — painted Mario lava lake, or raised grey stone for
+// `kind: 'stone'` hazards (walls, pillars, Boulder drops). See LavaHazards.tsx.
 // Selected-piece highlight — same blue as /learn (BasicsTutorial pattern).
 const SELECTED_BG = 'rgba(28, 176, 246, 0.18)';
 const SELECTED_RING = 'inset 0 0 0 3px rgba(28, 176, 246, 0.75)';
@@ -501,11 +502,13 @@ export function RunBoard({
       };
     }
 
-    // Hazard squares — one continuous lava lake with a stone bank on the
-    // edges that don't touch other lava. Dots/rings below layer on top of it.
-    const hazardSet = new Set(state.hazards.map(toSquare));
-    for (const sq of hazardSet) {
-      styles[sq] = { ...styles[sq], ...lavaSquareStyle(sq, hazardSet) };
+    // Hazard squares — lava draws as one continuous lake with a cobble bank
+    // on the edges that touch no other lava; stone draws as raised rock that
+    // merges with adjacent stone. Each kind merges with its OWN kind only.
+    // Dots/rings below layer on top of both.
+    const hazardSets = splitHazards(state.hazards);
+    for (const sq of [...hazardSets.lava, ...hazardSets.stone]) {
+      styles[sq] = { ...styles[sq], ...hazardSquareStyle(sq, hazardSets) };
     }
 
     // Controlled summons (Squire family): a soft rainbow ring says "tap me"
@@ -744,6 +747,12 @@ export function RunBoard({
     [state.abilities],
   );
 
+  // Only LAVA squares drift and bubble (stone does not move on its own).
+  const lavaSquares = useMemo(
+    () => [...splitHazards(state.hazards).lava],
+    [state.hazards],
+  );
+
   // Convert from→to squares into board-percentage centers for overlay VFX.
   // Board is rendered white-orientation: file 1 = leftmost, rank 8 = topmost.
   const fxGeom = useMemo(() => {
@@ -929,7 +938,7 @@ export function RunBoard({
           50%      { opacity: 1; transform: translate(4px, -6px) scale(1); }
         }
         ${LAVA_CSS}
-        ${lavaReducedMotionCss(state.hazards.map(toSquare))}
+        ${lavaReducedMotionCss(lavaSquares)}
         @keyframes rookiesRunAegisShieldPulse {
           0%, 100% { filter: drop-shadow(0 0 6px rgba(125, 211, 252, 1)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.85)); }
           50%      { filter: drop-shadow(0 0 12px rgba(125, 211, 252, 1)) drop-shadow(0 0 22px rgba(56, 189, 248, 1)); }
@@ -1156,10 +1165,10 @@ export function RunBoard({
             animationDurationInMs: slideMs ?? PIECE_SLIDE_MS,
           }}
         />
-        {state.hazards.length > 0 && (
+        {lavaSquares.length > 0 && (
           <>
             <link rel="preload" as="image" href={LAVA_SRC} />
-            <LavaBubbles hazards={state.hazards.map(toSquare)} />
+            <LavaBubbles hazards={lavaSquares} />
           </>
         )}
         {state.status === 'playing' && kingGoal && kingSquare && (

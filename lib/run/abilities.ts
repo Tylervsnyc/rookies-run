@@ -195,7 +195,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Boulder',
     activation: 'targeted',
     typeLine: 'Targeted · Terrain',
-    description: 'Drop a boulder on an empty square. Nothing passes it.',
+    description: 'Drop a block of stone on an empty square. Nothing passes it.',
   },
   smoke: {
     id: 'smoke',
@@ -307,7 +307,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Shove',
     activation: 'targeted',
     typeLine: 'Targeted · Terrain',
-    description: 'Push a stone beside you one square away. It moves. It does not disappear.',
+    description: 'Push a block of stone beside you one square away. It moves. It does not disappear.',
   },
   coup: {
     id: 'coup',
@@ -555,7 +555,7 @@ const HOW: Record<AbilityId, string> = {
   surge: 'Tap card. You get an extra move.',
   aegis: 'Tap card. Shield stays up until used.',
   decoy: 'Tap card, then tap an enemy.',
-  boulder: 'Tap card, then tap an empty square.',
+  boulder: 'Tap card, then tap an empty square. A block of stone lands there.',
   smoke: 'Tap card. You vanish at once.',
   rewind: "Tap card. The enemies' last turn unhappens. Yours stays.",
   magnet: 'Tap card, tap an enemy on your line, then tap the square it lands on.',
@@ -571,7 +571,7 @@ const HOW: Record<AbilityId, string> = {
   sacrifice: 'Tap card, then tap one of your summons.',
   knighting: 'Tap card, then tap one of your summons.',
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
-  shove: 'Tap card, then tap a stone beside you. It rolls one square away from you.',
+  shove: 'Tap card, then tap a block of stone beside you. It rolls one square away. Lava never moves.',
   coup: 'Tap card, then tap a guard near the king. They trade squares.',
   hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand.',
   scarecrow: 'Tap card, then tap an empty square. They hunt the straw. He runs from it.',
@@ -673,10 +673,10 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Mark an enemy for 2 turns. Its team will attack it.';
       return 'Mark an enemy for 1 turn. Its team will attack it.';
     case 'boulder':
-      if (tier === 5) return 'Drop a boulder on any square — crush an enemy pawn under it. Unlimited drops.';
-      if (tier === 4) return 'Drop a boulder on any square — crush an enemy pawn under it. Each use drops 2.';
-      if (tier >= 2) return 'Drop a boulder on any square — crush an enemy pawn under it.';
-      return 'Drop a boulder on an empty square. It blocks everyone, for good.';
+      if (tier === 5) return 'Drop a stone on any square — crush an enemy pawn under it. Unlimited drops.';
+      if (tier === 4) return 'Drop a stone on any square — crush an enemy pawn under it. Each use drops 2.';
+      if (tier >= 2) return 'Drop a stone on any square — crush an enemy pawn under it.';
+      return 'Drop a block of stone on an empty square. It blocks everyone, for good.';
     case 'smoke':
       if (tier === 5) return 'Vanish for 3 turns. Captures do not break cover.';
       if (tier === 4) return 'Vanish for 3 turns. Enemies cannot see you.';
@@ -762,7 +762,7 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'Push stones all you like. Every one crushes what it lands on.';
       if (tier === 4) return 'Push a stone on your line, up to 2 away, one square. Crushes pawns.';
       if (tier === 3) return 'Push a stone one square. A pawn it lands on is crushed.';
-      return 'Push a stone beside you one square away.';
+      return 'Push a block of stone beside you one square away. Lava is not a block.';
     case 'coup':
       if (tier === 5) return 'Swap the king with ANY enemy on the board. He is stunned a turn.';
       if (tier === 4) return 'Swap the king with any guard in his room or within 2. Swapping stuns him a turn.';
@@ -864,11 +864,11 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Mark for 2 turns. 1/level.';
       return 'Mark an enemy for 1 turn. 1/level.';
     case 'boulder':
-      if (tier === 5) return 'Crush pawns. Unlimited boulders.';
-      if (tier === 4) return 'Crush a pawn; 2 boulders per use. 3/level.';
-      if (tier === 3) return 'Crush a pawn under a boulder. 3/level.';
-      if (tier === 2) return 'Crush a pawn under a boulder. 2/level.';
-      return 'Drop a boulder. 2/level.';
+      if (tier === 5) return 'Crush pawns. Unlimited stones.';
+      if (tier === 4) return 'Crush a pawn; 2 stones per use. 3/level.';
+      if (tier === 3) return 'Crush a pawn under a stone. 3/level.';
+      if (tier === 2) return 'Crush a pawn under a stone. 2/level.';
+      return 'Drop a stone. 2/level.';
     case 'smoke':
       if (tier === 5) return 'Vanish 3 turns, captures keep cover. 1/level.';
       if (tier === 4) return 'Vanish 3 turns. 2/level.';
@@ -1081,8 +1081,8 @@ export const UPGRADE_NOTES: Record<
   boulder: {
     2: 'Crush enemy pawns under your drops',
     3: '',
-    4: 'Each use drops 2 boulders',
-    5: 'Unlimited boulders',
+    4: 'Each use drops 2 stones',
+    5: 'Unlimited stones',
   },
   smoke: {
     2: 'Vanish 1 turn → 2',
@@ -1918,7 +1918,8 @@ export function applyAbilityTargeted(
         : state.tempo,
       decoyTarget: clearDecoy ? null : state.decoyTarget,
       decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
-      hazards: [...state.hazards, { file: target.file, rank: target.rank }],
+      // A dropped boulder is ROCK, never lava (2026-09-06 hazard-kind split).
+      hazards: [...state.hazards, { file: target.file, rank: target.rank, kind: 'stone' }],
       abilities: chained ? state.abilities : decrementUse(state.abilities, abilityId),
       activeAbility: null,
       boulderDropsLeft: undefined,
@@ -2119,7 +2120,7 @@ export function boulderTargets(state: BoardState): Coord[] {
       const walled: BoardState = {
         ...state,
         pieces: enemy ? state.pieces.filter((p) => p !== enemy) : state.pieces,
-        hazards: [...state.hazards, { file, rank }],
+        hazards: [...state.hazards, { file, rank, kind: 'stone' as const }],
       };
       if (rookieLegalMoves(walled).length === 0) continue;
       out.push({ file, rank });
@@ -2250,7 +2251,9 @@ export function springSnaresAt(state: BoardState, arrivals: ReadonlyArray<string
 // Shove (2026-09-06) — move terrain. Tap a stone beside Rookie and it rolls
 // ONE square directly away from her: a gap opens where it was, a square dies
 // where it lands. Authored walls and Boulder stones are the same array
-// (`hazards`), so both roll; a run marks a stone `fixed: true` to refuse it,
+// (`hazards`), so both roll — but only entries whose kind is 'stone' (the
+// default); a lava square is terrain and is never a shove target. A run marks
+// a stone `fixed: true` to refuse it,
 // and a two-thick wall is shove-proof by construction (no chain pushes).
 // Design: docs/new-abilities-2026-09-06.md §2.2.
 // ---------------------------------------------------------------------------
@@ -2284,6 +2287,9 @@ export function shoveTargets(state: BoardState): ShoveTarget[] {
   const reach = shoveReach(owned.tier);
   const out: ShoveTarget[] = [];
   const consider = (stone: Hazard, df: number, dr: number) => {
+    // Lava is TERRAIN, not a block: you cannot push a river. Only stone rolls,
+    // and only stone that a run has not pinned with `fixed`.
+    if (stone.kind === 'lava') return;
     if (stone.fixed) return;
     const dest = { file: stone.file + df, rank: stone.rank + dr };
     if (!allyInBounds(dest.file, dest.rank)) return;
@@ -2299,7 +2305,7 @@ export function shoveTargets(state: BoardState): ShoveTarget[] {
     const moved: BoardState = {
       ...state,
       pieces: enemy ? state.pieces.filter((p) => p !== enemy) : state.pieces,
-      hazards: [...state.hazards.filter((h) => h !== stone), { file: dest.file, rank: dest.rank }],
+      hazards: [...state.hazards.filter((h) => h !== stone), { file: dest.file, rank: dest.rank, kind: 'stone' as const }],
     };
     if (rookieLegalMoves(moved).length === 0) return;
     out.push({ stone: { file: stone.file, rank: stone.rank }, dest, crushed: enemy ?? null });
@@ -2338,8 +2344,9 @@ function applyShove(state: BoardState, target: Coord): BoardState {
   return {
     ...state,
     ...(statusOverlay ?? {}),
-    // The moved stone is loose by definition (it was never fixed).
-    hazards: [...state.hazards.filter((h) => h !== stone), { file: hit.dest.file, rank: hit.dest.rank }],
+    // The moved stone is loose by definition (it was never fixed) and stays
+    // rock — Shove never touches lava, so a shoved square is always stone.
+    hazards: [...state.hazards.filter((h) => h !== stone), { file: hit.dest.file, rank: hit.dest.rank, kind: 'stone' }],
     pieces: crushed ? state.pieces.filter((p) => p !== crushed) : state.pieces,
     captures: crushed ? [...state.captures, crushed.type] : state.captures,
     tempo: crushed

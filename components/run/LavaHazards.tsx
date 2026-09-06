@@ -20,6 +20,12 @@
  * phase so the lake drifts as one body) + one rare bubble per square in a
  * tiny overlay. `prefers-reduced-motion` freezes both. Design page with the
  * rejected alternatives: app/test/lava-squares.
+ *
+ * 2026-09-06: lava is now only HALF of `hazards`. A hazard whose `kind` is
+ * 'stone' (the default — every wall, pillar, pen, and every block Boulder
+ * drops or Shove rolls) is drawn as raised grey rock instead; see
+ * stoneSquareStyle in lib/run/lava-style.ts. LavaBubbles must be given the
+ * LAVA squares only.
  */
 
 import { LAVA_BUBBLE_KEYFRAME } from '@/lib/run/lava-style';
@@ -27,8 +33,10 @@ import { LAVA_BUBBLE_KEYFRAME } from '@/lib/run/lava-style';
 export {
   LAVA_SRC, TILE_SQUARES, LAVA_FALLBACK, LAVA_DRIFT_KEYFRAME, LAVA_BUBBLE_KEYFRAME, LAVA_CSS,
   lavaReducedMotionCss, lavaOpenEdges, lavaRimShadow, lavaSquareStyle,
+  STONE_HI, STONE_FACE, STONE_LO, stoneBevelShadow, stoneSquareStyle,
+  hazardKind, splitHazards, hazardSquareStyle,
 } from '@/lib/run/lava-style';
-export type { LavaEdges } from '@/lib/run/lava-style';
+export type { LavaEdges, HazardSets } from '@/lib/run/lava-style';
 
 /** Deterministic per-square jitter so bubbles never sync. */
 function jitter(seed: number, salt: number): number {

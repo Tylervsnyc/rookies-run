@@ -36,12 +36,27 @@ export interface Coord {
 }
 
 /**
- * A stone (hazard square). `fixed: true` marks an AUTHORED wall stone that
- * Shove may never push (2026-09-06) — a run's way of refusing the card square
- * by square. Default (absent) = loose: every stone, authored or dropped by
- * Boulder, can be shoved.
+ * A hazard square. Hazards are TWO fictions sharing one array (2026-09-06):
+ *
+ *   'stone' — the walls, pillars, sills, plugs and pens that SHAPE a room,
+ *             and the block Boulder drops / Shove pushes. Drawn as raised
+ *             grey rock (see lib/run/lava-style.ts stoneSquareStyle).
+ *   'lava'  — deadly molten terrain that reads as a moat, a river, a field
+ *             of heat. Drawn as the painted Mario lava lake. It is TERRAIN,
+ *             not a block: Shove refuses it.
+ *
+ * DEFAULT WHEN ABSENT = 'stone'. Chosen deliberately: almost every authored
+ * hazard in the catalogue is a wall/pillar/pen (read the run headers), and a
+ * Boulder drop must never make a pool of lava appear. The genuinely molten
+ * runs mark their hazards `kind: 'lava'` at the run's helper level (the
+ * MOAT() band in revenge-12, BRIDGE_HAZARDS in the-bridge).
+ *
+ * `fixed: true` marks an AUTHORED wall stone that Shove may never push — a
+ * run's way of refusing the card square by square. Default (absent) = loose:
+ * every stone, authored or dropped by Boulder, can be shoved.
  */
 export interface Hazard extends Coord {
+  kind?: 'lava' | 'stone';
   fixed?: boolean;
 }
 

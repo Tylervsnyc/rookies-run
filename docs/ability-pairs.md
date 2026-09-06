@@ -31,7 +31,9 @@ pairs are "remove his squares" plus "arrive", or "get a free capture" plus
 "be on his line when it lands".
 
 The counterweight, and the source of most anti-pairs: **Rookie's own allies
-and her own boulders block her rays exactly like enemies do.**
+and her own boulders block her rays exactly like enemies do.** (A Boulder
+drop is always STONE — `Hazard.kind: 'stone'` — so it is drawn as rock and
+Shove can roll it; lava is authored terrain only.)
 
 ---
 
@@ -166,7 +168,9 @@ not step off the line while she is smoked). Anti-pairs: Twin and Bishop
 Squire (a moved stone blocks a summon's line as surely as a dropped one),
 Boulder (two stone cards, the Stacks' self-block twice), Knight Hop (two
 openers is a skeleton-key kit). Terrain runs that want to refuse it mark
-stones `fixed: true` in the puzzle def.
+stones `fixed: true` in the puzzle def — and Shove only ever moves STONE:
+a hazard with `kind: 'lava'` is terrain, not a block, and is never a target
+(2026-09-06).
 
 **Coup** — pairs: Boulder (swap him onto the post, stone his step back,
 slide onto the post's line), Duchess or any body with a line to the post

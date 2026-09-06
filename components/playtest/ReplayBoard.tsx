@@ -20,7 +20,7 @@ import type {
 } from '@/lib/run/abilities';
 import type { SerializedBoard } from '@/scripts/run-playtest/types';
 import { toSquare } from '@/lib/run/types';
-import { lavaSquareStyle } from '@/lib/run/lava-style';
+import { hazardSquareStyle, splitHazards } from '@/lib/run/lava-style';
 import type { PieceType, RookieForm } from '@/lib/run/types';
 
 // White-piece glyphs for Rookie (she's our player → light side).
@@ -80,9 +80,8 @@ export function ReplayBoard({
   for (const p of board.pieces) {
     enemyAt.set(toSquare({ file: p.file, rank: p.rank }), p.type);
   }
-  const hazardSet = new Set(
-    board.hazards.map((h) => toSquare(h)),
-  );
+  const hazardSets = splitHazards(board.hazards);
+  const hazardSet = new Set([...hazardSets.lava, ...hazardSets.stone]);
   const frozenSet = new Set(board.frozenSquares);
   const rookieSq = toSquare(board.rookie);
 
@@ -151,7 +150,7 @@ export function ReplayBoard({
             background,
             backgroundColor,
             boxShadow,
-            ...(isHazard ? lavaSquareStyle(sq, hazardSet, { animate: false, rimPx: 2 }) : null),
+            ...hazardSquareStyle(sq, hazardSets, { animate: false, rimPx: 2 }),
           }}
         >
           {glyph && (

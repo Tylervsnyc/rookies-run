@@ -16,6 +16,7 @@ import { isPlayerFacing, stageOf } from '../content/pipeline';
 import type {
   Coord,
   EnemyPiece,
+  Hazard,
   KingBehavior,
   RookieForm,
   RunPuzzle,
@@ -109,7 +110,7 @@ function make(
   level: number,
   pieces: EnemyPiece[],
   opts: {
-    hazards?: Coord[];
+    hazards?: Hazard[];
     moveLimit?: number;
     allowedForms?: RookieForm[];
     enemiesPerTurn?: number;
@@ -3625,14 +3626,15 @@ const RUN_X: RunDef = {
 // sidestep east to cross the first river, traverse the open rank 4-5
 // corridor, then sidestep west to cross the second river. Forced zigzag.
 
-const BRIDGE_HAZARDS: Coord[] = [
+/** Two RIVERS (the run's own word) — lava, not stone (2026-09-06 kind split). */
+const BRIDGE_HAZARDS: Hazard[] = [
   { file: 1, rank: 3 }, { file: 2, rank: 3 }, { file: 3, rank: 3 },
   { file: 4, rank: 3 }, { file: 5, rank: 3 }, { file: 6, rank: 3 },
   { file: 8, rank: 3 },
   { file: 1, rank: 6 }, { file: 3, rank: 6 }, { file: 4, rank: 6 },
   { file: 5, rank: 6 }, { file: 6, rank: 6 }, { file: 7, rank: 6 },
   { file: 8, rank: 6 },
-];
+].map((c) => ({ ...c, kind: 'lava' as const }));
 
 const RUN_BRIDGE: RunDef = {
   id: 'the-bridge',
@@ -3951,7 +3953,15 @@ const RUN_PLUS: RunDef = {
 const KING_GOAL = { winCondition: 'king' as const };
 const STILL = { ...KING_GOAL, kingBehavior: 'still' as const };
 const FLEE = { ...KING_GOAL, kingBehavior: 'flee' as const };
+/**
+ * A hazard square. Default kind is STONE (see types.ts): walls, pillars,
+ * sills, pens — the things that SHAPE a room, and the same rock Boulder drops
+ * and Shove rolls. Genuinely molten terrain uses LAVA() instead.
+ */
 const X = (file: number, rank: number): Coord => ({ file, rank });
+
+/** A LAVA hazard square — a moat, a river, a field of heat. Shove refuses it. */
+const LAVA = (file: number, rank: number): Hazard => ({ file, rank, kind: 'lava' });
 
 /**
  * Every ability the Revenge system knows about, whatever its pipeline stage.
@@ -6356,8 +6366,13 @@ const RUN_REVENGE_11: RunDef = {
  * queen a4, not a lock). L10 needs a pair: squire+swap through the sluice
  * then a poisoned lock, or knight-hop + poison.
  */
-const MOAT = (...gaps: number[]): Coord[] =>
-  [1, 2, 3, 4, 5, 6, 7, 8].filter((f) => !gaps.includes(f)).map((f) => X(f, 5));
+/**
+ * The moat itself is WATER — the one band of genuinely molten/deadly terrain
+ * in the run, drawn as the painted lava lake. The extra X() squares each level
+ * adds are the STONE room beyond it (2026-09-06 hazard-kind split).
+ */
+const MOAT = (...gaps: number[]): Hazard[] =>
+  [1, 2, 3, 4, 5, 6, 7, 8].filter((f) => !gaps.includes(f)).map((f) => LAVA(f, 5));
 
 const RUN_REVENGE_12: RunDef = {
   id: 'revenge-12',

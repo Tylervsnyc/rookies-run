@@ -13,7 +13,7 @@ import { ABILITY_DEFS, ALL_ABILITY_IDS, blurbDetailForTier, type AbilityId, type
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { STARTER_KIT_CATALOG } from '@/lib/run/profile';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
-import type { Coord, EnemyPiece, RunPuzzle } from '@/lib/run/types';
+import type { Coord, EnemyPiece, Hazard, RunPuzzle } from '@/lib/run/types';
 import { REGISTRY, STAGES, summarize, type ContentItem, type ContentStage, type Registry } from '@/lib/content/pipeline';
 import { loadRegistry } from '@/lib/content/pipeline-io';
 
@@ -65,7 +65,7 @@ export interface LevelView {
   theme: string | null;
   rookieStart: Coord;
   pieces: MiniPiece[];
-  hazards: Coord[];
+  hazards: Hazard[];
   kingPen: string[];
   moveLimit: number | null;
   winCondition: string;
