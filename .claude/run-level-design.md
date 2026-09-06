@@ -182,9 +182,62 @@ Before shipping a new level / run:
 
 ---
 
-## Measuring — read the noise before you tune (2026-09-03)
+## Measuring — the harness used to lie, and here is the honest method (2026-09-06)
 
-A single `revenge.ts matrix` cell moves with worker ordering, not just trials: Dead Bolt L10 no-ability read 50% inside a 240-cell parallel sweep and 21-25% in three isolated runs. Before tuning a level off one number, re-read it with `--levels=<n> --loadouts=none --trials=48 --jobs=1`; that read (23%) was the stable one.
+**Read this before you quote a number.** Everything measured before 2026-09-06 was
+taken with a harness whose results depended on the SHAPE of the command, not just on
+`(run, level, loadout, trial)`. Two independent defects, both fixed in commit `94482af`:
+
+1. **A process-lifetime counter inside the bot.** `createMctsBot` kept `decisionIndex`
+   as a closure variable on a module-level singleton, and that index was baked into the
+   rollout RNG seed. So a game's play depended on how many decisions the bot had already
+   made *in that process*. A cell read one number alone and a different one as a later
+   column of a multi-column run, or under a different `--jobs` sharding — and repeating
+   one cell four times inside a single process gave 24/16/21/23 wins out of 32. The
+   counter is now per-GAME (keyed by the `BotContext` each game builds) and the game's
+   own seed is mixed into the rollout seed.
+2. **An unseeded start file.** Rookie's random start file came from `Math.random()`
+   inside `puzzleToBoardState`. The app still uses `Math.random` (a player wants a fresh
+   file each attempt); the harness now passes a seeded `startRng`.
+
+**The command shape that gives a trustworthy number — after the fix, any of them.**
+That is the whole point: a cell is now reproducible across invocation shapes, so you may
+batch columns and parallelise freely.
+
+```
+npx tsx scripts/run-playtest/revenge.ts matrix --run=<id> --levels=7,8,9,10 \
+  --loadouts=none,<card>,<card>,<card>,<card>,<a>+<b> --trials=32 --jobs=8
+```
+
+`--jobs=1` is no longer a correctness requirement, only slower. 32 trials still carries
+~8pp of ordinary binomial noise, so do not tune a level off a 5-point difference.
+
+**The footgun that produces silent garbage.** In zsh, `set -- $spec` does NOT word-split,
+so a loop like `set -- "revenge-13 bishop-squire"; ... --loadouts=$2:3` sends
+`--loadouts=:3` — an empty ability id. That used to build a loadout of one ability with no
+id and no uses: it ran fast and printed plausible, meaningless win rates. The tell was a
+4-cell read finishing in ~8s where an honest read takes ~50s. `--loadouts` now REJECTS an
+empty component, an unknown ability id and a malformed `id:tier` (`assertValidLoadout` in
+revenge-core.ts), and `matrix` echoes the resolved loadout list as its first line of
+output — so a mis-expanded variable is visible immediately. Read that line before you read
+the table.
+
+**The regression check.** `scripts/run-playtest/matrix-determinism-check.ts` measures one
+cell three ways — alone, inside a 4-column read, and at `--jobs=3` — and exits non-zero
+unless all three agree exactly. Run it after any change to the bot, the engine's RNG, or
+the harness:
+
+```
+npx tsx scripts/run-playtest/matrix-determinism-check.ts
+```
+
+If it fails, the harness is lying again: look for state shared between games in one
+process (a module-level counter or cache in a bot) or an unseeded RNG in the engine.
+
+*(Superseded note, 2026-09-03: "a cell moves with worker ordering — re-read with
+`--jobs=1`." That observation was real but the diagnosis was wrong; `--jobs=1` did not
+fix it, because with one job every cell ran in ONE process and shared the counter. The
+cause was the counter, not the parallelism.)*
 
 ## Open experiments
 
