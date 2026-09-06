@@ -1901,6 +1901,8 @@ export default function RookiesRunPage() {
                   : 'tap an enemy'
                 : state.activeAbility.id === 'magnet'
                   ? 'tap the square it lands on'
+                  : state.activeAbility.id === 'shove'
+                  ? 'tap a stone beside you'
                   : state.activeAbility.id === 'swap'
                   ? 'tap the summon to swap with'
                   : state.activeAbility.id === 'sacrifice'

@@ -603,6 +603,31 @@
       "rating": 3,
       "mechanism": "Pull a guard onto a snared square: a guard that cannot be captured (stone-backed, twice defended) is held for two turns, or dies at T4, without Rookie standing anywhere. Poison Dart is the slow version of this pair.",
       "confidence": 3
+    },
+    {
+      "a": "shove",
+      "b": "magnet",
+      "archetype": "reposition-then-seal",
+      "rating": 4,
+      "mechanism": "Pull the door guard off its post onto her line, take it (stun), and shove the wall stone beside her INTO his cell so his flight square is gone and the wall's gap is her line in. Neither half alone: the pull opens nothing, the shove exposes her to the guard.",
+      "confidence": 4,
+      "note": "Designed 2026-09-06. Shove alone: The Keep L5-L7 0% -> 100%, The Parapet L5/L7 0% -> 100% (12 trials, T5 bot); The Vault L6-L7 stays 0% alone (the plug pawn sits on the landing square, needs the T3 crush or the pair)."
+    },
+    {
+      "a": "shove",
+      "b": "become-king",
+      "archetype": "untouchable-engineer",
+      "rating": 3,
+      "mechanism": "Step to the wall impervious, shove the stone into his room, revert on his line. Same archetype as Alcove / Keep with a different second card.",
+      "confidence": 3
+    },
+    {
+      "a": "shove",
+      "b": "smoke",
+      "archetype": "blind-the-court",
+      "rating": 3,
+      "mechanism": "Walk to the wall unseen, shove, and because he does not flee while she is smoked, the gap she opened is a line he does not step off. Two free actions and a slide.",
+      "confidence": 3
     }
   ],
   "antiPairs": [
@@ -704,6 +729,26 @@
       "a": "snare",
       "b": "duchess",
       "reason": "Same cover problem as Twin."
+    },
+    {
+      "a": "shove",
+      "b": "twin",
+      "reason": "A moved stone blocks a rook summon's line as surely as a dropped one."
+    },
+    {
+      "a": "shove",
+      "b": "bishop-squire",
+      "reason": "Same self-block on diagonals (the Colonnade measurement)."
+    },
+    {
+      "a": "shove",
+      "b": "boulder",
+      "reason": "Weak pair, not a true anti: two stone cards in one kit is the Stacks' upgrade self-block twice."
+    },
+    {
+      "a": "shove",
+      "b": "knight-hop",
+      "reason": "Two openers in one kit is a skeleton-key kit."
     }
   ]
 }

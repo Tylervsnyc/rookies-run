@@ -19,6 +19,7 @@ import type {
   Coord,
   Drone,
   EnemyPiece,
+  Hazard,
   PieceType,
   RookieForm,
 } from './types';
@@ -57,7 +58,8 @@ export type AbilityId =
   // The five of 2026-09-06, mined from the level library (testing). See
   // docs/new-abilities-2026-09-06.md — each is a distinct verb: trap a
   // square, move a stone, move the king, pass a turn, fake a Rookie.
-  | 'snare';
+  | 'snare'
+  | 'shove';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -297,6 +299,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Trap',
     description: 'Set a trap on an empty square. The first enemy to step on it is held.',
   },
+  shove: {
+    id: 'shove',
+    name: 'Shove',
+    activation: 'targeted',
+    typeLine: 'Targeted · Terrain',
+    description: 'Push a stone beside you one square away. It moves. It does not disappear.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -439,6 +448,11 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/2/2/2 — the spec's ladder (docs/new-abilities-2026-09-06.md).
       if (tier <= 2) return 1;
       return 2;
+    case 'shove':
+      // 1/2/2/2/unlimited.
+      if (tier === 1) return 1;
+      if (tier <= 4) return 2;
+      return -1;
   }
 }
 
@@ -520,6 +534,7 @@ const HOW: Record<AbilityId, string> = {
   sacrifice: 'Tap card, then tap one of your summons.',
   knighting: 'Tap card, then tap one of your summons.',
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
+  shove: 'Tap card, then tap a stone beside you. It rolls one square away from you.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -703,6 +718,11 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 4) return 'Set a trap. A guard that steps on it is captured; the king is held 3 turns.';
       if (tier >= 2) return 'Set a trap. Whoever steps on it is held for 2 turns.';
       return 'Set a trap on an empty square. The first enemy to step on it is held for 1 turn.';
+    case 'shove':
+      if (tier === 5) return 'Push stones all you like. Every one crushes what it lands on.';
+      if (tier === 4) return 'Push a stone on your line, up to 2 away, one square. Crushes pawns.';
+      if (tier === 3) return 'Push a stone one square. A pawn it lands on is crushed.';
+      return 'Push a stone beside you one square away.';
   }
 }
 
@@ -882,6 +902,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Trap holds 2 turns. 2/level.';
       if (tier === 2) return 'Trap holds 2 turns. 1/level.';
       return 'Trap holds 1 turn. 1/level.';
+    case 'shove':
+      if (tier === 5) return 'Unlimited shoves. Crushes pawns.';
+      if (tier === 4) return 'Shove from 2 away. Crushes pawns. 2/level.';
+      if (tier === 3) return 'Shove a stone; crushes a pawn. 2/level.';
+      if (tier === 2) return 'Shove a stone one square. 2/level.';
+      return 'Shove a stone one square. 1/level.';
   }
 }
 
@@ -1072,6 +1098,12 @@ export const UPGRADE_NOTES: Record<
     3: '',
     4: 'The trap bites: guards die on it',
     5: 'The trap re-arms after every spring',
+  },
+  shove: {
+    2: '',
+    3: 'The stone crushes a pawn it lands on',
+    4: 'Reach: shove from 2 squares off',
+    5: 'Unlimited shoves',
   },
 };
 
@@ -1333,6 +1365,7 @@ export function abilityLegalMoves(
   if (abilityId === 'sacrifice') return sacrificeTargets(state);
   if (abilityId === 'knighting') return knightingTargets(state);
   if (abilityId === 'snare') return snareTargets(state);
+  if (abilityId === 'shove') return shoveTargets(state).map((t) => t.stone);
   return [];
 }
 
@@ -1435,7 +1468,8 @@ export function applyAbilityActivate(
     abilityId === 'swap' ||
     abilityId === 'sacrifice' ||
     abilityId === 'knighting' ||
-    abilityId === 'snare';
+    abilityId === 'snare' ||
+    abilityId === 'shove';
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
   if (def.activation === 'targeted' && !picksSquare) step = 'pick-enemy';
   if (picksSquare && abilityLegalMoves(state, abilityId).length === 0) return state;
@@ -1827,6 +1861,9 @@ export function applyAbilityTargeted(
   if (abilityId === 'snare') {
     return applySnare(state, target);
   }
+  if (abilityId === 'shove') {
+    return applyShove(state, target);
+  }
 
   if (abilityId === 'magnet') {
     // Two taps: first pick the enemy to grab, THEN pick how far it comes —
@@ -2102,6 +2139,120 @@ export function springSnaresAt(state: BoardState, arrivals: ReadonlyArray<string
     };
   }
   return cur;
+}
+
+// ---------------------------------------------------------------------------
+// Shove (2026-09-06) — move terrain. Tap a stone beside Rookie and it rolls
+// ONE square directly away from her: a gap opens where it was, a square dies
+// where it lands. Authored walls and Boulder stones are the same array
+// (`hazards`), so both roll; a run marks a stone `fixed: true` to refuse it,
+// and a two-thick wall is shove-proof by construction (no chain pushes).
+// Design: docs/new-abilities-2026-09-06.md §2.2.
+// ---------------------------------------------------------------------------
+
+/** T3+: a stone landing on an enemy PAWN crushes it (a Rookie capture). */
+export function shoveCrushes(tier: AbilityTier): boolean {
+  return tier >= 3;
+}
+
+/** T4+: also stones on Rookie's rook lines two squares off, nothing between. */
+export function shoveReach(tier: AbilityTier): number {
+  return tier >= 4 ? 2 : 1;
+}
+
+export interface ShoveTarget {
+  stone: Coord;
+  dest: Coord;
+  crushed: EnemyPiece | null;
+}
+
+/**
+ * Stones Rookie may shove right now, with where each one lands. Legal when
+ * the destination is in bounds and free of enemy (except a crushable pawn),
+ * ally, drone, hazard, snare, scarecrow and Rookie — and never a shove that
+ * leaves Rookie with no legal move (the Boulder self-lock check).
+ */
+export function shoveTargets(state: BoardState): ShoveTarget[] {
+  const owned = state.abilities.find((a) => a.id === 'shove');
+  if (!owned) return [];
+  const crush = shoveCrushes(owned.tier);
+  const reach = shoveReach(owned.tier);
+  const out: ShoveTarget[] = [];
+  const consider = (stone: Hazard, df: number, dr: number) => {
+    if (stone.fixed) return;
+    const dest = { file: stone.file + df, rank: stone.rank + dr };
+    if (!allyInBounds(dest.file, dest.rank)) return;
+    if (allyIsHazard(state, dest.file, dest.rank)) return;
+    if (state.rookie.file === dest.file && state.rookie.rank === dest.rank) return;
+    if ((state.allies ?? []).some((a) => a.file === dest.file && a.rank === dest.rank)) return;
+    if ((state.drones ?? []).some((d) => d.alive && d.file === dest.file && d.rank === dest.rank)) return;
+    const destSq = toSquare(dest);
+    if ((state.snares ?? []).some((sn) => sn.square === destSq)) return;
+    if (state.scarecrow?.square === destSq) return;
+    const enemy = state.pieces.find((p) => p.file === dest.file && p.rank === dest.rank);
+    if (enemy && !(crush && enemy.type === 'pawn')) return;
+    const moved: BoardState = {
+      ...state,
+      pieces: enemy ? state.pieces.filter((p) => p !== enemy) : state.pieces,
+      hazards: [...state.hazards.filter((h) => h !== stone), { file: dest.file, rank: dest.rank }],
+    };
+    if (rookieLegalMoves(moved).length === 0) return;
+    out.push({ stone: { file: stone.file, rank: stone.rank }, dest, crushed: enemy ?? null });
+  };
+  for (const stone of state.hazards) {
+    const df = stone.file - state.rookie.file;
+    const dr = stone.rank - state.rookie.rank;
+    const d = Math.max(Math.abs(df), Math.abs(dr));
+    if (d === 1) {
+      consider(stone, Math.sign(df), Math.sign(dr));
+    } else if (d === 2 && reach >= 2 && (df === 0 || dr === 0)) {
+      // On a rook line two away: the square between must be open.
+      const midF = state.rookie.file + Math.sign(df);
+      const midR = state.rookie.rank + Math.sign(dr);
+      if (allyIsHazard(state, midF, midR)) continue;
+      if (state.pieces.some((p) => p.file === midF && p.rank === midR)) continue;
+      if ((state.allies ?? []).some((a) => a.file === midF && a.rank === midR)) continue;
+      if ((state.drones ?? []).some((x) => x.alive && x.file === midF && x.rank === midR)) continue;
+      consider(stone, Math.sign(df), Math.sign(dr));
+    }
+  }
+  return out;
+}
+
+function applyShove(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'shove');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  const hit = shoveTargets(state).find((t) => t.stone.file === target.file && t.stone.rank === target.rank);
+  if (!hit) return state;
+  const stone = state.hazards.find((h) => h.file === hit.stone.file && h.rank === hit.stone.rank);
+  if (!stone) return state;
+  const destSq = toSquare(hit.dest);
+  const crushed = hit.crushed;
+  const statusOverlay = crushed ? clearStatusOnSquare(state, destSq) : null;
+  const clearDecoy = !!crushed && state.decoyTarget === destSq;
+  return {
+    ...state,
+    ...(statusOverlay ?? {}),
+    // The moved stone is loose by definition (it was never fixed).
+    hazards: [...state.hazards.filter((h) => h !== stone), { file: hit.dest.file, rank: hit.dest.rank }],
+    pieces: crushed ? state.pieces.filter((p) => p !== crushed) : state.pieces,
+    captures: crushed ? [...state.captures, crushed.type] : state.captures,
+    tempo: crushed
+      ? Math.min(tempoMaxFor(state), state.tempo + (TEMPO_REWARD[crushed.type] ?? 0))
+      : state.tempo,
+    decoyTarget: clearDecoy ? null : state.decoyTarget,
+    decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
+    abilities: decrementUse(state.abilities, 'shove'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    ...(crushed ? stunKingAfterCapture(state) : {}),
+    lastAbilityFx: {
+      kind: 'shove',
+      from: toSquare(hit.stone),
+      to: destSq,
+      id: Date.now() + Math.random(),
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------

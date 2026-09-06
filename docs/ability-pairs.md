@@ -158,3 +158,12 @@ guard onto the trap). Anti-pairs: Freeze Ray (same job, reaches him directly),
 Smoke (he never steps while smoked, nothing springs), Twin / Duchess / any
 summon whose cover lands on the trapped square (cover deletes it from his
 flight set, he steps elsewhere).
+
+**Shove** — pairs: Magnet (pull the door guard out, take it, shove the wall
+stone into his cell: the gap is her line in), Become King (the untouchable
+engineer with a different second card), Smoke (open the wall unseen; he does
+not step off the line while she is smoked). Anti-pairs: Twin and Bishop
+Squire (a moved stone blocks a summon's line as surely as a dropped one),
+Boulder (two stone cards, the Stacks' self-block twice), Knight Hop (two
+openers is a skeleton-key kit). Terrain runs that want to refuse it mark
+stones `fixed: true` in the puzzle def.

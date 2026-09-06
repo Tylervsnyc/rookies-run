@@ -897,6 +897,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Set a trap on an empty square (free action). Invisible to the enemy AI. The first enemy to arrive on it during the enemy phase (a flee step, an approach, a Magnet pull, a Coup swap) is held there: frozen for the tier's hold (1/2/2/3/3 turns). From T4 a guard that springs it is captured instead (credited to Rookie, king stunned 2 turns); the king is only ever held. Consumed on springing; T5 re-arms. The boulder trick with the sign flipped: let him take his flight square and keep him there. Design: docs/new-abilities-2026-09-06.md."
+    },
+    {
+      "id": "shove",
+      "kind": "ability",
+      "name": "Shove",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Push a stone beside Rookie one square directly away from her (free action). It moves; it does not disappear: a gap opens where it was, a square dies where it lands (a pen square becomes a hazard he cannot step to). Legal only when the landing square is empty; from T3 a pawn it lands on is crushed (a Rookie capture with the king stun); T4 reaches stones two squares off on her rook lines; T5 unlimited. Never a shove that leaves Rookie with no move; never into a stone (two-thick walls are shove-proof); authored stones marked fixed cannot be pushed. Universal-solvent class: keep out of terrain kits unless it is half the signature pair. Design: docs/new-abilities-2026-09-06.md."
     }
   ]
 }

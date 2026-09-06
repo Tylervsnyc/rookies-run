@@ -1719,6 +1719,31 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
+  if (fx.kind === 'shove') {
+    // A stone rolls one square from where it stood to where it lands, with a
+    // dust ring at the landing. (The lava under it re-renders at once; this
+    // is the beat that says "it MOVED, it did not disappear".)
+    const k = Math.floor(fx.id);
+    return (
+      <div key={fx.id} aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+        <style>{`
+          @keyframes rrFxShoveRoll-${k} {
+            0%   { left: ${fromX}%; top: ${fromY}%; transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+            70%  { left: ${toX}%; top: ${toY}%; transform: translate(-50%, -50%) rotate(180deg); opacity: 1; }
+            100% { left: ${toX}%; top: ${toY}%; transform: translate(-50%, -50%) rotate(180deg); opacity: 0; }
+          }
+          @keyframes rrFxShoveDust-${k} {
+            0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+            60%  { opacity: 0.85; }
+            100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+          }
+        `}</style>
+        <div style={{ position: 'absolute', left: `${fromX}%`, top: `${fromY}%`, width: '10%', height: '10%', borderRadius: '45% 55% 50% 50%', background: 'radial-gradient(circle at 35% 30%, #a8a29e 0%, #57534e 45%, #292524 100%)', boxShadow: '0 4px 8px rgba(0,0,0,0.5)', animation: `rrFxShoveRoll-${k} 520ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards` }} />
+        <div style={{ position: 'absolute', left: `${toX}%`, top: `${toY}%`, width: '14%', height: '14%', borderRadius: '50%', border: '3px solid rgba(168,162,158,0.8)', animation: `rrFxShoveDust-${k} 420ms ease-out 320ms forwards`, opacity: 0 }} />
+      </div>
+    );
+  }
+
   if (fx.kind === 'smoke') {
     // Grey puffs bloom out of Rookie's square.
     const k = Math.floor(fx.id);

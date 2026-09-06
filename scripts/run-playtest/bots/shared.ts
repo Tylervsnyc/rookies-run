@@ -30,6 +30,7 @@ import {
   magnetLandingSquares,
   magnetTargets,
   sacrificeTargets,
+  shoveTargets,
   snareTargets,
   summonSpawnSquares,
   squireSpawnSquares,
@@ -591,6 +592,14 @@ function candidatesForAbility(
         if (!nearKing && !nearHunter) continue;
         out.push({ kind: 'ability-target', abilityId: 'snare', target: c });
         if (++n >= 16) break;
+      }
+      return out;
+    }
+    case 'shove': {
+      // Adjacent stones (at most 8; T4 plus the two-away line stones), one
+      // candidate each — the direction is implied.
+      for (const t of shoveTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'shove', target: t.stone });
       }
       return out;
     }
