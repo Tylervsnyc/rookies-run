@@ -6,6 +6,143 @@
  * Kit = become-king / boulder / aegis / magnet (`allowedAbilities` IS the kit).
  * VERB: walk in untouchable and brick the door behind you.
  *
+ * ===========================================================================
+ * 2026-09-06 VARIANCE REWORK (Tyler, after playing it: "both very good in
+ * creativity, but they need more VARIANCE and DIFFICULTY, once you get the
+ * idea you solve it" — and he LOVES the little boulder trick: a stone on the
+ * king's flight square and take him, one turn deep). The first build's finale
+ * was ONE line in three geometries — launch square, then cast + corner stone
+ * + diagonal step in a single turn — and the pair read 81-97%. The rework
+ * keeps the signature, the kit and L1-L6, and gives the trick FOUR SHAPES:
+ * each of L7-L10 demands a different use of the same two cards. Target per
+ * run-level-design.md "One line, four times": singles <= 8%, pair 60-80%.
+ *
+ *   L7  THE TWO CORNERS — WHICH STONE. Both diagonal-ups are open for the
+ *       first time (pen g7 / h8 / f8): two flight squares, two stones, and the
+ *       stone you reach for LOSES. Without any stone he always runs to h8 —
+ *       the flee AI marks f8 "risky" (it shares a file with f7, which her king
+ *       form can take) — and h8 is off every rook line forever. Brick f8 and
+ *       he still goes to h8: lost. Brick h8 and he is FORCED onto f8, his own
+ *       sentry's file, and the chase is a rook chase through the sentry:
+ *       revert on g6, step to his vacated g7, g7xf7 (stun), f7xf8. Both
+ *       stones = the old one-turn kill, one move faster. Clock 7, one launch.
+ *   L8  THE SEAM — TRAVEL, NOT THE KILL. No sill: the b-file runs through the
+ *       doorstep onto him, so the kill is a ROOK SLIDE from b5, and Become
+ *       King is spent a turn EARLIER, on movement. b5 sits in a stone pocket
+ *       (a4, a5, b4, c4, d5 stone) whose only entrance is the SEAM d4 → c5, a
+ *       diagonal between two stones that no rook line can make. Reach d4,
+ *       cast, step through to c5 (nothing even shoots at her — the untouchable
+ *       turn buys a diagonal, not a bounce), revert, slide c5 → b5 with the
+ *       stone already on a8, then b5xb7. Pure stone: nothing to crush at any
+ *       Boulder tier. (a4 is stone because a4 → b5 was a second seam that
+ *       landed ON the attacking square, and the revert then took him with no
+ *       stone at all — become-king alone read 100% until it was closed.)
+ *   L9  THE PLUG THAT WALKS — THE HUNTER IS THE RIDE. One corner, h5 stone
+ *       so f5 is the only launch, and a bishop standing ON the doorstep: off
+ *       every rook line, it plugs the step and covers f5, and its only move in
+ *       the world is f5 itself. Bishops ride to whatever is closer and off her
+ *       lines, so the decision is WHERE TO STAND: on rank 4 west of f it walks
+ *       out onto the launch; on the f-file it never leaves. Then f4, take it
+ *       (the stun is nothing, the square is everything — she is on the
+ *       launch), cast + h8 + step g6, g6xg7. Once it has left the doorstep it
+ *       roams the lower diagonals and hunts her; be quick.
+ *   L10 THE ALCOVE — THE PLUG, THEN WHICH CORNER, TWO A TURN. The b-side sill
+ *       with the plug on the doorstep (L9) AND both corners open (L7), two
+ *       enemies a turn. Lure the plug out onto c5, take it from c4, then the
+ *       corner question with no slack: a8 + c8 + step in one turn, or a8 alone
+ *       and the sentry chase (b6 → b7 → xc7 → xc8). Brick c8 instead of a8 and
+ *       he walks to a8 and the level is over.
+ *
+ *   WHY THE SINGLES STILL FAIL (kit-relative): none / aegis / magnet — the
+ *   doorstep is off every rook line on L7, L9, L10 and the pocket is a
+ *   diagonal away on L8; a shield never moves her, a pull runs along her lines
+ *   and nothing on her lines opens a diagonal. boulder — stone seals, never
+ *   opens; L8's pocket is stone, so there is nothing to crush at any tier.
+ *   become-king (T1 = one step, one protected turn) — L7 / L9 / L10: he has a
+ *   corner she has no stone for (on L7 and L10 the flee AI ALWAYS picks the
+ *   unreachable one, because the other shares a file with the sentry her
+ *   king form could take, which its "risky" rule avoids); L8: she reaches b5
+ *   and he steps to a8. NOTE the clock gates no single card on any finale
+ *   level any more — the geometry does — so the move limit is a pure PAIR
+ *   knob: L7 7 + one launch (6 read 53%, 7 with two launches 94%), L8 7, L9 7
+ *   (6 read 44%), L10 9 (7 read 50%, 8 read 53%, 9 read 59%, 10 read 50% —
+ *   past 9 the clock is not the limiter; the roaming bishop and the bot's
+ *   own junk stones are).
+ *
+ *   DEAD ENDS OF THE REWORK (all 2026-09-06, all measured, in order):
+ *   THE CHIMNEY. First L7 opened the crown g8 instead of the inboard corner.
+ *     Once he leaves g7 the g-file runs to g8, and g8 attacks h8 along rank
+ *     8: become-king alone read 100%. A second flight square must be off every
+ *     rook line even AFTER he has vacated his own square — only the diagonal-
+ *     ups qualify, and f8 only because its file is his sentry.
+ *   THE SECOND SEAM. First L8 left a4 open; a4 → b5 is also a diagonal, and
+ *     it lands ON the attacking square, so the revert took him with no stone
+ *     (become-king alone 100%). A seam must land BESIDE the attacking square,
+ *     never on it: the flee only happens on the enemy turn, and a king that
+ *     reverts into a threat never gives him one.
+ *   THE SHIELD. The plan had "stone as a shield": a bishop in a diagonal chute
+ *     covering the only launch square, one stone in its line. It cannot exist
+ *     here: a bishop slides, the launch is CLOSER to every rank-4 approach
+ *     square than its chute is, and it rides there first, where she takes it
+ *     from f4 for a free stun and a free ride. The plug that walks (L9) is
+ *     that same behaviour turned into the trick instead of fought.
+ *   THE SEAM WITH TWO CORNERS (first L9). A rook on g5 has nothing capturable
+ *     on its line, so neither corner is "risky" and with no stone he flips a
+ *     coin — become-king alone can only be gated by the clock, and the same
+ *     clock kills the pair's one-stone chase. The only pair line left was
+ *     both stones with zero slack, and the bot never found it (0/16). A
+ *     two-corner level needs the doorstep threat (king form, sentry
+ *     capturable) so the flee AI itself picks the losing corner.
+ *   JUNK STONES. The bot drops both stones early on squares within two of
+ *     itself, then casts and king-steps into a square whose rook exits are
+ *     the stones it just dropped — "end: playing", no legal move. e3 stone on
+ *     the seam approach turned e4 into exactly such a pocket (pair 0/16 until
+ *     it moved to e2); a chute wall at c3 did the same to c2. Keep every
+ *     square a king step can land on with at least two rook exits.
+ *
+ *   MEASURED — 2026-09-06 VARIANCE REWORK (Normal, T5 bot, kit at T1; the
+ *   finale is the SERIAL read, --jobs=1, 32 trials per cell; L7's singles and
+ *   the L7 / L10 pair re-read serially after their final clock change):
+ *   L      none  becomeK  boulder  aegis  magnet  |  becomeK+boulder   (first build)
+ *   7        0%      0%       0%     0%      0%  |    63%             (91%)
+ *   8        0%      0%       0%     0%      0%  |    72%             (97%)
+ *   9        0%      0%       0%     0%      0%  |    66%             (81%)
+ *   10       0%      0%       0%     0%      0%  |    59%             (81%)
+ *   Contract: no-ability 0%, every single card 0% (bar <= 8%), the pair
+ *   63 / 72 / 66 / 59 against a 60-80% band. L10 is the honest miss: its
+ *   32-trial serial reads were 53% (clock 8), 59% (clock 9), 50% (clock 10) —
+ *   the clock stopped being the limiter at 9; what is left is the bishop
+ *   roaming with two actions a turn and the bot's own junk-stone stalls
+ *   (see JUNK STONES). Called at 59, reported as 50-59. Direction-pass
+ *   reads at 16 trials / --jobs=2 ran 6-16 points above the serial numbers
+ *   (L7 63 -> 53 at clock 6; L10 69 -> 53 at clock 8), same cross-talk the
+ *   rubric warns about.
+ *
+ *   TIER CAVEAT (16 trials, --jobs=1, the highest tier the offers reach):
+ *   become-king:4 alone reads 100 / 100 / 100 / 100 — unchanged from the
+ *   first build and for the same reason: three uses and two protected turns
+ *   let her walk the corner diagonal herself, and the seam's pocket and the
+ *   plug's launch are both one king step wide. boulder:4 alone reads
+ *   0 / 0 / 0 / 0 (its second forced stone lands beside the king and cannot
+ *   open a diagonal). aegis:4 / magnet:4 were 0 in the first build and no
+ *   geometry that touches them changed. Pinning Become King's tier in this
+ *   run is still the one decision that would make the gate tier-proof.
+ *
+ *   FULL RUNS (40 each, never skipping an offer, T5 bot, --jobs=2):
+ *     RANDOM picks from the kit: 7/40 = 18% clear (first build 35%). Deaths
+ *       L3 6, L4 8, L5 2, L6 10, L7 4, L8 3 — every one but one a move-limit,
+ *       i.e. she arrived without the card the level asks for. L9 / L10: 7/7.
+ *     PAIR-ONLY pool: 15/40 = 38% clear (first build 40%); L3 / L4 still take
+ *       most of the losses (AEGIS levels, pair pool cannot hold it). The
+ *       finale in-run reads 89 / 94 / 100 / 100 — higher than the matrix
+ *       because by L7 the offers have UPGRADED the cards, and become-king:4
+ *       solos every finale level (tier caveat above). The 18% random figure
+ *       is the first combo run under the Moat's 10-25% target; the finale
+ *       now costs a random picker something even when he holds both halves.
+ *
+ *   The original design text follows unchanged.
+ * ===========================================================================
+ *
  * WHY THIS PAIR. Become King is the only card in the game that buys TIME ON A
  * SQUARE: nothing can capture her, but her reach collapses to one step, so she
  * can only ever be untouchable somewhere she was already standing beside — it
@@ -262,16 +399,20 @@ function alcove(
   kf: number,
   kr: number,
   wall: 1 | -1,
-  opts: { sill?: boolean; sentry?: boolean } = {},
+  opts: { sill?: boolean; sentry?: boolean; twoCorners?: boolean } = {},
 ): Alcove {
   const sentry = opts.sentry !== false;
+  // 2026-09-06 rework: `twoCorners` leaves the inboard corner OPEN and adds it
+  // to his pen — a second flight square (L7 / L9 / L10) that is NOT the one the
+  // stone should go on. Still off every rook line: its file is his sentry.
+  const twoCorners = opts.twoCorners === true;
   const inboard = kf - wall;
   const hazards: Coord[] = [
     X(kf + wall, kr), // the walled shoulder
     X(kf + wall, kr - 1), // …and the doorstep flank under it
     X(inboard, kr - 1), // the sentry's stump = the other doorstep flank
     X(kf, kr + 1), // the crown
-    X(inboard, kr + 1), // the inboard corner, bricked from the start
+    ...(twoCorners ? [] : [X(inboard, kr + 1)]), // the inboard corner, bricked
     // The BACK WALL: the three squares behind the sentry. Without them a king
     // form standing on any of them captures the sentry diagonally and lands on
     // his rank (measured 2026-09-06: become-king alone read 50-75% via e8xf7).
@@ -287,7 +428,7 @@ function alcove(
   return {
     hazards: hazards.filter((c) => inB(c.file, c.rank)),
     pieces,
-    pen: [sq(kf, kr), sq(kf + wall, kr + 1)],
+    pen: [sq(kf, kr), sq(kf + wall, kr + 1), ...(twoCorners ? [sq(inboard, kr + 1)] : [])],
   };
 }
 
@@ -298,7 +439,9 @@ const G7_SILL = alcove(7, 7, 1, { sill: true });
 const G7_SEALED = alcove(7, 7, 1, { sentry: false });
 /** b-file mirror: king b7, sentry c7, wall a7, corner a8, doorstep b6. */
 const B7 = alcove(2, 7, -1);
-const B7_SILL = alcove(2, 7, -1, { sill: true });
+/** 2026-09-06 rework: both corners open (pen adds f8 / c8). */
+const G7_SILL_2C = alcove(7, 7, 1, { sill: true, twoCorners: true });
+const B7_SILL_2C = alcove(2, 7, -1, { sill: true, twoCorners: true });
 
 const RUN_REVENGE_25: RunDef = {
   id: 'revenge-25',
@@ -375,40 +518,57 @@ const RUN_REVENGE_25: RunDef = {
       hazards: [...G7_SILL.hazards, X(3, 5)],
       kingPen: G7_SILL.pen,
     }),
-    // L7 — THE DOORSTEP. The sill AND he runs. Become King (free) + both stones
-    // (free) + one diagonal step, then slide onto him. The pair.
-    make(7, [...G7_SILL.pieces, pawn(3, 6)], {
+    // L7 — THE TWO CORNERS (2026-09-06 rework). The sill, he runs, and BOTH
+    // corners are open: pen g7 / h8 / f8. Two stones, and the one you reach
+    // for loses: with no stone he always takes h8 (f8 is "risky" — it shares
+    // a file with the sentry her king form can take), and h8 is off every
+    // rook line forever. Brick h8 and he is forced onto f8: revert on g6,
+    // step to his vacated g7, g7xf7, f7xf8. A chase through the sentry.
+    // h5 is stone so f5 is the only launch and two moves from every start
+    // (clock 6 with two launches read 53%, clock 7 with two read 94%).
+    make(7, [...G7_SILL_2C.pieces, pawn(3, 6)], {
       ...FLEE,
       moveLimit: 7,
-      hazards: [...G7_SILL.hazards, X(3, 5)],
+      hazards: [...G7_SILL_2C.hazards, X(3, 5), X(8, 5)],
+      kingPen: G7_SILL_2C.pen,
+    }),
+    // L8 — THE SEAM (2026-09-06 rework). NO sill: the b-file runs through the
+    // doorstep onto him, so the kill is a rook slide from b5 — and b5 sits in
+    // a stone pocket (a4, a5, b4, c4, d5) whose only entrance is the SEAM
+    // d4 → c5, a diagonal between two stones. Become King is spent on TRAVEL:
+    // reach d4, cast, step through to c5, revert, c5 → b5 with the stone on
+    // a8, and b5xb7. Nothing to crush at any tier.
+    make(8, [...B7.pieces, pawn(6, 6)], {
+      ...FLEE,
+      moveLimit: 7,
+      hazards: [...B7.hazards, X(6, 5), X(1, 4), X(1, 5), X(2, 4), X(3, 4), X(4, 5)],
+      kingPen: B7.pen,
+    }),
+    // L9 — THE PLUG THAT WALKS (2026-09-06 rework). The L7 alcove with one
+    // corner, h5 stone so f5 is the only launch — and a bishop standing ON
+    // the doorstep. Off every rook line, it plugs the step and covers f5, and
+    // its only move in the world is f5 itself. Bishops ride to whatever is
+    // closer and off her lines, so stand on rank 4 WEST of f and it walks
+    // out onto the launch; then f4, take it (the stun is nothing, the square
+    // is everything), cast + h8 + step g6, g6xg7. Stand on the f-file too
+    // early and it never leaves.
+    make(9, [...G7_SILL.pieces, pawn(3, 6), pawn(4, 6), bishop(7, 6)], {
+      ...FLEE,
+      moveLimit: 7,
+      hazards: [...G7_SILL.hazards, X(3, 5), X(4, 5), X(8, 5)],
       kingPen: G7_SILL.pen,
     }),
-    // L8 — THE OTHER DOORSTEP. Mirrored onto the b-file: launches a5/c5,
-    // corners a8/c8, two light bishops that can never touch a dark launch square
-    // but own the diagonals she crosses to reach one.
-    make(8, [...B7_SILL.pieces, pawn(6, 6)], {
-      ...FLEE,
-      moveLimit: 7,
-      hazards: [...B7_SILL.hazards, X(6, 5)],
-      kingPen: B7_SILL.pen,
-    }),
-    // L9 — TWO A TURN. The L7 alcove, two dark bishops, two enemies a turn.
-    make(9, [...G7_SILL.pieces, pawn(3, 6), pawn(4, 6)], {
+    // L10 — THE ALCOVE (2026-09-06 rework). The b-side sill with the plug on
+    // the doorstep (L9) AND both corners open (L7), two a turn. Lure the plug
+    // out onto c5, take it from c4, then the corner question with no slack:
+    // a8 + c8 + step in one turn, or a8 alone and the chase through the
+    // sentry (b6 → b7 → xc7 → xc8). Brick c8 instead of a8 and he walks to a8.
+    make(10, [...B7_SILL_2C.pieces, pawn(5, 6), pawn(6, 6), bishop(2, 6)], {
       ...FLEE,
       enemiesPerTurn: 2,
-      moveLimit: 7,
-      hazards: [...G7_SILL.hazards, X(3, 5), X(4, 5)],
-      kingPen: G7_SILL.pen,
-    }),
-    // L10 — THE ALCOVE. The b-file cell, three light bishops, two a turn.
-    // Nothing new is added to the geometry: the capstone is the motif with no
-    // slack left in it.
-    make(10, [...B7_SILL.pieces, pawn(5, 6), pawn(6, 6)], {
-      ...FLEE,
-      enemiesPerTurn: 2,
-      moveLimit: 7,
-      hazards: [...B7_SILL.hazards, X(5, 5), X(6, 5)],
-      kingPen: B7_SILL.pen,
+      moveLimit: 9,
+      hazards: [...B7_SILL_2C.hazards, X(5, 5), X(6, 5), X(1, 5)],
+      kingPen: B7_SILL_2C.pen,
     }),
   ],
 };
