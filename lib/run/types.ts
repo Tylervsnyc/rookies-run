@@ -49,8 +49,10 @@ export interface EnemyPiece {
 }
 
 /**
- * Rainbow ally piece — spawned by Squad (passive) or Convert (active).
- * `source` lets Convert allies use slightly worse AI than Squad allies.
+ * Rainbow ally piece — spawned by Squad / Bodyguard (AI-driven) or by the
+ * controllable-summon family, which includes any enemy stolen by Convert.
+ * `source` says which ability made it; CONTROLLED_SOURCES in abilities.ts
+ * decides whether the player steers it.
  */
 /** Ally piece kinds — allies can also be rooks (Bodyguard); enemies never are. */
 export type AllyPieceType = PieceType | 'rook';
@@ -62,8 +64,10 @@ export interface AllyPiece {
   rank: number;
   source:
     | 'squad'
-    | 'convert'
     | 'bodyguard'
+    // Convert (2026-09-06): a stolen enemy piece, keeps its type. CONTROLLED —
+    // tap-to-move like the Squire family below; never moves on its own.
+    | 'convert'
     | 'squire'
     // Controllable-summon family (2026-09-01) — pieces the PLAYER steers on
     // her own turns, like the Squire. See CONTROLLED_SOURCES in abilities.ts.
@@ -76,7 +80,7 @@ export interface AllyPiece {
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
    * end of each enemy turn; the ally dissolves when it hits 0. Absent =
-   * permanent (Squad / Convert allies).
+   * permanent (Squad / Convert / the Page).
    */
   turnsLeft?: number;
   /**
@@ -107,7 +111,7 @@ export type GameStatus = 'playing' | 'won' | 'lost';
 export interface BoardState {
   rookie: Coord;
   pieces: EnemyPiece[];
-  /** Rainbow ally pieces — spawned by Squad / Convert. Play after Rookie's move. */
+  /** Rainbow ally pieces. AI-driven ones (Squad / Bodyguard) play after Rookie's move; controlled ones (summons, converted pieces) move on her tap. */
   allies: AllyPiece[];
   /**
    * Active drones (mini-Rookies). Populated when Drones ability fires; cleared

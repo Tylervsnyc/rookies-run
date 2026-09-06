@@ -291,7 +291,9 @@ function convertBonus(
     return 0;
   }
   const v = PIECE_VALUE[piece.type];
-  // Strong: we gain a piece AND deprive them. ~2× material swing.
+  // Strong: we gain a CONTROLLED body AND deprive them (~2x material swing).
+  // The stolen piece is enumerated as a 'squire-move' candidate from the next
+  // decision on, like every controlled summon (legalCandidates in shared.ts).
   // Higher if target is on our forward path or attacks rookie.
   const inPath = piece.file === state.rookie.file && piece.rank > state.rookie.rank;
   const pathMult = inPath ? 1.6 : 1.0;

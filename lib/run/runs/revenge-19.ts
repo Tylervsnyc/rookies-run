@@ -1,5 +1,39 @@
 /**
  * revenge-19 — THE CLIFF. Built 2026-09-05 for the signature pair
+ *
+ * ===== 2026-09-06 CONVERT REWORK — THE GATE IS BROKEN ON L7-L8 =====
+ * Tyler: "they need to be controllable summons." A converted piece is now a
+ * CONTROLLED SUMMON (source 'convert' is in CONTROLLED_SOURCES): the player
+ * taps it to move it, it may TAKE THE KING, and it never walks on its own.
+ * Two premises below are therefore stale: "the ally cannot take him" and
+ * "the converted pawn cannot be moved / walks off". Re-measured with the
+ * same matrix (Normal, T5 bot, T1 cards; L1-L6 16 trials --jobs=6, L7-L10
+ * 32 trials --jobs=1 serial):
+ *          none convert squire aegis magnet  convert+squire
+ *   L1-L2  100%   100%   100%   100%   100%       100%
+ *   L3       0%   100%   100%     0%     0%       100%
+ *   L4       0%   100%   100%     0%     0%       100%
+ *   L5       0%   100%    44%    13%     0%       100%
+ *   L6       0%   100%    31%     0%     6%       100%
+ *   L7       0%   100%     0%     0%     0%       100%
+ *   L8       0%   100%     0%     0%     0%       100%
+ *   L9       0%     0%     0%     0%     0%        84%
+ *   L10      0%     0%     0%     0%     0%        88%
+ * WHY: on L7 the guard a7 (L8: h7) stands diagonally UNDER the king's square,
+ * so once stolen it attacks b8 (g8) — a controlled pawn captures diagonally
+ * forward, and the king cannot step off (the other pen square is covered by
+ * the other guard). Steal the guard, take him with it: Convert solos L7/L8.
+ * L9/L10 hold because the guard there (a6 / h6) sits two ranks below the pen
+ * and its only forward square is stone, so it can only cover, not strike.
+ * Convert also solos L3-L6 now (a stolen pawn or minor is a body that walks).
+ * VERDICT: L9/L10 still meet the combo gate (singles 0%, pair 84-88%);
+ * L7/L8 do not. Not redesigned in this task — demoted testing -> built in
+ * the pipeline (scripts/pipeline.ts stage revenge-19 built). Fix direction
+ * for whoever picks it up: the stolen guard must not attack a pen square
+ * (put it two ranks below the pen with stone ahead, like L9/L10), and
+ * expect Convert's new body to erode L3-L6 as well.
+ * ================================================================
+ *
  * CONVERT + SUMMON-KNIGHT (the Squire). The pair was not on anyone's list —
  * the discovery harness found it on a generated colonnade (see
  * data/run-playtest/combo-library/convert+summon-knight/), where it read 75%

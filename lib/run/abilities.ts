@@ -143,8 +143,8 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     id: 'convert',
     name: 'Convert',
     activation: 'targeted',
-    typeLine: 'Targeted · Defect',
-    description: 'Flip an enemy onto your team.',
+    typeLine: 'Targeted · Steal',
+    description: 'Steal an enemy piece. You control it.',
   },
   drones: {
     id: 'drones',
@@ -483,7 +483,7 @@ const HOW: Record<AbilityId, string> = {
   'freeze-ray': 'Tap card, then tap an enemy you can see.',
   'poison-dart': 'Tap card, then tap an enemy you can see.',
   'rabies-dart': 'Tap card, then tap an enemy you can see.',
-  convert: 'Tap card, then tap an eligible enemy.',
+  convert: 'Tap card, then tap an enemy. Then tap the stolen piece to move it.',
   drones: 'Tap card. Drones launch in fixed directions.',
   squad: 'Passive — allies spawn each level.',
   surge: 'Tap card. You get an extra move.',
@@ -565,11 +565,15 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
         return 'Drive an enemy mad for 2 turns. It attacks its own side.';
       return 'Drive an enemy mad for 1 turn. It attacks its own side.';
     case 'convert':
-      if (tier === 5) return 'Flip any enemy (except king) onto your team.';
-      if (tier === 4) return 'Flip any enemy rook, queen, knight, bishop, or pawn.';
-      if (tier === 3) return 'Flip an enemy rook or queen onto your team.';
-      if (tier === 2) return 'Flip an enemy knight or bishop onto your team.';
-      return 'Flip an enemy pawn onto your team.';
+      // The stolen piece is a controlled summon: tap it to move it (that is
+      // your move for the turn), it captures like its type (a pawn marches
+      // toward rank 8), its captures stun the king, and it is cured of any
+      // poison or rabies the moment it changes sides.
+      if (tier === 5) return 'Steal any enemy (except the king). You control it.';
+      if (tier === 4) return 'Steal any enemy piece. You control it.';
+      if (tier === 3) return 'Steal a pawn, minor, or queen. You control it.';
+      if (tier === 2) return 'Steal an enemy knight or bishop. You control it.';
+      return 'Steal an enemy pawn. You control it.';
     case 'drones':
       if (tier === 5) return 'Launch 6 drones (3 front, sides, back).';
       if (tier === 4) return 'Launch drones front, sides, and back.';
@@ -725,11 +729,11 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Rabid 2 turns. 1/level.';
       return 'Rabid 1 turn. 1/level.';
     case 'convert':
-      if (tier === 5) return 'Flip any non-king. 2/level.';
-      if (tier === 4) return 'Flip pawn/minor/major. 2/level.';
-      if (tier === 3) return 'Flip rook/queen. 2/level.';
-      if (tier === 2) return 'Flip knight/bishop. 1/level.';
-      return 'Flip an enemy pawn. 1/level.';
+      if (tier === 5) return 'Steal any non-king; you control it. 2/level.';
+      if (tier === 4) return 'Steal any piece; you control it. 2/level.';
+      if (tier === 3) return 'Steal pawn/minor/queen; you control it. 2/level.';
+      if (tier === 2) return 'Steal a knight/bishop; you control it. 1/level.';
+      return 'Steal a pawn; you control it. 1/level.';
     case 'drones':
       if (tier === 5) return '6 drones (3 front + sides + back). 2/level.';
       if (tier === 4) return '4 drones (front, sides, back). 2/level.';
@@ -910,10 +914,10 @@ export const UPGRADE_NOTES: Record<
     5: 'Mad for 3 turns → 5',
   },
   convert: {
-    2: 'Now flips knights and bishops',
-    3: 'Now flips rooks and queens',
-    4: 'Flips pawns, minors, AND majors',
-    5: 'Flips anything but the king',
+    2: 'Now steals knights and bishops',
+    3: 'Now steals queens',
+    4: 'Steals pawns, minors, AND majors',
+    5: 'Steals anything but the king',
   },
   drones: {
     2: '1 drone → 2',
@@ -1678,6 +1682,12 @@ export function applyAbilityTargeted(
   }
 
   if (abilityId === 'convert') {
+    // The stolen piece becomes a CONTROLLED summon (Tyler, 2026-09-06:
+    // "they need to be controllable summons") — source 'convert' is in
+    // CONTROLLED_SOURCES, so it is tap-to-move, one body per turn, its
+    // capture stuns, Sacrifice/Swap may target it, and it never moves on
+    // its own. clearStatusOnSquare cures it: a poisoned or rabid marker
+    // belonged to the enemy it no longer is.
     const hit = state.pieces.find(
       (p) => p.file === target.file && p.rank === target.rank,
     );
@@ -2435,7 +2445,8 @@ export function applySquireMove(state: BoardState, target: Coord): BoardState {
 //
 // One shared engine for every piece the PLAYER summons and steers on her own
 // turns: Squire (knight), Bishop Squire, Page (pawn that promotes), Twin
-// (rook), Duchess (queen), Vanguard (dropped knight). All of them:
+// (rook), Duchess (queen), Vanguard (dropped knight), and — since
+// 2026-09-06 — any enemy stolen by Convert (it keeps its type). All of them:
 //   - are rainbow allies enemies hunt like any other (captured = gone),
 //   - block lines, and their attack squares are squares the king won't enter,
 //   - MAY capture the enemy king — that wins the level (hence one charge per
@@ -2447,6 +2458,7 @@ export function applySquireMove(state: BoardState, target: Coord): BoardState {
 
 /** Ally sources the player controls directly. */
 export const CONTROLLED_SOURCES: ReadonlySet<AllyPiece['source']> = new Set([
+  'convert',
   'squire',
   'bishop-squire',
   'page',
@@ -3701,9 +3713,9 @@ function squareAttackedByEnemy(
  * ally at index `state.allyTurnIndex` acts, then the index advances. When
  * every ally has had a turn, control passes to the enemy.
  *
- * Captures take precedence; pawns promote to queen on rank 8.
- * Source=convert allies are slightly less consistent (30% random move,
- * 70% best-by-score) so they sometimes walk into trouble.
+ * Captures take precedence; pawns promote to queen on rank 8. Only the
+ * AI-driven allies (Squad, Bodyguard) act here — every controlled summon,
+ * converted pieces included, is skipped.
  */
 export function stepAllyTurn(state: BoardState): BoardState {
   if (state.turn !== 'allies' || state.status !== 'playing') return state;
@@ -3714,8 +3726,8 @@ export function stepAllyTurn(state: BoardState): BoardState {
   const idx = state.allyTurnIndex;
   const ally = state.allies[idx];
   // Ally either can't move or no longer exists — skip it. Controlled summons
-  // (Squire family) are player-moved (see applyControlledAllyMove) and never
-  // move on their own.
+  // (Squire family + converted pieces) are player-moved (see
+  // applyControlledAllyMove) and never move on their own.
   if (!ally || isControlledAlly(ally)) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
@@ -3726,20 +3738,14 @@ export function stepAllyTurn(state: BoardState): BoardState {
   if (moves.length === 0) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
-  let pick: { to: Coord; capture: EnemyPiece | null };
-  if (ally.source === 'convert' && Math.random() < 0.3) {
-    pick = moves[Math.floor(Math.random() * moves.length)];
-  } else {
-    let best = moves[0];
-    let bestScore = allyScoreMove(state, ally, best);
-    for (const m of moves.slice(1)) {
-      const s = allyScoreMove(state, ally, m);
-      if (s > bestScore) {
-        bestScore = s;
-        best = m;
-      }
+  let pick = moves[0];
+  let bestScore = allyScoreMove(state, ally, pick);
+  for (const m of moves.slice(1)) {
+    const s = allyScoreMove(state, ally, m);
+    if (s > bestScore) {
+      bestScore = s;
+      pick = m;
     }
-    pick = best;
   }
   const nextAllies = state.allies.map((a, i) =>
     i === idx

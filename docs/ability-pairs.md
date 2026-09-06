@@ -49,7 +49,9 @@ Swap is T4+, since T4 Swap accepts any rainbow ally: turn a guard deep in the
 pen into a body, then wear it.
 
 **Parachute the bomb.** Both halves are free actions, so a summon can appear
-inside the enemy cluster and explode in the same turn. The blast shape is the
+inside the enemy cluster and explode in the same turn. Convert + Sacrifice is
+the deep-strike version (legal since 2026-09-06, when converted pieces became
+controlled summons): steal a guard standing in the court, detonate it there. The blast shape is the
 summon's attack set: knight = eight squares no line covers (perfect against a
 pawn shell), rook = a whole rank and file, Dragon = queen rays plus knight
 squares, the biggest in the game. Every version also stuns the king 2-3 turns.
@@ -59,7 +61,9 @@ cannot outrun. Boulder is the purest tool (permanent, any square on the board,
 free), and it pairs best with **Knight Hop** — the knight is the one form that
 jumps its own walls, so she can brick the pen shut without sealing herself in.
 Convert is the quiet version: a converted pen pawn is a body inside his room
-whose covered squares he refuses to enter.
+whose covered squares he refuses to enter — and since 2026-09-06 it is a
+CONTROLLED body (see below), so it can also step, capture and take him
+itself, like a Squire that spawned deep.
 
 **Free capture-stun.** Get a capture that costs no move so the stun lands on
 the exact turn Rookie arrives. Poison Dart is the timer version (its death is
@@ -110,10 +114,12 @@ applies to Boulder + Twin (stone kills rook lines).
 
 The rest fall into four groups:
 
-- **Illegal, not just weak.** Sacrifice only targets *controlled* summons, so
-  Convert + Sacrifice ("convert something deep, then detonate it") is not a
-  legal play at all. Convert also wipes status markers, so Convert + Poison
-  heals the target.
+- **Convert + Poison Dart (still weak).** Convert wipes status markers, so
+  poisoning a piece and then stealing it heals it. (Convert + Sacrifice used to
+  sit here as *illegal* — Sacrifice only targets controlled summons and a
+  converted piece was an AI ally. Since 2026-09-06 a converted piece IS a
+  controlled summon, so "steal something deep, then detonate it" is a legal
+  and rather good play; it moved to the pair list.)
 - **No body in the kit.** Swap + Sacrifice are both support cards that operate
   on a summon and neither makes one. Together with no summon they are two dead
   charges; with one summon they fight over the same body.

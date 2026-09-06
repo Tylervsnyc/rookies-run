@@ -4,32 +4,151 @@
   "notes": [
     "TEMPO FACT that drives most of this list: almost every ability is a FREE action. Summoning, Swap, Sacrifice, Boulder, all three darts, Convert, Magnet, Smoke, Rewind, Aegis and the transforms all resolve without ending the turn. The only things that end the turn are Rookie moving and a summon moving (below T5). So the scarce resource is BODY-MOVES, not casts: a pair is strong when it converts free casts into a capture, a stun, or a relocation that would otherwise have cost a move.",
     "KING FACT: any capture credited to Rookie's side (her move, a summon's move, a Boulder crush on a pawn, a poison death, friendly fire on a Decoy, a Sacrifice blast) sets kingStunTurns, and a stunned king cannot flee. The king flees only from Rookie's CURRENT form, from controlled summons, and (nightmare) from ally cover; he never leaves his pen and never steps onto a hazard, an ally-covered square, or a square Rookie's form attacks.",
-    "SELF-BLOCK FACT: Rookie's own allies and her own boulders block her rays exactly like enemies do (lib/run/movement.ts slideMoves breaks on isAlly and isHazard). Most anti-pairs below are a version of this."
+    "SELF-BLOCK FACT: Rookie's own allies and her own boulders block her rays exactly like enemies do (lib/run/movement.ts slideMoves breaks on isAlly and isHazard). Most anti-pairs below are a version of this.",
+    "2026-09-06 CONVERT REWORK (Tyler): a converted piece is now a CONTROLLED SUMMON (source 'convert' is in CONTROLLED_SOURCES) — the player taps it to move it, it counts as the one body-move per turn, its capture stuns the king, it may take the king, Sacrifice/Swap target it, and it never moves on its own. Consequences for this list: convert+sacrifice moved from antiPairs to pairs; convert+swap no longer needs Swap T4+ (any tier of Swap trades with a controlled summon); 'a converted pawn walks off with its cover' is no longer a failure mode; convert now counts as a BODY for the 'two summons starve each other' rule."
   ],
   "primitives": {
-    "bishop-step": ["moves-rookie", "changes-legal-squares", "changes-what-king-fears", "changes-magnet-lines", "colour-bound"],
-    "knight-hop": ["moves-rookie", "ignores-blockers-and-walls", "changes-what-king-fears"],
-    "queen-pulse": ["moves-rookie", "all-lines", "changes-what-king-fears", "changes-magnet-lines"],
-    "become-king": ["makes-rookie-uncapturable", "reach-drops-to-one-square", "royal-aura-pushes-enemies-back"],
-    "freeze-ray": ["disables-enemy", "only-dart-that-may-hit-the-king", "pins-king-tier+1-turns", "free-action"],
-    "poison-dart": ["removes-enemy-on-a-timer", "death-counts-as-rookie-capture", "delayed-king-stun", "free-action"],
-    "rabies-dart": ["turns-enemy-against-its-own-side", "removes-piece-from-normal-ai", "never-takes-the-king", "free-action"],
-    "convert": ["removes-enemy", "creates-ai-ally-where-it-stood", "ally-cover-cuts-king-escapes", "any-range", "free-action"],
-    "aegis": ["absorbs-one-capture-on-rookie", "T3-stuns-attacker", "T5-kills-attacker", "free-action"],
-    "decoy": ["redirects-enemy-capture-priority", "friendly-fire-is-a-rookie-capture", "free-action"],
-    "boulder": ["creates-permanent-terrain-anywhere-on-board", "blocks-everyone-including-rookie", "T2+-crush-a-pawn-equals-a-capture", "free-action"],
-    "smoke": ["rookie-unseeable", "king-does-not-flee-while-smoked", "her-own-capture-ends-it-below-T5", "free-action"],
-    "rewind": ["undoes-the-enemy-turn", "restores-allies-the-enemies-just-ate", "T3+-stuns-king", "castable-only-before-she-moves", "free-action"],
-    "magnet": ["moves-an-enemy", "pull-line-follows-rookie's-current-form", "player-chooses-distance", "free-action"],
-    "summon-knight": ["creates-controllable-body", "knight-geometry", "may-take-the-king", "T5-move-is-free", "spawn-is-a-free-action"],
-    "bishop-squire": ["creates-controllable-body", "diagonal-geometry-crosses-what-a-rook-cannot", "may-take-the-king", "spawn-is-a-free-action"],
-    "page": ["creates-permanent-controllable-body", "promotes-to-queen", "slow", "spawn-is-a-free-action"],
-    "twin": ["creates-controllable-body", "rook-geometry", "spawn-is-a-free-action"],
-    "duchess": ["creates-controllable-body", "queen-geometry", "short-clock", "spawn-is-a-free-action"],
-    "dragon": ["creates-controllable-body", "queen+knight-geometry", "shortest-clock", "T4+-captures-stun-king-2", "spawn-is-a-free-action"],
-    "vanguard": ["creates-controllable-body-AT-RANGE", "drop-ignores-all-board-geometry-within-2..5-chebyshev", "spawn-is-a-free-action"],
-    "swap": ["teleports-rookie-into-a-summon's-square", "preserves-her-turn", "T2+-winds-the-summon's-clock-+2", "T4+-targets-ANY-rainbow-ally", "free-action"],
-    "sacrifice": ["mass-removal-on-the-summon's-attack-set", "T3+-adds-the-ring", "T4+-ring-2", "stuns-king-2-3", "consumes-the-summon", "free-action"]
+    "bishop-step": [
+      "moves-rookie",
+      "changes-legal-squares",
+      "changes-what-king-fears",
+      "changes-magnet-lines",
+      "colour-bound"
+    ],
+    "knight-hop": [
+      "moves-rookie",
+      "ignores-blockers-and-walls",
+      "changes-what-king-fears"
+    ],
+    "queen-pulse": [
+      "moves-rookie",
+      "all-lines",
+      "changes-what-king-fears",
+      "changes-magnet-lines"
+    ],
+    "become-king": [
+      "makes-rookie-uncapturable",
+      "reach-drops-to-one-square",
+      "royal-aura-pushes-enemies-back"
+    ],
+    "freeze-ray": [
+      "disables-enemy",
+      "only-dart-that-may-hit-the-king",
+      "pins-king-tier+1-turns",
+      "free-action"
+    ],
+    "poison-dart": [
+      "removes-enemy-on-a-timer",
+      "death-counts-as-rookie-capture",
+      "delayed-king-stun",
+      "free-action"
+    ],
+    "rabies-dart": [
+      "turns-enemy-against-its-own-side",
+      "removes-piece-from-normal-ai",
+      "never-takes-the-king",
+      "free-action"
+    ],
+    "convert": [
+      "removes-enemy",
+      "creates-ai-ally-where-it-stood",
+      "ally-cover-cuts-king-escapes",
+      "any-range",
+      "free-action"
+    ],
+    "aegis": [
+      "absorbs-one-capture-on-rookie",
+      "T3-stuns-attacker",
+      "T5-kills-attacker",
+      "free-action"
+    ],
+    "decoy": [
+      "redirects-enemy-capture-priority",
+      "friendly-fire-is-a-rookie-capture",
+      "free-action"
+    ],
+    "boulder": [
+      "creates-permanent-terrain-anywhere-on-board",
+      "blocks-everyone-including-rookie",
+      "T2+-crush-a-pawn-equals-a-capture",
+      "free-action"
+    ],
+    "smoke": [
+      "rookie-unseeable",
+      "king-does-not-flee-while-smoked",
+      "her-own-capture-ends-it-below-T5",
+      "free-action"
+    ],
+    "rewind": [
+      "undoes-the-enemy-turn",
+      "restores-allies-the-enemies-just-ate",
+      "T3+-stuns-king",
+      "castable-only-before-she-moves",
+      "free-action"
+    ],
+    "magnet": [
+      "moves-an-enemy",
+      "pull-line-follows-rookie's-current-form",
+      "player-chooses-distance",
+      "free-action"
+    ],
+    "summon-knight": [
+      "creates-controllable-body",
+      "knight-geometry",
+      "may-take-the-king",
+      "T5-move-is-free",
+      "spawn-is-a-free-action"
+    ],
+    "bishop-squire": [
+      "creates-controllable-body",
+      "diagonal-geometry-crosses-what-a-rook-cannot",
+      "may-take-the-king",
+      "spawn-is-a-free-action"
+    ],
+    "page": [
+      "creates-permanent-controllable-body",
+      "promotes-to-queen",
+      "slow",
+      "spawn-is-a-free-action"
+    ],
+    "twin": [
+      "creates-controllable-body",
+      "rook-geometry",
+      "spawn-is-a-free-action"
+    ],
+    "duchess": [
+      "creates-controllable-body",
+      "queen-geometry",
+      "short-clock",
+      "spawn-is-a-free-action"
+    ],
+    "dragon": [
+      "creates-controllable-body",
+      "queen+knight-geometry",
+      "shortest-clock",
+      "T4+-captures-stun-king-2",
+      "spawn-is-a-free-action"
+    ],
+    "vanguard": [
+      "creates-controllable-body-AT-RANGE",
+      "drop-ignores-all-board-geometry-within-2..5-chebyshev",
+      "spawn-is-a-free-action"
+    ],
+    "swap": [
+      "teleports-rookie-into-a-summon's-square",
+      "preserves-her-turn",
+      "T2+-winds-the-summon's-clock-+2",
+      "T4+-targets-ANY-rainbow-ally",
+      "free-action"
+    ],
+    "sacrifice": [
+      "mass-removal-on-the-summon's-attack-set",
+      "T3+-adds-the-ring",
+      "T4+-ring-2",
+      "stuns-king-2-3",
+      "consumes-the-summon",
+      "free-action"
+    ]
   },
   "archetypes": {
     "body-then-become": "Create a body on a square Rookie cannot reach, then become that body. The summon is the delivery vehicle; Swap is the payload transfer. Neither half crosses the barrier alone.",
@@ -159,7 +278,7 @@
       "mechanism": "At Swap T4+ any rainbow ally is a valid partner, so Convert can make a body out of an enemy standing anywhere on the board and Swap teleports Rookie into it — unlimited range, no summon charge, and the guard is removed in the same beat.",
       "confidence": 4,
       "geometry": "A far room with an enemy pawn or minor inside it and no line in; only works with Swap at T4 or higher (T1-T3 Swap sees controlled summons only).",
-      "tierNote": "GATED: requires swap tier >= 4 and convert tier high enough for the piece type."
+      "tierNote": "Since 2026-09-06 a converted piece is a controlled summon, so Swap trades with it at ANY tier (the old 'requires swap tier >= 4' gate is gone). Convert tier still gates which piece types can be stolen."
     },
     {
       "a": "smoke",
@@ -450,6 +569,15 @@
       "mechanism": "The knight's entry square inside the pen is usually covered; the shield lets her land on it anyway and take the king from a square she could not otherwise survive.",
       "confidence": 3,
       "geometry": "A pen whose only knight-entry square is guarded once."
+    },
+    {
+      "a": "convert",
+      "b": "sacrifice",
+      "archetype": "parachute-the-bomb",
+      "rating": 3,
+      "mechanism": "Since the 2026-09-06 rework a converted piece is a CONTROLLED summon, so Sacrifice may detonate it. Steal a guard standing inside the court (unlimited range, free) and blow it up where it stands: the blast is the stolen piece's own attack set (a pawn's two forward diagonals, a knight's eight squares, a queen's rays) plus the ring at T3+, and every capture in the blast stuns the king. Was listed as ILLEGAL before the rework (sacrificeTargets only read controlled summons and a converted piece was an AI ally).",
+      "tierNote": "Convert T1 steals pawns only — a pawn blast is two squares. Real value from Convert T2+ (minors) or Sacrifice T3+ (ring).",
+      "note": "Untested in the harness as of 2026-09-06; added when convert+sacrifice moved off antiPairs."
     }
   ],
   "antiPairs": [
@@ -471,13 +599,8 @@
     },
     {
       "a": "convert",
-      "b": "sacrifice",
-      "reason": "Sacrifice targets controlled summons only (sacrificeTargets reads controlledAllies), and a converted piece is an AI-driven ally with source 'convert'. The obvious play — convert something deep, then detonate it — is simply not legal."
-    },
-    {
-      "a": "convert",
       "b": "poison-dart",
-      "reason": "Converting a piece calls clearStatusOnSquare, which wipes the poison marker. Poisoning a piece and then converting it heals it and wastes both charges; they are also two ways of solving the same 'remove one guard' problem."
+      "reason": "Converting a piece calls clearStatusOnSquare, which wipes the poison marker (a stolen piece is cured). Poisoning a piece and then converting it heals it and wastes both charges; they are also two ways of solving the same 'remove one guard' problem. (2026-09-06: still an anti-pair after the Convert rework — converted pieces are now controlled summons, which changed convert+sacrifice, not this.)"
     },
     {
       "a": "bishop-step",

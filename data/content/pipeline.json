@@ -830,9 +830,9 @@
       "id": "revenge-19",
       "kind": "run",
       "name": "The Cliff",
-      "stage": "testing",
+      "stage": "built",
       "created": "2026-09-05",
-      "notes": "Convert + Summon Knight cage-and-take run, a pair the discovery harness found. Signature: one diagonal of stone a rook can never cross and a knight steps over. Finale: convert the pawn under the king's pen so his own guard becomes the cage, then the Squire jumps in and takes him. L7-L10: every single kit card 0%, pair 75-88% (serial). Full runs 8% random / 13% with the pair (L3 is a Squire-or-nothing gate)."
+      "notes": "Convert + Summon Knight cage-and-take run, a pair the discovery harness found. Signature: one diagonal of stone a rook can never cross and a knight steps over. Finale: convert the pawn under the king's pen so his own guard becomes the cage, then the Squire jumps in and takes him. L7-L10: every single kit card 0%, pair 75-88% (serial). Full runs 8% random / 13% with the pair (L3 is a Squire-or-nothing gate). 2026-09-06 CONVERT REWORK: converted pieces are now controllable summons, and the stolen guard pawn (a7 / g7) attacks the king's square, so Convert ALONE now clears L7 and L8 at 100% (L9/L10 still 0% single, pair 84-88%). Finale no longer combo-gated on L7-L8 — demoted testing → built until L7/L8 are redesigned (the guard under the pen must not attack the pen)."
     },
     {
       "id": "revenge-21",
