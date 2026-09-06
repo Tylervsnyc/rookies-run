@@ -103,6 +103,9 @@ With only magnet + boulder in the offer pool the offers keep UPGRADING them, and
 ### The gate depends on ability TIER (harness ground truth, 2026-09-05)
 Runs are validated with T1 cards, but offers UPGRADE cards during a run. The discovery harness, scoring the shipped runs under their own kits, found Colonnade L10 is NOT gated once Bishop Squire is T4 — it solos the level at 100% — and that The Moat's finale is not gated at all because its own kit contains `knight-hop`, a solvent (the Moat's L7-L10 only feel gated at low tier). Same family as the Stacks' upgraded-Boulder self-block. Open decision for Tyler: either validate finales at the tier a player will realistically hold by L7-L10 (T3-T4), pin signature-card tiers per run, or cap upgrades in combo runs. Until decided, report the finale matrix at T1 AND at the highest tier the offers can reach.
 
+### One line, four times (Lattice, Tyler 2026-09-06)
+Tyler on The Lattice: "pretty fun, once you solved it you kind of figured it out." Every combo run so far restates ONE finale line on L7-L10 with different geometry; the discovery is the fun and L8-L10 become execution. Inside the finale, each level must still demand a DIFFERENT decision with the same pair: a different order (bait first vs body first), a different target (mark the guard vs mark a hunter), a level where the pair is needed twice, or a level where a trap card briefly becomes the key. The "distinct primary decision" rule applies to L7-L10, not only L1-L6.
+
 ## Patterns that work
 
 ### The gated finale (Moat / Colonnade / Vault, 2026-09-04..05)
