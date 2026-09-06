@@ -63,7 +63,11 @@ jumps its own walls, so she can brick the pen shut without sealing herself in.
 Convert is the quiet version: a converted pen pawn is a body inside his room
 whose covered squares he refuses to enter — and since 2026-09-06 it is a
 CONTROLLED body (see below), so it can also step, capture and take him
-itself, like a Squire that spawned deep.
+itself, like a Squire that spawned deep. One brake: **a stolen piece is DAZED
+for the turn it is stolen** — it cannot move or capture until your next turn
+(Tyler: otherwise "you can just capture the king on the first move"). Its
+cover still cuts off his flight on the enemy turn, so cage-and-take is the
+shape: steal the guard, let him fail to step, strike next turn.
 
 **Free capture-stun.** Get a capture that costs no move so the stun lands on
 the exact turn Rookie arrives. Poison Dart is the timer version (its death is

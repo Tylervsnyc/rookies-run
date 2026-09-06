@@ -2177,6 +2177,17 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
           }
         `}</style>
       )}
+      {/* "Dazed" chip in the king's stunned palette on a freshly converted piece. */}
+      {allies
+        .filter((a) => a.dazed)
+        .map((a) => (
+          <SquareChip
+            key={`dazed-${a.id}`}
+            square={toSquare(a)}
+            label="Dazed"
+            palette={{ color: '#4c1d95', background: 'rgba(233,213,255,0.95)', border: 'rgba(168,85,247,0.9)' }}
+          />
+        ))}
       {allies.map((a) => (
         // Every ally is a RAINBOW piece — the same PieceBlocks block-art
         // treatment the Squire launched with (and Rookie's own palette).
@@ -2190,8 +2201,11 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
             width: '12.5%',
             height: '12.5%',
             transition: 'left 180ms cubic-bezier(0.4,0,0.2,1), top 180ms cubic-bezier(0.4,0,0.2,1)',
-            filter:
-              'drop-shadow(0 0 6px rgba(255,255,255,0.85)) drop-shadow(0 0 10px rgba(167,139,250,0.65))',
+            // Dazed (just stolen by Convert): greyed out like a stunned king
+            // until the enemy turn ends — it can't act yet.
+            filter: a.dazed
+              ? 'grayscale(0.85) opacity(0.6) drop-shadow(0 0 6px rgba(168,85,247,0.6))'
+              : 'drop-shadow(0 0 6px rgba(255,255,255,0.85)) drop-shadow(0 0 10px rgba(167,139,250,0.65))',
           }}
         >
           <div

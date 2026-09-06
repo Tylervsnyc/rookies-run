@@ -89,6 +89,15 @@ export interface AllyPiece {
    * returns to Rookie after the enemy turn.
    */
   movedThisTurn?: boolean;
+  /**
+   * Convert (Tyler, 2026-09-06: "some levels too easy where you can just
+   * capture the king on the first move"): a stolen piece is DAZED for the
+   * rest of the turn it is converted — it cannot move or capture until the
+   * player's NEXT turn. It is still a controlled body at once (its cover
+   * squares still cut off the king's flight on the enemy turn, Sacrifice /
+   * Swap may target it). Cleared when the enemy turn ends.
+   */
+  dazed?: boolean;
 }
 
 export type Turn = 'rookie' | 'allies' | 'drones' | 'enemy';

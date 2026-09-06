@@ -483,7 +483,7 @@ const HOW: Record<AbilityId, string> = {
   'freeze-ray': 'Tap card, then tap an enemy you can see.',
   'poison-dart': 'Tap card, then tap an enemy you can see.',
   'rabies-dart': 'Tap card, then tap an enemy you can see.',
-  convert: 'Tap card, then tap an enemy. Then tap the stolen piece to move it.',
+  convert: 'Tap card, then tap an enemy. It joins you next turn.',
   drones: 'Tap card. Drones launch in fixed directions.',
   squad: 'Passive — allies spawn each level.',
   surge: 'Tap card. You get an extra move.',
@@ -568,12 +568,13 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       // The stolen piece is a controlled summon: tap it to move it (that is
       // your move for the turn), it captures like its type (a pawn marches
       // toward rank 8), its captures stun the king, and it is cured of any
-      // poison or rabies the moment it changes sides.
-      if (tier === 5) return 'Steal any enemy (except the king). You control it.';
-      if (tier === 4) return 'Steal any enemy piece. You control it.';
-      if (tier === 3) return 'Steal a pawn, minor, or queen. You control it.';
-      if (tier === 2) return 'Steal an enemy knight or bishop. You control it.';
-      return 'Steal an enemy pawn. You control it.';
+      // poison or rabies the moment it changes sides. It is dazed the turn
+      // it is stolen — it moves from your next turn.
+      if (tier === 5) return 'Steal any enemy (except the king). You control it from next turn.';
+      if (tier === 4) return 'Steal any enemy piece. You control it from next turn.';
+      if (tier === 3) return 'Steal a pawn, minor, or queen. You control it from next turn.';
+      if (tier === 2) return 'Steal an enemy knight or bishop. You control it from next turn.';
+      return 'Steal an enemy pawn. You control it from next turn.';
     case 'drones':
       if (tier === 5) return 'Launch 6 drones (3 front, sides, back).';
       if (tier === 4) return 'Launch drones front, sides, and back.';
@@ -729,11 +730,11 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Rabid 2 turns. 1/level.';
       return 'Rabid 1 turn. 1/level.';
     case 'convert':
-      if (tier === 5) return 'Steal any non-king; you control it. 2/level.';
-      if (tier === 4) return 'Steal any piece; you control it. 2/level.';
-      if (tier === 3) return 'Steal pawn/minor/queen; you control it. 2/level.';
-      if (tier === 2) return 'Steal a knight/bishop; you control it. 1/level.';
-      return 'Steal a pawn; you control it. 1/level.';
+      if (tier === 5) return 'Steal any non-king; yours next turn. 2/level.';
+      if (tier === 4) return 'Steal any piece; yours next turn. 2/level.';
+      if (tier === 3) return 'Steal pawn/minor/queen; yours next turn. 2/level.';
+      if (tier === 2) return 'Steal a knight/bishop; yours next turn. 1/level.';
+      return 'Steal a pawn; yours next turn. 1/level.';
     case 'drones':
       if (tier === 5) return '6 drones (3 front + sides + back). 2/level.';
       if (tier === 4) return '4 drones (front, sides, back). 2/level.';
@@ -1686,8 +1687,10 @@ export function applyAbilityTargeted(
     // "they need to be controllable summons") — source 'convert' is in
     // CONTROLLED_SOURCES, so it is tap-to-move, one body per turn, its
     // capture stuns, Sacrifice/Swap may target it, and it never moves on
-    // its own. clearStatusOnSquare cures it: a poisoned or rabid marker
-    // belonged to the enemy it no longer is.
+    // its own. It is DAZED for the rest of this turn (no move / capture until
+    // the player's next turn) so a piece stolen beside the king cannot take
+    // him the same turn. clearStatusOnSquare cures it: a poisoned or rabid
+    // marker belonged to the enemy it no longer is.
     const hit = state.pieces.find(
       (p) => p.file === target.file && p.rank === target.rank,
     );
@@ -1702,7 +1705,8 @@ export function applyAbilityTargeted(
       pieces: state.pieces.filter((p) => p !== hit),
       allies: [
         ...state.allies,
-        { id: Date.now() + Math.random(), type: hit.type, file: hit.file, rank: hit.rank, source: 'convert' },
+        // DAZED: it joins you now but acts from your NEXT turn (see AllyPiece.dazed).
+        { id: Date.now() + Math.random(), type: hit.type, file: hit.file, rank: hit.rank, source: 'convert', dazed: true },
       ],
       abilities: decrementUse(state.abilities, abilityId),
       activeAbility: null,
@@ -2684,6 +2688,7 @@ export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
   if (state.status !== 'playing' || state.turn !== 'rookie') return false;
   if (state.pendingOffer || state.activeAbility) return false;
   if (!isControlledAlly(ally)) return false;
+  if (ally.dazed) return false; // freshly converted — acts from next turn
   if (allyHasFreeMove(state, ally)) {
     if (ally.movedThisTurn) return false;
     if (ally.source === 'squire' && state.squireMovedThisTurn) return false;

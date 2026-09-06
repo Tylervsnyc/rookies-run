@@ -1071,12 +1071,14 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     const smokePatch =
       (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
     // Bodyguard / timed summons dissolve when their turns run out; free-move
-    // summons (T5 Squire family) get their once-per-turn move back.
-    const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined || a.movedThisTurn)
+    // summons (T5 Squire family) get their once-per-turn move back; a piece
+    // stolen by Convert this turn wakes from its daze.
+    const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined || a.movedThisTurn || a.dazed)
       ? s.allies
           .map((a) => {
             const ticked = a.turnsLeft === undefined ? a : { ...a, turnsLeft: a.turnsLeft - 1 };
-            return ticked.movedThisTurn ? { ...ticked, movedThisTurn: false } : ticked;
+            const woke = ticked.movedThisTurn ? { ...ticked, movedThisTurn: false } : ticked;
+            return woke.dazed ? { ...woke, dazed: false } : woke;
           })
           .filter((a) => a.turnsLeft === undefined || a.turnsLeft > 0)
       : s.allies;

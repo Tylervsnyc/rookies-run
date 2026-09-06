@@ -57,7 +57,7 @@ const PLAIN: Partial<Record<AbilityId, string>> = {
   smoke: 'Vanish. Enemies lose track of you.',
   rewind: 'Undo the last turn — yours and theirs.',
   magnet: 'Pull an enemy on your line toward you.',
-  convert: 'Steal an enemy piece. You control it.',
+  convert: 'Steal an enemy piece. It joins you next turn.',
 };
 
 /** Per-power accent — colors the NEW chip so three cards read as three things. */
