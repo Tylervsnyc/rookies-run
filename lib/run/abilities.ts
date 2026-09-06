@@ -321,7 +321,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Hourglass',
     activation: 'instant',
     typeLine: 'Instant · Time',
-    description: 'Turn the glass. The enemies take a turn now. You have not moved.',
+    description: 'Turn the glass. The enemies take a turn now — you have not moved, and nothing of yours runs out.',
   },
   scarecrow: {
     id: 'scarecrow',
@@ -482,10 +482,11 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier <= 2) return 1;
       return 2;
     case 'hourglass':
-      // 1/2/2/2/3.
+      // 1/2/3/3/unlimited — the ladder is pure quantity (2026-09-06 rework).
       if (tier === 1) return 1;
-      if (tier <= 4) return 2;
-      return 3;
+      if (tier === 2) return 2;
+      if (tier <= 4) return 3;
+      return -1;
     case 'scarecrow':
       // 1/1/2/2/2.
       if (tier <= 2) return 1;
@@ -573,7 +574,7 @@ const HOW: Record<AbilityId, string> = {
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
   shove: 'Tap card, then tap a block of stone beside you. It rolls one square away. Lava never moves.',
   coup: 'Tap card, then tap a guard near the king. They trade squares.',
-  hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand.',
+  hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand and none of your effects tick.',
   scarecrow: 'Tap card, then tap an empty square. They hunt the straw. He runs from it.',
 };
 
@@ -770,10 +771,11 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Swap the king with any guard standing beside him.';
       return 'Swap the king with a pawn standing beside him.';
     case 'hourglass':
-      if (tier === 5) return 'Turn the glass as often as you like. The king stands still each time.';
-      if (tier === 4) return "The enemies take a turn now, the king stands still, and your summons' clocks do not run.";
-      if (tier === 3) return 'The enemies take a turn now, and the king stands still through it.';
-      return 'The enemies take a turn now. You have not moved.';
+      if (tier === 5) return 'Turn the glass as often as you like, as often in a turn as you like. Nothing of yours runs out.';
+      if (tier === 4) return 'The enemies take a turn now — twice in a turn if you want it. Nothing of yours runs out.';
+      if (tier === 3) return 'The enemies take a turn now. Three a level. Nothing of yours runs out.';
+      if (tier === 2) return 'The enemies take a turn now. Twice a level. Nothing of yours runs out.';
+      return 'The enemies take a turn now. You have not moved, and nothing of yours runs out.';
     case 'scarecrow':
       if (tier === 5) return 'A straw queen for 3 turns. Whatever strikes it dies on the spot.';
       if (tier === 4) return 'A straw QUEEN for 2 turns. He runs from her diagonals too.';
@@ -972,9 +974,9 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Swap him with any guard beside him. 1/level.';
       return 'Swap him with a pawn beside him. 1/level.';
     case 'hourglass':
-      if (tier === 5) return 'Glass any time; king held. 3/level.';
-      if (tier === 4) return 'Glass; king held; summons keep. 2/level.';
-      if (tier === 3) return 'Glass; the king stands still. 2/level.';
+      if (tier === 5) return 'Unlimited glasses, any number a turn.';
+      if (tier === 4) return 'Two glasses in one turn. 3/level.';
+      if (tier === 3) return 'Enemies take a turn now. 3/level.';
       if (tier === 2) return 'Enemies take a turn now. 2/level.';
       return 'Enemies take a turn now. 1/level.';
     case 'scarecrow':
@@ -1187,10 +1189,10 @@ export const UPGRADE_NOTES: Record<
     5: 'Any enemy, anywhere',
   },
   hourglass: {
-    2: '',
-    3: 'The king is held for the glass-turn',
-    4: 'Your summons do not age during it',
-    5: 'Turn it as often as you like each turn',
+    2: 'Two glasses a level',
+    3: 'Three glasses a level',
+    4: 'Turn it twice in one turn',
+    5: 'Unlimited glasses, any number a turn',
   },
   scarecrow: {
     2: 'Stands 1 turn → 2',
@@ -2742,24 +2744,34 @@ function applyCoup(state: BoardState, target: Coord): BoardState {
 }
 
 // ---------------------------------------------------------------------------
-// Hourglass (2026-09-06) — time. Turn the glass: the enemies take a full
-// turn NOW, and Rookie's move is still in hand. moveCount does not tick.
-// Everything that ticks at the end of an enemy turn ticks (freeze, poison,
-// rabies, decoy, smoke, king stun, king-form protection, summon clocks
-// below T4) — EXCEPT the daze on a freshly converted piece, which only
-// clears after a REAL Rookie action (convert + hourglass must not reopen
-// the same-turn king kill Tyler closed on 2026-09-06). One cast per Rookie
-// turn below T5. Design: docs/new-abilities-2026-09-06.md §2.4.
+// Hourglass (2026-09-06; REWORKED 2026-09-06 — see docs/revenge-abilities.md).
+// Time. Turn the glass: the enemies take a full turn NOW, and Rookie's move is
+// still in hand.
+//
+// THE ONE RULE: a glass-turn is a turn taken OUT OF ROOKIE'S CLOCK. `moveCount`
+// does not tick and NOTHING of hers expires during it — freeze/snare holds, the
+// king's stun, smoke, the straw, the decoy mark, rabies, king-form protection,
+// summon clocks, a convert daze and the once-per-turn summon move all stand.
+// Enemy FUSES still burn: `poisonedTurnsLeft` is the single counter that ticks,
+// because poison is a bomb going off, not a protection running out. All of that
+// lives in `endTurn` (lib/run/pawn-ai.ts) behind `s.glassTurn`.
+//
+// The king REACTS on a glass-turn exactly as he does on any enemy turn — he
+// flees, he steps into a snare, he runs from a straw. That is the card's whole
+// verb ("let them walk while your move is still in hand") and it is now true at
+// every tier. The old T3 `hourglassHoldsKing` clause did the opposite: it froze
+// him, deleting the one line the card existed to create (revenge-31's header).
+//
+// The tiers are pure QUANTITY: more glasses per level, then more per turn.
+// 1 use / 2 / 3 / 3 + two per turn / unlimited.
+// Design: docs/new-abilities-2026-09-06.md §2.4.
 // ---------------------------------------------------------------------------
 
-/** T3+: the king stands still through the glass-turn. */
-export function hourglassHoldsKing(tier: AbilityTier): boolean {
-  return tier >= 3;
-}
-
-/** T4+: summon clocks do not run during the glass-turn. */
-export function hourglassFreezesSummonClocks(tier: AbilityTier): boolean {
-  return tier >= 4;
+/** How many times the glass may be turned within a single Rookie turn. */
+export function hourglassCastsPerTurn(tier: AbilityTier): number {
+  if (tier >= 5) return Infinity;
+  if (tier === 4) return 2;
+  return 1;
 }
 
 /** True when the glass may be turned right now. */
@@ -2768,13 +2780,12 @@ export function canTurnHourglass(state: BoardState): boolean {
   if (!owned || owned.usesLeftThisLevel === 0) return false;
   if (state.status !== 'playing' || state.turn !== 'rookie') return false;
   if (state.activeAbility || state.pendingOffer) return false;
-  if (state.hourglassUsedThisTurn && owned.tier < 5) return false;
+  if ((state.hourglassCastsThisTurn ?? 0) >= hourglassCastsPerTurn(owned.tier)) return false;
   return true;
 }
 
 function applyHourglass(state: BoardState): BoardState {
   if (!canTurnHourglass(state)) return state;
-  const owned = state.abilities.find((a) => a.id === 'hourglass')!;
   const rookieSq = toSquare(state.rookie);
   const allyPhase = (state.allies ?? []).some((a) => !isControlledAlly(a));
   return {
@@ -2783,11 +2794,8 @@ function applyHourglass(state: BoardState): BoardState {
     allyTurnIndex: 0,
     enemyMovedSquares: [],
     enemyVacatedSquares: [],
-    glassTurn: {
-      holdKing: hourglassHoldsKing(owned.tier),
-      freezeSummonClocks: hourglassFreezesSummonClocks(owned.tier),
-    },
-    hourglassUsedThisTurn: true,
+    glassTurn: true,
+    hourglassCastsThisTurn: (state.hourglassCastsThisTurn ?? 0) + 1,
     abilities: decrementUse(state.abilities, 'hourglass'),
     activeAbility: null,
     cancellableActivation: undefined,

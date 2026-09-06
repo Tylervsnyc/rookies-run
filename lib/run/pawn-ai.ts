@@ -318,7 +318,9 @@ export function stepAllyTurnReactive(state: BoardState): BoardState {
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
   if (isSmoked(state)) return null; // Smoke: he can't see the threat
-  if (state.glassTurn?.holdKing) return null; // Hourglass T3+: he stands still
+  // (Hourglass: a glass-turn is an ordinary enemy turn for him. He flees, he
+  // steps into snares, he runs from the straw — that IS the card. The old
+  // T3 "the king is held" clause deleted the line and was cut 2026-09-06.)
   const king = state.pieces.find((p) => p.type === 'king');
   if (!king) return null;
   const kingSq = toSquare(king);
@@ -1048,11 +1050,16 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
   const exclude = new Set(state.enemyMovedSquares);
 
   const endTurn = (s: BoardState): BoardState => {
+    // Hourglass: a glass-turn is a turn taken OUT OF ROOKIE'S CLOCK. Nothing
+    // of hers expires during it — every counter below holds. The ONE exception
+    // is poison: a fuse is a bomb going off, not a protection running out, so
+    // it burns on a glass-turn (that is the hourglass + poison-dart line).
+    const glass = s.glassTurn === true;
     // Decrement freeze counters; drop entries that have run out.
     const nextFrozenTurnsLeft: Record<string, number> = {};
     const nextFrozenSquares: string[] = [];
     for (const sq of s.frozenSquares) {
-      const left = (s.frozenTurnsLeft[sq] ?? 1) - 1;
+      const left = (s.frozenTurnsLeft[sq] ?? 1) - (glass ? 0 : 1);
       if (left > 0) {
         nextFrozenSquares.push(sq);
         nextFrozenTurnsLeft[sq] = left;
@@ -1067,7 +1074,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       const stillThere = s.pieces.some(
         (p) => p.file === dt.file && p.rank === dt.rank,
       );
-      decoyTurnsLeft = Math.max(0, decoyTurnsLeft - 1);
+      decoyTurnsLeft = Math.max(0, decoyTurnsLeft - (glass ? 0 : 1));
       if (!stillThere || decoyTurnsLeft <= 0) {
         decoyTarget = null;
         decoyTurnsLeft = 0;
@@ -1080,7 +1087,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     for (const sq of s.rabidSquares) {
       const here = s.pieces.some((p) => toSquare(p) === sq);
       if (!here) continue;
-      const left = (s.rabidTurnsLeft[sq] ?? 1) - 1;
+      const left = (s.rabidTurnsLeft[sq] ?? 1) - (glass ? 0 : 1);
       if (left > 0) {
         nextRabidSquares.push(sq);
         nextRabidTurnsLeft[sq] = left;
@@ -1124,7 +1131,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     // expired. T5 sets formMovesLeft=999 so it effectively lasts forever.
     let nextForm = s.form;
     let nextFormMovesLeft = s.formMovesLeft;
-    if (s.form === 'king' && s.formMovesLeft > 0) {
+    if (!glass && s.form === 'king' && s.formMovesLeft > 0) {
       nextFormMovesLeft = s.formMovesLeft - 1;
       if (nextFormMovesLeft <= 0) {
         nextForm = 'rook';
@@ -1138,30 +1145,31 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
         ? {
             kingStunTurns: poisonDeaths.length > 0
               ? 1
-              : Math.max(0, (s.kingStunTurns ?? 0) - 1),
+              : glass
+                ? (s.kingStunTurns ?? 0)
+                : Math.max(0, (s.kingStunTurns ?? 0) - 1),
           }
         : {};
     // Smoke ticks down at end of enemy turn.
     const smokePatch =
-      (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
+      !glass && (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
     // Scarecrow: the straw stands one enemy turn fewer; gone at 0.
-    const scarecrowPatch = s.scarecrow
+    const scarecrowPatch = !glass && s.scarecrow
       ? { scarecrow: s.scarecrow.turnsLeft > 1 ? { ...s.scarecrow, turnsLeft: s.scarecrow.turnsLeft - 1 } : undefined }
       : {};
     // Bodyguard / timed summons dissolve when their turns run out; free-move
     // summons (T5 Squire family) get their once-per-turn move back; a piece
     // stolen by Convert this turn wakes from its daze.
-    // Hourglass: during a glass-turn the daze never clears (a piece stolen
-    // this turn still acts from the player's NEXT real turn) and, at T4+,
-    // summon clocks do not run.
-    const glass = s.glassTurn;
-    const nextAllies = s.allies.some((a) => a.turnsLeft !== undefined || a.movedThisTurn || a.dazed)
+    // Hourglass: on a glass-turn a summon does not age, does not get its
+    // once-per-turn move back (the glass is not a new Rookie turn) and a piece
+    // stolen this turn stays dazed until a REAL Rookie action.
+    const nextAllies = !glass && s.allies.some((a) => a.turnsLeft !== undefined || a.movedThisTurn || a.dazed)
       ? s.allies
           .map((a) => {
             const ticked =
-              a.turnsLeft === undefined || glass?.freezeSummonClocks ? a : { ...a, turnsLeft: a.turnsLeft - 1 };
+              a.turnsLeft === undefined ? a : { ...a, turnsLeft: a.turnsLeft - 1 };
             const woke = ticked.movedThisTurn ? { ...ticked, movedThisTurn: false } : ticked;
-            return woke.dazed && !glass ? { ...woke, dazed: false } : woke;
+            return woke.dazed ? { ...woke, dazed: false } : woke;
           })
           .filter((a) => a.turnsLeft === undefined || a.turnsLeft > 0)
       : s.allies;
@@ -1173,11 +1181,11 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       allies: nextAllies,
       ...smokePatch,
       ...scarecrowPatch,
-      squireMovedThisTurn: false,
+      squireMovedThisTurn: glass ? s.squireMovedThisTurn : false,
       glassTurn: undefined,
-      // One glass per Rookie turn: the flag survives the glass-turn itself
-      // and resets after the enemy phase that follows a real action.
-      hourglassUsedThisTurn: glass ? s.hourglassUsedThisTurn : false,
+      // The per-turn glass count survives the glass-turn itself and resets
+      // after the enemy phase that follows a real action.
+      hourglassCastsThisTurn: glass ? s.hourglassCastsThisTurn : 0,
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,

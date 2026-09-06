@@ -441,17 +441,21 @@ export interface BoardState {
    */
   scarecrow?: Scarecrow;
   /**
-   * Hourglass — set while the enemy phase it triggered is resolving (a
-   * "glass-turn"). endTurn reads it (no daze wake-up, optionally no summon
-   * clocks, the king held at T3+) and clears it. Absent = a normal phase.
+   * Hourglass — true while the enemy phase it triggered is resolving (a
+   * "glass-turn"). `endTurn` reads it: a glass-turn is a turn taken OUT OF
+   * Rookie's clock, so nothing of hers expires during it (freeze/snare holds,
+   * the king's stun, smoke, the straw, decoy, rabies, king-form protection,
+   * summon clocks, a convert daze and the once-per-turn summon move all
+   * stand). Enemy FUSES still burn: poison is the one counter that ticks.
+   * The king reacts exactly as on any enemy turn. Absent = a normal phase.
    */
-  glassTurn?: { holdKing: boolean; freezeSummonClocks: boolean };
+  glassTurn?: boolean;
   /**
-   * Hourglass — true once the glass has been turned during the current
-   * Rookie turn (one cast per turn below T5). Cleared by the end of the
+   * Hourglass — how many times the glass has been turned during the current
+   * Rookie turn (see `hourglassCastsPerTurn`). Cleared by the end of the
    * enemy phase that follows a REAL Rookie action.
    */
-  hourglassUsedThisTurn?: boolean;
+  hourglassCastsThisTurn?: number;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {
