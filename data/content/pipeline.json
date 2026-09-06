@@ -945,6 +945,14 @@
       "stage": "idea",
       "created": "2026-09-06",
       "notes": "Hourglass + poison-dart combo run (let the fuse burn). Signature: a stone gallery over ranks 7-8 with a 2x2 turret and ONE stair, a bishop bricked into a niche as the only remote stun, and a procession of pawns as the visible clock. GATE 3-OF-4 at L7-L10 (T1, Normal, 32 trials): no-ability 0/0/0/3, hourglass alone 0 at EVERY tier, magnet 0 at every tier, aegis 0 at every tier, pair 63/69/78/69. MISS: poison-dart alone reads 78/75/13/78 — structural, not tuning: a glass-turn and an idle move produce the same enemy phases (the glass only saves one MOVE), MOVE_LIMIT_FLOOR=6 forbids the moveLimit 5 a one-move gate needs, and the dart has no line of sight or timing limit so the fuse can always be synced to the walk. Full runs 15% random / 10% pair-only."
+    },
+    {
+      "id": "revenge-30",
+      "kind": "run",
+      "name": "The Squint",
+      "stage": "testing",
+      "created": "2026-09-06",
+      "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Signature = a blind cell whose throne is sealed on rank, file AND diagonal, with one diagonal DOORSTEP and one long squint-diagonal that reaches the post and never the throne. Kit coup/duchess/aegis/magnet. Finale gate MET at T1: L7-L10 none 0%, every single kit card 0%, pair 94/91/91/94 (32 trials). abilityTierCaps { coup: 2, duchess: 3 } — coup:3 solos the finale 100% (any guard within 2, plus a second charge, lets him be hopped across the board via wandering hunters); duchess:4 reads 31/31/28/56. Four different finale decisions: the line / which guard / the shuttered lane / the throne given back. HONEST MISS: pair is 91-94%, not 60-80 — the pair's line is 2-3 moves from any start and a perfect-information bot does not misstep a walk; every knob measured (clock does nothing, punishers are a cliff at 3-13%). Full runs 10% random, 70% pair-pool. Coup is at TESTING so this run is playtest-only."
     }
   ]
 }
