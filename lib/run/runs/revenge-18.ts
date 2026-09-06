@@ -65,6 +65,28 @@
  * a house built out of walls it would either seal his room for free or seal
  * her own line — measured on The Colonnade as an active negative.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-18 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none  freezeray     magnet  poisondar   vanguard  |  freeze-ray+vanguard
+ *    7         0%         0%         0%         0%         0%  |  100%
+ *    8         0%         0%         0%         0%         0%  |  94%
+ *    9         0%         0%         0%         0%         0%  |  66%
+ *   10         0%         0%         0%         0%         0%  |  91%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 100/94/66/91.
+ * The header below reads 100/88/72/81 for the pair and is CONFIRMED (max drift 10 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (Normal, T5 bot, 32 trials/cell, --jobs=1 SERIAL — parallel matrix
  * cells cross-talk when other sims share the machine, so these are the numbers
  * of record; 2026-09-05):

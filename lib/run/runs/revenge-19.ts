@@ -145,6 +145,28 @@
  *   L10 PAIR: steal b6 (the knight d7 eats it), Squire c4/d5 x b6 (stun),
  *       x a8. A queen hunts. 8 moves.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-19 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none      aegis    convert     magnet  summonkni  |  convert+summon-knight
+ *    7         0%         0%         0%         0%         0%  |  72%
+ *    8         0%         0%         0%         0%         3%  |  66%
+ *    9         0%         0%         0%         0%         0%  |  69%
+ *   10         0%         0%         0%         0%         0%  |  75%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 3%); the pair reads 72/66/69/75.
+ * The header below reads 72/66/66/75 for the pair and is CONFIRMED (max drift 3 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED — see the dated block at the bottom of this header.
  *
  * MEASURED 2026-09-06 (Normal, T5 bot, T1 cards; L7-L10 = 32 trials/cell

@@ -89,6 +89,28 @@
  *   L10 THE MILLSTONE — the west door, two a turn, two knights from opposite
  *       corners, twelve moves.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-22 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L     none    aegis   dragon  duchess   magnet  |  dragon+duchess
+ *    7       0%       0%       0%       0%       0%  |  78%
+ *    8       0%       0%       0%       0%       0%  |  81%
+ *    9       0%       0%       0%       0%       0%  |  84%
+ *   10       0%       0%       0%       0%       0%  |  72%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 78/81/84/72.
+ * The header below reads 81/88/84/72 for the pair and is CONFIRMED (max drift 7 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (Normal, T5 bot, abilities at T1 as the harness deals them,
  * --jobs=1 SERIAL; finale 32 trials/cell, L1-L6 16; 2026-09-05):
  *   L      none  dragon  duchess  magnet  aegis  |  dragon+duchess

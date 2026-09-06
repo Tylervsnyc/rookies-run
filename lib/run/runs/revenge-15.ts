@@ -49,6 +49,28 @@
  * stone can shift and a 2x2 room no line can hold, so every single card in
  * the kit solves exactly half the level.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-15 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L     none    aegis  boulder    decoy   magnet  |  magnet+boulder
+ *    7       0%       0%       0%       0%       0%  |  100%
+ *    8       0%       0%       0%       0%       0%  |  100%
+ *    9       0%       0%       0%       0%       0%  |  100%
+ *   10       0%       0%       0%       0%       0%  |  100%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 100/100/100/100.
+ * The header below reads 100/100/97/100 for the pair and is CONFIRMED (max drift 3 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED — Normal, T1 cards, 32 trials/cell, SERIAL (`--jobs=1`; matrix
  * cells cross-talk when workers share a loaded machine), 2026-09-05:
  *

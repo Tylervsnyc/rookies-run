@@ -54,6 +54,28 @@
  * they went in. Note also that two enemies a turn made things EASIER before
  * the runner (twice the marching); it is a real difficulty knob only now.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-17 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none      aegis     dragon  poisondar  sacrifice  |  dragon+sacrifice
+ *    7         0%         0%         0%         0%         0%  |  69%
+ *    8         0%         3%         0%         3%         0%  |  88%
+ *    9         0%         0%         0%         0%         0%  |  91%
+ *   10         0%         0%         0%         0%         0%  |  69%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 3%); the pair reads 69/88/91/69.
+ * The header below was WRONG by up to 15 points on the pair (84/78/81/84 then, 69/88/91/69 now) — it was
+ * measured with the flawed method. The direction of every gate claim survives;
+ * the exact percentages did not.
+ * ──
  * MEASURED (32 trials/cell, Normal, --jobs=1, 2026-09-05, `revenge.ts
  * matrix`). NOTE: --jobs=2 cells cross-talk badly when several agents share
  * the machine (L7 no-ability read 44% in one parallel sweep and 0% in three

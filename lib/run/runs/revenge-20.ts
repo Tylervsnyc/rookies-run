@@ -61,6 +61,28 @@
  *       (a3 sorts before b3) and lands sealed on a3 with a4 empty — then
  *       take b3 blind, take her from b3, and slide a3xa5.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-20 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none    boulder     magnet  rabiesdar      smoke  |  smoke+rabies-dart
+ *    7         0%         0%         0%        50%         0%  |  63%
+ *    8         0%         0%         0%        25%         0%  |  13%
+ *    9         0%         0%         0%         3%         0%  |  9%
+ *   10         0%         0%         0%         3%         0%  |  19%
+ * GATE DOES NOT HOLD CLEANLY: a single card reads 50% on a finale level. See the run's own notes below.
+ * The header below reads 63/9/6/9 for the pair and is CONFIRMED (max drift 10 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (Normal, bot T5 = MCTS-160, T1 cards, --jobs=1, 32 trials on
  * L7-L10; 16 trials, --jobs=2 on L1-L6):
  *          none  smoke  rabies  boulder  magnet  smoke+rabies

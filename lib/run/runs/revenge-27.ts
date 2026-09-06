@@ -123,6 +123,28 @@
  * Contract: L7-L10 no-ability ~0%, every single kit card <= 8%, the pair
  * 60-80% (not 100). MET on all four levels — numbers below.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-27 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none      aegis  hourglass  knighthop  scarecrow  |  scarecrow+knight-hop
+ *    7         0%         0%         0%         0%         0%  |  72%
+ *    8         0%         0%         0%         0%         0%  |  53%
+ *    9         0%         0%         0%         0%         0%  |  66%
+ *   10         0%         0%         0%         0%         0%  |  75%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 72/53/66/75.
+ * The header below was WRONG by up to 16 points on the pair (66/69/63/75 then, 72/53/66/75 now) — it was
+ * measured with the flawed method. The direction of every gate claim survives;
+ * the exact percentages did not.
+ * ──
  * MEASURED (Normal, T5 bot, kit at T1 — the harness default; 2026-09-06).
  *   MID-RUN, numbers of record (--jobs=1, 32 trials/cell):
  *   L      none  scarecrow  knight-hop  aegis  hourglass  |  pair

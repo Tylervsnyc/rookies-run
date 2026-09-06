@@ -115,6 +115,28 @@
  *     reads 69% for knight-hop alone, and why the sealed finales cannot be
  *     gated against a SECOND hop (see the tier note in MEASURED).
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-23 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none      aegis      decoy  knighthop       twin  |  knight-hop+twin
+ *    7         0%         0%         0%         0%         0%  |  100%
+ *    8         0%         0%         0%         0%         0%  |  100%
+ *    9         0%         0%         0%         0%         0%  |  100%
+ *   10         0%         0%         0%         0%         0%  |  100%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 100/100/100/100.
+ * The header below reads 100/100/100/100 for the pair and is CONFIRMED (max drift 0 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (Normal, T5 bot, --jobs=1 --trials=32 on the finale, 2026-09-05):
  *   L1-L3 free. L4 none 0% / aegis 83% / decoy 100% (knight-hop and twin
  *   also solve it — it is a stair level). L5 none 0% / knight-hop 100% /

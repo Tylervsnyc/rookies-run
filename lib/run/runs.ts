@@ -6646,6 +6646,28 @@ const RUN_REVENGE_12: RunDef = {
  * pillared hall walls YOUR line, never his — and a crushed key is a stun you
  * cannot use from the wrong side of the columns).
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-13 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none  bishopsqu    boulder     magnet       swap  |  bishop-squire+swap
+ *    7         0%        25%         0%         0%         0%  |  100%
+ *    8         0%         0%         0%         0%         0%  |  100%
+ *    9         0%         0%         0%         0%         0%  |  97%
+ *   10         0%         0%         0%         0%         0%  |  69%
+ * GATE DOES NOT HOLD CLEANLY: a single card reads 25% on a finale level. See the run's own notes below.
+ * The header below reads 100/100/100/71 for the pair and is CONFIRMED (max drift 3 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (24 trials/cell, Normal, 2026-09-04 — matrix + full-run sim):
  * L1-L2 free (teaching the hall). L3 squire 92%. L4 squire 100% / magnet 71%.
  * L5 squire 100% / boulder 92%. L6 squire 100% / magnet 92%. L7-L10 are the

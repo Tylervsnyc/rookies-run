@@ -66,6 +66,28 @@
  *       the low c-file she has to stand on: arrive, drop into c6 or c7,
  *       swap, slide up the shaft.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-14 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none  poisondar      smoke       swap   vanguard  |  vanguard+swap
+ *    7         0%         0%         0%         0%         0%  |  100%
+ *    8         0%         0%         0%         0%         0%  |  97%
+ *    9         0%         0%         0%         0%         0%  |  75%
+ *   10         0%         0%         0%         0%         0%  |  88%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 100/97/75/88.
+ * The header below reads 97/97/81/88 for the pair and is CONFIRMED (max drift 6 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (Normal, T5, 2026-09-05 — 16 trials/cell, 32 on the finale):
  *   L1 L2 L3 free (teaching the box). L4 none 0% / poison 100%. L5 none 25%
  *   / smoke 100%. L6 none 0% / vanguard 100%. FINALE, every single card in

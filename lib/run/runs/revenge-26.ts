@@ -113,6 +113,28 @@
  *   magnet       nothing to pull; the pillar is stone and the watcher pawn
  *                is sealed on its rank and its file.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-26 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none      aegis  becomekin    boulder     magnet  |  become-king+boulder
+ *    7         0%         0%         0%         0%         0%  |  91%
+ *    8         0%         0%         0%         0%         0%  |  91%
+ *    9         0%         0%         0%         0%         0%  |  88%
+ *   10         0%         0%         0%         0%         0%  |  88%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 91/91/88/88.
+ * The header below reads 84/84/91/78 for the pair and is CONFIRMED (max drift 10 points,
+ * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
+ * are the numbers of record.
+ * ──
  * MEASURED (Normal, T5 bot, kit at T1 — the harness default; 2026-09-06).
  *   Direction pass (--jobs=3, 16 trials/cell):
  *   L      none  becomeK  boulder  aegis  magnet  |  become-king+boulder

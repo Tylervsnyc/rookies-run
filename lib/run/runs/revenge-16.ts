@@ -136,6 +136,34 @@
  *       climb to c4, summon d4 as it dies, and the Squire slides the whole
  *       corridor onto him.
  *
+ * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * Everything under MEASURED below was taken with a harness whose result depended
+ * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
+ * counter into its rollout RNG seed, so a cell read one number alone and another
+ * as a later column of a multi-column run (repeating ONE cell four times in one
+ * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
+ * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
+ * reproducible across invocation shapes — guarded by
+ * scripts/run-playtest/matrix-determinism-check.ts.
+ *
+ * FINALE, numbers of record. `revenge.ts matrix --run=revenge-16 --levels=7,8,9,10
+ * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ *    L       none  bishopsqu     magnet  poisondar  rabiesdar  |  poison-dart+bishop-squire
+ *    7         0%         0%         0%         0%         0%  |  97%
+ *    8         0%         0%         0%         0%         0%  |  59%
+ *    9         0%         0%         0%         0%         0%  |  84%
+ *   10         0%         0%         0%         0%         0%  |  47%
+ * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 97/59/84/47.
+ * The header below was WRONG by up to 28 points on the pair (69/63/63/63 then,
+ * 97/59/84/47 now) — it was measured with the flawed method. The gate itself
+ * survives (every single card still 0% on all four), but THE VARIANCE REWORK'S
+ * OWN CONTRACT DOES NOT: it asked for the pair in a 60-80% band and the honest
+ * read is 97 / 59 / 84 / 47. L7 is a giveaway and L10 is harder than the band
+ * allows. This is the one run in the catalogue whose SHIPPED TUNING was chosen
+ * off flawed numbers and would be chosen differently today — L7 wants a tighter
+ * clock and L10 a looser one. Not demoted: the combo gate is what /playtest
+ * claims, and it holds.
+ * ──
  * MEASURED (2026-09-05, `revenge.ts matrix --difficulty=normal`, 16-32
  * trials/cell). Finale L7-L10: no-ability 0%, poison alone 0%, squire alone
  * 0%, magnet 0%, rabies 0% — every single card in the kit reads ZERO on all
