@@ -11,7 +11,7 @@ import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { LadderTab } from './LadderTab';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
-import { getHandle } from '@/lib/run/leaderboard-client';
+import { fetchBoard, getHandle, type LeaderboardResponse } from '@/lib/run/leaderboard-client';
 import { todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
@@ -26,7 +26,9 @@ import { autoplayMusicOnHome } from '@/lib/music';
  *             board to today's map card and the button itself becomes BEGIN
  *             (Tyler 2026-09-03: no dead button, no second PLAY on the card).
  *   Ladder  — the 10 rungs (real profile state), tap an open rung to play it.
- *   Ranks   — today's hunters. DUMMY DATA for now (see DUMMY_ROWS).
+ *   Ranks   — today's hunters, REAL data from `run_scores` via fetchBoard().
+ *             Real rows or an honest empty state — never invented numbers
+ *             (DUMMY_ROWS shipped fabricated hunters until 2026-09-07).
  *   Codex   — powers + trophies counts; tap opens the Trophy Room.
  * Same page contract as HomeLanding so app/page.tsx swaps cleanly.
  */
@@ -39,16 +41,28 @@ interface ArenaHomeProps {
   onTrophies?: () => void;
 }
 
-// ── Dummy ranks (until the daily leaderboard is wired here) ─────────────────
-const DUMMY_ROWS = [
-  { rank: 1, handle: 'kingslayer_ru', captures: 31 },
-  { rank: 2, handle: 'pawnstorm', captures: 29 },
-  { rank: 3, handle: 'gleasons_gym', captures: 27 },
-  { rank: 4, handle: 'moxie.chess', captures: 24 },
-  { rank: 5, handle: 'h8_bishops', captures: 22 },
-];
-const DUMMY_ME = { rank: 47, captures: 12 };
-const DUMMY_HUNTING = 2318;
+// ── Today's global board ────────────────────────────────────────────────────
+/**
+ * One fetch of `run_scores` for today's run, shared by the Revenge subtitle and
+ * the Ranks tab. `available:false` means the board could not be read at all
+ * (Supabase down, or `run_scores` not migrated onto the live DB) — treated the
+ * same as empty: we say so, we never fill the gap with made-up hunters.
+ */
+function useDailyBoard(iso: string, runId: string) {
+  const [board, setBoard] = useState<LeaderboardResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetchBoard(iso, runId).then((b) => {
+      if (cancelled) return;
+      setBoard(b);
+      setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [iso, runId]);
+  return { board, loading };
+}
 
 // ── Kit ──────────────────────────────────────────────────────────────────────
 const NAVY = '#0f1c3f';
@@ -257,9 +271,18 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
 }
 
 // ── Tabs ─────────────────────────────────────────────────────────────────────
-function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities }: {
-  flipped: boolean; onGo: () => void; onBegin: () => void; countdown: string; runName: string; abilities: AbilityId[];
+function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, board }: {
+  flipped: boolean; onGo: () => void; onBegin: () => void; countdown: string; runName: string;
+  abilities: AbilityId[]; board: LeaderboardResponse | null;
 }) {
+  // Only ever a real standing: your rank when you've played, the live hunter
+  // count when you haven't, and nothing at all when the board is empty.
+  const live = board?.available && board.total > 0 ? board : null;
+  const standing = !live
+    ? ''
+    : live.me
+      ? ` \u00b7 you\u2019re #${live.me.rank} of ${live.total.toLocaleString()}`
+      : ` \u00b7 ${live.total.toLocaleString()} hunting`;
   return (
     <div className="h-full flex flex-col">
       {flipped ? (
@@ -275,7 +298,7 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities }: {
           <RevengeMarkSvg size={46} ringColor="#fff" />
           <span className="flex flex-col items-start leading-none">
             <span className="text-[24px]" style={{ ...OUTLINE, letterSpacing: '0.02em' }}>DAILY REVENGE</span>
-            <span className="text-[12px] font-bold mt-1" style={{ color: '#FFD6D6' }}>Resets in {countdown} · you&rsquo;re #{DUMMY_ME.rank} of {DUMMY_HUNTING.toLocaleString()}</span>
+            <span className="text-[12px] font-bold mt-1" style={{ color: '#FFD6D6' }}>Resets in {countdown}{standing}</span>
           </span>
         </CpButton>
       )}
@@ -290,25 +313,69 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities }: {
   );
 }
 
-function RanksTab({ handle }: { handle: string }) {
+function RanksTab({ handle, board, loading }: {
+  handle: string; board: LeaderboardResponse | null; loading: boolean;
+}) {
+  const live = board?.available ? board : null;
+  const rows = live?.rows ?? [];
+  const me = live?.me ?? null;
+  // The top rows already carry `me` when you're in them — don't print you twice.
+  const meBelow = me && !rows.some((r) => r.me) ? me : null;
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-baseline justify-between px-1">
         <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s hunters</span>
-        <span className="text-[10px] font-black uppercase tracking-wider" style={GOLD_TEXT}>Global</span>
+        <span className="text-[10px] font-black uppercase tracking-wider" style={GOLD_TEXT}>
+          {live && live.total > 0 ? `${live.total.toLocaleString()} playing` : 'Global'}
+        </span>
       </div>
-      <ul className="mt-1.5">
-        {DUMMY_ROWS.slice(0, 4).map((r) => (
-          <li key={r.rank} className="flex items-center gap-2.5 py-[5px] text-[12px]" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-            <Medal rank={r.rank} /><span className="flex-1 font-bold truncate">{r.handle}</span>
-            <span className="tabular-nums font-black" style={GOLD_TEXT}>{r.captures}<span className="text-[9px] opacity-80"> caps</span></span>
-          </li>
-        ))}
-        <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
-          <Medal rank={DUMMY_ME.rank} /><span className="flex-1 truncate">{handle} (you)</span>
-          <span className="tabular-nums" style={GOLD_TEXT}>{DUMMY_ME.captures}<span className="text-[9px] opacity-80"> caps</span></span>
-        </li>
-      </ul>
+
+      {loading ? (
+        <ul className="mt-1.5" aria-label="Loading today\u2019s board">
+          {[0, 1, 2, 3].map((i) => (
+            <li key={i} className="flex items-center gap-2.5 py-[7px]" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+              <span className="h-[18px] w-[18px] rounded-full" style={{ background: 'rgba(255,255,255,0.10)' }} />
+              <span className="flex-1 h-[10px] rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            </li>
+          ))}
+        </ul>
+      ) : rows.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-5 -mt-2">
+          <RevengeMarkSvg size={38} ringColor="rgba(255,255,255,0.75)" />
+          <div className="mt-2.5 text-[14px] font-black" style={OUTLINE}>No hunters yet today</div>
+          <div className="mt-1 text-[11px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.62)' }}>
+            Finish today&rsquo;s Revenge and you hold #1 until somebody takes it off you.
+          </div>
+        </div>
+      ) : (
+        <ul className="mt-1.5">
+          {rows.slice(0, meBelow ? 4 : 5).map((r) => (
+            <li
+              key={`${r.rank}-${r.handle}`}
+              className={`flex items-center gap-2.5 py-[5px] text-[12px] ${r.me ? 'font-black rounded-lg px-2 -mx-2' : ''}`}
+              style={r.me
+                ? { background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }
+                : { borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+            >
+              <Medal rank={r.rank} />
+              <span className="flex-1 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</span>
+              <span className="tabular-nums font-black" style={GOLD_TEXT}>{r.captures}<span className="text-[9px] opacity-80"> caps</span></span>
+            </li>
+          ))}
+          {meBelow ? (
+            <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
+              <Medal rank={meBelow.rank} />
+              <span className="flex-1 truncate">{handle} (you)</span>
+              <span className="tabular-nums" style={GOLD_TEXT}>{meBelow.captures}<span className="text-[9px] opacity-80"> caps</span></span>
+            </li>
+          ) : !me ? (
+            <li className="mt-2 text-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.6)' }}>
+              You haven&rsquo;t hunted today. Play the Daily Revenge to take a rank.
+            </li>
+          ) : null}
+        </ul>
+      )}
     </div>
   );
 }
@@ -359,6 +426,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
   const countdown = useCountdownToMidnight();
   const [handle, setHandle] = useState('Rook');
   useEffect(() => { setHandle(getHandle()); }, []);
+  const { board, loading: boardLoading } = useDailyBoard(iso, runId);
   // Music starts the moment the home screen shows (or on the first tap if
   // the browser blocks autoplay) — not on the first board move.
   useEffect(() => autoplayMusicOnHome(), []);
@@ -406,9 +474,9 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
         {/* the surround */}
         <div className="flex-1 min-h-0 mt-3 relative overflow-hidden">
           <div key={tab} className="h-full arena-tab-in">
-            {tab === 'Revenge' && <RevengeTab flipped={flipped} onGo={() => setFlipped(true)} onBegin={() => onStart(dailyDifficulty)} countdown={countdown} runName={runName} abilities={pool} />}
+            {tab === 'Revenge' && <RevengeTab flipped={flipped} onGo={() => setFlipped(true)} onBegin={() => onStart(dailyDifficulty)} countdown={countdown} runName={runName} abilities={pool} board={board} />}
             {tab === 'Ladder' && <LadderTab profile={profile} onLadderStart={onLadderStart} />}
-            {tab === 'Ranks' && <RanksTab handle={handle} />}
+            {tab === 'Ranks' && <RanksTab handle={handle} board={board} loading={boardLoading} />}
             {tab === 'Codex' && <CodexTab profile={profile} onTrophies={onTrophies} />}
           </div>
         </div>
