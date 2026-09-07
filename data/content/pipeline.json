@@ -977,6 +977,14 @@
       "stage": "idea",
       "created": "2026-09-07",
       "notes": "Snare + Boulder. HONEST MISS: singles gate holds (every kit card 0% on L7-L10) but the pair reads only 19-34%, far below the 60-80 band — the run is too hard, not too easy, and the clock is not the limiter (L7 read 13% at 10 moves, 38% at more). Committed with its numbers; NOT on the playtest page. Needs the winning line shortened before it can ship."
+    },
+    {
+      "id": "revenge-34",
+      "kind": "run",
+      "name": "The Dogleg",
+      "stage": "testing",
+      "created": "2026-09-07",
+      "notes": "Combo run for the signature pair TWIN + REWIND ('insurance on a one-charge body'; the pair the discovery harness proved could gate, data/run-playtest/combo-library/rewind+twin). VERB: spend a body where nothing survives, then take the killing back — the only run in the catalogue whose answer is an UNDO. SIGNATURE: an L-shaped stone wall seals the king's corridor with no gap at all — every orthogonal boundary square is wall — so no rook, bishop or queen ray, no pawn and no walk ever enters it. The one way in is the NOOK: a corridor square whose only free neighbour outside is DIAGONAL, the outside corner of the dogleg. A line cannot turn that corner; a body BORN there is already inside. Inside, the single square that attacks the king (the POST) is covered by a jammed knight, so any rook standing on it dies — which is why the answer is a body you can get back. FOUR FINALE LINES, four different jobs for the body: L7 die on the post (one slide, seven moves); L8 buy the post (it is occupied by a knotted bishop, so the body's one move must be a CAPTURE); L9 wait first (the king is a rank lower, so the top of the shaft is a waiting room and the body must turn the corner and survive a phase before taking the post); L10 both, on the longest walk, mirrored, four body-moves against a four-turn leash. SERIAL NUMBERS (32 trials, jobs=1, Normal): none 0/0/0/0, twin 0/0/0/0, rewind 0/0/0/0, magnet 0/0/0/0, poison-dart 0/0/0/0, twin+rewind 69/78/63/63 — gate MET, inside the 60-80% band. Every other kit pair 0-9%. FULL RUNS (40 each): random offer picks 0/40, pool pinned to the pair 5/40 = 13%. TIER CAVEAT: abilityTierCaps twin:2. Twin T3 is the second charge and it breaks L7/L8 (75%/66% alone) because the first body can trade itself for the executioner; L9 and L10 are gated at every twin tier because their executioners sit in pockets no body can reach."
     }
   ]
 }

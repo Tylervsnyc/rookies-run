@@ -30,6 +30,7 @@ import { RUN_REVENGE_30 } from './runs/revenge-30';
 import { RUN_REVENGE_31 } from './runs/revenge-31';
 import { RUN_REVENGE_32 } from './runs/revenge-32';
 import { RUN_REVENGE_33 } from './runs/revenge-33';
+import { RUN_REVENGE_34 } from './runs/revenge-34';
 
 
 export const EXTRA_REVENGE_RUNS: ReadonlyArray<RunDef> = [
@@ -52,4 +53,5 @@ export const EXTRA_REVENGE_RUNS: ReadonlyArray<RunDef> = [
   RUN_REVENGE_31,
   RUN_REVENGE_32,
   RUN_REVENGE_33,
+  RUN_REVENGE_34,
 ];
