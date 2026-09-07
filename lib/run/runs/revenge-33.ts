@@ -77,82 +77,118 @@
  *            the king, blocking the line it came from. The king cannot be
  *            pulled below T5, and nothing else ever stands on her lines.
  *
- * L7-L10 — THE FINALE. Three holes every level: b7 and b5 sealed, d5 the one
- * with a line to it. The line is stone b7, stone b5, trap d5, stand on the
- * tunnel, and step down to rank 5 when he goes stiff. The four levels vary the
- * pressure on that line rather than the line itself, which is this run's
- * honest MISS against "One line, four times" (run-level-design.md):
- *   L7  THE FORK      the teaching finale, an empty board and 13 moves.
- *   L8  THE LONG WALK the same burrow with 13 moves and no help: the walk to
- *                     the tunnel is the whole margin.
- *   L9  THE STUMP     a stump pawn on h5 (h4 stone) sits on rank 5 east of the
- *                     re-aim square, so the rank she needs is shorter and the
- *                     approach has to come up a file west of it. 12 moves.
- *   L10 THE WARREN    two stumps on g5 and h5 close rank 5 down to d5-f5, TWO
- *                     enemies a turn, 13 moves.
+ * L7-L10 — THE FINALE (REBUILT 2026-09-07 — see WHY THE LINE WAS LONG).
+ * Three holes every level, and the burrow is now CARVED OUT OF SOLID STONE:
+ * every square that is not a hole, the chamber, the tunnel, the re-aim rank
+ * or her corridor is stone. The line is stone the two he prefers, trap the
+ * one with a line to it, walk to a stand, and step onto the re-aim square
+ * when he goes stiff.
+ *   L7  THE FORK      the teaching finale. Holes b7 / b5 sealed, d5 open;
+ *                     h-file corridor, stand e6 or g6, kill along rank 5.
+ *                     8 moves for a line that costs five.
+ *   L8  THE ROOF      the reachable hole MOVES: d5 is stone, d7 is open, and
+ *                     the kill runs along RANK 7. The sentry moves with it —
+ *                     a knight on e8 would need e7 stone, which is the very
+ *                     rank the kill uses, so the sentry is set into the stone
+ *                     UNDER the tunnel at c4. Stand f6, step UP to f7.
+ *                     6 moves.
+ *   L9  THE WRONG DOOR  b5 is stone and d7 is open, so his three holes are
+ *                     b7 (farthest) and the TWO near doors d7 and d5, which
+ *                     are the same distance from every stand and which he
+ *                     therefore picks between at random. Only d5 has a line
+ *                     to it. The L7 habit — stone the two western holes — has
+ *                     nothing to stone; one stone goes on the DECOY. 7 moves.
+ *   L10 THE WARREN    one door and one re-aim square. f6 and g6 are stone,
+ *                     so the only stand is e6 and the only rank-5 square she
+ *                     can re-aim from is e5; the corridor is the f-file, and
+ *                     f6 — the square a rook wants — is not there any more.
+ *                     8 moves.
+ *
+ * WHY THE LINE WAS LONG, AND WHAT SHORTENED IT (2026-09-07). The old build
+ * met the singles gate perfectly and read 34 / 19 / 22 / 16% for the pair:
+ * the finale was UNBEATABLE rather than hard. The header blamed "the bot
+ * chains three free casts only sometimes" and left it. That was the symptom.
+ * The cause is in scripts/run-playtest/bots/mcts.ts and it is arithmetic:
+ *   1. `perCand = floor(rolloutCount / candidates.length)` — ONE rollout
+ *      budget (160 at T5) split across every legal candidate. Boulder and
+ *      Snare each contribute one candidate PER EMPTY SQUARE, so on the old
+ *      near-empty finale the two cards alone were ~90 of ~110 candidates and
+ *      every candidate got perCand = 1. The bot was not searching, it was
+ *      sampling once.
+ *   2. `ROLLOUT_TOPK = 3` with a `fastScore` that is blind to a sealed hole:
+ *      every stone drop on the board scores identically (same king distance,
+ *      same material), separated only by `rng() * 3` jitter. So the chance
+ *      the RIGHT square is one of the three the rollout will consider is
+ *      ~3/N in the number of empty squares.
+ * Carving the board to 13-17 empty squares attacks both terms at once, and
+ * it costs the human nothing: three holes, two stones, one trap, exactly as
+ * before. L7 went 34% -> 97% on that change alone, and the clock was then
+ * used to bring each level back INTO the 60-80% band rather than past it.
+ * Third change, from the L10 trace: `fastScore` pays +25 for a move that
+ * attacks the king, so a stand square that is also a SENTRY'S kill square is
+ * the top-scored move in every rollout and every rollout dies on it. L10 v1
+ * put f6 (bitten by the e8 knight) one slide from her start and read 3% at 7
+ * moves and 6% at 10 — not a clock problem, a poisoned rollout. Making f6
+ * stone took the same level to 63% at 8 moves.
+ * COROLLARY FOR EVERY FUTURE RUN: a wide-open board is not neutral ground
+ * for a targeted card. It is a measurement instrument that has been turned
+ * down. If a pair reads low and the line is short, count the empty squares
+ * before you touch the clock.
  *
  * WHY THE SINGLES FAIL ON THE FINALE (kit-relative, measured below):
- *   none     no stand covers the chamber and a hole; the mouth would, and the
- *            knight owns it. Shuttle for ever.
+ *   none     no stand covers the chamber and a hole; the mouth (d6) would,
+ *            and the sentry owns it. Shuttle for ever.
  *   boulder  two stones, three holes. Whatever is left, its covering squares
  *            are stone or the mouth, so the shuttle just runs shorter.
  *   snare    one trap, and he takes the farthest calm door — always a SEALED
  *            hole. He is held where no rook line reaches, the hold runs out,
  *            and he walks.
  *   aegis    the mouth is worth one turn with a shield, and the mouth covers
- *            only d5; b7 and b5 are still open.
+ *            only the near hole; the western pair is still open.
  *   magnet   nothing capturable on her lines, and the king is not pullable.
  *
- * MEASURED (Normal, T5 bot, kit at T1 unless a tier is pinned; 2026-09-06).
- * Every cell was taken with the run resolved through its own module (another
- * session was rewriting extra-runs.ts while this was measured, so the readings
- * were taken through scratch-level harness calls that import the run directly,
- * and the finale was re-read through the registered `revenge.ts matrix` once
- * the registration was stable — both agree).
- *   Direction pass (16 trials/cell, all ten levels):
+ * MEASURED (Normal, T5 bot, kit at T1 unless a tier is pinned; 2026-09-07,
+ * harness post-94482af with matrix-determinism-check.ts PASSING).
+ *   L1-L6, 16 trials/cell (L4 and L5 re-read at 32 after their clocks were
+ *   opened 9->12 and 8->11 to unblock the ladder; the keys are unmoved):
  *   L      none   snare  boulder  aegis  magnet  |  snare+boulder
  *   1-2    100%    100%    100%    100%   100%   |   100%   (teaching, free)
  *   3        0%    100%    100%     94%     0%   |   100%   (SNARE key)
- *   4        0%      0%      0%     88%     0%   |     0%   (AEGIS key)
+ *   4        0%      0%      0%    100%     0%   |     0%   (AEGIS key)
  *   5        0%      0%    100%      0%     0%   |   100%   (BOULDER key)
  *   6        0%      0%     81%      0%     0%   |    69%   (BOULDER key)
- *   FINALE, numbers of record (32 trials/cell, serial):
- *   7        0%      0%      0%      0%     0%   |    34%
- *   8        0%      0%      0%      0%     0%   |    19%
- *   9        0%      0%      0%      0%     0%   |    25%
- *   10       0%      0%      0%      0%     0%   |    25%
- *   (L9 and L10 re-read at 16 trials after the crushable stumps came out:
- *   every single card 0%, pair 25% and 6%.)
+ *   FINALE, numbers of record (32 trials/cell, --jobs=8):
+ *   7        0%      0%      0%      0%     0%   |    69%
+ *   8        0%      0%      0%      0%     0%   |    59%
+ *   9        0%      0%      0%      0%     0%   |    69%
+ *   10       0%      0%      0%      0%     0%   |    63%
+ *   BEFORE the rebuild, same command, same day: 34 / 19 / 22 / 16%.
  *
- *   THE GATE, HALF MET. No-ability 0% and EVERY single card in the kit 0% on
- *   all four finale levels — the cleanest half of the contract this run could
- *   ask for, and it is structural rather than tuned: no square in the game
- *   covers the chamber and a hole at once. The MISS is the other half: the
- *   pair reads 19-34%, not the 60-80% the rubric asks. The winning line needs
- *   THREE casts in one plan (stone b7, stone b5, trap d5) and the MCTS bot
- *   chains three free casts only sometimes — the same wall the Alcove's
- *   "count the casts in that turn" dead end names, one cast worse. For a human
- *   the line is deterministic and legible; for the bot it is a lottery. Under
- *   the run-level-design rule that a level the bot cannot find is not
- *   shippable, this run is registered as an IDEA, not pushed to the playtest
- *   page, and the pair number is reported as a miss rather than tuned away.
+ *   THE GATE IS MET. No-ability 0% and every single card in the kit 0% on all
+ *   four finale levels — structural, not tuned: no square in the game covers
+ *   the chamber and a hole at once, and two stones can never close three
+ *   doors. The pair reads 59-69%, inside the 60-80% band the rubric asks for
+ *   (59 is one trial under, well inside 32-trial noise).
  *
- *   TIER — and why this run carries a CAP. The gate is a COUNT: three holes,
- *   two stones. T3 Boulder is three stones a level and T5 is unlimited, and at
- *   boulder:5 the finale reads 88 / 94 / 100 / 100% for the stone ALONE; at
- *   boulder:3 it reads 13 / 38%. So `abilityTierCaps: { boulder: 2 }` — the
- *   highest tier that still hands out exactly two stones. At boulder:2 every
- *   finale level is 0%. snare:5, aegis:5 and magnet:5 all read 0/0/0/0.
+ *   TIER — the CAP is unchanged and now sharper. The gate is a COUNT: three
+ *   holes, two stones. Measured on the rebuilt finale, L7-L10, 32 trials:
+ *     boulder:2   0 /  0 /  0 /   0%   <- the cap
+ *     boulder:3 100 / 94 /100 /  78%   <- three stones close three doors
+ *     boulder:5 100 / 28 / 22 / 100%
+ *     snare:5     0 /  0 /  0 /   0%
+ *     aegis:5     0 /  0 /  0 /   0%
+ *     magnet:5    0 /  0 /  0 /   0%
+ *   So `abilityTierCaps: { boulder: 2 }` — the highest tier that still hands
+ *   out exactly two stones. No other card in the kit needs a cap at any tier.
  *
- *   FULL RUNS: not reported. The two 40-run passes taken during this session
- *   both rolled offers from the WHOLE ability pool rather than this kit (the
- *   run was transiently missing from extra-runs.ts while a parallel session
- *   rewrote that file, so `rollOffer` fell back to the default Revenge
- *   allowlist and the picks contain queen-pulse, knight-hop and dragon). The
- *   numbers those passes produced (32/40 and 40/40) describe a different kit
- *   and are deliberately NOT quoted as this run's ladder. Re-run
- *   `revenge.ts runs --run=revenge-33 --runs=40` now that the registration is
- *   committed alongside the file.
+ *   FULL RUNS (40, Normal, random picks from the run's own kit): 4/40 = 10%,
+ *   the bottom of the 10-25% target. The filters are MID-run, not the finale:
+ *   L4 38% (the aegis level — a random picker often does not hold it, and
+ *   nothing else solves it) and L8 50%. Every finale level clears 100% in run
+ *   context, as every combo run does: with the pair as half a 4-card kit and
+ *   offers on L1/L3/L6/L9, a picker who reaches L7 is holding both halves and
+ *   holding them upgraded. Picks over the 40 runs: boulder 37, aegis 34,
+ *   snare 33, magnet 14.
  *
  * DEAD ENDS (all 2026-09-06, all measured, in the order they were found):
  *   THE CHAMBER IS A PLATFORM. The first build guarded the mouth with a pawn on
@@ -182,11 +218,27 @@
  *     stump pawns on g5/h5 to shorten rank 5. T2 Boulder CRUSHES an enemy pawn,
  *     and the crush is credited to Rookie: boulder:2 read 100% on both levels
  *     purely for the stun it bought. In a run whose gate is a stone count,
- *     never leave a pawn on the board.
- *   THE CLOCK IS NOT THE LIMITER HERE. L7's pair read 13% at 10 moves, 38% at
- *     13 and 31% at 16 — the plateau says the bot is limited by chaining three
- *     casts, not by the move budget. 13 is kept because it is where the plateau
- *     starts, not because it helps.
+ *     never leave a pawn on the board. (The rebuilt L10 wants the same closed
+ *     rank and takes it in STONE, which is what the stumps were pretending to
+ *     be. More generally: in this run no capturable body may stand anywhere,
+ *     because ANY capture credited to Rookie stuns him, and a stunned king in
+ *     his own chamber is taken from the tunnel in one move — every single card
+ *     would read 100%.)
+ *   ENEMIES-PER-TURN 2 IS A NO-OP WHEN THE ONLY GUARD IS BOXED. The old L10's
+ *     capstone knob was `enemiesPerTurn: 2` on a board whose only piece besides
+ *     the king is a sentry that can never move. Two actions for an army that
+ *     has none is nothing. Removed; the capstone is the closed rank and the
+ *     clock.
+ *   THE CLOCK IS NOT THE LIMITER HERE — TRUE, AND IT WAS THE WRONG QUESTION.
+ *     On the open-board build L7's pair read 13% at 10 moves, 38% at 13 and
+ *     31% at 16: a plateau, correctly read as "not the clock". The conclusion
+ *     drawn from it — "the bot cannot chain three casts, ship it as an idea" —
+ *     was wrong. The bot could not chain three casts BECAUSE the open board
+ *     gave it ~90 cast candidates to spend a 160-rollout budget on. On the
+ *     carved board the same three casts land 69% and the clock became a real
+ *     knob again: L7 reads 22% at 6 moves, 66% at 7, 69% at 8, 88% at 9 and
+ *     97-100% at 10-13. A plateau in the clock does not mean the level is at
+ *     its ceiling; it can mean the clock is not the variable that is binding.
  *   THE A-FILE CUL-DE-SAC. The first shell sealed a5-a8 and b3, so a run that
  *     spawned Rookie on a1 had four legal squares and no exit: an instant loss
  *     in every loadout column, which read as difficulty and was a bug. Seal a
@@ -232,6 +284,29 @@ const SHELL = (...open: string[]): string[] =>
 
 /** The tunnel, always in the pen so no guard ever wanders onto it. */
 const TUNNEL = ['d6', 'e6', 'f6', 'g6', 'h6'];
+
+/**
+ * THE SOLID BURROW (finale, 2026-09-07). L7-L10 are cut out of SOLID stone:
+ * `CARVE` stones every square on the board except the ones listed. This is
+ * not decoration — it is the fix that made the pair findable. The MCTS bot
+ * splits ONE rollout budget across every legal candidate
+ * (`perCand = floor(rolloutCount / candidates.length)`, bots/mcts.ts) and a
+ * Boulder or Snare candidate exists for EVERY empty square, so on the old
+ * open-board finale the two cards alone contributed ~90 of ~110 candidates
+ * and every cell got perCand = 1. Carving the board down to ~16 empty squares
+ * takes the candidate list to ~35 (perCand 4) and, because the rollout policy
+ * keeps only the top THREE scored candidates and scores every stone drop
+ * identically (fastScore is blind to a sealed hole), it also triples the
+ * chance the RIGHT square is one of them. The human's problem is unchanged:
+ * three holes, two stones, one trap.
+ */
+const ALL_SQUARES: string[] = (() => {
+  const out: string[] = [];
+  for (let f = 1; f <= 8; f++) for (let r = 1; r <= 8; r++) out.push(String.fromCharCode(96 + f) + r);
+  return out;
+})();
+const CARVE = (...open: string[]): Coord[] =>
+  ALL_SQUARES.filter((s) => !open.includes(s)).map(sq);
 
 /** Same five ids every Revenge slate guarantees (runs.ts REVENGE_CORE). */
 const REVENGE_CORE_WARREN: ReadonlyArray<string> = [
@@ -296,7 +371,7 @@ const RUN_REVENGE_33: RunDef = {
     // the plug between her and the king, blocking the line it came from.
     make(4, [P('e6'), N('d8'), N('e8'), K('c6')], {
       ...FLEE,
-      moveLimit: 9,
+      moveLimit: 12,
       hazards: S(...SHELL('d8'), 'd7', 'e5', 'f7'),
       kingPen: pen('c6', 'd5', ...TUNNEL),
     }),
@@ -306,7 +381,7 @@ const RUN_REVENGE_33: RunDef = {
     // he cannot move at all. KEY = boulder, and snare is the trap card.
     make(5, [N('e8'), B('h2'), K('c6')], {
       ...FLEE,
-      moveLimit: 8,
+      moveLimit: 11,
       hazards: S(...SHELL(), 'd7', 'e7'),
       kingPen: pen('c6', 'b5', ...TUNNEL),
     }),
@@ -322,41 +397,89 @@ const RUN_REVENGE_33: RunDef = {
     }),
     // L7 — THE FORK. Three holes: b7 and b5 sealed on both their lines, d5 the
     // one with a line to it. He prefers the sealed pair — they are farther from
-    // the tunnel — so stone BOTH, trap d5, and he has one door left. He walks
+    // the stand — so stone BOTH, trap d5, and he has one door left. He walks
     // in, goes stiff, and one step down to rank 5 takes him.
+    // The burrow is CARVED out of solid stone: h6 is stone too, so the h-file
+    // corridor stops on rank 5 and the walk to a stand costs THREE moves
+    // (h1-h5, h5-e5/g5, up to e6/g6). That dogleg is deliberate: while no move
+    // attacks the king, moves and casts score within a point of each other in
+    // the rollout policy, so the three casts stay live; a one-move stand let
+    // every rollout spend the position before the setup existed.
     make(7, [N('e8'), K('c6')], {
       ...FLEE,
-      moveLimit: 13,
-      hazards: S(...SHELL(), 'd7', 'e7'),
-      kingPen: pen('c6', 'b7', 'b5', 'd5', ...TUNNEL),
+      moveLimit: 8,
+      hazards: CARVE(
+        'c6', 'e8',
+        'b7', 'b5', 'd5',
+        'd6', 'e6', 'f6', 'g6',
+        'e5', 'f5', 'g5', 'h5',
+        'h1', 'h2', 'h3', 'h4',
+      ),
+      kingPen: pen('c6', 'b7', 'b5', 'd5', 'd6', 'e6', 'f6', 'g6'),
     }),
-    // L8 — THE LONG WALK. The same burrow with nothing on the board but the
-    // boxed knight: no hunter, no stump, and thirteen moves for a line that
-    // costs four. Everything spent finding the tunnel is gone from the clock.
-    make(8, [N('e8'), K('c6')], {
+    // L8 — THE ROOF. The hole that has a line to it MOVES: d5 is stone and
+    // d7 is open, so the kill runs along RANK 7 from the east instead of
+    // rank 5 from the east, and the sentry has to move with it — a knight on
+    // e8 would need e7 stone (its own ladder), which walls the very rank the
+    // kill uses. So the sentry is set into the stone UNDER the tunnel at c4:
+    // it covers d6 exactly as e8 did (a5/b6/d6/e5/e3/a3/b2/d2 are all stone
+    // or pen, so it can never move; c3/c5/b4/d4 are stone, so it can never be
+    // taken). Same three casts, a different room to aim at: stone b7 and b5,
+    // trap d7, stand on f6, and step UP to f7 when he goes stiff.
+    make(8, [N('c4'), K('c6')], {
       ...FLEE,
-      moveLimit: 13,
-      hazards: S(...SHELL(), 'd7', 'e7'),
-      kingPen: pen('c6', 'b7', 'b5', 'd5', ...TUNNEL),
+      moveLimit: 6,
+      hazards: CARVE(
+        'c6', 'c4',
+        'b7', 'b5', 'd7',
+        'd6', 'e6', 'f6', 'g6',
+        'e7', 'f7', 'g7',
+        'f5', 'g5',
+        'h1', 'h2', 'h3', 'h4', 'h5',
+      ),
+      kingPen: pen('c6', 'b7', 'b5', 'd7', 'd6', 'e6', 'f6', 'g6'),
     }),
-    // L9 — THE SHORT CLOCK. The same burrow with a move less than L7 and L8:
-    // twelve moves for a line that costs four, so the walk to the tunnel and
-    // the three casts have to overlap.
+    // L9 — THE WRONG DOOR. b5 is stone and d7 is open, so the burrow's three
+    // holes are b7 (sealed, farthest), d7 and d5 — and d7 and d5 are the same
+    // distance from every stand, so he takes one of them at random. Only d5
+    // has a line to it (rank 7 is stone at c7 and e7, and the d-file into d7
+    // runs through d6, where the sentry bites), so the L7 habit — stone the
+    // two western holes — has nothing to stone: b5 is already gone. The two
+    // stones go on b7 and on the DECOY d7, and the trap goes on the near
+    // hole. The level's question is which of the two doors beside him is the
+    // one you can actually walk through.
     make(9, [N('e8'), K('c6')], {
       ...FLEE,
-      moveLimit: 12,
-      hazards: S(...SHELL(), 'd7', 'e7'),
-      kingPen: pen('c6', 'b7', 'b5', 'd5', ...TUNNEL),
+      moveLimit: 7,
+      hazards: CARVE(
+        'c6', 'e8',
+        'b7', 'd7', 'd5',
+        'd6', 'e6', 'f6', 'g6',
+        'e5', 'f5', 'g5', 'h5',
+        'h1', 'h2', 'h3', 'h4',
+      ),
+      kingPen: pen('c6', 'b7', 'd7', 'd5', 'd6', 'e6', 'f6', 'g6'),
     }),
-    // L10 — THE WARREN. The burrow with TWO enemies a turn: the king's free
-    // reaction still fires first, but the army acts twice, so every turn spent
-    // walking instead of casting is a turn he gets for nothing.
+    // L10 — THE WARREN. L7's three holes with the room to work taken away.
+    // Rank 5 is stone from g5 east, so the re-aim square is e5 or f5 and
+    // nothing else, and the corridor is the F-FILE — the file whose rank-6
+    // square the sentry bites. One slide from her start puts her on f6 and
+    // kills her, so the walk has to go round: f5, e5, e6, and only then the
+    // stand. Seven moves for a line that costs five.
+    // (The old build carried `enemiesPerTurn: 2` here. With a sentry that can
+    // never move it bought the army nothing — a no-op dressed as a capstone.
+    // The capstone is the clock and the closed rank.)
     make(10, [N('e8'), K('c6')], {
       ...FLEE,
-      enemiesPerTurn: 2,
-      moveLimit: 13,
-      hazards: S(...SHELL(), 'd7', 'e7'),
-      kingPen: pen('c6', 'b7', 'b5', 'd5', ...TUNNEL),
+      moveLimit: 8,
+      hazards: CARVE(
+        'c6', 'e8',
+        'b7', 'b5', 'd5',
+        'd6', 'e6',
+        'e5', 'f5',
+        'f1', 'f2', 'f3', 'f4',
+      ),
+      kingPen: pen('c6', 'b7', 'b5', 'd5', 'd6', 'e6'),
     }),
   ],
 };

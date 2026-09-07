@@ -974,9 +974,9 @@
       "id": "revenge-33",
       "kind": "run",
       "name": "The Warren",
-      "stage": "idea",
+      "stage": "testing",
       "created": "2026-09-07",
-      "notes": "Snare + Boulder. HONEST MISS: singles gate holds (every kit card 0% on L7-L10) but the pair reads only 19-34%, far below the 60-80 band — the run is too hard, not too easy, and the clock is not the limiter (L7 read 13% at 10 moves, 38% at more). Committed with its numbers; NOT on the playtest page. Needs the winning line shortened before it can ship."
+      "notes": "Snare + Boulder. COMBO GATE MET (rebuilt 2026-09-07): none 0% and every kit card 0% on L7-L10, pair 69/59/69/63%. The old 19-34% pair was not a design miss - the near-empty board gave the MCTS bot ~90 cast candidates to spend a 160-rollout budget on. Carving the finale out of solid stone (13-17 empty squares) took L7 34% to 97%, then the clock brought each level back into the 60-80 band. abilityTierCaps boulder:2 (T3 = three stones = 78-100% alone). Full runs 4/40 = 10%."
     },
     {
       "id": "revenge-34",
