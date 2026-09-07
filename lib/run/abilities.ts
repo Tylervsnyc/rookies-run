@@ -67,7 +67,14 @@ export type AbilityId =
   // touches the king moves him one square, pins him, steers his flight or
   // deletes the squares he runs to. This one changes what he WANTS — he
   // leaves the room you were never getting into and walks at you.
-  | 'gauntlet';
+  | 'gauntlet'
+  // 2026-09-07 (testing). The catalogue's first ZUGZWANG. Every other card
+  // that touches the king takes a square away from him (boulder, snare), puts
+  // him on a different one (coup), stops him using them (freeze), or changes
+  // which one he wants (scarecrow, gauntlet). This one takes away the option
+  // of USING NONE: for one enemy phase he must leave the square he is on,
+  // and if every step is covered he takes the least-bad one anyway.
+  | 'panic';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -342,6 +349,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Instant · Challenge',
     description: 'Throw down the gauntlet. He leaves his room and comes at you — and he never goes back.',
   },
+  panic: {
+    id: 'panic',
+    name: 'Panic',
+    activation: 'instant',
+    typeLine: 'Instant · Royal',
+    description: 'He cannot keep still. This turn the king must leave the square he is standing on — even if every square is worse.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -512,6 +526,15 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // never a new clause. One throw is the whole card at T1.
       if (tier <= 2) return 1;
       return 2;
+    case 'panic':
+      // 1/1/2/2/3 — the ladder is QUANTITY ONLY. A panic always covers
+      // exactly the next enemy phase at every tier: a duration ladder on a
+      // card that forces a step would be a second forced step, which is the
+      // classic gate-breaker (run-level-design.md, "the tier that grants a
+      // SECOND USE"). Extra uses are capped per run by abilityTierCaps.
+      if (tier <= 2) return 1;
+      if (tier <= 4) return 2;
+      return 3;
   }
 }
 
@@ -598,6 +621,7 @@ const HOW: Record<AbilityId, string> = {
   hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand and none of your effects tick.',
   scarecrow: 'Tap card, then tap an empty square. They hunt the straw. He runs from it.',
   gauntlet: 'Tap card. He steps out of his room toward you, once a turn. He will not walk onto a line he can see.',
+  panic: 'Tap card. On their turn he must step off his square. He picks the safest one left — take the safe ones away first.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -810,6 +834,10 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'He answers for 3 turns. He abandons his room for good and walks at you.';
       if (tier === 2) return 'He answers for 3 turns. He abandons his room for good and walks at you.';
       return 'He answers for 2 turns: one step toward you a turn, out of his room and never back.';
+    case 'panic':
+      if (tier === 5) return 'He must leave the square he stands on. Three panics a level.';
+      if (tier >= 3) return 'He must leave the square he stands on. Twice a level.';
+      return 'He must leave the square he stands on, this turn. He takes the safest square left — and if none is safe, the least bad.';
   }
 }
 
@@ -1019,6 +1047,10 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'He comes at you 3 turns. 2/level.';
       if (tier === 2) return 'He comes at you 3 turns. 1/level.';
       return 'He comes at you 2 turns. 1/level.';
+    case 'panic':
+      if (tier === 5) return 'He must step off his square. 3/level.';
+      if (tier >= 3) return 'He must step off his square. 2/level.';
+      return 'He must step off his square. 1/level.';
   }
 }
 
@@ -1240,6 +1272,12 @@ export const UPGRADE_NOTES: Record<
     4: 'He answers 3 turns → 4',
     5: 'He answers 4 turns → 5',
   },
+  panic: {
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+  },
 };
 
 /**
@@ -1326,6 +1364,8 @@ const NO_TARGET_ABILITIES: ReadonlySet<AbilityId> = new Set<AbilityId>([
   'hourglass',
   // Gauntlet needs nothing but a fleeing king, and every Revenge level has one.
   'gauntlet',
+  // Panic is the same: a fleeing king is its only requirement.
+  'panic',
 ]);
 
 /** Cards whose target must be MADE by another card (rule 2 above). */
@@ -1872,6 +1912,9 @@ export function applyAbilityActivate(
   }
   if (abilityId === 'gauntlet') {
     return applyGauntlet(state);
+  }
+  if (abilityId === 'panic') {
+    return applyPanic(state);
   }
 
   // Targeted abilities pick an enemy as their second tap — except Boulder
@@ -2931,6 +2974,54 @@ function applyGauntlet(state: BoardState): BoardState {
       kind: 'gauntlet',
       from: toSquare(state.rookie),
       to: kingSq,
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// PANIC (2026-09-07) — the catalogue's zugzwang.
+//
+// Every other card in the game that touches the king answers the question
+// "which square is he on / which squares can he reach": Boulder and Snare
+// delete his squares, Coup moves him to one, Freeze Ray stops him leaving,
+// Scarecrow and Gauntlet change which one he wants. NONE of them touches the
+// option he actually uses on a sealed throne — STANDING STILL. A king who is
+// not threatened simply never moves, so a square no line reaches is a square
+// he owns forever, and the level is unwinnable however clever the geometry.
+//
+// Panic takes that option away for exactly one enemy phase. He still picks the
+// best square he can see (`kingPanicMove` in pawn-ai.ts uses the flee's own
+// safety test), and his pen still holds him — so the card is only ever as good
+// as the work done BEFORE it is thrown. Fill or cover every safe step first and
+// the panic is a kill; throw it into a room with a spare square and you have
+// pushed him one square sideways and spent a card.
+// ---------------------------------------------------------------------------
+
+/** True when Panic may be thrown right now. */
+export function canPanic(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'panic');
+  if (!owned || owned.usesLeftThisLevel === 0) return false;
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.activeAbility || state.pendingOffer) return false;
+  if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return false;
+  return state.pieces.some((p) => p.type === 'king');
+}
+
+function applyPanic(state: BoardState): BoardState {
+  if (!canPanic(state)) return state;
+  const king = state.pieces.find((p) => p.type === 'king')!;
+  return {
+    ...state,
+    // Always exactly the next enemy phase, at every tier. Cleared in endTurn
+    // whether or not he found a step to take.
+    panicTurns: 1,
+    abilities: decrementUse(state.abilities, 'panic'),
+    activeAbility: null,
+    lastAbilityFx: {
+      kind: 'panic',
+      from: toSquare(state.rookie),
+      to: toSquare(king),
       id: Date.now() + Math.random(),
     },
   };

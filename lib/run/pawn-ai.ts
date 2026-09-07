@@ -352,6 +352,68 @@ function kingAnswerMove(
   return pickRandom(closer, rng);
 }
 
+/**
+ * Panic — the FORCED step. While `panicTurns > 0` a king who has no reason to
+ * move must move anyway: he may not end the enemy phase on the square he
+ * started it on. Everything physical still refuses him (out of bounds, stone,
+ * a vacated ghost square, an occupied square, Rookie's own square) AND HIS PEN
+ * STILL HOLDS HIM — the panic shuffles him inside his room, it never opens it.
+ * That is the whole difference from a thrown Gauntlet, which walks him out.
+ *
+ * What is NOT a refusal any more is the thing that makes the card: a square
+ * Rookie attacks. He prefers a safe one exactly as a flee does (unattacked by
+ * her CURRENT form with him relocated, not covered by a rainbow ally, not
+ * threatened by a controlled summon; farthest from Rookie among those). But if
+ * NOTHING is safe he takes the least-bad step — farthest from her — instead of
+ * standing his ground. So the player's job is the work before the throw: leave
+ * him one safe square and the panic is a wasted card, leave him none and it is
+ * the kill.
+ *
+ * Walled in with no legal step at all, he stands. The panic is spent either way.
+ */
+function kingPanicMove(
+  king: EnemyPiece,
+  state: BoardState,
+  rng: () => number,
+): Coord | null {
+  if ((state.panicTurns ?? 0) <= 0) return null;
+  if ((state.kingStunTurns ?? 0) > 0) return null;
+  const vacated = vacatedSet(state);
+  const pen = state.kingPen ? new Set(state.kingPen) : null;
+  const allyCover = state.allies.length > 0 ? allyAttackedSquares(state) : null;
+  const legal: Coord[] = [];
+  const safe: Coord[] = [];
+  for (const [df, dr] of QUEEN_DIRS) {
+    const c: Coord = { file: king.file + df, rank: king.rank + dr };
+    if (!inBounds(c)) continue;
+    if (pen && !pen.has(toSquare(c))) continue; // the room still holds him
+    if (isHazard(state.hazards, c)) continue;
+    if (isVacated(vacated, c)) continue;
+    if (enemyAt(state.pieces, c)) continue;
+    if (isAllyAt(state, c)) continue;
+    if (state.rookie.file === c.file && state.rookie.rank === c.rank) continue;
+    legal.push(c);
+    if (allyCover && allyCover.has(toSquare(c))) continue;
+    if (controlledThreatensSquare(state, c)) continue;
+    const moved: BoardState = {
+      ...state,
+      pieces: state.pieces.map((p) =>
+        p === king ? { ...p, file: c.file, rank: c.rank } : p,
+      ),
+    };
+    const attacked = rookieLegalMoves(moved).some(
+      (m) => m.file === c.file && m.rank === c.rank,
+    );
+    if (attacked) continue;
+    safe.push(c);
+  }
+  const pool = safe.length > 0 ? safe : legal;
+  if (pool.length === 0) return null;
+  let bestDist = -1;
+  for (const c of pool) bestDist = Math.max(bestDist, chebyshev(c, state.rookie));
+  return pickRandom(pool.filter((c) => chebyshev(c, state.rookie) === bestDist), rng);
+}
+
 function kingReactsToAllies(state: BoardState): boolean {
   const d = state.difficulty;
   return !!d && !!DIFFICULTIES[d]?.kingReactsToAllies;
@@ -376,10 +438,13 @@ export function stepAllyTurnReactive(state: BoardState): BoardState {
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
   const answering = (state.tauntTurns ?? 0) > 0;
+  // Panic: like a thrown Gauntlet, it is not a threat he has to SEE. A
+  // panicking king moves under Smoke too.
+  const panicking = (state.panicTurns ?? 0) > 0;
   // Smoke: he can't see the threat, so he does not flee — but a thrown
   // Gauntlet is not a threat he has to see. He answers it blind, and that is
   // the whole signature pair (gauntlet + smoke).
-  if (isSmoked(state) && !answering) return null;
+  if (isSmoked(state) && !answering && !panicking) return null;
   // (Hourglass: a glass-turn is an ordinary enemy turn for him. He flees, he
   // steps into snares, he runs from the straw — that IS the card. The old
   // T3 "the king is held" clause deleted the line and was cut 2026-09-06.)
@@ -395,16 +460,22 @@ function kingReaction(state: BoardState): BoardState | null {
   // Scarecrow: he reads the STRAW's lines as the threat and hers as harmless
   // (the view shares `pieces`, so `king` is the same object inside it).
   const straw = scarecrowViewState(view);
-  // The flee always wins: a challenge never makes him walk into danger.
+  // The flee always wins: a challenge never makes him walk into danger, and a
+  // panic never overrides a step he wanted to take anyway. Panic is LAST — it
+  // only ever fires for a king who would otherwise have stood still.
   const target =
     (isSmoked(state) ? null : kingFleeMove(king, straw ?? view, aiRng(view))) ??
-    kingAnswerMove(king, view, aiRng(view));
+    kingAnswerMove(king, view, aiRng(view)) ??
+    kingPanicMove(king, straw ?? view, aiRng(view));
   if (!target) return null;
   // Once he steps out of the room, the room is gone for the rest of the level.
   const leftPen = !!state.kingPen && !state.kingPen.includes(toSquare(target));
   const fled: BoardState = {
     ...state,
     ...(leftPen ? { kingPen: undefined } : {}),
+    // A panic buys exactly ONE step. kingReaction runs again after every guard
+    // move, so without this a single throw would walk him across the room.
+    ...(panicking ? { panicTurns: 0 } : {}),
     pieces: state.pieces.map((p) =>
       p === king ? { ...p, file: target.file, rank: target.rank } : { ...p },
     ),
@@ -1231,6 +1302,12 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     // — the glass buys the enemy phase, not the expiry.
     const tauntPatch =
       !glass && (s.tauntTurns ?? 0) > 0 ? { tauntTurns: s.tauntTurns! - 1 } : {};
+    // Panic covers exactly ONE enemy phase. `kingReaction` already zeroes it
+    // when he takes his step; this clears the throw that found him walled in
+    // with nowhere legal to go, so a wasted panic never leaks into next turn.
+    // Like the taunt it holds through a glass-turn — the glass buys the phase.
+    const panicPatch =
+      !glass && (s.panicTurns ?? 0) > 0 ? { panicTurns: 0 } : {};
     // Scarecrow: the straw stands one enemy turn fewer; gone at 0.
     const scarecrowPatch = !glass && s.scarecrow
       ? { scarecrow: s.scarecrow.turnsLeft > 1 ? { ...s.scarecrow, turnsLeft: s.scarecrow.turnsLeft - 1 } : undefined }
@@ -1259,6 +1336,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       allies: nextAllies,
       ...smokePatch,
       ...tauntPatch,
+      ...panicPatch,
       ...scarecrowPatch,
       squireMovedThisTurn: glass ? s.squireMovedThisTurn : false,
       glassTurn: undefined,

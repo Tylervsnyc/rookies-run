@@ -323,7 +323,8 @@ export interface BoardState {
       | 'coup'
       | 'hourglass'
       | 'scarecrow'
-      | 'gauntlet';
+      | 'gauntlet'
+      | 'panic';
     from: string;
     to: string;
     id: number;
@@ -401,6 +402,15 @@ export interface BoardState {
    * for good. Decremented at the end of each enemy turn. Absent/0 = calm.
    */
   tauntTurns?: number;
+  /**
+   * Panic (2026-09-07) — set to 1 by a thrown Panic and cleared at the end of
+   * the enemy phase it covers. While > 0 a king who is NOT fleeing must LEAVE
+   * the square he stands on (see `kingPanicMove` in pawn-ai.ts): he still
+   * prefers a square nothing attacks, but when every step is covered he takes
+   * the least-bad one anyway. His pen still holds him — the panic moves him
+   * inside his room, it never opens it.
+   */
+  panicTurns?: number;
   /**
    * Why the current `pendingOffer` exists. 'tempo' (default) = the meter
    * filled; 'level' = the run grants a free pick at level start (Rookie's

@@ -20,6 +20,7 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   hourglass: 'rewind-1.webp',
   scarecrow: 'smoke-1.webp',
   gauntlet: 'become-king-2.webp',
+  panic: 'freeze-ray-2.webp',
 };
 
 export function artFile(id: AbilityId): string {

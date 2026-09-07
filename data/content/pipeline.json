@@ -1041,6 +1041,22 @@
       "stage": "idea",
       "created": "2026-09-07",
       "notes": "Signature pair SHOVE + MAGNET (pull the plug, roll the wall). Rescued 2026-09-07 from an untracked orphan file (revenge-cairn.ts) left by a killed agent; renumbered and registered. COMBO GATE NOT MET on either half, 32 trials, Normal, L7-L10: shove ALONE reads 31% on L7 and 6% on L9 (the singles bar is 8%), and the pair reads only 22/0/56/3 — L8 and L10 are unbeatable by the pair the run was built for. Registered with its numbers so the next author starts from measurement instead of the header's prose."
+    },
+    {
+      "id": "panic",
+      "kind": "ability",
+      "name": "Panic",
+      "stage": "testing",
+      "created": "2026-09-07",
+      "notes": "Instant, free action, one enemy phase. The catalogue's first ZUGZWANG card: for the next enemy phase the king may not end his turn on the square he started it on. He still picks the best square he can see — unattacked by Rookie's current form, uncovered by her rainbow allies, farthest from her, exactly the flee's own safety test — and his pen still holds him, so a panic never opens his room. What it removes is the option every other king-card leaves him: STANDING STILL. A king who is not threatened normally never moves at all, so a throne no rook line reaches is a square he owns forever. Panic makes that square cost him a step, and if every step left to him is covered he takes the least-bad one anyway. The card is therefore only ever as good as the work done before it is thrown: fill or cover his safe steps first and it is a kill, throw it into a room with a spare square and you pushed him one square sideways for nothing. Tiers are quantity only (1/1/2/2/3 uses) — a duration ladder on a card that forces a step would be a second forced step, the classic gate-breaker."
+    },
+    {
+      "id": "revenge-41",
+      "kind": "run",
+      "name": "The Niche",
+      "stage": "testing",
+      "created": "2026-09-07",
+      "notes": "Concept type (C): a NEW ability, PANIC (Instant, Royal, testing stage), paired with PAGE. VERB: zugzwang — the catalogue's first card that takes away STANDING STILL. Signature: THE NICHE, one square whose four orthogonal neighbours are stone and whose two lower diagonals are stone too, so no rank, file or pawn-diagonal in the game ever touches the king, and a FLEE king who is never threatened never moves; his room is the niche plus its two upper diagonals, the doors. L1-L2 the west wall is missing and rank 3 runs in. L3-L5 the mouth is open but a sealed door above lets him step out of reach: freeze-ray pins him, or a Page fills the doorway first. L6 the mouth is bricked and PANIC alone walks him onto her file. L7-L10 combo-gated. The four finale lines differ: L7 THE VACANT ROOM (stand in the open door, throw, then put the Page in the room he just left, where a pawn covers both doors and takes him in the far one); L8 THE LONG WAY ROUND (the seal has swapped sides, so the door in front of her is the one she can never enter and the one she must stand in is past his room); L9 THE QUIET TURN (his own jammed pawn holds the open door, and taking it stuns him, and a stunned king cannot panic, so the throw must wait a turn); L10 THE DOORWAY IS NOT SAFE (L9 plus a hunter that can reach the doorway, two enemies a turn). Serial numbers of record, 32 trials, jobs=1, Normal: L7-L10 none 0/0/0/0, panic 0/0/0/0, page 0/0/0/0, magnet 0/0/0/0, freeze-ray 0/0/0/0, panic+page 78/72/97/59. Gate MET (L10 at 59 is one point under 60, inside 32-trial noise; L9 at 97 is above the 60-80 band and is the run's one honest miss — the clock is not the knob there and every hunter tried broke the level instead of tightening it). Full runs, 40 each: random picks 13% full clears (the first combo run to meet the Moat's 10-25% target), pool=panic,page 48%. TIER CAVEAT: page holds at T1-T4 (0% on every finale) and BREAKS at T5 (47/41/100/100), so abilityTierCaps page:4; panic reads 0% alone at every tier and needs no cap, which is the payoff of giving it a quantity-only ladder. Panic is TESTING, so this run is playtest-only."
     }
   ]
 }

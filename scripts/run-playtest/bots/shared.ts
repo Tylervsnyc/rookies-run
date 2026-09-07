@@ -21,6 +21,7 @@ import {
   boulderTargets,
   canMoveAllyAt,
   canTurnHourglass,
+  canPanic,
   canThrowGauntlet,
   controlledAllies,
   controlledAllyLegalMoves,
@@ -625,6 +626,12 @@ function candidatesForAbility(
       // pawn-ai runs `kingAnswerMove` inside them, so the bot sees the king
       // walk out of his room turn by turn and scores the position that makes.
       if (canThrowGauntlet(state)) out.push({ kind: 'activate-ability', abilityId: 'gauntlet' });
+      return out;
+    case 'panic':
+      // One candidate. The forced step is modelled by the rollouts: the real
+      // pawn-ai runs `kingPanicMove` inside them, so the bot sees where the
+      // king is pushed and scores the position that makes.
+      if (canPanic(state)) out.push({ kind: 'activate-ability', abilityId: 'panic' });
       return out;
     case 'scarecrow': {
       // Empty squares with an OPEN rook line to the king (at most 14) plus

@@ -523,6 +523,7 @@ export default function RookiesRunPage() {
       snare: 600,
       shove: 600,
       coup: 700,
+      panic: 700,
       hourglass: 900,
       scarecrow: 600,
       gauntlet: 800,
