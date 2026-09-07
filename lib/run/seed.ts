@@ -164,7 +164,7 @@ export function puzzleToBoardState(
   // Difficulty is applied exactly once, here. Downstream code reads the
   // adjusted puzzle + `state.difficulty` — never re-apply.
   const puzzle = carry.difficulty
-    ? applyDifficulty(authoredPuzzle, carry.difficulty)
+    ? applyDifficulty(authoredPuzzle, carry.difficulty, carry.runId)
     : authoredPuzzle;
   const abilities = refreshAbilityUses(carry.abilities ?? []);
   // Forced offer at start of level 6: if no offer carried over and the player

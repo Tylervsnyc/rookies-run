@@ -9,6 +9,7 @@
  * run id in localStorage and reloads with the next variant.
  */
 
+import type { DifficultyId } from './difficulty';
 import { DAILY_LEVELS } from './daily-levels';
 import { EXTRA_REVENGE_RUNS } from './extra-runs';
 import { DEFAULT_PAR_MOVES } from './scoring';
@@ -100,6 +101,30 @@ export interface RunDef {
    * tier the player already legitimately holds is never mutated.
    */
   abilityTierCaps?: Readonly<Record<string, number>>;
+  /**
+   * PER-RUN DIFFICULTY OVERRIDES (2026-09-07). The global deltas in
+   * `lib/run/difficulty.ts` are tuned for the catalogue as a whole; a few runs
+   * react to them backwards, and the fix must never be to retune the globals
+   * for the whole game.
+   *
+   * A key present here REPLACES that difficulty's global delta for THIS RUN
+   * only; keys left out keep the global value. Applied in exactly one place —
+   * `applyDifficulty` (lib/run/apply-difficulty.ts) — alongside the globals,
+   * so nothing downstream has to know a run was overridden.
+   *
+   * Why a run needs one: `enemiesPerTurnDelta: -1` on Rookie is not always a
+   * mercy. On a run whose signature is a MARCHING PAWN WALL, the enemy phase
+   * is what drains files open for the player (`.claude/run-level-design.md`,
+   * "Pawn walls march"), so fewer enemy moves per turn makes the level HARDER
+   * and Easy reads below Normal. Such a run pins its own Rookie delta to 0.
+   */
+  difficultyOverrides?: Readonly<Partial<Record<DifficultyId, DifficultyOverride>>>;
+}
+
+/** The subset of a DifficultyDef a single run may override. See RunDef.difficultyOverrides. */
+export interface DifficultyOverride {
+  enemiesPerTurnDelta?: number;
+  moveLimitDelta?: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
