@@ -146,6 +146,14 @@ export const RUN_REVENGE_15: RunDef = {
   name: 'The Stacks',
   blurb: 'A wall with slots cut in it. He thinks a plug is a wall.',
   allowedAbilities: ['magnet', 'boulder', 'aegis', 'decoy'],
+  // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
+  // makes THIS run EASIER, measured twice: no-retry 27% Normal vs 30% Hard, real-retry 37% vs 47%. The cause is the
+  // documented one (.claude/run-level-design.md, "Pawn walls march") — the
+  // enemy phase is what drains a narrow corridor open, so an extra enemy move
+  // per turn is a GIFT on a stone/wall run. Hard keeps its tighter clock
+  // (moveLimitDelta -2) and its fleeing king; only the enemy-count delta is
+  // pinned to 0.
+  difficultyOverrides: { hard: { enemiesPerTurnDelta: 0 } },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

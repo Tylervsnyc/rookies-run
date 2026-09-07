@@ -185,6 +185,14 @@ const RUN_REVENGE_21: RunDef = {
   name: 'The Slash',
   blurb: 'One line of stone. He thinks a line is a wall.',
   allowedAbilities: ['boulder', 'knight-hop', 'aegis', 'magnet'],
+  // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
+  // makes THIS run EASIER, measured twice: no-retry 50% Normal vs 50% Hard, real-retry 55% vs 60%. The cause is the
+  // documented one (.claude/run-level-design.md, "Pawn walls march") — the
+  // enemy phase is what drains a narrow corridor open, so an extra enemy move
+  // per turn is a GIFT on a stone/wall run. Hard keeps its tighter clock
+  // (moveLimitDelta -2) and its fleeing king; only the enemy-count delta is
+  // pinned to 0.
+  difficultyOverrides: { hard: { enemiesPerTurnDelta: 0 } },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

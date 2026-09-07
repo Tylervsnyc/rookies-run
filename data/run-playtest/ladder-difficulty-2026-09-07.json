@@ -1,0 +1,173 @@
+{
+ "generated": "2026-09-07",
+ "what": "The Ladder difficulty sweep. 10 rungs x rookie/normal/hard, 40 full runs each (revenge.ts runs, T5 bot, random offer picks). Values are FULL CLEARS out of 40.",
+ "passes": {
+  "noRetries": "--retries=0. Isolates the BOARD knobs (enemiesPerTurnDelta, moveLimitDelta, king behaviour). The harness's own default.",
+  "realRetries": "Each mode's actual allowance: rookie 5 (Infinity is capped at MAX_RETRIES=5), normal 1, hard 1. This is what a player experiences."
+ },
+ "caveat": "n=40 carries ~8pp binomial SE (~15pp at 95% near p=0.5). Do not read a gap under ~15pp as real.",
+ "harness": "matrix-determinism-check.ts PASSES (2026-09-07), so cells are reproducible across invocation shapes.",
+ "rungs": [
+  {
+   "rung": 1,
+   "runId": "revenge-17",
+   "name": "The Briar",
+   "noRetries": {
+    "rookie": 31,
+    "normal": 22,
+    "hard": 16
+   },
+   "realRetries": {
+    "rookie": 33,
+    "normal": 29,
+    "hard": 29
+   }
+  },
+  {
+   "rung": 2,
+   "runId": "revenge-18",
+   "name": "The Glasshouse",
+   "noRetries": {
+    "rookie": 23,
+    "normal": 18,
+    "hard": 11
+   },
+   "realRetries": {
+    "rookie": 26,
+    "normal": 24,
+    "hard": 20
+   }
+  },
+  {
+   "rung": 3,
+   "runId": "revenge-21",
+   "name": "The Slash",
+   "noRetries": {
+    "rookie": 21,
+    "normal": 20,
+    "hard": 20
+   },
+   "realRetries": {
+    "rookie": 23,
+    "normal": 22,
+    "hard": 24
+   }
+  },
+  {
+   "rung": 4,
+   "runId": "revenge-15",
+   "name": "The Stacks",
+   "noRetries": {
+    "rookie": 18,
+    "normal": 11,
+    "hard": 12
+   },
+   "realRetries": {
+    "rookie": 21,
+    "normal": 15,
+    "hard": 19
+   }
+  },
+  {
+   "rung": 5,
+   "runId": "revenge-23",
+   "name": "The Parapet",
+   "noRetries": {
+    "rookie": 10,
+    "normal": 12,
+    "hard": 15
+   },
+   "realRetries": {
+    "rookie": 21,
+    "normal": 17,
+    "hard": 20
+   }
+  },
+  {
+   "rung": 6,
+   "runId": "revenge-12",
+   "name": "The Moat",
+   "noRetries": {
+    "rookie": 11,
+    "normal": 8,
+    "hard": 7
+   },
+   "realRetries": {
+    "rookie": 32,
+    "normal": 18,
+    "hard": 13
+   }
+  },
+  {
+   "rung": 7,
+   "runId": "revenge-24",
+   "name": "The Lattice",
+   "noRetries": {
+    "rookie": 15,
+    "normal": 16,
+    "hard": 10
+   },
+   "realRetries": {
+    "rookie": 18,
+    "normal": 19,
+    "hard": 16
+   }
+  },
+  {
+   "rung": 8,
+   "runId": "revenge-22",
+   "name": "The Millstone",
+   "noRetries": {
+    "rookie": 12,
+    "normal": 8,
+    "hard": 0
+   },
+   "realRetries": {
+    "rookie": 26,
+    "normal": 15,
+    "hard": 4
+   }
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-25",
+   "name": "The Alcove",
+   "noRetries": {
+    "rookie": 10,
+    "normal": 9,
+    "hard": 0
+   },
+   "realRetries": {
+    "rookie": null,
+    "normal": 15,
+    "hard": 8
+   }
+  },
+  {
+   "rung": 10,
+   "runId": "revenge-19",
+   "name": "The Cliff",
+   "noRetries": {
+    "rookie": 11,
+    "normal": 5,
+    "hard": 0
+   },
+   "realRetries": {
+    "rookie": 20,
+    "normal": 13,
+    "hard": 7
+   }
+  }
+ ],
+ "overrideVerification": {
+  "what": "Hard re-measured on the three runs given difficultyOverrides {hard:{enemiesPerTurnDelta:0}}.",
+  "cells": {
+   "revenge-15__hard__r0": 11,
+   "revenge-15__hard__r1": 17,
+   "revenge-21__hard__r0": 21,
+   "revenge-21__hard__r1": 24,
+   "revenge-23__hard__r0": 14,
+   "revenge-23__hard__r1": 18
+  }
+ }
+}

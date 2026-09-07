@@ -218,6 +218,14 @@ const RUN_REVENGE_23: RunDef = {
   name: 'The Parapet',
   blurb: 'A wall the whole width of the board. He is on top of it.',
   allowedAbilities: ['knight-hop', 'twin', 'aegis', 'decoy'],
+  // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
+  // makes THIS run EASIER, measured twice: no-retry 30% Normal vs 37% Hard, real-retry 42% vs 50%. The cause is the
+  // documented one (.claude/run-level-design.md, "Pawn walls march") — the
+  // enemy phase is what drains a narrow corridor open, so an extra enemy move
+  // per turn is a GIFT on a stone/wall run. Hard keeps its tighter clock
+  // (moveLimitDelta -2) and its fleeing king; only the enemy-count delta is
+  // pinned to 0.
+  difficultyOverrides: { hard: { enemiesPerTurnDelta: 0 } },
   // TIER CAP (2026-09-06) — the caveat this run's own MEASURED block ends on,
   // now enforced instead of only reported. Re-measured per tier, L7-L10, 32
   // trials, serial: T2 0/0/0/0 and T3 0/0/0/0 (the gate holds), against the
