@@ -294,6 +294,64 @@ function kingFleeMove(
  * Returns the new state, or null when he doesn't move.
  */
 /** Difficulty flag: does the fleeing king react to ally moves (nightmare)? */
+/**
+ * Gauntlet — the ANSWER step. While `tauntTurns > 0` a king who is not in
+ * danger walks one square toward Rookie instead of standing still. Shares
+ * every refusal a flee has (hazards, occupied and vacated squares, ally
+ * cover, Rookie's own square) with two differences that ARE the card:
+ *
+ *  - his pen does not hold him, and
+ *  - he refuses squares Rookie's CURRENT form attacks only while the court
+ *    can see her. Under Smoke (`isSmoked`) there is nothing to refuse, so he
+ *    walks straight onto her line — which is the run's signature pair.
+ *
+ * He only ever takes a step that STRICTLY closes the distance; when nothing
+ * does, he stands (the challenge burns a turn but does not push him sideways).
+ */
+function kingAnswerMove(
+  king: EnemyPiece,
+  state: BoardState,
+  rng: () => number,
+): Coord | null {
+  if ((state.tauntTurns ?? 0) <= 0) return null;
+  if ((state.kingStunTurns ?? 0) > 0) return null;
+  const kingPos: Coord = { file: king.file, rank: king.rank };
+  const here = chebyshev(kingPos, state.rookie);
+  if (here <= 1) return null; // already face to face — nothing left to close
+  const blind = isSmoked(state);
+  const allyCover = state.allies.length > 0 ? allyAttackedSquares(state) : null;
+  const vacated = vacatedSet(state);
+  const closer: Coord[] = [];
+  for (const [df, dr] of QUEEN_DIRS) {
+    const c: Coord = { file: king.file + df, rank: king.rank + dr };
+    if (!inBounds(c)) continue;
+    if (chebyshev(c, state.rookie) >= here) continue;
+    if (isHazard(state.hazards, c)) continue;
+    if (isVacated(vacated, c)) continue;
+    if (enemyAt(state.pieces, c)) continue;
+    if (isAllyAt(state, c)) continue;
+    if (state.rookie.file === c.file && state.rookie.rank === c.rank) continue;
+    if (allyCover && allyCover.has(toSquare(c))) continue;
+    if (controlledThreatensSquare(state, c)) continue;
+    if (!blind) {
+      // Proud, not suicidal: he will not answer onto a line he can see.
+      const moved: BoardState = {
+        ...state,
+        pieces: state.pieces.map((p) =>
+          p === king ? { ...p, file: c.file, rank: c.rank } : p,
+        ),
+      };
+      const attacked = rookieLegalMoves(moved).some(
+        (m) => m.file === c.file && m.rank === c.rank,
+      );
+      if (attacked) continue;
+    }
+    closer.push(c);
+  }
+  if (closer.length === 0) return null;
+  return pickRandom(closer, rng);
+}
+
 function kingReactsToAllies(state: BoardState): boolean {
   const d = state.difficulty;
   return !!d && !!DIFFICULTIES[d]?.kingReactsToAllies;
@@ -317,7 +375,11 @@ export function stepAllyTurnReactive(state: BoardState): BoardState {
 
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
-  if (isSmoked(state)) return null; // Smoke: he can't see the threat
+  const answering = (state.tauntTurns ?? 0) > 0;
+  // Smoke: he can't see the threat, so he does not flee — but a thrown
+  // Gauntlet is not a threat he has to see. He answers it blind, and that is
+  // the whole signature pair (gauntlet + smoke).
+  if (isSmoked(state) && !answering) return null;
   // (Hourglass: a glass-turn is an ordinary enemy turn for him. He flees, he
   // steps into snares, he runs from the straw — that IS the card. The old
   // T3 "the king is held" clause deleted the line and was cut 2026-09-06.)
@@ -325,13 +387,24 @@ function kingReaction(state: BoardState): BoardState | null {
   if (!king) return null;
   const kingSq = toSquare(king);
   if (state.frozenSquares.includes(kingSq)) return null;
+  // Gauntlet: an answering king's pen does not hold him, for the flee as well
+  // as for the answer step — otherwise a challenge that walked him out of the
+  // room would leave him with no legal flee square at all.
+  const view: BoardState =
+    answering && state.kingPen ? { ...state, kingPen: undefined } : state;
   // Scarecrow: he reads the STRAW's lines as the threat and hers as harmless
   // (the view shares `pieces`, so `king` is the same object inside it).
-  const straw = scarecrowViewState(state);
-  const target = kingFleeMove(king, straw ?? state, aiRng(state));
+  const straw = scarecrowViewState(view);
+  // The flee always wins: a challenge never makes him walk into danger.
+  const target =
+    (isSmoked(state) ? null : kingFleeMove(king, straw ?? view, aiRng(view))) ??
+    kingAnswerMove(king, view, aiRng(view));
   if (!target) return null;
+  // Once he steps out of the room, the room is gone for the rest of the level.
+  const leftPen = !!state.kingPen && !state.kingPen.includes(toSquare(target));
   const fled: BoardState = {
     ...state,
+    ...(leftPen ? { kingPen: undefined } : {}),
     pieces: state.pieces.map((p) =>
       p === king ? { ...p, file: target.file, rank: target.rank } : { ...p },
     ),
@@ -1153,6 +1226,11 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     // Smoke ticks down at end of enemy turn.
     const smokePatch =
       !glass && (s.smokeTurnsLeft ?? 0) > 0 ? { smokeTurnsLeft: s.smokeTurnsLeft! - 1 } : {};
+    // Gauntlet: the challenge is answered one enemy phase at a time. Like every
+    // other clock of Rookie's it HOLDS through a glass-turn (2026-09-06 rework)
+    // — the glass buys the enemy phase, not the expiry.
+    const tauntPatch =
+      !glass && (s.tauntTurns ?? 0) > 0 ? { tauntTurns: s.tauntTurns! - 1 } : {};
     // Scarecrow: the straw stands one enemy turn fewer; gone at 0.
     const scarecrowPatch = !glass && s.scarecrow
       ? { scarecrow: s.scarecrow.turnsLeft > 1 ? { ...s.scarecrow, turnsLeft: s.scarecrow.turnsLeft - 1 } : undefined }
@@ -1180,6 +1258,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       tempo,
       allies: nextAllies,
       ...smokePatch,
+      ...tauntPatch,
       ...scarecrowPatch,
       squireMovedThisTurn: glass ? s.squireMovedThisTurn : false,
       glassTurn: undefined,

@@ -62,7 +62,12 @@ export type AbilityId =
   | 'shove'
   | 'coup'
   | 'hourglass'
-  | 'scarecrow';
+  | 'scarecrow'
+  // 2026-09-07 (testing). The catalogue's first LURE: every other card that
+  // touches the king moves him one square, pins him, steers his flight or
+  // deletes the squares he runs to. This one changes what he WANTS — he
+  // leaves the room you were never getting into and walks at you.
+  | 'gauntlet';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -330,6 +335,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Trick',
     description: 'Stand a straw Rookie on an empty square. For a turn, the court and the king believe it.',
   },
+  gauntlet: {
+    id: 'gauntlet',
+    name: 'Gauntlet',
+    activation: 'instant',
+    typeLine: 'Instant · Challenge',
+    description: 'Throw down the gauntlet. He leaves his room and comes at you — and he never goes back.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -495,6 +507,11 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/2/2/2.
       if (tier <= 2) return 1;
       return 2;
+    case 'gauntlet':
+      // 1/1/2/2/2 — the ladder is quantity and DURATION (tauntTurnsForTier),
+      // never a new clause. One throw is the whole card at T1.
+      if (tier <= 2) return 1;
+      return 2;
   }
 }
 
@@ -580,6 +597,7 @@ const HOW: Record<AbilityId, string> = {
   coup: 'Tap card, then tap a guard near the king. They trade squares.',
   hourglass: 'Tap card. The enemies play a turn at once; your move is still in hand and none of your effects tick.',
   scarecrow: 'Tap card, then tap an empty square. They hunt the straw. He runs from it.',
+  gauntlet: 'Tap card. He steps out of his room toward you, once a turn. He will not walk onto a line he can see.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -786,6 +804,12 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'A straw Rookie for 2 turns.';
       if (tier === 2) return 'A straw Rookie for 2 turns. They hunt it. He runs from it.';
       return 'A straw Rookie on an empty square, for 1 turn. They hunt it. He runs from it.';
+    case 'gauntlet':
+      if (tier === 5) return 'He answers for 5 turns. He abandons his room for good and walks at you.';
+      if (tier === 4) return 'He answers for 4 turns. He abandons his room for good and walks at you.';
+      if (tier === 3) return 'He answers for 3 turns. He abandons his room for good and walks at you.';
+      if (tier === 2) return 'He answers for 3 turns. He abandons his room for good and walks at you.';
+      return 'He answers for 2 turns: one step toward you a turn, out of his room and never back.';
   }
 }
 
@@ -989,6 +1013,12 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return 'Straw Rookie, 2 turns. 2/level.';
       if (tier === 2) return 'Straw Rookie, 2 turns. 1/level.';
       return 'Straw Rookie, 1 turn. 1/level.';
+    case 'gauntlet':
+      if (tier === 5) return 'He comes at you 5 turns. 2/level.';
+      if (tier === 4) return 'He comes at you 4 turns. 2/level.';
+      if (tier === 3) return 'He comes at you 3 turns. 2/level.';
+      if (tier === 2) return 'He comes at you 3 turns. 1/level.';
+      return 'He comes at you 2 turns. 1/level.';
   }
 }
 
@@ -1204,6 +1234,12 @@ export const UPGRADE_NOTES: Record<
     4: 'The straw is a queen: he fears diagonals too',
     5: 'Stands 3 turns. Attackers die (a capture, and a stun)',
   },
+  gauntlet: {
+    2: 'He answers 2 turns → 3',
+    3: '',
+    4: 'He answers 3 turns → 4',
+    5: 'He answers 4 turns → 5',
+  },
 };
 
 /**
@@ -1288,6 +1324,8 @@ const NO_TARGET_ABILITIES: ReadonlySet<AbilityId> = new Set<AbilityId>([
   // become castable on their own.
   'rewind',
   'hourglass',
+  // Gauntlet needs nothing but a fleeing king, and every Revenge level has one.
+  'gauntlet',
 ]);
 
 /** Cards whose target must be MADE by another card (rule 2 above). */
@@ -1831,6 +1869,9 @@ export function applyAbilityActivate(
   }
   if (abilityId === 'hourglass') {
     return applyHourglass(state);
+  }
+  if (abilityId === 'gauntlet') {
+    return applyGauntlet(state);
   }
 
   // Targeted abilities pick an enemy as their second tap — except Boulder
@@ -2829,6 +2870,70 @@ export function scarecrowTurns(tier: AbilityTier): number {
   if (tier === 1) return 1;
   if (tier <= 4) return 2;
   return 3;
+}
+
+// ---------------------------------------------------------------------------
+// Gauntlet (2026-09-07) — the LURE. Every other card in the catalogue that
+// touches the king takes a square away from him (Boulder, Snare), holds him
+// (Freeze Ray), shoves him one square (Coup, T5 Magnet) or lies to him about
+// where Rookie is (Scarecrow, Decoy). This one changes what he WANTS: for
+// `tauntTurnsForTier` enemy phases he ANSWERS — at the top of the enemy turn,
+// before the army acts and instead of the usual flee reaction, he takes one
+// step toward Rookie.
+//
+// Three rules make it a lure and not a win button:
+//   1. HE IS PROUD, NOT SUICIDAL. He refuses any square Rookie's CURRENT form
+//      attacks, exactly as a flee does — so a rook sitting on the corridor
+//      closes the corridor and he simply stands there. The card cannot walk
+//      him onto her line while she can be seen. (Smoke is the whole point:
+//      `isSmoked` means the court cannot see her, so the refusal has nothing
+//      to read and he walks straight down her file.)
+//   2. HE STILL FLEES. A taunt never suppresses the flee reaction; a threatened
+//      king sidesteps first and answers only when he is not in danger.
+//   3. HE NEVER GOES BACK. The pen does not hold an answering king, and the
+//      moment he steps out of it `kingPen` is dropped for the rest of the
+//      level. That is the cost of the card: the room you could not enter was
+//      also the room that kept him cornerable, and an open-board king is the
+//      hardest thing in this game for a lone rook to catch.
+// Verb: LURE. See lib/run/pawn-ai.ts `kingAnswerMove` for the step itself.
+// ---------------------------------------------------------------------------
+
+/** Enemy turns the challenge stands. 2/3/3/4/5. */
+export function tauntTurnsForTier(tier: AbilityTier): number {
+  if (tier === 1) return 2;
+  if (tier <= 3) return 3;
+  if (tier === 4) return 4;
+  return 5;
+}
+
+/** True when the gauntlet may be thrown right now. */
+export function canThrowGauntlet(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'gauntlet');
+  if (!owned || owned.usesLeftThisLevel === 0) return false;
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.activeAbility || state.pendingOffer) return false;
+  if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return false;
+  return state.pieces.some((p) => p.type === 'king');
+}
+
+function applyGauntlet(state: BoardState): BoardState {
+  if (!canThrowGauntlet(state)) return state;
+  const owned = state.abilities.find((a) => a.id === 'gauntlet')!;
+  const king = state.pieces.find((p) => p.type === 'king')!;
+  const kingSq = toSquare(king);
+  return {
+    ...state,
+    // A fresh throw always resets the clock — it never stacks.
+    tauntTurns: tauntTurnsForTier(owned.tier),
+    abilities: decrementUse(state.abilities, 'gauntlet'),
+    activeAbility: null,
+    lastAbilityFx: {
+      kind: 'gauntlet',
+      from: toSquare(state.rookie),
+      to: kingSq,
+      id: Date.now() + Math.random(),
+    },
+  };
 }
 
 /** T4+: the straw is a queen — he fears its diagonals too. */

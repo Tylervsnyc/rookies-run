@@ -513,6 +513,7 @@ export default function RookiesRunPage() {
       coup: 700,
       hourglass: 900,
       scarecrow: 600,
+      gauntlet: 800,
     };
     const t = setTimeout(() => setAbilityFx(null), durations[abilityFx.kind]);
     return () => clearTimeout(t);

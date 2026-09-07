@@ -322,7 +322,8 @@ export interface BoardState {
       | 'shove'
       | 'coup'
       | 'hourglass'
-      | 'scarecrow';
+      | 'scarecrow'
+      | 'gauntlet';
     from: string;
     to: string;
     id: number;
@@ -392,6 +393,14 @@ export interface BoardState {
    * fleeing king never steps outside his pen. Absent = whole board.
    */
   kingPen?: string[];
+  /**
+   * Gauntlet (2026-09-07) — enemy phases the king is still ANSWERING the
+   * challenge. While > 0 he takes one step toward Rookie at the top of the
+   * enemy turn (see `kingAnswerMove` in pawn-ai.ts) instead of standing, his
+   * pen does not hold him, and the first step out of the pen drops `kingPen`
+   * for good. Decremented at the end of each enemy turn. Absent/0 = calm.
+   */
+  tauntTurns?: number;
   /**
    * Why the current `pendingOffer` exists. 'tempo' (default) = the meter
    * filled; 'level' = the run grants a free pick at level start (Rookie's

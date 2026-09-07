@@ -21,6 +21,7 @@ import {
   boulderTargets,
   canMoveAllyAt,
   canTurnHourglass,
+  canThrowGauntlet,
   controlledAllies,
   controlledAllyLegalMoves,
   convertTargets,
@@ -618,6 +619,12 @@ function candidatesForAbility(
       // One candidate. The rollouts run the real pawn-ai inside the
       // glass-turn — the first card that lets the bot wait without a move.
       if (canTurnHourglass(state)) out.push({ kind: 'activate-ability', abilityId: 'hourglass' });
+      return out;
+    case 'gauntlet':
+      // One candidate. The lure itself is modelled by the rollouts: the real
+      // pawn-ai runs `kingAnswerMove` inside them, so the bot sees the king
+      // walk out of his room turn by turn and scores the position that makes.
+      if (canThrowGauntlet(state)) out.push({ kind: 'activate-ability', abilityId: 'gauntlet' });
       return out;
     case 'scarecrow': {
       // Empty squares with an OPEN rook line to the king (at most 14) plus
