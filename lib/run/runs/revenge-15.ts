@@ -49,7 +49,61 @@
  * stone can shift and a 2x2 room no line can hold, so every single card in
  * the kit solves exactly half the level.
  *
+ * ── 2026-09-07 FINALE RETUNED: the pair now reads 60-80%, not 100% ──
+ * Tyler, playtest 2026-09-07: "the design is really cool but later levels need
+ * more difficulty, and ways to solve. I love the combination of abilities, it's
+ * just too easy." The combo gate as written is a FLOOR with no CEILING — it
+ * proves the pair is REQUIRED and never that it is HARD, and this run's finale
+ * was 100/100/100/100 for magnet+boulder, i.e. it solved itself the moment you
+ * held both cards. Retuned to the Alcove's band (60-80%).
+ *
+ * WHAT MOVED: the clock, on all four levels, and nothing else. The geometry,
+ * the pieces, the kit, the terrain signature and the pen shapes are unchanged.
+ *   L7 11 -> 7 · L8 17 -> 10 · L9 12 -> 9 · L10 12 -> 8.
+ * Measured sensitivity (32 trials/cell, T5 bot, T1 cards, magnet+boulder):
+ * the first cut (9/12/10/10) barely registered — 100/100/94/100 — because the
+ * bot's line is short and the old budgets held 4-6 spare moves. The band opens
+ * only in the last two moves before the cliff, and it is a REAL band, not a
+ * cliff edge: the failures are move-limit losses on the games where the bot
+ * spends a move finding the right stone square or the right plug.
+ *
+ * DISTINCT DEMAND PER LEVEL (Tyler, "once you solved it you kind of figured it
+ * out" — L7-L10 must not be one line four times). Each is written out at its
+ * own level below: L7 = which of two plugs (choice of target); L8 = the gallery
+ * pawns defend the plug, so the drag must go the full two squares first and the
+ * stone is spent last; L9 = the pull is cheap and the ROUTE is the level (wrong
+ * end of the board, two enemies a turn); L10 = the dependency inverts — the
+ * plug defends the gate pawn, so exactly one order works.
+ *
+ * TRIED AND REJECTED (2026-09-07): an L8 built around a MAGNET PULL ALONG RANK
+ * 8 — the shaft open, a gate pawn on d8 held by a frozen bishop in an e7 alcove,
+ * dragged west off its guard from b8. Provable and, for a human, a genuinely
+ * different use of the card. The bot cannot find it: 3% at moveLimit 16 and 9%
+ * with the T6 bot, against 72% for the down-the-shaft version at moveLimit 10.
+ * Same family as "Provable but unfindable" in .claude/run-level-design.md — the
+ * bot will not climb to a rank-8 square that scores nothing to set up a pull.
+ * Do not rebuild it without first teaching the bot to value a magnet standpoint.
+ *
+ * FINALE, numbers of record. `matrixParallel({runId:'revenge-15'}, {levels:
+ * [7,8,9,10], trials: 32, tier:'T5', realistic: false, jobs: 4})`, T1 cards,
+ * Normal, 2026-09-07:
+ *    L     none    aegis  boulder    decoy   magnet  |  magnet+boulder
+ *    7       0%       0%       0%       0%       0%  |   75%
+ *    8       0%       0%       0%       0%       0%  |   72%
+ *    9       0%       0%       0%       0%       0%  |   75%
+ *   10       0%       0%       0%       0%       0%  |   69%
+ * GATE HOLDS: every single card in the kit, and 'none', reads 0% on all four.
+ * PAIR MEAN 72.8% — inside the 60-80 band, no level at 100%.
+ *
+ * STILL OPEN: this run has no `abilityTierCaps`. The tier sweep that would
+ * choose one was not run in this pass, and the known Boulder self-block at T4/T5
+ * (below) is unchanged — with the clocks now this tight it is likely to bite
+ * harder, so a tier sweep is the next thing to do here.
+ *
  * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
+ * (HISTORICAL: the finale table in this block and the one below it are the
+ *  PRE-RETUNE numbers, superseded by the 2026-09-07 block above. The L7-L10
+ *  move limits they were taken at were 11/17/12/12.)
  * Everything under MEASURED below was taken with a harness whose result depended
  * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
  * counter into its rollout RNG seed, so a cell read one number alone and another
@@ -269,8 +323,14 @@ export const RUN_REVENGE_15: RunDef = {
     // L7 — TWO PLUGS, ONE PULL. The finale starts, and from here every level
     // has TWO locks: a plug no stone can shift, and the 2x2 room no line can
     // hold. Two shafts (b and d), each frozen shut by a bishop that a frozen
-    // knight defends — one magnet charge opens one of them. His room is the
+    // knight defends — one magnet charge opens ONE of them. His room is the
     // g7/h7/g8/h8 corner. MAGNET + BOULDER.
+    // DISTINCT DEMAND: the pull is a CHOICE OF TARGET. Both shafts open the
+    // same way and only one of them is on the clock: out of d8 the gallery east
+    // is empty all the way to his corner, while out of b8 the knight on c8
+    // stands in the way and has to be eaten first. Same line, one move more —
+    // and at 7 moves there is no move. The level asks WHICH plug, not how to
+    // pull one.
     make(
       7,
       [
@@ -280,7 +340,7 @@ export const RUN_REVENGE_15: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 11,
+        moveLimit: 7,
         hazards: alcoves(STACKS(2, 4), X(7, 7), X(8, 7)),
         kingPen: ['g7', 'h7', 'g8', 'h8'],
       },
@@ -291,6 +351,13 @@ export const RUN_REVENGE_15: RunDef = {
     // d8 and f8 both have to be eaten before rank 8 reaches his corner — and
     // neither stun is worth anything, because from f8 the room is still four
     // squares wide. MAGNET + BOULDER.
+    // DISTINCT DEMAND: here the GALLERY DEFENDS THE PLUG. The two pawns that
+    // hold c7 are the same rank-8 pawns she will later walk past, and they can
+    // never be reached from below — so the pull has to drag the bishop the FULL
+    // two squares, out from under both of them, before anything else happens.
+    // Then the walk is three captures long on a 10-move clock: the stone is the
+    // LAST thing she spends, and any move taken out of order loses the level to
+    // the clock rather than to a piece.
     make(
       8,
       [
@@ -300,7 +367,7 @@ export const RUN_REVENGE_15: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 17,
+        moveLimit: 10,
         hazards: alcoves(STACKS(3), X(7, 7), X(8, 7)),
         kingPen: ['g7', 'h7', 'g8', 'h8'],
       },
@@ -310,6 +377,13 @@ export const RUN_REVENGE_15: RunDef = {
     // that same square, and his room is the a7/b7/a8/b8 corner at the far end
     // of the gallery. The knight has to be eaten on the walk west and the
     // stun buys nothing. Two enemies a turn.
+    // DISTINCT DEMAND: the ROUTE, not the lock. The plug sits in the MIDDLE of
+    // the shaft, so the pull is the cheap part — what is expensive is that the
+    // room is at the WRONG END of the board. Nine moves to open the shaft, ride
+    // it, eat the knight that was holding the plug (it is standing in the
+    // gallery she has to walk down), cross five files west and still have the
+    // stone placed before he dodges, with two enemies acting per turn. The pair
+    // is obvious here and the level still fails on tempo.
     make(
       9,
       [
@@ -320,7 +394,7 @@ export const RUN_REVENGE_15: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 12,
+        moveLimit: 9,
         hazards: alcoves(STACKS(5), X(1, 7), X(2, 7)),
         kingPen: ['a7', 'b7', 'a8', 'b8'],
       },
@@ -334,6 +408,12 @@ export const RUN_REVENGE_15: RunDef = {
     // the room, pull the bishop off its defenders, take it on e5, ride the
     // shaft, eat f8, step to g8, take him. MAGNET + BOULDER — every single card
     // in the kit reads exactly half of this level.
+    // DISTINCT DEMAND: the dependency RUNS THE OTHER WAY from L8. Here the plug
+    // defends the gate: the bishop on e7 is what holds f8, so the pull does not
+    // just open the shaft, it unlocks the gallery pawn as well — kill the plug
+    // and the gate opens itself, take the gate first and the plug eats her. One
+    // order works. At 8 moves and two enemies a turn there is no second attempt
+    // and no move to spend finding out.
     make(
       10,
       [
@@ -344,7 +424,7 @@ export const RUN_REVENGE_15: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 12,
+        moveLimit: 8,
         hazards: alcoves(STACKS(5), X(7, 7), X(8, 7)),
         kingPen: ['g7', 'h7', 'g8', 'h8'],
       },

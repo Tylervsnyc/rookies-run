@@ -32,9 +32,11 @@
  *          2x2 against a stepping king. Two stones make it a 1x2: BOULDER.
  *   L6     no ford. Row room again — so the rook owns it — but the only way
  *          over the slash is a jump: KNIGHT-HOP.
- *   L7-L10 no ford AND a 2x2 room. Jump the slash (only the knight does),
- *          then stone the two squares he would step to and slide onto his
- *          line (only the stone does). The pair, and nothing else in the kit.
+ *   L7-L10 no ford AND a room a rook cannot hold. Jump the slash (only the
+ *          knight does), then stone the squares he would step to and slide
+ *          onto his line (only the stone does). The pair, and nothing else
+ *          in the kit — and each of the four asks for a DIFFERENT stone
+ *          pattern (see "THE FOUR DEMANDS" below).
  *
  * WHY THE SINGLES FAIL ON THE FINALE (kit-relative, measured below):
  *   none        no line crosses the slash. 0%.
@@ -64,25 +66,39 @@
  *               bishop lands on d2/d3 under a frozen pawn column and blocks
  *               the file it came from.
  *
- * L7-L10 intended lines (from any rank-1 start; the launch squares are the
- * two files below the slash — b1/c1/c2/d2/... on a1-h8, f1/g1/... on a8-h1 —
- * and each jumps onto the two files above it):
- *   L7  THE CAGE      slide to c1, jump to b3, stone a7+b7, b3→b8: he is on
- *                     a8 with b8 attacked along the rank and nowhere to
- *                     step. Take him. 4 moves, one dark (sealed) bishop
- *                     hunting the dark launch squares, 7 on the clock.
- *   L8  THE FAR SIDE  mirrored slash a8-h1, room g7/g8/h7/h8. Launch from
- *                     f1/g1 onto g3/h2/h3; stone g7+g8, then h3→h6 (or
- *                     h7+h8 and g3→g6): take. Two light (sealed) bishops
- *                     hunt the light launch square f1.
- *   L9  OFF THE CORNER a1-h8, room b7/b8/c7/c8 — not in the corner, so the
- *                     a-file and rank 8 both see it and the stones follow
- *                     the approach: from d8 stone b7+c7 (he is on b8, c8 is
- *                     on her rank); from a6 stone c7+c8. Two enemies a turn,
- *                     two bishops and a pawn on her side, 7 moves.
- *   L10 THE SLASH     a8-h1 again, corner room, two a turn, three sealed
- *                     bishops on her side, and SIX moves for a four-move
- *                     line: one wasted step and the clock takes it.
+ * THE FOUR DEMANDS (reworked 2026-09-07 — Tyler: "the design is really cool
+ * but later levels need more difficulty, and ways to solve. I love the
+ * combination of abilities, it's just too easy."). The old finale was one
+ * line restated four times — corner 2x2, stone both flight squares, arrive
+ * along rank 8 — and the pair read 100/100/100/100. The rework varies TWO
+ * axes of his room, shape and position, so the four levels are the four
+ * cells of that matrix and each needs a different use of the same pair:
+ *
+ *   L7  THE CAGE       SMALL room, IN the corner (a7/a8/b7/b8, a1-h8 slash).
+ *                      The stones FLANK it — a7 + b7 — which seals both
+ *                      files and means the only road left is rank 8, from
+ *                      OUTSIDE, at c8 or beyond. Four moves, four on the
+ *                      clock: the pattern is fixed, the tempo is the test.
+ *   L8  THE LONG ROOM  LONG room (2x3: f7-h8), still in the corner, mirrored
+ *                      slash. A rook line can only ever cover ONE of its two
+ *                      rows, so the stones stop flanking and become a BAR:
+ *                      both on the same row, on the two squares he can drop
+ *                      to, while the rook owns the other row. Pick the wrong
+ *                      row and the four moves are gone.
+ *   L9  OFF THE CORNER SMALL room LIFTED off the wall (b7/b8/c7/c8). Now the
+ *                      a-file AND rank 8 both see it, so there is no fixed
+ *                      pair of squares to stone: the answer depends on which
+ *                      side of the room you crossed onto. A choice, not a
+ *                      pattern — and two enemies a turn while you make it.
+ *   L10 THE FAR ROOM   LONG room, LIFTED off the corner (e7-g8, mirrored) —
+ *                      both wrinkles at once, two a turn, four moves. The
+ *                      bar has to be laid on the right row AND on the right
+ *                      end of it, because the open h-file behind him is a
+ *                      door the corner rooms did not have.
+ *
+ * Boulder is 2 stones a level at T1 and knight-hop is ONE knight move, so
+ * every one of these is exactly two stones and one jump — the difficulty is
+ * never "more resource", it is which squares and in which order.
  *
  * SECOND ANSWERS MID-RUN (honest): knight-hop also solves L3-L5. On a ford
  * level the rook is already on his side, and a knight that lasts one move
@@ -94,67 +110,59 @@
  *
  * ON THE BOT AND THE STONES: the playtest bot only considers drops adjacent
  * to the king or within two of Rookie. That is precisely the cage, and it
- * found it first read (L7-L10 100/100/100/94 on the direction pass) — the
- * stone plans here are one turn deep (drop two, slide onto the line), which
+ * finds it — the stone plans here are one turn deep (drop two, slide onto the line), which
  * is the depth the bot models well. The prior "Boulder never gates" reads
  * were levels where the stone's job was to wall a guard's lane several
  * turns ahead, not to delete his flight squares this turn.
  *
- * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
- * Everything under MEASURED below was taken with a harness whose result depended
- * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
- * counter into its rollout RNG seed, so a cell read one number alone and another
- * as a later column of a multi-column run (repeating ONE cell four times in one
- * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
- * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
- * reproducible across invocation shapes — guarded by
- * scripts/run-playtest/matrix-determinism-check.ts.
+ * ── 2026-09-07 REWORKED FOR DIFFICULTY (L7-L10 only) ──
+ * The gate was never the problem: every single card in the kit read 0% and the
+ * pair read 100/100/100/100, which proves the combo is REQUIRED and never that
+ * it is HARD. The combo-gate contract is a floor with no ceiling; Tyler solved
+ * the finale once and then executed it three more times. L7-L10 were rebuilt to
+ * the 60-80% band (the Alcove, revenge-25, is the model at 67%).
  *
- * FINALE, numbers of record. `revenge.ts matrix --run=revenge-21 --levels=7,8,9,10
- * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
+ * WHAT ACTUALLY MOVES THE NUMBER ON THIS RUN (measured, 32 trials each):
+ *   - THE CLOCK, and almost nothing else. The intended line is four moves from
+ *     every start file; at moveLimit 5 the pair reads 100/100/100/91 and at 4 it
+ *     reads 78/72/59/47. One spare move is the whole difference between "solved"
+ *     and "no wasted step allowed", so all four finales now sit at moveLimit 4.
+ *   - enemiesPerTurn is NOT a knob here (L7 with 2/turn at clock 5 still read
+ *     100%) — the same reason this run already pins Hard's enemy delta to 0.
+ *   - A BIGGER ROOM IS NOT HARDER. A 2x3 corner room at clock 6 read 100%: one
+ *     rook line covers a row of three and two stones cover the rest. Room shape
+ *     changes WHICH squares you stone (the point of the rework), not how hard.
+ *   - NOTHING CAPTURABLE MAY STAND ON HIS SIDE. A sealed dark bishop parked on
+ *     his side of the slash took knight-hop ALONE from 0% to 100%: the capture
+ *     is a stun, and stuns are what let a lone rook hold a 2x2. Every hunter in
+ *     the finale stays on her side of the wall. (This is the single most
+ *     load-bearing constraint in the run — do not add a piece above the slash.)
+ *   - A THREE-SQUARE ROOM IS TOO SMALL. An L of three (the diagonal cutting the
+ *     corner off) read knight-hop alone 78%. A full 2x2 is the minimum.
+ *
+ * DIFFICULTY PIN (new, and the cost of a 4-move clock): Hard and Nightmare carry
+ * moveLimitDelta -2, which on a four-move line is unwinnable, so this run now
+ * pins both to 0 alongside the existing enemy-count pin. Hard/Nightmare keep
+ * their fleeing-from-L1 king, retry count and scoring.
+ *
+ * FINALE, numbers of record. Normal, T5 bot, kit at T1, 32 trials, jobs=4
+ * (matrixParallel over levels 7-10 x none + each kit card + the pair):
  *    L       none      aegis    boulder  knighthop     magnet  |  boulder+knight-hop
- *    7         0%         0%         0%         0%         0%  |  100%
- *    8         0%         0%         0%         0%         0%  |  100%
- *    9         0%         0%         0%         3%         0%  |  100%
- *   10         0%         0%         0%         0%         0%  |  100%
- * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 3%); the pair reads 100/100/100/100.
- * The header below reads 100/100/100/100 for the pair and is CONFIRMED (max drift 0 points,
- * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
- * are the numbers of record.
- * ──
- * MEASURED (Normal, T5 bot, kit at T1 — the harness default; 2026-09-05).
- *   Direction pass (--jobs=2, 16 trials/cell, all ten levels):
- *   L      none  boulder  knight-hop  aegis  magnet  |  boulder+knight-hop
- *   1-3    100%   100%      100%       100%   100%   |   100%   (teaching)
- *   4        0%     0%      100%       100%    19%   |   100%   (aegis KEY)
- *   5        0%   100%       88%         0%    13%   |   100%   (boulder KEY)
- *   6        0%     0%      100%         0%     0%   |   100%   (knight-hop KEY)
- *   FINALE, numbers of record (--jobs=1 SERIAL, 32 trials/cell):
- *   7        0%     0%        0%         0%     0%   |   100%
- *   8        0%     0%        0%         0%     0%   |   100%
- *   9        0%     0%        0%         0%     0%   |   100%
- *   10       0%     0%        0%         0%     0%   |   100%
- *   (An earlier serial read of the same build, taken while another agent's
- *   edit had briefly dropped this run from extra-runs.ts, gave 100/100/100/91
- *   with knight-hop 3% on L9 — re-measured with the registration guarded;
- *   the table above is the clean read.)
- *   FULL RUNS (40 each, serial, never skipping an offer): 16/40 = 40% clear
- *   with RANDOM picks from the kit (deaths: L4 7, L5 4, L6 3, L7 8 — all
- *   move-limit, i.e. arrived without the card the level asks for); 34/40 =
- *   85% when the player takes only boulder + knight-hop. The random figure
- *   sits above The Moat's 25% for the structural reason the rubric names:
- *   with the pair as half of a 4-card kit and offers on L1/L3/L6/L9, a random
- *   picker usually holds both halves by L7. The gate itself is clean.
+ *    7         0%         0%         0%         0%         0%  |   78%
+ *    8         0%         0%         0%         0%         0%  |   66%
+ *    9         0%         0%         0%         0%         0%  |   72%
+ *   10         0%         0%         0%         0%         0%  |   69%
+ * GATE HOLDS (every single card 0%, worst cell 0%) and the pair mean is 71.3%,
+ * inside the 60-80 band with no level at 100. Before the rework, the same read
+ * gave 100/100/100/100 with knight-hop 3% on L9.
+ * Nothing below L7 changed.
  *
  * DID BOULDER EARN ITS PLACE: yes, by construction and by number. On every
- * finale level the pair reads 100% and knight-hop alone reads 0% (serial,
- * 32 trials) — the only difference between the two cells is the stones.
- * The 2x2 room is what makes that true: a lone rook on his side of the
- * slash can attack one file or one rank of it and he steps to the other,
- * and nothing on his side can be captured for a stun. The stone's job is
- * one turn deep (drop two, slide onto the line), which is why the bot finds
- * it — the earlier Boulder failures asked the stone to wall a lane several
- * turns ahead.
+ * finale level knight-hop alone reads 0% and the pair reads 66-78% — the only
+ * difference between the two cells is the stones. A lone rook on his side of
+ * the slash can attack one file or one rank of his room and he steps off it,
+ * and nothing on his side can be captured for a stun. The stone's job is one
+ * turn deep (drop two, slide onto the line), which is why the bot finds it.
  */
 
 import { bishop, king, make, pawn, X } from '../run-kit';
@@ -192,7 +200,14 @@ const RUN_REVENGE_21: RunDef = {
   // per turn is a GIFT on a stone/wall run. Hard keeps its tighter clock
   // (moveLimitDelta -2) and its fleeing king; only the enemy-count delta is
   // pinned to 0.
-  difficultyOverrides: { hard: { enemiesPerTurnDelta: 0 } },
+  // The move-limit halves of the pin are NEW (2026-09-07): the reworked
+  // L7-L10 sit at moveLimit 4, which IS the length of the intended line, so
+  // Hard/Nightmare's global -2 would make the finale unwinnable rather than
+  // hard. Both keep their fleeing-from-L1 king, retry count and scoring.
+  difficultyOverrides: {
+    hard: { enemiesPerTurnDelta: 0, moveLimitDelta: 0 },
+    nightmare: { enemiesPerTurnDelta: 0, moveLimitDelta: 0 },
+  },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
@@ -264,40 +279,47 @@ const RUN_REVENGE_21: RunDef = {
       hazards: SLASH(),
       kingPen: ['a8', 'b8'],
     }),
-    // L7 — THE CAGE. No ford, 2x2 room. Jump the slash, stone the two
-    // squares he would step to, slide onto his line. The pair.
+    // L7 — THE CAGE. Small room, in the corner. Jump the slash, FLANK his
+    // room with the two stones (a7 + b7), and the only road left is rank 8
+    // from outside — a8/b8 can no longer be reached up either file. Four
+    // moves for a four-move line: no step to spare.
     make(7, [bishop(6, 2), king(1, 8)], {
       ...FLEE,
-      moveLimit: 7,
+      moveLimit: 4,
       hazards: SLASH(),
       kingPen: ['a8', 'b8', 'a7', 'b7'],
     }),
-    // L8 — THE FAR SIDE. Mirrored slash, corner room g7/g8/h7/h8. The h2
-    // pawn is a stump (h1 is slash) that makes g1 hot for good, so the
-    // launch has to be f1 — and two light bishops hunt exactly that.
+    // L8 — THE LONG ROOM. Same corner, twice as wide (2x3, f7-h8), mirrored
+    // slash. One rook line can only ever hold ONE of the two rows, so the
+    // stones stop flanking and lie as a BAR across the row he is not on.
+    // Choose the row, then take the other one with the rook.
     make(8, [bishop(2, 1), bishop(4, 1), king(8, 8)], {
       ...FLEE,
-      moveLimit: 7,
+      moveLimit: 4,
       hazards: BACKSLASH(),
-      kingPen: ['g8', 'h8', 'g7', 'h7'],
+      kingPen: ['f8', 'g8', 'h8', 'f7', 'g7', 'h7'],
     }),
-    // L9 — OFF THE CORNER. Room b7/b8/c7/c8: the a-file and rank 8 both
-    // see it, so the stones depend on the approach. Two enemies a turn.
-    make(9, [bishop(6, 2), bishop(8, 4), pawn(4, 3), king(2, 8)], {
+    // L9 — OFF THE CORNER. Small room lifted off the wall (b7/b8/c7/c8), so
+    // the a-file and rank 8 both see it and there is no fixed pair to stone:
+    // from d8 stone b7 + c7, from a6 stone c7 + c8. Which two depends on
+    // where you crossed. Two enemies a turn.
+    make(9, [bishop(6, 2), bishop(8, 4), king(2, 8)], {
       ...FLEE,
       enemiesPerTurn: 2,
-      moveLimit: 7,
+      moveLimit: 4,
       hazards: SLASH(),
       kingPen: ['b8', 'c8', 'b7', 'c7'],
     }),
-    // L10 — THE SLASH. Mirrored, corner room, two a turn, seven moves, the
-    // h2 stump and three sealed bishops on her side.
-    make(10, [bishop(2, 1), bishop(4, 1), bishop(3, 4), king(8, 8)], {
+    // L10 — THE FAR ROOM. Both wrinkles at once: a LONG room (e7-g8) LIFTED
+    // off the corner, mirrored slash, two a turn, four moves. The bar has to
+    // go on the right row AND cover the right end of it — the open h-file
+    // behind him is the door the corner rooms never had.
+    make(10, [bishop(2, 1), bishop(4, 1), king(6, 8)], {
       ...FLEE,
       enemiesPerTurn: 2,
-      moveLimit: 6,
+      moveLimit: 4,
       hazards: BACKSLASH(),
-      kingPen: ['g8', 'h8', 'g7', 'h7'],
+      kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
     }),
   ],
 };

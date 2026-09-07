@@ -76,26 +76,44 @@
  *               enemy turn it happens, and nothing on the court can be
  *               made to eat anything on his lines.
  *
- * L7-L10 intended lines (one shape, tightening landings):
- *   L7  THE WEST GALLERY. Room c7/d7/c8/d8. A pawn on g8 over a stone on
- *       g7 watches f7 and h7, a stone block e7/e8 closes the rank; the free
- *       landings are a7, b7 and d7. Hop c5-b7 (or a5-b7 / b5-a7): a rook on
- *       b7 owns rank 7. Next turn summon the Twin on b8 — she owns rank 8
- *       and is looking at him — and slide b7-a7 to keep the rank. He has no
- *       square. The Twin takes him.
- *   L8  THE EAST GALLERY. Room f7/g7/f8/g8, pawns b8/d8 over b7/d7 watch
- *       a7, c7, e7, stone on e8: the only landing is h7, reached from g5,
- *       and a bishop on e3 is looking at g5. Hop g5-h7, summon on h8, step
- *       into g7.
- *   L9  THE HIGH TABLE. Room d7/e7/d8/e8 in the centre. Pawn b8 over b7
- *       watches a7/c7, stones on c8 and g7: land on f7 from g5, summon on
- *       f8 and run her out to h8 along the open rank — both lines hold from
- *       three squares away. Two enemies a turn.
- *   L10 THE CORNER. Room g7/h7/g8/h8. Pawns b8/d8/e8 over b7/d7/e7 watch
- *       a7, c7, f7, and f8 is stone: the landing is g7 ITSELF, from f5 or
- *       h5, under two bishops. Land inside his room, summon on h7 or g8,
- *       and take him with whichever rook he steps in front of. Eight moves,
+ * L7-L10 — THE DISTINCT DEMAND OF EACH (reworked 2026-09-07). Tyler on the
+ * Lattice and the Alcove: "once you solved it you kind of figured it out."
+ * These four levels share the run's one mechanism (hop up, summon the second
+ * rook, close the room) but each asks a DIFFERENT question of it, and the
+ * clock is now set so that the pair's own intended line is the only line that
+ * fits. Measured: the pair reads 72/69/66/63 (mean 67.5) where it used to read
+ * 100/100/100/100 — the geometry was never the slack, the MOVE LIMIT was.
+ * Every level is now within one spare move of its intended line.
+ *   L7  THE WEST GALLERY — CHOOSE THE DOOR. Room c7/d7/c8/d8. A pawn on g8
+ *       over a stone on g7 watches f7 and h7, a stone block e7/e8 closes the
+ *       rank; three landings survive (a7, b7, d7) and they are not equivalent.
+ *       Hop c5-b7 (or a5-b7 / b5-a7): a rook on b7 owns rank 7. Summon the
+ *       Twin on b8 — she owns rank 8 and is looking at him — and slide b7-a7
+ *       to KEEP the rank. He has no square; the Twin takes him. The canonical
+ *       two-rank cage, built from outside the room, and the only finale that
+ *       offers a choice of doors. FIVE moves: the choice has to be right the
+ *       first time.
+ *   L8  THE EAST GALLERY — THE LAUNCH SQUARE IS THE PUZZLE. Room f7/g7/f8/g8,
+ *       pawns b8/d8 over b7/d7 watch a7, c7, e7, stone on e8: exactly ONE
+ *       landing (h7) and exactly ONE square that jumps to it (g5), and a
+ *       bishop on e3 is looking at g5. The question is not where the cage
+ *       goes, it is how you reach the only square you may leave from. Hop
+ *       g5-h7, summon on h8 to cover rank 8, then WALK IN: h7-g7. FOUR moves
+ *       — the tightest clock in the run, because the line is exactly four.
+ *   L9  THE HIGH TABLE — CAGE AT RANGE, TWICE THE COURT. Room d7/e7/d8/e8 in
+ *       the CENTRE, so neither rook can stand beside him: land on f7 from g5
+ *       (a knight on c4 and a bishop on b2 both watch e5), summon on f8, and
+ *       hold BOTH ranks from three files away while the court moves twice per
+ *       Rookie move. The other three finales cage him from contact; this one
+ *       has to hold at distance and survive the extra enemy phase. Five moves,
  *       two enemies a turn.
+ *   L10 THE CORNER — THE LANDING IS HIS ROOM. Room g7/h7/g8/h8. Pawns b8/d8/e8
+ *       over b7/d7/e7 watch a7, c7, f7, and f8 is stone: the only landing is
+ *       g7 ITSELF, from f5 or h5, under a queen on a3 and a bishop on e4.
+ *       Rookie hops INSIDE the room and becomes the wall; the Twin, summoned
+ *       on h7 or g8, is the executioner. The only finale where Rookie does not
+ *       take the king — the roles of the pair are swapped. Five moves, two
+ *       enemies a turn.
  *
  * THINGS THE BOTS TAUGHT THIS RUN (2026-09-05, all fixed):
  *   - A court pawn on the king's rank is a GIFT: a rook that eats it from
@@ -115,6 +133,55 @@
  *     reads 69% for knight-hop alone, and why the sealed finales cannot be
  *     gated against a SECOND hop (see the tier note in MEASURED).
  *
+ * ── 2026-09-07 THE FINALE REWORK — 100/100/100/100 -> 72/69/66/63 ──
+ * Tyler's playtest: "the design is really cool but later levels need more
+ * difficulty, and ways to solve. I love the combination of abilities, it's
+ * just too easy." The combo gate this run was built to is a FLOOR with no
+ * ceiling: it proves the pair is REQUIRED, never that it is HARD, and a pair
+ * at 100% means the finale solves itself the moment you hold both cards.
+ * Target band (.claude/run-level-design.md, "One line, four times"): 60-80%
+ * mean with no level at 100%, the model being The Alcove at 67%.
+ *
+ * WHAT WAS ACTUALLY WRONG: not the geometry — the CLOCK. Every finale line
+ * here is 3-4 body moves (reach the launch square, hop, summon free, close),
+ * and the levels shipped with 10/9/9/8. Six spare moves is six chances to
+ * recover from a wrong door, a wrong launch square, or a bishop that took the
+ * first rook. Measured walk-down of the pair, 32 trials, T5, jobs=4:
+ *      moveLimit    L7   L8   L9  L10   mean
+ *      10/9/9/8    100  100  100  100  100.0   (as shipped)
+ *       8/7/7/6    100  100  100  100  100.0   (still no bite at all)
+ *       6/5/5/4     97   81   66   25   67.3   (past the band on both ends)
+ *       5/5/5/5     72   81   66   63   70.5
+ *       5/4/5/5     72   69   66   63   67.5   <- SHIPPED
+ * Nothing else changed: no piece, no stone, no room, no kit, no tier cap, and
+ * the parapet signature (rank 6 solid a-h, jammed rank-8 pawns over rank-7
+ * merlons, a stone between every pawn and his room) is untouched. Because the
+ * only edit is a smaller move budget, the singles cannot rise — and they did
+ * not. Re-measured, same command, T1 cards, Normal, 32 trials, jobs=4:
+ *    L       none      aegis      decoy  knighthop       twin  |  knight-hop+twin
+ *    7         0%         0%         0%         0%         0%  |   72%
+ *    8         0%         0%         0%         0%         0%  |   69%
+ *    9         0%         0%         0%         0%         0%  |   66%
+ *   10         0%         0%         0%         0%         0%  |   63%
+ * GATE HOLDS (every kit card 0%, worst cell 0%) AND THE BAND HOLDS: pair mean
+ * 67.5, no level at 100, none below 60. These are the numbers of record.
+ *
+ * THE COST, reported not hidden. 0.72 x 0.69 x 0.66 x 0.63 = 20.7%, so the
+ * finale alone now gates four fifths of full runs. FULL RUNS (40, Normal, T5,
+ * no retries) fell from 13/40 = 33% random / 26/40 = 65% pair-pool to
+ * 6/40 = 15% random / 7/40 = 18% pair-pool, and the sim's per-level ladder
+ * shows the loss is exactly the finale (pair pool: L7 25/31, L8 16/25,
+ * L9 12/16, L10 7/12). That is the arithmetic of the 60-80% band, not a
+ * regression — any run tuned to it compounds the same way — but it is the
+ * open question the band raises for every combo run: a 67% finale mean and a
+ * 25%+ full-run clear cannot both be true without retries.
+ * WITH RETRIES — which is what the app's Normal actually ships (3/level) —
+ * the run is healthy: 17/40 = 43% with random picks, 32/40 = 80% when the
+ * pool is the pair. So the finale is now a real wall you bounce off once or
+ * twice and then solve, which is exactly the note Tyler gave. Quote the
+ * RETRY numbers when asking whether the run is too hard; quote the no-retry
+ * numbers only when comparing against older runs measured that way.
+ * ──
  * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
  * Everything under MEASURED below was taken with a harness whose result depended
  * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
@@ -133,6 +200,9 @@
  *    9         0%         0%         0%         0%         0%  |  100%
  *   10         0%         0%         0%         0%         0%  |  100%
  * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 100/100/100/100.
+ * SUPERSEDED 2026-09-07 by the block above: this table is the geometry as it
+ * stands today measured on the OLD move limits (10/9/9/8). The gate half is
+ * unchanged and still true; the 100/100/100/100 half is what was fixed.
  * The header below reads 100/100/100/100 for the pair and is CONFIRMED (max drift 0 points,
  * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
  * are the numbers of record.
@@ -161,7 +231,9 @@
  *   and the run now never offers the fourth. The forced-loadout matrix above
  *   is UNCHANGED by the cap on purpose — `--loadouts=knight-hop:4` still
  *   measures what T4 would do; the cap only removes it from offer slates.
- *   FULL RUNS (40, Normal, T5, never skipping an offer): 13/40 = 33% with
+ *   FULL RUNS [SUPERSEDED 2026-09-07 — see the rework block above: now
+ *   6/40 = 15% random, 7/40 = 18% pair-pool, no retries] (40, Normal, T5,
+ *   never skipping an offer): 13/40 = 33% with
  *   random picks (deaths at L5-L7, all move-limit — the player who did not
  *   take the hop by L5 or the Twin by L7 ends there), 26/40 = 65% when the
  *   pool is the pair. Same shape as The Vault (28% / 53%) and The Glasshouse
@@ -348,11 +420,15 @@ const RUN_REVENGE_23: RunDef = {
         kingPen: ROOM(7),
       },
     ),
-    // L7 — THE WEST GALLERY. No stair, 2x2 room c7/d7/c8/d8. Two jammed
-    // pawns (e8 over e7, g8 over g7) watch d7, f7 and h7, so the only
-    // landings a rook body survives are a7 and b7. Hop c5-b7: rank 7 is
-    // hers. Summon the Twin on b8: rank 8 is hers too and she is looking at
-    // him. Slide b7-a7 to keep the rank. He has no square. The pair.
+    // L7 — THE WEST GALLERY. CHOOSE THE DOOR. No stair, 2x2 room
+    // c7/d7/c8/d8. Two jammed pawns (e8 over e7, g8 over g7) watch d7, f7 and
+    // h7, so the only landings a rook body survives are a7 and b7 — and they
+    // are not equivalent. Hop c5-b7: rank 7 is hers. Summon the Twin on b8:
+    // rank 8 is hers too and she is looking at him. Slide b7-a7 to KEEP the
+    // rank. He has no square. The canonical two-rank cage, built from OUTSIDE
+    // the room, and the only finale with a choice of doors. FIVE moves (was
+    // 10): the intended line is four, so the door has to be right first time.
+    // Pair 72%.
     make(
       7,
       [
@@ -362,15 +438,19 @@ const RUN_REVENGE_23: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 10,
+        moveLimit: 5,
         hazards: PARAPET([], [X(5, 7), X(5, 8), X(7, 7)]),
         kingPen: ROOM(3),
       },
     ),
-    // L8 — THE EAST GALLERY. Room f7/g7/f8/g8. Pawns b8 and d8 over stones
-    // b7/d7 watch a7, c7 and e7: the only landing is h7, and the only square
-    // that jumps to h7 is g5 — which a bishop on e3 is looking at. Hop
-    // g5-h7, summon on h8 (she sees g8 and f8), step into g7. Nine moves.
+    // L8 — THE EAST GALLERY. THE LAUNCH SQUARE IS THE PUZZLE. Room
+    // f7/g7/f8/g8. Pawns b8 and d8 over stones b7/d7 watch a7, c7 and e7: the
+    // only landing is h7, and the only square that jumps to h7 is g5 — which
+    // a bishop on e3 is looking at. The question is not where the cage goes,
+    // it is how you reach the one square you may leave from. Hop g5-h7,
+    // summon on h8 (she sees g8 and f8), then WALK IN: h7-g7. FOUR moves (was
+    // 9) — the tightest clock in the run, because the line is exactly four.
+    // Pair 69%.
     make(
       8,
       [
@@ -380,17 +460,18 @@ const RUN_REVENGE_23: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 9,
+        moveLimit: 4,
         hazards: PARAPET([], [X(2, 7), X(4, 7), X(5, 8)]),
         kingPen: ROOM(6),
       },
     ),
-    // L9 — THE HIGH TABLE. Room d7/e7/d8/e8 in the centre of the court.
-    // Pawn b8 over b7 watches a7 and c7; g7 is stone. Land on f7 from g5
-    // (a knight on c4 and a bishop on b2 both watch e5), summon on f8 and
-    // run her out to h8 along the open rank: rank 7 and rank 8 both hold
-    // from three squares away, and she takes him down the rank. Two
-    // enemies a turn.
+    // L9 — THE HIGH TABLE. CAGE AT RANGE, TWICE THE COURT. Room d7/e7/d8/e8
+    // in the CENTRE, so neither rook can stand beside him. Pawn b8 over b7
+    // watches a7 and c7; g7 is stone. Land on f7 from g5 (a knight on c4 and
+    // a bishop on b2 both watch e5), summon on f8, and hold BOTH ranks from
+    // three files away — the other three finales cage him from contact, this
+    // one has to hold at distance — while the court moves twice per Rookie
+    // move. FIVE moves (was 9), two enemies a turn. Pair 66%.
     make(
       9,
       [
@@ -401,7 +482,7 @@ const RUN_REVENGE_23: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 9,
+        moveLimit: 5,
         hazards: PARAPET([], [X(2, 7), X(3, 8), X(7, 7)]),
         kingPen: ROOM(4),
       },
@@ -411,10 +492,11 @@ const RUN_REVENGE_23: RunDef = {
     // never reaches him from the west (a rook eating those pawns is never
     // on his line when the stun lands — L10 v1 lost 44% to exactly that).
     // The only landing is g7 — INSIDE his room — from f5 or h5, under a
-    // queen on a3 and a bishop on e4 that watches f5. Land in his room
-    // (the g-file and rank 7 are hers), summon the Twin on h7 or g8, and
-    // take him with whichever rook he stands in front of. Two enemies a
-    // turn, eight moves.
+    // queen on a3 and a bishop on e4 that watches f5. THE LANDING IS HIS
+    // ROOM: Rookie hops INSIDE (the g-file and rank 7 are hers) and becomes
+    // the WALL; the Twin, summoned on h7 or g8, is the executioner. The only
+    // finale where Rookie does not take the king — the roles of the pair are
+    // swapped. FIVE moves (was 8), two enemies a turn. Pair 63%.
     make(
       10,
       [
@@ -425,7 +507,7 @@ const RUN_REVENGE_23: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 8,
+        moveLimit: 5,
         hazards: PARAPET([], [X(2, 7), X(4, 7), X(5, 7), X(6, 8)]),
         kingPen: ROOM(7),
       },
