@@ -26,27 +26,43 @@
  *     pair reads 67% avg, inside Tyler's 60-80% band; the Keep reads 90%.
  *   - "king in a box" terrain: The Glasshouse (18) over The Vault (14).
  *
- * ORDER = the run's own random-pick FULL-RUN clear rate (40 runs, Normal, T5,
- * never skipping an offer), highest first — that is the honest "how often does
- * a player who picks carelessly finish this" number. Ties broken by the
- * signature pair's mean L7-L10 rate from
- * `data/run-playtest/finale-remeasure-2026-09-06.json` (higher = easier).
+ * ORDER = THE POWER CURVE, not the clear rate (Tyler, 2026-09-07: "we should
+ * save dragon for like the last ability since it's so powerful"). The rungs run
+ * from cards that extend what a starter already does (Boulder, Vanguard) up to
+ * the ones that rewrite the board (Become King, Convert, Dragon).
  *
- *  #  run         name            signature pair            random%  pair avg
- *  1  revenge-17  The Briar       dragon + sacrifice          55%      79
- *  2  revenge-18  The Glasshouse  freeze-ray + vanguard       43%      88
- *  3  revenge-21  The Slash       boulder + knight-hop        40%     100
- *  4  revenge-15  The Stacks      magnet + boulder            35%     100
- *  5  revenge-23  The Parapet     knight-hop + twin           33%     100
- *  6  revenge-12  The Moat        bishop-squire + swap        25%       —
- *  7  revenge-24  The Lattice     duchess + decoy             23%      94
- *  8  revenge-22  The Millstone   dragon + duchess            18%      79
- *  9  revenge-25  The Alcove      become-king + boulder       18%      67
- * 10  revenge-19  The Cliff       convert + summon-knight     15%      71
+ * This REPLACED an order by measured random-pick clear rate, and the two
+ * genuinely disagree: the Dragon runs measured as the EASIEST full runs (Briar
+ * 55%), which put Dragon on rung 1 and handed it to a brand-new profile on
+ * first launch. They measured easy *because* Dragon is strong enough that a
+ * careless picker still wins — so clear rate was reading power as gentleness.
+ * The ladder's job is unlocking, so power sets the order; difficulty is fixed
+ * per-run instead (see the finale rework below).
  *
- * Rungs 8 and 9 tie at 18%; the Alcove's harder finale (67 vs 79) puts it
- * later. All numbers were taken after the 2026-09-06 harness fix (commit
- * 94482af) — `matrix-determinism-check.ts` passes, so a cell is reproducible.
+ *  #  run         name            signature pair            unlocks       pair avg
+ *  1  revenge-21  The Slash       boulder + knight-hop      Boulder         100
+ *  2  revenge-18  The Glasshouse  freeze-ray + vanguard     Vanguard         88
+ *  3  revenge-15  The Stacks      magnet + boulder          Decoy           100
+ *  4  revenge-23  The Parapet     knight-hop + twin         Twin            100
+ *  5  revenge-12  The Moat        bishop-squire + swap      Swap, Squire      —
+ *  6  revenge-24  The Lattice     duchess + decoy           Duchess          94
+ *  7  revenge-25  The Alcove      become-king + boulder     Become King      67
+ *  8  revenge-19  The Cliff       convert + summon-knight   Convert          71
+ *  9  revenge-22  The Millstone   dragon + duchess          DRAGON           79
+ * 10  revenge-17  The Briar       dragon + sacrifice        Sacrifice        79
+ *
+ * The grants are unchanged in total (17 abilities) — only when you get them.
+ *
+ * ── KNOWN DEBT: the gate is a floor with no ceiling ────────────────────────
+ * `pair avg` above is the pair's mean clear rate on L7-L10
+ * (`data/run-playtest/finale-remeasure-2026-09-06.json`). A run qualifies at
+ * >= 60%, which proves the combo is REQUIRED but never that it is HARD — and
+ * The Slash, The Stacks and The Parapet all read 100/100/100/100, i.e. the
+ * finale solves itself the moment you hold both cards. That is exactly the
+ * "later levels are too easy" note from Tyler's 2026-09-07 playtest. The rule
+ * should be a 60-80% BAND (The Alcove at 67 is the model). Adding the ceiling
+ * to the nightly harness is queued; the three 100% finales are being reworked
+ * first.
  *
  * ── UNLOCKS ────────────────────────────────────────────────────────────────
  * A combo run's kit NAMES the two cards its finale requires, and `rollOffer`
@@ -73,16 +89,16 @@ import { getRunById, isKnownRunId, type RunDef } from './runs';
 import type { PlayerProfile } from './profile';
 
 export const LADDER_RUNG_IDS: ReadonlyArray<string> = [
-  'revenge-17', // The Briar       — dragon + sacrifice
-  'revenge-18', // The Glasshouse  — freeze-ray + vanguard
-  'revenge-21', // The Slash       — boulder + knight-hop
-  'revenge-15', // The Stacks      — magnet + boulder
-  'revenge-23', // The Parapet     — knight-hop + twin
-  'revenge-12', // The Moat        — bishop-squire + swap
-  'revenge-24', // The Lattice     — duchess + decoy
-  'revenge-22', // The Millstone   — dragon + duchess
-  'revenge-25', // The Alcove      — become-king + boulder
-  'revenge-19', // The Cliff       — convert + summon-knight
+  'revenge-21', // The Slash       — boulder + knight-hop      -> Boulder
+  'revenge-18', // The Glasshouse  — freeze-ray + vanguard     -> Vanguard
+  'revenge-15', // The Stacks      — magnet + boulder          -> Decoy
+  'revenge-23', // The Parapet     — knight-hop + twin         -> Twin
+  'revenge-12', // The Moat        — bishop-squire + swap      -> Swap, Bishop Squire
+  'revenge-24', // The Lattice     — duchess + decoy           -> Duchess
+  'revenge-25', // The Alcove      — become-king + boulder     -> Become King
+  'revenge-19', // The Cliff       — convert + summon-knight   -> Convert
+  'revenge-22', // The Millstone   — dragon + duchess          -> DRAGON (latest possible)
+  'revenge-17', // The Briar       — dragon + sacrifice        -> Sacrifice
 ];
 
 export type RungState = 'locked' | 'open' | 'cleared';
