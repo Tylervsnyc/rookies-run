@@ -969,6 +969,14 @@
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "Signature pair SHOVE + MAGNET (pull the plug, roll the wall). Signature: a one-thick vertical FACE on file f with a single CUT, a two-file LEDGE behind it, and exactly one non-fixed stone per level. Gate MET at 32 trials, Normal: L7-L10 no-ability 0%, every kit single (shove/magnet/aegis/hourglass) 0% at EVERY tier T1-T5, pair 72/59/72/66. No abilityTierCaps needed - fixed stones gate Shove better than a cap. Full runs 20% random picks, 10% pair-pool. Shove is TESTING, so playtest-only."
+    },
+    {
+      "id": "revenge-33",
+      "kind": "run",
+      "name": "The Warren",
+      "stage": "idea",
+      "created": "2026-09-07",
+      "notes": "Snare + Boulder. HONEST MISS: singles gate holds (every kit card 0% on L7-L10) but the pair reads only 19-34%, far below the 60-80 band — the run is too hard, not too easy, and the clock is not the limiter (L7 read 13% at 10 moves, 38% at more). Committed with its numbers; NOT on the playtest page. Needs the winning line shortened before it can ship."
     }
   ]
 }
