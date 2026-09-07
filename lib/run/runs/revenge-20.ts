@@ -128,6 +128,75 @@
  *      open board (L8-L10) drop the pair from 63% to under 10% because the
  *      rollouts die before the gate. The 0% cells on L9/L10 are the bot's
  *      horizon, not proof of a gate.
+ *
+ * ── 2026-09-07: THE "T5 STORY" ARGUMENT IS WRONG, AND HERE IS THE CODE ──
+ * Finding 1 above concludes that at T1 "rabies strictly dominates smoke and no
+ * geometry we found needs both", and that the pair is a T5 story the matrix
+ * cannot measure. That is not a fact about the T1 economy. It is a fact about
+ * THIS FINALE, and the finale did it to itself.
+ *
+ * SMOKE HAS ONE POWER NOTHING ELSE IN THE KIT HAS: the king does not flee.
+ * `kingReaction` (pawn-ai.ts) returns null outright while `isSmoked(state)`,
+ * so a smoked king does not sidestep at all. Rabies cannot buy that: the
+ * king's flee is a FREE reaction that does not spend the army's action budget,
+ * so a rabid piece eating the whole enemy turn does nothing to it. (A rabid
+ * friendly-fire capture does stun him — but that is the CAPTURE stunning him,
+ * not the dart, and any capture credited to Rookie does the same.)
+ *
+ * AND THIS FINALE SWITCHED THAT POWER OFF. `BLOCK()` returns
+ * `pen = [`${side}${5 + up}`]` — a king pen of exactly ONE square, his own —
+ * and `kingFleeMove` rejects every neighbour that is not in the pen, so on
+ * L7-L10 the king can never flee under any circumstances. Smoke's whole
+ * unique function is worth nothing on a king who was never going to move, and
+ * what is left of the card is "one blind non-capture landing", which is
+ * strictly less than what a dart gives. The measurement is correct; the
+ * conclusion drawn from it (the card is a T5 story) is not. What was actually
+ * measured is that a pen of one square deletes smoke.
+ *
+ * THE LEVER, then, is the run's own L4: a king alone in a 3x3 ROOM at the top
+ * of the alley, where one rook can never corner him and smoke reads 75% while
+ * rabies reads 0%. A finale built on that room, with a DEFENDED PLUG in the
+ * one line into it, needs both halves: rabies is the only way to clear the
+ * plug (a rabid piece lands on its VICTIM'S square, so darting the plug is
+ * what takes it out of the doorway), and smoke is the only way to finish a
+ * king with room to run.
+ *
+ * BUILT AND MEASURED (2026-09-07), then REVERTED — the numbers are here so the
+ * next author starts from them. Finale = the L4 room f6-h8 (king f7), the
+ * h-file as the only way in, and a FROZEN BISHOP plug on h4 jammed between its
+ * own two pawns g3 and g5 (g2 and g4 stone so neither can march; g5 defends
+ * h4, h4 defends g3; a first version used a PAWN plug and it simply marched
+ * off the doorway by itself — no-ability read 38%). 32 trials, Normal:
+ *   L     none  smoke  rabies  boulder  magnet  |  smoke+rabies
+ *   7       0%     0%     97%       0%      0%  |     97%
+ *   8       0%     0%     84%       0%      0%  |     88%
+ *   9       0%     0%     78%       0%      0%  |     88%
+ *   10      0%     0%     84%       0%      0%  |     75%
+ * FOUR of the five gate cells go clean — none, smoke, boulder and magnet all
+ * 0% on all four levels, against 63/13/9/19 for the shipped pair. Smoke is
+ * demonstrably NOT dominated once the king has a room: the pair reads 75-97%.
+ *
+ * WHAT STILL BLOCKS IT — the real obstacle, named so nobody re-derives it:
+ * A CAPTURE-STUN IS TWO TURNS, AND TWO TURNS BRIDGES A SMALL ROOM. The dart
+ * opens the door AND stuns him for two, and from the square outside the door
+ * the h-file runs straight to h7, which is on the king's rank: one slide gives
+ * a line while he is still stunned, and the next move takes him. So rabies
+ * alone reads 78-97%. Every repair tried has the same shape and the same
+ * failure: move the king off the entry file's ranks and the entry square
+ * changes with it; block the room's h-column and the entry lands beside a
+ * capturable defender instead (taking it is another free 2-turn stun); defend
+ * every body in the chain and the chain's last link has to stand INSIDE the
+ * room, where taking it is a stun ON his line. THE CONSTRAINT TO DESIGN TO:
+ * no capturable body may sit within TWO Rookie moves of any square that
+ * attacks the king, and the plug must still be defended. That means the door
+ * and the room have to be separated by a corridor with nothing capturable in
+ * it — which the shipped a-file BLOCK cannot express, because its whole
+ * signature is a court packed shoulder to shoulder against him.
+ *
+ * VERDICT: not "unfixable as designed at T1" — fixable, but it needs a finale
+ * whose room and whose door are far apart, which is a different silhouette
+ * from the packed alley. Left at stage `idea` with the shipped levels
+ * unchanged and this diagnosis attached.
  */
 
 import {

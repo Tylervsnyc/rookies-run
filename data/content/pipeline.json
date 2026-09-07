@@ -864,7 +864,7 @@
       "name": "The Alley",
       "stage": "idea",
       "created": "2026-09-06",
-      "notes": "Smoke + Rabies Dart (blind the court). HONEST MISS: the finale does not meet the combo gate at T1 cards (rabies alone 53% on L7; pair 63/9/6/9). The pair is a T5 story the harness cannot measure and the bot cannot plan cast-then-wait lines. Kept as idea; reachable via ?run=revenge-20, not on the playtest page."
+      "notes": "Smoke + Rabies Dart (blind the court). STILL AN IDEA, but its header's diagnosis was CORRECTED 2026-09-07. The old note said the pair is 'a T5 story the harness cannot measure' because at T1 a dart strictly dominates smoke. Wrong: smoke's unique power is that kingReaction returns null while isSmoked, and this finale's BLOCK() gives the king a pen of ONE square (his own), so he can never flee and smoke's only function is switched off by the level. Rebuilt the finale on the run's own L4 room (3x3, smoke 75% / rabies 0%) with a frozen-bishop plug in the one way in and measured it: none/smoke/boulder/magnet all 0% on L7-L10 and the pair 75-97%, i.e. 4 of 5 gate cells clean. Reverted and NOT shipped because rabies alone still reads 78-97%: the dart's 2-turn capture-stun bridges a small room in one slide. Constraint for the next author, in the file header: the door and the room must be two Rookie moves apart with nothing capturable between them."
     },
     {
       "id": "revenge-24",
