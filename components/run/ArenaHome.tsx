@@ -9,7 +9,7 @@ import { playTabSwitchSound } from '@/lib/sounds';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
-import { LADDER_RUNG_IDS, rungRun, rungState } from '@/lib/run/ladder';
+import { LadderTab } from './LadderTab';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
 import { getHandle } from '@/lib/run/leaderboard-client';
 import { todaysAbilities } from '@/lib/run/daily-kit';
@@ -32,7 +32,7 @@ import { autoplayMusicOnHome } from '@/lib/music';
  */
 interface ArenaHomeProps {
   onStart: (d?: DifficultyId) => void;
-  onLadderStart?: (runId: string) => void;
+  onLadderStart?: (runId: string, difficulty?: DifficultyId) => void;
   iso: string;
   runId: string;
   profile?: PlayerProfile;
@@ -285,49 +285,6 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities }: {
       </div>
       <div className="mt-2 grid grid-cols-4 gap-2">
         {abilities.map((id) => <AbilityTile key={id} id={id} />)}
-      </div>
-    </div>
-  );
-}
-
-function LadderTab({ profile, onLadderStart }: { profile?: PlayerProfile; onLadderStart?: (runId: string) => void }) {
-  const rungs = LADDER_RUNG_IDS.map((id, i) => {
-    const run = rungRun(i);
-    const state = rungState(profile, i);
-    return { id, run, state, comingSoon: !run };
-  });
-  const openIdx = rungs.findIndex((r) => r.state === 'open' && !r.comingSoon);
-  return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-baseline justify-between px-1">
-        <span className="text-[14px] font-black" style={OUTLINE}>The Ladder</span>
-        <span className="text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.7)' }}>{openIdx >= 0 ? `Rung ${openIdx + 1} of 10` : 'All clear'} · unlocks the Codex</span>
-      </div>
-      <div className="mt-2 grid grid-cols-5 gap-1.5">
-        {rungs.map((r, i) => {
-          const playable = !r.comingSoon && r.state !== 'locked' && !!onLadderStart;
-          const st = r.state === 'cleared' ? 'done' : r.state === 'open' && !r.comingSoon ? 'next' : 'locked';
-          return (
-            <button
-              key={r.id}
-              type="button"
-              disabled={!playable}
-              onClick={() => { if (playable && onLadderStart) onLadderStart(r.id); }}
-              data-rung={i + 1}
-              data-run-id={r.id}
-              className="arena-press rounded-xl flex flex-col items-center justify-center min-h-[56px] py-1.5 gap-1"
-              style={{
-                background: st === 'done' ? '#58CC02' : st === 'next' ? REVENGE_RED : '#22305e',
-                boxShadow: `0 4px 0 ${st === 'done' ? '#3d8c01' : st === 'next' ? REVENGE_RED_DARK : '#0a1230'}`,
-                ['--depth' as string]: '4px',
-                opacity: st === 'locked' ? 0.55 : 1,
-              }}
-            >
-              <span className="text-[16px] font-black leading-none" style={OUTLINE}>{st === 'done' ? '✓' : i + 1}</span>
-              <span className="text-[8px] font-bold leading-tight text-center px-0.5 line-clamp-2" style={{ color: 'rgba(255,255,255,0.85)' }}>{r.run?.name ?? 'Soon'}</span>
-            </button>
-          );
-        })}
       </div>
     </div>
   );

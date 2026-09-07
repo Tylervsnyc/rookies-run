@@ -18,6 +18,7 @@ import {
   type RunEvent,
 } from './achievements';
 import { DEFAULT_DIFFICULTY, isDifficultyId, type DifficultyId } from './difficulty';
+import { ladderUnlockedAbilities } from './ladder';
 
 export const PROFILE_KEY = 'rookies-revenge-profile-v1';
 
@@ -53,10 +54,22 @@ export interface EarnedAchievement {
   seen: boolean;
 }
 
-export interface LadderRungResult {
+/** One rung's result at one difficulty. */
+export interface LadderAttempt {
   cleared: boolean;
   bestLevels: number;
   score: number;
+}
+
+/**
+ * A rung's stored result. The top-level fields are the AGGREGATE across every
+ * difficulty (`cleared` = cleared on ANY mode, which is what opens the next
+ * rung) — they are exactly the pre-2026-09-07 shape, so profiles saved before
+ * per-difficulty tracking keep working untouched. `byDifficulty` is the new
+ * per-mode breakdown and is absent on those old saves.
+ */
+export interface LadderRungResult extends LadderAttempt {
+  byDifficulty?: Partial<Record<DifficultyId, LadderAttempt>>;
 }
 
 export interface PlayerProfile {
@@ -74,7 +87,7 @@ export interface PlayerProfile {
 }
 
 export function freshProfile(now = new Date()): PlayerProfile {
-  return {
+  return foldLadderUnlocks({
     v: 1,
     createdAt: now.toISOString(),
     difficulty: DEFAULT_DIFFICULTY,
@@ -83,15 +96,35 @@ export function freshProfile(now = new Date()): PlayerProfile {
     counters: {},
     bestByDifficulty: {},
     ladder: {},
-  };
+  });
+}
+
+/**
+ * Fold THE LADDER's derived grants into a profile's unlocked set.
+ *
+ * The ladder grants the kit of every rung that is open or cleared
+ * (`ladderUnlockedAbilities`) — rung 1 is always open, so even a brand new
+ * profile can be offered the cards rung 1's finale requires, and clearing a
+ * rung unlocks exactly what the next one needs. Derived from each RunDef's own
+ * `allowedAbilities`, so there is no second list to drift.
+ *
+ * Idempotent, additive, and applied on EVERY load: an ability is never taken
+ * away, and a profile saved before this shipped picks its grants up silently.
+ */
+function foldLadderUnlocks(p: PlayerProfile): PlayerProfile {
+  const set = new Set<AbilityId>(p.unlockedAbilities);
+  const before = set.size;
+  for (const id of ladderUnlockedAbilities(p)) set.add(id);
+  return set.size === before ? p : { ...p, unlockedAbilities: [...set] };
 }
 
 const KNOWN_ABILITIES = new Set<string>(ALL_ABILITY_IDS);
 
 function sanitize(raw: unknown): PlayerProfile {
   const p = freshProfile();
-  if (!raw || typeof raw !== 'object') return p;
-  const r = raw as Partial<PlayerProfile>;
+  // NOT an early return on a missing/!object raw: the achievement and ladder
+  // folds at the bottom must run for a brand-new profile too.
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<PlayerProfile>;
   if (typeof r.createdAt === 'string') p.createdAt = r.createdAt;
   if (isDifficultyId(r.difficulty)) p.difficulty = r.difficulty;
   if (Array.isArray(r.unlockedAbilities)) {
@@ -134,11 +167,28 @@ function sanitize(raw: unknown): PlayerProfile {
     for (const [runId, entry] of Object.entries(r.ladder)) {
       if (!entry || typeof entry !== 'object') continue;
       const e = entry as Partial<LadderRungResult>;
-      p.ladder[runId] = {
+      const next: LadderRungResult = {
         cleared: !!e.cleared,
         bestLevels: typeof e.bestLevels === 'number' && Number.isFinite(e.bestLevels) ? e.bestLevels : 0,
         score: typeof e.score === 'number' && Number.isFinite(e.score) ? e.score : 0,
       };
+      // Per-difficulty breakdown (added 2026-09-07). Absent on older saves —
+      // those keep only the aggregate, and bestClearedDifficulty reports the
+      // Normal the old ladder forced.
+      if (e.byDifficulty && typeof e.byDifficulty === 'object') {
+        const by: Partial<Record<DifficultyId, LadderAttempt>> = {};
+        for (const [d, a] of Object.entries(e.byDifficulty as Record<string, unknown>)) {
+          if (!isDifficultyId(d) || !a || typeof a !== 'object') continue;
+          const at = a as Partial<LadderAttempt>;
+          by[d] = {
+            cleared: !!at.cleared,
+            bestLevels: typeof at.bestLevels === 'number' && Number.isFinite(at.bestLevels) ? at.bestLevels : 0,
+            score: typeof at.score === 'number' && Number.isFinite(at.score) ? at.score : 0,
+          };
+        }
+        if (Object.keys(by).length > 0) next.byDifficulty = by;
+      }
+      p.ladder[runId] = next;
     }
   }
   // Achievements already earned always grant their ability (handles catalog
@@ -150,7 +200,9 @@ function sanitize(raw: unknown): PlayerProfile {
       }
     }
   }
-  return p;
+  // THE LADDER grants the kits of the rungs it has opened. Achievements above
+  // stay a parallel path — both are additive, neither removes anything.
+  return foldLadderUnlocks(p);
 }
 
 let cache: PlayerProfile | null = null;
@@ -167,7 +219,11 @@ export function readProfile(): PlayerProfile {
   return cache;
 }
 
-export function writeProfile(p: PlayerProfile): void {
+export function writeProfile(input: PlayerProfile): void {
+  // Every persisted profile carries the kits of the rungs it has opened. Doing
+  // it HERE (the one funnel) means clearing rung N grants rung N+1's kit
+  // immediately, in-session — not only after the next page load.
+  const p = foldLadderUnlocks(input);
   cache = p;
   if (typeof window === 'undefined') return;
   try {
@@ -259,18 +315,44 @@ export function recordBestStars(d: DifficultyId, runId: string, stars: number): 
 }
 
 /**
- * The Ladder — record a finished rung attempt. Keeps the best result:
- * `cleared` never regresses to false, `bestLevels`/`score` only improve.
+ * The Ladder — record a finished rung attempt.
+ *
+ * Writes BOTH the aggregate (top-level, unchanged shape: `cleared` never
+ * regresses to false, `bestLevels`/`score` only improve — this is what opens
+ * the next rung, on ANY difficulty) and the per-difficulty entry under
+ * `byDifficulty[d]`. `d` is optional so any old caller still compiles; it
+ * defaults to Normal, which is the only mode the ladder used to allow.
  */
-export function recordLadderResult(runId: string, levels: number, score: number, cleared: boolean): PlayerProfile {
+export function recordLadderResult(
+  runId: string,
+  levels: number,
+  score: number,
+  cleared: boolean,
+  d: DifficultyId = 'normal',
+): PlayerProfile {
   return updateProfile((p) => {
     const cur = p.ladder[runId];
+    const merge = (a: LadderAttempt | undefined): LadderAttempt => ({
+      cleared: (a?.cleared ?? false) || cleared,
+      bestLevels: Math.max(a?.bestLevels ?? 0, levels),
+      score: Math.max(a?.score ?? 0, score),
+    });
+    const agg = merge(cur);
+    const curForD = cur?.byDifficulty?.[d];
     const next: LadderRungResult = {
-      cleared: (cur?.cleared ?? false) || cleared,
-      bestLevels: Math.max(cur?.bestLevels ?? 0, levels),
-      score: Math.max(cur?.score ?? 0, score),
+      ...agg,
+      byDifficulty: { ...(cur?.byDifficulty ?? {}), [d]: merge(curForD) },
     };
-    if (cur && cur.cleared === next.cleared && cur.bestLevels === next.bestLevels && cur.score === next.score) return p;
+    const unchanged =
+      cur &&
+      cur.cleared === next.cleared &&
+      cur.bestLevels === next.bestLevels &&
+      cur.score === next.score &&
+      curForD &&
+      curForD.cleared === next.byDifficulty![d]!.cleared &&
+      curForD.bestLevels === next.byDifficulty![d]!.bestLevels &&
+      curForD.score === next.byDifficulty![d]!.score;
+    if (unchanged) return p;
     return { ...p, ladder: { ...p.ladder, [runId]: next } };
   });
 }

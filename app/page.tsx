@@ -180,9 +180,9 @@ function readParityHook(params: URLSearchParams): ParityHook | null {
   };
 }
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; go: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null } {
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; ladderDifficulty: DifficultyId | null; go: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '', ladder: false, go: false, refresh: false, loadout: null, testkit: null, parity: null };
+    return { runId: '', startLevelIndex: 0, date: '', ladder: false, ladderDifficulty: null, go: false, refresh: false, loadout: null, testkit: null, parity: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -195,13 +195,19 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
     if (!Number.isNaN(n) && n >= 1) startLevelIndex = n - 1;
   }
   const ladder = params.get('ladder') === '1';
+  // `?difficulty=` — the mode chosen in the Ladder's rung sheet. Ladder runs
+  // used to be hard-coded to Normal; every rung is now playable on Rookie /
+  // Normal / Hard (Nightmare stays a daily concept). Ignored outside a ladder
+  // launch, where the profile's own difficulty already applies.
+  const dParam = params.get('difficulty');
+  const ladderDifficulty = dParam && isDifficultyId(dParam) ? dParam : null;
   // `?go=1`: board straight away, no home screen (the "Next run" button).
   const go = params.get('go') === '1';
   const refresh = params.get('refresh') === '1';
   const parity = readParityHook(params);
   // Parity wins: a parity session never combines with a testkit.
   const testkit = parity ? null : readTestkitParam(params);
-  return { runId, startLevelIndex, date, ladder, go, refresh, loadout: readLoadoutParam(params), testkit, parity };
+  return { runId, startLevelIndex, date, ladder, ladderDifficulty, go, refresh, loadout: readLoadoutParam(params), testkit, parity };
 }
 
 /** Slow-motion enemy slide onto Rookie when she gets captured (ms). */
@@ -213,9 +219,14 @@ interface RunMeta {
   startLevelIndex: number;
   /**
    * The run was launched from The Ladder (`?ladder=1&run=<id>`): skip the
-   * home screen, force Normal rules, and record the result to profile.ladder.
+   * home screen and record the result to profile.ladder.
    */
   ladder: boolean;
+  /**
+   * The difficulty the rung sheet picked (`?difficulty=`). Null = Normal, the
+   * mode the ladder forced before 2026-09-07.
+   */
+  ladderDifficulty: DifficultyId | null;
   /** `?go=1`: skip the home screen and board immediately ("Next run" from the summary card). */
   go: boolean;
   /** Standalone `?loadout=` starting kit (works in production); parity wins over it. */
@@ -335,6 +346,7 @@ export default function RookiesRunPage() {
       runId: validRunId,
       startLevelIndex,
       ladder,
+      ladderDifficulty: url.ladderDifficulty,
       go: url.go,
       loadout: url.loadout,
       parity: url.parity,
@@ -350,8 +362,8 @@ export default function RookiesRunPage() {
 
   const [levelIndex, setLevelIndex] = useState(meta.startLevelIndex);
   const initial = useMemo(
-    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout, meta.testkit),
-    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.loadout, meta.testkit],
+    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit),
+    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.ladderDifficulty, meta.loadout, meta.testkit],
   );
   const [state, setState] = useState<BoardState>(initial.state);
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
@@ -1311,7 +1323,7 @@ export default function RookiesRunPage() {
   }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
-    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? 'normal' : null, meta.loadout, meta.testkit);
+    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit);
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
     levelStartAbilitiesRef.current = fresh.state.abilities;
@@ -1546,6 +1558,7 @@ export default function RookiesRunPage() {
         runComplete ? totalLevels : Math.max(0, levelReached - 1),
         state.captures.length,
         runComplete,
+        state.difficulty ?? 'normal',
       );
       progress.setProfile(readProfile());
     }
@@ -1679,8 +1692,9 @@ export default function RookiesRunPage() {
         ) : (
           <ArenaHome
             onStart={dismissIntro}
-            onLadderStart={(id) => {
-              window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1`;
+            onLadderStart={(id, d) => {
+              const mode = d ? `&difficulty=${encodeURIComponent(d)}` : '';
+              window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1${mode}`;
             }}
             iso={meta.iso}
             runId={meta.runId}

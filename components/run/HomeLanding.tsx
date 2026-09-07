@@ -24,7 +24,7 @@ interface HomeLandingProps {
   /** Start today's daily. When `d` is given, the parent switches difficulty first. */
   onStart: (d?: DifficultyId) => void;
   /** Start a Ladder rung — the exact run, always on Normal rules. */
-  onLadderStart?: (runId: string) => void;
+  onLadderStart?: (runId: string, difficulty?: DifficultyId) => void;
   iso: string;
   runId: string;
   dateLabel?: string;
