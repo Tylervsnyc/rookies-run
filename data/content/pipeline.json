@@ -1025,6 +1025,22 @@
       "stage": "idea",
       "created": "2026-09-07",
       "notes": "Signature pair GAUNTLET + SMOKE, verb LURE — the first run in the catalogue whose answer is that you never get in, you make him come out. Concept (C): GAUNTLET is a NEW ability added in the same commit (testing stage), the catalogue's first lure — a free no-target instant that makes the king ANSWER for 2 enemy phases (3/3/4/5 by tier), stepping one square toward Rookie, out of a pen that never holds him again; he refuses any square her current form attacks, which is a SIGHT check, so under Smoke he walks straight onto her line. SIGNATURE: THE PINCH — his corner quarter is closed by an L of stone whose only flaw is a place where an inside square and an outside square touch ONLY AT A CORNER; no rank, no file and no rook crosses a corner, a king does. Finale lines: L7 taunt first then cover on the phase he arrives; L8 the quarter mirrored so rank 6 is wall and the d-FILE is the only line, watched from below, cover before challenge; L9 his own pawn plugs the pinch square and taking it parks Rookie in the doorway, so the line is take, step back along the rank, then throw; L10 a stone shelf at c5-e5 puts the travel and the wait both under the watching queen on four moves. SERIAL NUMBERS OF RECORD (32 trials, jobs=1, normal): L7 none 0 / gauntlet 6 / smoke 0 / magnet 0 / aegis 0 / pair 72 PASS; L8 0/0/0/0/0 / pair 78 PASS; L9 0/13/0/0/0 / pair 66 singles MISS; L10 0/13/0/0/0 / pair 88 MISS both. THE GATE IS MET ON L7 AND L8 AND MISSED ON L9 AND L10 (the challenge alone reads 13% on both, five points over the 8% bar; L10's pair is eight points over the band). Full runs: random picks 15% (6/40), pair pool 43% (17/40) — the bottleneck is L4, not the finale. Ladder misses too: L4 locks on the challenge rather than the authored magnet, and L5 does not lock at all (88% bare); magnet and aegis are pure traps in this kit. TIER CAVEAT: only magnet is capped (4, on the rule that T5 magnet moves the king and would duplicate the signature verb); gauntlet and smoke were NOT swept tier by tier, so their caps are unmeasured — smoke:3 (a second cover, hence a second attempt at the one phase that must be right) is the likely break. add only; NOT marked built."
+    },
+    {
+      "id": "revenge-39",
+      "kind": "run",
+      "name": "The Balcony",
+      "stage": "idea",
+      "created": "2026-09-07",
+      "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Rescued 2026-09-07 from an untracked orphan file (revenge-99.ts) left by a killed agent; renumbered and registered. SINGLES GATE CLEAN: none/coup/duchess/aegis/snare all 0% on L7-L10, 32 trials, Normal. PAIR 100/94/28/91 — three finale levels are ABOVE the 60-80 band and L9 is below it, so the run does not meet the combo gate yet and stays an idea. The clock is NOT the knob: L7 still reads 100% at 5 moves and L9 only 41% at 9 / 38% at 11, and enemiesPerTurn 2 on L8/L10 changed nothing (100/91). It needs a geometry pass on the finale, not tuning."
+    },
+    {
+      "id": "revenge-40",
+      "kind": "run",
+      "name": "The Cairn",
+      "stage": "idea",
+      "created": "2026-09-07",
+      "notes": "Signature pair SHOVE + MAGNET (pull the plug, roll the wall). Rescued 2026-09-07 from an untracked orphan file (revenge-cairn.ts) left by a killed agent; renumbered and registered. COMBO GATE NOT MET on either half, 32 trials, Normal, L7-L10: shove ALONE reads 31% on L7 and 6% on L9 (the singles bar is 8%), and the pair reads only 22/0/56/3 — L8 and L10 are unbeatable by the pair the run was built for. Registered with its numbers so the next author starts from measurement instead of the header's prose."
     }
   ]
 }
