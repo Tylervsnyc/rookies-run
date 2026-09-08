@@ -30,6 +30,16 @@ const GOLD = '#FFC800';
 
 type PlanEntry = { pair?: number[]; was?: number[]; changed?: string };
 const ENTRIES = plan.runs as Record<string, PlanEntry>;
+const COVERAGE = (plan as { coverage?: Coverage }).coverage;
+
+interface Coverage {
+  playerFacing: number;
+  covered: number;
+  missing: string[];
+  note: string;
+  candidates: { id: string; name: string; pair: string; covers: string[]; stage: string; band: string }[];
+  result: string;
+}
 
 function mean(xs: number[]): number {
   return xs.reduce((a, b) => a + b, 0) / xs.length;
@@ -148,7 +158,49 @@ export default function LadderPlanPage() {
           })}
         </ol>
 
-        <p className="mt-5 text-[11px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.42)' }}>
+        {COVERAGE && (
+          <section className="mt-6">
+            <h2 className="text-[18px] font-black leading-none">Every ability?</h2>
+            <div className="mt-1.5 text-[13px] font-bold">
+              The ladder grants {COVERAGE.covered} of {COVERAGE.playerFacing}.
+            </div>
+            <p className="mt-2 text-[12px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.62)' }}>
+              {COVERAGE.note}
+            </p>
+
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {COVERAGE.missing.map((id) => (
+                <span
+                  key={id}
+                  className="rounded-lg px-2 py-1 text-[11px] font-black"
+                  style={{ background: 'rgba(229,57,53,0.25)', border: '1.5px solid rgba(229,57,53,0.55)' }}
+                >
+                  {abilityName(id)}
+                </span>
+              ))}
+            </div>
+
+            <ul className="mt-3 space-y-2">
+              {COVERAGE.candidates.map((c) => (
+                <li key={c.id} className="rounded-xl p-3" style={{ background: PANEL, border: `1.5px solid ${EDGE}` }}>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[14px] font-black">{c.name}</span>
+                    <span className="text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.5)' }}>{c.stage}</span>
+                  </div>
+                  <div className="mt-0.5 text-[12px] font-bold" style={{ color: 'rgba(255,255,255,0.66)' }}>{c.pair}</div>
+                  <div className="mt-0.5 text-[12px] font-black" style={{ color: GOLD }}>
+                    Covers: {c.covers.map(abilityName).join(', ')}
+                  </div>
+                  <div className="mt-0.5 text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.5)' }}>{c.band}</div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-2.5 text-[12px] font-black" style={{ color: '#58CC02' }}>{COVERAGE.result}</div>
+          </section>
+        )}
+
+        <p className="mt-6 text-[11px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.42)' }}>
           Numbers are the signature pair&rsquo;s clear rate on levels 7-10, 32 trials at T5 against the
           bot. Every single card in every kit reads 0-8% on those levels — that is what makes the run a
           combo gate rather than a hard level. Updated {plan.updated}.

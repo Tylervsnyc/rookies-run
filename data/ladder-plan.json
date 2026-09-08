@@ -1,16 +1,161 @@
 {
   "updated": "2026-09-07",
-  "band": { "min": 60, "max": 80 },
-  "note": "Pair clear % on L7-L10 with the run's signature pair in hand. The gate rule was 'pair >= 60%', a floor with no ceiling — a run at 100% solves itself the moment you hold both cards. Tyler's band is 60-80%.",
+  "band": {
+    "min": 60,
+    "max": 80
+  },
+  "note": "Pair clear % on L7-L10 with the run's signature pair in hand. The gate rule was 'pair >= 60%', a floor with no ceiling \u2014 a run at 100% solves itself the moment you hold both cards. Tyler's band is 60-80%.",
   "runs": {
-    "revenge-21": { "pair": [78, 66, 72, 69], "was": [100, 100, 100, 100], "changed": "2026-09-07" },
-    "revenge-15": { "pair": [75, 72, 75, 69], "was": [100, 100, 100, 100], "changed": "2026-09-07" },
-    "revenge-23": { "pair": [72, 69, 66, 63], "was": [100, 100, 100, 100], "changed": "2026-09-07" },
-    "revenge-18": { "pair": [100, 94, 66, 91] },
-    "revenge-24": { "pair": [97, 84, 94, 100] },
-    "revenge-25": { "pair": [69, 81, 66, 53] },
-    "revenge-19": { "pair": [72, 66, 69, 75] },
-    "revenge-22": { "pair": [78, 81, 84, 72] },
-    "revenge-17": { "pair": [69, 88, 91, 69] }
+    "revenge-21": {
+      "pair": [
+        78,
+        66,
+        72,
+        69
+      ],
+      "was": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "changed": "2026-09-07"
+    },
+    "revenge-15": {
+      "pair": [
+        75,
+        72,
+        75,
+        69
+      ],
+      "was": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "changed": "2026-09-07"
+    },
+    "revenge-23": {
+      "pair": [
+        72,
+        69,
+        66,
+        63
+      ],
+      "was": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "changed": "2026-09-07"
+    },
+    "revenge-18": {
+      "pair": [
+        100,
+        94,
+        66,
+        91
+      ]
+    },
+    "revenge-24": {
+      "pair": [
+        97,
+        84,
+        94,
+        100
+      ]
+    },
+    "revenge-25": {
+      "pair": [
+        69,
+        81,
+        66,
+        53
+      ]
+    },
+    "revenge-19": {
+      "pair": [
+        72,
+        66,
+        69,
+        75
+      ]
+    },
+    "revenge-22": {
+      "pair": [
+        78,
+        81,
+        84,
+        72
+      ]
+    },
+    "revenge-17": {
+      "pair": [
+        69,
+        88,
+        91,
+        69
+      ]
+    }
+  },
+  "coverage": {
+    "playerFacing": 23,
+    "covered": 17,
+    "missing": [
+      "bishop-step",
+      "queen-pulse",
+      "rabies-dart",
+      "smoke",
+      "rewind",
+      "page"
+    ],
+    "note": "Tyler 2026-09-07: the ladder should encompass every ability. Six player-facing cards never appear in any rung's kit, so a player who only plays the ladder can never hold them. Four runs already in the codebase close the gap and every card in their kits is live, so they are eligible today \u2014 they need measuring and approving, not building.",
+    "candidates": [
+      {
+        "id": "revenge-36",
+        "name": "The Turnstile",
+        "pair": "queen-pulse + smoke",
+        "covers": [
+          "queen-pulse",
+          "smoke"
+        ],
+        "stage": "testing",
+        "band": "not measured"
+      },
+      {
+        "id": "revenge-35",
+        "name": "The Picket",
+        "pair": "page + aegis",
+        "covers": [
+          "page",
+          "rewind"
+        ],
+        "stage": "testing",
+        "band": "not measured"
+      },
+      {
+        "id": "revenge-16",
+        "name": "The Switchback",
+        "pair": "poison-dart + bishop-squire",
+        "covers": [
+          "rabies-dart"
+        ],
+        "stage": "testing",
+        "band": "72% \u2014 in band"
+      },
+      {
+        "id": "revenge-37",
+        "name": "The Perch",
+        "pair": "bishop-step + magnet",
+        "covers": [
+          "bishop-step"
+        ],
+        "stage": "idea",
+        "band": "not measured \u2014 stage idea, may have failed its gate"
+      }
+    ],
+    "result": "A 14-rung ladder covering all 23 player-facing abilities."
   }
 }
