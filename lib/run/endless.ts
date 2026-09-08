@@ -346,10 +346,20 @@ export function endlessLevelAt(session: EndlessSession, idx: number): EndlessLev
  * Everything is drawn from the session seed + depth, so a depth is the same
  * board on a reload.
  */
-/** Reinforcements start at this depth ... */
-const REINFORCE_FROM = 9;
-/** ... and one more arrives every this many levels. */
-const REINFORCE_EVERY = 3;
+/**
+ * RETUNED 2026-09-08 (second pass), from the curve itself rather than a
+ * playtest. Printing the ramp showed it FLATLINING: enemiesPerTurn pins at its
+ * cap and moveLimit at its floor by depth 20, so from there to depth 52 the
+ * only thing still moving was reinforcements at one piece per three levels.
+ * Depth 24 and depth 44 were nearly the same board. Tyler, mid-session: "I'm
+ * doing endless right now and it's just not hard enough."
+ *
+ * Reinforcements now start sooner and arrive twice as often, and the
+ * enemies-per-turn cap lifts with depth (see maxEnemiesPerTurnAt) so the ramp
+ * has something left to give after the other two knobs bottom out.
+ */
+const REINFORCE_FROM = 7;
+const REINFORCE_EVERY = 2;
 
 /** How many extra enemies stand on the board at `depth`. */
 export function reinforcementsAt(depth: number): number {
@@ -382,7 +392,21 @@ function reinforcementType(n: number): 'pawn' | 'knight' | 'bishop' | 'queen' {
 const OVERDRIVE_FROM = 8;
 const OVERDRIVE_EVERY = 3;
 const MOVE_LIMIT_FLOOR = 6;
-const MAX_ENEMIES_PER_TURN = 6;
+
+/**
+ * The enemies-per-turn cap, which is no longer a constant.
+ *
+ * 6 is the right ceiling for the authored game and stays the ceiling until
+ * depth 20 — which is exactly where the move-limit floor also bites, i.e.
+ * where the old ramp ran out of road. Past that it lifts one step every 8
+ * levels to a hard 9, so the enemy phase keeps growing without ever becoming
+ * a cutscene you watch.
+ */
+export function maxEnemiesPerTurnAt(depth: number): number {
+  const d = Math.max(1, Math.floor(depth));
+  if (d < 20) return 6;
+  return Math.min(9, 6 + Math.floor((d - 20) / 8) + 1);
+}
 
 export interface EndlessRamp {
   difficulty: DifficultyId;
@@ -412,7 +436,7 @@ export function applyEndlessRamp(puzzle: RunPuzzle, depth: number, seed = 1): Ru
   const extra = reinforcementsAt(depth);
   if (ramp.overdrive === 0 && extra === 0) return puzzle;
   const out: RunPuzzle = { ...puzzle };
-  out.enemiesPerTurn = Math.min(MAX_ENEMIES_PER_TURN, (puzzle.enemiesPerTurn ?? 1) + ramp.enemiesPerTurnDelta);
+  out.enemiesPerTurn = Math.min(maxEnemiesPerTurnAt(depth), (puzzle.enemiesPerTurn ?? 1) + ramp.enemiesPerTurnDelta);
   if (typeof puzzle.moveLimit === 'number') {
     out.moveLimit = Math.max(MOVE_LIMIT_FLOOR, puzzle.moveLimit + ramp.moveLimitDelta);
   }
