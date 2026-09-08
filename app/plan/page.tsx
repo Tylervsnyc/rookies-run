@@ -31,6 +31,15 @@ const GOLD = '#FFC800';
 type PlanEntry = { pair?: number[]; was?: number[]; changed?: string };
 const ENTRIES = plan.runs as Record<string, PlanEntry>;
 const COVERAGE = (plan as { coverage?: Coverage }).coverage;
+const ENDLESS = (plan as { endless?: Endless }).endless;
+
+interface Endless {
+  shipped: string;
+  how: string;
+  ramp: string;
+  pool: string;
+  where: string;
+}
 
 interface Coverage {
   playerFacing: number;
@@ -157,6 +166,24 @@ export default function LadderPlanPage() {
             );
           })}
         </ol>
+
+        {ENDLESS && (
+          <section className="mt-6 rounded-2xl p-4" style={{ background: PANEL, border: `1.5px solid ${GOLD}` }}>
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-[18px] font-black leading-none">Endless</h2>
+              <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: GOLD }}>New</span>
+            </div>
+            <p className="mt-2 text-[13px] font-bold leading-snug">{ENDLESS.how}</p>
+            <dl className="mt-3 space-y-2 text-[12px]">
+              {([['Ramp', ENDLESS.ramp], ['Levels', ENDLESS.pool], ['Where', ENDLESS.where]] as const).map(([k, v]) => (
+                <div key={k}>
+                  <dt className="font-black uppercase tracking-wider text-[10px]" style={{ color: 'rgba(255,255,255,0.55)' }}>{k}</dt>
+                  <dd className="font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.78)' }}>{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
 
         {COVERAGE && (
           <section className="mt-6">

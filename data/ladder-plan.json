@@ -53,11 +53,18 @@
     },
     "revenge-18": {
       "pair": [
+        78,
+        72,
+        66,
+        72
+      ],
+      "was": [
         100,
         94,
         66,
         91
-      ]
+      ],
+      "changed": "2026-09-07"
     },
     "revenge-24": {
       "pair": [
@@ -157,5 +164,12 @@
       }
     ],
     "result": "A 14-rung ladder covering all 23 player-facing abilities."
+  },
+  "endless": {
+    "shipped": "2026-09-07",
+    "how": "Roll 5 random abilities from all live cards, then play levels that never stop getting harder. No win state, no retries: it ends when you die, and your score is how deep you got.",
+    "ramp": "Rookie 1-4, Normal 5-10, Hard 11-18, then Nightmare from 19 with +1 enemy per turn and -1 move every 6 levels, forever.",
+    "pool": "120 levels from the 12 broad-kit runs. Combo runs are excluded entirely \u2014 a random kit cannot beat a level only one specific pair opens.",
+    "where": "Gold ENDLESS strip under DAILY REVENGE on the Revenge tab."
   }
 }
