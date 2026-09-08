@@ -359,8 +359,14 @@ function freshRun(
   };
 }
 
-export default function RookiesRunPage() {
-  const meta: RunMeta = useMemo(() => {
+/**
+ * Everything the page derives from the URL + the clock, in one place.
+ *
+ * Module-level rather than inline in a `useMemo([])` so that leaving a run can
+ * REBUILD it (see `goHome`) instead of reloading the document. Called at mount
+ * and again whenever the URL is rewritten in place.
+ */
+function buildMeta(): RunMeta {
     const url = readUrlParams();
     const tz = typeof window !== 'undefined'
       ? Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
@@ -412,7 +418,10 @@ export default function RookiesRunPage() {
       testkit: url.testkit,
       endless: url.endlessSeed ? buildEndlessSession(url.endlessSeed) : null,
     };
-  }, []);
+}
+
+export default function RookiesRunPage() {
+  const [meta, setMeta] = useState<RunMeta>(buildMeta);
   const endless = meta.endless;
 
   const runDef = useMemo(() => getRunById(meta.runId), [meta.runId]);
@@ -1441,9 +1450,14 @@ export default function RookiesRunPage() {
     setShowLevelCleared(false);
   }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, meta.endless, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
-  const resetRun = useCallback(() => {
-    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit, meta.endless);
-    setLevelIndex(meta.startLevelIndex);
+  /**
+   * Rebuild the whole run from a given `meta`. Split out of `resetRun` so
+   * LEAVING a run (goHome) can reuse the exact same reset instead of growing a
+   * second copy of it — the two differ only in which meta they build from.
+   */
+  const resetRunFrom = useCallback((m: RunMeta) => {
+    const fresh = freshRun(m.iso, m.runId, m.startLevelIndex, m.parity, m.ladder ? (m.ladderDifficulty ?? 'normal') : null, m.loadout, m.testkit, m.endless);
+    setLevelIndex(m.startLevelIndex);
     setPuzzle(fresh.puzzle);
     levelStartAbilitiesRef.current = fresh.state.abilities;
     activeMsRef.current = 0;
@@ -1470,10 +1484,56 @@ export default function RookiesRunPage() {
     tracePostedRef.current = false;
     traceEventsRef.current = [];
     traceStartRef.current = Date.now();
-    trackEvent('run_replayed', { iso: meta.iso, run: meta.runId });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meta.iso, meta.runId, meta.startLevelIndex]);
+    trackEvent('run_replayed', { iso: m.iso, run: m.runId });
+  }, [progress]);
+
+  const resetRun = useCallback(() => resetRunFrom(meta), [resetRunFrom, meta]);
   resetRunRef.current = resetRun;
+
+  /**
+   * LEAVE A RUN, without reloading the document.
+   *
+   * The X on the summary card used to be `window.location.href = '/'`, which
+   * tears down the JS context — and the music lives in one module-level
+   * <audio> element, so the track restarted from the top of the playlist every
+   * time you closed a run (Tyler, 2026-09-08: "x'ing out of the post game
+   * screen needs to be smoother and not reset the music"). The reload was also
+   * the jank: a blank frame, the splash, then home.
+   *
+   * Instead: rewrite the URL in place, rebuild `meta` from it, and reset the
+   * run through the same path a replay uses. The audio element, the loaded
+   * buffers and the React tree all survive, so the card just gives way to the
+   * home screen. `meta` is state rather than a mount-time memo purely so this
+   * can work for a session that was launched with params — an Endless seed or
+   * a ladder rung — and not just a bare daily.
+   */
+  /**
+   * Start a fresh Endless session the same soft way. "Roll five again" sits on
+   * the very card the X does, and reloaded exactly as hard — same lost music,
+   * same blank frame.
+   */
+  const startEndless = useCallback((seed: number = newEndlessSeed()) => {
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', `/?endless=${seed}`);
+    }
+    const next = buildMeta();
+    setMeta(next);
+    resetRunFrom(next);
+    setEndlessNewBest(false);
+    setShowEndlessIntro(true);
+    setShowIntro(false);
+  }, [resetRunFrom]);
+
+  const goHome = useCallback(() => {
+    const next = (() => {
+      if (typeof window === 'undefined') return meta;
+      if (window.location.search) window.history.replaceState(null, '', '/');
+      return buildMeta();
+    })();
+    setMeta(next);
+    resetRunFrom(next);
+    setShowIntro(true);
+  }, [meta, resetRunFrom]);
 
   // Difficulty retry: rebuild THIS level with the carried powers/tempo/offer
   // (same carry pattern as goToNextLevel). Loss bookkeeping (lossesByLevelRef,
@@ -1857,7 +1917,7 @@ export default function RookiesRunPage() {
               const mode = d ? `&difficulty=${encodeURIComponent(d)}` : '';
               window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1${mode}`;
             }}
-            onEndless={() => { window.location.href = `/?endless=${newEndlessSeed()}`; }}
+            onEndless={() => startEndless()}
             iso={meta.iso}
             runId={meta.runId}
             profile={progress.profile}
@@ -2245,15 +2305,10 @@ export default function RookiesRunPage() {
           timeMs={Math.round(activeMsRef.current)}
           stars={scorePair?.stars}
           starLine={scorePair?.starLine}
-          onReplay={endless
-            ? () => { window.location.href = `/?endless=${newEndlessSeed()}`; }
-            : resetRun}
+          onReplay={endless ? () => startEndless() : resetRun}
           nextRunName={endless || nextRunId === meta.runId ? undefined : getRunById(nextRunId).name}
           onNextRun={endless || nextRunId === meta.runId ? undefined : goToNextRun}
-          onClose={() => {
-            // A fresh cold open = the home screen, with today's daily up.
-            window.location.href = '/';
-          }}
+          onClose={goHome}
         />
       )}
     </div>

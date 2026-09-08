@@ -287,26 +287,48 @@ export function playCelebrationSound(_correctCount?: number): void {
 }
 
 // Play a preloaded buffer sound
-async function playBuffer(buffer: AudioBuffer | null): Promise<void> {
+/**
+ * Play a preloaded one-shot.
+ *
+ * Takes a GETTER, not a buffer, and that is the whole point: the buffers are
+ * module-level `let`s that `preloadSounds()` fills in later, so passing
+ * `tabSwitchBuffer` evaluated the variable at CALL time — null on the very
+ * first play — and the `await preloadSounds()` below could never be seen by
+ * the already-captured argument. Every sound in the app was therefore silent
+ * the first time it fired and fine forever after (Tyler, 2026-09-08: "the
+ * sound isn't playing on the first switch"). Re-reading through the getter
+ * after the await fixes it for all of them at once.
+ *
+ * `volume` is a plain linear gain (1 = as recorded).
+ */
+async function playBuffer(get: () => AudioBuffer | null, volume = 1): Promise<void> {
   const ctx = await ensureAudioReady();
   if (!ctx) return;
   if (!buffersLoaded) await preloadSounds();
+  const buffer = get();
   if (!buffer) return;
 
   const source = ctx.createBufferSource();
   source.buffer = buffer;
-  source.connect(ctx.destination);
+  if (volume === 1) {
+    source.connect(ctx.destination);
+  } else {
+    const gain = ctx.createGain();
+    gain.gain.value = volume;
+    source.connect(gain);
+    gain.connect(ctx.destination);
+  }
   source.start();
 }
 
 /** Play move sound - uses preloaded mp3 file */
 export async function playMoveSound(): Promise<void> {
-  return playBuffer(moveBuffer);
+  return playBuffer(() => moveBuffer);
 }
 
 /** Play capture sound - uses preloaded mp3 file */
 export async function playCaptureSound(): Promise<void> {
-  return playBuffer(captureBuffer);
+  return playBuffer(() => captureBuffer);
 }
 
 /**
@@ -334,27 +356,33 @@ export async function playAllyCaptureSound(): Promise<void> {
  * transform-INTO; that's a separate cue.
  */
 export async function playTransformBackSound(): Promise<void> {
-  return playBuffer(transformBackBuffer);
+  return playBuffer(() => transformBackBuffer);
 }
 
 /** Dark whoosh — Surge activates (two moves in a row). */
 export async function playSurgeSound(): Promise<void> {
-  return playBuffer(surgeBuffer);
+  return playBuffer(() => surgeBuffer);
 }
 
-/** Camera-flash click — switching modes in the home tab bar (Tyler's ElevenLabs SFX, 2026-09-04). */
+/**
+ * Camera-flash click — switching modes in the home tab bar (Tyler's
+ * ElevenLabs SFX, 2026-09-04). Halved 2026-09-08: "clicking between tabs 50%
+ * quieter". It fires on a navigation, not on an action, so it should sit
+ * under the music rather than on top of it.
+ */
+const TAB_SWITCH_VOLUME = 0.5;
 export async function playTabSwitchSound(): Promise<void> {
-  return playBuffer(tabSwitchBuffer);
+  return playBuffer(() => tabSwitchBuffer, TAB_SWITCH_VOLUME);
 }
 
 /** Magical freeze — Freeze Ray lands on a piece. */
 export async function playFreezeSound(): Promise<void> {
-  return playBuffer(freezeBuffer);
+  return playBuffer(() => freezeBuffer);
 }
 
 /** Arcane shimmer — Rookie transforming INTO a knight / queen / king. */
 export async function playTransformIntoSound(): Promise<void> {
-  return playBuffer(transformIntoBuffer);
+  return playBuffer(() => transformIntoBuffer);
 }
 
 /**
