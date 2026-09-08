@@ -161,9 +161,11 @@ for (const runId of runIds) {
     if (!r) { cells.push('-'); continue; }
     const w = [...r.rows].filter((x) => x.reached >= 5).sort((a, b) => (a.clearRate ?? 100) - (b.clearRate ?? 100))[0];
     if (!w) { cells.push('-'); continue; }
+    const rate = w.clearRate ?? 100;
+    if (rate >= 95) { cells.push(`none (min ${rate}%)`); continue; }
     const mark = w.level < 7 ? ' **!**' : '';
-    if (w.level < 7 && (w.clearRate ?? 100) < 90) { early = true; spikes.push({ runId, d, level: w.level, rate: w.clearRate ?? 100 }); }
-    cells.push(`L${w.level} ${w.clearRate}%${mark}`);
+    if (w.level < 7 && rate < 90) { early = true; spikes.push({ runId, d, level: w.level, rate }); }
+    cells.push(`L${w.level} ${rate}%${mark}`);
   }
   L.push(`| \`${runId}\` | ${cells.join(' | ')} | ${early ? 'YES' : ''} |`);
 }
@@ -202,16 +204,16 @@ L.push('## 6. Runs most in need of difficulty attention (worst first)');
 L.push('');
 function score(v: Verdict): number {
   let s = 0;
-  if (v.ladder === 'INVERTED') s += 100;
-  s += v.issues.filter((x) => x.startsWith('flat')).length * 25;
-  const spread = v.rates[0] - v.rates[3];
-  s += Math.max(0, 40 - spread); // a flat ladder overall
-  s += v.rates.filter((r) => r <= 10).length * 20; // dead modes
-  const early = spikes.filter((x) => x.runId === v.runId);
-  s += early.length * 10;
+  // A mode nobody can finish is the loudest failure.
+  s += v.rates.filter((r) => r <= 10).length * 60;
+  if (v.ladder === 'INVERTED') s += 50;
+  // A run that sits at the ceiling on ALL FOUR modes has no ladder at all.
+  if (v.rates.every((r) => r >= 95)) s += 40;
+  s += v.issues.filter((x) => x.startsWith('flat')).length * 10;
+  s += new Set(spikes.filter((x) => x.runId === v.runId).map((x) => x.level)).size * 15;
   return s;
 }
-const ranked = [...verdicts].sort((a, b) => score(b) - score(a));
+const ranked = [...verdicts].sort((a, b) => score(b) - score(a) || (a.rates[0] - a.rates[3]) - (b.rates[0] - b.rates[3]));
 L.push('| # | Run | Why |');
 L.push('|---|---|---|');
 ranked.forEach((v, i) => {
@@ -220,13 +222,67 @@ ranked.forEach((v, i) => {
   const f = v.issues.filter((x) => x.startsWith('flat')).length;
   if (f) why.push(`${f} adjacent mode(s) indistinguishable`);
   const spread = v.rates[0] - v.rates[3];
-  why.push(`Rookie→Nightmare spread only ${spread}pp`);
+  if (v.rates.every((r) => r >= 95)) why.push('no ladder at all — all four modes at the ceiling');
+  else why.push(`Rookie→Nightmare spread ${spread}pp`);
   const deadModes = DIFFICULTY_ORDER.filter((d, j) => v.rates[j] <= 10);
   if (deadModes.length) why.push(`unwinnable: ${deadModes.join(', ')}`);
   const early = spikes.filter((x) => x.runId === v.runId);
   if (early.length) why.push(`early spike (${[...new Set(early.map((e) => `L${e.level}`))].join(',')})`);
   L.push(`| ${i + 1} | \`${v.runId}\` | ${why.join('; ')} |`);
 });
+L.push('');
+
+
+// ── Per-run pins + caveats
+L.push('## 7. The per-run `difficultyOverrides` pins');
+L.push('');
+L.push('Three measured runs carry a pin. A pin replaces a difficulty\'s GLOBAL delta for that run only.');
+L.push('');
+for (const runId of runIds) {
+  let def; try { def = getRunById(runId); } catch { continue; }
+  if (!def?.difficultyOverrides || def.id !== runId) continue;
+  const rates = DIFFICULTY_ORDER.map((d) => get(runId, d)?.fullClearRate ?? null);
+  L.push(`- \`${runId}\` pins \`${JSON.stringify(def.difficultyOverrides)}\` — Rookie ${rates[0]}% / Normal ${rates[1]}% / Hard ${rates[2]}% / Nightmare ${rates[3]}%.`);
+}
+L.push('');
+const r21n = get('revenge-21', 'normal');
+const r21h = get('revenge-21', 'hard');
+if (r21n && r21h) {
+  const same = r21n.rows.every((row, i) => row.cleared === r21h.rows[i].cleared && row.reached === r21h.rows[i].reached);
+  L.push('**revenge-21 is the test case for whether a global delta is the right mechanism, and the answer measured');
+  L.push(`here is no.** With both deltas pinned to 0, Hard's curve is ${same ? 'IDENTICAL to Normal\'s at every one of the 10 levels' : 'nearly identical to Normal\'s'}`);
+  L.push(`(${r21n.fullClearRate}% vs ${r21h.fullClearRate}% full clear${same ? `; per-level cleared/reached match exactly: ${r21n.rows.map((x) => x.clearRate).join('/')}` : ''}).`);
+  L.push('The pin removed the two knobs that were making the run unwinnable, and what remained — the fleeing');
+  L.push('king — moved nothing at all. Hard on this run is a relabelled Normal that pays 1.5x score.');
+  L.push('Nightmare, which keeps the same pin but adds a king that reacts to allies and a higher tempo cap,');
+  L.push(`does separate (${get('revenge-21', 'nightmare')?.fullClearRate}%) — so the ally-reacting king is the only global knob on this run that`);
+  L.push('actually produces difficulty. The lesson: a global +1 enemy / -2 moves is not a difficulty dial, it is');
+  L.push('a level-design assumption. On corridor/wall runs it is a gift (see the revenge-15 and revenge-23 notes');
+  L.push('in their run files); on tight-finale runs it is an instant loss; pinning it to 0 leaves the mode empty.');
+  L.push('');
+}
+L.push('## 8. Caveats — read before acting on these numbers');
+L.push('');
+L.push('- **The measuring bot is not a person.** These runs are played by the T5 MCTS bot with Tyler-derived');
+L.push('  move priors. On `revenge-1`..`revenge-11` and `crucible` it clears essentially every level on every');
+L.push('  mode, so those rows say "the ladder is invisible to a strong player", NOT "a beginner will breeze');
+L.push('  through". The mode separation on those runs may exist for humans and be undetectable here.');
+L.push('- **Rookie mode retries are capped at 5** by the harness (`MAX_RETRIES`), where the shipped mode is');
+L.push('  unlimited. Rookie\'s true clear rate is therefore >= the number in this table.');
+L.push('- Ability offers are taken at RANDOM from every offer, which is a weaker player policy than choosing');
+L.push('  well. Runs whose difficulty is carried by a specific combo will read harder here than they play.');
+L.push('- One seed family per cell (`revenge-run:<i>:<level>`), shared across difficulties, so a run/difficulty');
+L.push('  pair is reproducible and two difficulties see the same starting layouts.');
+L.push('');
+L.push('## 9. Reproduce');
+L.push('');
+L.push('```');
+L.push('npx tsx scripts/run-playtest/difficulty-sweep.ts --runs=60 --jobs=4');
+L.push('npx tsx scripts/run-playtest/difficulty-sweep-report.ts');
+L.push('```');
+L.push('');
+L.push('The sweep checkpoints after every (run, difficulty) pair and skips pairs already in the out file, so');
+L.push('it is resumable. `--ids=` restricts it to named runs.');
 L.push('');
 
 writeFileSync(join(process.cwd(), OUT), L.join('\n'));
