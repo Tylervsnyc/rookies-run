@@ -1,0 +1,16 @@
+{
+  "updated": "2026-09-07",
+  "band": { "min": 60, "max": 80 },
+  "note": "Pair clear % on L7-L10 with the run's signature pair in hand. The gate rule was 'pair >= 60%', a floor with no ceiling — a run at 100% solves itself the moment you hold both cards. Tyler's band is 60-80%.",
+  "runs": {
+    "revenge-21": { "pair": [78, 66, 72, 69], "was": [100, 100, 100, 100], "changed": "2026-09-07" },
+    "revenge-15": { "pair": [75, 72, 75, 69], "was": [100, 100, 100, 100], "changed": "2026-09-07" },
+    "revenge-23": { "pair": [72, 69, 66, 63], "was": [100, 100, 100, 100], "changed": "2026-09-07" },
+    "revenge-18": { "pair": [100, 94, 66, 91] },
+    "revenge-24": { "pair": [97, 84, 94, 100] },
+    "revenge-25": { "pair": [69, 81, 66, 53] },
+    "revenge-19": { "pair": [72, 66, 69, 75] },
+    "revenge-22": { "pair": [78, 81, 84, 72] },
+    "revenge-17": { "pair": [69, 88, 91, 69] }
+  }
+}
