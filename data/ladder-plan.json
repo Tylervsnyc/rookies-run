@@ -190,8 +190,14 @@
   "endless": {
     "shipped": "2026-09-07",
     "how": "Roll 5 random abilities from all live cards, then play levels that never stop getting harder. No win state, no retries: it ends when you die, and your score is how deep you got.",
-    "ramp": "Rookie 1-4, Normal 5-10, Hard 11-18, then Nightmare from 19 with +1 enemy per turn and -1 move every 6 levels, forever.",
+    "ramp": "Rookie 1-3, Normal 4-6, Hard 7-9, then Nightmare from 10 with +1 enemy per turn and -1 move every 4 levels, forever.",
     "pool": "120 levels from the 12 broad-kit runs. Combo runs are excluded entirely \u2014 a random kit cannot beat a level only one specific pair opens.",
     "where": "Gold ENDLESS strip under DAILY REVENGE on the Revenge tab."
+  },
+  "difficulty": {
+    "measured": "2026-09-07",
+    "headline": "The four difficulty modes are decorative on every run you can currently play.",
+    "detail": "First all-difficulty measurement ever taken: 60 full runs per run per mode. Eleven of the twelve live broad-kit runs clear 100% on every level at every difficulty INCLUDING Nightmare, with zero deaths. All 13 measured runs have at least one pair of adjacent modes within 8pp. No inversions \u2014 a harder mode is never easier, it just isn't harder.",
+    "worst": "revenge-13 is the opposite failure: Hard 7%, Nightmare 5%, effectively unwinnable, and the wall is L2 rather than the finale."
   }
 }

@@ -294,8 +294,25 @@ export function endlessLevelAt(session: EndlessSession, idx: number): EndlessLev
  * Retries are NOT part of the ramp: Endless is one life at every depth, which
  * app/page.tsx enforces by pinning `canRetry` to false for the mode.
  */
-const OVERDRIVE_FROM = 19;
-const OVERDRIVE_EVERY = 6;
+/**
+ * RETUNED 2026-09-07 from the first all-difficulty sweep
+ * (data/run-playtest/DIFFICULTY-SWEEP.md). The ramp originally ran Rookie 1-4,
+ * Normal 5-10, Hard 11-18, Nightmare 19+ — on the assumption that the four
+ * shipped modes supply real difficulty. They do not. Endless's whole pool is
+ * the 12 broad-kit runs, and ELEVEN of them clear 100% on every level at every
+ * difficulty INCLUDING Nightmare, with zero deaths. So the mode half of the
+ * ramp contributes almost nothing, and the old bands meant 18 free levels
+ * before the first real pressure — the opposite of "harder and harder until
+ * death".
+ *
+ * Bands are compressed to 3 levels each and overdrive starts with Nightmare at
+ * depth 10, stepping every 4. HONEST CAVEAT: the sweep is BOT data with random
+ * picks; a human with a fixed random 5 may find these levels harder than the
+ * bot does. These two constants are the one place to tune the whole curve, and
+ * they want a real depth sweep (19-60) before anyone calls them right.
+ */
+const OVERDRIVE_FROM = 10;
+const OVERDRIVE_EVERY = 4;
 const MOVE_LIMIT_FLOOR = 6;
 const MAX_ENEMIES_PER_TURN = 6;
 
@@ -311,7 +328,7 @@ export interface EndlessRamp {
 
 export function endlessRamp(depth: number): EndlessRamp {
   const d = Math.max(1, Math.floor(depth));
-  const difficulty: DifficultyId = d <= 4 ? 'rookie' : d <= 10 ? 'normal' : d <= 18 ? 'hard' : 'nightmare';
+  const difficulty: DifficultyId = d <= 3 ? 'rookie' : d <= 6 ? 'normal' : d <= 9 ? 'hard' : 'nightmare';
   const overdrive = d < OVERDRIVE_FROM ? 0 : 1 + Math.floor((d - OVERDRIVE_FROM) / OVERDRIVE_EVERY);
   return { difficulty, enemiesPerTurnDelta: overdrive, moveLimitDelta: -overdrive, overdrive };
 }

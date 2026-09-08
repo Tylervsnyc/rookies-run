@@ -32,6 +32,9 @@ type PlanEntry = { pair?: number[]; was?: number[]; changed?: string };
 const ENTRIES = plan.runs as Record<string, PlanEntry>;
 const COVERAGE = (plan as { coverage?: Coverage }).coverage;
 const ENDLESS = (plan as { endless?: Endless }).endless;
+const DIFFICULTY = (plan as { difficulty?: Difficulty }).difficulty;
+
+interface Difficulty { measured: string; headline: string; detail: string; worst: string }
 
 interface Endless {
   shipped: string;
@@ -182,6 +185,15 @@ export default function LadderPlanPage() {
                 </div>
               ))}
             </dl>
+          </section>
+        )}
+
+        {DIFFICULTY && (
+          <section className="mt-6 rounded-2xl p-4" style={{ background: PANEL, border: '1.5px solid rgba(229,57,53,0.6)' }}>
+            <h2 className="text-[18px] font-black leading-none">Difficulty</h2>
+            <p className="mt-2 text-[13px] font-black leading-snug" style={{ color: '#FF6B66' }}>{DIFFICULTY.headline}</p>
+            <p className="mt-2 text-[12px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.7)' }}>{DIFFICULTY.detail}</p>
+            <p className="mt-2 text-[12px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.7)' }}>{DIFFICULTY.worst}</p>
           </section>
         )}
 
