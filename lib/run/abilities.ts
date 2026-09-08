@@ -224,7 +224,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Smoke',
     activation: 'instant',
     typeLine: 'Instant · Cover',
-    description: 'Vanish for a few turns. Enemies lose track of you.',
+    description: 'Nothing can capture you, and the king stops running.',
   },
   rewind: {
     id: 'rewind',
@@ -627,7 +627,7 @@ const HOW: Record<AbilityId, string> = {
   aegis: 'Tap card. Shield stays up until used.',
   decoy: 'Tap card, then tap an enemy.',
   boulder: 'Tap card, then tap an empty square. A block of stone lands there.',
-  smoke: 'Tap card. You vanish at once.',
+  smoke: 'Tap card. You vanish at once. Capturing gives you away.',
   rewind: "Tap card. The enemies' last turn unhappens. Yours stays.",
   magnet: 'Tap card, tap an enemy on your line, then tap the square it lands on.',
   bodyguard: 'Tap card. A rook appears beside you.',
@@ -751,11 +751,17 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 4) return 'Drop a stone on any square — crush an enemy pawn under it. Each use drops 2.';
       if (tier >= 2) return 'Drop a stone on any square — crush an enemy pawn under it.';
       return 'Drop a block of stone on an empty square. It blocks everyone, for good.';
-    case 'smoke':
-      if (tier === 5) return 'Vanish for 3 turns. Captures do not break cover.';
-      if (tier === 4) return 'Vanish for 3 turns. Enemies cannot see you.';
-      if (tier >= 2) return 'Vanish for 2 turns. Enemies cannot see you.';
-      return 'Vanish for 1 turn. Enemies cannot see you.';
+    case 'smoke': {
+      // Say the MECHANIC, not the mood (Tyler, 2026-09-08, eight times in one
+      // session: "I still really don't get what smoke does ... what does smoke
+      // protect you from? Is smoke like an Aegis then?"). It is: no enemy can
+      // capture you at all while it lasts, AND the king stops fleeing because
+      // he can't see you — which is the reason to cast it, and was written
+      // nowhere. Capturing gives away your position (except at T5).
+      const turns = tier === 1 ? 1 : tier <= 3 ? 2 : 3;
+      const tail = tier === 5 ? 'Capturing keeps you hidden.' : 'Capturing gives you away.';
+      return `${turns} turn${turns === 1 ? '' : 's'}: nothing can capture you and the king stops running. ${tail}`;
+    }
     case 'rewind':
       if (tier === 5) return "Undo the last TWO enemy turns — and every piece you rewind is frozen for a turn.";
       if (tier === 4) return "Undo the last TWO enemy turns. Your moves stay.";
@@ -959,11 +965,11 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Crush a pawn under a stone. 2/level.';
       return 'Drop a stone. 2/level.';
     case 'smoke':
-      if (tier === 5) return 'Vanish 3 turns, captures keep cover. 1/level.';
-      if (tier === 4) return 'Vanish 3 turns. 2/level.';
-      if (tier === 3) return 'Vanish 2 turns. 2/level.';
-      if (tier === 2) return 'Vanish 2 turns. 1/level.';
-      return 'Vanish 1 turn. 1/level.';
+      if (tier === 5) return 'Untouchable 3 turns, even if you capture. 1/level.';
+      if (tier === 4) return 'Untouchable 3 turns; king stops running. 2/level.';
+      if (tier === 3) return 'Untouchable 2 turns; king stops running. 2/level.';
+      if (tier === 2) return 'Untouchable 2 turns; king stops running. 1/level.';
+      return 'Untouchable 1 turn; king stops running. 1/level.';
     case 'rewind':
       if (tier === 5) return 'Undo 2 enemy turns; rewound pieces freeze. 3/level.';
       if (tier === 4) return 'Undo the last TWO enemy turns. 2/level.';
@@ -3365,7 +3371,21 @@ function applyRewind(state: BoardState): BoardState {
     // snapshot, and her charges are simply what she has now (minus this use).
     // Tempo, captures and any offer resolved since the snapshot stay too
     // ("your position, captures, tempo and charges stay").
+    //
+    // The snapshot is taken at the START of the enemy phase, so anything
+    // Rookie casts on the FOLLOWING turn — before she moves, which is exactly
+    // when Rewind is legal — is not in it. Spreading the snapshot therefore
+    // used to silently un-cast it. Tyler, 2026-09-08: "I did Queen Pulse and
+    // then I did rewind and it reset my Queen Pulse. I'm not sure if that's
+    // what we want." It is not: the card's whole promise is that the ENEMIES
+    // take their turn back and you don't. Every one of Rookie's own live
+    // effects is carried forward from the CURRENT state, not the snapshot.
     abilities: decrementUse(state.abilities, 'rewind'),
+    form: state.form,
+    formMovesLeft: state.formMovesLeft,
+    shieldUp: state.shieldUp,
+    bonusMovesLeft: state.bonusMovesLeft,
+    smokeTurnsLeft: state.smokeTurnsLeft,
     tempo: state.tempo,
     captures: state.captures,
     pendingOffer: state.pendingOffer,

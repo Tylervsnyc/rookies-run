@@ -72,7 +72,7 @@ import { isPlayerFacing } from '../content/pipeline';
 import { mulberry32 } from './seed';
 import { REVENGE_RUN_IDS, getRunById } from './runs';
 import type { DifficultyId } from './difficulty';
-import type { RunPuzzle } from './types';
+import { fromSquare, type RunPuzzle } from './types';
 import remeasureRaw from '../../data/run-playtest/finale-remeasure-2026-09-06.json';
 
 /** URL/leaderboard id. Distinct so Endless never pollutes a daily run's board. */
@@ -324,6 +324,53 @@ export function endlessLevelAt(session: EndlessSession, idx: number): EndlessLev
  * they want a real depth sweep (19-60) before anyone calls them right.
  */
 /**
+ * REINFORCEMENTS — the third overdrive dimension, added 2026-09-08 after
+ * Tyler reached depth 36 and stopped because he had to, not because he died:
+ * "I feel like I'm never gonna lose ... it still needs to get harder faster.
+ * There needs to be increasingly MORE AND MORE PIECES so that this is
+ * actually impossible."
+ *
+ * He is right about the mechanism, not just the amount. The old overdrive had
+ * two knobs and BOTH saturate: enemiesPerTurn stops at MAX_ENEMIES_PER_TURN
+ * and moveLimit stops at MOVE_LIMIT_FLOOR, so past roughly depth 25 the ramp
+ * was flat no matter how deep you went — a mode advertised as endless with a
+ * difficulty ceiling. Pieces have no such ceiling: the board runs out of
+ * squares long after the player runs out of answers.
+ *
+ * Placement is deliberately conservative — nothing that can steal a level
+ * from the player before they move:
+ *   - never on Rookie's start rank (her file is drawn from it at build time)
+ *     nor the rank ahead of it, so no reinforcement can take her on turn one;
+ *   - never on an occupied square, a hazard, or inside the king's pen;
+ *   - never adjacent to the king, so the objective can't be walled off.
+ * Everything is drawn from the session seed + depth, so a depth is the same
+ * board on a reload.
+ */
+/** Reinforcements start at this depth ... */
+const REINFORCE_FROM = 9;
+/** ... and one more arrives every this many levels. */
+const REINFORCE_EVERY = 3;
+
+/** How many extra enemies stand on the board at `depth`. */
+export function reinforcementsAt(depth: number): number {
+  const d = Math.max(1, Math.floor(depth));
+  if (d < REINFORCE_FROM) return 0;
+  return 1 + Math.floor((d - REINFORCE_FROM) / REINFORCE_EVERY);
+}
+
+/**
+ * What the nth reinforcement (0-based) is. The first few are pawns — bodies
+ * that clog lines and cost tempo to remove — and the ladder climbs from there,
+ * so depth adds both MORE pieces and BETTER ones.
+ */
+function reinforcementType(n: number): 'pawn' | 'knight' | 'bishop' | 'queen' {
+  if (n < 2) return 'pawn';
+  if (n < 4) return n % 2 === 0 ? 'knight' : 'bishop';
+  if (n < 6) return n % 2 === 0 ? 'bishop' : 'knight';
+  return n % 3 === 0 ? 'queen' : n % 3 === 1 ? 'knight' : 'bishop';
+}
+
+/**
  * RETUNED AGAIN 2026-09-08, this time on HUMAN data — the first full session
  * Tyler played (died at depth 23). His read through the twenties: "I'm at
  * level 20 ... it's not feeling that much harder", "I kind of don't want to
@@ -360,15 +407,52 @@ export function endlessRamp(depth: number): EndlessRamp {
  * handed `ramp.difficulty`. Pure; returns the puzzle untouched below
  * OVERDRIVE_FROM.
  */
-export function applyEndlessRamp(puzzle: RunPuzzle, depth: number): RunPuzzle {
+export function applyEndlessRamp(puzzle: RunPuzzle, depth: number, seed = 1): RunPuzzle {
   const ramp = endlessRamp(depth);
-  if (ramp.overdrive === 0) return puzzle;
+  const extra = reinforcementsAt(depth);
+  if (ramp.overdrive === 0 && extra === 0) return puzzle;
   const out: RunPuzzle = { ...puzzle };
   out.enemiesPerTurn = Math.min(MAX_ENEMIES_PER_TURN, (puzzle.enemiesPerTurn ?? 1) + ramp.enemiesPerTurnDelta);
   if (typeof puzzle.moveLimit === 'number') {
     out.moveLimit = Math.max(MOVE_LIMIT_FLOOR, puzzle.moveLimit + ramp.moveLimitDelta);
   }
+  if (extra > 0) out.pieces = withReinforcements(puzzle, extra, seed, depth);
   return out;
+}
+
+/** The authored pieces plus `count` reinforcements on safe squares. */
+function withReinforcements(puzzle: RunPuzzle, count: number, seed: number, depth: number): RunPuzzle['pieces'] {
+  const startRank = puzzle.rookieStart.rank;
+  // Which way is "ahead" for Rookie — she is placed on startRank and climbs.
+  const ahead = startRank <= 4 ? startRank + 1 : startRank - 1;
+  const taken = new Set<string>();
+  for (const p of puzzle.pieces) taken.add(`${p.file},${p.rank}`);
+  for (const h of puzzle.hazards ?? []) taken.add(`${h.file},${h.rank}`);
+  for (const sq of puzzle.kingPen ?? []) {
+    const c = fromSquare(sq);
+    taken.add(`${c.file},${c.rank}`);
+  }
+  const king = puzzle.pieces.find((p) => p.type === 'king');
+
+  // On a rank-8 level the goal row is the win itself — never wall it.
+  const goalRank = puzzle.winCondition === 'king' ? 0 : 8;
+
+  const open: Array<{ file: number; rank: number }> = [];
+  for (let file = 1; file <= 8; file++) {
+    for (let rank = 1; rank <= 8; rank++) {
+      if (rank === startRank || rank === ahead || rank === goalRank) continue;
+      if (taken.has(`${file},${rank}`)) continue;
+      if (king && Math.max(Math.abs(king.file - file), Math.abs(king.rank - rank)) <= 1) continue;
+      open.push({ file, rank });
+    }
+  }
+  // Seeded by session AND depth, so one depth is one board across reloads.
+  const rng = mulberry32(((seed ^ (depth * 0x9e3779b9)) >>> 0) || 1);
+  const picks = shuffled(open, rng).slice(0, count);
+  return [
+    ...puzzle.pieces,
+    ...picks.map((c, i) => ({ type: reinforcementType(i), color: 'black' as const, file: c.file, rank: c.rank })),
+  ];
 }
 
 /** Short HUD line for the current depth, e.g. "HARD" or "NIGHTMARE +2". */

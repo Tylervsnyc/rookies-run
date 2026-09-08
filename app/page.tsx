@@ -290,7 +290,7 @@ function freshEndlessLevel(
   carry: { abilities?: BoardState['abilities']; tempo?: number; pendingOffer?: BoardState['pendingOffer'] } = {},
 ): { state: BoardState; puzzle: RunPuzzle } {
   const ref = endlessLevelAt(endless, step);
-  const puzzle = applyEndlessRamp(puzzleForDate(iso, ref.levelIndex, ref.runId), step + 1);
+  const puzzle = applyEndlessRamp(puzzleForDate(iso, ref.levelIndex, ref.runId), step + 1, endless.seed);
   return {
     state: puzzleToBoardState(puzzle, {
       ...carry,
