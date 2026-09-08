@@ -6420,6 +6420,60 @@ const RUN_REVENGE_11: RunDef = {
  * L4/L9, trap on L3 (7-move clock) and L6 (the c4 pawn is the shield from
  * queen a4, not a lock). L10 needs a pair: squire+swap through the sluice
  * then a poisoned lock, or knight-hop + poison.
+ *
+ * ── FINALE (L7-L10) MEASURED + REWORKED 2026-09-07 ─────────────────────────
+ * The finale had never been measured. Taken at 32 trials/cell, T5 bot, T1
+ * cards, Normal (`matrixParallel`, levels 7-10, jobs 4) it read:
+ *
+ *   BEFORE           L7   L8   L9  L10        AFTER            L7   L8   L9  L10
+ *   none             56    0   28    0        none              0    0    0    0
+ *   swap             66    0   16    0        swap              0    0    0    0
+ *   bishop-squire    75    0   47    0        bishop-squire     0    0    0    0
+ *   knight-hop       84    9   72   38        knight-hop        0    9    0    0
+ *   poison-dart      84    0   78    0        poison-dart       0    0    0    0
+ *   squire+swap     100   81   78  100        squire+swap      69   81   63   78
+ *                                             squire+hop       66   63    6   53
+ *                                             hop+dart         53   50   28    0
+ *
+ * L7 and L9 were not gates at all — a bare rook cleared L7 more than half the
+ * time and every single card walked L9 — and the signature pair read 100 on
+ * two rungs (mean 89). It now reads 69/81/63/78, mean 73, no level at 100,
+ * and every single card is 0 (the one 9 is knight-hop on L8, untouched).
+ *
+ * NOT ONE ANSWER (Tyler, 2026-09-07: "they need to stop being 1 combination").
+ * The gate is now the CROSSING, not one card: L7 has three live roads
+ * (squire+swap 69, squire+hop 66, hop+dart 53) and L8 keeps its three
+ * (81/63/50). Out-of-kit pairs clear too — vanguard+swap and summon-knight+swap
+ * read 97-100 on L7/L8/L10, freeze-ray+squire 53/97, dragon+magnet 47/31/84/100
+ * — so an Endless kit that never draws Bishop Squire still has a road. Those
+ * two summon-and-trade pairs are the same IDEA as the signature (a body across
+ * the water, then trade places); they are honest, but they are also the reason
+ * the finale is not tuned for random kits. L9's second road is the weakest of
+ * the four (hop+dart 28) — the one thing left undone.
+ *
+ * The lever everywhere was GEOMETRY, not the clock: the near bank's knight
+ * LAUNCH squares are occupied by guards (a4/e4 on L7, h4/d4 on L9), so a
+ * knight-hop cannot leave the ground without first taking a defended knight;
+ * rank 6 beyond the water is stone except the sluice's own diagonal step and
+ * the key, so a hop that does get off has nowhere to land; and the king's room
+ * is walled on both flanks so a body that lands west of it can never walk in.
+ * Move budgets were raised, not cut (L7 7->16, L9 8->12, L10 10->12): the
+ * finale is long because the crossing is long, and cutting the clock would
+ * only have re-hidden the leak.
+ *
+ * WHAT EACH RUNG ASKS OF THE PAIR (all four are different):
+ *   L7  THE SHALLOWS  — the crossing, and only the crossing. Both launch
+ *       squares are guarded, so the bishop is the only body that gets over;
+ *       the room beyond is wide enough that the swap has to land you IN it.
+ *   L8  THE OPEN ROOM — two bodies. The room is 3x3 and the knights hunt you
+ *       across the water, so one body only chases. (Unchanged, and correct.)
+ *   L9  THE FAR CORNER — the long walk under two enemies a turn. The sluice
+ *       is at f5 and the king sits at the far corner f8, so the bishop has to
+ *       cross AND traverse before the swap is worth spending.
+ *   L10 THE KEEP      — the ORDER. The bishop must take the gate knight on e7
+ *       and slide THROUGH f6 to g7 in one move (stopping on f6 loses him to
+ *       the h7 guard), and only then is the swap the capture. Tyler's
+ *       Squire -> Swap -> capture line, unchanged and now the only way in.
  */
 /**
  * The moat itself is WATER — the one band of genuinely molten/deadly terrain
@@ -6551,28 +6605,29 @@ const RUN_REVENGE_12: RunDef = {
         kingPen: ['g7', 'h7', 'g8', 'h8'],
       },
     ),
-    // L7 — TWO A TURN. King e8 on a rank-8 strip d8-f8 (walls d7/e7/f7): a
-    // rook on rank 8 is lethal. Both bridges (a5/h5) lead up the edge files
-    // to rank 8, where pawns c8/g8 block, each held by a bishop (b7/h7)
-    // that the pawn holds back (g8 defends h7, c8 defends b7): a mutual
-    // lock. The bishops are walled in (a8/a6/c6 and g6) so they can never
-    // wander off their posts and become free stuns; queen d3 hunts alone
-    // (one enemy a turn — at two the rank-8 pawns march off their posts).
-    // Seven moves: a dart on g8/c8 buys the edge file, but only if the
-    // queen doesn't find you first. Hard adds the second enemy.
+    // L7 — THE SHALLOWS. The crossing, and nothing but the crossing. The
+    // sluice is c5: c4 walls the file, so no rook ever reaches rank 5, and
+    // the moat's ray-blocking water means a rook on the near bank cannot even
+    // SEE the room. The knights on a4 and e4 are not hunters, they are the
+    // two squares a knight-hop would have to launch from to land on b6 — sit
+    // on them and the hop has no runway (d2 defends e4, so taking one is not
+    // free). d6 is stone, so the bishop's step off the sluice is b6 and the
+    // swap has to land Rookie inside the room. Every single card reads 0;
+    // squire+swap 69, squire+hop 66, hop+dart 53.
     make(
       7,
       [
-        pawn(3, 8), pawn(7, 8),
-        bishop(2, 7), bishop(8, 7),
-        queen(4, 3),
-        king(5, 8),
+        knight(1, 4), knight(5, 4), knight(4, 2),
+        king(3, 7),
       ],
       {
         ...FLEE,
-        moveLimit: 7,
-        hazards: [...MOAT(1, 8), X(4, 7), X(5, 7), X(6, 7), X(1, 8), X(1, 6), X(3, 6), X(7, 6)],
-        kingPen: ['d8', 'e8', 'f8'],
+        moveLimit: 16,
+        hazards: [
+          ...MOAT(3), X(3, 4), X(3, 6), X(4, 6),
+          X(1, 6), X(1, 7), X(1, 8), X(5, 6), X(5, 7), X(5, 8),
+        ],
+        kingPen: ['b6', 'b7', 'c7', 'd7', 'b8', 'c8', 'd8'],
       },
     ),
     // L8 — THE OPEN ROOM. King f7 in a 3x3 room e6-g8 (walls d6-d8 /
@@ -6595,54 +6650,64 @@ const RUN_REVENGE_12: RunDef = {
         kingPen: ['e6', 'g6', 'e7', 'f7', 'g7', 'e8', 'f8', 'g8'],
       },
     ),
-    // L9 — THE QUEEN'S BANK. King h8 in the corner (walls f7/f8), bridge g5.
-    // Key h6 on his file is held twice: bishop e3 (through the bridge) and
-    // knight g4. Queen a4 rakes rank 4, so no knight-hop launches and no
-    // bishop reaches the bridge. Two darts (T3) then g-file, take the key,
-    // take him — KEY — under two enemies a turn and an eight-move clock.
+    // L9 — THE FAR CORNER. Same idea as L7, two enemies a turn, and the walk
+    // is the point: the sluice is f5 (f4 walls it) and the king is at f8, the
+    // far corner of a room walled at e6/e7/e8 — the bishop crosses at g6 and
+    // still has to traverse before the swap is worth spending. Rank 6 is
+    // stone from a6 to f6 and at h6, so g6 is the ONLY square on the far bank
+    // a body can arrive on, and h4 sits on the one launch square that reaches
+    // it. Every single card reads 0; squire+swap 63, hop+dart 28 (the
+    // weakest second road in the finale).
     make(
       9,
       [
-        pawn(8, 6),
-        bishop(5, 3), knight(7, 4),
-        queen(1, 4),
-        pawn(2, 2),
-        king(8, 8),
+        knight(8, 4), knight(4, 4), knight(5, 2),
+        king(6, 8),
       ],
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 8,
-        hazards: [...MOAT(7), X(6, 7), X(6, 8)],
-        kingPen: ['g7', 'h7', 'g8', 'h8'],
+        moveLimit: 12,
+        hazards: [
+          ...MOAT(6), X(6, 4),
+          X(1, 6), X(2, 6), X(3, 6), X(4, 6), X(5, 6), X(6, 6), X(8, 6),
+          X(5, 7), X(5, 8),
+        ],
+        kingPen: ['g6', 'f7', 'g7', 'h7', 'f8', 'g8', 'h8'],
       },
     ),
-    // L10 — THE KEEP. King g8 in the 2x2 corner room (walls f7/f8) — a room
-    // one rook can never lock. No bridge; the sluice c5 (walls c4/c6) is
-    // bishop-only, and it is a DARK square: the two hunters are LIGHT
-    // bishops (a2/g2), so nothing on her side can ever cross the water and
-    // become a free stun on his. Key g6 on his file is held by knight e7,
-    // which has NO legal jump (c6/c8 walls, d5/f5 water) — it can never
-    // hunt off its post (v4: with c8 open it stepped there and g6 was a
-    // free hop-capture, knight-hop 100%). Two enemies a turn,
-    // ten moves. Squire b4-c5-d6, SWAP, rook along rank 6, poisoned knight
-    // dies, take the key, take him — or knight-hop onto g6 with e7 already
-    // darted. Every single card alone reads ~0% (v1-v3 tuning: a queen /
-    // marcher that could cross the sluice fed knight-hop a stun, 70-95%).
+    // L10 — THE KEEP. The ORDER. King g8 in the corner room (walls f7/f8);
+    // the sluice is c5, a DARK square, and the two hunters are LIGHT bishops
+    // (a2/g2), so nothing on his side can ever cross the water and become a
+    // free stun on hers. Key g6 on his file is held by knight e7, which has
+    // no legal jump (c6/c8 walls, d5/f5 water) and can never leave its post.
+    // 2026-09-07: e6 and h6 are stone, which seals the two roads a lone
+    // knight-hop used to walk (it landed west of the room and strolled rank 7
+    // to the guard, 38%), and c4 is now OPEN — c5 was a rook square with zero
+    // exits, so a swap onto it was a silent loss. The h7 knight is the second
+    // gaoler: its only jump is f6, so it never leaves, and it is why the
+    // ORDER matters — the bishop must take e7 and then slide THROUGH f6 to
+    // g7 in ONE move. Stop on f6 and h7 eats him; reach g7 and the swap IS
+    // the capture. That is Tyler's Squire -> Swap -> capture line, and it is
+    // now the only way into the keep. Two enemies a turn, twelve moves.
+    // Every single card reads 0; squire+swap 78, squire+hop 53.
     make(
       10,
       [
         pawn(7, 6),
-        knight(5, 7),
+        knight(5, 7), knight(8, 7),
         bishop(1, 2), bishop(7, 2),
         king(7, 8),
       ],
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 10,
-        hazards: [...MOAT(3), X(3, 4), X(3, 6), X(3, 8), X(6, 7), X(6, 8)],
-        kingPen: ['g7', 'h7', 'g8', 'h8'],
+        moveLimit: 12,
+        hazards: [
+          ...MOAT(3), X(3, 6), X(3, 8), X(6, 7), X(6, 8),
+          X(5, 6), X(8, 6),
+        ],
+        kingPen: ['g7', 'g8', 'h8'],
       },
     ),
   ],
