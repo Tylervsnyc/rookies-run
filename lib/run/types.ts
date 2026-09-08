@@ -324,7 +324,8 @@ export interface BoardState {
       | 'hourglass'
       | 'scarecrow'
       | 'gauntlet'
-      | 'panic';
+      | 'panic'
+      | 'chequer';
     from: string;
     to: string;
     id: number;
@@ -411,6 +412,17 @@ export interface BoardState {
    * inside his room, it never opens it.
    */
   panicTurns?: number;
+  /**
+   * Chequer (2026-09-08) — set to 1 by a cast Chequer and cleared at the end
+   * of the enemy phase it covers. While > 0 the king MAY NOT SET FOOT ON HIS
+   * OWN COLOUR: every diagonal step is illegal to him, so for one enemy phase
+   * he moves like a rook. It never compels a step (that is Panic) and never
+   * stops one (that is Freeze) — it takes away a DIRECTION, and the four
+   * squares it leaves him are all the opposite colour to the one he stands on.
+   * Applies to the flee, the Gauntlet answer and the Panic step alike (see
+   * `chequered` / `kingFleeMove` in pawn-ai.ts).
+   */
+  chequerTurns?: number;
   /**
    * Why the current `pendingOffer` exists. 'tempo' (default) = the meter
    * filled; 'level' = the run grants a free pick at level start (Rookie's

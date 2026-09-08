@@ -21,6 +21,7 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   scarecrow: 'smoke-1.webp',
   gauntlet: 'become-king-2.webp',
   panic: 'freeze-ray-2.webp',
+  chequer: 'boulder-1.webp',
 };
 
 export function artFile(id: AbilityId): string {

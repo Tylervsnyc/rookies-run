@@ -22,6 +22,7 @@ import {
   canMoveAllyAt,
   canTurnHourglass,
   canPanic,
+  canChequer,
   canThrowGauntlet,
   controlledAllies,
   controlledAllyLegalMoves,
@@ -632,6 +633,13 @@ function candidatesForAbility(
       // pawn-ai runs `kingPanicMove` inside them, so the bot sees where the
       // king is pushed and scores the position that makes.
       if (canPanic(state)) out.push({ kind: 'activate-ability', abilityId: 'panic' });
+      return out;
+    case 'chequer':
+      // One candidate. The forbidden colour is modelled by the rollouts: the
+      // real pawn-ai runs `chequerForbids` inside every one of the king's
+      // three move modes, so the bot sees the flight set collapse to one
+      // colour and scores the position that makes.
+      if (canChequer(state)) out.push({ kind: 'activate-ability', abilityId: 'chequer' });
       return out;
     case 'scarecrow': {
       // Empty squares with an OPEN rook line to the king (at most 14) plus

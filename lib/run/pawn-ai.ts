@@ -240,6 +240,7 @@ function kingFleeMove(
   for (const [df, dr] of QUEEN_DIRS) {
     const c: Coord = { file: king.file + df, rank: king.rank + dr };
     if (!inBounds(c)) continue;
+    if (chequerForbids(state, king, c)) continue; // no diagonals while chequered
     if (pen && !pen.has(toSquare(c))) continue; // never leaves his pen
     if (isHazard(state.hazards, c)) continue;
     if (isVacated(vacated, c)) continue;
@@ -325,6 +326,7 @@ function kingAnswerMove(
   for (const [df, dr] of QUEEN_DIRS) {
     const c: Coord = { file: king.file + df, rank: king.rank + dr };
     if (!inBounds(c)) continue;
+    if (chequerForbids(state, king, c)) continue; // no diagonals while chequered
     if (chebyshev(c, state.rookie) >= here) continue;
     if (isHazard(state.hazards, c)) continue;
     if (isVacated(vacated, c)) continue;
@@ -386,6 +388,7 @@ function kingPanicMove(
   for (const [df, dr] of QUEEN_DIRS) {
     const c: Coord = { file: king.file + df, rank: king.rank + dr };
     if (!inBounds(c)) continue;
+    if (chequerForbids(state, king, c)) continue; // no diagonals while chequered
     if (pen && !pen.has(toSquare(c))) continue; // the room still holds him
     if (isHazard(state.hazards, c)) continue;
     if (isVacated(vacated, c)) continue;
@@ -412,6 +415,25 @@ function kingPanicMove(
   let bestDist = -1;
   for (const c of pool) bestDist = Math.max(bestDist, chebyshev(c, state.rookie));
   return pickRandom(pool.filter((c) => chebyshev(c, state.rookie) === bestDist), rng);
+}
+
+/**
+ * Chequer — the FORBIDDEN DIRECTION. While `chequerTurns > 0` the king may not
+ * set foot on a square of his own colour, and a king's four diagonal
+ * neighbours are always exactly that. So for one enemy phase he moves like a
+ * rook: four orthogonal steps, every one of them the opposite colour to the
+ * square he is standing on.
+ *
+ * It is a filter on the CANDIDATE squares, shared by all three of his move
+ * modes (the flee, the Gauntlet answer, the Panic step) — the card takes the
+ * direction away from him however he came to be moving. It never compels a
+ * step and never prevents one: walled in with all four orthogonals gone, he
+ * simply stands, and a chequer thrown into a room with a spare orthogonal
+ * square has bought one sidestep and spent a card.
+ */
+function chequerForbids(state: BoardState, king: EnemyPiece, c: Coord): boolean {
+  if ((state.chequerTurns ?? 0) <= 0) return false;
+  return (c.file + c.rank) % 2 === (king.file + king.rank) % 2;
 }
 
 function kingReactsToAllies(state: BoardState): boolean {
@@ -1308,6 +1330,12 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
     // Like the taunt it holds through a glass-turn — the glass buys the phase.
     const panicPatch =
       !glass && (s.panicTurns ?? 0) > 0 ? { panicTurns: 0 } : {};
+    // Chequer covers exactly ONE enemy phase, and unlike the panic it is NOT
+    // spent by his first step — he re-checks after every guard move and the
+    // forbidden colour has to still be forbidden. So it is cleared here and
+    // only here. Like the taunt it holds through a glass-turn.
+    const chequerPatch =
+      !glass && (s.chequerTurns ?? 0) > 0 ? { chequerTurns: 0 } : {};
     // Scarecrow: the straw stands one enemy turn fewer; gone at 0.
     const scarecrowPatch = !glass && s.scarecrow
       ? { scarecrow: s.scarecrow.turnsLeft > 1 ? { ...s.scarecrow, turnsLeft: s.scarecrow.turnsLeft - 1 } : undefined }
@@ -1337,6 +1365,7 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       ...smokePatch,
       ...tauntPatch,
       ...panicPatch,
+      ...chequerPatch,
       ...scarecrowPatch,
       squireMovedThisTurn: glass ? s.squireMovedThisTurn : false,
       glassTurn: undefined,

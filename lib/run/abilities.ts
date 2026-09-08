@@ -74,7 +74,17 @@ export type AbilityId =
   // which one he wants (scarecrow, gauntlet). This one takes away the option
   // of USING NONE: for one enemy phase he must leave the square he is on,
   // and if every step is covered he takes the least-bad one anyway.
-  | 'panic';
+  | 'panic'
+  // 2026-09-08 (testing). The catalogue's first card that takes away a
+  // DIRECTION. Freeze stops him moving, Snare holds him, Boulder deletes the
+  // square, Coup moves him, Panic compels a step, Gauntlet changes the one he
+  // wants — every one of them argues about WHICH squares or WHETHER he moves.
+  // Chequer argues about HOW: for one enemy phase he may not set foot on his
+  // own colour, so every diagonal step is gone and he moves like a rook. The
+  // four squares it leaves him are all the opposite colour to his own, which
+  // is the whole reason it has a partner (a light-squared body covers exactly
+  // those four, and can never touch a king who stands on dark).
+  | 'chequer';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -356,6 +366,13 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Instant · Royal',
     description: 'He cannot keep still. This turn the king must leave the square he is standing on — even if every square is worse.',
   },
+  chequer: {
+    id: 'chequer',
+    name: 'Chequer',
+    activation: 'instant',
+    typeLine: 'Instant · Royal',
+    description: 'Chequer the floor. Until your next turn the king cannot set foot on his own colour — he moves like a rook, or not at all.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -535,6 +552,15 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier <= 2) return 1;
       if (tier <= 4) return 2;
       return 3;
+    case 'chequer':
+      // 1/1/2/2/3 — QUANTITY ONLY, for Panic's reason. A duration ladder on a
+      // card that halves his compass would be a second sealed enemy phase,
+      // which is the classic gate-breaker (run-level-design.md, "the tier that
+      // grants a SECOND USE"). Extra uses are capped per run by
+      // abilityTierCaps.
+      if (tier <= 2) return 1;
+      if (tier <= 4) return 2;
+      return 3;
   }
 }
 
@@ -622,6 +648,7 @@ const HOW: Record<AbilityId, string> = {
   scarecrow: 'Tap card, then tap an empty square. They hunt the straw. He runs from it.',
   gauntlet: 'Tap card. He steps out of his room toward you, once a turn. He will not walk onto a line he can see.',
   panic: 'Tap card. On their turn he must step off his square. He picks the safest one left — take the safe ones away first.',
+  chequer: 'Tap card. Until your next turn he cannot step diagonally — only the four squares of the other colour. Cover those and he has nowhere.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -838,6 +865,10 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'He must leave the square he stands on. Three panics a level.';
       if (tier >= 3) return 'He must leave the square he stands on. Twice a level.';
       return 'He must leave the square he stands on, this turn. He takes the safest square left — and if none is safe, the least bad.';
+    case 'chequer':
+      if (tier === 5) return 'He cannot step onto his own colour. Three times a level.';
+      if (tier >= 3) return 'He cannot step onto his own colour. Twice a level.';
+      return 'Until your next turn he cannot step onto his own colour: no diagonals, only the four squares of the other colour.';
   }
 }
 
@@ -1051,6 +1082,10 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'He must step off his square. 3/level.';
       if (tier >= 3) return 'He must step off his square. 2/level.';
       return 'He must step off his square. 1/level.';
+    case 'chequer':
+      if (tier === 5) return 'No diagonal steps for him. 3/level.';
+      if (tier >= 3) return 'No diagonal steps for him. 2/level.';
+      return 'No diagonal steps for him. 1/level.';
   }
 }
 
@@ -1278,6 +1313,12 @@ export const UPGRADE_NOTES: Record<
     4: '',
     5: '',
   },
+  chequer: {
+    2: '',
+    3: '',
+    4: '',
+    5: '',
+  },
 };
 
 /**
@@ -1366,6 +1407,8 @@ const NO_TARGET_ABILITIES: ReadonlySet<AbilityId> = new Set<AbilityId>([
   'gauntlet',
   // Panic is the same: a fleeing king is its only requirement.
   'panic',
+  // Chequer likewise — it only ever needs a king with squares to step to.
+  'chequer',
 ]);
 
 /** Cards whose target must be MADE by another card (rule 2 above). */
@@ -1915,6 +1958,9 @@ export function applyAbilityActivate(
   }
   if (abilityId === 'panic') {
     return applyPanic(state);
+  }
+  if (abilityId === 'chequer') {
+    return applyChequer(state);
   }
 
   // Targeted abilities pick an enemy as their second tap — except Boulder
@@ -3020,6 +3066,55 @@ function applyPanic(state: BoardState): BoardState {
     activeAbility: null,
     lastAbilityFx: {
       kind: 'panic',
+      from: toSquare(state.rookie),
+      to: toSquare(king),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Chequer (2026-09-08, testing) — the catalogue's first card that takes away a
+// DIRECTION rather than a square, a turn, or a preference.
+//
+// Every other card that touches the king argues about WHICH square he ends on
+// (Boulder and Snare delete one, Coup puts him on one, Scarecrow and Gauntlet
+// change the one he wants) or about WHETHER he moves at all (Freeze stops him,
+// Panic compels him). Chequer argues about HOW he gets there: for one enemy
+// phase he may not set foot on a square of his own colour, so all four
+// diagonal steps are illegal and he moves like a rook.
+//
+// The geometry is the point, and it is exact: a king's four DIAGONAL
+// neighbours are always his own colour and his four ORTHOGONAL neighbours are
+// always the other one. So a chequer does not shrink his room by a random
+// half — it hands him a flight set that is entirely one colour, and one
+// light-squared body covers all four of them at once. Which is why the card
+// has a partner and cannot be a solvent: alone it leaves him four squares.
+// ---------------------------------------------------------------------------
+
+/** True when Chequer may be cast right now. */
+export function canChequer(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'chequer');
+  if (!owned || owned.usesLeftThisLevel === 0) return false;
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.activeAbility || state.pendingOffer) return false;
+  if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return false;
+  return state.pieces.some((p) => p.type === 'king');
+}
+
+function applyChequer(state: BoardState): BoardState {
+  if (!canChequer(state)) return state;
+  const king = state.pieces.find((p) => p.type === 'king')!;
+  return {
+    ...state,
+    // Always exactly the next enemy phase, at every tier — and it holds for
+    // the WHOLE phase, so the re-checks after each guard move see it too.
+    // Cleared in endTurn.
+    chequerTurns: 1,
+    abilities: decrementUse(state.abilities, 'chequer'),
+    activeAbility: null,
+    lastAbilityFx: {
+      kind: 'chequer',
       from: toSquare(state.rookie),
       to: toSquare(king),
       id: Date.now() + Math.random(),
