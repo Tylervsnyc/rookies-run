@@ -2505,7 +2505,15 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transform: 'scale(0.88)',
+              // The Dragon's hand-authored mask is 18 blocks wide where the
+              // widest normal piece (knight / queen / king) is 16, so at the
+              // shared 0.88 she overhung her square (Tyler, 2026-09-08: "the
+              // dragon is a little outside the square"). 0.88 x 16/18 lands her
+              // footprint exactly on the rainbow queen's. Scaling the whole
+              // sprite rather than her blockSize keeps the block grid on whole
+              // pixels — fractional block math is what made the Breathing Rook
+              // spacing uneven, and it would show worse here at blockSize 3.
+              transform: `scale(${a.source === 'dragon' ? 0.78 : 0.88})`,
             }}
           >
             {/* The Dragon has her OWN sprite — a hand-authored block dragon,

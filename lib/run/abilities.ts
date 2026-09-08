@@ -806,7 +806,7 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       return 'A queen you control for 2 turns. Make them count.';
     case 'dragon':
       if (tier === 5)
-        return 'A dragon for 5 turns — queen moves plus knight moves. Summon her anywhere within 3 squares.';
+        return 'A dragon for 5 turns — queen moves plus knight moves. Two charges.';
       if (tier === 4)
         return 'A dragon for 4 turns — queen moves plus knight moves. Her captures stun the king 2 turns.';
       if (tier === 3) return 'A dragon you control for 4 turns. Queen moves plus knight moves.';
@@ -1019,7 +1019,7 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Your queen, 3 turns. 1 charge.';
       return 'Your queen, 2 turns. 1 charge.';
     case 'dragon':
-      if (tier === 5) return 'Your dragon, 5 turns, drops in range 3. 2 charges.';
+      if (tier === 5) return 'Your dragon, 5 turns. 2 charges.';
       if (tier === 4) return 'Your dragon, 4 turns. Captures stun king 2. 1 charge.';
       if (tier === 3) return 'Your dragon, 4 turns. 1 charge.';
       if (tier === 2) return 'Your dragon, 3 turns. 1 charge.';
@@ -1251,7 +1251,7 @@ export const UPGRADE_NOTES: Record<
     2: 'On the board 2 turns → 3',
     3: '3 turns → 4',
     4: 'Her captures stun the king 2 turns, not 1',
-    5: '4 turns → 5; summon her anywhere within 3 squares',
+    5: '4 turns → 5; a second charge',
   },
   vanguard: {
     2: 'Drop range 2 → 3',
@@ -3871,21 +3871,13 @@ export function summonSpawnSquares(state: BoardState, id: AbilityId): Coord[] {
     }
     return out;
   }
-  // Dragon T5: summon her anywhere within 3 squares of Rookie (Chebyshev).
-  // T1-T4 place adjacent like the rest of the family (loop below).
-  if (id === 'dragon') {
-    const owned = state.abilities.find((a) => a.id === 'dragon');
-    if ((owned?.tier ?? 1) === 5) {
-      for (let f = 1; f <= 8; f++) {
-        for (let r = 1; r <= 8; r++) {
-          const d = Math.max(Math.abs(f - state.rookie.file), Math.abs(r - state.rookie.rank));
-          if (d > 3) continue;
-          if (squareIsFreeForSummon(state, f, r)) out.push({ file: f, rank: r });
-        }
-      }
-      return out;
-    }
-  }
+  // THE DRAGON ALWAYS LANDS BESIDE YOU — every tier, no exception (Tyler,
+  // 2026-09-08: "you should only deploy the dragon right next to you, it's
+  // too OP bro"). T5 used to drop her anywhere within 3 squares, which let
+  // the strongest piece in the game appear next to the king from across the
+  // room with nothing spent to get there. She keeps her T5 upgrades — 5 turns
+  // and a second charge — and now has to be walked into range like everyone
+  // else's summon.
   for (const [df, dr] of ALLY_QUEEN_DIRS) {
     const f = state.rookie.file + df;
     const r = state.rookie.rank + dr;
