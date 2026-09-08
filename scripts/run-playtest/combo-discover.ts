@@ -33,7 +33,11 @@
  * Given a 4-card KIT K, a level is combo-gated under K when:
  *   - no-ability wins <= --none-max                 (default 8%)
  *   - EVERY single card in K alone <= --single-max  (default 8%)
- *   - at least one PAIR drawn from K wins >= --pair-min (default 60%)
+ *   - at least --routes-min PAIRS drawn from K win inside --pair-min..--pair-max
+ *     (default 60-80%). The CEILING was added 2026-09-07: the old rule was a
+ *     floor with no ceiling, which proved the combo was REQUIRED but never that
+ *     it was HARD — The Slash, The Stacks and The Parapet all shipped at
+ *     100/100/100/100 and Tyler read them, correctly, as too easy.
  * A level gated under MANY kits is more valuable, not less — it can ship in
  * several runs — so `kitsGating` is recorded on every entry. Within one kit,
  * fewer winning pairs is better (a unique answer is the ideal).
@@ -119,6 +123,12 @@
  *                                 subject (use for shipped-run ground truth)
  *     --screen-trials=N (10) --pair-trials=N (10) --confirm-trials=N (30)
  *     --screen-kill=P (20) --none-max=P (8) --single-max=P (8) --pair-min=P (60)
+ *     --pair-max=P (80)   the CEILING — a pair above this is not a gate, it is a
+ *                         free level once you hold the two cards (Tyler, 2026-09-07)
+ *     --routes-min=N (1)  how many DISTINCT in-band pairs a kit must have. 2+ is
+ *                         what Tyler asked for ("different ways to use it");
+ *                         left at 1 by default so the nightly does not silently
+ *                         stop producing while the yield is unmeasured.
  *     --tier=T5|T6 (T5)  --realistic (default on; --realistic=off pins T1)
  *     --pure-check                also measure all 23 singles on each hit, to
  *                                 flag the rare "pure" level (23 extra cells)
@@ -768,7 +778,7 @@ interface Opts {
   kitSize: number;
   maxKits: number;
   screenTrials: number; pairTrials: number; confirmTrials: number;
-  screenKill: number; noneMax: number; singleMax: number; pairMin: number;
+  screenKill: number; noneMax: number; singleMax: number; pairMin: number; pairMax: number; routesMin: number;
   tier: string; realistic: boolean; jobs: number;
   scoreAll: boolean; pureCheck: boolean; limit: number; minutes: number; fresh: boolean;
 }
@@ -799,6 +809,8 @@ function readOpts(): Opts {
     noneMax: num('none-max', 8),
     singleMax: num('single-max', 8),
     pairMin: num('pair-min', 60),
+    pairMax: num('pair-max', 80),
+    routesMin: num('routes-min', 1),
     tier: arg('tier', 'T5')!,
     realistic: r !== 'off' && r !== 'false',
     jobs: defaultJobs(num('jobs', 8)),
@@ -859,7 +871,7 @@ async function main(): Promise<void> {
 
   console.error(
     `[combo-discover] ${o.mode} mode · ${subjects.length} subjects (${lintFails} lint-failed, ${skipped} already in the ledger)\n` +
-    `  KIT-RELATIVE gate: none<=${o.noneMax}% · every card in the kit<=${o.singleMax}% · >=1 pair in the kit>=${o.pairMin}%\n` +
+    `  KIT-RELATIVE gate: none<=${o.noneMax}% · every card in the kit<=${o.singleMax}% · >=${o.routesMin} pair(s) in the kit inside ${o.pairMin}-${o.pairMax}%\n` +
     `  ${o.maxKits} kits of ${o.kitSize} per subject, from ${HYP.source}${HYP.anti.size ? `, ${HYP.anti.size} anti-pairs avoided` : ''}\n` +
     `  pool ${POOL.length} cards${EXCLUDED.size ? ` (excluded ${[...EXCLUDED].join(',')})` : ''} · solvent probe: ${SOLVENTS.join(', ')}\n` +
     `  funnel: none@${o.screenTrials} → singles@${o.screenTrials} → pairs@${o.pairTrials} → confirm@${o.confirmTrials} · bot ${o.tier}${o.realistic ? ', realistic tiers' : ', T1'} · jobs ${o.jobs}` +
@@ -924,13 +936,13 @@ async function main(): Promise<void> {
       const gatedRaw: GatedKit[] = liveKits
         .map((k) => ({
           kit: k.kit, anchors: k.anchors, reason: k.reason,
-          winningPairs: pairsOf(k.kit).filter((p) => matrix[p].winPct >= o.pairMin).map((p) => ({ pair: p, winPct: matrix[p].winPct })),
+          winningPairs: pairsOf(k.kit).filter((p) => matrix[p].winPct >= o.pairMin && matrix[p].winPct <= o.pairMax).map((p) => ({ pair: p, winPct: matrix[p].winPct })),
         }))
-        .filter((g) => g.winningPairs.length > 0);
+        .filter((g) => g.winningPairs.length >= o.routesMin);
       if (!gatedRaw.length) {
         if (o.scoreAll) writeScan(s.key, { id: s.key, title: s.title, slot: s.slot, verdict: 'no-pair', solvents, matrix });
-        record({ key: s.key, date: today(), verdict: 'no-pair', slot: s.slot, detail: `${pairs.length} pairs tested, none >= ${o.pairMin}%`, kitsTested: kits.length, kitsGating: 0, pairsTested: pairs, solvents });
-        console.error(`  ✗ ${label} — no pair cleared ${o.pairMin}% (${pairs.length} tested)`);
+        record({ key: s.key, date: today(), verdict: 'no-pair', slot: s.slot, detail: `${pairs.length} pairs tested, fewer than ${o.routesMin} inside ${o.pairMin}-${o.pairMax}%`, kitsTested: kits.length, kitsGating: 0, pairsTested: pairs, solvents });
+        console.error(`  ✗ ${label} — fewer than ${o.routesMin} pair(s) inside ${o.pairMin}-${o.pairMax}% (${pairs.length} tested)`);
         continue;
       }
 
@@ -940,8 +952,8 @@ async function main(): Promise<void> {
       await meas(['none', ...gatingCards, ...hitPairs], o.confirmTrials);
       const gated: GatedKit[] = gatedRaw
         .filter((g) => g.kit.every((c) => matrix[c].winPct <= o.singleMax))
-        .map((g) => ({ ...g, winningPairs: g.winningPairs.filter((w) => matrix[w.pair].winPct >= o.pairMin).map((w) => ({ pair: w.pair, winPct: matrix[w.pair].winPct })) }))
-        .filter((g) => g.winningPairs.length > 0);
+        .map((g) => ({ ...g, winningPairs: g.winningPairs.filter((w) => matrix[w.pair].winPct >= o.pairMin && matrix[w.pair].winPct <= o.pairMax).map((w) => ({ pair: w.pair, winPct: matrix[w.pair].winPct })) }))
+        .filter((g) => g.winningPairs.length >= o.routesMin);
       if (matrix.none.winPct > o.noneMax || !gated.length) {
         const why = matrix.none.winPct > o.noneMax ? `none ${matrix.none.winPct}%` : 'no kit held its gate at confirm trials';
         if (o.scoreAll) writeScan(s.key, { id: s.key, title: s.title, slot: s.slot, verdict: 'died-confirm', why, solvents, matrix });
