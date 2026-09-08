@@ -1,0 +1,4813 @@
+{
+ "generated": "2026-09-08T00:22:09.391Z",
+ "n": 60,
+ "tier": "T5",
+ "note": "Full runs L1->L10 with the shipped difficulty knobs and the mode's own retry rule. Bot tier T5. rookie retries = harness cap 5 (mode is Infinity).",
+ "results": [
+  {
+   "runId": "crucible",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 280
+  },
+  {
+   "runId": "crucible",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 175
+  },
+  {
+   "runId": "crucible",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 178
+  },
+  {
+   "runId": "crucible",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 171
+  },
+  {
+   "runId": "revenge-1",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 314
+  },
+  {
+   "runId": "revenge-1",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 229
+  },
+  {
+   "runId": "revenge-1",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 2,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "10": 2
+   },
+   "seconds": 246
+  },
+  {
+   "runId": "revenge-1",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 59,
+   "fullClearRate": 98,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "captured": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "10": 1
+   },
+   "seconds": 244
+  },
+  {
+   "runId": "revenge-10",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 389
+  },
+  {
+   "runId": "revenge-10",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 188
+  },
+  {
+   "runId": "revenge-10",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 187
+  },
+  {
+   "runId": "revenge-10",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 59,
+   "fullClearRate": 98,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "dead-end": 1
+     }
+    },
+    {
+     "level": 9,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "8": 1
+   },
+   "seconds": 178
+  },
+  {
+   "runId": "revenge-11",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 222
+  },
+  {
+   "runId": "revenge-11",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 2,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "8": 2
+   },
+   "seconds": 161
+  },
+  {
+   "runId": "revenge-11",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 1,
+   "fullClears": 59,
+   "fullClearRate": 98,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "move-limit": 1
+     }
+    },
+    {
+     "level": 3,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "2": 2
+   },
+   "seconds": 172
+  },
+  {
+   "runId": "revenge-11",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 57,
+   "fullClearRate": 95,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "move-limit": 1
+     }
+    },
+    {
+     "level": 3,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 59,
+     "cleared": 57,
+     "clearRate": 97,
+     "losses": {
+      "captured": 2
+     }
+    },
+    {
+     "level": 9,
+     "reached": 57,
+     "cleared": 57,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 57,
+     "cleared": 57,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "2": 1,
+    "8": 2
+   },
+   "seconds": 168
+  },
+  {
+   "runId": "revenge-12",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 145,
+   "fullClears": 46,
+   "fullClearRate": 77,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 46,
+     "clearRate": 77,
+     "losses": {
+      "move-limit": 14
+     }
+    },
+    {
+     "level": 4,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 46,
+     "cleared": 46,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "3": 108,
+    "5": 3,
+    "6": 33,
+    "7": 12,
+    "8": 1,
+    "9": 2
+   },
+   "seconds": 259
+  },
+  {
+   "runId": "revenge-12",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 64,
+   "fullClears": 22,
+   "fullClearRate": 37,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 36,
+     "clearRate": 60,
+     "losses": {
+      "move-limit": 24
+     }
+    },
+    {
+     "level": 4,
+     "reached": 36,
+     "cleared": 36,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 36,
+     "cleared": 36,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 36,
+     "cleared": 27,
+     "clearRate": 75,
+     "losses": {
+      "captured": 1,
+      "dead-end": 4,
+      "move-limit": 4
+     }
+    },
+    {
+     "level": 7,
+     "reached": 27,
+     "cleared": 25,
+     "clearRate": 93,
+     "losses": {
+      "dead-end": 2
+     }
+    },
+    {
+     "level": 8,
+     "reached": 25,
+     "cleared": 25,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 25,
+     "cleared": 23,
+     "clearRate": 92,
+     "losses": {
+      "move-limit": 1,
+      "dead-end": 1
+     }
+    },
+    {
+     "level": 10,
+     "reached": 23,
+     "cleared": 22,
+     "clearRate": 96,
+     "losses": {
+      "move-limit": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "3": 52,
+    "6": 27,
+    "7": 10,
+    "9": 10,
+    "10": 3
+   },
+   "seconds": 116
+  },
+  {
+   "runId": "revenge-12",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 55,
+   "fullClears": 21,
+   "fullClearRate": 35,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 36,
+     "clearRate": 60,
+     "losses": {
+      "move-limit": 24
+     }
+    },
+    {
+     "level": 4,
+     "reached": 36,
+     "cleared": 36,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 36,
+     "cleared": 35,
+     "clearRate": 97,
+     "losses": {
+      "dead-end": 1
+     }
+    },
+    {
+     "level": 6,
+     "reached": 35,
+     "cleared": 23,
+     "clearRate": 66,
+     "losses": {
+      "move-limit": 6,
+      "captured": 1,
+      "dead-end": 5
+     }
+    },
+    {
+     "level": 7,
+     "reached": 23,
+     "cleared": 23,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 23,
+     "cleared": 22,
+     "clearRate": 96,
+     "losses": {
+      "move-limit": 1
+     }
+    },
+    {
+     "level": 9,
+     "reached": 22,
+     "cleared": 22,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 22,
+     "cleared": 21,
+     "clearRate": 95,
+     "losses": {
+      "move-limit": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "3": 52,
+    "5": 2,
+    "6": 28,
+    "7": 5,
+    "8": 3,
+    "9": 2,
+    "10": 2
+   },
+   "seconds": 89
+  },
+  {
+   "runId": "revenge-12",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 14,
+   "fullClearRate": 23,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 44,
+     "clearRate": 73,
+     "losses": {
+      "move-limit": 16
+     }
+    },
+    {
+     "level": 4,
+     "reached": 44,
+     "cleared": 44,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 44,
+     "cleared": 40,
+     "clearRate": 91,
+     "losses": {
+      "move-limit": 4
+     }
+    },
+    {
+     "level": 6,
+     "reached": 40,
+     "cleared": 21,
+     "clearRate": 53,
+     "losses": {
+      "move-limit": 9,
+      "dead-end": 7,
+      "captured": 3
+     }
+    },
+    {
+     "level": 7,
+     "reached": 21,
+     "cleared": 17,
+     "clearRate": 81,
+     "losses": {
+      "dead-end": 2,
+      "move-limit": 2
+     }
+    },
+    {
+     "level": 8,
+     "reached": 17,
+     "cleared": 16,
+     "clearRate": 94,
+     "losses": {
+      "dead-end": 1
+     }
+    },
+    {
+     "level": 9,
+     "reached": 16,
+     "cleared": 15,
+     "clearRate": 94,
+     "losses": {
+      "dead-end": 1
+     }
+    },
+    {
+     "level": 10,
+     "reached": 15,
+     "cleared": 14,
+     "clearRate": 93,
+     "losses": {
+      "move-limit": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "3": 16,
+    "5": 4,
+    "6": 19,
+    "7": 4,
+    "8": 1,
+    "9": 1,
+    "10": 1
+   },
+   "seconds": 72
+  },
+  {
+   "runId": "revenge-13",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 61,
+   "fullClears": 21,
+   "fullClearRate": 35,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 38,
+     "clearRate": 63,
+     "losses": {
+      "move-limit": 22
+     }
+    },
+    {
+     "level": 4,
+     "reached": 38,
+     "cleared": 38,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 38,
+     "cleared": 38,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 38,
+     "cleared": 38,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 38,
+     "cleared": 27,
+     "clearRate": 71,
+     "losses": {
+      "dead-end": 6,
+      "move-limit": 5
+     }
+    },
+    {
+     "level": 8,
+     "reached": 27,
+     "cleared": 21,
+     "clearRate": 78,
+     "losses": {
+      "dead-end": 2,
+      "move-limit": 4
+     }
+    },
+    {
+     "level": 9,
+     "reached": 21,
+     "cleared": 21,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 21,
+     "cleared": 21,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "3": 60,
+    "7": 25,
+    "8": 13,
+    "10": 2
+   },
+   "seconds": 720
+  },
+  {
+   "runId": "revenge-13",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 71,
+   "fullClears": 4,
+   "fullClearRate": 7,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 19,
+     "clearRate": 32,
+     "losses": {
+      "move-limit": 41
+     }
+    },
+    {
+     "level": 3,
+     "reached": 19,
+     "cleared": 10,
+     "clearRate": 53,
+     "losses": {
+      "move-limit": 9
+     }
+    },
+    {
+     "level": 4,
+     "reached": 10,
+     "cleared": 10,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 10,
+     "cleared": 10,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 10,
+     "cleared": 10,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 10,
+     "cleared": 7,
+     "clearRate": 70,
+     "losses": {
+      "dead-end": 1,
+      "move-limit": 2
+     }
+    },
+    {
+     "level": 8,
+     "reached": 7,
+     "cleared": 6,
+     "clearRate": 86,
+     "losses": {
+      "move-limit": 1
+     }
+    },
+    {
+     "level": 9,
+     "reached": 6,
+     "cleared": 6,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 6,
+     "cleared": 4,
+     "clearRate": 67,
+     "losses": {
+      "dead-end": 1,
+      "move-limit": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "2": 92,
+    "3": 19,
+    "6": 1,
+    "7": 6,
+    "8": 2,
+    "9": 2,
+    "10": 5
+   },
+   "seconds": 422
+  },
+  {
+   "runId": "revenge-13",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 3,
+   "fullClearRate": 5,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 9,
+     "clearRate": 15,
+     "losses": {
+      "move-limit": 51
+     }
+    },
+    {
+     "level": 3,
+     "reached": 9,
+     "cleared": 6,
+     "clearRate": 67,
+     "losses": {
+      "move-limit": 3
+     }
+    },
+    {
+     "level": 4,
+     "reached": 6,
+     "cleared": 6,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 6,
+     "cleared": 6,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 6,
+     "cleared": 6,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 6,
+     "cleared": 5,
+     "clearRate": 83,
+     "losses": {
+      "move-limit": 1
+     }
+    },
+    {
+     "level": 8,
+     "reached": 5,
+     "cleared": 5,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 5,
+     "cleared": 4,
+     "clearRate": 80,
+     "losses": {
+      "move-limit": 1
+     }
+    },
+    {
+     "level": 10,
+     "reached": 4,
+     "cleared": 3,
+     "clearRate": 75,
+     "losses": {
+      "dead-end": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "2": 51,
+    "3": 3,
+    "7": 1,
+    "9": 1,
+    "10": 1
+   },
+   "seconds": 210
+  },
+  {
+   "runId": "revenge-2",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 601
+  },
+  {
+   "runId": "revenge-2",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 331
+  },
+  {
+   "runId": "revenge-2",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 341
+  },
+  {
+   "runId": "revenge-2",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 330
+  },
+  {
+   "runId": "revenge-3",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 378
+  },
+  {
+   "runId": "revenge-3",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 236
+  },
+  {
+   "runId": "revenge-3",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 1,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "9": 1
+   },
+   "seconds": 286
+  },
+  {
+   "runId": "revenge-3",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 58,
+   "fullClearRate": 97,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "captured": 1
+     }
+    },
+    {
+     "level": 10,
+     "reached": 59,
+     "cleared": 58,
+     "clearRate": 98,
+     "losses": {
+      "captured": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "9": 1,
+    "10": 1
+   },
+   "seconds": 288
+  },
+  {
+   "runId": "revenge-4",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 2,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "10": 2
+   },
+   "seconds": 512
+  },
+  {
+   "runId": "revenge-4",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 2,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "9": 1,
+    "10": 1
+   },
+   "seconds": 216
+  },
+  {
+   "runId": "revenge-4",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 4,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "9": 4
+   },
+   "seconds": 252
+  },
+  {
+   "runId": "revenge-4",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 56,
+   "fullClearRate": 93,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 58,
+     "clearRate": 97,
+     "losses": {
+      "captured": 2
+     }
+    },
+    {
+     "level": 10,
+     "reached": 58,
+     "cleared": 56,
+     "clearRate": 97,
+     "losses": {
+      "move-limit": 2
+     }
+    }
+   ],
+   "deathsAt": {
+    "9": 2,
+    "10": 2
+   },
+   "seconds": 255
+  },
+  {
+   "runId": "revenge-5",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 341
+  },
+  {
+   "runId": "revenge-5",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 212
+  },
+  {
+   "runId": "revenge-5",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 1,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "8": 1
+   },
+   "seconds": 210
+  },
+  {
+   "runId": "revenge-5",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 267
+  },
+  {
+   "runId": "revenge-6",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 397
+  },
+  {
+   "runId": "revenge-6",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 204
+  },
+  {
+   "runId": "revenge-6",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 205
+  },
+  {
+   "runId": "revenge-6",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 261
+  },
+  {
+   "runId": "revenge-7",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 361
+  },
+  {
+   "runId": "revenge-7",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 203
+  },
+  {
+   "runId": "revenge-7",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 233
+  },
+  {
+   "runId": "revenge-7",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 251
+  },
+  {
+   "runId": "revenge-8",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 2,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "10": 2
+   },
+   "seconds": 287
+  },
+  {
+   "runId": "revenge-8",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 190
+  },
+  {
+   "runId": "revenge-8",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 1,
+   "fullClears": 59,
+   "fullClearRate": 98,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "dead-end": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "10": 2
+   },
+   "seconds": 205
+  },
+  {
+   "runId": "revenge-8",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 58,
+   "fullClearRate": 97,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 58,
+     "clearRate": 97,
+     "losses": {
+      "dead-end": 1,
+      "captured": 1
+     }
+    }
+   ],
+   "deathsAt": {
+    "10": 2
+   },
+   "seconds": 240
+  },
+  {
+   "runId": "revenge-9",
+   "difficulty": "rookie",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 5,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 214
+  },
+  {
+   "runId": "revenge-9",
+   "difficulty": "normal",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 175
+  },
+  {
+   "runId": "revenge-9",
+   "difficulty": "hard",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 1,
+   "retriesUsed": 0,
+   "fullClears": 60,
+   "fullClearRate": 100,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 10,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {},
+   "seconds": 170
+  },
+  {
+   "runId": "revenge-9",
+   "difficulty": "nightmare",
+   "runs": 60,
+   "tier": "T5",
+   "retriesPerLevel": 0,
+   "retriesUsed": 0,
+   "fullClears": 59,
+   "fullClearRate": 98,
+   "rows": [
+    {
+     "level": 1,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 2,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 3,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 4,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 5,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 6,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 7,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 8,
+     "reached": 60,
+     "cleared": 60,
+     "clearRate": 100,
+     "losses": {}
+    },
+    {
+     "level": 9,
+     "reached": 60,
+     "cleared": 59,
+     "clearRate": 98,
+     "losses": {
+      "dead-end": 1
+     }
+    },
+    {
+     "level": 10,
+     "reached": 59,
+     "cleared": 59,
+     "clearRate": 100,
+     "losses": {}
+    }
+   ],
+   "deathsAt": {
+    "9": 1
+   },
+   "seconds": 170
+  }
+ ]
+}
