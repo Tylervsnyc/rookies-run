@@ -46,6 +46,15 @@ export function useProgress(state: BoardState) {
     return res;
   }, []);
 
+  // The cloud merge (lib/run/profile-sync.ts) writes the profile from outside
+  // this reducer; refresh from the cache so merged trophies show without a
+  // reload. Same-reference writes (our own emits) bail out in React.
+  useEffect(() => {
+    const onChange = () => setProfile(readProfile());
+    window.addEventListener('rookies-profile-changed', onChange);
+    return () => window.removeEventListener('rookies-profile-changed', onChange);
+  }, []);
+
   // Session start — once per mount.
   useEffect(() => {
     emit({ type: 'session-start', hour: new Date().getHours(), difficulty: readProfile().difficulty });

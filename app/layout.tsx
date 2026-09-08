@@ -6,6 +6,7 @@ import { AbortErrorSuppressor } from '@/components/providers/ErrorBoundary';
 import { RookieErrorBoundary } from '@/components/ui/RookieErrorBoundary';
 import { NativeSplash } from '@/components/run/NativeSplash';
 import { StatusBarSync } from '@/components/run/StatusBarSync';
+import { ProfileSync } from '@/components/run/ProfileSync';
 
 const TITLE = "Rookie's Revenge";
 const DESCRIPTION =
@@ -85,6 +86,8 @@ export default function RootLayout({
                 deliberately do not come across. */}
             <RookieErrorBoundary>{children}</RookieErrorBoundary>
             <StatusBarSync />
+            {/* Cloud copy of the local profile — inert unless CLOUD_PROFILE. */}
+            <ProfileSync />
           </PostHogProvider>
         </Suspense>
       </body>

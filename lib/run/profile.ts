@@ -120,6 +120,11 @@ function foldLadderUnlocks(p: PlayerProfile): PlayerProfile {
 
 const KNOWN_ABILITIES = new Set<string>(ALL_ABILITY_IDS);
 
+/** Shape-check any JSON blob into a well-formed profile (used by the cloud merge too). */
+export function sanitizeProfile(raw: unknown): PlayerProfile {
+  return sanitize(raw);
+}
+
 function sanitize(raw: unknown): PlayerProfile {
   const p = freshProfile();
   // NOT an early return on a missing/!object raw: the achievement and ladder
@@ -207,6 +212,18 @@ function sanitize(raw: unknown): PlayerProfile {
 
 let cache: PlayerProfile | null = null;
 
+/**
+ * Optional observer of every persisted write — the cloud sync
+ * (lib/run/profile-sync.ts) registers here when a player is signed in and
+ * CLOUD_PROFILE is on. Kept as a plain callback so profile.ts stays free of
+ * Supabase imports and the tsx unit test needs no browser.
+ */
+let writeHook: ((p: PlayerProfile) => void) | null = null;
+
+export function registerProfileWriteHook(fn: ((p: PlayerProfile) => void) | null): void {
+  writeHook = fn;
+}
+
 export function readProfile(): PlayerProfile {
   if (cache) return cache;
   if (typeof window === 'undefined') return freshProfile();
@@ -232,6 +249,135 @@ export function writeProfile(input: PlayerProfile): void {
   } catch {
     /* quota / private mode — keep the in-memory copy */
   }
+  // Cloud push (debounced inside the hook). Never throws into game code.
+  if (writeHook) {
+    try {
+      writeHook(p);
+    } catch {
+      /* sync is best-effort */
+    }
+  }
+}
+
+/**
+ * Feed a profile that arrived from OUTSIDE the reducer (the cloud merge)
+ * through the same sanitizer a localStorage load gets, then persist it.
+ * Returns the sanitized, folded profile that is now the live one.
+ */
+export function replaceProfile(raw: unknown): PlayerProfile {
+  const p = sanitize(raw);
+  writeProfile(p);
+  return p;
+}
+
+// ---------------------------------------------------------------------------
+// Merge — two copies of one player's progress (localStorage vs cloud).
+// Pure; no I/O. See lib/run/profile-sync.ts for when it runs.
+// ---------------------------------------------------------------------------
+
+function mergeAttempt(a: LadderAttempt | undefined, b: LadderAttempt | undefined): LadderAttempt | undefined {
+  if (!a) return b;
+  if (!b) return a;
+  return {
+    cleared: a.cleared || b.cleared,
+    bestLevels: Math.max(a.bestLevels, b.bestLevels),
+    score: Math.max(a.score, b.score),
+  };
+}
+
+/**
+ * Union two profiles so NOTHING is ever lost:
+ *
+ * - `difficulty` — local wins (it is what the player is looking at right now).
+ * - `createdAt` — the earlier of the two.
+ * - `unlockedAbilities` — set union, local order first.
+ * - `achievements` — union; when both have one, the EARLIEST `unlockedAt` and
+ *   `seen` if either side has seen it (never re-toast an old trophy).
+ * - `counters` — per key, the max (they only ever go up on either side).
+ * - `bestByDifficulty` — per difficulty, more levels wins, then higher score.
+ * - `bestStars` — per difficulty per run, the max.
+ * - `ladder` — per rung, aggregate AND per-difficulty entries merged the same
+ *   way `recordLadderResult` does: cleared never regresses, bests are maxes.
+ *
+ * Deterministic and commutative except for the two "local wins" rules
+ * (difficulty, ability order). Neither input is mutated.
+ */
+export function mergeProfiles(local: PlayerProfile, remote: PlayerProfile): PlayerProfile {
+  const abilities = new Set<AbilityId>([...local.unlockedAbilities, ...remote.unlockedAbilities]);
+
+  const achievements: Record<string, EarnedAchievement> = {};
+  for (const id of new Set([...Object.keys(local.achievements), ...Object.keys(remote.achievements)])) {
+    const a = local.achievements[id];
+    const b = remote.achievements[id];
+    if (a && b) {
+      achievements[id] = {
+        unlockedAt: a.unlockedAt <= b.unlockedAt ? a.unlockedAt : b.unlockedAt,
+        seen: a.seen || b.seen,
+      };
+    } else {
+      achievements[id] = { ...(a ?? b)! };
+    }
+  }
+
+  const counters: Counters = { ...local.counters };
+  for (const [k, v] of Object.entries(remote.counters)) {
+    counters[k] = Math.max(counters[k] ?? 0, v);
+  }
+
+  const bestByDifficulty: PlayerProfile['bestByDifficulty'] = { ...local.bestByDifficulty };
+  for (const [d, r] of Object.entries(remote.bestByDifficulty) as Array<[DifficultyId, { levels: number; score: number }]>) {
+    const cur = bestByDifficulty[d];
+    if (!cur || r.levels > cur.levels || (r.levels === cur.levels && r.score > cur.score)) {
+      bestByDifficulty[d] = { ...r };
+    }
+  }
+
+  let bestStars: PlayerProfile['bestStars'] | undefined;
+  if (local.bestStars || remote.bestStars) {
+    bestStars = {};
+    for (const src of [local.bestStars ?? {}, remote.bestStars ?? {}]) {
+      for (const [d, runs] of Object.entries(src)) {
+        const out = (bestStars[d] ??= {});
+        for (const [runId, n] of Object.entries(runs)) out[runId] = Math.max(out[runId] ?? 0, n);
+      }
+    }
+  }
+
+  const ladder: Record<string, LadderRungResult> = {};
+  for (const runId of new Set([...Object.keys(local.ladder), ...Object.keys(remote.ladder)])) {
+    const a = local.ladder[runId];
+    const b = remote.ladder[runId];
+    const agg = mergeAttempt(a, b)!;
+    const next: LadderRungResult = { cleared: agg.cleared, bestLevels: agg.bestLevels, score: agg.score };
+    if (a?.byDifficulty || b?.byDifficulty) {
+      const by: Partial<Record<DifficultyId, LadderAttempt>> = {};
+      const keys = new Set([...Object.keys(a?.byDifficulty ?? {}), ...Object.keys(b?.byDifficulty ?? {})]) as Set<DifficultyId>;
+      for (const d of keys) {
+        const m = mergeAttempt(a?.byDifficulty?.[d], b?.byDifficulty?.[d]);
+        if (m) by[d] = m;
+      }
+      next.byDifficulty = by;
+    }
+    ladder[runId] = next;
+  }
+
+  const merged: PlayerProfile = {
+    v: 1,
+    createdAt: local.createdAt <= remote.createdAt ? local.createdAt : remote.createdAt,
+    difficulty: local.difficulty,
+    unlockedAbilities: [...abilities],
+    achievements,
+    counters,
+    bestByDifficulty,
+    ladder,
+  };
+  if (bestStars && Object.keys(bestStars).length > 0) merged.bestStars = bestStars;
+  return foldLadderUnlocks(merged);
+}
+
+/** Cheap structural equality for "did the merge change anything" checks. */
+export function profilesEqual(a: PlayerProfile, b: PlayerProfile): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 export function updateProfile(fn: (p: PlayerProfile) => PlayerProfile): PlayerProfile {

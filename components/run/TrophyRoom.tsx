@@ -13,6 +13,7 @@ import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { DIFFICULTIES, DIFFICULTY_ORDER } from '@/lib/run/difficulty';
 import { artFile } from './AbilityCard';
 import { TrophyGlyph } from './AchievementToast';
+import { AccountRow } from './AccountRow';
 
 interface Props {
   profile: PlayerProfile;
@@ -87,6 +88,8 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
       {/* Body */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28">
         <div className="max-w-md md:max-w-lg mx-auto w-full flex flex-col gap-5">
+          {/* Sign in / out — the game's one account surface. Null unless ACCOUNTS. */}
+          <AccountRow />
           {onReplayTutorial && (
             <button
               type="button"

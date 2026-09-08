@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@/hooks/useUser';
+import { FEATURE_FLAGS } from '@/lib/config/feature-flags';
 
 type StreakResponse = {
   current: number;
@@ -33,10 +34,12 @@ export function StreakChip() {
   if (loading) return null;
 
   if (!user) {
+    // Entry point is flag-gated: with accounts off there is nowhere to send them.
+    if (!FEATURE_FLAGS.ACCOUNTS) return null;
     return (
       <Link
-        href="/auth/signup?next=/run"
-        className="bg-chess-surface rounded-lg px-2.5 py-1.5 shadow-sm inline-flex items-center gap-1.5 leading-none shrink-0 text-[10px] font-bold text-chess-text-muted active:opacity-70"
+        href="/auth/signup?redirect=/"
+        className="bg-chess-surface rounded-lg px-2.5 py-1.5 shadow-sm inline-flex items-center gap-1.5 leading-none shrink-0 text-[10px] font-bold text-chess-text-muted active:opacity-70 min-h-[44px]"
       >
         Sign in to streak
       </Link>
@@ -51,10 +54,9 @@ export function StreakChip() {
       className="bg-chess-surface rounded-lg px-2.5 py-1.5 shadow-sm inline-flex items-center gap-1 leading-none shrink-0"
       title={completedToday ? "Today's run completed" : "Complete today's run to grow your streak"}
     >
-      <span className="text-sm" aria-hidden>
-        {completedToday ? '🔥' : '·'}
+      <span className="text-sm font-black tabular-nums" style={{ color: completedToday ? '#f5cf5a' : undefined }}>
+        {current}
       </span>
-      <span className="text-sm font-black text-chess-text tabular-nums">{current}</span>
       <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted ml-0.5">
         Streak
       </span>

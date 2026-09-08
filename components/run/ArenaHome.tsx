@@ -15,6 +15,7 @@ import { HANDLE_RE, fetchBoard, getHandle, setHandle, type LeaderboardResponse }
 import { todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
+import { FamilyStrip } from './FamilyStrip';
 import { autoplayMusicOnHome } from '@/lib/music';
 import { ENDLESS_ENABLED, readEndlessBest, ENDLESS_RUN_ID } from '@/lib/run/endless';
 
@@ -656,6 +657,8 @@ export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profi
             <span aria-hidden className="text-[10px] leading-none" style={{ color: GOLD }}>&#9998;</span>
           </button>
         </div>
+        {/* "Your Chess" strip — family streak + rating + sibling apps. Null unless FAMILY_STRIP. */}
+        <div className="mt-2 empty:hidden"><FamilyStrip /></div>
 
         {/* the anchor — square, and never taller than what leaves room for the surround + tab bar */}
         <div className="mt-3 mx-auto w-full" style={{ maxWidth: 'calc(100dvh - 470px)' }}>
