@@ -33,6 +33,9 @@ const ENTRIES = plan.runs as Record<string, PlanEntry>;
 const COVERAGE = (plan as { coverage?: Coverage }).coverage;
 const ENDLESS = (plan as { endless?: Endless }).endless;
 const DIFFICULTY = (plan as { difficulty?: Difficulty }).difficulty;
+const ROUTES = (plan as { routes?: Routes }).routes;
+
+interface Routes { measured: string; headline: string; multiRoute: string[]; template: string; leak: string; broken: string; generalists: string }
 
 interface Difficulty { measured: string; headline: string; detail: string; worst: string }
 
@@ -179,6 +182,26 @@ export default function LadderPlanPage() {
             <p className="mt-2 text-[13px] font-bold leading-snug">{ENDLESS.how}</p>
             <dl className="mt-3 space-y-2 text-[12px]">
               {([['Ramp', ENDLESS.ramp], ['Levels', ENDLESS.pool], ['Where', ENDLESS.where]] as const).map(([k, v]) => (
+                <div key={k}>
+                  <dt className="font-black uppercase tracking-wider text-[10px]" style={{ color: 'rgba(255,255,255,0.55)' }}>{k}</dt>
+                  <dd className="font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.78)' }}>{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        {ROUTES && (
+          <section className="mt-6 rounded-2xl p-4" style={{ background: PANEL, border: `1.5px solid ${EDGE}` }}>
+            <h2 className="text-[18px] font-black leading-none">Different ways to win?</h2>
+            <p className="mt-2 text-[13px] font-black leading-snug" style={{ color: GOLD }}>{ROUTES.headline}</p>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {ROUTES.multiRoute.map((n) => (
+                <span key={n} className="rounded-lg px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(88,204,2,0.22)', border: '1.5px solid rgba(88,204,2,0.55)' }}>{n}</span>
+              ))}
+            </div>
+            <dl className="mt-3 space-y-2 text-[12px]">
+              {([['Template', ROUTES.template], ['The real leak', ROUTES.leak], ['Broken', ROUTES.broken], ['Cards that generalise', ROUTES.generalists]] as const).map(([k, v]) => (
                 <div key={k}>
                   <dt className="font-black uppercase tracking-wider text-[10px]" style={{ color: 'rgba(255,255,255,0.55)' }}>{k}</dt>
                   <dd className="font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.78)' }}>{v}</dd>

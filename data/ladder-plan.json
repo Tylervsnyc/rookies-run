@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-07",
+  "updated": "2026-09-08",
   "band": {
     "min": 60,
     "max": 80
@@ -69,9 +69,9 @@
     "revenge-24": {
       "pair": [
         75,
-        84,
-        69,
-        38
+        91,
+        75,
+        63
       ],
       "was": [
         97,
@@ -199,5 +199,21 @@
     "headline": "The four difficulty modes are decorative on every run you can currently play.",
     "detail": "First all-difficulty measurement ever taken: 60 full runs per run per mode. Eleven of the twelve live broad-kit runs clear 100% on every level at every difficulty INCLUDING Nightmare, with zero deaths. All 13 measured runs have at least one pair of adjacent modes within 8pp. No inversions \u2014 a harder mode is never easier, it just isn't harder.",
     "worst": "revenge-13 is the opposite failure: Hard 7%, Nightmare 5%, effectively unwinnable, and the wall is L2 rather than the finale."
+  },
+  "routes": {
+    "measured": "2026-09-08",
+    "headline": "Six of 22 combo runs have more than one real answer. The rest are not locked so much as leaky.",
+    "multiRoute": [
+      "The Briar",
+      "The Cliff",
+      "The Slash",
+      "The Millstone",
+      "The Alcove",
+      "The Turnstile"
+    ],
+    "template": "The Slash: fifteen pairs clear it, seven inside the band \u2014 by far the most of any run, and proof a level can be hard and still have many answers.",
+    "leak": "The runs marked one-answer usually have ONE road in band and several FREE ones above 80% \u2014 revenge-26 has 17 such pairs, revenge-33 has 15, The Alcove 12. The problem is not that there is a single road, it is that the other roads are free.",
+    "broken": "revenge-13's gate is beaten by a single card. revenge-16 and revenge-27 have no answer at all \u2014 not even their own signature pair clears.",
+    "generalists": "knight-hop, become-king, summon-knight, twin, swap and freeze-ray keep clearing finales they were never designed for. decoy, duchess, sacrifice, aegis and convert never once do."
   }
 }
