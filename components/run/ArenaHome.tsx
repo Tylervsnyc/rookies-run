@@ -16,6 +16,7 @@ import { todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
 import { autoplayMusicOnHome } from '@/lib/music';
+import { ENDLESS_ENABLED, readEndlessBest } from '@/lib/run/endless';
 
 /**
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
@@ -35,6 +36,8 @@ import { autoplayMusicOnHome } from '@/lib/music';
 interface ArenaHomeProps {
   onStart: (d?: DifficultyId) => void;
   onLadderStart?: (runId: string, difficulty?: DifficultyId) => void;
+  /** ENDLESS — the strip under the daily button on the Revenge tab. */
+  onEndless?: () => void;
   iso: string;
   runId: string;
   profile?: PlayerProfile;
@@ -271,9 +274,43 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
 }
 
 // ── Tabs ─────────────────────────────────────────────────────────────────────
-function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, board }: {
+/**
+ * ENDLESS entry point (Tyler 2026-09-07). Deliberately NOT a fifth tab: the
+ * tab bar is a four-column painted set with bespoke art per tab, and adding a
+ * column would be a redesign of the home screen. This is the smallest honest
+ * addition instead — a strip on the DEFAULT tab, directly under the daily
+ * button, where a player who opens the app cannot miss it.
+ */
+function EndlessStrip({ best, onPlay }: { best: number; onPlay: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onPlay}
+      aria-label="Play Endless"
+      data-testid="home-endless"
+      className="arena-press mt-2.5 w-full rounded-[14px] flex items-center gap-3 px-3 min-h-[52px] text-left"
+      style={{ background: 'linear-gradient(180deg,#2b3f7d 0%,#1c2f63 100%)', border: `2px solid ${GOLD}`, boxShadow: '0 5px 0 rgba(0,0,0,0.45)', ['--depth' as string]: '5px' }}
+    >
+      <span className="w-8 h-8 rounded-lg flex items-center justify-center text-[17px] font-black shrink-0" style={{ background: GOLD, color: '#2a1c00' }}>
+        &infin;
+      </span>
+      <span className="flex flex-col leading-none min-w-0">
+        <span className="text-[15px] font-black" style={OUTLINE}>ENDLESS</span>
+        <span className="text-[11px] font-bold mt-1 truncate" style={{ color: 'rgba(255,255,255,0.72)' }}>
+          5 random powers &middot; how deep can you get?
+        </span>
+      </span>
+      <span className="ml-auto text-[11px] font-black shrink-0 tabular-nums" style={GOLD_TEXT}>
+        {best > 0 ? `BEST ${best}` : 'NEW'}
+      </span>
+    </button>
+  );
+}
+
+function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, board, endlessBest, onEndless }: {
   flipped: boolean; onGo: () => void; onBegin: () => void; countdown: string; runName: string;
   abilities: AbilityId[]; board: LeaderboardResponse | null;
+  endlessBest: number; onEndless?: () => void;
 }) {
   // Only ever a real standing: your rank when you've played, the live hunter
   // count when you haven't, and nothing at all when the board is empty.
@@ -302,6 +339,7 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
           </span>
         </CpButton>
       )}
+      {ENDLESS_ENABLED && onEndless && <EndlessStrip best={endlessBest} onPlay={onEndless} />}
       <div className="mt-3 flex items-baseline justify-between px-1">
         <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s abilities</span>
         <span className="text-[11px] font-bold truncate ml-3" style={{ color: 'rgba(255,255,255,0.7)' }}>Map: {runName}</span>
@@ -420,12 +458,14 @@ function CodexTab({ profile, onTrophies }: { profile?: PlayerProfile; onTrophies
 }
 
 // ── The shell ────────────────────────────────────────────────────────────────
-export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTrophies }: ArenaHomeProps) {
+export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profile, onTrophies }: ArenaHomeProps) {
   const [tab, setTab] = useState<Tab>('Revenge');
   const [flipped, setFlipped] = useState(false);
   const countdown = useCountdownToMidnight();
   const [handle, setHandle] = useState('Rook');
   useEffect(() => { setHandle(getHandle()); }, []);
+  const [endlessBest, setEndlessBest] = useState(0);
+  useEffect(() => { setEndlessBest(readEndlessBest()); }, []);
   const { board, loading: boardLoading } = useDailyBoard(iso, runId);
   // Music starts the moment the home screen shows (or on the first tap if
   // the browser blocks autoplay) — not on the first board move.
@@ -474,7 +514,7 @@ export function ArenaHome({ onStart, onLadderStart, iso, runId, profile, onTroph
         {/* the surround */}
         <div className="flex-1 min-h-0 mt-3 relative overflow-hidden">
           <div key={tab} className="h-full arena-tab-in">
-            {tab === 'Revenge' && <RevengeTab flipped={flipped} onGo={() => setFlipped(true)} onBegin={() => onStart(dailyDifficulty)} countdown={countdown} runName={runName} abilities={pool} board={board} />}
+            {tab === 'Revenge' && <RevengeTab flipped={flipped} onGo={() => setFlipped(true)} onBegin={() => onStart(dailyDifficulty)} countdown={countdown} runName={runName} abilities={pool} board={board} endlessBest={endlessBest} onEndless={onEndless} />}
             {tab === 'Ladder' && <LadderTab profile={profile} onLadderStart={onLadderStart} />}
             {tab === 'Ranks' && <RanksTab handle={handle} board={board} loading={boardLoading} />}
             {tab === 'Codex' && <CodexTab profile={profile} onTrophies={onTrophies} />}

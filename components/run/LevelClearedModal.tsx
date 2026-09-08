@@ -18,10 +18,15 @@ interface LevelClearedModalProps {
   moves?: number;
   /** Per-level par (run par ÷ levels) so "par" is a familiar word by run end. */
   levelPar?: number;
+  /**
+   * Force the CTA wording. Endless has no last level, so it pins this false
+   * and the button always reads "Next level". Default: level >= totalLevels.
+   */
+  isLast?: boolean;
 }
 
-export function LevelClearedModal({ level, totalLevels, tempo: _tempo, onNext, runName, moves, levelPar }: LevelClearedModalProps) {
-  const last = level >= totalLevels;
+export function LevelClearedModal({ level, totalLevels, tempo: _tempo, onNext, runName, moves, levelPar, isLast }: LevelClearedModalProps) {
+  const last = isLast ?? level >= totalLevels;
   const chips = moves !== undefined && levelPar !== undefined ? <StampChip gold={moves <= levelPar}>{moves} {moves === 1 ? 'move' : 'moves'} · level par {levelPar}</StampChip> : undefined;
   return (
     <StampCard kicker={`${runName ?? 'Today’s run'} · level ${level}`} level={level} totalLevels={totalLevels} stamp="Cleared" tone="won" chips={chips}>

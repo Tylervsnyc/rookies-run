@@ -89,6 +89,20 @@ import {
   totalLevelsForRun,
 } from '@/lib/run/seed';
 import { getRunIdForDate, getTodayInTZ, isValidDate } from '@/lib/run/daily';
+import {
+  ENDLESS_ENABLED,
+  ENDLESS_RUN_ID,
+  applyEndlessRamp,
+  buildEndlessSession,
+  endlessLevelAt,
+  endlessRamp,
+  endlessRampLabel,
+  newEndlessSeed,
+  readEndlessBest,
+  recordEndlessBest,
+  type EndlessSession,
+} from '@/lib/run/endless';
+import { EndlessIntro } from '@/components/run/EndlessIntro';
 import { todaysAbilities } from '@/lib/run/daily-kit';
 import { buildShareString, sharePiecesFrom, type ShareCardData } from '@/lib/run/share';
 import { fromSquare, toSquare } from '@/lib/run/types';
@@ -180,9 +194,9 @@ function readParityHook(params: URLSearchParams): ParityHook | null {
   };
 }
 
-function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; ladderDifficulty: DifficultyId | null; go: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null } {
+function readUrlParams(): { runId: string; startLevelIndex: number; date: string; ladder: boolean; ladderDifficulty: DifficultyId | null; go: boolean; refresh: boolean; loadout: OwnedAbility[] | null; testkit: AbilityId[] | null; parity: ParityHook | null; endlessSeed: number | null } {
   if (typeof window === 'undefined') {
-    return { runId: '', startLevelIndex: 0, date: '', ladder: false, ladderDifficulty: null, go: false, refresh: false, loadout: null, testkit: null, parity: null };
+    return { runId: '', startLevelIndex: 0, date: '', ladder: false, ladderDifficulty: null, go: false, refresh: false, loadout: null, testkit: null, parity: null, endlessSeed: null };
   }
   const params = new URLSearchParams(window.location.search);
   const runId = params.get('run') ?? '';
@@ -207,7 +221,11 @@ function readUrlParams(): { runId: string; startLevelIndex: number; date: string
   const parity = readParityHook(params);
   // Parity wins: a parity session never combines with a testkit.
   const testkit = parity ? null : readTestkitParam(params);
-  return { runId, startLevelIndex, date, ladder, ladderDifficulty, go, refresh, loadout: readLoadoutParam(params), testkit, parity };
+  // ENDLESS — `?endless=<seed>`. One integer is the whole session (kit + level
+  // plan; see lib/run/endless.ts), so a reload restores it with nothing stored.
+  const endlessRaw = parseInt(params.get('endless') ?? '', 10);
+  const endlessSeed = ENDLESS_ENABLED && Number.isFinite(endlessRaw) && endlessRaw > 0 ? endlessRaw >>> 0 : null;
+  return { runId, startLevelIndex, date, ladder, ladderDifficulty, go, refresh, loadout: readLoadoutParam(params), testkit, parity, endlessSeed };
 }
 
 /** Slow-motion enemy slide onto Rookie when she gets captured (ms). */
@@ -247,6 +265,39 @@ interface RunMeta {
   refreshAll: boolean;
   /** `?testkit=` real-run playtest kit (see readTestkitParam). null off parity. */
   testkit: AbilityId[] | null;
+  /**
+   * ENDLESS (`?endless=<seed>`) — random 5-card kit, levels from the whole
+   * library, difficulty ramping forever, one life, score = levels cleared.
+   * Null for every other flow, which is what keeps Daily and Ladder untouched.
+   */
+  endless: EndlessSession | null;
+}
+
+/**
+ * ONE endless level, built from the session plan at depth `step` (0-based).
+ * The ramp is applied in two halves — the overdrive on the authored puzzle
+ * here, the difficulty MODE by applyDifficulty inside puzzleToBoardState —
+ * so the shipped floors (MOVE_LIMIT_FLOOR) still apply. The rolled 5 are
+ * passed as `testkit`: the session's whole offer pool, exactly the mechanism
+ * the daily's four already ride.
+ */
+function freshEndlessLevel(
+  iso: string,
+  endless: EndlessSession,
+  step: number,
+  carry: { abilities?: BoardState['abilities']; tempo?: number; pendingOffer?: BoardState['pendingOffer'] } = {},
+): { state: BoardState; puzzle: RunPuzzle } {
+  const ref = endlessLevelAt(endless, step);
+  const puzzle = applyEndlessRamp(puzzleForDate(iso, ref.levelIndex, ref.runId), step + 1);
+  return {
+    state: puzzleToBoardState(puzzle, {
+      ...carry,
+      runId: ref.runId,
+      difficulty: endlessRamp(step + 1).difficulty,
+      testkit: endless.kit,
+    }),
+    puzzle,
+  };
 }
 
 function freshRun(
@@ -257,7 +308,9 @@ function freshRun(
   forceDifficulty: DifficultyId | null = null,
   loadout: OwnedAbility[] | null = null,
   testkit: AbilityId[] | null = null,
+  endless: EndlessSession | null = null,
 ): { state: BoardState; puzzle: RunPuzzle } {
+  if (endless) return freshEndlessLevel(iso, endless, startLevelIndex);
   const puzzle = puzzleForDate(iso, startLevelIndex, runId);
   const profile = readProfile();
   if (parity) {
@@ -353,8 +406,10 @@ export default function RookiesRunPage() {
       levelJump: startLevelIndex > 0,
       refreshAll: url.refresh && (!!url.loadout || !!url.testkit) && !url.parity,
       testkit: url.testkit,
+      endless: url.endlessSeed ? buildEndlessSession(url.endlessSeed) : null,
     };
   }, []);
+  const endless = meta.endless;
 
   const runDef = useMemo(() => getRunById(meta.runId), [meta.runId]);
   const totalLevels = runDef.levels.length;
@@ -362,8 +417,8 @@ export default function RookiesRunPage() {
 
   const [levelIndex, setLevelIndex] = useState(meta.startLevelIndex);
   const initial = useMemo(
-    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit),
-    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.ladderDifficulty, meta.loadout, meta.testkit],
+    () => freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit, meta.endless),
+    [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.ladderDifficulty, meta.loadout, meta.testkit, meta.endless],
   );
   const [state, setState] = useState<BoardState>(initial.state);
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
@@ -594,8 +649,16 @@ export default function RookiesRunPage() {
     0,
     difficultyDef.retriesPerLevel - (retriesUsedRef.current[levelIndex] ?? 0),
   );
-  const canRetry = retriesLeft > 0 && !gaveUp;
+  // ENDLESS is ONE LIFE at every depth, whatever the ramped difficulty mode
+  // would normally allow. A failed level ends the session; that is the score.
+  const canRetry = retriesLeft > 0 && !gaveUp && !endless;
   const [showTrophies, setShowTrophies] = useState(false);
+  // ENDLESS: the kit-reveal card before level 1, plus the personal best shown
+  // on the HUD and on the game-over card.
+  const [showEndlessIntro, setShowEndlessIntro] = useState(() => !!meta.endless);
+  const [endlessBest, setEndlessBest] = useState(0);
+  const [endlessNewBest, setEndlessNewBest] = useState(false);
+  useEffect(() => { if (meta.endless) setEndlessBest(readEndlessBest()); }, [meta.endless]);
   const progress = useProgress(state);
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -673,6 +736,9 @@ export default function RookiesRunPage() {
     if (meta.ladder) return;
     // "Next run" from the summary card: the player already chose to play.
     if (meta.go) return;
+    // ENDLESS owns its own opening screen (the kit reveal) — the home screen
+    // must not sit in front of it.
+    if (meta.endless) return;
     // A playtest deep link (?level=N with ?loadout=, /playtest's PLAY button)
     // also boards directly — the funnel already picked the level + kit.
     // Parity keeps its own flow untouched.
@@ -685,7 +751,7 @@ export default function RookiesRunPage() {
     if (!localStorage.getItem(key)) {
       setShowIntro(true);
     }
-  }, [meta.iso, meta.ladder, meta.go, meta.levelJump, meta.loadout, meta.parity, usesClassicLanding]);
+  }, [meta.iso, meta.ladder, meta.go, meta.levelJump, meta.loadout, meta.parity, meta.endless, usesClassicLanding]);
 
   const resetRunRef = useRef<() => void>(() => {});
   // Optionally starts under a specific difficulty (ArenaHome's PLAY and
@@ -983,7 +1049,9 @@ export default function RookiesRunPage() {
       isKingLevel: state.winCondition === 'king',
     });
 
-    if (levelIndex >= totalLevels - 1) {
+    // ENDLESS has no last level and no completion screen (Tyler 2026-09-07:
+    // "until death") — the only exit is failing, so it never takes this branch.
+    if (!endless && levelIndex >= totalLevels - 1) {
       setRunComplete(true);
       trackEvent('run_completed', { iso: meta.iso, run: meta.runId });
       {
@@ -1018,7 +1086,7 @@ export default function RookiesRunPage() {
       setShowLevelCleared(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels]);
+  }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels, endless]);
 
   const trackedLossRef = useRef(false);
   useEffect(() => {
@@ -1301,6 +1369,25 @@ export default function RookiesRunPage() {
 
   const goToNextLevel = useCallback(() => {
     const nextIdx = levelIndex + 1;
+    // ENDLESS: the next board comes from the session plan (a different run's
+    // level), one notch further up the ramp. Powers/tempo/offer carry exactly
+    // as they do inside a normal run.
+    if (meta.endless) {
+      const next = freshEndlessLevel(meta.iso, meta.endless, nextIdx, {
+        abilities: state.abilities,
+        tempo: state.tempo,
+        pendingOffer: state.pendingOffer,
+      });
+      setLevelIndex(nextIdx);
+      setPuzzle(next.puzzle);
+      levelStartAbilitiesRef.current = next.state.abilities;
+      levelStartMsRef.current = activeMsRef.current;
+      levelStartEnemiesRef.current = next.state.pieces.length;
+      setState(next.state);
+      setSelectedSquare(null);
+      setShowLevelCleared(false);
+      return;
+    }
     const nextPuzzle = puzzleForDate(meta.iso, nextIdx, meta.runId);
     setLevelIndex(nextIdx);
     setPuzzle(nextPuzzle);
@@ -1321,10 +1408,10 @@ export default function RookiesRunPage() {
     setState(nextState);
     setSelectedSquare(null);
     setShowLevelCleared(false);
-  }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
+  }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, meta.endless, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   const resetRun = useCallback(() => {
-    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit);
+    const fresh = freshRun(meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder ? (meta.ladderDifficulty ?? 'normal') : null, meta.loadout, meta.testkit, meta.endless);
     setLevelIndex(meta.startLevelIndex);
     setPuzzle(fresh.puzzle);
     levelStartAbilitiesRef.current = fresh.state.abilities;
@@ -1537,6 +1624,27 @@ export default function RookiesRunPage() {
       setHistoryVersion((v) => v + 1);
       return;
     }
+    // ENDLESS keeps its own books: a personal best in localStorage and a score
+    // on a SEPARATE board (runId 'endless'), so it can never move the daily
+    // run's history, streak, stars, ladder or leaderboard.
+    if (meta.endless) {
+      const cleared = Math.max(0, levelReached - 1);
+      setEndlessBest(readEndlessBest());
+      setEndlessNewBest(recordEndlessBest(cleared));
+      setEndlessBest(readEndlessBest());
+      trackEvent('endless_run_ended', { seed: meta.endless.seed, levelsCleared: cleared, kit: meta.endless.kit.join(',') });
+      void submitScore({
+        runDate: meta.iso,
+        runId: ENDLESS_RUN_ID,
+        difficulty: state.difficulty ?? 'normal',
+        levelsCleared: cleared,
+        totalLevels: cleared,
+        captures: state.captures.length,
+        completed: false,
+      });
+      setHistoryVersion((v) => v + 1);
+      return;
+    }
     recordRun({
       iso: meta.iso,
       runId: meta.runId,
@@ -1588,7 +1696,7 @@ export default function RookiesRunPage() {
         completed: runComplete,
       });
     }
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, meta.endless, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
 
@@ -1669,6 +1777,23 @@ export default function RookiesRunPage() {
     );
   }
 
+  // ENDLESS: the kit reveal owns the screen until the player taps START.
+  if (endless && showEndlessIntro) {
+    return (
+      <div className="h-full overflow-hidden">
+        <EndlessIntro
+          kit={endless.kit}
+          best={endlessBest}
+          onStart={() => {
+            ensureAudioWarm();
+            setShowEndlessIntro(false);
+            trackEvent('endless_run_started', { seed: endless.seed, kit: endless.kit.join(',') });
+          }}
+        />
+      </div>
+    );
+  }
+
   if (showIntro) {
     const dateLabel = (() => {
       try {
@@ -1697,6 +1822,7 @@ export default function RookiesRunPage() {
               const mode = d ? `&difficulty=${encodeURIComponent(d)}` : '';
               window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1${mode}`;
             }}
+            onEndless={() => { window.location.href = `/?endless=${newEndlessSeed()}`; }}
             iso={meta.iso}
             runId={meta.runId}
             profile={progress.profile}
@@ -1773,7 +1899,10 @@ export default function RookiesRunPage() {
               </span>
               <span className="text-sm font-black text-chess-text tabular-nums" style={isStc ? undefined : { color: '#FFC800', textShadow: '0 2px 0 rgba(0,0,0,0.5)' }}>
                 {levelIndex + 1}
-                <span className="text-chess-text-faint">/{totalLevels}</span>
+                {/* Endless has no denominator — it shows your best instead. */}
+                {endless
+                  ? endlessBest > 0 && <span className="text-chess-text-faint"> · best {endlessBest}</span>
+                  : <span className="text-chess-text-faint">/{totalLevels}</span>}
               </span>
             </div>
             </div>
@@ -1795,7 +1924,7 @@ export default function RookiesRunPage() {
                 title="Difficulty"
               >
                 <span className="text-[9px] font-black uppercase tracking-[0.14em] text-chess-text-muted">
-                  {difficultyDef.name}
+                  {endless ? endlessRampLabel(levelIndex + 1) : difficultyDef.name}
                 </span>
               </div>
             )}
@@ -2001,11 +2130,14 @@ export default function RookiesRunPage() {
       {showLevelCleared && (
         <LevelClearedModal
           level={levelIndex + 1}
-          totalLevels={totalLevels}
+          // Endless has no denominator; the pip row is capped so an unbounded
+          // depth can never ask StampCard for an unbounded array.
+          totalLevels={endless ? 10 : totalLevels}
+          isLast={endless ? false : undefined}
           tempo={state.tempo}
-          runName={runDef.name}
+          runName={endless ? `Endless · ${endlessLevelAt(endless, levelIndex).runName}` : runDef.name}
           moves={state.moveCount}
-          levelPar={Math.max(1, Math.round(parMovesForRun(meta.runId) / totalLevels))}
+          levelPar={Math.max(1, Math.round(parMovesForRun(endless ? endlessLevelAt(endless, levelIndex).runId : meta.runId) / 10))}
           onNext={goToNextLevel}
         />
       )}
@@ -2025,9 +2157,11 @@ export default function RookiesRunPage() {
       {((state.status === 'lost' && deathSettled && !canRetry) || runComplete) && (
         <RunSummaryModal
           outOfMoves={!runComplete && outOfMoves}
-          difficultyLabel={isStc ? undefined : difficultyDef.name}
+          difficultyLabel={endless
+            ? `Endless \u00b7 ${endlessRampLabel(levelIndex + 1)}${endlessNewBest ? ' \u00b7 NEW BEST' : endlessBest > 0 ? ` \u00b7 best ${endlessBest}` : ''}`
+            : isStc ? undefined : difficultyDef.name}
           iso={meta.iso}
-          totalLevels={totalLevels}
+          totalLevels={endless ? Math.min(10, Math.max(1, levelReached)) : totalLevels}
           levelReached={levelReached}
           completed={runComplete}
           stats={stats}
@@ -2038,9 +2172,11 @@ export default function RookiesRunPage() {
           timeMs={Math.round(activeMsRef.current)}
           stars={scorePair?.stars}
           starLine={scorePair?.starLine}
-          onReplay={resetRun}
-          nextRunName={nextRunId !== meta.runId ? getRunById(nextRunId).name : undefined}
-          onNextRun={nextRunId !== meta.runId ? goToNextRun : undefined}
+          onReplay={endless
+            ? () => { window.location.href = `/?endless=${newEndlessSeed()}`; }
+            : resetRun}
+          nextRunName={endless || nextRunId === meta.runId ? undefined : getRunById(nextRunId).name}
+          onNextRun={endless || nextRunId === meta.runId ? undefined : goToNextRun}
           onClose={() => {
             // A fresh cold open = the home screen, with today's daily up.
             window.location.href = '/';
