@@ -95,10 +95,25 @@
  * GATE HOLDS: every single card in the kit, and 'none', reads 0% on all four.
  * PAIR MEAN 72.8% — inside the 60-80 band, no level at 100%.
  *
- * STILL OPEN: this run has no `abilityTierCaps`. The tier sweep that would
- * choose one was not run in this pass, and the known Boulder self-block at T4/T5
- * (below) is unchanged — with the clocks now this tight it is likely to bite
- * harder, so a tier sweep is the next thing to do here.
+ * TIER SWEEP (2026-09-08, 32 trials, magnet pinned T1, boulder T1-T5):
+ *
+ *     boulder:1  69/69/88/59   mean 71.3
+ *     boulder:2  72/25/78/44   mean 54.8
+ *     boulder:3  81/28/72/25   mean 51.5
+ *     boulder:4   0/ 0/ 0/ 0   mean  0.0
+ *     boulder:5   0/ 0/ 0/ 0   mean  0.0
+ *
+ * The documented Boulder self-block is real and worse than described: at T4 the
+ * run becomes UNWINNABLE, not merely harder. Unlimited stones let Rookie wall
+ * her own one-wide shaft, and with the retuned clocks she can no longer spend
+ * moves undoing it. Upgrading the card is a trap — the player earns an upgrade
+ * and loses the run.
+ *
+ * `abilityTierCaps: { boulder: 3 }` is therefore a CORRECTNESS fix, not a
+ * balance one: it removes the unwinnable states and nothing else. Note that
+ * every upgrade still makes this run harder (71.3 -> 54.8 -> 51.5), so capping
+ * at 1 would hold the 60-80 band — but that also removes Boulder's upgrade path
+ * entirely, which is a taste call and is on Tyler's board rather than made here.
  *
  * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
  * (HISTORICAL: the finale table in this block and the one below it are the
@@ -200,6 +215,10 @@ export const RUN_REVENGE_15: RunDef = {
   name: 'The Stacks',
   blurb: 'A wall with slots cut in it. He thinks a plug is a wall.',
   allowedAbilities: ['magnet', 'boulder', 'aegis', 'decoy'],
+  // Boulder T4/T5 make this run unwinnable (0% on every finale level, measured
+  // 2026-09-08) — she walls her own one-wide shaft and cannot afford to undo it.
+  // Correctness cap only; see the tier sweep in the header.
+  abilityTierCaps: { boulder: 3 },
   // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
   // makes THIS run EASIER, measured twice: no-retry 27% Normal vs 30% Hard, real-retry 37% vs 47%. The cause is the
   // documented one (.claude/run-level-design.md, "Pawn walls march") — the
