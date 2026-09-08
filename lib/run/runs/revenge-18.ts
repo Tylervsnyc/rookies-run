@@ -30,17 +30,79 @@
  *                   room, so the rook is out of the game and a body must go
  *                   over the glass. freeze / poison / magnet / no-ability all
  *                   read 0%.
- *          Lock 2 — the room is DEEP. The one square that attacks his square
- *                   (f7 in the east house, c7 in the west, e7 in the middle)
- *                   is three or more from every square Rookie can stand on, so
- *                   the knight can never be dropped onto the kill. It lands on
- *                   the stone (g5 / b5 / d5) and has to WALK — and that costs a
- *                   turn, and in that turn he steps to his second square. A
- *                   lone knight can never watch both squares of his room,
- *                   because no knight attacks two squares side by side. So a
- *                   parachute alone chases him until the clock runs out: 0%.
+ *          Lock 2 — the room is DEEP. The one square that attacks his square is
+ *                   never inside Rookie's drop radius, so the knight can never
+ *                   be parachuted onto the kill. It lands in a POCKET — a free
+ *                   square sealed on all four sides, that no rook can ever
+ *                   stand on — and it has to WALK, and that costs a turn, and
+ *                   in that turn he steps to his other square. A lone knight
+ *                   can never watch both squares of his room, because no
+ *                   knight attacks two squares side by side. So a parachute
+ *                   alone chases him until the clock runs out: 0%.
  *          The pair is the whole level: FREEZE him where he stands, drop the
- *          knight, walk it onto the kill square, take him inside the pin.
+ *          knight in the pocket, walk it onto the kill square, take him inside
+ *          the pin.
+ *
+ * ── 2026-09-07 REWORK: L7-L10, four DIFFERENT uses of the same pair ──
+ * Tyler played the run and 3-starred it: "the design is really cool but later
+ * levels need more difficulty, and ways to solve. I love the combination of
+ * abilities, it's just too easy." He was right, and the diagnosis was sharper
+ * than "not enough clock": L7-L10 were the SAME line four times. Every finale
+ * put the pocket two ranks under the house on an open floor, so on all four
+ * levels the answer was "walk to the square facing the room, drop, freeze,
+ * hop, take" — 2 body-moves out of a 7-move budget, discovered once on L7 and
+ * executed three more times.
+ *
+ * The lever that fixed it is GEOMETRY, not the clock: WHERE Rookie is allowed
+ * to stand when she throws the knight, and WHERE the corridor out of the
+ * pocket goes. Two of the four levels got MORE clock, not less (L7 7->9).
+ *
+ * Each level now asks a different question of the same pair:
+ *   L7  THE SILL — the house grows an unbroken stone shelf a4-d4. The pocket
+ *       b5 is unchanged and so is the corridor b5->c7, but the square Rookie
+ *       wants to stand on (the one facing the room) and the corner beside it
+ *       are both stone. The only squares left in range of the pocket are on
+ *       the rank BELOW the sill. DEMAND: you cannot throw the knight from
+ *       where you want to stand — find the square that can.
+ *   L8  THE TWO ARMS — the mid house gets a shelf either side of its pocket
+ *       (c4/e4/f4), which also pushes the second kill square e6 out of
+ *       Rookie's radius. The pocket d5 now serves TWO corridors that do not
+ *       connect: d5->e7 kills him on c8, d5->c7->e6 kills him on d8, and no
+ *       knight step crosses between e7 and e6. DEMAND: pin him BEFORE the
+ *       knight lands. Land first and he steps into the other arm, and the
+ *       knight has to go all the way back through the pocket to follow.
+ *   L9  TWO A TURN — the east house, unchanged, and the level that is about
+ *       TEMPO rather than shape: two enemies a turn and a knight that is the
+ *       one hunter which can follow her onto the launch squares under g5.
+ *       DEMAND: the two clear turns the pin-and-walk needs have to be bought.
+ *   L10 THE TALL ROOM — a new silhouette. His room is a COLUMN (a7/a8), not a
+ *       shelf; the pocket d5 is sealed on all four sides; c7 is the only
+ *       square in the world that attacks a8 and NOTHING attacks a7. The
+ *       corridor is one-way and there is no second door. DEMAND: he only has
+ *       to take one step up for the level to be unwinnable — so the pin has
+ *       to be right, first time, with a knight walking at her two a turn.
+ *
+ * MEASURED after the rework (32 trials/cell, T5 bot, T1 cards, Normal,
+ * matrixParallel jobs=4, and taken on the bytes that shipped):
+ *    L        none  freezeray   vanguard  poisondar     magnet  |  pair
+ *    7          0%         0%         0%         0%         0%  |   78%
+ *    8          0%         0%         0%         0%         0%  |   72%
+ *    9          0%         0%         0%         0%         0%  |   66%
+ *   10          0%         0%         0%         0%         0%  |   72%
+ * PAIR MEAN 72.0 (was 87.8: 100/94/66/91). Gate holds — every single card and
+ * no-ability read 0% on every finale level, worst single cell 0%.
+ *
+ * A NOTE ON WHAT THE HARNESS WILL NOT LET YOU BUILD. The obvious escalation —
+ * lengthen the knight's WALK from one hop to two — is not reachable inside this
+ * vocabulary. Vanguard T1 drops within 2 squares of Rookie, and any interior
+ * square on rank 5 is inside that radius from rank 3, so forcing a two-hop
+ * entry means sealing the whole approach; every layout that did so also sealed
+ * the square Rookie's search anchors on (the one square beside the wall) and
+ * the pair fell off a cliff to 0% at EVERY clock, including 12 moves. Measured
+ * three times: seal a4-e4 and the level is provable and unfindable. The rule
+ * that came out of it: NEVER stone the square Rookie naturally stands on
+ * beside the house — narrow the drop radius from the sides instead.
+ * ──
  *
  * KIT ROLES (KEY = solves it, TRAP = looks like it does)
  *   freeze-ray  — KEY on L3/L4/L5 (pin the king who is reading your line) and
@@ -83,6 +145,8 @@
  *    9         0%         0%         0%         0%         0%  |  66%
  *   10         0%         0%         0%         0%         0%  |  91%
  * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 100/94/66/91.
+ * THESE FINALE ROWS ARE SUPERSEDED by the 2026-09-07 rework above — they are the
+ * numbers that made Tyler call the run too easy. L1-L6 below are still current.
  * The header below reads 100/88/72/81 for the pair and is CONFIRMED (max drift 10 points,
  * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
  * are the numbers of record.
@@ -186,6 +250,19 @@ const WEST_HOUSE: ReadonlyArray<Coord> = [
   X(4, 7), X(2, 6), X(1, 6),
 ];
 
+/**
+ * L7's house — the WEST house with the buttress under b5 widened into an
+ * unbroken SILL, a4-d4. It changes exactly one thing and that thing is the
+ * level: the square Rookie naturally walks to, the one facing the room, is
+ * stone, and so is the corner. b5 is still the only pocket a knight can be
+ * dropped into, but the only squares left in range of it are on the rank
+ * BELOW the sill. You cannot throw the knight from where you want to stand.
+ */
+const WEST_SILL: ReadonlyArray<Coord> = [
+  ...WEST_HOUSE,
+  X(1, 4), X(3, 4), X(4, 4),
+];
+
 /** MID: the same house built in the middle of the board — king c8, pen c8/d8,
  *  stone d5, kill square e7, and walls on BOTH sides (the a/b files and the
  *  g-file) because in the middle he has two flanks to brick up. */
@@ -197,6 +274,28 @@ const MID_HOUSE: ReadonlyArray<Coord> = [
   X(5, 5),
   X(6, 5), X(6, 7),
   X(7, 5), X(7, 6), X(7, 7), X(7, 8),
+];
+
+/**
+ * L8's house — the MID house with a SHELF (c4/e4/f4) laid either side of the
+ * pocket d5, so the drop can only be thrown from the rank below and the
+ * second kill square e6 falls out of Rookie's radius entirely.
+ */
+const MID_SHELF: ReadonlyArray<Coord> = [...MID_HOUSE, X(3, 4), X(5, 4), X(6, 4)];
+
+/**
+ * L10's house — the same glasshouse built TALL. His room is a COLUMN, a7/a8,
+ * not a shelf; the pocket d5 is sealed on all four sides; and the corridor
+ * out of it is one-way. d5 -> c7 is the only knight step that enters the
+ * house at all, c7 is the only square that attacks a8, and NOTHING in the
+ * world attacks a7. If he takes the step up, the level is over.
+ */
+const TALL_HOUSE: ReadonlyArray<Coord> = [
+  X(1, 5), X(2, 5), X(3, 5),
+  X(1, 6), X(2, 6), X(3, 6),
+  X(3, 4), X(4, 4), X(4, 6), X(4, 7), X(4, 8),
+  X(5, 5), X(5, 6), X(5, 7), X(5, 8),
+  X(2, 4), X(6, 4),
 ];
 
 const RUN_REVENGE_18: RunDef = {
@@ -317,35 +416,44 @@ const RUN_REVENGE_18: RunDef = {
         kingPen: ['h8'],
       },
     ),
-    // L7 — HE BRICKS UP THE WINDOW. From here the glasshouse has NO pane at
-    // all: the box is sealed, no rook line on the board reaches inside it, so
-    // the rook is out of the game and a body has to go over the glass. But the
-    // room is deep — the one square that attacks a8 is c7, and c7 is three or
-    // more from anywhere Rookie can stand, so the knight can never be dropped
-    // straight onto the kill. It lands on b5 and has to WALK, and that costs a
-    // turn, and in that turn he steps to b8. One knight can never watch both
-    // a8 and b8 — no knight attacks two squares side by side — so a parachute
-    // alone chases him round his room until the clock runs out. The last
-    // sightline in the run is HIS: freeze the king, and the step he was going
-    // to take never happens.
+    // L7 — THE SILL. From here the glasshouse has NO pane at all: the box is
+    // sealed, no rook line on the board reaches inside it, so the rook is out
+    // of the game and a body has to go over the glass. b5 is the pocket — a
+    // square walled on all four sides that no rook can ever stand on — and the
+    // corridor out of it is b5->c7, the one square in the world that attacks
+    // a8. What this level adds to that is the SILL: the buttress under the
+    // house is now an unbroken shelf a4-d4, so the square Rookie wants to
+    // stand on (the one facing the room) and the corner beside it are stone.
+    // The only squares left within a Vanguard throw of the pocket are on the
+    // rank below the sill. DEMAND: you cannot throw the knight from where you
+    // want to stand. She gets a LONGER clock than the old build (7 -> 9) and
+    // it is still the hardest thing in the run so far — the shape did that,
+    // not the timer.
     make(
       7,
       [king(1, 8)],
-      { ...FLEE, moveLimit: 7, hazards: [...WEST_HOUSE], kingPen: ['a8', 'b8'] },
+      { ...FLEE, moveLimit: 9, hazards: [...WEST_SILL], kingPen: ['a8', 'b8'] },
     ),
-    // L8 — THE OTHER CORNER. The same sealed house read from the right: king
-    // h8, the stone at g5, the kill square f7. A bishop hunts her on the open
-    // floor, so the two clear turns the pin needs have to be taken while
-    // something is chasing her.
+    // L8 — THE TWO ARMS. The mid house with a shelf laid either side of its
+    // pocket (c4/e4/f4), which does two things: it drops the throw down to the
+    // rank below again, and it pushes e6 — the square that kills him on d8 —
+    // out of Rookie's drop radius entirely. So the pocket d5 now serves TWO
+    // corridors that do not connect. d5->e7 takes him on c8; d5->c7->e6 takes
+    // him on d8; and no knight step crosses from e7 to e6. DEMAND: pin him
+    // BEFORE the knight lands. Land on e7 first and he simply steps to d8, and
+    // the knight has to walk all the way back through the pocket to follow him
+    // — which is more turns than a Vanguard knight is alive for. A bishop
+    // hunts her while she works out which arm she is committing to.
     make(
       8,
       [bishop(8, 2), king(3, 8)],
-      { ...FLEE, moveLimit: 7, hazards: [...MID_HOUSE], kingPen: ['c8', 'd8'] },
+      { ...FLEE, moveLimit: 7, hazards: [...MID_SHELF], kingPen: ['c8', 'd8'] },
     ),
-    // L9 — TWO A TURN. The eastern house with two enemies a turn and a knight
-    // on the floor. The knight is the point: it is the one hunter that can
-    // follow her onto the launch squares under g5, so the turn she spends
-    // dropping is a turn she has to have bought.
+    // L9 — TWO A TURN. The eastern house, with the shape left alone on
+    // purpose: this is the finale level about TEMPO rather than geometry. Two
+    // enemies a turn, and the knight is the point — it is the one hunter that
+    // can follow her onto the launch squares under g5, so the two clear turns
+    // the pin-and-walk needs are turns she has to buy.
     make(
       9,
       [knight(3, 3), king(8, 8)],
@@ -357,22 +465,27 @@ const RUN_REVENGE_18: RunDef = {
         kingPen: ['g8', 'h8'],
       },
     ),
-    // L10 — THE GLASSHOUSE. The western house, sealed, two enemies a turn, six
-    // moves, and both a bishop and a knight loose on the floor. No rook line
-    // reaches him, no drop reaches the kill square, and no lone knight corners
-    // a king with two squares. Freeze him where he stands, drop the knight on
-    // b5, walk it to c7, take him. Everything else — the dart that kills a
-    // guard she could have walked around, the magnet with nothing on her
-    // lines, the parachute with no pin — runs out of moves in his garden.
+    // L10 — THE TALL ROOM. The glasshouse built as a COLUMN: his room is a7/a8
+    // stacked, not two squares side by side, and it is the only silhouette in
+    // the run that stands up instead of lying down. The pocket d5 is sealed on
+    // all four sides, d5->c7 is the only knight step that enters the house at
+    // all, c7 is the only square in the world that attacks a8 — and NOTHING
+    // attacks a7. The corridor is one-way and there is no second door: the
+    // moment he takes one step up the column, the level is over and no amount
+    // of clock brings it back. DEMAND: the pin has to be right the first time,
+    // with a knight walking at her two enemies a turn. Everything else — the
+    // dart that kills a guard she could have walked around, the magnet with
+    // nothing on her lines, the parachute with no pin — watches him take the
+    // step.
     make(
       10,
-      [bishop(6, 2), knight(7, 4), king(1, 8)],
+      [knight(7, 4), king(1, 8)],
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 6,
-        hazards: [...WEST_HOUSE],
-        kingPen: ['a8', 'b8'],
+        moveLimit: 7,
+        hazards: [...TALL_HOUSE],
+        kingPen: ['a8', 'a7'],
       },
     ),
   ],
