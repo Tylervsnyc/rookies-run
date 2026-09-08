@@ -11,7 +11,7 @@ import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { LadderTab } from './LadderTab';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
-import { fetchBoard, getHandle, type LeaderboardResponse } from '@/lib/run/leaderboard-client';
+import { HANDLE_RE, fetchBoard, getHandle, setHandle, type LeaderboardResponse } from '@/lib/run/leaderboard-client';
 import { todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
@@ -42,6 +42,92 @@ interface ArenaHomeProps {
   runId: string;
   profile?: PlayerProfile;
   onTrophies?: () => void;
+}
+
+/**
+ * NAME SHEET — the only place a player can choose what the leaderboard calls
+ * them (Tyler, 2026-09-08: "where do people pick their names?").
+ *
+ * They couldn't. A handle is minted on first launch as `Rook-####` from a hash
+ * of the random device id, and the rename UI existed only on HomeLanding and
+ * DeskLanding — the two landings ArenaHome replaced on 2026-09-02, which
+ * nothing has routed to since. The Arena took `getHandle` and left `setHandle`
+ * behind, so the name was frozen. It only started to matter today, when
+ * `run_scores` was finally created and Ranks began recording anything.
+ *
+ * Rules are the server's, not new ones: 2-16 chars of [a-zA-Z0-9_.-], spaces
+ * folded to underscores by setHandle(). Existing rows keep the old name until
+ * the next run — the score route rewrites the handle on every submit, even one
+ * that doesn't beat your best.
+ */
+function NameSheet({ current, onSave, onClose }: {
+  current: string;
+  onSave: (h: string) => void;
+  onClose: () => void;
+}) {
+  const [draft, setDraft] = useState(current);
+  const cleaned = draft.trim().replace(/\s+/g, '_');
+  const valid = HANDLE_RE.test(cleaned);
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-6"
+      style={{ background: 'rgba(0,0,0,0.55)' }}
+      onClick={onClose}
+    >
+      <form
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={(e) => { e.preventDefault(); if (valid) onSave(cleaned); }}
+        className="w-full max-w-[340px] rounded-2xl p-4"
+        style={{ background: PANEL, border: `2px solid ${PANEL_EDGE}`, boxShadow: '0 14px 40px rgba(0,0,0,0.6)' }}
+      >
+        <div className="text-[11px] font-black uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.55)' }}>
+          Your name on the board
+        </div>
+        <input
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          maxLength={16}
+          // A game handle is not a form field: browser autofill offered a
+          // saved profile name over the top of it during testing and won.
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          name="revenge-handle"
+          aria-label="Your leaderboard name"
+          className="mt-2 w-full min-h-[48px] px-3 rounded-xl text-[18px] font-black outline-none"
+          style={{ background: NAVY, color: '#fff', border: `2px solid ${valid ? GOLD : '#7d3b3b'}` }}
+        />
+        <div className="mt-1.5 text-[11px] font-bold" style={{ color: valid ? 'rgba(255,255,255,0.5)' : '#FF9E9E' }}>
+          {valid ? '2-16 characters · letters, numbers, _ . -' : 'Needs 2-16 characters: letters, numbers, _ . -'}
+        </div>
+        <div className="mt-3 flex gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="arena-press flex-1 min-h-[48px] rounded-[14px] text-[14px] font-black"
+            style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', boxShadow: '0 4px 0 rgba(0,0,0,0.4)', ['--depth' as string]: '4px' }}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={!valid}
+            className="arena-press flex-1 min-h-[48px] rounded-[14px] text-[14px] font-black"
+            style={{
+              background: valid ? REVENGE_RED : 'rgba(255,255,255,0.12)',
+              color: '#fff',
+              boxShadow: `0 4px 0 ${valid ? REVENGE_RED_DARK : 'rgba(0,0,0,0.4)'}`,
+              ['--depth' as string]: '4px',
+            }}
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 // ── Today's global board ────────────────────────────────────────────────────
@@ -518,8 +604,9 @@ export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profi
   const [tab, setTab] = useState<Tab>('Revenge');
   const [flipped, setFlipped] = useState(false);
   const countdown = useCountdownToMidnight();
-  const [handle, setHandle] = useState('Rook');
-  useEffect(() => { setHandle(getHandle()); }, []);
+  const [handle, setHandleState] = useState('Rook');
+  const [namingOpen, setNamingOpen] = useState(false);
+  useEffect(() => { setHandleState(getHandle()); }, []);
   const [endlessBest, setEndlessBest] = useState(0);
   useEffect(() => { setEndlessBest(readEndlessBest()); }, []);
   const { board, loading: boardLoading } = useDailyBoard(iso, runId);
@@ -557,9 +644,17 @@ export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profi
             <RevengeMarkSvg size={26} />
             <span className="text-[12px] font-black leading-none" style={OUTLINE}>Rookie&rsquo;s <span style={{ color: '#FF6B66' }}>REVENGE</span></span>
           </div>
-          <div className="rounded-lg px-2.5 py-1" style={{ background: 'rgba(0,0,0,0.3)', border: '1.5px solid rgba(255,255,255,0.12)' }}>
+          <button
+            type="button"
+            onClick={() => setNamingOpen(true)}
+            aria-label={`Change your leaderboard name (currently ${handle})`}
+            data-testid="home-handle"
+            className="arena-press rounded-lg px-2.5 min-h-[32px] flex items-center gap-1.5"
+            style={{ background: 'rgba(0,0,0,0.3)', border: '1.5px solid rgba(255,255,255,0.12)', ['--depth' as string]: '2px' }}
+          >
             <span className="text-[11px] font-black" style={OUTLINE}>{handle}</span>
-          </div>
+            <span aria-hidden className="text-[10px] leading-none" style={{ color: GOLD }}>&#9998;</span>
+          </button>
         </div>
 
         {/* the anchor — square, and never taller than what leaves room for the surround + tab bar */}
@@ -579,6 +674,17 @@ export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profi
 
         <div className="mt-3 pt-3"><TabBar active={tab} onChange={(t) => { if (t !== tab) void playTabSwitchSound(); setTab(t); setFlipped(false); }} /></div>
       </div>
+      {namingOpen && (
+        <NameSheet
+          current={handle}
+          onClose={() => setNamingOpen(false)}
+          onSave={(h) => {
+            const ok = setHandle(h);
+            if (ok) setHandleState(ok);
+            setNamingOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }
