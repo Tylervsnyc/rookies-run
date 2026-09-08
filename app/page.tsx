@@ -2028,6 +2028,34 @@ export default function RookiesRunPage() {
           </button>
         </div>
 
+        {/*
+          SMOKED — a live status line, not just a card blurb. Tyler,
+          2026-09-08: "we need to be more clear about the rules of smoke, esp
+          in earlier levels it's unclear if you can capture things safely with
+          it on." You CAN: the capture lands, and then it gives you away. That
+          sentence has to be on screen while the cover is actually up, at the
+          moment the choice is in front of you — a line on an offer card two
+          minutes ago is not an answer.
+        */}
+        {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (() => {
+          const turns = state.smokeTurnsLeft ?? 0;
+          const keepsCover = state.abilities.find((a) => a.id === 'smoke')?.tier === 5;
+          return (
+            <div
+              className="w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto rounded-lg px-3 py-2 flex items-center gap-3"
+              style={{ background: 'rgba(120,134,168,0.24)', border: '1.5px solid rgba(176,190,220,0.55)' }}
+            >
+              <span className="text-[11px] font-black uppercase tracking-[0.14em] shrink-0" style={{ color: '#DCE4F5' }}>
+                Smoked · {turns}
+              </span>
+              <span className="text-[11px] font-bold leading-tight" style={{ color: 'rgba(220,228,245,0.85)' }}>
+                Nothing can capture you and the king stops running.{' '}
+                {keepsCover ? 'Capturing keeps you hidden.' : 'Capturing is safe — but it drops the smoke.'}
+              </span>
+            </div>
+          );
+        })()}
+
         <div
           className={`w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto ${isStc ? '' : 'rounded-[20px] p-2'}`}
           style={isStc ? undefined : { background: 'linear-gradient(180deg,#3d5297 0%,#1b2b5c 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' }}

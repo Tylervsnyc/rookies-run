@@ -83,7 +83,11 @@ const PIECE_THREAT: Record<PieceType, number> = {
   bishop: 2,
   knight: 2,
   pawn: 1,
-  king: 0, // the enemy king never captures — he's the objective, not a threat
+  // The king DOES capture as of 2026-09-08 — but only Rookie, and only from
+  // an adjacent square (see pieceLegalMovesRaw). Ranked below a queen so a
+  // queen still takes the shot when both can; ranked at all so he takes it
+  // when nobody else can.
+  king: 3,
 };
 
 function inBounds(c: Coord): boolean {
@@ -203,10 +207,35 @@ function pieceLegalMovesRaw(piece: EnemyPiece, state: BoardState): Coord[] {
       return slidingMoves(piece, state, dirs, vacated);
     }
     case 'king':
-      // Kings never capture and never move through the generic path. A
-      // 'flee' king sidesteps via kingFleeMove() in the mover phase.
-      return [];
+      // THE KING TAKES WHAT STANDS NEXT TO HIM. See the twin block in
+      // rabidLegalMoves for the full note — the rule is identical in both
+      // move generators on purpose (Tyler, 2026-09-08: "we can't have
+      // different rules for the king in different places"). His MOVEMENT is
+      // still owned by kingFleeMove() in the mover phase; this is captures
+      // only, and only of Rookie.
+      return kingCaptureMoves(piece, state, vacated);
   }
+}
+
+/**
+ * The squares an enemy king may CAPTURE on: adjacent, holding Rookie, not a
+ * hazard, not a ghost-blocked square. Never a plain step — a king who could
+ * step through here would roam, and his movement belongs to kingReaction.
+ */
+function kingCaptureMoves(
+  piece: EnemyPiece,
+  state: BoardState,
+  vacated: ReturnType<typeof vacatedSet>,
+): Coord[] {
+  const out: Coord[] = [];
+  for (const [df, dr] of QUEEN_DIRS) {
+    const c: Coord = { file: piece.file + df, rank: piece.rank + dr };
+    if (!inBounds(c)) continue;
+    if (isHazard(state.hazards, c)) continue;
+    if (isVacated(vacated, c)) continue;
+    if (c.file === state.rookie.file && c.rank === state.rookie.rank) out.push(c);
+  }
+  return out;
 }
 
 /**
@@ -485,6 +514,16 @@ function kingReaction(state: BoardState): BoardState | null {
   // The flee always wins: a challenge never makes him walk into danger, and a
   // panic never overrides a step he wanted to take anyway. Panic is LAST — it
   // only ever fires for a king who would otherwise have stood still.
+  // He does not run from someone he can simply take. A king who can reach
+  // Rookie captures instead of fleeing — the capture is resolved by the
+  // ordinary capturers pass, so all this has to do is stand still and let it.
+  if (
+    !isSmoked(state) &&
+    (state.kingStunTurns ?? 0) <= 0 &&
+    chebyshev({ file: king.file, rank: king.rank }, state.rookie) <= 1
+  ) {
+    return null;
+  }
   const target =
     (isSmoked(state) ? null : kingFleeMove(king, straw ?? view, aiRng(view))) ??
     kingAnswerMove(king, view, aiRng(view)) ??
@@ -554,9 +593,15 @@ export function isRookieThreatened(state: BoardState): boolean {
   if (state.status !== 'playing') return false;
   if (state.shieldUp) return false;
   if ((state.smokeTurnsLeft ?? 0) > 0) return false;
-  // A frozen piece skips its next action — it can't take her.
+  // A frozen piece skips its next action — it can't take her. Nor can a
+  // stunned king, who is now a capturer like anyone else: without this the
+  // alarm sprite would call check on a king who cannot move.
+  const kingStunned = (state.kingStunTurns ?? 0) > 0;
   return state.pieces.some(
-    (piece) => !state.frozenSquares.includes(toSquare(piece)) && canCapture(piece, state),
+    (piece) =>
+      !state.frozenSquares.includes(toSquare(piece)) &&
+      !(piece.type === 'king' && kingStunned) &&
+      canCapture(piece, state),
   );
 }
 
@@ -804,8 +849,11 @@ function chooseEnemyActionAgainst(
   };
   const capturers: Capturer[] = [];
   const smoked = isSmoked(state); // Smoke: nobody can see Rookie
+  // A stunned king is out of the fight entirely — he cannot take her either.
+  const kingStunned = (state.kingStunTurns ?? 0) > 0;
   for (const p of state.pieces) {
     if (!isNormallyEligible(p)) continue;
+    if (p.type === 'king' && kingStunned) continue;
     const moves = pieceLegalMoves(p, state);
     let best: { coord: Coord; isRookie: boolean; value: number } | null = null;
     for (const m of moves) {
@@ -953,8 +1001,28 @@ function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
       }
       return out;
     }
-    case 'king':
-      return []; // kings never capture, rabid or not
+    case 'king': {
+      /**
+       * THE KING TAKES WHAT STANDS NEXT TO HIM (Tyler, 2026-09-08: "I do
+       * think the king should be able to capture, it will make the game more
+       * difficult", and then: "we can't have different rules for the king in
+       * different places"). So it is ONE rule, everywhere — daily, ladder,
+       * Endless, tutorial: end your turn on a square touching the king and he
+       * takes you.
+       *
+       * Deliberately ROOKIE ONLY, and deliberately captures only — never a
+       * free step, never an ally. Two reasons, both structural: the king's
+       * movement stays owned by kingReaction (flee / answer / panic), so this
+       * cannot make him roam; and because every capture he can make ends the
+       * level, he can never both take something here AND take his flee step
+       * in the same enemy phase.
+       *
+       * He is still blind under Smoke (the caller's `smoked` guard), still
+       * skipped while frozen (isExcluded) and while stunned (the capturers
+       * loop), so nothing that used to make you safe stops working.
+       */
+      return kingCaptureMoves(piece, state, vacated);
+    }
   }
 }
 
