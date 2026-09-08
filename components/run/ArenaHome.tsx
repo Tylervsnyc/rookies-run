@@ -16,7 +16,7 @@ import { todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
 import { autoplayMusicOnHome } from '@/lib/music';
-import { ENDLESS_ENABLED, readEndlessBest } from '@/lib/run/endless';
+import { ENDLESS_ENABLED, readEndlessBest, ENDLESS_RUN_ID } from '@/lib/run/endless';
 
 /**
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
@@ -351,26 +351,60 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
   );
 }
 
-function RanksTab({ handle, board, loading }: {
-  handle: string; board: LeaderboardResponse | null; loading: boolean;
+/**
+ * Ranks. Two boards behind one switch: TODAY (the daily run) and ENDLESS.
+ * Endless scores are submitted under runId 'endless' by app/page.tsx, and until
+ * 2026-09-07 nothing ever fetched them — the mode kept a board nobody could see.
+ * Endless is ranked by DEPTH, so its rows read "n deep", not captures.
+ */
+type RanksBoard = 'today' | 'endless';
+
+function RanksTab({ handle, board, loading, iso }: {
+  handle: string; board: LeaderboardResponse | null; loading: boolean; iso: string;
 }) {
-  const live = board?.available ? board : null;
+  const [which, setWhich] = useState<RanksBoard>('today');
+  const endless = useDailyBoard(iso, ENDLESS_RUN_ID);
+  const showEndless = which === 'endless' && ENDLESS_ENABLED;
+  const shown = showEndless ? endless.board : board;
+  const isLoading = showEndless ? endless.loading : loading;
+  const live = shown?.available ? shown : null;
   const rows = live?.rows ?? [];
   const me = live?.me ?? null;
+  const unit = showEndless ? 'deep' : 'caps';
   // The top rows already carry `me` when you're in them — don't print you twice.
   const meBelow = me && !rows.some((r) => r.me) ? me : null;
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-baseline justify-between px-1">
-        <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s hunters</span>
+        <span className="text-[14px] font-black" style={OUTLINE}>{showEndless ? 'Deepest runs' : 'Today\u2019s hunters'}</span>
         <span className="text-[10px] font-black uppercase tracking-wider" style={GOLD_TEXT}>
           {live && live.total > 0 ? `${live.total.toLocaleString()} playing` : 'Global'}
         </span>
       </div>
 
-      {loading ? (
-        <ul className="mt-1.5" aria-label="Loading today\u2019s board">
+      {ENDLESS_ENABLED && (
+        <div className="mt-2 flex gap-1.5" role="tablist" aria-label="Which board">
+          {(['today', 'endless'] as const).map((b) => (
+            <button
+              key={b}
+              type="button"
+              role="tab"
+              aria-selected={which === b}
+              onClick={() => setWhich(b)}
+              className="flex-1 rounded-lg py-1.5 text-[11px] font-black uppercase tracking-wider active:opacity-80"
+              style={which === b
+                ? { background: GOLD, color: '#2a1c00' }
+                : { background: 'rgba(0,0,0,0.28)', color: 'rgba(255,255,255,0.62)', border: `1.5px solid ${PANEL_EDGE}` }}
+            >
+              {b === 'today' ? 'Today' : 'Endless'}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {isLoading ? (
+        <ul className="mt-1.5" aria-label="Loading the board">
           {[0, 1, 2, 3].map((i) => (
             <li key={i} className="flex items-center gap-2.5 py-[7px]" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
               <span className="h-[18px] w-[18px] rounded-full" style={{ background: 'rgba(255,255,255,0.10)' }} />
@@ -381,9 +415,13 @@ function RanksTab({ handle, board, loading }: {
       ) : rows.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center px-5 -mt-2">
           <RevengeMarkSvg size={38} ringColor="rgba(255,255,255,0.75)" />
-          <div className="mt-2.5 text-[14px] font-black" style={OUTLINE}>No hunters yet today</div>
+          <div className="mt-2.5 text-[14px] font-black" style={OUTLINE}>
+            {showEndless ? 'Nobody has gone deep yet' : 'No hunters yet today'}
+          </div>
           <div className="mt-1 text-[11px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.62)' }}>
-            Finish today&rsquo;s Revenge and you hold #1 until somebody takes it off you.
+            {showEndless
+              ? 'Roll five abilities and set the mark. It only ends when you die.'
+              : 'Finish today\u2019s Revenge and you hold #1 until somebody takes it off you.'}
           </div>
         </div>
       ) : (
@@ -398,18 +436,18 @@ function RanksTab({ handle, board, loading }: {
             >
               <Medal rank={r.rank} />
               <span className="flex-1 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</span>
-              <span className="tabular-nums font-black" style={GOLD_TEXT}>{r.captures}<span className="text-[9px] opacity-80"> caps</span></span>
+              <span className="tabular-nums font-black" style={GOLD_TEXT}>{showEndless ? r.levels : r.captures}<span className="text-[9px] opacity-80"> {unit}</span></span>
             </li>
           ))}
           {meBelow ? (
             <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
               <Medal rank={meBelow.rank} />
               <span className="flex-1 truncate">{handle} (you)</span>
-              <span className="tabular-nums" style={GOLD_TEXT}>{meBelow.captures}<span className="text-[9px] opacity-80"> caps</span></span>
+              <span className="tabular-nums" style={GOLD_TEXT}>{showEndless ? meBelow.levels : meBelow.captures}<span className="text-[9px] opacity-80"> {unit}</span></span>
             </li>
           ) : !me ? (
             <li className="mt-2 text-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.6)' }}>
-              You haven&rsquo;t hunted today. Play the Daily Revenge to take a rank.
+              {showEndless ? 'No Endless run of yours on the board yet.' : 'You haven\u2019t hunted today. Play the Daily Revenge to take a rank.'}
             </li>
           ) : null}
         </ul>
@@ -516,7 +554,7 @@ export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profi
           <div key={tab} className="h-full arena-tab-in">
             {tab === 'Revenge' && <RevengeTab flipped={flipped} onGo={() => setFlipped(true)} onBegin={() => onStart(dailyDifficulty)} countdown={countdown} runName={runName} abilities={pool} board={board} endlessBest={endlessBest} onEndless={onEndless} />}
             {tab === 'Ladder' && <LadderTab profile={profile} onLadderStart={onLadderStart} />}
-            {tab === 'Ranks' && <RanksTab handle={handle} board={board} loading={boardLoading} />}
+            {tab === 'Ranks' && <RanksTab handle={handle} board={board} loading={boardLoading} iso={iso} />}
             {tab === 'Codex' && <CodexTab profile={profile} onTrophies={onTrophies} />}
           </div>
         </div>
