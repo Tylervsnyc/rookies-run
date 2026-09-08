@@ -434,7 +434,6 @@ export default function RookiesRunPage() {
 
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
   /** Instant ability being READ before it fires (see onActivateAbility). */
-  const [instantPreview, setInstantPreview] = useState<AbilityId | null>(null);
   // Per-ability cast VFX — phase-step ghost / leap arc /
   // freeze-ray beam / poison or rabies dart. Cleared after the matching anim ends.
   type AbilityFx = NonNullable<BoardState['lastAbilityFx']>;
@@ -661,7 +660,6 @@ export default function RookiesRunPage() {
   const canRetry = retriesLeft > 0 && !gaveUp && !endless;
 
   // A new level (or a lost/won board) never keeps a card held up for reading.
-  useEffect(() => { setInstantPreview(null); }, [levelIndex, state.status]);
   const [showTrophies, setShowTrophies] = useState(false);
   // ENDLESS: the kit-reveal card before level 1, plus the personal best shown
   // on the HUD and on the game-over card.
@@ -1137,15 +1135,6 @@ export default function RookiesRunPage() {
     return abilityLegalMoves(state, state.activeAbility.id);
   }, [state]);
 
-  /** "2 uses left this level" for the instant being read. */
-  const instantUsesLine = useMemo(() => {
-    if (!instantPreview) return '';
-    const owned = state.abilities.find((a) => a.id === instantPreview);
-    const left = owned?.usesLeftThisLevel ?? 0;
-    if (left < 0) return 'Unlimited uses';
-    return `${left} use${left === 1 ? '' : 's'} left this level`;
-  }, [instantPreview, state.abilities]);
-
   const activeAbilityTier = useMemo(() => {
     if (!state.activeAbility) return undefined;
     return state.abilities.find((a) => a.id === state.activeAbility!.id)?.tier;
@@ -1178,13 +1167,9 @@ export default function RookiesRunPage() {
     return out;
   }, [state]);
 
-  /**
-   * Actually fire (or arm) an ability. Split out of `onActivateAbility` so an
-   * INSTANT can be read before it happens — see the preview below.
-   */
+  /** Actually fire (or arm) an ability. */
   const fireAbility = useCallback(
     (id: AbilityId) => {
-      setInstantPreview(null);
       const next = applyAbilityActivate(state, id);
       if (next !== state) {
         recordEvent({
@@ -1210,45 +1195,33 @@ export default function RookiesRunPage() {
    *
    * Aimed abilities (Freeze Ray, Magnet, the Duchess) arm, and the red panel
    * under the board tells you what you're about to do while you pick a square.
-   * Instants had no such moment: they resolved on the first tap, so their
-   * effect was never stated anywhere in the game. Tyler, 2026-09-08 playtest,
-   * on Smoke: "I still don't really get what Smoke does" ... "it needs to be a
-   * little bit more explicit about what happens there. Like, if it's smoke,
-   * I'm disappearing how many levels?"
    *
-   * So an instant's first tap opens the SAME red panel with its tier-exact
-   * text ("Vanish for 2 turns. Enemies cannot see you.") and a USE button.
-   * Aimed abilities are untouched — one tap, as before.
+   * INSTANTS FIRE ON ONE TAP. A confirm panel was added for them on 2026-09-08
+   * to answer "what does Smoke actually do", and Tyler killed it the same day
+   * after playing the Parapet on Hard: "that Aegis thing is annoying... another
+   * click just made me die. We got to take that out." He was right, and it was
+   * worse than annoying — tapping the board dismissed the panel, so an Aegis
+   * you thought you had raised was never raised at all. A defensive card cannot
+   * cost a confirmation step. The explaining belongs on the card, not in the
+   * path of the tap.
    */
   const onActivateAbility = useCallback(
     (id: AbilityId) => {
       ensureAudioWarm();
-      // Tapping the same card again cancels — whether armed or being read.
+      // Tapping the same card again cancels an armed (aimed) ability.
       if (state.activeAbility?.id === id) {
         setState((s) => applyAbilityCancel(s));
         return;
       }
-      if (instantPreview === id) {
-        setInstantPreview(null);
-        return;
-      }
-      if (ABILITY_DEFS[id].activation === 'instant') {
-        // Nothing has happened yet — this only opens the panel.
-        if (applyAbilityActivate(state, id) !== state) setInstantPreview(id);
-        return;
-      }
-      setInstantPreview(null);
       fireAbility(id);
     },
-    [state, instantPreview, ensureAudioWarm, fireAbility],
+    [state.activeAbility?.id, ensureAudioWarm, fireAbility],
   );
 
   const onSquareClick = useCallback(
     (square: string) => {
       ensureAudioWarm();
       if (state.status !== 'playing' || state.turn !== 'rookie') return;
-      // Touching the board puts the ability card back down.
-      setInstantPreview(null);
 
       // Ability resolution mode.
       if (state.activeAbility) {
@@ -2102,43 +2075,11 @@ export default function RookiesRunPage() {
 
         {/*
           THE RED PANEL — the one place the game states, in words, what a power
-          is about to do. Until 2026-09-08 it only carried the aiming
-          instruction ("tap an enemy"), never the EFFECT, and instants never
-          reached it at all. Now every panel leads with the tier-exact effect
-          line (`blurbDetailForTier`), so "how many turns?" is answered on
-          screen instead of guessed.
+          is about to do. It leads with the tier-exact effect line
+          (`blurbDetailForTier`) so "how many turns?" is answered on screen
+          instead of guessed. AIMED abilities only — instants fire on one tap
+          (Tyler, 2026-09-08).
         */}
-        {state.status === 'playing' && !state.activeAbility && instantPreview && (
-          <div className="flex items-start gap-2 rounded-lg px-3 py-2" style={isStc ? { background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.4)' } : { background: 'rgba(229,57,53,0.22)', border: '1.5px solid rgba(229,57,53,0.7)' }}>
-            <span className="flex-1 min-w-0 leading-tight" style={{ color: isStc ? '#B71C1C' : '#FFB3B0' }}>
-              <span className="block text-[10px] font-black uppercase tracking-[0.14em] opacity-80">
-                {ABILITY_DEFS[instantPreview].name} · {ABILITY_DEFS[instantPreview].typeLine}
-              </span>
-              <span className="block text-xs font-black mt-0.5">
-                {blurbDetailForTier(instantPreview, state.abilities.find((a) => a.id === instantPreview)?.tier ?? 1).what}
-              </span>
-              <span className="block text-[10px] font-bold mt-0.5 opacity-80">{instantUsesLine}</span>
-            </span>
-            <span className="flex gap-1.5 shrink-0">
-              <button
-                type="button"
-                onClick={() => setInstantPreview(null)}
-                className="px-3 min-h-[44px] rounded bg-chess-text/10 text-chess-text text-[11px] font-bold active:scale-95"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => fireAbility(instantPreview)}
-                data-testid="instant-use"
-                className="px-4 min-h-[44px] rounded text-[11px] font-black text-white active:scale-95"
-                style={{ background: '#E53935' }}
-              >
-                USE
-              </button>
-            </span>
-          </div>
-        )}
 
         {state.status === 'playing' && state.activeAbility && (
           <div className="flex items-center gap-2 rounded-lg px-3 py-2" style={isStc ? { background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.4)' } : { background: 'rgba(229,57,53,0.22)', border: '1.5px solid rgba(229,57,53,0.7)' }}>
