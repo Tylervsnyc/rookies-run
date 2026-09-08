@@ -288,15 +288,15 @@ function EndlessStrip({ best, onPlay }: { best: number; onPlay: () => void }) {
       onClick={onPlay}
       aria-label="Play Endless"
       data-testid="home-endless"
-      className="arena-press mt-2.5 w-full rounded-[14px] flex items-center gap-3 px-3 min-h-[52px] text-left"
+      className="arena-press w-full rounded-[16px] flex items-center gap-3 px-4 min-h-[70px] text-left"
       style={{ background: 'linear-gradient(180deg,#2b3f7d 0%,#1c2f63 100%)', border: `2px solid ${GOLD}`, boxShadow: '0 5px 0 rgba(0,0,0,0.45)', ['--depth' as string]: '5px' }}
     >
-      <span className="w-8 h-8 rounded-lg flex items-center justify-center text-[17px] font-black shrink-0" style={{ background: GOLD, color: '#2a1c00' }}>
+      <span className="w-[46px] h-[46px] rounded-xl flex items-center justify-center text-[26px] font-black shrink-0" style={{ background: GOLD, color: '#2a1c00' }}>
         &infin;
       </span>
       <span className="flex flex-col leading-none min-w-0">
-        <span className="text-[15px] font-black" style={OUTLINE}>ENDLESS</span>
-        <span className="text-[11px] font-bold mt-1 truncate" style={{ color: 'rgba(255,255,255,0.72)' }}>
+        <span className="text-[24px] font-black" style={{ ...OUTLINE, letterSpacing: '0.02em' }}>ENDLESS</span>
+        <span className="text-[12px] font-bold mt-1 truncate" style={{ color: 'rgba(255,255,255,0.72)' }}>
           5 random powers &middot; how deep can you get?
         </span>
       </span>
@@ -321,7 +321,7 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
       ? ` \u00b7 you\u2019re #${live.me.rank} of ${live.total.toLocaleString()}`
       : ` \u00b7 ${live.total.toLocaleString()} hunting`;
   return (
-    <div className="h-full flex flex-col">
+    <div className={`h-full flex flex-col${flipped ? '' : ' gap-3 justify-center pb-2'}`}>
       {flipped ? (
         <CpButton onClick={onBegin} className="min-h-[70px]" color="#58CC02" shadow="#3d8c01" ariaLabel="Begin today's revenge">
           <RevengeMarkSvg size={46} ringColor="#fff" />
@@ -339,14 +339,32 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
           </span>
         </CpButton>
       )}
-      {ENDLESS_ENABLED && onEndless && <EndlessStrip best={endlessBest} onPlay={onEndless} />}
-      <div className="mt-3 flex items-baseline justify-between px-1">
-        <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s abilities</span>
-        <span className="text-[11px] font-bold truncate ml-3" style={{ color: 'rgba(255,255,255,0.7)' }}>Map: {runName}</span>
-      </div>
-      <div className="mt-2 grid grid-cols-4 gap-2">
-        {abilities.map((id) => <AbilityTile key={id} id={id} />)}
-      </div>
+      {/*
+        THE MODE PICKER vs THE MODE SCREEN (Tyler, 2026-09-08 playtest).
+        Endless earned a place on the front screen, and with the ability grid
+        also sitting there the front screen became two things at once: "this
+        probably isn't the right place to put it because it messes up the
+        landing screen a little bit ... if we're gonna have Endless here, we
+        can put the today's abilities in the Daily Revenge when you click
+        that. The today's abilities should just be in that new screen, in the
+        mode screen."
+
+        So: UNFLIPPED is the picker — two modes, nothing else. FLIPPED is the
+        daily's own screen, and today's four cards live there, next to BEGIN.
+      */}
+      {flipped ? (
+        <>
+          <div className="mt-3 flex items-baseline justify-between px-1">
+            <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s abilities</span>
+            <span className="text-[11px] font-bold truncate ml-3" style={{ color: 'rgba(255,255,255,0.7)' }}>Map: {runName}</span>
+          </div>
+          <div className="mt-2 grid grid-cols-4 gap-2">
+            {abilities.map((id) => <AbilityTile key={id} id={id} />)}
+          </div>
+        </>
+      ) : (
+        ENDLESS_ENABLED && onEndless && <EndlessStrip best={endlessBest} onPlay={onEndless} />
+      )}
     </div>
   );
 }

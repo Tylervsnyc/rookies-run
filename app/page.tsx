@@ -70,6 +70,7 @@ import {
   type AbilityOfferOption,
   type AbilityTier,
   type OwnedAbility,
+  blurbDetailForTier,
 } from '@/lib/run/abilities';
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
@@ -94,6 +95,7 @@ import {
   ENDLESS_RUN_ID,
   applyEndlessRamp,
   buildEndlessSession,
+  ENDLESS_TEMPO_MAX,
   endlessLevelAt,
   endlessRamp,
   endlessRampLabel,
@@ -294,6 +296,8 @@ function freshEndlessLevel(
       ...carry,
       runId: ref.runId,
       difficulty: endlessRamp(step + 1).difficulty,
+      // The meter never shortens with the depth band (see ENDLESS_TEMPO_MAX).
+      tempoMax: ENDLESS_TEMPO_MAX,
       testkit: endless.kit,
     }),
     puzzle,
@@ -429,6 +433,8 @@ export default function RookiesRunPage() {
   const levelStartAbilitiesRef = useRef<OwnedAbility[]>(initial.state.abilities);
 
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
+  /** Instant ability being READ before it fires (see onActivateAbility). */
+  const [instantPreview, setInstantPreview] = useState<AbilityId | null>(null);
   // Per-ability cast VFX — phase-step ghost / leap arc /
   // freeze-ray beam / poison or rabies dart. Cleared after the matching anim ends.
   type AbilityFx = NonNullable<BoardState['lastAbilityFx']>;
@@ -653,6 +659,9 @@ export default function RookiesRunPage() {
   // ENDLESS is ONE LIFE at every depth, whatever the ramped difficulty mode
   // would normally allow. A failed level ends the session; that is the score.
   const canRetry = retriesLeft > 0 && !gaveUp && !endless;
+
+  // A new level (or a lost/won board) never keeps a card held up for reading.
+  useEffect(() => { setInstantPreview(null); }, [levelIndex, state.status]);
   const [showTrophies, setShowTrophies] = useState(false);
   // ENDLESS: the kit-reveal card before level 1, plus the personal best shown
   // on the HUD and on the game-over card.
@@ -1128,6 +1137,15 @@ export default function RookiesRunPage() {
     return abilityLegalMoves(state, state.activeAbility.id);
   }, [state]);
 
+  /** "2 uses left this level" for the instant being read. */
+  const instantUsesLine = useMemo(() => {
+    if (!instantPreview) return '';
+    const owned = state.abilities.find((a) => a.id === instantPreview);
+    const left = owned?.usesLeftThisLevel ?? 0;
+    if (left < 0) return 'Unlimited uses';
+    return `${left} use${left === 1 ? '' : 's'} left this level`;
+  }, [instantPreview, state.abilities]);
+
   const activeAbilityTier = useMemo(() => {
     if (!state.activeAbility) return undefined;
     return state.abilities.find((a) => a.id === state.activeAbility!.id)?.tier;
@@ -1160,14 +1178,13 @@ export default function RookiesRunPage() {
     return out;
   }, [state]);
 
-  const onActivateAbility = useCallback(
+  /**
+   * Actually fire (or arm) an ability. Split out of `onActivateAbility` so an
+   * INSTANT can be read before it happens — see the preview below.
+   */
+  const fireAbility = useCallback(
     (id: AbilityId) => {
-      ensureAudioWarm();
-      // Tapping the same card again cancels.
-      if (state.activeAbility?.id === id) {
-        setState((s) => applyAbilityCancel(s));
-        return;
-      }
+      setInstantPreview(null);
       const next = applyAbilityActivate(state, id);
       if (next !== state) {
         recordEvent({
@@ -1185,13 +1202,53 @@ export default function RookiesRunPage() {
         if (id === 'surge') void playSurgeSound();
       }
     },
-    [state, ensureAudioWarm, recordEvent],
+    [state, recordEvent],
+  );
+
+  /**
+   * TAP TO READ, TAP AGAIN TO FIRE — for INSTANT abilities only.
+   *
+   * Aimed abilities (Freeze Ray, Magnet, the Duchess) arm, and the red panel
+   * under the board tells you what you're about to do while you pick a square.
+   * Instants had no such moment: they resolved on the first tap, so their
+   * effect was never stated anywhere in the game. Tyler, 2026-09-08 playtest,
+   * on Smoke: "I still don't really get what Smoke does" ... "it needs to be a
+   * little bit more explicit about what happens there. Like, if it's smoke,
+   * I'm disappearing how many levels?"
+   *
+   * So an instant's first tap opens the SAME red panel with its tier-exact
+   * text ("Vanish for 2 turns. Enemies cannot see you.") and a USE button.
+   * Aimed abilities are untouched — one tap, as before.
+   */
+  const onActivateAbility = useCallback(
+    (id: AbilityId) => {
+      ensureAudioWarm();
+      // Tapping the same card again cancels — whether armed or being read.
+      if (state.activeAbility?.id === id) {
+        setState((s) => applyAbilityCancel(s));
+        return;
+      }
+      if (instantPreview === id) {
+        setInstantPreview(null);
+        return;
+      }
+      if (ABILITY_DEFS[id].activation === 'instant') {
+        // Nothing has happened yet — this only opens the panel.
+        if (applyAbilityActivate(state, id) !== state) setInstantPreview(id);
+        return;
+      }
+      setInstantPreview(null);
+      fireAbility(id);
+    },
+    [state, instantPreview, ensureAudioWarm, fireAbility],
   );
 
   const onSquareClick = useCallback(
     (square: string) => {
       ensureAudioWarm();
       if (state.status !== 'playing' || state.turn !== 'rookie') return;
+      // Touching the board puts the ability card back down.
+      setInstantPreview(null);
 
       // Ability resolution mode.
       if (state.activeAbility) {
@@ -1629,7 +1686,11 @@ export default function RookiesRunPage() {
     // on a SEPARATE board (runId 'endless'), so it can never move the daily
     // run's history, streak, stars, ladder or leaderboard.
     if (meta.endless) {
-      const cleared = Math.max(0, levelReached - 1);
+      // DEPTH, not levels-cleared (Tyler 2026-09-08: dying on 23, "there
+      // should be an endless popup of level 23"). Endless is a roguelike —
+      // the floor you died on is how deep you got, and it is the one number
+      // the popup, the personal best and the Deepest-runs board all use.
+      const cleared = levelReached;
       setEndlessBest(readEndlessBest());
       setEndlessNewBest(recordEndlessBest(cleared));
       setEndlessBest(readEndlessBest());
@@ -2039,9 +2100,52 @@ export default function RookiesRunPage() {
           </div>
         )}
 
+        {/*
+          THE RED PANEL — the one place the game states, in words, what a power
+          is about to do. Until 2026-09-08 it only carried the aiming
+          instruction ("tap an enemy"), never the EFFECT, and instants never
+          reached it at all. Now every panel leads with the tier-exact effect
+          line (`blurbDetailForTier`), so "how many turns?" is answered on
+          screen instead of guessed.
+        */}
+        {state.status === 'playing' && !state.activeAbility && instantPreview && (
+          <div className="flex items-start gap-2 rounded-lg px-3 py-2" style={isStc ? { background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.4)' } : { background: 'rgba(229,57,53,0.22)', border: '1.5px solid rgba(229,57,53,0.7)' }}>
+            <span className="flex-1 min-w-0 leading-tight" style={{ color: isStc ? '#B71C1C' : '#FFB3B0' }}>
+              <span className="block text-[10px] font-black uppercase tracking-[0.14em] opacity-80">
+                {ABILITY_DEFS[instantPreview].name} · {ABILITY_DEFS[instantPreview].typeLine}
+              </span>
+              <span className="block text-xs font-black mt-0.5">
+                {blurbDetailForTier(instantPreview, state.abilities.find((a) => a.id === instantPreview)?.tier ?? 1).what}
+              </span>
+              <span className="block text-[10px] font-bold mt-0.5 opacity-80">{instantUsesLine}</span>
+            </span>
+            <span className="flex gap-1.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => setInstantPreview(null)}
+                className="px-3 min-h-[44px] rounded bg-chess-text/10 text-chess-text text-[11px] font-bold active:scale-95"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => fireAbility(instantPreview)}
+                data-testid="instant-use"
+                className="px-4 min-h-[44px] rounded text-[11px] font-black text-white active:scale-95"
+                style={{ background: '#E53935' }}
+              >
+                USE
+              </button>
+            </span>
+          </div>
+        )}
+
         {state.status === 'playing' && state.activeAbility && (
           <div className="flex items-center gap-2 rounded-lg px-3 py-2" style={isStc ? { background: 'rgba(229,57,53,0.1)', border: '1px solid rgba(229,57,53,0.4)' } : { background: 'rgba(229,57,53,0.22)', border: '1.5px solid rgba(229,57,53,0.7)' }}>
             <span className="text-xs font-black flex-1 leading-tight" style={{ color: isStc ? '#B71C1C' : '#FFB3B0' }}>
+              <span className="block text-[11px] font-bold opacity-90 mb-0.5">
+                {blurbDetailForTier(state.activeAbility.id, activeAbilityTier ?? 1).what}
+              </span>
               {ABILITY_DEFS[state.activeAbility.id].name}:{' '}
               {state.activeAbility.step === 'pick-enemy'
                 ? state.activeAbility.id === 'magnet'
@@ -2158,9 +2262,8 @@ export default function RookiesRunPage() {
       {((state.status === 'lost' && deathSettled && !canRetry) || runComplete) && (
         <RunSummaryModal
           outOfMoves={!runComplete && outOfMoves}
-          difficultyLabel={endless
-            ? `Endless \u00b7 ${endlessRampLabel(levelIndex + 1)}${endlessNewBest ? ' \u00b7 NEW BEST' : endlessBest > 0 ? ` \u00b7 best ${endlessBest}` : ''}`
-            : isStc ? undefined : difficultyDef.name}
+          difficultyLabel={endless ? endlessRampLabel(levelIndex + 1) : isStc ? undefined : difficultyDef.name}
+          endless={endless ? { depth: levelReached, kit: endless.kit, best: endlessBest, newBest: endlessNewBest } : undefined}
           iso={meta.iso}
           totalLevels={endless ? Math.min(10, Math.max(1, levelReached)) : totalLevels}
           levelReached={levelReached}

@@ -53,9 +53,17 @@ interface StampCardProps {
   testId?: string;
   /** Optional X in the top-right corner (Tyler 2026-09-03: the celebration needs a way out). */
   onClose?: () => void;
+  /**
+   * Hide the level pips. ENDLESS has no level count to be a fraction OF — its
+   * number is a depth, not "4 of 10" (Tyler 2026-09-08: "we don't need the
+   * levels reached on that").
+   */
+  hidePips?: boolean;
+  /** Small caption under the big number, e.g. "LEVELS DEEP". */
+  caption?: string;
 }
 
-export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, stars, starLine, children, testId, onClose }: StampCardProps) {
+export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, stars, starLine, children, testId, onClose, hidePips = false, caption }: StampCardProps) {
   const won = tone === 'won';
   const filled = won ? level : level - 1;
   const showStars = stars !== undefined;
@@ -121,6 +129,11 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
           </div>
         </div>
 
+        {caption && (
+          <div className="mt-1 text-[11px] font-black uppercase tracking-[0.22em]" style={{ color: 'rgba(255,255,255,0.55)' }}>{caption}</div>
+        )}
+
+        {!hidePips && (
         <div className="mt-2 flex justify-center gap-1.5" aria-label={`Level ${level} of ${totalLevels}`}>
           {Array.from({ length: totalLevels }).map((_, i) => {
             const done = i < filled;
@@ -134,6 +147,7 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
             );
           })}
         </div>
+        )}
 
         {showStars && <StampStars stars={stars} line={starLine} />}
 

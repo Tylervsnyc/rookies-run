@@ -83,6 +83,18 @@ export const ENDLESS_KIT_SIZE = 5;
 export const ENDLESS_BEST_KEY = 'rookies-revenge-endless-best';
 
 /**
+ * TEMPO CAP for a whole Endless session, at every depth.
+ *
+ * The ramp's opening bands run on Rookie (depth 1-3), and Rookie's meter is
+ * only 8 long — so offers landed roughly every other capture and a card hit
+ * T4 inside four levels. Tyler, 2026-09-08 playtest: "I'm already at Duchess
+ * level 4 ... Seems a little fast. Oh, it's because the tempo is only at 8
+ * here. It should be at 12 in the endless." Endless pins the Normal-length
+ * meter for the session so upgrade pace never moves with the depth band.
+ */
+export const ENDLESS_TEMPO_MAX = 12;
+
+/**
  * Kill switch, same shape as the one game flag this repo already has
  * (`NEXT_PUBLIC_HOME_CLASSIC` in app/page.tsx). On by default; set
  * `NEXT_PUBLIC_ENDLESS=0` to take the entry point and the mode away.
@@ -311,8 +323,17 @@ export function endlessLevelAt(session: EndlessSession, idx: number): EndlessLev
  * bot does. These two constants are the one place to tune the whole curve, and
  * they want a real depth sweep (19-60) before anyone calls them right.
  */
-const OVERDRIVE_FROM = 10;
-const OVERDRIVE_EVERY = 4;
+/**
+ * RETUNED AGAIN 2026-09-08, this time on HUMAN data — the first full session
+ * Tyler played (died at depth 23). His read through the twenties: "I'm at
+ * level 20 ... it's not feeling that much harder", "I kind of don't want to
+ * keep doing it" — i.e. by the time all three of his cards were maxed (~16)
+ * the ramp was no longer taking anything back. 10/4 put only three overdrive
+ * steps under him at depth 20; 8/3 puts five there, and starts the squeeze
+ * one band earlier, right as the first upgrades land.
+ */
+const OVERDRIVE_FROM = 8;
+const OVERDRIVE_EVERY = 3;
 const MOVE_LIMIT_FLOOR = 6;
 const MAX_ENEMIES_PER_TURN = 6;
 

@@ -275,6 +275,17 @@ export interface BoardState {
   /** Difficulty mode this state was built under (see lib/run/difficulty.ts). */
   difficulty?: DifficultyId;
   /**
+   * Tempo cap override, ignoring the difficulty mode's own `tempoMaxKing`.
+   *
+   * Only ENDLESS sets this. Its opening depths run on Rookie for the move and
+   * enemy allowances, but Rookie's short 8-tempo meter made offers land far
+   * too fast there (Tyler, 2026-09-08 playtest: "I'm already at Duchess level
+   * 4 ... it's because the tempo is only at 8 here. It should be at 12 in the
+   * endless"). Endless pins the meter at the Normal length for its whole
+   * session, so upgrade pace never depends on the depth band.
+   */
+  tempoMax?: number;
+  /**
    * Extra Rookie moves queued by Surge. While > 0, the turn stays with Rookie
    * after a move or ability instead of handing off to the enemy. Decremented
    * once per move/ability consumed. Resets to 0 at the start of each level.

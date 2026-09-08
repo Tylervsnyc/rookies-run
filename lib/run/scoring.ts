@@ -60,9 +60,13 @@ export const TEMPO_MAX_KING = 12;
  */
 export function tempoMaxFor(
   state:
-    | (Pick<BoardState, 'winCondition'> & { difficulty?: DifficultyId })
+    | (Pick<BoardState, 'winCondition'> & { difficulty?: DifficultyId; tempoMax?: number })
     | Pick<RunPuzzle, 'winCondition'>,
 ): number {
+  // An explicit override wins over everything (Endless pins its meter at 12
+  // for the whole session — see BoardState.tempoMax).
+  const override = (state as { tempoMax?: number }).tempoMax;
+  if (typeof override === 'number' && override > 0) return override;
   if (state.winCondition !== 'king') return TEMPO_MAX;
   const d = (state as { difficulty?: DifficultyId }).difficulty;
   return d && DIFFICULTIES[d] ? DIFFICULTIES[d].tempoMaxKing : TEMPO_MAX_KING;

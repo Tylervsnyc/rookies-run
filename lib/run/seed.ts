@@ -153,6 +153,8 @@ export function puzzleToBoardState(
     /** Playtest kit (?testkit=) — exact offer pool; see BoardState.testkit. */
     testkit?: BoardState['testkit'];
     difficulty?: BoardState['difficulty'];
+    /** Tempo cap override (Endless pins 12 at every depth). */
+    tempoMax?: BoardState['tempoMax'];
     /**
      * Seeded RNG for Rookie's random start file. Omit in the app (players
      * want a fresh file each attempt); the playtest harness MUST pass one so
@@ -213,6 +215,7 @@ export function puzzleToBoardState(
     ...(carry.unlockedAbilities ? { unlockedAbilities: [...carry.unlockedAbilities] } : {}),
     ...(carry.testkit && carry.testkit.length > 0 ? { testkit: [...carry.testkit] } : {}),
     ...(carry.difficulty ? { difficulty: carry.difficulty } : {}),
+    ...(carry.tempoMax ? { tempoMax: carry.tempoMax } : {}),
     moveLimit: puzzle.moveLimit ?? null,
     enemiesPerTurn: puzzle.enemiesPerTurn ?? 1,
     ...(puzzle.winCondition === 'king'

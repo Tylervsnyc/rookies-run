@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { fireConfetti } from '@/lib/confetti';
 import type { RunStats } from '@/lib/run/history';
 import type { RunStars } from '@/lib/run/scoring';
+import { ABILITY_DEFS, type AbilityId } from '@/lib/run/abilities';
+import { artFile } from '@/lib/run/ability-art';
 import { SHARE_URL, buildShareText, encodeShareCard, type ShareCardData } from '@/lib/run/share';
 import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
 import { SHARE_CARD_H, SHARE_CARD_W, ShareCard } from './ShareCard';
@@ -51,6 +53,62 @@ interface RunSummaryModalProps {
   stars?: RunStars;
   /** One-line star rule, e.g. "No retries · 32 moves, par 35". */
   starLine?: string;
+  /**
+   * ENDLESS ending. When set the card stops being a run report and becomes a
+   * depth report — Tyler, 2026-09-08, on dying at 23: "there should be an
+   * endless popup ... we don't need the levels reached on that. We should
+   * just say what abilities we used. How far we got. And then have that be
+   * our high score."
+   *
+   * So: the depth is the number, the rolled five are the body, and the
+   * personal best sits under them. No pips, no levels-reached histogram, no
+   * daily win/streak stats — none of those mean anything in a mode with no
+   * level count and no daily.
+   */
+  endless?: EndlessSummary;
+}
+
+export interface EndlessSummary {
+  /** Levels cleared before dying — the score. */
+  depth: number;
+  /** The five powers the session rolled. */
+  kit: AbilityId[];
+  /** Best depth before this session (0 = none). */
+  best: number;
+  /** This session set a new best. */
+  newBest: boolean;
+}
+
+const KIT_FRAME = 'linear-gradient(135deg,#b8852b,#6a4612 30%,#ffd87a 60%,#b8852b)';
+
+/** The rolled five, cut like the in-game cards (same treatment as the home tiles). */
+function EndlessKit({ kit }: { kit: AbilityId[] }) {
+  return (
+    <div className="mt-1 text-left">
+      <div className="px-1 mb-1.5 text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: MUTED }}>
+        Your five
+      </div>
+      <div className="grid grid-cols-5 gap-1.5">
+        {kit.map((id) => (
+          <div
+            key={id}
+            className="w-full rounded-[10px] p-[2px]"
+            style={{ aspectRatio: '4 / 5', background: KIT_FRAME, boxShadow: '0 4px 10px rgba(0,0,0,0.45)' }}
+          >
+            <div className="w-full h-full rounded-[8px] overflow-hidden flex flex-col" style={{ background: '#f6e7c5' }}>
+              <div className="flex-1 min-h-0 relative" style={{ background: 'radial-gradient(ellipse at center,#ffe9a8 0%,#d49a2a 100%)' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/abilities/${artFile(id)}`} alt="" className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+              </div>
+              <div className="px-0.5 py-[2px] text-[8px] font-black text-center leading-tight truncate" style={{ color: '#3d2806' }}>
+                {ABILITY_DEFS[id].name}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const GOLD = '#FFC800';
@@ -75,6 +133,7 @@ export function RunSummaryModal({
   timeMs,
   stars,
   starLine,
+  endless,
 }: RunSummaryModalProps) {
   const [shareState, setShareState] = useState<'idle' | 'busy' | 'shared' | 'copied'>('idle');
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -176,22 +235,39 @@ export function RunSummaryModal({
 
   return (
     <StampCard
-      kicker={`${iso}${difficultyLabel ? ` · ${difficultyLabel}` : ''}`}
-      level={completed ? totalLevels : levelReached}
+      kicker={`${endless ? 'Endless' : iso}${difficultyLabel ? ` · ${difficultyLabel}` : ''}`}
+      level={endless ? endless.depth : completed ? totalLevels : levelReached}
       totalLevels={totalLevels}
+      hidePips={!!endless}
+      caption={endless ? (endless.depth === 1 ? 'Level deep' : 'Levels deep') : undefined}
       stamp={completed ? 'Run complete' : outOfMoves ? 'Out of moves' : 'Captured'}
       tone={completed ? 'won' : 'lost'}
       stars={completed ? stars : undefined}
       starLine={completed ? starLine : undefined}
       onClose={onClose}
       chips={
-        <>
-          {score !== undefined && <StampChip gold>{score} pts</StampChip>}
-          {clock && <StampChip>{clock}</StampChip>}
-          {timedScore !== undefined && <StampChip>Timed {timedScore} (testing)</StampChip>}
-        </>
+        endless ? (
+          <>
+            {endless.newBest ? (
+              <StampChip gold>New best</StampChip>
+            ) : (
+              endless.best > 0 && <StampChip>Best {endless.best}</StampChip>
+            )}
+            {clock && <StampChip>{clock}</StampChip>}
+          </>
+        ) : (
+          <>
+            {score !== undefined && <StampChip gold>{score} pts</StampChip>}
+            {clock && <StampChip>{clock}</StampChip>}
+            {timedScore !== undefined && <StampChip>Timed {timedScore} (testing)</StampChip>}
+          </>
+        )
       }
     >
+      {endless ? (
+        <EndlessKit kit={endless.kit} />
+      ) : (
+      <>
       <div className="grid grid-cols-4 gap-2">
         <Stat value={stats.played} label="Played" />
         <Stat value={`${stats.winPct}%`} label="Win" />
@@ -238,6 +314,8 @@ export function RunSummaryModal({
           @media (prefers-reduced-motion: reduce) { [style*="rrStampBar"] { animation: none !important; } }
         `}</style>
       </div>
+      </>
+      )}
 
       <div className="mt-3 flex flex-col gap-2">
         {completed && nextRunName && onNextRun ? (
@@ -246,7 +324,7 @@ export function RunSummaryModal({
           </StampButton>
         ) : (
           <StampButton color={REVENGE_RED} shadow={REVENGE_RED_DARK} onClick={onReplay}>
-            {completed ? 'Play again' : 'Try again'}
+            {endless ? 'Roll five again' : completed ? 'Play again' : 'Try again'}
           </StampButton>
         )}
         <div className="flex gap-2 justify-center items-center">
