@@ -140,7 +140,7 @@
       "rewind",
       "page"
     ],
-    "note": "Tyler 2026-09-07: the ladder should encompass every ability. Six player-facing cards never appear in any rung's kit, so a player who only plays the ladder can never hold them. Four runs looked like they closed the gap \u2014 but measurement killed two of them: The Switchback does not work at all (53% worst even with its own pair) and The Perch is unwinnable (0% with everything). So rabies-dart and bishop-step currently have NO working run to carry them onto the ladder.",
+    "note": "Tyler 2026-09-07: the ladder should encompass every ability. Six player-facing cards never appear in any rung's kit, so a ladder-only player can never hold them. Four existing runs looked like they closed the gap. Measuring all four killed three of them.",
     "candidates": [
       {
         "id": "revenge-36",
@@ -151,7 +151,7 @@
           "smoke"
         ],
         "stage": "testing",
-        "band": "not measured"
+        "band": "ELIGIBLE \u2014 signature 72/63/72/72, worst 63, inside the band; every single card 0%."
       },
       {
         "id": "revenge-35",
@@ -162,7 +162,7 @@
           "rewind"
         ],
         "stage": "testing",
-        "band": "not measured"
+        "band": "FAILS \u2014 its signature worst is 50% (below the 60 floor), and its own kit contains aegis+rewind at 97%, a free route. Needs rework before it can carry a rung."
       },
       {
         "id": "revenge-16",
@@ -172,7 +172,7 @@
           "rabies-dart"
         ],
         "stage": "testing",
-        "band": "DISQUALIFIED \u2014 nothing clears it. Its own signature pair tops out at 53% (multi-route audit, 2026-09-07)."
+        "band": "DEAD \u2014 nothing clears it. Signature worst 53%."
       },
       {
         "id": "revenge-37",
@@ -182,10 +182,10 @@
           "bishop-step"
         ],
         "stage": "idea",
-        "band": "DISQUALIFIED \u2014 unwinnable. Every loadout including bishop-step+magnet reads 0% on all of L7-L10 (measured 2026-09-08)."
+        "band": "DEAD \u2014 unwinnable. Every loadout reads 0/0/0/0."
       }
     ],
-    "result": "Coverage is NOT one approval away. Two of the four candidates are dead on measurement; Turnstile and Picket are still being measured."
+    "result": "Only The Turnstile is ready. Approving it takes the ladder to 19 of 23 (11 rungs). bishop-step, rabies-dart, page and rewind still have no working run \u2014 closing those means BUILDING runs, not approving them. The alternative is to accept 19 of 23 on the ladder and let trophies carry the rest."
   },
   "endless": {
     "shipped": "2026-09-07",
