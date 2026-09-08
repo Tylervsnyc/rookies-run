@@ -33,6 +33,17 @@ export const FEATURE_FLAGS = {
    * blank — the strip tolerates that and still shows the tiles.
    */
   FAMILY_STRIP: false,
+  /**
+   * One web login across chesspath.app and run.chesspath.app (plan 1.4).
+   * Supabase auth cookies are written with `Domain=.chesspath.app` (via
+   * lib/supabase/cookie-domain.ts) so a sign-in on either site is a sign-in on
+   * both, and a sign-out on either clears both. Only on chesspath.app hosts —
+   * localhost and *.vercel.app previews keep host-only cookies. The one-time
+   * host-only-cookie cleanup lives in the main repo's middleware (chesspath.app
+   * is where the legacy cookies are). Must be flipped in BOTH repos together.
+   * OFF = cookieOptions omitted, byte-identical to today.
+   */
+  SHARED_AUTH_COOKIE: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

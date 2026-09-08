@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { sharedCookieOptions } from '@/lib/supabase/cookie-domain';
 
 /**
  * Session refresh for run.chesspath.app — ported from Chess Path's
@@ -27,7 +28,16 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
+  // SHARED_AUTH_COOKIE: Domain=.chesspath.app on chesspath.app hosts, else
+  // undefined and the key is omitted (see lib/supabase/cookie-domain.ts).
+  // The one-time host-only-cookie migration lives in the main repo's
+  // middleware; run.chesspath.app has no legacy cookies to clean up.
+  const cookieOptions = sharedCookieOptions(
+    request.headers.get('x-forwarded-host') ?? request.nextUrl.hostname
+  );
+
   const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    ...(cookieOptions ? { cookieOptions } : {}),
     cookies: {
       getAll() {
         return request.cookies.getAll();
