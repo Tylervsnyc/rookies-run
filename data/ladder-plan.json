@@ -140,7 +140,7 @@
       "rewind",
       "page"
     ],
-    "note": "Tyler 2026-09-07: the ladder should encompass every ability. Six player-facing cards never appear in any rung's kit, so a player who only plays the ladder can never hold them. Four runs already in the codebase close the gap and every card in their kits is live, so they are eligible today \u2014 they need measuring and approving, not building.",
+    "note": "Tyler 2026-09-07: the ladder should encompass every ability. Six player-facing cards never appear in any rung's kit, so a player who only plays the ladder can never hold them. Four runs looked like they closed the gap \u2014 but measurement killed two of them: The Switchback does not work at all (53% worst even with its own pair) and The Perch is unwinnable (0% with everything). So rabies-dart and bishop-step currently have NO working run to carry them onto the ladder.",
     "candidates": [
       {
         "id": "revenge-36",
@@ -172,7 +172,7 @@
           "rabies-dart"
         ],
         "stage": "testing",
-        "band": "72% \u2014 in band"
+        "band": "DISQUALIFIED \u2014 nothing clears it. Its own signature pair tops out at 53% (multi-route audit, 2026-09-07)."
       },
       {
         "id": "revenge-37",
@@ -182,10 +182,10 @@
           "bishop-step"
         ],
         "stage": "idea",
-        "band": "not measured \u2014 stage idea, may have failed its gate"
+        "band": "DISQUALIFIED \u2014 unwinnable. Every loadout including bishop-step+magnet reads 0% on all of L7-L10 (measured 2026-09-08)."
       }
     ],
-    "result": "A 14-rung ladder covering all 23 player-facing abilities."
+    "result": "Coverage is NOT one approval away. Two of the four candidates are dead on measurement; Turnstile and Picket are still being measured."
   },
   "endless": {
     "shipped": "2026-09-07",
