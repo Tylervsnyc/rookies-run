@@ -272,6 +272,20 @@ export interface BoardState {
    * normal players.
    */
   testkit?: AbilityId[];
+  /**
+   * The king has already acted in THIS enemy phase.
+   *
+   * He gets a free reaction step (flee / answer / panic) BEFORE the army acts,
+   * and since 2026-09-08 he can also capture Rookie. Without this flag he does
+   * both: he steps toward her, and the capture pass that runs next sees him
+   * standing beside her and takes her — two king moves in one phase (Tyler,
+   * 2026-09-08: "king moved 2 moves in a row to capture me"). Set by
+   * kingReaction, cleared at the start of every fresh enemy phase.
+   *
+   * Deliberately NOT `enemyMovedSquares`: that list is also the
+   * enemiesPerTurn budget, and the king's reaction step has always been free.
+   */
+  kingMovedThisPhase?: boolean;
   /** Difficulty mode this state was built under (see lib/run/difficulty.ts). */
   difficulty?: DifficultyId;
   /**

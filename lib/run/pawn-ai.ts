@@ -543,6 +543,9 @@ function kingReaction(state: BoardState): BoardState | null {
     // His old square is a ghost blocker for the rest of this turn, like any
     // other vacated square.
     enemyVacatedSquares: [...(state.enemyVacatedSquares ?? []), kingSq],
+    // He has spent his action. The capture pass must not use him again this
+    // phase — see BoardState.kingMovedThisPhase.
+    kingMovedThisPhase: true,
   };
   // Snare: he cannot see the trap; a flee step onto it holds him there.
   return springSnaresAt(fled, [toSquare(target)]);
@@ -849,11 +852,12 @@ function chooseEnemyActionAgainst(
   };
   const capturers: Capturer[] = [];
   const smoked = isSmoked(state); // Smoke: nobody can see Rookie
-  // A stunned king is out of the fight entirely — he cannot take her either.
-  const kingStunned = (state.kingStunTurns ?? 0) > 0;
+  // A stunned king is out of the fight entirely — he cannot take her either,
+  // and neither can one who already took his reaction step this phase.
+  const kingSpent = (state.kingStunTurns ?? 0) > 0 || state.kingMovedThisPhase === true;
   for (const p of state.pieces) {
     if (!isNormallyEligible(p)) continue;
-    if (p.type === 'king' && kingStunned) continue;
+    if (p.type === 'king' && kingSpent) continue;
     const moves = pieceLegalMoves(p, state);
     let best: { coord: Coord; isRookie: boolean; value: number } | null = null;
     for (const m of moves) {
@@ -1444,6 +1448,11 @@ export function stepEnemyTurn(rawState: BoardState): BoardState {
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,
       ...kingStunPatch,
+      // The king is re-armed once the turn goes back to Rookie. It CANNOT be
+      // cleared at phase start instead: his reaction step never touches
+      // enemyMovedSquares, so "nothing has moved yet" is still true on the
+      // very step that would capture, and the flag would clear itself.
+      kingMovedThisPhase: false,
       enemyMovedSquares: [],
       enemyVacatedSquares: [],
       frozenSquares: nextFrozenSquares,
