@@ -1,0 +1,32 @@
+diff --git a/lib/run/abilities.ts b/lib/run/abilities.ts
+index 9516035..3894dd8 100644
+--- a/lib/run/abilities.ts
++++ b/lib/run/abilities.ts
+@@ -3901,6 +3901,18 @@ function applySummonAlly(state: BoardState, id: AbilityId, target: Coord): Board
+     rank: target.rank,
+     source: id as AllyPiece['source'],
+     ...(turns !== undefined ? { turnsLeft: turns } : {}),
++    // SUMMONING SICKNESS (Tyler, 2026-09-08, after depth 24: "for all the
++    // summons they should probably have summoning sickness you know?").
++    // A body arrives and does nothing until your next turn — so a summon is
++    // a THREAT you have to protect for a turn, not an instant answer you
++    // drop beside the king and cash in on the spot.
++    //
++    // The mechanic already existed: `dazed`, built for Convert on 2026-09-06
++    // for the same reason ("some levels too easy where you can just capture
++    // the king on the first move"). It is read by canMoveAllyAt and cleared
++    // when the enemy turn ends, so applying it to the rest of the family is
++    // one field, not a second system.
++    dazed: true,
+   };
+   return {
+     ...state,
+@@ -3931,7 +3943,7 @@ export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
+   if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+   if (state.pendingOffer || state.activeAbility) return false;
+   if (!isControlledAlly(ally)) return false;
+-  if (ally.dazed) return false; // freshly converted — acts from next turn
++  if (ally.dazed) return false; // summoning sickness — acts from your next turn
+   if (allyHasFreeMove(state, ally)) {
+     if (ally.movedThisTurn) return false;
+     if (ally.source === 'squire' && state.squireMovedThisTurn) return false;
