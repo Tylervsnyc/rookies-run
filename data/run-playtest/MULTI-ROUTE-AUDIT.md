@@ -26,7 +26,7 @@ playable. If they do not, most of the library is a one-answer lock.
 
 | run | signature pair | sig worst | routes in 60-80 band | too-easy (>80) | pairs that clear | single card >8% | verdict |
 |---|---|---|---|---|---|---|---|
-| revenge-12 | `bishop-squire+swap` | 75% | 1 | 0 | 1 | **bishop-squire, knight-hop** | **BROKEN GATE** |
+| revenge-12 | `bishop-squire+swap` | 63% | 1 | 0 | 1 | none | **ONE-ANSWER** |
 | revenge-13 | `bishop-squire+swap` | 69% | 3 | 1 | 4 | **bishop-squire** | **BROKEN GATE** |
 | revenge-14 | `swap+vanguard` | 84% | 0 | 7 | 7 | none | **ONE-ANSWER*** |
 | revenge-15 | `boulder+magnet` | 59% | 1 | 2 | 3 | none | **ONE-ANSWER*** |
@@ -38,16 +38,26 @@ playable. If they do not, most of the library is a one-answer lock.
 | revenge-22 | `dragon+duchess` | 72% | 2 | 0 | 2 | none | **MULTI-ROUTE** |
 | revenge-23 | `knight-hop+twin` | 63% | 1 | 0 | 1 | none | **ONE-ANSWER** |
 | revenge-24 | `decoy+duchess` | 63% | 1 | 0 | 1 | none | **ONE-ANSWER** |
+| revenge-25 | `become-king+boulder` | 53% | 2 | 12 | 14 | none | **MULTI-ROUTE** |
+| revenge-26 | `become-king+boulder` | 88% | 0 | 17 | 17 | none | **ONE-ANSWER*** |
+| revenge-27 | `knight-hop+scarecrow` | 47% | 0 | 0 | 0 | none | **NO ANSWER (not even the signature pair clears)** |
+| revenge-30 | `coup+duchess` | 91% | 0 | 3 | 3 | none | **ONE-ANSWER*** |
+| revenge-32 | `magnet+shove` | 63% | 1 | 6 | 7 | none | **ONE-ANSWER*** |
+| revenge-33 | `boulder+snare` | 69% | 1 | 15 | 16 | none | **ONE-ANSWER*** |
+| revenge-34 | `rewind+twin` | 47% | 1 | 6 | 7 | none | **ONE-ANSWER*** |
+| revenge-35 | `aegis+page` | 50% | 0 | 2 | 2 | none | **ONE-ANSWER*** |
+| revenge-36 | `queen-pulse+smoke` | 63% | 3 | 6 | 9 | none | **MULTI-ROUTE** |
+| revenge-41 | `page+panic` | 34% | 0 | 11 | 11 | none | **ONE-ANSWER*** |
 
 ## Verdict lists
 
-**MULTI-ROUTE (2+ pairs land in the 60-80 band):** revenge-17, revenge-19, revenge-21, revenge-22
+**MULTI-ROUTE (2+ pairs land in the 60-80 band):** revenge-17, revenge-19, revenge-21, revenge-22, revenge-25, revenge-36
 
-**ONE-ANSWER (only the signature pair clears):** revenge-23, revenge-24, revenge-14, revenge-15, revenge-18
+**ONE-ANSWER (only the signature pair clears):** revenge-12, revenge-23, revenge-24, revenge-14, revenge-15, revenge-18, revenge-26, revenge-30, revenge-32, revenge-33, revenge-34, revenge-35, revenge-41
 
-**BROKEN GATE (a single card beats the finale):** revenge-12, revenge-13
+**BROKEN GATE (a single card beats the finale):** revenge-13
 
-**NO ANSWER (the authored pair itself does not clear):** revenge-16
+**NO ANSWER (the authored pair itself does not clear):** revenge-16, revenge-27
 
 ## Which cards generalise
 
@@ -56,49 +66,57 @@ How often each card appears in a pair that CLEARS a finale it was not designed f
 
 | card | clearing pairs OUTSIDE its kit | clearing pairs inside a kit | runs |
 |---|---|---|---|
-| `knight-hop` | 13 | 2 | revenge-13, revenge-14, revenge-15, revenge-21, revenge-21(kit), revenge-23(kit) |
-| `become-king` | 8 | 0 | revenge-15, revenge-19, revenge-21 |
-| `summon-knight` | 7 | 1 | revenge-13, revenge-14, revenge-19, revenge-19(kit), revenge-21 |
-| `twin` | 7 | 1 | revenge-13, revenge-21, revenge-23(kit) |
-| `swap` | 6 | 3 | revenge-12(kit), revenge-13, revenge-13(kit), revenge-14, revenge-14(kit), revenge-18, revenge-21 |
-| `freeze-ray` | 5 | 1 | revenge-14, revenge-18(kit), revenge-21, revenge-22 |
-| `boulder` | 3 | 2 | revenge-14, revenge-15(kit), revenge-21, revenge-21(kit) |
-| `magnet` | 3 | 0 | revenge-14, revenge-15 |
+| `knight-hop` | 46 | 2 | revenge-13, revenge-14, revenge-15, revenge-21, revenge-21(kit), revenge-23(kit), revenge-25, revenge-26, revenge-30, revenge-32, revenge-33, revenge-34, revenge-36, revenge-41 |
+| `summon-knight` | 45 | 1 | revenge-13, revenge-14, revenge-19, revenge-19(kit), revenge-21, revenge-25, revenge-26, revenge-30, revenge-32, revenge-33, revenge-34, revenge-35, revenge-36, revenge-41 |
+| `become-king` | 24 | 1 | revenge-15, revenge-19, revenge-21, revenge-25, revenge-26, revenge-26(kit), revenge-33, revenge-41 |
+| `freeze-ray` | 23 | 1 | revenge-14, revenge-18(kit), revenge-21, revenge-22, revenge-25, revenge-26, revenge-32, revenge-33, revenge-34, revenge-36 |
+| `swap` | 19 | 3 | revenge-12(kit), revenge-13, revenge-13(kit), revenge-14, revenge-14(kit), revenge-18, revenge-21, revenge-25, revenge-26, revenge-32, revenge-33, revenge-34, revenge-36, revenge-41 |
+| `twin` | 19 | 1 | revenge-13, revenge-21, revenge-23(kit), revenge-25, revenge-26, revenge-34 |
+| `boulder` | 16 | 4 | revenge-14, revenge-15(kit), revenge-21, revenge-21(kit), revenge-25, revenge-26, revenge-26(kit), revenge-32, revenge-33, revenge-33(kit), revenge-34, revenge-36, revenge-41 |
+| `magnet` | 3 | 1 | revenge-14, revenge-15, revenge-32(kit) |
+| `snare` | 3 | 1 | revenge-33, revenge-33(kit) |
+| `queen-pulse` | 3 | 1 | revenge-36, revenge-36(kit) |
 | `vanguard` | 2 | 2 | revenge-14, revenge-14(kit), revenge-18, revenge-18(kit) |
+| `coup` | 2 | 1 | revenge-30, revenge-30(kit) |
+| `shove` | 2 | 1 | revenge-32, revenge-32(kit) |
+| `panic` | 2 | 0 | revenge-41 |
+| `page` | 2 | 0 | revenge-41 |
 | `dragon` | 1 | 3 | revenge-17(kit), revenge-22, revenge-22(kit) |
 | `bishop-squire` | 1 | 2 | revenge-12(kit), revenge-13, revenge-13(kit) |
+| `aegis` | 1 | 2 | revenge-17(kit), revenge-35, revenge-35(kit) |
+| `rewind` | 1 | 1 | revenge-34, revenge-35(kit) |
+| `smoke` | 1 | 1 | revenge-36, revenge-36(kit) |
+| `duchess` | 0 | 3 | revenge-22(kit), revenge-24(kit), revenge-30(kit) |
 | `decoy` | 0 | 2 | revenge-15(kit), revenge-24(kit) |
-| `duchess` | 0 | 2 | revenge-22(kit), revenge-24(kit) |
 | `sacrifice` | 0 | 1 | revenge-17(kit) |
-| `aegis` | 0 | 1 | revenge-17(kit) |
 | `convert` | 0 | 1 | revenge-19(kit) |
 
 ## Per-run detail
 
-### revenge-12 — BROKEN GATE
+### revenge-12 — ONE-ANSWER
 
 kit: `swap` `bishop-squire` `knight-hop` `poison-dart` · signature: `bishop-squire+swap` · probes: `boulder` `summon-knight` `freeze-ray` `magnet` `become-king`
 
 | loadout | group | L7 | L8 | L9 | L10 | worst | trials |
 |---|---|---|---|---|---|---|---|
-| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 32 |
-| `swap` | single | 0 | 0 | 0 | 0 | 0% | 32 |
-| `bishop-squire` | single | 0 | 0 | 47 | 0 | 0% | 32 |
-| `knight-hop` | single | 0 | 9 | 0 | 38 | 0% | 32 |
-| `poison-dart` | single | 0 | 0 | 0 | 0 | 0% | 32 |
-| `bishop-squire+swap` | in-kit pair | 75 | 81 | 100 | 100 | 75% | 32 |
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `swap` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `bishop-squire` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `knight-hop` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `poison-dart` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `bishop-squire+swap` | in-kit pair | 69 | 81 | 63 | 78 | 63% | 32 |
 | `knight-hop+swap` | in-kit pair | 0 | — | — | — | elim | 16 |
 | `poison-dart+swap` | in-kit pair | 0 | — | — | — | elim | 16 |
-| `bishop-squire+knight-hop` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `bishop-squire+knight-hop` | in-kit pair | 66 | 63 | 6 | 53 | 6% | 32 |
 | `bishop-squire+poison-dart` | in-kit pair | 0 | — | — | — | elim | 16 |
-| `knight-hop+poison-dart` | in-kit pair | 0 | — | — | — | elim | 16 |
-| `bishop-squire+boulder` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+poison-dart` | in-kit pair | 53 | 50 | 28 | 0 | 0% | 32 |
+| `bishop-squire+boulder` | out-of-kit pair | 6 | 6 | 0 | 0 | 0% | 16 |
 | `bishop-squire+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
-| `bishop-squire+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `bishop-squire+freeze-ray` | out-of-kit pair | 44 | 75 | 0 | 0 | 0% | 32 |
 | `bishop-squire+magnet` | out-of-kit pair | 0 | — | — | — | elim | 16 |
-| `become-king+bishop-squire` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+bishop-squire` | out-of-kit pair | 72 | 47 | 0 | 0 | 0% | 32 |
 | `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
-| `summon-knight+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 94 | 50 | 94 | 50% | 32 |
 | `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
 | `magnet+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
 | `become-king+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
@@ -531,8 +549,386 @@ kit: `duchess` `decoy` `aegis` `magnet` · signature: `decoy+duchess` · probes:
 | `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
 | `freeze-ray+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
 
+### revenge-25 — MULTI-ROUTE
+
+kit: `become-king` `boulder` `aegis` `magnet` · signature: `become-king+boulder` · probes: `knight-hop` `swap` `summon-knight` `freeze-ray` `twin`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `become-king` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `boulder` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `become-king+boulder` | in-kit pair | 69 | 81 | 66 | 53 | 53% | 32 |
+| `aegis+become-king` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+boulder` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+freeze-ray` | out-of-kit pair | 100 | 97 | 100 | 94 | 94% | 32 |
+| `become-king+twin` | out-of-kit pair | 72 | 66 | 91 | 91 | 66% | 32 |
+| `boulder+knight-hop` | out-of-kit pair | 100 | 100 | 97 | 97 | 97% | 32 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+twin` | out-of-kit pair | 94 | 50 | 97 | 69 | 50% | 32 |
+| `knight-hop+swap` | out-of-kit pair | 100 | 100 | 100 | 94 | 94% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `knight-hop+twin` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `swap+twin` | out-of-kit pair | 97 | 0 | 100 | 72 | 0% | 32 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `summon-knight+twin` | out-of-kit pair | 100 | 94 | 100 | 100 | 94% | 32 |
+| `freeze-ray+twin` | out-of-kit pair | 100 | 94 | 100 | 69 | 69% | 32 |
+
+### revenge-26 — ONE-ANSWER*
+
+kit: `become-king` `boulder` `aegis` `magnet` · signature: `become-king+boulder` · probes: `knight-hop` `swap` `summon-knight` `freeze-ray` `twin`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `become-king` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `boulder` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `become-king+boulder` | in-kit pair | 91 | 91 | 88 | 88 | 88% | 32 |
+| `aegis+become-king` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+boulder` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+freeze-ray` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+twin` | out-of-kit pair | 100 | 84 | 100 | 100 | 84% | 32 |
+| `boulder+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 91 | 91% | 32 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+twin` | out-of-kit pair | 100 | 88 | 100 | 84 | 84% | 32 |
+| `knight-hop+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `knight-hop+twin` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `swap+twin` | out-of-kit pair | 100 | 100 | 100 | 97 | 97% | 32 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `summon-knight+twin` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+twin` | out-of-kit pair | 100 | 97 | 100 | 84 | 84% | 32 |
+
+### revenge-27 — NO ANSWER (not even the signature pair clears)
+
+kit: `scarecrow` `knight-hop` `aegis` `hourglass` · signature: `knight-hop+scarecrow` · probes: `swap` `boulder` `summon-knight` `freeze-ray` `magnet`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `scarecrow` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `knight-hop` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `hourglass` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `knight-hop+scarecrow` | in-kit pair | 75 | 69 | 63 | 47 | 47% | 32 |
+| `aegis+scarecrow` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `hourglass+scarecrow` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+knight-hop` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `hourglass+knight-hop` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+hourglass` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `scarecrow+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+scarecrow` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `scarecrow+summon-knight` | out-of-kit pair | 97 | 78 | 0 | 47 | 0% | 32 |
+| `freeze-ray+scarecrow` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+scarecrow` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+knight-hop` | out-of-kit pair | 53 | 0 | 63 | 0 | 0% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 91 | 41 | 34 | 22 | 22% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 0 | 66 | 0 | 0% | 32 |
+| `knight-hop+magnet` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 56 | 38 | 69 | 47 | 38% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+magnet` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 38 | 0 | 22 | 0 | 0% | 32 |
+| `magnet+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+magnet` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+
+### revenge-30 — ONE-ANSWER*
+
+kit: `coup` `duchess` `aegis` `magnet` · signature: `coup+duchess` · probes: `knight-hop` `swap` `boulder` `summon-knight` `freeze-ray`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `coup` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `duchess` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `coup+duchess` | in-kit pair | 94 | 91 | 91 | 94 | 91% | 32 |
+| `aegis+coup` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `coup+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+duchess` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `duchess+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `coup+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `coup+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+coup` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `coup+summon-knight` | out-of-kit pair | 81 | 100 | 88 | 94 | 81% | 32 |
+| `coup+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `duchess+knight-hop` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `duchess+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+duchess` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `duchess+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `duchess+freeze-ray` | out-of-kit pair | 25 | 56 | 13 | 0 | 0% | 32 |
+| `knight-hop+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+knight-hop` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+
+### revenge-32 — ONE-ANSWER*
+
+kit: `shove` `magnet` `aegis` `hourglass` · signature: `magnet+shove` · probes: `knight-hop` `swap` `boulder` `summon-knight` `freeze-ray`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `shove` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `hourglass` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet+shove` | in-kit pair | 69 | 63 | 66 | 66 | 63% | 32 |
+| `aegis+shove` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `hourglass+shove` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `hourglass+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+hourglass` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+shove` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `shove+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+shove` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `shove+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+shove` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+magnet` | out-of-kit pair | 100 | 0 | 100 | 100 | 0% | 32 |
+| `magnet+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+magnet` | out-of-kit pair | 56 | 0 | 0 | 97 | 0% | 32 |
+| `magnet+summon-knight` | out-of-kit pair | 100 | 0 | 100 | 100 | 0% | 32 |
+| `freeze-ray+magnet` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+swap` | out-of-kit pair | 100 | 0 | 100 | 100 | 0% | 32 |
+| `boulder+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 100 | 0 | 100 | 100 | 0% | 32 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 100 | 0 | 100 | 100 | 0% | 32 |
+
+### revenge-33 — ONE-ANSWER*
+
+kit: `snare` `boulder` `aegis` `magnet` · signature: `boulder+snare` · probes: `knight-hop` `swap` `summon-knight` `freeze-ray` `become-king`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `snare` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `boulder` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `boulder+snare` | in-kit pair | 88 | 69 | 72 | 72 | 69% | 32 |
+| `aegis+snare` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+snare` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+boulder` | in-kit pair | 100 | 9 | 100 | 100 | 9% | 32 |
+| `boulder+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+snare` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `snare+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `snare+summon-knight` | out-of-kit pair | 100 | 94 | 97 | 100 | 94% | 32 |
+| `freeze-ray+snare` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+snare` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+knight-hop` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 100 | 97 | 100 | 100 | 97% | 32 |
+| `boulder+freeze-ray` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+boulder` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `knight-hop+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+freeze-ray` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+
+### revenge-34 — ONE-ANSWER*
+
+kit: `twin` `rewind` `magnet` `poison-dart` · signature: `rewind+twin` · probes: `knight-hop` `swap` `boulder` `summon-knight` `freeze-ray`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `twin` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `rewind` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `poison-dart` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `rewind+twin` | in-kit pair | 81 | 81 | 47 | 72 | 47% | 32 |
+| `magnet+twin` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `poison-dart+twin` | in-kit pair | 6 | 6 | 0 | 6 | 0% | 16 |
+| `magnet+rewind` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `poison-dart+rewind` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+poison-dart` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+twin` | out-of-kit pair | 100 | 100 | 100 | 63 | 63% | 32 |
+| `swap+twin` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+twin` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+twin` | out-of-kit pair | 100 | 100 | 97 | 94 | 94% | 32 |
+| `freeze-ray+twin` | out-of-kit pair | 66 | 41 | 0 | 0 | 0% | 32 |
+| `knight-hop+rewind` | out-of-kit pair | 100 | 100 | 100 | 0 | 0% | 32 |
+| `rewind+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+rewind` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `rewind+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 97 | 97% | 32 |
+| `freeze-ray+rewind` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+swap` | out-of-kit pair | 100 | 100 | 100 | 0 | 0% | 32 |
+| `boulder+knight-hop` | out-of-kit pair | 100 | 100 | 97 | 0 | 0% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 97 | 97% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 0 | 0% | 32 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 100 | 94 | 94% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 100 | 100 | 97 | 88 | 88% | 32 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 94 | 94% | 32 |
+
+### revenge-35 — ONE-ANSWER*
+
+kit: `page` `aegis` `magnet` `rewind` · signature: `aegis+page` · probes: `knight-hop` `swap` `boulder` `summon-knight` `freeze-ray`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `page` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `rewind` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis+page` | in-kit pair | 50 | 63 | 69 | 66 | 50% | 32 |
+| `magnet+page` | in-kit pair | 13 | 0 | 13 | 0 | 0% | 16 |
+| `page+rewind` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 69 | 50 | 69 | 41 | 41% | 32 |
+| `aegis+rewind` | in-kit pair | 100 | 97 | 97 | 100 | 97% | 32 |
+| `magnet+rewind` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+page` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `page+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+page` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `page+summon-knight` | out-of-kit pair | 6 | 6 | 31 | 13 | 6% | 16 |
+| `freeze-ray+page` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+knight-hop` | out-of-kit pair | 88 | 22 | 56 | 22 | 22% | 32 |
+| `aegis+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+boulder` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+summon-knight` | out-of-kit pair | 97 | 84 | 91 | 84 | 84% | 32 |
+| `aegis+freeze-ray` | out-of-kit pair | 13 | 25 | 13 | 6 | 6% | 16 |
+| `knight-hop+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+knight-hop` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 100 | 50 | 47 | 63 | 47% | 32 |
+
+### revenge-36 — MULTI-ROUTE
+
+kit: `queen-pulse` `smoke` `aegis` `magnet` · signature: `queen-pulse+smoke` · probes: `knight-hop` `swap` `boulder` `summon-knight` `freeze-ray`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `queen-pulse` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `smoke` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `aegis` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `queen-pulse+smoke` | in-kit pair | 72 | 63 | 72 | 72 | 63% | 32 |
+| `aegis+queen-pulse` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+queen-pulse` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+smoke` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+smoke` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `aegis+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+queen-pulse` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `queen-pulse+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+queen-pulse` | out-of-kit pair | 97 | 44 | 81 | 44 | 44% | 32 |
+| `queen-pulse+summon-knight` | out-of-kit pair | 100 | 97 | 88 | 63 | 63% | 32 |
+| `freeze-ray+queen-pulse` | out-of-kit pair | 100 | 88 | 94 | 66 | 66% | 32 |
+| `knight-hop+smoke` | out-of-kit pair | 84 | 100 | 84 | 100 | 84% | 32 |
+| `smoke+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+smoke` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `smoke+summon-knight` | out-of-kit pair | 100 | 94 | 97 | 0 | 0% | 32 |
+| `freeze-ray+smoke` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+knight-hop` | out-of-kit pair | 100 | 91 | 100 | 100 | 91% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 97 | 100 | 97 | 97 | 97% | 32 |
+| `freeze-ray+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 97 | 100 | 97% | 32 |
+| `freeze-ray+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 91 | 63 | 94 | 0 | 0% | 32 |
+| `boulder+freeze-ray` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+summon-knight` | out-of-kit pair | 97 | 97 | 100 | 0 | 0% | 32 |
+
+### revenge-41 — ONE-ANSWER*
+
+kit: `panic` `page` `magnet` `freeze-ray` · signature: `page+panic` · probes: `knight-hop` `swap` `boulder` `summon-knight` `become-king`
+
+| loadout | group | L7 | L8 | L9 | L10 | worst | trials |
+|---|---|---|---|---|---|---|---|
+| `none` | baseline | 0 | 0 | 0 | 0 | 0% | 16 |
+| `panic` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `page` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `magnet` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `freeze-ray` | single | 0 | 0 | 0 | 0 | 0% | 16 |
+| `page+panic` | in-kit pair | 84 | 44 | 88 | 34 | 34% | 32 |
+| `magnet+panic` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+panic` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `magnet+page` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+page` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `freeze-ray+magnet` | in-kit pair | 0 | — | — | — | elim | 16 |
+| `knight-hop+panic` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `panic+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+panic` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `panic+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+panic` | out-of-kit pair | 53 | 56 | 100 | 0 | 0% | 32 |
+| `knight-hop+page` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `page+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+page` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `page+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+page` | out-of-kit pair | 100 | 100 | 100 | 0 | 0% | 32 |
+| `knight-hop+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `knight-hop+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+knight-hop` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `boulder+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `summon-knight+swap` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+swap` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `boulder+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+| `become-king+boulder` | out-of-kit pair | 0 | — | — | — | elim | 16 |
+| `become-king+summon-knight` | out-of-kit pair | 100 | 100 | 100 | 100 | 100% | 32 |
+
 ## Coverage
 
-Runs completed: 12 — revenge-12, revenge-13, revenge-14, revenge-15, revenge-16, revenge-17, revenge-18, revenge-19, revenge-21, revenge-22, revenge-23, revenge-24
-
-In flight / incomplete: revenge-25
+Runs completed: 22 — revenge-12, revenge-13, revenge-14, revenge-15, revenge-16, revenge-17, revenge-18, revenge-19, revenge-21, revenge-22, revenge-23, revenge-24, revenge-25, revenge-26, revenge-27, revenge-30, revenge-32, revenge-33, revenge-34, revenge-35, revenge-36, revenge-41
