@@ -7,130 +7,145 @@
  * dragon+duchess, The Millstone's double door).
  *
  * ---------------------------------------------------------------------------
- * 2026-09-06 VARIANCE REWORK (Tyler, after playing the Lattice and the Alcove:
- * "pretty fun, once you solved it you kind of figured it out ... they need
- * more VARIANCE and DIFFICULTY"). The shipped finale was ONE line four times:
- * post three moves from the king, summon the Duchess, mark a court pawn so
- * the bishop eats it, swing — in four courts, at 97-100%. L7-L10 now each
- * demand a DIFFERENT use of duchess + decoy, and the L7 line LOSES on L8, L9
- * and L10. The four decisions, one line each:
+ * 2026-09-07 DIFFICULTY REWORK (Tyler: "the design is really cool but later
+ * levels need more difficulty, and ways to solve. I love the combination of
+ * abilities, it's just too easy."). The gate rule these runs were built to —
+ * every single card <= 8%, the pair >= 60% — is a FLOOR with no ceiling: it
+ * proves the combo is REQUIRED, never that it is HARD. L7-L10 read 97/84/94/100
+ * for duchess+decoy (mean 93.8, data/run-playtest/finale-remeasure-2026-09-06).
+ * They now read 75/84/69/38, mean 66.5, with every single card still 0%.
  *
- *   L7  BODY, THEN BAIT (the lesson, unchanged). The post is watched by a
- *       pawn; land on it and mark a bishop-defended pawn the same turn — the
- *       bishop (threat 2) beats the watcher (threat 1) to the army's action.
- *   L8  BAIT FIRST, BODY SECOND (the flinch). No watcher at all; both of his
- *       rank-6 diagonals are open. A fleeing king reacts for FREE at the
- *       start of the enemy turn, before the army acts, so a queen landing on
- *       one post sends him to the other and she is one move late. A decoy
- *       eat stuns him TWO turns (Rookie's own capture only one): mark the
- *       bait the turn BEFORE the body, land while the stun is still running.
- *       Mark and land together (the L7 order) and he flees before the bishop
- *       moves.
- *   L9  THE ROOK IS THE ONE IN DANGER (Aegis, the trap card, becomes a key).
- *       Both d7 and f7 are open so ANY sitting queen makes him flinch (even
- *       after a stun-first mark, because the only sit square is watched and
- *       the stun bait is gone). The only kill is a one-move strike from the
- *       spawn square c6 through d7, which can be reached from exactly one
- *       rook square, d5 — covered by the pawn on e6. Survive one enemy turn
- *       on d5 (Aegis, or a mark cast on arrival), then spawn and strike.
- *       Duchess + aegis is a deliberate second key on this level only.
- *   L10 MARK THE HUNTER, NOT THE BAIT (two enemies per turn). The L7 court
- *       mirrored, but the army moves twice: mark the bishop's pawn and the
- *       watcher takes the queen with the second action. The only mark that
- *       lives is the WATCHER ITSELF — it is attacked by the pawn behind it
- *       and by the bishop, the bishop eats it and has then already acted, and
- *       nothing else on the board can reach the post. Every other mark loses
- *       deterministically.
+ *   duchess+decoy   L7    L8    L9    L10   mean
+ *   before          97%   84%   94%   100%  93.8
+ *   after           75%   84%   69%    38%  66.5
+ *   (none / duchess / decoy / aegis / magnet: 0% on all four, before and after.)
  *
- * Contract (this pass): L7-L10 no-ability ~0%, every single kit card <= 8%,
- * the pair 60-80% — NOT 100%. Numbers under MEASURED / 2026-09-06.
- * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
- * Everything under MEASURED below was taken with a harness whose result depended
- * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
- * counter into its rollout RNG seed, so a cell read one number alone and another
- * as a later column of a multi-column run (repeating ONE cell four times in one
- * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
- * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
- * reproducible across invocation shapes — guarded by
- * scripts/run-playtest/matrix-determinism-check.ts.
+ * WHICH LEVER DID THE WORK: what defends what. Not the clock — L8's budget is
+ * untouched, and raising L7's from 6 to 7 mid-experiment moved its number by
+ * zero, which is the proof that the clock was never what was binding. Every
+ * point came from the DEFENCE MAP of the king's court: how many pieces guard
+ * the square the Duchess must land on, and therefore how many of the marks a
+ * player can make actually save her. Tried first and rejected (all measured):
+ *   - lengthening Rookie's walk with fallen panes on the floor: 97% -> 91%.
+ *     A rook that dithers two moves and still arrives is not under pressure.
+ *   - raising the move limit (6 -> 7) on a level reading 31%: no change.
+ *   - sealing the court into a pure post-and-survive cell (no capture
+ *     anywhere): 28-31%, and the trace says why — the bot never casts at all.
+ *     See DEAD ENDS: THE BODY MUST ARRIVE BY CAPTURING.
  *
- * FINALE, numbers of record. `revenge.ts matrix --run=revenge-24 --levels=7,8,9,10
- * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
- *    L     none    aegis    decoy  duchess   magnet  |  duchess+decoy
- *    7       0%       0%       0%       0%       0%  |  97%
- *    8       0%       0%       0%       0%       0%  |  84%
- *    9       0%       0%       0%       0%       0%  |  94%
- *   10       0%       0%       0%       0%       0%  |  100%
- * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 97/84/94/100.
- * The header below reads 100/97/100/100 for the pair and is CONFIRMED (max drift 13 points,
- * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
- * are the numbers of record.
- * ──
- * MEASURED, 2026-09-06 variance rework (Normal, T5 bot, T1 cards; numbers of
- * record `--jobs=1 --trials=32`, everything else 16 trials at `--jobs=2`):
- *   FINALE          none  duchess  decoy  aegis  magnet  duchess+decoy
- *     L7 body+bait    0%      0%     0%     0%      0%      94%
- *     L8 the plug     0%      0%     0%     0%      0%      81%
- *     L9 open door    0%      0%     0%     0%      0%     100%
- *     L10 two hands   0%      0%     0%     0%      0%     100%
- *   Before (shipped build, serial 32): pair 100 / 97 / 100 / 100.
- *   Every other pair in the kit (duchess+aegis, duchess+magnet, decoy+aegis,
- *   decoy+magnet, aegis+magnet) reads 0% on all four — including L9's
- *   intended second key, duchess+aegis (0% for the BOT: it never raises a
- *   shield before stepping onto a covered square, the rubric's "provable but
- *   unfindable" limit; the line is hand-verified — shield, d5, spawn c6,
- *   c6xe8 — and is real for a human).
- *   HONEST MISS: L9 and L10 read 100%, not 60-80. Each is a deterministic
- *   4-5 move line under a clock already at the Normal floor (6); a
- *   perfect-information bot cannot misstep a walk, and stretching the walk
- *   further only makes some start files unwinnable (0%) rather than harder.
- *   The 60-80 band on L7/L8 comes from TRAP marks whose failure is a turn or
- *   two away (L8: the b7 bait leaves the plug in place; the loss arrives at
- *   the clock). On L9/L10 every wrong choice dies on the very next enemy
- *   turn, which the bot's one-ply doom check sees through. For a human the
- *   two levels ARE the hard ones: the L7 habit and the L8 habit both lose on
- *   each of them, deterministically.
- *   TIERS (highest the offers can reach): decoy:5, aegis:5, magnet:5 all 0%
- *   on all four. duchess:2 and duchess:3 0% on all four. duchess:4 / :5
- *   (second charge): L7 25%/0%, L8 31%/31%, L9 94%/88%, L10 94%/100% —
- *   the family's known tier break (a second body after the first one is
- *   eaten or dissolves), reported not hidden; the gate holds at T1-T3.
- *   FIXED 2026-09-06 — `abilityTierCaps: { duchess: 3 }`: the run now never
- *   offers the fourth tier. Re-measured serially one column at a time to
- *   choose it (T2 0/0/0/0, T3 0/0/0/0). The forced-loadout matrix above is
- *   unchanged by the cap on purpose — `--loadouts=duchess:4` still reads
- *   what T4 would do; the cap only removes it from offer slates.
- *   duchess:2+decoy:2 reads 100/100/94/100.
- *   FULL RUNS (40, Normal, T5, never skipping an offer): 9/40 = 23% with
- *   random picks (was 33%) — deaths are move-limits at L6 (12) and L7 (14),
- *   the player who did not take the pair by L7; 31/40 = 78% when the pool
- *   is the pair (was 88%), with the finale now costing 4 + 2 + 1 + 0 runs.
+ * THE FOUR DEMANDS — one pair, four different questions, and the L7 answer
+ * loses on each of the other three:
  *
- * DEAD ENDS, 2026-09-06:
- *   - THE FLINCH IS UNFINDABLE. The first L8 was pure king-flinch: no
- *     watcher, both rank-6 diagonals open, a decoy eat's 2-turn stun cast
- *     the turn BEFORE the body so he could not sidestep. Hand-verified, and
- *     the bot read the pair at 0%: a pre-emptive mark with no threat on the
- *     board and a payoff two turns out is exactly the "provable but
- *     unfindable" case. It survives as the DEFENCE of L9 (an open second
- *     diagonal is what kills every sitting queen there), not as a key.
- *   - AN EMPTY POST IS A WINDOW. With g6 empty and h5 open, a queen on h5
- *     took him THROUGH the post from range (81% alone). Any post left empty
- *     on purpose needs the square beyond it on the same diagonal filled.
- *   - FRIENDLY FIRE NEVER EMPTIES THE SQUARE IT HITS, ONLY THE EATER'S.
- *     Marking the plug itself (f5) is useless — e6 eats it and stands on f5.
- *     The mark has to go on the piece the plug DEFENDS so the plug moves.
- *   - ENEMIES-PER-TURN 2 BEATS EVERY BAIT MARK. A captured decoy clears the
- *     mark at once, so the second action is planned against the real board
- *     and eats whatever is standing on the post. The only mark that
- *     survives a two-action turn is the watcher itself (removed from the
- *     actors, then eaten by a piece that has thereby already acted) — which
- *     is what makes L10 a different decision from L7 rather than a harder
- *     copy.
+ *   L7  WHICH DOOR. Two of his diagonals hold pawns the Duchess can take, and
+ *       they look identical. e6 is guarded TWICE — by the pawn d7 and by a
+ *       bishop frozen on d5 (c4/e4 are stone, so it has no move for the whole
+ *       level and never threatens Rookie) — so one mark can never clear it and
+ *       the take dies on the reply. g6 is guarded ONCE, by h7. Count the locks,
+ *       pick the single-locked door, spend the mark on that lock. There is no
+ *       bait bishop on this level on purpose: friendly fire eats the army's
+ *       whole action and would have saved BOTH doors, which is what made the
+ *       old L7 a 97% level.
+ *   L8  THE PLUG (unchanged, 84%). The mark is not for blanking a guard, it is
+ *       for MOVING one: friendly fire never empties the square it hits, only
+ *       the square the EATER stood on, so marking the pawn that f5 defends
+ *       walks f5 off the approach and opens the launch.
+ *   L9  YOU CANNOT BLANK BOTH — FEED THEM ONE OF THEIR OWN. He sits deep, on
+ *       e6, in a stone box: d5, f5 and f7 are walls, so the court has exactly
+ *       ONE door, the pawn d7 — and a rank-7 door is watched by TWO rank-8
+ *       pawns (c8 and e8), which a single charge cannot cover. Blanking either
+ *       watcher loses to the other. The only line is the bait: the bishop a8
+ *       jammed behind its own pawn b7, marked so it eats b7 and spends the
+ *       army's entire turn. Both watchers are pawns (threat 1) and the eater is
+ *       a bishop (threat 2), so the tie-break is deterministic, not a flip.
+ *   L10 THE BAIT IS THE TRAP (two enemies per turn). The L9 answer is exactly
+ *       what loses here: mark the bait, the bishop g8 eats f7 with the first
+ *       action and b7 eats the Duchess on c6 with the second. With two hands
+ *       the army can pay for a decoy AND still recapture, so the only mark that
+ *       lives is the actual guard of the landing square, b7 itself. His court
+ *       is stone but for that one pawn; c6 is the only door and b7 the only
+ *       lock.
  *
- * Everything below this line is the original design text, kept as written;
- * the L8-L10 "intended lines" and their MEASURED numbers there describe the
- * SHIPPED-AND-REPLACED build, not the current one.
+ * SO THE LADDER IS: blank the right lock (L7) -> move a piece instead of
+ * blanking it (L8) -> you cannot blank at all, buy the turn (L9) -> buying the
+ * turn is now the losing move (L10). Every wrong choice on all four dies one
+ * enemy turn later, never immediately: the harness bot's 1-ply doom check only
+ * sees ROOKIE captured, so a Duchess who is about to be eaten is invisible to
+ * it and the loss arrives at the clock. That is where the 25-60 points of
+ * failure live.
+ *
+ * MEASURED 2026-09-07 (Normal, T5 bot, T1 cards, 32 trials, jobs 4, numbers
+ * taken on the bytes in this file):
+ *    L     none    duchess  decoy  aegis  magnet  |  duchess+decoy
+ *    7       0%      0%      0%     0%     0%     |  75%
+ *    8       0%      0%      0%     0%     0%     |  84%
+ *    9       0%      0%      0%     0%     0%     |  69%
+ *   10       0%      0%      0%     0%     0%     |  38%
+ *   Every other pair in the kit — duchess+aegis, duchess+magnet, decoy+aegis,
+ *   decoy+magnet, aegis+magnet — reads 0% on all four. L9's old second key
+ *   (duchess+aegis) is gone with the level it belonged to: one answer per
+ *   level now.
+ *   FULL RUNS (40, Normal, T5, never skipping an offer): 4/40 = 10% with
+ *   random picks (was 33%) and 12/40 = 30% when the pool is the pair (was
+ *   88%). Every death is a move limit, and they are where they should be —
+ *   random picks lose 17 of 29 runs at L7; the pair pool clears L7 at 76%
+ *   (matching the forced-loadout 75%) and then loses 11 of 23 at L10. The
+ *   10-25% random-pick target the Moat set, which no combo run had met since,
+ *   is met at 10%; the finale, not the mid-run, is now what ends a run.
+ *
+ * TIER CAP TIGHTENED TO `abilityTierCaps: { duchess: 1 }` (was 3). Measured
+ * L7-L10, 32 trials, on this build:
+ *     duchess:2 / :3        0/0/0/0        (alone, still gated)
+ *     duchess:4 / :5        97/59/0/97 · 94/44/0/100   (the old T4 break)
+ *     decoy:5, aegis:5, magnet:5   0/0/0/0
+ *     duchess:1 + decoy:1   75/84/69/38   mean 66.5   <- the band
+ *     duchess:2 + decoy:1   91/88/59/91   mean 82
+ *     duchess:3 + decoy:1   94/97/47/97   mean 84
+ *     duchess:3 + decoy:3   97/97/78/88   mean 90
+ *   The break is not the T4 second charge any more, it is T2: summonTurnsFor
+ *   is 2/3/4/4/6, so the FIRST upgrade buys her a third enemy turn, and a
+ *   third turn is a second body move — she can miss the door, be eaten, or
+ *   chase a fled king and still arrive. This run's whole difficulty is that
+ *   her life is exactly "appear, take one square, survive one enemy turn,
+ *   strike"; an extra turn is not a bonus here, it is the level. Hence T1.
+ *   Same shape as The Alcove (become-king capped at 1) and The Hayloft
+ *   (knight-hop capped at 1): the cap is a property of the geometry.
+ *
+ * DEAD ENDS, 2026-09-07 (all measured, none of them shipped):
+ *   - THE BODY MUST ARRIVE BY CAPTURING. A finale sealed so that the only
+ *     winning move is landing on an EMPTY square beside the king and surviving
+ *     a turn reads 28-31% — and the traces show the bot never casts a single
+ *     card, it shuffles on rank 4 until the move limit. Its rollout policy
+ *     samples the top 3 moves by a fast score that pays for material and for
+ *     attacking the king; a capture-and-stun is on that list, an empty post is
+ *     not, so the sit-and-survive plan scores zero wins in every rollout, every
+ *     candidate ties, and it falls back to walking toward the king. Provable
+ *     but unfindable, the Glasshouse limit again. Every shipped finale here
+ *     therefore ends with the Duchess TAKING a court pawn: findable, and the
+ *     difficulty goes into WHICH pawn and WHICH mark.
+ *   - DEAD MARKS MAKE THE LEVEL HARDER FOR THE BOT AND NOT FOR A HUMAN. Two
+ *     pawns nobody can eat and nobody needs (e8, g8, sealing his back
+ *     diagonals) cost L7 sixteen points: 59% with them as pawns, 75% with them
+ *     as stone. `legalCandidates` emits one Decoy candidate PER ENEMY and the
+ *     ~160 rollouts are split across all candidates, so every red herring
+ *     thins the search. Same family as The Warren's empty squares: if a piece
+ *     is only there to fill a square, make it a stone. Difficulty must come
+ *     from choices that are ambiguous to a PLAYER, not from search dilution.
+ *   - MORE FLOOR IS EASIER THAN LESS FLOOR, for the same reason. Removing
+ *     L10's fallen panes from ranks 2-4 (more open board, more rook moves,
+ *     more candidates) dropped it 34% -> 9%; adding walls at a4/b4 dropped it
+ *     to 22%. Floor stone is a shape knob with a non-monotonic effect on the
+ *     harness — read it, do not assume it.
+ *   - FRIENDLY FIRE IS A UNIVERSAL SOLVENT AT enemiesPerTurn 1. Whatever the
+ *     Duchess is standing on, a marked piece that gets eaten spends the army's
+ *     whole action and she lives. That is why L7 cannot contain a bait bishop
+ *     (it would rescue the double-locked door too) and why L10 needs a second
+ *     enemy action for its trap to bite.
+ *
+ * Everything below this line is the original design text, kept as written for
+ * the mechanism, the signature and the L1-L6 arc, which are unchanged. The
+ * "FINALE LOCK", the "L7-L10 intended lines" and every MEASURED number below
+ * describe SHIPPED-AND-REPLACED builds of L7, L9 and L10, not this one —
+ * read the 2026-09-07 block above for the finale as it stands.
  * ---------------------------------------------------------------------------
  *
  * THE VERB: buy the body one turn. Not crossing a wall (The Moat), not
@@ -413,15 +428,17 @@ const RUN_REVENGE_24: RunDef = {
   name: 'The Lattice',
   blurb: 'Stone on every dark square. Rooks die up there; queens walk.',
   allowedAbilities: ['duchess', 'decoy', 'aegis', 'magnet'],
-  // TIER CAP (2026-09-06) — the caveat this run's MEASURED block ends on, now
-  // enforced. Re-measured per tier, L7-L10, 32 trials, serial: T2 0/0/0/0 and
-  // T3 0/0/0/0, confirming the header, against T4/T5 at 13/6-25/94/100. T4 is
-  // where the Duchess gets a SECOND CHARGE (maxUsesForTier 1/1/1/2/2): the
-  // first body dies on the post, the second takes the pawn and then the king,
-  // with no Decoy at all — and the header proves no geometry closes it,
-  // because the only squares attacking the post are the king's and the
-  // watcher's. Ceiling T3.
-  abilityTierCaps: { duchess: 3 },
+  // TIER CAP — T1, tightened from T3 on 2026-09-07. The Duchess ALONE is still
+  // 0% at T2 and T3, which is what bought her T3 before; but paired with Decoy
+  // the finale reads 75/84/69/38 at T1 and 91/88/59/91 at T2 (and 94/97/47/97
+  // at T3, 97/59/0/97 at T4). summonTurnsFor is 2/3/4/4/6, so the FIRST upgrade
+  // gives her a third enemy turn — a second body move — and this run's whole
+  // difficulty is that her life is exactly "appear, take one square, survive
+  // one enemy turn, strike". An extra turn is not a bonus here, it is the
+  // level: she can pick the wrong door, be eaten, chase a fled king, and still
+  // arrive. Ceiling T1. (The old T4 note stands too: T4 is a second CHARGE and
+  // solos three of the four finales.)
+  abilityTierCaps: { duchess: 1 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
@@ -549,28 +566,35 @@ const RUN_REVENGE_24: RunDef = {
         hazards: LATTICE(),
       },
     ),
-    // L7 — THE NORTH-EAST COURT (the pair). The same cell as L6 with ONE pawn
-    // added: h7, the watcher, which covers g6 — the only square in the level
-    // that attacks him. The Duchess lands there and is eaten; the pawn then
-    // stands on the post and it is plugged forever. h5 is a filled pane, so
-    // the post cannot be sniped from down the same diagonal; f5, the
-    // approach, is watched by e6, so Rookie can never stand next to the post
-    // and spawn onto it. The bishop on c8 is jammed between b7 and d7 and
-    // defends both. Rook to e4 or g4; summon on f5, mark b7, step her to g6; the
-    // bishop (threat 2) beats the watcher (threat 1) to the turn and eats its
-    // own pawn. She takes him off g6.
+    // L7 — TWO DOORS (2026-09-07: 75% for the pair, 0% for every card alone).
+    // He is on f7 and his back diagonals e8/g8 are STONE, so there is nothing
+    // behind him and nothing to mark that does not matter. In front of him are
+    // two pawns that look the same: e6 and g6. Both are one Duchess move away
+    // (she launches from f5 or h5, Rookie standing on g4 or h4), both put her
+    // diagonally on his square, and only one of them lives.
+    //   e6 is DOUBLE-LOCKED: the pawn d7 guards it AND so does the bishop
+    //     frozen on d5 — c4 and e4 are stone and c6/e6 are his own men, so it
+    //     has no move for the whole level and never threatens Rookie. One
+    //     charge cannot clear two locks; take e6 and the other one takes her.
+    //   g6 is SINGLE-LOCKED, by h7. Mark h7, take g6 (the capture stuns him so
+    //     he cannot flinch), she lives the turn, and she takes him off g6.
+    // There is deliberately NO bait bishop on this level: at one enemy action a
+    // friendly-fire eat spends the army's whole turn and would rescue the
+    // double-locked door too, which is exactly what made the old 97% build. The
+    // only question here is which door has one lock, and the wrong answer dies
+    // on the next enemy turn, not on this one.
     make(
       7,
       [
-        pawn(5, 6), pawn(4, 7), pawn(5, 8), pawn(7, 8),
-        pawn(8, 7),
-        bishop(3, 8), pawn(2, 7),
+        pawn(5, 6), pawn(7, 6),
+        pawn(4, 7), pawn(8, 7),
+        bishop(4, 5),
         king(6, 7),
       ],
       {
         ...FLEE,
         moveLimit: 6,
-        hazards: LATTICE([], [X(8, 5), X(6, 4), X(4, 5)]),
+        hazards: LATTICE([], [X(3, 4), X(5, 4), X(6, 4), X(5, 8), X(7, 8)]),
       },
     ),
     // L8 — THE PLUG (decoy FIRST, body second). The post g6 is unwatched and
@@ -598,56 +622,61 @@ const RUN_REVENGE_24: RunDef = {
         hazards: LATTICE([], [X(6, 4), X(5, 3), X(8, 5)]),
       },
     ),
-    // L9 — THE OPEN DOOR (the trap card is a key). He is on e8 with BOTH
-    // d7 and f7 empty, so any Duchess that SITS on a post makes him flinch to
-    // the other one and she runs out of time (the L8 lesson, turned against
-    // the player: even a stun-first line fails, because the only square she
-    // could sit on, c6, is watched by b7 and the mark that bought the stun
-    // has been eaten). The only kill is a ONE-MOVE strike: spawn on c6 and
-    // slide c6-d7-e8 before he ever gets an enemy turn. b5 is stone, so c6
-    // can be spawned on from exactly one rook-reachable square — d5 — and d5
-    // is covered by the pawn on e6. So for once the danger is on ROOKIE, not
-    // the body: stand on d5, survive one enemy turn, then spawn and strike.
-    // Aegis does that (the shield ends the turn), and so does a mark on b7 or
-    // g6 cast the turn she arrives. Duchess + aegis is a deliberate second
-    // key here; every single card is still 0.
+    // L9 — YOU CANNOT BLANK BOTH (2026-09-07: 69% for the pair, 0% alone).
+    // The first cell in the run on RANK 6: he is on e6, deep inside the
+    // lattice, and d5, f5 and f7 are filled panes — a stone box with exactly
+    // one door, the pawn on d7. A rank-7 door is the one square in this
+    // geometry that can be watched TWICE by pawns: c8 and e8 both cover it,
+    // and neither of them is his own square. So the L7 answer is dead here —
+    // blank c8 and e8 eats her, blank e8 and c8 does. One charge, two locks.
+    // The only line left is the one the run is named for: feed the court its
+    // own man. The bishop on a8 is jammed behind its own pawn b7 (a8 has
+    // exactly one diagonal), so marking b7 makes the bishop eat it, and that
+    // eat is the army's WHOLE action — nobody is left to recapture on d7.
+    // Both watchers are pawns (threat 1) and the eater is a bishop (threat 2),
+    // so the tie-break is deterministic. Rookie's approach is the far corner:
+    // the door is reached along a4-b5-c6-d7, so she wants a3/b3/b4/a4/c4.
+    // Marking d7 itself is the prettiest trap — a watcher eats the decoy and
+    // then STANDS on the door.
     make(
       9,
       [
-        pawn(3, 8), pawn(7, 8), pawn(2, 7), pawn(5, 6),
-        pawn(7, 6), pawn(8, 7),
-        king(5, 8),
+        pawn(4, 7), pawn(3, 8), pawn(5, 8),
+        pawn(2, 7), bishop(1, 8),
+        king(5, 6),
       ],
       {
         ...FLEE,
         moveLimit: 6,
-        hazards: LATTICE([], [X(2, 5), X(4, 2), X(4, 3)]),
+        hazards: LATTICE([], [X(4, 5), X(6, 5), X(6, 7)]),
       },
     ),
-    // L10 — THE WEST COURT, TWO HANDS (mark the hunter, not the bait). The
-    // L7 court mirrored — he is on d7, the post is e6, f7 is the watcher, the
-    // bishop on g8 is jammed between f7 and h7 — and the army now moves TWO
-    // pieces a turn. The L7 line is dead: mark h7 and the bishop eats it,
-    // then the watcher eats the Duchess with the second action. The only
-    // mark that lives is the WATCHER ITSELF: f7 is attacked by e8 and by the
-    // bishop, so the bishop takes it (threat 2 beats the pawn), lands on f7
-    // having already acted, and nothing else on the board can reach e6 — the
-    // second action has nobody to move. Marking anything else (h7, c6, e8)
-    // loses on the second action, deterministically. c6 blocks his fourth
-    // diagonal and watches d5, f5 and d4 are stone, so the launch is c4/e4
-    // and the walk is the longest in the run.
+    // L10 — THE BAIT IS THE TRAP (2026-09-07: 38% for the pair, 0% alone).
+    // The capstone, and it punishes the level before it. He is on d7 walled in
+    // stone on three diagonals (c8, e8, e6); the only door is the pawn c6, and
+    // its only lock is b7. Across the board sits the L9 shape, laid out as a
+    // lure: the bishop g8 jammed against the pawn f7 (h7 is stone). Mark f7 and
+    // the bishop eats it exactly as it did on L9 — but the army has TWO hands
+    // here, so the eat costs it one action and b7 recaptures the Duchess on c6
+    // with the other. Buying the turn no longer buys anything; the only mark
+    // that lives is the guard of the square she lands on, b7 itself. Marking
+    // c6 is the third trap: b7 eats the decoy and stands on the door.
+    // b5 and d4 are stone, so the launch is c4/e4 (or the long c6-d5-e4-f3-g2-h1
+    // diagonal), and the fallen panes on c2/c3/e2/e3 make the walk the longest
+    // in the run.
     make(
       10,
       [
-        pawn(3, 6), pawn(2, 7), pawn(3, 8), pawn(5, 8), pawn(6, 7),
-        bishop(7, 8), pawn(8, 7),
+        pawn(3, 6), pawn(2, 7),
+        pawn(6, 7), bishop(7, 8),
         king(4, 7),
       ],
       {
         ...FLEE,
         moveLimit: 6,
         enemiesPerTurn: 2,
-        hazards: LATTICE([], [X(6, 5), X(4, 4), X(2, 5), X(3, 2), X(3, 3), X(5, 2), X(5, 3)]),
+        hazards: LATTICE([], [X(6, 5), X(4, 4), X(2, 5), X(3, 2), X(3, 3), X(5, 2), X(5, 3),
+          X(5, 6), X(3, 8), X(5, 8), X(8, 7)]),
       },
     ),
   ],
