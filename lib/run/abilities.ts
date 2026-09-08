@@ -3650,11 +3650,6 @@ function applySummonKnight(state: BoardState, target: Coord): BoardState {
     rank: target.rank,
     source: 'squire',
     turnsLeft: squireTurns(owned.tier),
-    // Summoning sickness, same as the rest of the family. Summon Knight has
-    // its OWN spawn function rather than going through applySummonAlly, which
-    // is why the first measurement showed it moving by exactly 0.0 — the rule
-    // never reached it. Two spawn paths, so the field has to be set twice.
-    dazed: true,
   };
   return {
     ...state,
@@ -3906,18 +3901,6 @@ function applySummonAlly(state: BoardState, id: AbilityId, target: Coord): Board
     rank: target.rank,
     source: id as AllyPiece['source'],
     ...(turns !== undefined ? { turnsLeft: turns } : {}),
-    // SUMMONING SICKNESS (Tyler, 2026-09-08, after depth 24: "for all the
-    // summons they should probably have summoning sickness you know?").
-    // A body arrives and does nothing until your next turn — so a summon is
-    // a THREAT you have to protect for a turn, not an instant answer you
-    // drop beside the king and cash in on the spot.
-    //
-    // The mechanic already existed: `dazed`, built for Convert on 2026-09-06
-    // for the same reason ("some levels too easy where you can just capture
-    // the king on the first move"). It is read by canMoveAllyAt and cleared
-    // when the enemy turn ends, so applying it to the rest of the family is
-    // one field, not a second system.
-    dazed: true,
   };
   return {
     ...state,
@@ -3948,7 +3931,7 @@ export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
   if (state.status !== 'playing' || state.turn !== 'rookie') return false;
   if (state.pendingOffer || state.activeAbility) return false;
   if (!isControlledAlly(ally)) return false;
-  if (ally.dazed) return false; // summoning sickness — acts from your next turn
+  if (ally.dazed) return false; // freshly converted — acts from next turn
   if (allyHasFreeMove(state, ally)) {
     if (ally.movedThisTurn) return false;
     if (ally.source === 'squire' && state.squireMovedThisTurn) return false;
@@ -4995,14 +4978,6 @@ export function stepAllyTurn(state: BoardState): BoardState {
   // (Squire family + converted pieces) are player-moved (see
   // applyControlledAllyMove) and never move on their own.
   if (!ally || isControlledAlly(ally)) {
-    return { ...state, allyTurnIndex: idx + 1 };
-  }
-  // Summoning sickness reaches the AI-driven allies too. Without this the
-  // rule would apply to every summon you STEER and silently skip the ones
-  // that steer themselves (summon-knight, squad) — the measurement on
-  // 2026-09-08 showed summon-knight moving by exactly 0.0, which was this
-  // gap, not a result. `dazed` is cleared when the enemy turn ends.
-  if (ally.dazed) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
   let moves = allyMoves(state, ally);
