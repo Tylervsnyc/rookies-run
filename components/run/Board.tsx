@@ -358,6 +358,28 @@ export function RunBoard({
     [state.status, state.pieces, state.rookie],
   );
 
+  /**
+   * The attacker is drawn TWICE for one moment on a capture: react-chessboard
+   * is still sliding the real piece into Rookie's square (in slow motion when
+   * `slideMs` is the capture bed), while the overlay below already paints a
+   * static copy on the destination. Tyler, 2026-09-08: "the animation on the
+   * capture when Rookie gets captured isn't right — I saw the bishop on 2
+   * different squares."
+   *
+   * So hold the overlay until the slide has actually landed. Same shape as the
+   * poison-slide gate above. Until then the real, moving piece is the only one
+   * on screen, which is the whole point of the slow-motion capture.
+   */
+  const [captureSlideDone, setCaptureSlideDone] = useState(false);
+  useEffect(() => {
+    if (state.status !== 'lost' || !attackerAtRookie) {
+      setCaptureSlideDone(false);
+      return;
+    }
+    const t = setTimeout(() => setCaptureSlideDone(true), slideMs ?? PIECE_SLIDE_MS);
+    return () => clearTimeout(t);
+  }, [state.status, attackerAtRookie, slideMs]);
+
   // Keep the position object reference stable across renders when content
   // hasn't changed. react-chessboard's [position] effect flushes any in-flight
   // slide on every new reference, so an unrelated re-render mid-slide (tempo,
@@ -1322,7 +1344,7 @@ export function RunBoard({
         )}
         {state.status === 'lost' && (
           <>
-            {attackerAtRookie &&
+            {attackerAtRookie && captureSlideDone &&
               (() => {
                 const PieceComp =
                   defaultPieces[
