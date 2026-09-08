@@ -1,0 +1,5560 @@
+{
+ "meta": {
+  "generated": "2026-09-07",
+  "tier": "T5",
+  "realistic": false,
+  "jobs": 4,
+  "screenTrials": 16,
+  "confirmTrials": 32,
+  "confirmAbove": 40,
+  "levels": [
+   7,
+   8,
+   9,
+   10
+  ],
+  "method": "singles+none measured on all of L7-L10 at 16; pairs screened on L7 at 16 and expanded to L8-L10 only if L7>0; anything >40% re-measured at 32; verdicts use 32-trial numbers only"
+ },
+ "runs": {
+  "revenge-12": {
+   "kit": [
+    "swap",
+    "bishop-squire",
+    "knight-hop",
+    "poison-dart"
+   ],
+   "sig": [
+    "bishop-squire",
+    "swap"
+   ],
+   "probes": [
+    "boulder",
+    "summon-knight",
+    "freeze-ray",
+    "magnet",
+    "become-king"
+   ],
+   "inKit": [
+    "bishop-squire+swap",
+    "knight-hop+swap",
+    "poison-dart+swap",
+    "bishop-squire+knight-hop",
+    "bishop-squire+poison-dart",
+    "knight-hop+poison-dart"
+   ],
+   "outKit": [
+    "bishop-squire+boulder",
+    "bishop-squire+summon-knight",
+    "bishop-squire+freeze-ray",
+    "bishop-squire+magnet",
+    "become-king+bishop-squire",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "magnet+swap",
+    "become-king+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+magnet",
+    "become-king+boulder",
+    "freeze-ray+summon-knight",
+    "magnet+summon-knight",
+    "become-king+summon-knight",
+    "freeze-ray+magnet",
+    "become-king+freeze-ray",
+    "become-king+magnet"
+   ],
+   "cells": {
+    "bishop-squire": {
+     "7": {
+      "pct": 0,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 47,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 32
+     },
+     "8": {
+      "pct": 9,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 38,
+      "trials": 32
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "swap": {
+     "7": {
+      "pct": 0,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+bishop-squire": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+swap": {
+     "7": {
+      "pct": 75,
+      "trials": 32
+     },
+     "8": {
+      "pct": 81,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "knight-hop+swap",
+    "poison-dart+swap",
+    "bishop-squire+knight-hop",
+    "bishop-squire+poison-dart",
+    "knight-hop+poison-dart",
+    "bishop-squire+boulder",
+    "bishop-squire+summon-knight",
+    "bishop-squire+freeze-ray",
+    "bishop-squire+magnet",
+    "become-king+bishop-squire",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "magnet+swap",
+    "become-king+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+magnet",
+    "become-king+boulder",
+    "freeze-ray+summon-knight",
+    "magnet+summon-knight",
+    "become-king+summon-knight",
+    "freeze-ray+magnet",
+    "become-king+freeze-ray",
+    "become-king+magnet"
+   ],
+   "done": true
+  },
+  "revenge-13": {
+   "kit": [
+    "swap",
+    "bishop-squire",
+    "magnet",
+    "boulder"
+   ],
+   "sig": [
+    "bishop-squire",
+    "swap"
+   ],
+   "probes": [
+    "knight-hop",
+    "summon-knight",
+    "freeze-ray",
+    "become-king",
+    "twin"
+   ],
+   "inKit": [
+    "bishop-squire+swap",
+    "magnet+swap",
+    "boulder+swap",
+    "bishop-squire+magnet",
+    "bishop-squire+boulder",
+    "boulder+magnet"
+   ],
+   "outKit": [
+    "bishop-squire+knight-hop",
+    "bishop-squire+summon-knight",
+    "bishop-squire+freeze-ray",
+    "become-king+bishop-squire",
+    "bishop-squire+twin",
+    "knight-hop+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "become-king+swap",
+    "swap+twin",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "become-king+knight-hop",
+    "knight-hop+twin",
+    "freeze-ray+summon-knight",
+    "become-king+summon-knight",
+    "summon-knight+twin",
+    "become-king+freeze-ray",
+    "freeze-ray+twin",
+    "become-king+twin"
+   ],
+   "cells": {
+    "bishop-squire": {
+     "7": {
+      "pct": 25,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+bishop-squire": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 84,
+      "trials": 32
+     },
+     "9": {
+      "pct": 41,
+      "trials": 32
+     },
+     "10": {
+      "pct": 88,
+      "trials": 32
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 69,
+      "trials": 32
+     },
+     "9": {
+      "pct": 28,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 56,
+      "trials": 32
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 72,
+      "trials": 32
+     },
+     "9": {
+      "pct": 69,
+      "trials": 32
+     },
+     "10": {
+      "pct": 25,
+      "trials": 32
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 53,
+      "trials": 32
+     },
+     "9": {
+      "pct": 25,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 81,
+      "trials": 32
+     },
+     "9": {
+      "pct": 34,
+      "trials": 32
+     },
+     "10": {
+      "pct": 91,
+      "trials": 32
+     }
+    },
+    "bishop-squire+boulder": {
+     "7": {
+      "pct": 13,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+freeze-ray": {
+     "7": {
+      "pct": 19,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 88,
+      "trials": 32
+     }
+    },
+    "bishop-squire+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 75,
+      "trials": 32
+     }
+    },
+    "bishop-squire+magnet": {
+     "7": {
+      "pct": 38,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 6,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+summon-knight": {
+     "7": {
+      "pct": 72,
+      "trials": 32
+     },
+     "8": {
+      "pct": 28,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 94,
+      "trials": 32
+     }
+    },
+    "bishop-squire+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 69,
+      "trials": 32
+     }
+    },
+    "bishop-squire+twin": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 56,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 91,
+      "trials": 32
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 91,
+      "trials": 32
+     },
+     "9": {
+      "pct": 88,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 66,
+      "trials": 32
+     },
+     "8": {
+      "pct": 19,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 6,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+twin": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 50,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 44,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 97,
+      "trials": 32
+     },
+     "9": {
+      "pct": 53,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 97,
+      "trials": 32
+     },
+     "9": {
+      "pct": 72,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "magnet+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 97,
+      "trials": 32
+     },
+     "9": {
+      "pct": 94,
+      "trials": 32
+     },
+     "10": {
+      "pct": 94,
+      "trials": 32
+     }
+    },
+    "summon-knight+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 31,
+      "trials": 32
+     },
+     "9": {
+      "pct": 22,
+      "trials": 32
+     },
+     "10": {
+      "pct": 9,
+      "trials": 32
+     }
+    },
+    "swap+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 41,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "magnet+swap",
+    "boulder+swap",
+    "boulder+magnet"
+   ],
+   "done": true
+  },
+  "revenge-14": {
+   "kit": [
+    "vanguard",
+    "swap",
+    "poison-dart",
+    "smoke"
+   ],
+   "sig": [
+    "vanguard",
+    "swap"
+   ],
+   "probes": [
+    "knight-hop",
+    "boulder",
+    "summon-knight",
+    "freeze-ray",
+    "magnet"
+   ],
+   "inKit": [
+    "swap+vanguard",
+    "poison-dart+vanguard",
+    "smoke+vanguard",
+    "poison-dart+swap",
+    "smoke+swap",
+    "poison-dart+smoke"
+   ],
+   "outKit": [
+    "knight-hop+vanguard",
+    "boulder+vanguard",
+    "summon-knight+vanguard",
+    "freeze-ray+vanguard",
+    "magnet+vanguard",
+    "knight-hop+swap",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "magnet+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "knight-hop+magnet",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+magnet",
+    "freeze-ray+summon-knight",
+    "magnet+summon-knight",
+    "freeze-ray+magnet"
+   ],
+   "cells": {
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "smoke": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 97,
+      "trials": 32
+     }
+    },
+    "freeze-ray+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+magnet": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "knight-hop+vanguard": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "magnet+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+smoke": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "smoke+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "smoke+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 91,
+      "trials": 32
+     },
+     "9": {
+      "pct": 41,
+      "trials": 32
+     },
+     "10": {
+      "pct": 56,
+      "trials": 32
+     }
+    },
+    "summon-knight+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "swap+vanguard": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 97,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 88,
+      "trials": 32
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "poison-dart+vanguard",
+    "smoke+vanguard",
+    "poison-dart+swap",
+    "smoke+swap",
+    "poison-dart+smoke",
+    "boulder+vanguard",
+    "summon-knight+vanguard",
+    "freeze-ray+vanguard",
+    "magnet+vanguard",
+    "boulder+swap",
+    "freeze-ray+swap",
+    "magnet+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+magnet",
+    "freeze-ray+summon-knight",
+    "magnet+summon-knight",
+    "freeze-ray+magnet"
+   ],
+   "done": true
+  },
+  "revenge-15": {
+   "kit": [
+    "magnet",
+    "boulder",
+    "aegis",
+    "decoy"
+   ],
+   "sig": [
+    "magnet",
+    "boulder"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "summon-knight",
+    "freeze-ray",
+    "become-king"
+   ],
+   "inKit": [
+    "boulder+magnet",
+    "aegis+magnet",
+    "decoy+magnet",
+    "aegis+boulder",
+    "boulder+decoy",
+    "aegis+decoy"
+   ],
+   "outKit": [
+    "knight-hop+magnet",
+    "magnet+swap",
+    "magnet+summon-knight",
+    "freeze-ray+magnet",
+    "become-king+magnet",
+    "boulder+knight-hop",
+    "boulder+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "become-king+boulder",
+    "knight-hop+swap",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "become-king+knight-hop",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "become-king+swap",
+    "freeze-ray+summon-knight",
+    "become-king+summon-knight",
+    "become-king+freeze-ray"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+boulder": {
+     "7": {
+      "pct": 19,
+      "trials": 32
+     },
+     "8": {
+      "pct": 13,
+      "trials": 32
+     },
+     "9": {
+      "pct": 47,
+      "trials": 32
+     },
+     "10": {
+      "pct": 9,
+      "trials": 32
+     }
+    },
+    "aegis+decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+boulder": {
+     "7": {
+      "pct": 31,
+      "trials": 32
+     },
+     "8": {
+      "pct": 16,
+      "trials": 32
+     },
+     "9": {
+      "pct": 31,
+      "trials": 32
+     },
+     "10": {
+      "pct": 44,
+      "trials": 32
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 13,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 6,
+      "trials": 16
+     }
+    },
+    "become-king+knight-hop": {
+     "7": {
+      "pct": 75,
+      "trials": 32
+     },
+     "8": {
+      "pct": 47,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "become-king+magnet": {
+     "7": {
+      "pct": 88,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 91,
+      "trials": 32
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 47,
+      "trials": 32
+     },
+     "8": {
+      "pct": 59,
+      "trials": 32
+     },
+     "9": {
+      "pct": 47,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+decoy": {
+     "7": {
+      "pct": 72,
+      "trials": 32
+     },
+     "8": {
+      "pct": 84,
+      "trials": 32
+     },
+     "9": {
+      "pct": 94,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 6,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 6,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 59,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 69,
+      "trials": 32
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 6,
+      "trials": 32
+     },
+     "8": {
+      "pct": 31,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 97,
+      "trials": 32
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+magnet": {
+     "7": {
+      "pct": 72,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+magnet": {
+     "7": {
+      "pct": 25,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 25,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+magnet": {
+     "7": {
+      "pct": 81,
+      "trials": 32
+     },
+     "8": {
+      "pct": 88,
+      "trials": 32
+     },
+     "9": {
+      "pct": 81,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+summon-knight": {
+     "7": {
+      "pct": 38,
+      "trials": 32
+     },
+     "8": {
+      "pct": 28,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "magnet+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "aegis+magnet",
+    "aegis+decoy",
+    "magnet+swap",
+    "boulder+knight-hop",
+    "boulder+swap",
+    "knight-hop+swap",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "become-king+swap",
+    "freeze-ray+summon-knight"
+   ],
+   "done": true
+  },
+  "revenge-16": {
+   "kit": [
+    "poison-dart",
+    "bishop-squire",
+    "magnet",
+    "rabies-dart"
+   ],
+   "sig": [
+    "poison-dart",
+    "bishop-squire"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "boulder",
+    "summon-knight",
+    "freeze-ray"
+   ],
+   "inKit": [
+    "bishop-squire+poison-dart",
+    "magnet+poison-dart",
+    "poison-dart+rabies-dart",
+    "bishop-squire+magnet",
+    "bishop-squire+rabies-dart",
+    "magnet+rabies-dart"
+   ],
+   "outKit": [
+    "knight-hop+poison-dart",
+    "poison-dart+swap",
+    "boulder+poison-dart",
+    "poison-dart+summon-knight",
+    "freeze-ray+poison-dart",
+    "bishop-squire+knight-hop",
+    "bishop-squire+swap",
+    "bishop-squire+boulder",
+    "bishop-squire+summon-knight",
+    "bishop-squire+freeze-ray",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight"
+   ],
+   "cells": {
+    "bishop-squire": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "rabies-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+knight-hop": {
+     "7": {
+      "pct": 38,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 38,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+poison-dart": {
+     "7": {
+      "pct": 63,
+      "trials": 32
+     },
+     "8": {
+      "pct": 56,
+      "trials": 32
+     },
+     "9": {
+      "pct": 53,
+      "trials": 32
+     },
+     "10": {
+      "pct": 56,
+      "trials": 32
+     }
+    },
+    "bishop-squire+rabies-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "bishop-squire+summon-knight": {
+     "7": {
+      "pct": 78,
+      "trials": 32
+     },
+     "8": {
+      "pct": 47,
+      "trials": 32
+     },
+     "9": {
+      "pct": 41,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "bishop-squire+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 25,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 38,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 72,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 44,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 47,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 25,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "freeze-ray+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 78,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 38,
+      "trials": 32
+     },
+     "10": {
+      "pct": 3,
+      "trials": 32
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+poison-dart": {
+     "7": {
+      "pct": 56,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 44,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 59,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 19,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "magnet+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+rabies-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+rabies-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+summon-knight": {
+     "7": {
+      "pct": 63,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 44,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "poison-dart+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 66,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 75,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "magnet+poison-dart",
+    "poison-dart+rabies-dart",
+    "bishop-squire+magnet",
+    "bishop-squire+rabies-dart",
+    "magnet+rabies-dart",
+    "poison-dart+swap",
+    "boulder+poison-dart",
+    "freeze-ray+poison-dart",
+    "bishop-squire+swap",
+    "bishop-squire+boulder",
+    "bishop-squire+freeze-ray",
+    "boulder+swap",
+    "freeze-ray+swap",
+    "boulder+freeze-ray"
+   ],
+   "done": true
+  },
+  "revenge-17": {
+   "kit": [
+    "dragon",
+    "sacrifice",
+    "aegis",
+    "poison-dart"
+   ],
+   "sig": [
+    "dragon",
+    "sacrifice"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "boulder",
+    "summon-knight",
+    "freeze-ray"
+   ],
+   "inKit": [
+    "dragon+sacrifice",
+    "aegis+dragon",
+    "dragon+poison-dart",
+    "aegis+sacrifice",
+    "poison-dart+sacrifice",
+    "aegis+poison-dart"
+   ],
+   "outKit": [
+    "dragon+knight-hop",
+    "dragon+swap",
+    "boulder+dragon",
+    "dragon+summon-knight",
+    "dragon+freeze-ray",
+    "knight-hop+sacrifice",
+    "sacrifice+swap",
+    "boulder+sacrifice",
+    "sacrifice+summon-knight",
+    "freeze-ray+sacrifice",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 32
+     },
+     "8": {
+      "pct": 3,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "dragon": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "sacrifice": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+dragon": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 69,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "aegis+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+sacrifice": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+dragon": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+sacrifice": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "dragon+freeze-ray": {
+     "7": {
+      "pct": 41,
+      "trials": 32
+     },
+     "8": {
+      "pct": 28,
+      "trials": 32
+     },
+     "9": {
+      "pct": 50,
+      "trials": 32
+     },
+     "10": {
+      "pct": 6,
+      "trials": 32
+     }
+    },
+    "dragon+knight-hop": {
+     "7": {
+      "pct": 63,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 78,
+      "trials": 32
+     },
+     "10": {
+      "pct": 56,
+      "trials": 32
+     }
+    },
+    "dragon+poison-dart": {
+     "7": {
+      "pct": 31,
+      "trials": 32
+     },
+     "8": {
+      "pct": 63,
+      "trials": 32
+     },
+     "9": {
+      "pct": 38,
+      "trials": 32
+     },
+     "10": {
+      "pct": 9,
+      "trials": 32
+     }
+    },
+    "dragon+sacrifice": {
+     "7": {
+      "pct": 69,
+      "trials": 32
+     },
+     "8": {
+      "pct": 88,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 69,
+      "trials": 32
+     }
+    },
+    "dragon+summon-knight": {
+     "7": {
+      "pct": 53,
+      "trials": 32
+     },
+     "8": {
+      "pct": 47,
+      "trials": 32
+     },
+     "9": {
+      "pct": 66,
+      "trials": 32
+     },
+     "10": {
+      "pct": 16,
+      "trials": 32
+     }
+    },
+    "dragon+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+sacrifice": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 31,
+      "trials": 32
+     },
+     "8": {
+      "pct": 25,
+      "trials": 32
+     },
+     "9": {
+      "pct": 47,
+      "trials": 32
+     },
+     "10": {
+      "pct": 9,
+      "trials": 32
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+sacrifice": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 50,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 66,
+      "trials": 32
+     },
+     "10": {
+      "pct": 3,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+sacrifice": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "sacrifice+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "sacrifice+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "aegis+sacrifice",
+    "poison-dart+sacrifice",
+    "aegis+poison-dart",
+    "dragon+swap",
+    "boulder+dragon",
+    "knight-hop+sacrifice",
+    "sacrifice+swap",
+    "boulder+sacrifice",
+    "sacrifice+summon-knight",
+    "freeze-ray+sacrifice",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray"
+   ],
+   "done": true
+  },
+  "revenge-18": {
+   "kit": [
+    "freeze-ray",
+    "vanguard",
+    "poison-dart",
+    "magnet"
+   ],
+   "sig": [
+    "freeze-ray",
+    "vanguard"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "boulder",
+    "summon-knight",
+    "become-king"
+   ],
+   "inKit": [
+    "freeze-ray+vanguard",
+    "freeze-ray+poison-dart",
+    "freeze-ray+magnet",
+    "poison-dart+vanguard",
+    "magnet+vanguard",
+    "magnet+poison-dart"
+   ],
+   "outKit": [
+    "freeze-ray+knight-hop",
+    "freeze-ray+swap",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight",
+    "become-king+freeze-ray",
+    "knight-hop+vanguard",
+    "swap+vanguard",
+    "boulder+vanguard",
+    "summon-knight+vanguard",
+    "become-king+vanguard",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "become-king+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "become-king+swap",
+    "boulder+summon-knight",
+    "become-king+boulder",
+    "become-king+summon-knight"
+   ],
+   "cells": {
+    "freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 3,
+      "trials": 32
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 88,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 13,
+      "trials": 32
+     },
+     "8": {
+      "pct": 16,
+      "trials": 32
+     },
+     "9": {
+      "pct": 47,
+      "trials": 32
+     },
+     "10": {
+      "pct": 44,
+      "trials": 32
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+vanguard": {
+     "7": {
+      "pct": 19,
+      "trials": 16
+     },
+     "8": {
+      "pct": 19,
+      "trials": 16
+     },
+     "9": {
+      "pct": 25,
+      "trials": 16
+     },
+     "10": {
+      "pct": 25,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 88,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "freeze-ray+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 9,
+      "trials": 32
+     },
+     "8": {
+      "pct": 34,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 44,
+      "trials": 32
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+vanguard": {
+     "7": {
+      "pct": 78,
+      "trials": 32
+     },
+     "8": {
+      "pct": 72,
+      "trials": 32
+     },
+     "9": {
+      "pct": 66,
+      "trials": 32
+     },
+     "10": {
+      "pct": 72,
+      "trials": 32
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 69,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 91,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+vanguard": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 78,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "magnet+poison-dart": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "poison-dart+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 78,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 41,
+      "trials": 32
+     }
+    },
+    "summon-knight+vanguard": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "swap+vanguard": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 84,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 88,
+      "trials": 32
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "freeze-ray+poison-dart",
+    "freeze-ray+magnet",
+    "poison-dart+vanguard",
+    "magnet+vanguard",
+    "magnet+poison-dart",
+    "freeze-ray+swap",
+    "boulder+freeze-ray",
+    "become-king+freeze-ray",
+    "summon-knight+vanguard",
+    "become-king+vanguard",
+    "boulder+swap",
+    "become-king+swap",
+    "become-king+boulder",
+    "become-king+summon-knight"
+   ],
+   "done": true
+  },
+  "revenge-19": {
+   "kit": [
+    "convert",
+    "summon-knight",
+    "aegis",
+    "magnet"
+   ],
+   "sig": [
+    "convert",
+    "summon-knight"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "boulder",
+    "freeze-ray",
+    "become-king"
+   ],
+   "inKit": [
+    "convert+summon-knight",
+    "aegis+convert",
+    "convert+magnet",
+    "aegis+summon-knight",
+    "magnet+summon-knight",
+    "aegis+magnet"
+   ],
+   "outKit": [
+    "convert+knight-hop",
+    "convert+swap",
+    "boulder+convert",
+    "convert+freeze-ray",
+    "become-king+convert",
+    "knight-hop+summon-knight",
+    "summon-knight+swap",
+    "boulder+summon-knight",
+    "freeze-ray+summon-knight",
+    "become-king+summon-knight",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "freeze-ray+knight-hop",
+    "become-king+knight-hop",
+    "boulder+swap",
+    "freeze-ray+swap",
+    "become-king+swap",
+    "boulder+freeze-ray",
+    "become-king+boulder",
+    "become-king+freeze-ray"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "convert": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+convert": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+boulder": {
+     "7": {
+      "pct": 84,
+      "trials": 32
+     },
+     "8": {
+      "pct": 63,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+convert": {
+     "7": {
+      "pct": 75,
+      "trials": 32
+     },
+     "8": {
+      "pct": 84,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 75,
+      "trials": 32
+     },
+     "8": {
+      "pct": 69,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 91,
+      "trials": 32
+     },
+     "8": {
+      "pct": 91,
+      "trials": 32
+     },
+     "9": {
+      "pct": 88,
+      "trials": 32
+     },
+     "10": {
+      "pct": 75,
+      "trials": 32
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 81,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "boulder+convert": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "convert+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "convert+knight-hop": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 63,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "convert+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "convert+summon-knight": {
+     "7": {
+      "pct": 72,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 69,
+      "trials": 32
+     },
+     "10": {
+      "pct": 75,
+      "trials": 32
+     }
+    },
+    "convert+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 0,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 19,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 16,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "magnet+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 94,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "aegis+convert",
+    "convert+magnet",
+    "aegis+summon-knight",
+    "magnet+summon-knight",
+    "aegis+magnet",
+    "boulder+convert",
+    "convert+freeze-ray",
+    "boulder+summon-knight",
+    "freeze-ray+summon-knight",
+    "boulder+swap",
+    "freeze-ray+swap",
+    "boulder+freeze-ray"
+   ],
+   "done": true
+  },
+  "revenge-21": {
+   "kit": [
+    "boulder",
+    "knight-hop",
+    "aegis",
+    "magnet"
+   ],
+   "sig": [
+    "boulder",
+    "knight-hop"
+   ],
+   "probes": [
+    "swap",
+    "summon-knight",
+    "freeze-ray",
+    "become-king",
+    "twin"
+   ],
+   "inKit": [
+    "boulder+knight-hop",
+    "aegis+boulder",
+    "boulder+magnet",
+    "aegis+knight-hop",
+    "knight-hop+magnet",
+    "aegis+magnet"
+   ],
+   "outKit": [
+    "boulder+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "become-king+boulder",
+    "boulder+twin",
+    "knight-hop+swap",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "become-king+knight-hop",
+    "knight-hop+twin",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "become-king+swap",
+    "swap+twin",
+    "freeze-ray+summon-knight",
+    "become-king+summon-knight",
+    "summon-knight+twin",
+    "become-king+freeze-ray",
+    "freeze-ray+twin",
+    "become-king+twin"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+boulder": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 78,
+      "trials": 32
+     },
+     "9": {
+      "pct": 78,
+      "trials": 32
+     },
+     "10": {
+      "pct": 66,
+      "trials": 32
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "become-king+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 84,
+      "trials": 32
+     },
+     "9": {
+      "pct": 94,
+      "trials": 32
+     },
+     "10": {
+      "pct": 97,
+      "trials": 32
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 97,
+      "trials": 32
+     },
+     "8": {
+      "pct": 78,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 78,
+      "trials": 32
+     }
+    },
+    "become-king+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 78,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 72,
+      "trials": 32
+     },
+     "10": {
+      "pct": 69,
+      "trials": 32
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+twin": {
+     "7": {
+      "pct": 91,
+      "trials": 32
+     },
+     "8": {
+      "pct": 63,
+      "trials": 32
+     },
+     "9": {
+      "pct": 69,
+      "trials": 32
+     },
+     "10": {
+      "pct": 66,
+      "trials": 32
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 19,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 66,
+      "trials": 32
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 88,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 94,
+      "trials": 32
+     }
+    },
+    "knight-hop+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 94,
+      "trials": 32
+     },
+     "9": {
+      "pct": 91,
+      "trials": 32
+     },
+     "10": {
+      "pct": 91,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 100,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 97,
+      "trials": 32
+     },
+     "9": {
+      "pct": 72,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "summon-knight+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 63,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 78,
+      "trials": 32
+     }
+    },
+    "swap+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 32
+     },
+     "8": {
+      "pct": 75,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 88,
+      "trials": 32
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "aegis+boulder",
+    "boulder+magnet",
+    "aegis+knight-hop",
+    "knight-hop+magnet",
+    "aegis+magnet",
+    "boulder+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "knight-hop+swap",
+    "freeze-ray+swap"
+   ],
+   "done": true
+  },
+  "revenge-22": {
+   "kit": [
+    "dragon",
+    "duchess",
+    "magnet",
+    "aegis"
+   ],
+   "sig": [
+    "dragon",
+    "duchess"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "boulder",
+    "summon-knight",
+    "freeze-ray"
+   ],
+   "inKit": [
+    "dragon+duchess",
+    "dragon+magnet",
+    "aegis+dragon",
+    "duchess+magnet",
+    "aegis+duchess",
+    "aegis+magnet"
+   ],
+   "outKit": [
+    "dragon+knight-hop",
+    "dragon+swap",
+    "boulder+dragon",
+    "dragon+summon-knight",
+    "dragon+freeze-ray",
+    "duchess+knight-hop",
+    "duchess+swap",
+    "boulder+duchess",
+    "duchess+summon-knight",
+    "duchess+freeze-ray",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "dragon": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+dragon": {
+     "7": {
+      "pct": 56,
+      "trials": 32
+     },
+     "8": {
+      "pct": 22,
+      "trials": 32
+     },
+     "9": {
+      "pct": 25,
+      "trials": 32
+     },
+     "10": {
+      "pct": 0,
+      "trials": 32
+     }
+    },
+    "aegis+duchess": {
+     "7": {
+      "pct": 38,
+      "trials": 16
+     },
+     "8": {
+      "pct": 38,
+      "trials": 16
+     },
+     "9": {
+      "pct": 25,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+dragon": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+duchess": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "dragon+duchess": {
+     "7": {
+      "pct": 78,
+      "trials": 32
+     },
+     "8": {
+      "pct": 81,
+      "trials": 32
+     },
+     "9": {
+      "pct": 84,
+      "trials": 32
+     },
+     "10": {
+      "pct": 72,
+      "trials": 32
+     }
+    },
+    "dragon+freeze-ray": {
+     "7": {
+      "pct": 66,
+      "trials": 32
+     },
+     "8": {
+      "pct": 78,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 69,
+      "trials": 32
+     }
+    },
+    "dragon+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "dragon+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "dragon+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "dragon+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+freeze-ray": {
+     "7": {
+      "pct": 50,
+      "trials": 32
+     },
+     "8": {
+      "pct": 84,
+      "trials": 32
+     },
+     "9": {
+      "pct": 97,
+      "trials": 32
+     },
+     "10": {
+      "pct": 84,
+      "trials": 32
+     }
+    },
+    "duchess+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "dragon+magnet",
+    "duchess+magnet",
+    "aegis+magnet",
+    "dragon+knight-hop",
+    "dragon+swap",
+    "boulder+dragon",
+    "dragon+summon-knight",
+    "duchess+knight-hop",
+    "duchess+swap",
+    "boulder+duchess",
+    "duchess+summon-knight",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight"
+   ],
+   "done": true
+  },
+  "revenge-23": {
+   "kit": [
+    "knight-hop",
+    "twin",
+    "aegis",
+    "decoy"
+   ],
+   "sig": [
+    "knight-hop",
+    "twin"
+   ],
+   "probes": [
+    "swap",
+    "boulder",
+    "summon-knight",
+    "freeze-ray",
+    "magnet"
+   ],
+   "inKit": [
+    "knight-hop+twin",
+    "aegis+knight-hop",
+    "decoy+knight-hop",
+    "aegis+twin",
+    "decoy+twin",
+    "aegis+decoy"
+   ],
+   "outKit": [
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "knight-hop+magnet",
+    "swap+twin",
+    "boulder+twin",
+    "summon-knight+twin",
+    "freeze-ray+twin",
+    "magnet+twin",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "magnet+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+magnet",
+    "freeze-ray+summon-knight",
+    "magnet+summon-knight",
+    "freeze-ray+magnet"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 44,
+      "trials": 32
+     },
+     "8": {
+      "pct": 59,
+      "trials": 32
+     },
+     "9": {
+      "pct": 59,
+      "trials": 32
+     },
+     "10": {
+      "pct": 53,
+      "trials": 32
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 59,
+      "trials": 32
+     },
+     "8": {
+      "pct": 56,
+      "trials": 32
+     },
+     "9": {
+      "pct": 50,
+      "trials": 32
+     },
+     "10": {
+      "pct": 59,
+      "trials": 32
+     }
+    },
+    "freeze-ray+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 53,
+      "trials": 32
+     },
+     "8": {
+      "pct": 38,
+      "trials": 32
+     },
+     "9": {
+      "pct": 53,
+      "trials": 32
+     },
+     "10": {
+      "pct": 50,
+      "trials": 32
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+twin": {
+     "7": {
+      "pct": 72,
+      "trials": 32
+     },
+     "8": {
+      "pct": 69,
+      "trials": 32
+     },
+     "9": {
+      "pct": 66,
+      "trials": 32
+     },
+     "10": {
+      "pct": 63,
+      "trials": 32
+     }
+    },
+    "magnet+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 16,
+      "trials": 32
+     },
+     "8": {
+      "pct": 69,
+      "trials": 32
+     },
+     "9": {
+      "pct": 6,
+      "trials": 32
+     },
+     "10": {
+      "pct": 19,
+      "trials": 32
+     }
+    },
+    "summon-knight+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "swap+twin": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "aegis+knight-hop",
+    "decoy+knight-hop",
+    "aegis+twin",
+    "decoy+twin",
+    "aegis+decoy",
+    "knight-hop+swap",
+    "knight-hop+magnet",
+    "swap+twin",
+    "boulder+twin",
+    "summon-knight+twin",
+    "freeze-ray+twin",
+    "magnet+twin",
+    "boulder+swap",
+    "freeze-ray+swap",
+    "magnet+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+magnet",
+    "freeze-ray+summon-knight",
+    "magnet+summon-knight",
+    "freeze-ray+magnet"
+   ],
+   "done": true
+  },
+  "revenge-24": {
+   "kit": [
+    "duchess",
+    "decoy",
+    "aegis",
+    "magnet"
+   ],
+   "sig": [
+    "duchess",
+    "decoy"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "boulder",
+    "summon-knight",
+    "freeze-ray"
+   ],
+   "inKit": [
+    "decoy+duchess",
+    "aegis+duchess",
+    "duchess+magnet",
+    "aegis+decoy",
+    "decoy+magnet",
+    "aegis+magnet"
+   ],
+   "outKit": [
+    "duchess+knight-hop",
+    "duchess+swap",
+    "boulder+duchess",
+    "duchess+summon-knight",
+    "duchess+freeze-ray",
+    "decoy+knight-hop",
+    "decoy+swap",
+    "boulder+decoy",
+    "decoy+summon-knight",
+    "decoy+freeze-ray",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+duchess": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+decoy": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+duchess": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+duchess": {
+     "7": {
+      "pct": 75,
+      "trials": 32
+     },
+     "8": {
+      "pct": 91,
+      "trials": 32
+     },
+     "9": {
+      "pct": 75,
+      "trials": 32
+     },
+     "10": {
+      "pct": 63,
+      "trials": 32
+     }
+    },
+    "decoy+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "decoy+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+freeze-ray": {
+     "7": {
+      "pct": 44,
+      "trials": 32
+     },
+     "8": {
+      "pct": 66,
+      "trials": 32
+     },
+     "9": {
+      "pct": 0,
+      "trials": 32
+     },
+     "10": {
+      "pct": 100,
+      "trials": 32
+     }
+    },
+    "duchess+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "duchess+summon-knight": {
+     "7": {
+      "pct": 63,
+      "trials": 32
+     },
+     "8": {
+      "pct": 38,
+      "trials": 32
+     },
+     "9": {
+      "pct": 100,
+      "trials": 32
+     },
+     "10": {
+      "pct": 13,
+      "trials": 32
+     }
+    },
+    "duchess+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    }
+   },
+   "eliminatedAtL7": [
+    "aegis+duchess",
+    "duchess+magnet",
+    "aegis+decoy",
+    "decoy+magnet",
+    "aegis+magnet",
+    "duchess+knight-hop",
+    "duchess+swap",
+    "boulder+duchess",
+    "decoy+knight-hop",
+    "decoy+swap",
+    "boulder+decoy",
+    "decoy+summon-knight",
+    "decoy+freeze-ray",
+    "knight-hop+swap",
+    "boulder+knight-hop",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "boulder+swap",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "freeze-ray+summon-knight"
+   ],
+   "done": true
+  },
+  "revenge-25": {
+   "kit": [
+    "become-king",
+    "boulder",
+    "aegis",
+    "magnet"
+   ],
+   "sig": [
+    "become-king",
+    "boulder"
+   ],
+   "probes": [
+    "knight-hop",
+    "swap",
+    "summon-knight",
+    "freeze-ray",
+    "twin"
+   ],
+   "inKit": [
+    "become-king+boulder",
+    "aegis+become-king",
+    "become-king+magnet",
+    "aegis+boulder",
+    "boulder+magnet",
+    "aegis+magnet"
+   ],
+   "outKit": [
+    "become-king+knight-hop",
+    "become-king+swap",
+    "become-king+summon-knight",
+    "become-king+freeze-ray",
+    "become-king+twin",
+    "boulder+knight-hop",
+    "boulder+swap",
+    "boulder+summon-knight",
+    "boulder+freeze-ray",
+    "boulder+twin",
+    "knight-hop+swap",
+    "knight-hop+summon-knight",
+    "freeze-ray+knight-hop",
+    "knight-hop+twin",
+    "summon-knight+swap",
+    "freeze-ray+swap",
+    "swap+twin",
+    "freeze-ray+summon-knight",
+    "summon-knight+twin",
+    "freeze-ray+twin"
+   ],
+   "cells": {
+    "aegis": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "none": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     },
+     "8": {
+      "pct": 0,
+      "trials": 16
+     },
+     "9": {
+      "pct": 0,
+      "trials": 16
+     },
+     "10": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+become-king": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+boulder": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "aegis+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+boulder": {
+     "7": {
+      "pct": 81,
+      "trials": 16
+     }
+    },
+    "become-king+freeze-ray": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "become-king+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "become-king+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "become-king+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "become-king+twin": {
+     "7": {
+      "pct": 75,
+      "trials": 16
+     }
+    },
+    "boulder+freeze-ray": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "boulder+magnet": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "boulder+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "boulder+twin": {
+     "7": {
+      "pct": 94,
+      "trials": 16
+     }
+    },
+    "freeze-ray+knight-hop": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "freeze-ray+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "freeze-ray+swap": {
+     "7": {
+      "pct": 0,
+      "trials": 16
+     }
+    },
+    "freeze-ray+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "knight-hop+summon-knight": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "knight-hop+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "knight-hop+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "summon-knight+swap": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "summon-knight+twin": {
+     "7": {
+      "pct": 100,
+      "trials": 16
+     }
+    },
+    "swap+twin": {
+     "7": {
+      "pct": 94,
+      "trials": 16
+     }
+    }
+   }
+  }
+ }
+}
