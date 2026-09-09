@@ -1966,7 +1966,7 @@ export default function RookiesRunPage() {
   const smokeStatus =
     state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0
       ? {
-          label: `Smoked · ${state.smokeTurnsLeft ?? 0}`,
+          label: `Hidden · ${state.smokeTurnsLeft ?? 0}`,
           text: `Nothing can capture you and the king stops running. ${
             state.abilities.find((a) => a.id === 'smoke')?.tier === 5
               ? 'Capturing keeps you hidden.'

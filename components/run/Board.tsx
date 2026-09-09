@@ -1330,7 +1330,7 @@ export function RunBoard({
         {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (
           <SquareChip
             square={toSquare(state.rookie)}
-            label={`Smoked · ${state.smokeTurnsLeft}`}
+            label={`Hidden · ${state.smokeTurnsLeft}`}
             palette={{ color: '#1e293b', background: 'rgba(226,232,240,0.95)', border: 'rgba(71,85,105,0.9)' }}
           />
         )}

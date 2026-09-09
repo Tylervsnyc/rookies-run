@@ -221,7 +221,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
   },
   smoke: {
     id: 'smoke',
-    name: 'Smoke',
+    name: 'Stealth',
     activation: 'instant',
     typeLine: 'Instant · Cover',
     description: 'Nothing can capture you, and the king stops running.',
