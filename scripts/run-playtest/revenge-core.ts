@@ -561,7 +561,7 @@ export function solveLevel(
   return { ...(worst as SolveResult), nodes: totalNodes };
 }
 
-function solveLevelFrom(
+export function solveLevelFrom(
   cfg: RevengeCfg,
   level: number,
   loadout: string,
