@@ -2459,6 +2459,10 @@ function SummonPoofLayer({
  * enemy piece glyphs so a summon reads as a piece, not a poster.
  */
 const ALLY_CELL_FIT = 0.84;
+// A summoned / converted PAWN is a pawn — it should read smaller than a
+// summoned knight or the dragon, the way a real pawn sits under a knight.
+// Tyler (2026-09-09): "make the summoned pawns smaller."
+const ALLY_PAWN_CELL_FIT = 0.62;
 
 function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
   const anyLastTurn = allies.some((a) => a.turnsLeft === 1);
@@ -2479,6 +2483,7 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
     return () => ro.disconnect();
   }, []);
   const fitPx = Math.floor(cellPx * ALLY_CELL_FIT);
+  const pawnFitPx = Math.floor(cellPx * ALLY_PAWN_CELL_FIT);
   return (
     <div
       ref={rootRef}
@@ -2542,7 +2547,7 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
                 no per-piece scale numbers. Rendered only once measured so
                 nothing flashes at natural (un-fitted) size. */}
             {fitPx > 0 && (
-              <PieceBlocks piece={a.source === 'dragon' ? 'D' : ALLY_BLOCK[a.type]} blockSize={3} fit={fitPx} animate />
+              <PieceBlocks piece={a.source === 'dragon' ? 'D' : ALLY_BLOCK[a.type]} blockSize={3} fit={a.source !== 'dragon' && a.type === 'pawn' ? pawnFitPx : fitPx} animate />
             )}
           </div>
           {/* Turn countdown for timed summons (Duchess & friends) — small
