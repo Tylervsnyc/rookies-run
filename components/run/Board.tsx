@@ -55,6 +55,9 @@ interface BoardProps {
   abilityTier?: AbilityTier;
   /** Enemy squares the active Convert ability can target (pulsing rings). */
   convertTargets?: Coord[];
+  /** Sacrifice armed: the 5x5 blast box around each detonatable summon —
+   *  tinted so the player sees exactly what explodes BEFORE tapping. */
+  blastSquares?: Coord[];
   /** Transient Sacrifice detonation VFX — burst on the summon square plus a
    *  hit flash on every square the blast captured. */
   sacrificeFx?: { summonSq: string; capturedSqs: string[]; id: number } | null;
@@ -198,6 +201,7 @@ export function RunBoard({
   legalAbilityMoves,
   abilityTier,
   convertTargets,
+  blastSquares,
   sacrificeFx = null,
   allyPoofFx = null,
   onSquareClick,
@@ -592,6 +596,34 @@ export function RunBoard({
       }
     }
 
+    // Sacrifice blast preview — an ember wash over the 5x5 box; enemies
+    // inside get a capture ring (they die), the king a stun-blue ring (he is
+    // stunned, never captured). Same squares the engine detonates.
+    if (blastSquares && blastSquares.length > 0) {
+      for (const c of blastSquares) {
+        const sq = toSquare(c);
+        const enemy = state.pieces.find((p) => p.file === c.file && p.rank === c.rank);
+        const prev = styles[sq] ?? {};
+        const ring = enemy
+          ? enemy.type === 'king'
+            ? 'radial-gradient(circle, transparent 60%, rgba(56,189,248,0.95) 60%)'
+            : 'radial-gradient(circle, transparent 60%, rgba(234,88,12,0.95) 60%)'
+          : null;
+        styles[sq] = {
+          ...prev,
+          backgroundColor: 'rgba(249, 115, 22, 0.38)',
+          backgroundImage: ring
+            ? prev.backgroundImage
+              ? `${ring}, ${prev.backgroundImage}`
+              : ring
+            : prev.backgroundImage,
+          boxShadow: prev.boxShadow
+            ? `${prev.boxShadow}, inset 0 0 0 2px rgba(234, 88, 12, 0.55)`
+            : 'inset 0 0 0 2px rgba(234, 88, 12, 0.55)',
+        };
+      }
+    }
+
     // Dart-style abilities (freeze ray, poison dart, rabies dart) — no
     // target-circle highlights; the cursor + piece tap is enough.
 
@@ -695,7 +727,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastSquares, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring

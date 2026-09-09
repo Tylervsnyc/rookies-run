@@ -59,6 +59,7 @@ import {
   applyOfferPick,
   knightingTargets,
   sacrificeTargets,
+  sacrificeBlastSquares,
   swapTargets,
   canRewind,
   convertTargets as computeConvertTargets,
@@ -1176,6 +1177,23 @@ export default function RookiesRunPage() {
     return undefined;
   }, [state]);
 
+  // Sacrifice armed: tint the 5x5 blast box around every summon that could
+  // detonate, so the player sees what explodes before the tap.
+  const sacrificeBlast = useMemo(() => {
+    if (state.activeAbility?.id !== 'sacrifice' || state.activeAbility.step !== 'pick-square') return undefined;
+    const seen = new Set<string>();
+    const out: Coord[] = [];
+    for (const summon of sacrificeTargets(state)) {
+      for (const c of sacrificeBlastSquares(summon)) {
+        const sq = toSquare(c);
+        if (seen.has(sq)) continue;
+        seen.add(sq);
+        out.push(c);
+      }
+    }
+    return out;
+  }, [state]);
+
   // Swap / Sacrifice / Knighting operate ON a summon — without an eligible
   // target the card tap silently no-ops in the engine, which reads as "the
   // ability is broken". Gray the card out instead. Rewind (enemy-only) is
@@ -2152,6 +2170,7 @@ export default function RookiesRunPage() {
             legalAbilityMoves={legalAbilityMoves}
             abilityTier={activeAbilityTier}
             convertTargets={convertTargets}
+            blastSquares={sacrificeBlast}
             sacrificeFx={sacrificeFx}
             allyPoofFx={allyPoofFx}
             onSquareClick={onSquareClick}
@@ -2210,7 +2229,7 @@ export default function RookiesRunPage() {
                   : state.activeAbility.id === 'swap'
                   ? 'tap the summon to swap with'
                   : state.activeAbility.id === 'sacrifice'
-                    ? 'tap the summon to detonate'
+                    ? 'tap the summon to detonate — the tinted box is the blast'
                     : ABILITY_DEFS[state.activeAbility.id].activation === 'targeted'
                       ? 'tap an empty square'
                       : 'tap a highlighted square'}

@@ -309,7 +309,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Sacrifice',
     activation: 'targeted',
     typeLine: 'Targeted · Burst',
-    description: 'Your summon explodes. Everything it threatened is captured.',
+    description: 'Your summon explodes. Every enemy within 2 squares of it is captured.',
   },
   knighting: {
     id: 'knighting',
@@ -640,7 +640,7 @@ const HOW: Record<AbilityId, string> = {
   dragon: 'Tap card, then tap a spawn square. Tap the dragon to move her.',
   vanguard: 'Tap card, then tap any square in range. Tap the knight to move it.',
   swap: 'Tap card, then tap one of your summons.',
-  sacrifice: 'Tap card, then tap one of your summons.',
+  sacrifice: 'Tap card, then tap one of your summons. The tinted box is the blast.',
   knighting: 'Tap card, then tap one of your summons.',
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
   shove: 'Tap card, then tap a block of stone beside you. It rolls one square away. Lava never moves.',
@@ -823,11 +823,11 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Trade squares with one of your summons. Its clock gains 2 turns. Free action.';
       return 'Trade squares with one of your summons. Free action.';
     case 'sacrifice':
-      if (tier === 5) return 'Detonate a summon. It captures everything it threatens and within 2 squares; the king is stunned 3 turns.';
-      if (tier === 4) return 'Detonate a summon. Enemies it threatens and within 2 squares are captured. Survivors beside it are stunned.';
-      if (tier === 3) return 'Detonate a summon. Enemies it threatens and beside it are captured. Survivors beside it are stunned.';
-      if (tier === 2) return 'Detonate a summon. Enemies on its attack squares are captured; survivors beside it are stunned.';
-      return 'Detonate a summon. Enemies on its attack squares are captured.';
+      // ONE rule at every tier (2026-09-09): the blast is the 5x5 box around
+      // the summon. Enemies inside are captured; the king inside is stunned.
+      if (tier === 5) return 'Detonate a summon. Every enemy within 2 squares is captured; the king inside is stunned 3 turns.';
+      if (tier >= 2) return 'Detonate a summon. Every enemy within 2 squares is captured; the king inside is stunned 2 turns.';
+      return 'Detonate a summon. Every enemy within 2 squares is captured; the king inside is stunned 1 turn.';
     case 'knighting':
       if (tier === 5) return 'Promote a summon straight to queen.';
       if (tier === 4) return 'Promote a summon or ANY rainbow ally two steps up.';
@@ -1038,11 +1038,10 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Trade, +2 turns on its clock. 1/level.';
       return 'Trade with a summon. 1/level.';
     case 'sacrifice':
-      if (tier === 5) return 'Detonate: threats + 2 rings, stun 3. 2/level.';
-      if (tier === 4) return 'Detonate: threats + 2 rings. 2/level.';
-      if (tier === 3) return 'Detonate: threats + beside. 2/level.';
-      if (tier === 2) return 'Detonate + stun survivors. 1/level.';
-      return 'Detonate a summon. 1/level.';
+      if (tier === 5) return 'Detonate: 5x5 blast, king stun 3. 2/level.';
+      if (tier >= 3) return 'Detonate: 5x5 blast, king stun 2. 2/level.';
+      if (tier === 2) return 'Detonate: 5x5 blast, king stun 2. 1/level.';
+      return 'Detonate: 5x5 blast, king stun 1. 1/level.';
     case 'knighting':
       if (tier === 5) return 'Summon straight to queen. 2/level.';
       if (tier === 4) return 'Any ally, two steps up. 2/level.';
@@ -1267,9 +1266,9 @@ export const UPGRADE_NOTES: Record<
     5: '',
   },
   sacrifice: {
-    2: 'Survivors beside the boom are stunned',
-    3: 'Blast also hits adjacent squares',
-    4: 'Blast reaches 2 squares out',
+    2: 'King stun 1 turn → 2',
+    3: 'A second charge',
+    4: '',
     5: 'King stun 2 turns → 3',
   },
   knighting: {
@@ -4195,45 +4194,27 @@ function applySwap(state: BoardState, target: Coord): BoardState {
   };
 }
 
-/** Squares a single ally attacks from where it stands (for the Sacrifice blast). */
-function attackSquaresOfAlly(state: BoardState, a: AllyPiece): Coord[] {
+/** How long a king caught in the blast box is stunned, by tier. */
+export function sacrificeKingStunForTier(tier: AbilityTier): number {
+  if (tier >= 5) return 3;
+  if (tier >= 2) return 2;
+  return 1;
+}
+
+/**
+ * The Sacrifice blast: every square within 2 of the summon in all 8
+ * directions — a 5x5 box, the summon's own square excluded. The SAME squares
+ * the board tints while the card is armed, so what you see is what explodes.
+ */
+export function sacrificeBlastSquares(at: Coord): Coord[] {
   const out: Coord[] = [];
-  const add = (f: number, r: number) => {
-    if (allyInBounds(f, r)) out.push({ file: f, rank: r });
-  };
-  switch (a.type) {
-    case 'pawn':
-      add(a.file - 1, a.rank + 1);
-      add(a.file + 1, a.rank + 1);
-      break;
-    case 'knight':
-      for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
-      break;
-    case 'bishop':
-    case 'rook':
-    case 'queen': {
-      const dirs = a.type === 'queen' ? ALLY_QUEEN_DIRS : a.type === 'rook' ? ALLY_ROOK_DIRS : ALLY_BISHOP_DIRS;
-      for (const [df, dr] of dirs) {
-        let f = a.file + df;
-        let r = a.rank + dr;
-        while (allyInBounds(f, r)) {
-          if (allyIsHazard(state, f, r)) break;
-          add(f, r);
-          if (state.rookie.file === f && state.rookie.rank === r) break;
-          if (state.allies.some((o) => o !== a && o.file === f && o.rank === r)) break;
-          if (state.pieces.some((p) => p.file === f && p.rank === r)) break;
-          f += df;
-          r += dr;
-        }
-      }
-      // Dragon: knight squares join the blast — detonating her is enormous.
-      if (a.source === 'dragon') {
-        for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(a.file + df, a.rank + dr);
-      }
-      break;
+  for (let df = -2; df <= 2; df++) {
+    for (let dr = -2; dr <= 2; dr++) {
+      if (df === 0 && dr === 0) continue;
+      const f = at.file + df;
+      const r = at.rank + dr;
+      if (allyInBounds(f, r)) out.push({ file: f, rank: r });
     }
-    case 'king':
-      break;
   }
   return out;
 }
@@ -4250,26 +4231,16 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
   if (!owned || owned.usesLeftThisLevel === 0) return state;
   const ally = controlledAllyAt(state, target);
   if (!ally) return state;
-  // Blast area: the squares this summon attacks; from T3 also every square
-  // beside it; from T4 everything within 2 squares. The king is never
-  // captured by the blast — but the mass capture stuns him hard (2 turns;
-  // 3 at T5).
-  const blast = new Map<string, Coord>();
-  for (const c of attackSquaresOfAlly(state, ally)) blast.set(toSquare(c), c);
-  if (owned.tier >= 3) {
-    const ring = owned.tier >= 4 ? 2 : 1;
-    for (let df = -ring; df <= ring; df++) {
-      for (let dr = -ring; dr <= ring; dr++) {
-        if (df === 0 && dr === 0) continue;
-        const f = ally.file + df;
-        const r = ally.rank + dr;
-        if (allyInBounds(f, r)) blast.set(toSquare({ file: f, rank: r }), { file: f, rank: r });
-      }
-    }
-  }
+  // ONE rule (2026-09-09): the blast is the 5x5 box around the summon. Every
+  // enemy inside is captured. The king is never captured by a blast — only
+  // Rookie takes him — but a king inside the box is stunned (1 / 2 / 3 turns
+  // by tier). Tiers change the stun and the charges, never the shape.
+  const blast = new Set(sacrificeBlastSquares(ally).map(toSquare));
   const victims = state.pieces.filter(
     (p) => p.type !== 'king' && blast.has(toSquare({ file: p.file, rank: p.rank })),
   );
+  const king = state.pieces.find((p) => p.type === 'king');
+  const kingInBlast = !!king && blast.has(toSquare({ file: king.file, rank: king.rank }));
   let working: BoardState = state;
   const captures = [...state.captures];
   let tempo = state.tempo;
@@ -4279,25 +4250,10 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
     captures.push(v.type);
     tempo = Math.min(tempoMaxFor(state), tempo + (TEMPO_REWARD[v.type] ?? 0));
   }
-  // T2+: the shockwave stuns — surviving enemies beside the summon are
-  // frozen for a turn (the king has his own stun below).
-  let frozenSquares = working.frozenSquares;
-  let frozenTurnsLeft = working.frozenTurnsLeft;
-  if (owned.tier >= 2) {
-    for (const p of state.pieces) {
-      if (p.type === 'king' || victims.includes(p)) continue;
-      const d = Math.max(Math.abs(p.file - ally.file), Math.abs(p.rank - ally.rank));
-      if (d > 1) continue;
-      const psq = toSquare({ file: p.file, rank: p.rank });
-      if (!frozenSquares.includes(psq)) frozenSquares = [...frozenSquares, psq];
-      frozenTurnsLeft = { ...frozenTurnsLeft, [psq]: Math.max(frozenTurnsLeft[psq] ?? 0, 1) };
-    }
-  }
+  const kingStun = kingInBlast ? sacrificeKingStunForTier(owned.tier) : victims.length > 0 ? 1 : 0;
   const allySq = toSquare({ file: ally.file, rank: ally.rank });
   return {
     ...working,
-    frozenSquares,
-    frozenTurnsLeft,
     pieces: state.pieces.filter((p) => !victims.includes(p)),
     allies: state.allies.filter((a) => a !== ally),
     captures,
@@ -4309,7 +4265,7 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
     abilities: decrementUse(state.abilities, 'sacrifice'),
     activeAbility: null,
     cancellableActivation: undefined,
-    ...(victims.length > 0 ? stunKingAfterCapture(state, owned.tier === 5 ? 3 : 2) : {}),
+    ...(kingStun > 0 ? stunKingAfterCapture(state, kingStun) : {}),
     lastAbilityFx: {
       kind: 'summon-knight',
       from: allySq,
