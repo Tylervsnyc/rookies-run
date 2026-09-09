@@ -1,9 +1,17 @@
 # Rookie's Revenge — nightly playtest in the cloud.
 #
-# Successor to the LOCAL crontab entry (scripts/run-revenge-nightly.sh), which
-# only fired while Tyler's Mac was awake. This runs on GitHub's machines at
-# 06:30 UTC (2:30am ET) every night regardless: full harness -> digest ->
-# Slack summary -> commit + push, same as the local wrapper.
+# Two independent jobs:
+#   ladder           the 10 LADDER_RUNG_IDS at full budget -> digest -> Slack
+#                    -> commit + push. The ladder is the product (Tyler,
+#                    2026-09-09), so it is the only thing graded nightly.
+#                    Candidate (testing-stage) runs are NOT swept here: the
+#                    pool grew to 38 runs and the old all-runs sweep timed out
+#                    at 350 min ten nights in a row (2026-09-04..09) without a
+#                    word to anyone. Grade a candidate by hand:
+#                      npx tsx scripts/run-playtest/revenge-nightly.ts --runs-filter=<id>
+#   combo-discovery  files combo-gated levels under data/run-playtest/combo-library/
+#
+# A failed or timed-out ladder job POSTS TO SLACK. Silence is never success.
 #
 # Manual run: Actions tab -> "Revenge nightly" -> Run workflow (quick=true
 # for a 2-minute smoke).
@@ -13,12 +21,9 @@ name: Revenge nightly
 on:
   schedule:
     # 04:30 UTC (= 12:30am ET). GitHub cron can fire hours late on busy
-    # shared runners (2026-09-02: the 06:30 fire came at 11:33), so start
-    # early enough that even a late, slow run lands before morning.
+    # shared runners, so start early enough that a late, slow run still lands
+    # before morning.
     - cron: '30 4 * * *'
-    # TEMP (2026-09-02): Tyler's laptop-closed proof fire at 6pm ET. GitHub cron
-    # can run late; expect the fire between 6:00-7:00pm. REMOVE after tonight.
-    - cron: '0 22 * * *'
   workflow_dispatch:
     inputs:
       quick:
@@ -34,9 +39,12 @@ permissions:
   contents: write
 
 jobs:
-  playtest:
+  ladder:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    # 10 runs x full budget measured ~2.5h on the 4-core runner (2026-09-04:
+    # 12 runs = 249 min). If this trips, the budget below is wrong — shrink it,
+    # never raise the timeout.
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
 
@@ -47,22 +55,21 @@ jobs:
 
       - run: npm ci
 
-      - name: Run the harness
+      - name: Run the ladder
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          # GitHub's hosted runners have ~4 cores vs the dev Mac's 10+, so run
-          # a reduced budget (~half trials) or the full harness takes 4-6h
-          # (2026-09-02: the first full-budget fire ran past 3h). Noise grows
-          # from about +/-10 to +/-14 points per cell — fine for a nightly
-          # trend read; verify borderline calls locally at full budget.
-          # Budget resized 2026-09-02: the live pool doubled (11 runs x 25 ability
-          # loadouts). 16 trials/cell keeps the sweep ~2-2.5h on the 4-core runner
-          # (noise ~+/-17/cell — trend-read only; verify borderline calls locally).
-          # player-runs stays 24: the new-player clear rate is the headline number.
-          FLAGS="--trials=16 --mode-trials=8 --runs=16 --player-runs=24 --cand-trials=16 --cand-mode-trials=8 --cand-runs=12 --cand-player-runs=12 --exp-trials=16"
-          if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick"; fi
+          # The run set is the ladder, read from code so this file never holds
+          # a second copy of the list.
+          RUNGS=$(npx tsx -e "import('./lib/run/ladder').then(m => console.log(m.LADDER_RUNG_IDS.join(',')))")
+          echo "ladder: $RUNGS"
+          # GitHub's hosted runners have ~4 cores vs the dev Mac's 10+, so the
+          # budget is about half the local default. Noise per cell is roughly
+          # +/-17 points at 16 trials — the digest is a TREND read; a verdict on
+          # one rung is confirmed locally with ladder-audit.ts before acting.
+          FLAGS="--runs-filter=$RUNGS --trials=16 --mode-trials=8 --runs=16 --player-runs=24 --cand-trials=16 --cand-mode-trials=8 --cand-runs=16 --cand-player-runs=24 --exp-trials=16"
+          if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick --runs-filter=$RUNGS"; fi
           npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
 
       - name: Post Slack summary
@@ -71,13 +78,14 @@ jobs:
         run: |
           TODAY=$(date -u +%Y-%m-%d)
           RAW="data/run-playtest/revenge/raw/$TODAY"
-          if [ -n "$SLACK_WEBHOOK_URL" ] && [ -f "$RAW/slack.txt" ]; then
-            PAYLOAD=$(python3 -c 'import json,sys; print(json.dumps({"text": open(sys.argv[1]).read().strip()}))' "$RAW/slack.txt")
-            curl -sS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" \
-              && echo "slack posted" || echo "warn: slack post failed"
-          else
-            echo "slack skipped (no webhook or no slack.txt)"
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then echo "slack skipped (no webhook)"; exit 0; fi
+          if [ ! -f "$RAW/slack.txt" ]; then
+            echo "harness produced no slack.txt — treating as failure"
+            exit 1
           fi
+          PAYLOAD=$(python3 -c 'import json,sys; print(json.dumps({"text": open(sys.argv[1]).read().strip()}))' "$RAW/slack.txt")
+          curl -sS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" \
+            && echo "slack posted" || echo "warn: slack post failed"
 
       - name: Commit digests and push
         run: |
@@ -86,32 +94,46 @@ jobs:
           git config user.name "Rookie Playtest Bot"
           git config user.email "playtest@rookies-run.local"
           git add data/run-playtest/revenge/digests/
-          RAW_BYTES=$(du -sk "$RAW" 2>/dev/null | cut -f1)
-          if [ -n "$RAW_BYTES" ] && [ "$RAW_BYTES" -lt 2048 ]; then
-            git add "$RAW"/*.json || true
-          else
-            echo "raw dir is ${RAW_BYTES:-?} KB — committing digests only"
-          fi
           git add data/run-playtest/revenge/experiments.jsonl || true
           git add data/content/pipeline.json || true
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "Rookie's Revenge: nightly playtest digest $TODAY (GitHub Actions)"
-            # Drop uncommitted leftovers (e.g. raw dirs over the 2MB cap) so rebase is clean.
-            git restore .
-            git clean -fd data/run-playtest/revenge/raw
+            git commit -m "Rookie's Revenge: nightly ladder digest $TODAY (GitHub Actions)"
+            # Raw JSON is kept as a workflow artifact (below), never committed
+            # and never deleted here: the old `git restore . && git clean` step
+            # threw away anything the harness left behind.
+            git stash --include-untracked -q || true
             git pull --rebase origin main
             git push origin main
           fi
 
+      - name: Keep raw JSON as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: revenge-raw-${{ github.run_id }}
+          path: data/run-playtest/revenge/raw/
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Alert Slack on failure
+        if: failure() || cancelled()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          [ -z "$SLACK_WEBHOOK_URL" ] && exit 0
+          MSG="NIGHTLY FAILED — Rookie's Revenge ladder job ended ${{ job.status }} (timeout is 240 min). No digest tonight. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          PAYLOAD=$(python3 -c 'import json,sys; print(json.dumps({"text": sys.argv[1]}))' "$MSG")
+          curl -sS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" || true
+
   # Combo-gate discovery (2026-09-05, Tyler: "find more combinations of
   # abilities and build a LOT of levels"). Independent job so it never delays
-  # the playtest digest. Generates terrain candidates, screens them against
+  # the ladder digest. Generates terrain candidates, screens them against
   # 4-card kits, and files levels that no single kit card beats but one pair
-  # does under data/run-playtest/combo-library/ (SYNERGY.md = the pair map).
-  # The ledger makes nightly runs additive: least-tried pairs first. The seed
-  # is the day-of-year so each night explores different candidates.
+  # does (60-80%) under data/run-playtest/combo-library/ (SYNERGY.md = the pair
+  # map). The ledger makes nightly runs additive: least-tried pairs first. The
+  # seed is the day-of-year so each night explores different candidates.
   combo-discovery:
     runs-on: ubuntu-latest
     timeout-minutes: 200
@@ -135,7 +157,16 @@ jobs:
           else
             N=$(ls -d data/run-playtest/combo-library/*+*/ 2>/dev/null | wc -l | tr -d ' ')
             git commit -m "Rookie's Revenge: nightly combo discovery $(date -u +%Y-%m-%d) ($N gating pairs in library)"
-            git restore .
+            git stash --include-untracked -q || true
             git pull --rebase origin main
             git push origin main
           fi
+      - name: Alert Slack on failure
+        if: failure() || cancelled()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          [ -z "$SLACK_WEBHOOK_URL" ] && exit 0
+          MSG="NIGHTLY FAILED — combo-discovery job ended ${{ job.status }}. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          PAYLOAD=$(python3 -c 'import json,sys; print(json.dumps({"text": sys.argv[1]}))' "$MSG")
+          curl -sS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" || true

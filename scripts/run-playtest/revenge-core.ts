@@ -60,6 +60,13 @@ export interface RevengeCfg {
    * e.g. the 3 starters). Undefined = every ability the run allows.
    */
   pool?: AbilityId[];
+  /**
+   * Force summoning sickness on for this measurement. The rule shipped to
+   * Endless on 2026-09-09 and is headed for the ladder once its finales are
+   * re-tuned for it, so the audit has to be able to grade the ladder AS IT WILL
+   * BE, not as it is. See BoardState.summonSickness.
+   */
+  summonSickness?: boolean;
 }
 
 export type FailMode = 'won' | 'captured' | 'move-limit' | 'stall' | 'dead-end';
@@ -168,6 +175,7 @@ export function startState(
   const rng = rngFromString(seed);
   const s = puzzleToBoardState(puzzle, {
     runId: cfg.runId,
+    ...(cfg.summonSickness ? { summonSickness: true } : {}),
     abilities,
     aiRngSeed: (Math.floor(rng() * 0xffffffff) >>> 0) || 1,
     // Rookie's random start file is seeded off the SAME per-trial seed, so a
@@ -408,6 +416,7 @@ export function simulateRuns(cfg: RevengeCfg, n: number, tier: string, opts: Run
         const rng = rngFromString(seed);
         const start = puzzleToBoardState(puzzle, {
           runId: cfg.runId,
+          ...(cfg.summonSickness ? { summonSickness: true } : {}),
           abilities,
           tempo,
           pendingOffer: pending,

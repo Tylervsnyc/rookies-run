@@ -519,6 +519,15 @@ function kingReaction(state: BoardState): BoardState | null {
   // Rookie captures instead of fleeing — the capture is resolved by the
   // ordinary capturers pass, so all this has to do is stand still and let it.
   //
+  // EXCEPT against a KING-form Rookie. Standing his ground works because she
+  // cannot take him back — but in king form she can, and she moves first, so
+  // holding still is simply losing the race. Real chess forbids two kings
+  // standing adjacent for exactly this reason. Measured 2026-09-09: without
+  // this, `become-king` ALONE clears revenge-25 L7/L9 and revenge-26 L7/L10 at
+  // 100% (they read 0% before the capturing king landed), which voids the combo
+  // gate on both runs. Still ONE rule for the king everywhere — he takes what
+  // stands next to him; he just doesn't trade kings.
+  //
   // And not into a raised Aegis either (2026-09-09): there is no capture to
   // stand still for, so a shielded Rookie beside him is a threat like any
   // other — he keeps running. (The old permanent T5 shield parked him next
@@ -526,6 +535,7 @@ function kingReaction(state: BoardState): BoardState | null {
   if (
     !isSmoked(state) &&
     (state.kingStunTurns ?? 0) <= 0 &&
+    state.form !== 'king' &&
     !state.shieldUp &&
     chebyshev({ file: king.file, rank: king.rank }, state.rookie) <= 1
   ) {

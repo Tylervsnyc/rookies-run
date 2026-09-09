@@ -10,11 +10,11 @@
 # 3. commit digests + tonight's raw JSON (raw only if under 2 MB) as the
 #    playtest bot and push origin main.
 #
-# Supabase (human traces) + Slack creds come from chess-learning-tree/.env.local
-# because this repo has no .env.local of its own.
+# Supabase (human traces) + Slack creds come from this repo's .env.local
+# (NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SLACK_WEBHOOK_URL).
 export PATH="/opt/homebrew/bin:/Users/tyler.schwartz/.local/bin:$PATH"
 REPO=/Users/tyler.schwartz/rookies-run
-ENV_FILE=/Users/tyler.schwartz/chess-learning-tree/.env.local
+ENV_FILE="$REPO/.env.local"
 cd "$REPO" || exit 1
 mkdir -p logs
 TODAY=$(date +%Y-%m-%d)

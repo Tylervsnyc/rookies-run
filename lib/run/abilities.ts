@@ -3661,7 +3661,7 @@ function applySummonKnight(state: BoardState, target: Coord): BoardState {
     // function rather than going through applySummonAlly, which is why the
     // first measurement (2026-09-08) showed it moving by exactly 0.0 — the rule
     // never reached it. Two spawn paths, so the field has to be set twice.
-    ...(state.endless ? { dazed: true } : {}),
+    ...(state.summonSickness ? { dazed: true } : {}),
   };
   return {
     ...state,
@@ -3924,7 +3924,7 @@ function applySummonAlly(state: BoardState, id: AbilityId, target: Coord): Board
     // takes ladder rungs 5/8/9 to 0-3% while leaving rungs 1/3/7 untouched
     // (their kits hold no summons). It goes in there when those finales are
     // re-tuned, not before. See docs/SUMMONING-SICKNESS-FULL-2026-09-08.md.
-    ...(state.endless ? { dazed: true } : {}),
+    ...(state.summonSickness ? { dazed: true } : {}),
   };
   return {
     ...state,

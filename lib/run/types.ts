@@ -309,6 +309,15 @@ export interface BoardState {
    */
   endless?: boolean;
   /**
+   * Summoning sickness is ON for this board — a summon acts from your NEXT
+   * turn. Shipped to Endless 2026-09-09 and headed for the ladder too (Tyler:
+   * "yes do 1 this is what i want"), so it is its own switch rather than a
+   * reading of `endless`: the ladder turns it on when its finales have been
+   * re-tuned for it, without pretending a ladder run is an Endless session.
+   * Defaults to `endless` when not set explicitly.
+   */
+  summonSickness?: boolean;
+  /**
    * Extra Rookie moves queued by Surge. While > 0, the turn stays with Rookie
    * after a move or ability instead of handing off to the enemy. Decremented
    * once per move/ability consumed. Resets to 0 at the start of each level.

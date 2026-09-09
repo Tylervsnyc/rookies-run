@@ -155,8 +155,10 @@ export function puzzleToBoardState(
     difficulty?: BoardState['difficulty'];
     /** Tempo cap override (Endless pins 12 at every depth). */
     tempoMax?: BoardState['tempoMax'];
-    /** Endless session — turns on summoning sickness. See BoardState.endless. */
+    /** Endless session. See BoardState.endless. */
     endless?: BoardState['endless'];
+    /** Summoning sickness. Defaults to `endless`. See BoardState.summonSickness. */
+    summonSickness?: BoardState['summonSickness'];
     /**
      * Seeded RNG for Rookie's random start file. Omit in the app (players
      * want a fresh file each attempt); the playtest harness MUST pass one so
@@ -219,6 +221,7 @@ export function puzzleToBoardState(
     ...(carry.difficulty ? { difficulty: carry.difficulty } : {}),
     ...(carry.tempoMax ? { tempoMax: carry.tempoMax } : {}),
     ...(carry.endless ? { endless: true } : {}),
+    ...((carry.summonSickness ?? carry.endless) ? { summonSickness: true } : {}),
     moveLimit: puzzle.moveLimit ?? null,
     enemiesPerTurn: puzzle.enemiesPerTurn ?? 1,
     ...(puzzle.winCondition === 'king'
