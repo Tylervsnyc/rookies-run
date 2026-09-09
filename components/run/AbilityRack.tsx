@@ -126,13 +126,14 @@ export function AbilityRack({
                 {status.text}
               </div>
             ) : (
-              <div className="text-[10px] text-chess-text-faint font-bold uppercase tracking-wider leading-none">
-                {abilities.length === 0
-                  ? 'Fill tempo to claim a power'
-                  : abilities.length >= MAX_OWNED_ABILITIES
-                    ? 'Rack full — fill tempo to upgrade'
-                    : `${abilities.length}/${MAX_OWNED_ABILITIES} powers · all refill every level`}
-              </div>
+              // The rack-count / "Rack full — fill tempo to upgrade" line is
+              // gone (Tyler, 2026-09-09: "kind of throwing everything off").
+              // The slot only speaks when there's a live rule or a hint.
+              abilities.length === 0 ? (
+                <div className="text-[10px] text-chess-text-faint font-bold uppercase tracking-wider leading-none">
+                  Fill tempo to claim a power
+                </div>
+              ) : null
             )}
             {hint ? <p className="text-sm text-chess-text-muted leading-tight">{hint}</p> : null}
           </div>

@@ -463,7 +463,10 @@ export function AbilityCardMini({
               className="mx-[3px] rounded-[3px] overflow-hidden"
               style={{
                 background: t.art,
-                height: '64%',
+                // 56% (was 64%) — the footer needs two rows now: the (i)
+                // button sits above the uses pips, never over the art
+                // (Tyler, 2026-09-09: "I love all of our pictures").
+                height: '56%',
                 boxShadow: 'inset 0 0 6px rgba(0,0,0,0.25)',
               }}
             >
@@ -507,11 +510,12 @@ export function AbilityCardMini({
       </button>
 
       {/*
-        (i) — sits in the art window's top-right corner, OUTSIDE the card
-        button (a button can't nest a button). Visible circle is 18px; the
-        hit box is 30px and the card beside it is 100x140, so the tap target
-        is well past 44px. Stays tappable on a spent (disabled) card — you
-        can always read what a power does.
+        (i) — lower-left of the card, directly above the uses pips and
+        OUTSIDE the card button (a button can't nest a button). Never over
+        the art. Visible circle is 18px; the hit box is 30px and the card
+        beside it is 100x140, so the tap target is well past 44px. Stays
+        tappable on a spent (disabled) card — you can always read what a
+        power does.
       */}
       {onInfo && (
         <button
@@ -524,8 +528,8 @@ export function AbilityCardMini({
           aria-pressed={infoOpen}
           className="absolute flex items-center justify-center active:scale-90 transition-transform"
           style={{
-            top: 14,
-            right: 0,
+            left: 0,
+            bottom: 8,
             width: 30,
             height: 30,
             WebkitTapHighlightColor: 'transparent',
