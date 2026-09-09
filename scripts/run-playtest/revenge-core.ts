@@ -100,7 +100,7 @@ export function realisticTierFor(level: number): AbilityTier {
 /**
  * `id` is normally a single ability id ("twin"). It may also be a `+`-joined
  * compound ("summon-knight+swap") to give the loadout MULTIPLE abilities at
- * once — needed to measure a support card (swap/sacrifice/knighting) paired
+ * once — needed to measure a support card (swap/sacrifice) paired
  * with the summon it operates on, since matrix mode otherwise only ever
  * grants one owned ability per cell.
  */

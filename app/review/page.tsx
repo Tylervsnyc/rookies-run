@@ -63,7 +63,6 @@ const SUMMON_MEASUREMENTS: Partial<Record<AbilityId, string>> = {
   'page': 'Floor 67% (L10) vs 33% no-ability — weakest direct summon · NEEDS TUNING',
   'swap': 'Paired with Squire: +20 (T1 L10) / +17 (realistic L10) · KEEP',
   'sacrifice': 'Paired with Squire: +33 (T1 L10) / +17 (realistic L10) — best support card · KEEP',
-  'knighting': 'Paired with Squire: +25 (T1 L10) / +13 (realistic L10) · KEEP',
 };
 
 /**

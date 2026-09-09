@@ -57,7 +57,6 @@ import {
   abilitiesForRetry,
   applyDismissOffer,
   applyOfferPick,
-  knightingTargets,
   sacrificeTargets,
   sacrificeBlastPreview,
   swapTargets,
@@ -1185,7 +1184,7 @@ export default function RookiesRunPage() {
     return sacrificeBlastPreview(state);
   }, [state]);
 
-  // Swap / Sacrifice / Knighting operate ON a summon — without an eligible
+  // Swap / Sacrifice operate ON a summon — without an eligible
   // target the card tap silently no-ops in the engine, which reads as "the
   // ability is broken". Gray the card out instead. Rewind (enemy-only) is
   // the same: with nothing on record to undo the tap no-ops, so gray it.
@@ -1194,7 +1193,6 @@ export default function RookiesRunPage() {
     for (const a of state.abilities) {
       if (a.id === 'swap' && swapTargets(state).length === 0) out.push('swap');
       if (a.id === 'sacrifice' && sacrificeTargets(state).length === 0) out.push('sacrifice');
-      if (a.id === 'knighting' && knightingTargets(state).length === 0) out.push('knighting');
       if (a.id === 'rewind' && a.usesLeftThisLevel !== 0 && !canRewind(state)) out.push('rewind');
     }
     return out;

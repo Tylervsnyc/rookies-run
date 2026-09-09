@@ -765,7 +765,7 @@ export function RunBoard({
     return styles;
   }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
-  // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
+  // Summon-targeting support cards (Swap / Sacrifice): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring
   // language Convert uses so "tap the summon" is unmissable.
   const allyTargets = useMemo(() => {

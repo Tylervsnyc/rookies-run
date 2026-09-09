@@ -4066,7 +4066,6 @@ export const REVENGE_ABILITY_CATALOG: ReadonlyArray<string> = [
   'vanguard',
   'swap',
   'sacrifice',
-  'knighting',
 ];
 
 /**
@@ -4936,7 +4935,6 @@ const LAB_ABILITIES: ReadonlyArray<string> = [
   'vanguard',
   'swap',
   'sacrifice',
-  'knighting',
   // two finishers so a slate can't brick the run
   'surge',
   'knight-hop',

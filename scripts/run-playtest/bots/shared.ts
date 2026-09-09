@@ -30,7 +30,6 @@ import {
   coupTargets,
   canRewind,
   isSmoked,
-  knightingTargets,
   latestRewindSnapshot,
   magnetLandingSquares,
   magnetTargets,
@@ -574,12 +573,6 @@ function candidatesForAbility(
     case 'sacrifice': {
       for (const c of sacrificeTargets(state)) {
         out.push({ kind: 'ability-target', abilityId: 'sacrifice', target: c });
-      }
-      return out;
-    }
-    case 'knighting': {
-      for (const c of knightingTargets(state)) {
-        out.push({ kind: 'ability-target', abilityId: 'knighting', target: c });
       }
       return out;
     }

@@ -309,14 +309,6 @@ function AbilityIcon({ id, size }: { id: AbilityId; size: number }) {
           <path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3" />
         </svg>
       );
-    case 'knighting':
-      // chevron rank-up
-      return (
-        <svg {...props}>
-          <path d="M5 15l7-7 7 7" />
-          <path d="M5 21l7-7 7 7" />
-        </svg>
-      );
     default:
       return null;
   }

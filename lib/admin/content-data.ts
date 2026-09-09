@@ -148,7 +148,6 @@ const PLACEHOLDER_ART = new Set([
   'vanguard-1.webp',
   'swap-1.webp',
   'sacrifice-1.webp',
-  'knighting-1.webp',
 ]);
 
 // ─────────────────────────────────────────────────────────────────────────────

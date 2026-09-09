@@ -55,7 +55,6 @@ export type AbilityId =
   | 'vanguard'
   | 'swap'
   | 'sacrifice'
-  | 'knighting'
   // The five of 2026-09-06, mined from the level library (testing). See
   // docs/new-abilities-2026-09-06.md — each is a distinct verb: trap a
   // square, move a stone, move the king, pass a turn, fake a Rookie.
@@ -311,13 +310,6 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Targeted · Burst',
     description: 'Your summon explodes in the shape it moves. Everything on the squares it attacks, up to 2 away, is captured.',
   },
-  knighting: {
-    id: 'knighting',
-    name: 'Knighting',
-    activation: 'targeted',
-    typeLine: 'Targeted · Rank',
-    description: 'Promote one of your summons into a bigger piece.',
-  },
   snare: {
     id: 'snare',
     name: 'Snare',
@@ -509,10 +501,6 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       // 1/1/2/2/2 — support, refreshes every level.
       if (tier <= 2) return 1;
       return 2;
-    case 'knighting':
-      // 1/1/1/2/2 — support, refreshes every level.
-      if (tier <= 3) return 1;
-      return 2;
     case 'snare':
       // 1/1/2/2/2 — the spec's ladder (docs/new-abilities-2026-09-06.md).
       if (tier <= 2) return 1;
@@ -642,7 +630,6 @@ const HOW: Record<AbilityId, string> = {
   vanguard: 'Tap card, then tap any square in range. Tap the knight to move it.',
   swap: 'Tap card, then tap one of your summons.',
   sacrifice: 'Tap card, then tap one of your summons. The tinted squares are its blast — shape = how the piece moves, 2 squares out.',
-  knighting: 'Tap card, then tap one of your summons.',
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
   shove: 'Tap card, then tap a block of stone beside you. It rolls one square away. Lava never moves.',
   coup: 'Tap card, then tap a guard near the king. They trade squares.',
@@ -830,12 +817,6 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'Detonate a summon. Everything on the squares it attacks, up to 2 away, is captured; the king there is stunned 3 turns.';
       if (tier >= 2) return 'Detonate a summon. Everything on the squares it attacks, up to 2 away, is captured; the king there is stunned 2 turns.';
       return 'Detonate a summon. Everything on the squares it attacks, up to 2 away, is captured; the king there is stunned 1 turn.';
-    case 'knighting':
-      if (tier === 5) return 'Promote a summon straight to queen.';
-      if (tier === 4) return 'Promote a summon or ANY rainbow ally two steps up.';
-      if (tier === 3) return 'Promote a summon two steps up (pawn to bishop, knight to rook).';
-      if (tier === 2) return 'Promote a summon one step up. Its clock gains 3 turns.';
-      return 'Promote a summon one step: pawn, knight, bishop, rook, queen.';
     case 'snare':
       if (tier === 5) return 'Set a trap that never wears out. Guards die on it, the king is held 3 turns.';
       if (tier === 4) return 'Set a trap. A guard that steps on it is captured; the king is held 3 turns.';
@@ -1044,12 +1025,6 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 3) return 'Detonate: its attack squares, 2 out; king stun 2. 2/level.';
       if (tier === 2) return 'Detonate: its attack squares, 2 out; king stun 2. 1/level.';
       return 'Detonate: its attack squares, 2 out; king stun 1. 1/level.';
-    case 'knighting':
-      if (tier === 5) return 'Summon straight to queen. 2/level.';
-      if (tier === 4) return 'Any ally, two steps up. 2/level.';
-      if (tier === 3) return 'Two steps up. 1/level.';
-      if (tier === 2) return 'One step up, +3 turns. 1/level.';
-      return 'One step up. 1/level.';
     case 'snare':
       if (tier === 5) return 'Trap re-arms. Guards die, king held 3. 2/level.';
       if (tier === 4) return 'Trap bites guards; king held 3. 2/level.';
@@ -1273,12 +1248,6 @@ export const UPGRADE_NOTES: Record<
     4: '',
     5: 'King stun 2 turns → 3',
   },
-  knighting: {
-    2: 'Promoted summon gains 3 extra turns',
-    3: 'Promotes two steps up, not one',
-    4: 'Works on ANY rainbow ally',
-    5: 'Straight to queen',
-  },
   snare: {
     2: 'Holds 1 turn → 2',
     3: '',
@@ -1380,7 +1349,7 @@ export function upgradeDeltaForTier(
 //  2. TARGETS CAN APPEAR LATER. A card whose target is MADE by another card
 //     is live whenever that other card is reachable in this level — owned
 //     already, or in the run's own pool (`allowedAbilities` / the playtest
-//     kit). Swap / Sacrifice / Knighting are live in any kit that also
+//     kit). Swap / Sacrifice are live in any kit that also
 //     contains a summon; Shove is live in any kit that contains Boulder,
 //     even on a board with no stone on it yet. Filtering those out would
 //     kill the Boulder-then-Shove pairing the runs are built around.
@@ -1423,18 +1392,10 @@ const NO_TARGET_ABILITIES: ReadonlySet<AbilityId> = new Set<AbilityId>([
 function targetMakersFor(id: AbilityId): ReadonlyArray<AbilityId> {
   // Anything that puts a rainbow piece you control on the board. Squad's
   // allies are NOT controlled, so they only count for the cards that read
-  // every ally at T4+ (Swap, Knighting) — never for Sacrifice.
+  // every ally at T4+ (Swap) — never for Sacrifice.
   const controlledMakers: AbilityId[] = ['convert', 'summon-knight', ...SUMMON_ABILITIES];
   if (id === 'sacrifice') return controlledMakers;
-  const withSquad: AbilityId[] = [...controlledMakers, 'squad'];
-  if (id === 'swap') return withSquad;
-  if (id === 'knighting') {
-    // Same makers, minus the ones that only ever produce a queen — a queen
-    // is already top of PROMOTION_ORDER and can never be knighted.
-    return withSquad.filter(
-      (m) => !isSummonAbility(m) || summonPieceFor(m) !== 'queen',
-    );
-  }
+  if (id === 'swap') return [...controlledMakers, 'squad'];
   if (id === 'shove') return ['boulder'];
   return [];
 }
@@ -1555,8 +1516,6 @@ export function canEverCastInLevel(
       return swapTargets(hypo).length > 0;
     case 'sacrifice':
       return sacrificeTargets(hypo).length > 0;
-    case 'knighting':
-      return knightingTargets(hypo).length > 0;
 
     default:
       if (isSummonAbility(id)) {
@@ -1863,7 +1822,6 @@ export function abilityLegalMoves(
   if (isSummonAbility(abilityId)) return summonSpawnSquares(state, abilityId);
   if (abilityId === 'swap') return swapTargets(state);
   if (abilityId === 'sacrifice') return sacrificeTargets(state);
-  if (abilityId === 'knighting') return knightingTargets(state);
   if (abilityId === 'snare') return snareTargets(state);
   if (abilityId === 'shove') return shoveTargets(state).map((t) => t.stone);
   if (abilityId === 'scarecrow') return scarecrowTargets(state);
@@ -1981,7 +1939,6 @@ function applyAbilityActivateImpl(
     isSummonAbility(abilityId) ||
     abilityId === 'swap' ||
     abilityId === 'sacrifice' ||
-    abilityId === 'knighting' ||
     abilityId === 'snare' ||
     abilityId === 'shove' ||
     abilityId === 'scarecrow';
@@ -2375,9 +2332,6 @@ function applyAbilityTargetedImpl(
   }
   if (abilityId === 'sacrifice') {
     return applySacrifice(state, target);
-  }
-  if (abilityId === 'knighting') {
-    return applyKnighting(state, target);
   }
   if (abilityId === 'snare') {
     return applySnare(state, target);
@@ -3719,7 +3673,7 @@ function applySquireMoveImpl(state: BoardState, target: Coord): BoardState {
 //     run, see ONE_CHARGE_PER_RUN),
 //   - move INSTEAD of Rookie (T1–T4); a T5 Squire/Bishop Squire/Twin's move
 //     is a free action, once per turn.
-// Swap / Sacrifice / Knighting are support cards that operate ON a summon.
+// Swap / Sacrifice are support cards that operate ON a summon.
 // ---------------------------------------------------------------------------
 
 /** Ally sources the player controls directly. */
@@ -4153,8 +4107,8 @@ export function controlledThreatensSquare(state: BoardState, c: Coord): boolean 
 }
 
 // ---------------------------------------------------------------------------
-// Swap / Sacrifice / Knighting — support cards that operate ON a summon.
-// All three are FREE actions (like darts): they resolve without ending the
+// Swap / Sacrifice — support cards that operate ON a summon.
+// Both are FREE actions (like darts): they resolve without ending the
 // turn, limited by their per-level uses.
 // ---------------------------------------------------------------------------
 
@@ -4378,52 +4332,6 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
       kind: 'summon-knight',
       from: allySq,
       to: allySq,
-      id: Date.now() + Math.random(),
-    },
-  };
-}
-
-/** Promotion ladder for Knighting. */
-const PROMOTION_ORDER: ReadonlyArray<AllyPiece['type']> = ['pawn', 'knight', 'bishop', 'rook', 'queen'];
-
-/** Allies Knighting may promote. T4+: any rainbow ally. */
-export function knightingTargets(state: BoardState): Coord[] {
-  const owned = state.abilities.find((a) => a.id === 'knighting');
-  if (!owned) return [];
-  const pool = owned.tier >= 4 ? state.allies ?? [] : controlledAllies(state);
-  return pool
-    .filter((a) => a.type !== 'queen' && a.type !== 'king')
-    .map((a) => ({ file: a.file, rank: a.rank }));
-}
-
-function applyKnighting(state: BoardState, target: Coord): BoardState {
-  const owned = state.abilities.find((a) => a.id === 'knighting');
-  if (!owned || owned.usesLeftThisLevel === 0) return state;
-  if (!knightingTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
-  const ally = (state.allies ?? []).find((a) => a.file === target.file && a.rank === target.rank);
-  if (!ally) return state;
-  const i = PROMOTION_ORDER.indexOf(ally.type);
-  if (i < 0 || i >= PROMOTION_ORDER.length - 1) return state;
-  const steps = owned.tier === 5 ? PROMOTION_ORDER.length : owned.tier >= 3 ? 2 : 1;
-  const nextType = PROMOTION_ORDER[Math.min(PROMOTION_ORDER.length - 1, i + steps)];
-  return {
-    ...state,
-    allies: state.allies.map((a) =>
-      a === ally
-        ? {
-            ...a,
-            type: nextType,
-            ...(owned.tier >= 2 && a.turnsLeft !== undefined ? { turnsLeft: a.turnsLeft + 3 } : {}),
-          }
-        : a,
-    ),
-    abilities: decrementUse(state.abilities, 'knighting'),
-    activeAbility: null,
-    cancellableActivation: undefined,
-    lastAbilityFx: {
-      kind: 'summon-knight',
-      from: toSquare(state.rookie),
-      to: toSquare(target),
       id: Date.now() + Math.random(),
     },
   };
