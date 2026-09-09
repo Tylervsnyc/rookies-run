@@ -89,6 +89,7 @@ function endlessSession(seed: number): number {
       difficulty: endlessRamp(depth).difficulty,
       tempoMax: ENDLESS_TEMPO_MAX,
       testkit: session.kit,
+      endless: true,
       aiRngSeed: (Math.floor(rng() * 0xffffffff) >>> 0) || 1,
       startRng: rngFromString(`${trialSeed}:start`),
     });

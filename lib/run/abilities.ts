@@ -3650,6 +3650,11 @@ function applySummonKnight(state: BoardState, target: Coord): BoardState {
     rank: target.rank,
     source: 'squire',
     turnsLeft: squireTurns(owned.tier),
+    // SUMMONING SICKNESS, Endless only. Summon Knight has its OWN spawn
+    // function rather than going through applySummonAlly, which is why the
+    // first measurement (2026-09-08) showed it moving by exactly 0.0 — the rule
+    // never reached it. Two spawn paths, so the field has to be set twice.
+    ...(state.endless ? { dazed: true } : {}),
   };
   return {
     ...state,
@@ -3901,6 +3906,18 @@ function applySummonAlly(state: BoardState, id: AbilityId, target: Coord): Board
     rank: target.rank,
     source: id as AllyPiece['source'],
     ...(turns !== undefined ? { turnsLeft: turns } : {}),
+    // SUMMONING SICKNESS — ENDLESS ONLY (Tyler, 2026-09-09: "push it to
+    // endless"). A body arrives and does nothing until your next turn, so a
+    // summon is a THREAT you have to protect for a turn, not an instant answer
+    // you drop beside the king and cash in on the spot. The king still FLEES a
+    // sick summon — the fear check is pure geometry and never consults `dazed`
+    // — so this removes the instant kill, not the pressure.
+    //
+    // The ladder deliberately keeps the old rule: measured 2026-09-08, sickness
+    // takes ladder rungs 5/8/9 to 0-3% while leaving rungs 1/3/7 untouched
+    // (their kits hold no summons). It goes in there when those finales are
+    // re-tuned, not before. See docs/SUMMONING-SICKNESS-FULL-2026-09-08.md.
+    ...(state.endless ? { dazed: true } : {}),
   };
   return {
     ...state,
@@ -3931,7 +3948,7 @@ export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
   if (state.status !== 'playing' || state.turn !== 'rookie') return false;
   if (state.pendingOffer || state.activeAbility) return false;
   if (!isControlledAlly(ally)) return false;
-  if (ally.dazed) return false; // freshly converted — acts from next turn
+  if (ally.dazed) return false; // freshly converted, or summon-sick in Endless
   if (allyHasFreeMove(state, ally)) {
     if (ally.movedThisTurn) return false;
     if (ally.source === 'squire' && state.squireMovedThisTurn) return false;
@@ -4978,6 +4995,14 @@ export function stepAllyTurn(state: BoardState): BoardState {
   // (Squire family + converted pieces) are player-moved (see
   // applyControlledAllyMove) and never move on their own.
   if (!ally || isControlledAlly(ally)) {
+    return { ...state, allyTurnIndex: idx + 1 };
+  }
+  // `dazed` means the same thing for an ally that steers itself as for one you
+  // steer: it does not act this turn. Without this the rule would apply to
+  // every summon you STEER and silently skip the ones that steer themselves
+  // (summon-knight, squad) — that gap is why the first sickness measurement
+  // read summon-knight at exactly 0.0. Cleared when the enemy turn ends.
+  if (ally.dazed) {
     return { ...state, allyTurnIndex: idx + 1 };
   }
   let moves = allyMoves(state, ally);

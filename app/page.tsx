@@ -299,6 +299,8 @@ function freshEndlessLevel(
       // The meter never shortens with the depth band (see ENDLESS_TEMPO_MAX).
       tempoMax: ENDLESS_TEMPO_MAX,
       testkit: endless.kit,
+      // Summoning sickness is an ENDLESS-only rule (Tyler, 2026-09-09).
+      endless: true,
     }),
     puzzle,
   };

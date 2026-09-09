@@ -300,6 +300,15 @@ export interface BoardState {
    */
   tempoMax?: number;
   /**
+   * True only inside an Endless session. SUMMONING SICKNESS lives here (Tyler,
+   * 2026-09-09: "push it to endless"): a summon acts from your NEXT turn in
+   * Endless, and immediately everywhere else. Measured 2026-09-08 — in Endless
+   * it cuts the long tail (p75 depth 44 -> 31) without touching early death
+   * (p10 15 -> 14), while on the ladder it took three rungs to 0-3%, so the
+   * ladder keeps the old rule until its finales are re-tuned.
+   */
+  endless?: boolean;
+  /**
    * Extra Rookie moves queued by Surge. While > 0, the turn stays with Rookie
    * after a move or ability instead of handing off to the enemy. Decremented
    * once per move/ability consumed. Resets to 0 at the start of each level.
