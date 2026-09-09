@@ -4,7 +4,8 @@
  *   npx tsx scripts/pipeline.ts list
  *   npx tsx scripts/pipeline.ts add <ability|run> <id> "<name>" "<notes>"   (→ idea)
  *   npx tsx scripts/pipeline.ts built <id>                                   (→ testing; "built" is the verb, not a stage)
- *   npx tsx scripts/pipeline.ts lint                                          (files <-> registry <-> imports <-> ladder agree; exit 1 if not)
+ *   npx tsx scripts/pipeline.ts lint                                          (files <-> registry <-> imports <-> ladder agree, testing <= 5; exit 1 if not)
+ *   npx tsx scripts/pipeline.ts verdict <id> <SHIP|TUNE|KILL|BUG> "<note>"     (Tyler's call, from any session: writes the registry AND posts the [playtest] Slack line)
  *   npx tsx scripts/pipeline.ts approve <id>                                 (→ approved, by Tyler)
  *   npx tsx scripts/pipeline.ts mark-live [id]                               (approved → live if reachable in this build)
  *   npx tsx scripts/pipeline.ts retire <id> "<why>"
@@ -16,6 +17,14 @@ import { STAGES, addItem, advance, isStage, shortReason, summarize, type Content
 import { REGISTRY_PATH, isReachableByPlayers, loadRegistry, saveRegistry, syncLive } from '../lib/content/pipeline-io';
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+
+// .env.local (SLACK_WEBHOOK_URL) for `verdict`; absent in CI, harmless.
+try {
+  for (const line of readFileSync(join(process.cwd(), '.env.local'), 'utf8').split('\n')) {
+    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^"|"$/g, '');
+  }
+} catch { /* no .env.local */ }
 
 const [cmd, ...rest] = process.argv.slice(2);
 
@@ -77,9 +86,16 @@ function list(): void {
  * Runs defined inside runs.ts itself (revenge-1..13, crucible) are exempt from
  * the file rule but still need a registry entry.
  */
+/** Tyler can play about this many runs in a week; more is a parking lot, not a queue (audit 2026-09-09). */
+export const TESTING_RUN_CAP = 5;
+
 function lint(): number {
   const reg = loadRegistry();
   const problems: string[] = [];
+  const testingRuns = reg.items.filter((i) => i.kind === 'run' && i.stage === 'testing');
+  if (testingRuns.length > TESTING_RUN_CAP) {
+    problems.push(`${testingRuns.length} runs in testing, cap is ${TESTING_RUN_CAP} — park the rest as idea (pipeline.ts stage <id> idea; move the file to _ideas/)`);
+  }
   const runsDir = join(process.cwd(), 'lib', 'run', 'runs');
   const ideasDir = join(runsDir, '_ideas');
   const extra = readFileSync(join(process.cwd(), 'lib', 'run', 'extra-runs.ts'), 'utf8');
@@ -119,7 +135,7 @@ function lint(): number {
     for (const p of problems) console.error('  - ' + p);
     return 1;
   }
-  console.log(`pipeline lint: ok — ${built.length} built run files, ${ideas.length} ideas, ${rungIds.length} ladder rungs all player-facing`);
+  console.log(`pipeline lint: ok — ${built.length} built run files (${testingRuns.length}/${TESTING_RUN_CAP} testing), ${ideas.length} ideas, ${rungIds.length} ladder rungs all player-facing`);
   return 0;
 }
 
@@ -181,6 +197,43 @@ function main(): void {
       return;
     }
 
+    case 'verdict': {
+      // Tyler's verdicts used to reach the registry only through the /playtest
+      // page -> Slack -> 7am routine, and in practice never did (6 lines ever,
+      // all art picks). Any session that hears "ship it" / "too easy" runs this.
+      const [id, v, ...noteParts] = rest;
+      const verdict = (v ?? '').toUpperCase();
+      const note = noteParts.join(' ').trim();
+      if (!id || !['SHIP', 'TUNE', 'KILL', 'BUG'].includes(verdict) || !note) die('usage: verdict <id> <SHIP|TUNE|KILL|BUG> "<note>"');
+      let reg = loadRegistry();
+      const item = reg.items.find((i) => i.id === id) ?? die(`unknown id "${id}"`);
+      const date = new Date().toISOString().slice(0, 10);
+      let applied = '';
+      if (verdict === 'SHIP') {
+        if (item.stage === 'testing') reg = advance(reg, id, 'approved', { by: 'Tyler' });
+        applied = reg.items.find((i) => i.id === id)!.stage === 'approved' && isReachableByPlayers(id, item.kind) ? 'approved (run mark-live after the next build)' : 'approved';
+      } else if (verdict === 'KILL') {
+        reg = advance(reg, id, 'retired', { why: `Tyler playtest ${date}: ${note}` });
+        applied = 'retired';
+      } else {
+        const cur = reg.items.find((i) => i.id === id)!;
+        reg = { ...reg, items: reg.items.map((i) => (i.id === id ? { ...i, notes: `[${verdict} ${date}] ${note} — ${cur.notes}` } : i)) };
+        applied = `${verdict} noted (no stage change; file the fix as a task)`;
+      }
+      saveRegistry(reg);
+      console.log(`${id}: ${verdict} → ${applied}`);
+      const line = `[playtest] ${id} ${verdict} — ${note} (Tyler, ${date}) [recorded]`;
+      const hook = process.env.SLACK_WEBHOOK_URL;
+      if (hook) {
+        fetch(hook, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: line }) })
+          .then((r) => console.log(r.ok ? `slack: ${line}` : `slack post failed (${r.status})`))
+          .catch((e) => console.log(`slack post failed: ${(e as Error).message}`));
+      } else {
+        console.log(`(no SLACK_WEBHOOK_URL in env — Slack line not posted) ${line}`);
+      }
+      return;
+    }
+
     case 'retire': {
       const [id, why] = rest;
       if (!id || !why) die('usage: retire <id> "<why>"');
@@ -199,7 +252,7 @@ function main(): void {
     }
 
     default:
-      die(`unknown command "${cmd}" — list | lint | add | built | approve | mark-live | retire | stage`);
+      die(`unknown command "${cmd}" — list | lint | verdict | add | built | approve | mark-live | retire | stage`);
   }
 }
 

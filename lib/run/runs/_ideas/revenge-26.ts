@@ -243,8 +243,8 @@
  *     the gate is geometry, spend the difficulty on the walk, not the watch.
  */
 
-import { bishop, king, make, pawn, X, FLEE, STILL, type RunDef } from '../run-kit';
-import type { Coord } from '../types';
+import { bishop, king, make, pawn, X, FLEE, STILL, type RunDef } from '../../run-kit';
+import type { Coord } from '../../types';
 
 const FILES = 'abcdefgh';
 const sq = (c: Coord): string => `${FILES[c.file - 1]}${c.rank}`;

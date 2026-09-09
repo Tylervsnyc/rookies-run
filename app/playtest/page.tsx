@@ -25,9 +25,16 @@ export const metadata: Metadata = {
 
 export default function PlaytestPage() {
   // Every TESTING-stage run — played whole, from level 1.
+  // The queue is capped at TESTING_RUN_CAP (scripts/pipeline.ts lint) so it can
+  // actually be played through. Each entry shows its last nightly grade + date,
+  // or "not graded" — a verdict on an ungraded run is still Tyler's to give.
   const runs: PlaytestRun[] = REGISTRY.items
     .filter((i) => i.stage === 'testing' && i.kind === 'run')
-    .map((i) => ({ id: i.id, name: i.name }));
+    .map((i) => ({
+      id: i.id,
+      name: i.name,
+      grade: i.testing ? `${i.testing.verdict} ${i.testing.lastRun}` : `not graded (built ${i.created})`,
+    }));
 
   // Every player-relevant ability: ABILITY_DEFS minus retired-stage ids.
   // Testing-stage abilities first (they're what needs eyes), then the rest.

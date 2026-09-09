@@ -342,8 +342,8 @@ import {
   pawn,
   queen,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 /** 'f4' -> {file:6, rank:4}. Authoring convenience only. */
 const sq = (name: string): Coord => X(name.charCodeAt(0) - 96, Number(name.slice(1)));

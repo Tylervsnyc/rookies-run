@@ -218,9 +218,9 @@
  *     blindfold L8 later demands — so it stays as foreshadowing.
  */
 
-import { bishop, king, make, pawn, X, FLEE, STILL } from '../run-kit';
-import type { RunDef } from '../run-kit';
-import type { Coord } from '../types';
+import { bishop, king, make, pawn, X, FLEE, STILL } from '../../run-kit';
+import type { RunDef } from '../../run-kit';
+import type { Coord } from '../../types';
 
 /**
  * The roof: ridge on rank 6 (c6-f6) minus the SKYLIGHT file (3-6, if any),

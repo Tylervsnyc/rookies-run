@@ -247,9 +247,9 @@
  */
 
 
-import { bishop, king, knight, make, pawn } from '../run-kit';
-import type { RunDef } from '../run-kit';
-import type { Coord } from '../types';
+import { bishop, king, knight, make, pawn } from '../../run-kit';
+import type { RunDef } from '../../run-kit';
+import type { Coord } from '../../types';
 
 /** 'a5' -> Coord. */
 const sq = (s: string): Coord => ({ file: s.charCodeAt(0) - 96, rank: parseInt(s[1], 10) });

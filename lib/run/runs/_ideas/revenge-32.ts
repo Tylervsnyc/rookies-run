@@ -225,8 +225,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Hazard } from '../types';
+} from '../../run-kit';
+import type { Hazard } from '../../types';
 
 /** A FIXED stone: authored wall Shove may never push. */
 const F = (file: number, rank: number): Hazard => ({ file, rank, fixed: true });

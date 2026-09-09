@@ -247,8 +247,8 @@ import {
   make,
   pawn,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 const REVENGE_CORE_35: ReadonlyArray<string> = [
   'surge',

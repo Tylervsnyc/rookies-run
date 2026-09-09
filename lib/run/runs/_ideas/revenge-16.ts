@@ -347,8 +347,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 const FILES = [1, 2, 3, 4, 5, 6, 7, 8];
 

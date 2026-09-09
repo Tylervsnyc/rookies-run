@@ -343,8 +343,8 @@ import {
   make,
   pawn,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 /**
  * THE COURT WALL — f6/f7/f8 down the west face and h6 closing the south-east.

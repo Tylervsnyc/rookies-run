@@ -111,8 +111,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 const FILES = 'abcdefgh';
 const nameOf = (f: number, r: number): string => `${FILES[f - 1]}${r}`;

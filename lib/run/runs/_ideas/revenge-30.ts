@@ -270,8 +270,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 /** The FINISHERS every Revenge offer slate carries (mirrors runs.ts). */
 const REVENGE_CORE_30: ReadonlyArray<string> = [

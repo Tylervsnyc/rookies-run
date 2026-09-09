@@ -23,6 +23,8 @@ import { blurbDetailForTier, type AbilityId } from '@/lib/run/abilities';
 export interface PlaytestRun {
   id: string;
   name: string;
+  /** Last nightly grade + date, or "not graded (built <date>)". */
+  grade?: string;
 }
 
 export interface PlaytestAbility {
@@ -189,6 +191,7 @@ export function PlaytestClient({ runs, abilities }: { runs: PlaytestRun[]; abili
               {runs.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
+                  {r.grade ? ` · ${r.grade}` : ''}
                   {playedRuns.has(r.id) ? ' - done' : ''}
                 </option>
               ))}

@@ -265,7 +265,7 @@
  *    capturable pieces are the ones a level's puzzle actually needs.
  */
 
-import type { Coord } from '../types';
+import type { Coord } from '../../types';
 import {
   make,
   pawn,
@@ -277,7 +277,7 @@ import {
   STILL,
   type RunDef,
   type LevelBuilder,
-} from '../run-kit';
+} from '../../run-kit';
 
 // ---------------------------------------------------------------------------
 // THE NICHE, restated ten times. EAST is f3 (mouth e3), WEST is c3 (mouth d4's
