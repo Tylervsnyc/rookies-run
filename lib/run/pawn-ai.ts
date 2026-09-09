@@ -30,6 +30,7 @@ import { enemyAt, rookieLegalMoves } from './movement';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { mulberry32 } from './seed';
 import { fromSquare, toSquare } from './types';
+import { enforceKingInvariant } from './king-invariant';
 import type { BoardState, Coord, EnemyPiece, PieceType } from './types';
 
 /**
@@ -476,7 +477,7 @@ function kingReactsToAllies(state: BoardState): boolean {
  * take his free sidestep immediately, mirroring how he reacts after each
  * guard move. Every other difficulty is byte-identical to `stepAllyTurn`.
  */
-export function stepAllyTurnReactive(state: BoardState): BoardState {
+function stepAllyTurnReactiveImpl(state: BoardState): BoardState {
   const next = stepAllyTurn(state);
   if (next === state || next.status !== 'playing') return next;
   if (!kingReactsToAllies(next)) return next;
@@ -1278,7 +1279,7 @@ function applyAction(state: BoardState, action: EnemyAction): BoardState {
  * - If a capture happens, sets status='lost' and turn='rookie'.
  * - Otherwise leaves turn='enemy' so the caller can step again.
  */
-export function stepEnemyTurn(rawState: BoardState): BoardState {
+function stepEnemyTurnImpl(rawState: BoardState): BoardState {
   if (rawState.status !== 'playing' || rawState.turn !== 'enemy') return rawState;
   // Rewind (enemy-only): a FRESH enemy phase records the board as Rookie's
   // side left it — the undo target if this phase needs to unhappen.
@@ -1601,4 +1602,13 @@ export function nextEnemyMovers(state: BoardState): EnemyPiece[] {
 /** Back-compat single-mover (returns first upcoming mover or null). */
 export function nextEnemyMover(state: BoardState): EnemyPiece | null {
   return nextEnemyMovers(state)[0] ?? null;
+}
+
+// King invariant — see lib/run/king-invariant.ts. These are the exported
+// names; the *Impl bodies above never leave this file unchecked.
+export function stepEnemyTurn(state: BoardState): BoardState {
+  return enforceKingInvariant(state, stepEnemyTurnImpl(state), 'stepEnemyTurn');
+}
+export function stepAllyTurnReactive(state: BoardState): BoardState {
+  return enforceKingInvariant(state, stepAllyTurnReactiveImpl(state), 'stepAllyTurnReactive');
 }

@@ -25,6 +25,7 @@ import {
   stunKingAfterCapture,
 } from './abilities';
 import { stepEnemyTurn } from './pawn-ai';
+import { enforceKingInvariant } from './king-invariant';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { toSquare } from './types';
@@ -39,6 +40,10 @@ function offerRngFor(state: BoardState): () => number {
 }
 
 export function applyRookieMove(state: BoardState, target: Coord): BoardState {
+  return enforceKingInvariant(state, applyRookieMoveImpl(state, target), 'applyRookieMove');
+}
+
+function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
   if (state.status !== 'playing' || state.turn !== 'rookie') return state;
   if (!isLegalRookieMove(state, target)) return state;
 

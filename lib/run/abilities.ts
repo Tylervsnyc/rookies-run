@@ -13,6 +13,7 @@ import { getRunById, type RunDef } from './runs';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { fromSquare, toSquare } from './types';
+import { enforceKingInvariant } from './king-invariant';
 import type {
   AllyPiece,
   BoardState,
@@ -1908,7 +1909,7 @@ function droneDirs(tier: AbilityTier): Array<[number, number]> {
 // Activation.
 // ---------------------------------------------------------------------------
 
-export function applyAbilityActivate(
+function applyAbilityActivateImpl(
   state: BoardState,
   abilityId: AbilityId,
 ): BoardState {
@@ -2092,7 +2093,7 @@ function applySurge(state: BoardState): BoardState {
   };
 }
 
-export function applyAbilityMove(
+function applyAbilityMoveImpl(
   state: BoardState,
   abilityId: AbilityId,
   target: Coord,
@@ -2172,7 +2173,7 @@ export function applyAbilityMove(
   };
 }
 
-export function applyAbilityTargeted(
+function applyAbilityTargetedImpl(
   state: BoardState,
   abilityId: AbilityId,
   target: Coord,
@@ -3693,7 +3694,7 @@ export function squireLegalMoves(state: BoardState): Coord[] {
  * a Rookie move. T5: free action, once per turn; Rookie still moves after.
  * (Now a wrapper over the generic controlled-ally move below.)
  */
-export function applySquireMove(state: BoardState, target: Coord): BoardState {
+function applySquireMoveImpl(state: BoardState, target: Coord): BoardState {
   const sq = squireOf(state);
   if (!sq) return state;
   return applyControlledAllyMove(state, { file: sq.file, rank: sq.rank }, target);
@@ -4044,7 +4045,7 @@ export function controlledAllyLegalMoves(state: BoardState, ally: AllyPiece): Co
  * turn, Rookie still moves after. The Page promotes to a controlled QUEEN
  * when he reaches his promotion rank (8, or 7 from T3; any capture at T5).
  */
-export function applyControlledAllyMove(
+function applyControlledAllyMoveImpl(
   state: BoardState,
   from: Coord,
   target: Coord,
@@ -4382,7 +4383,11 @@ export function tryAegisIntercept(
 
   let pieces = state.pieces;
   let captures = state.captures;
-  if (owned.tier === 5) {
+  // T5 kills the attacker — NEVER the king. Only Rookie takes the king, and
+  // taking him is the win; an Aegis kill would delete him with no win and
+  // leave a level that cannot be finished (Tyler's 2026-09-09 endless run).
+  // A king who walks into the shield simply bounces off it.
+  if (owned.tier === 5 && attacker.type !== 'king') {
     pieces = pieces.filter((p) => p !== attacker);
     captures = [...captures, attacker.type];
   }
@@ -4572,7 +4577,7 @@ function applyDrones(state: BoardState): BoardState {
  * capture it and die. Drones that hit the step cap die unfed. When all
  * drones are dead, the phase ends and turn flips to 'enemy'.
  */
-export function stepDroneTurn(state: BoardState): BoardState {
+function stepDroneTurnImpl(state: BoardState): BoardState {
   if (state.turn !== 'drones' || state.status !== 'playing') return state;
   const liveCount = state.drones.filter((d) => d.alive).length;
   if (liveCount === 0) {
@@ -4983,7 +4988,7 @@ function squareAttackedByEnemy(
  * AI-driven allies (Squad, Bodyguard) act here — every controlled summon,
  * converted pieces included, is skipped.
  */
-export function stepAllyTurn(state: BoardState): BoardState {
+function stepAllyTurnImpl(state: BoardState): BoardState {
   if (state.turn !== 'allies' || state.status !== 'playing') return state;
   // No allies, or every ally has moved — hand off to enemy.
   if (state.allyTurnIndex >= state.allies.length) {
@@ -5086,4 +5091,31 @@ export function relocateStatusMarkers(
     rabidTurnsLeft[toSq] = turns;
   }
   return { poisonedSquares, poisonedTurnsLeft, rabidSquares, rabidTurnsLeft };
+}
+
+// ---------------------------------------------------------------------------
+// King invariant — every exported state transition is checked on the way
+// out. See lib/run/king-invariant.ts. The *Impl functions above are the
+// real bodies; these are the only names the rest of the app sees.
+// ---------------------------------------------------------------------------
+export function applyAbilityActivate(state: BoardState, abilityId: AbilityId): BoardState {
+  return enforceKingInvariant(state, applyAbilityActivateImpl(state, abilityId), `applyAbilityActivate(${abilityId})`);
+}
+export function applyAbilityMove(state: BoardState, abilityId: AbilityId, target: Coord): BoardState {
+  return enforceKingInvariant(state, applyAbilityMoveImpl(state, abilityId, target), `applyAbilityMove(${abilityId})`);
+}
+export function applyAbilityTargeted(state: BoardState, abilityId: AbilityId, target: Coord): BoardState {
+  return enforceKingInvariant(state, applyAbilityTargetedImpl(state, abilityId, target), `applyAbilityTargeted(${abilityId})`);
+}
+export function applySquireMove(state: BoardState, target: Coord): BoardState {
+  return enforceKingInvariant(state, applySquireMoveImpl(state, target), 'applySquireMove');
+}
+export function applyControlledAllyMove(state: BoardState, from: Coord, target: Coord): BoardState {
+  return enforceKingInvariant(state, applyControlledAllyMoveImpl(state, from, target), 'applyControlledAllyMove');
+}
+export function stepDroneTurn(state: BoardState): BoardState {
+  return enforceKingInvariant(state, stepDroneTurnImpl(state), 'stepDroneTurn');
+}
+export function stepAllyTurn(state: BoardState): BoardState {
+  return enforceKingInvariant(state, stepAllyTurnImpl(state), 'stepAllyTurn');
 }
