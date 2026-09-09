@@ -3923,7 +3923,7 @@ function applySummonAlly(state: BoardState, id: AbilityId, target: Coord): Board
     // The ladder deliberately keeps the old rule: measured 2026-09-08, sickness
     // takes ladder rungs 5/8/9 to 0-3% while leaving rungs 1/3/7 untouched
     // (their kits hold no summons). It goes in there when those finales are
-    // re-tuned, not before. See docs/SUMMONING-SICKNESS-FULL-2026-09-08.md.
+    // re-tuned, not before. See docs/findings/SUMMONING-SICKNESS-FULL-2026-09-08.md.
     ...(state.summonSickness ? { dazed: true } : {}),
   };
   return {

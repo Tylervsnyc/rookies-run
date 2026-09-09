@@ -1,5 +1,5 @@
 /**
- * Render data/run-playtest/DIFFICULTY-SWEEP.md from the sweep JSON.
+ * Render docs/findings/DIFFICULTY-SWEEP-<date>.md from the sweep JSON.
  *
  *   npx tsx scripts/run-playtest/difficulty-sweep-report.ts [--in=...] [--out=...]
  *
@@ -19,8 +19,8 @@ function arg(name: string, def?: string): string {
   return hit ? hit.slice(name.length + 3) : (def as string);
 }
 
-const IN = arg('in', 'data/run-playtest/difficulty-sweep-2026-09-07.json');
-const OUT = arg('out', 'data/run-playtest/DIFFICULTY-SWEEP.md');
+const IN = arg('in', 'data/run-playtest/results/2026-09-07/difficulty-sweep-2026-09-07.json');
+const OUT = arg('out', 'docs/findings/DIFFICULTY-SWEEP-<date>.md');
 
 interface Row { level: number; reached: number; cleared: number; clearRate: number | null; losses: Record<string, number> }
 interface PairResult {

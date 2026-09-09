@@ -127,7 +127,7 @@ export function isComboRun(runId: string): boolean {
  * Rule B — the remeasure says only a PAIR clears this level.
  *
  * A second, better measurement now exists:
- * `data/run-playtest/multi-route-audit-2026-09-07.json` (32 trials/cell, same
+ * `data/run-playtest/results/2026-09-07/multi-route-audit-2026-09-07.json` (32 trials/cell, same
  * loadout -> level -> pct shape). It CONFIRMS Rule A rather than changing the
  * pool: it found revenge-12 L9 soloed by bishop-squire at 47% and L10 by
  * knight-hop at 38% — the documented "one pair only" gate is broken there —
@@ -316,7 +316,7 @@ export function endlessLevelAt(session: EndlessSession, idx: number): EndlessLev
  */
 /**
  * RETUNED 2026-09-07 from the first all-difficulty sweep
- * (data/run-playtest/DIFFICULTY-SWEEP.md). The ramp originally ran Rookie 1-4,
+ * (docs/findings/DIFFICULTY-SWEEP-2026-09-07.md). The ramp originally ran Rookie 1-4,
  * Normal 5-10, Hard 11-18, Nightmare 19+ — on the assumption that the four
  * shipped modes supply real difficulty. They do not. Endless's whole pool is
  * the 12 broad-kit runs, and ELEVEN of them clear 100% on every level at every

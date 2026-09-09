@@ -2,7 +2,7 @@
  * Difficulty sweep — every player-facing run x every difficulty, full runs.
  *
  *   npx tsx scripts/run-playtest/difficulty-sweep.ts [--runs=60] [--jobs=4]
- *     [--ids=revenge-1,revenge-2] [--out=data/run-playtest/difficulty-sweep-2026-09-07.json]
+ *     [--ids=revenge-1,revenge-2] [--out=data/run-playtest/results/<date>/difficulty-sweep-<date>.json]
  *
  * MEASUREMENT ONLY. Spawns `revenge.ts runs --json` workers (the shipped
  * harness) — one process per (run, difficulty) pair — and reproduces the
@@ -36,7 +36,7 @@ function arg(name: string, def?: string): string | undefined {
 const N = parseInt(arg('runs', '60')!, 10);
 const JOBS = parseInt(arg('jobs', '4')!, 10);
 const TIER = arg('tier', 'T5')!;
-const OUT = arg('out', 'data/run-playtest/difficulty-sweep-2026-09-07.json')!;
+const OUT = arg('out', 'data/run-playtest/results/2026-09-07/difficulty-sweep-2026-09-07.json')!;
 
 /** Registry order, approved|live only, unless --ids overrides. */
 function targetRuns(): string[] {

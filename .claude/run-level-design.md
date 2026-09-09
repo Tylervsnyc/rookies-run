@@ -292,7 +292,7 @@ Before shipping a new level / run:
 4. **No-ability run** — solo-rook bot should clear L1–3 trivially, struggle by L5, fail L8+.
 5. **Ability necessity** — L10 must require abilities (verified via ablation in `scripts/run-playtest/ablation.ts`). For Revenge, L7-L10 must pass the combo gate: `revenge.ts matrix` with `none`, each kit card, and the pair as a compound loadout.
 6. **Sweep** — run `npx tsx scripts/run-playtest/sweep.ts` and compare to the rubric above. Iterate until each level lands in its target band.
-7. **Read the digest** — `data/run-playtest/digests/latest.md`. Fail-mode histogram should show a *mix* (captured-by, move-limit, dead-end). All-one-fail-mode = one-dimensional level.
+7. **Read the digest** — `data/run-playtest/revenge/digests/latest.md` (the ladder-contract table at the top; `npm run playtest:report` prints it). Fail-mode histogram should show a *mix* (captured-by, move-limit, dead-end). All-one-fail-mode = one-dimensional level.
 
 ---
 
@@ -352,6 +352,24 @@ process (a module-level counter or cache in a bot) or an unseeded RNG in the eng
 `--jobs=1`." That observation was real but the diagnosis was wrong; `--jobs=1` did not
 fix it, because with one job every cell ran in ONE process and shared the counter. The
 cause was the counter, not the parallelism.)*
+
+## Measuring — the contract, and where numbers live (2026-09-09 audit)
+
+Everything above about the harness telling the truth still holds. Three more rules from
+the audit (`docs/AUDIT-2026-09-09.md`):
+
+1. **The bar is `scripts/run-playtest/spec.ts`** (= `docs/LADDER-SPEC.md`). Not the
+   60-80 band in a run header, not the new-player 40-60% line in the digest, not a number
+   in this file. Grade a rung with `npm run playtest:ladder` and read the PASS / FAIL /
+   INCONCLUSIVE table. INCONCLUSIVE means "more trials", not "probably fine".
+2. **A number without an engine fingerprint is hearsay.** Every result file carries
+   `engine: <sha>/<hash of lib/run>`; `npm run playtest:ladder -- --check-stale` says whether
+   the filed ladder numbers describe the tree you are editing. After ANY change to
+   `lib/run`, the engine-regression workflow re-grades the ladder and posts the delta —
+   read it before tuning a level to a number measured on the old engine.
+3. **Results go through `results.ts`** into `data/run-playtest/results/<date>/` with a row
+   in `results/INDEX.md`. No dated JSON in the data root, no per-experiment file shapes.
+   The per-run "MEASURED" header block in a run file is a summary; the ledger is the record.
 
 ## Open experiments
 

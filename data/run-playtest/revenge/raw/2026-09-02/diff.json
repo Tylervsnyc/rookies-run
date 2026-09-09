@@ -1,0 +1,1246 @@
+{
+ "movers": [
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "surge",
+   "before": 7,
+   "after": 87,
+   "delta": 80
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 0,
+   "after": 73,
+   "delta": 73
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "queen-pulse",
+   "before": 27,
+   "after": 93,
+   "delta": 66
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 28,
+   "after": 93,
+   "delta": 65
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 27,
+   "after": 87,
+   "delta": 60
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 20,
+   "after": 80,
+   "delta": 60
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "queen-pulse",
+   "before": 40,
+   "after": 100,
+   "delta": 60
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "surge",
+   "before": 40,
+   "after": 100,
+   "delta": 60
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "surge",
+   "before": 33,
+   "after": 93,
+   "delta": 60
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 6,
+   "loadout": "freeze-ray",
+   "before": 33,
+   "after": 87,
+   "delta": 54
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 8,
+   "loadout": "none",
+   "before": 100,
+   "after": 47,
+   "delta": -53
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 7,
+   "loadout": "none",
+   "before": 100,
+   "after": 47,
+   "delta": -53
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "none",
+   "before": 0,
+   "after": 53,
+   "delta": 53
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 27,
+   "after": 80,
+   "delta": 53
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 40,
+   "after": 93,
+   "delta": 53
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "smoke",
+   "before": 43,
+   "after": 95,
+   "delta": 52
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 7,
+   "loadout": "none",
+   "before": 0,
+   "after": 47,
+   "delta": 47
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "boulder",
+   "before": 28,
+   "after": 75,
+   "delta": 47
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "none",
+   "before": 13,
+   "after": 60,
+   "delta": 47
+  },
+  {
+   "runId": "revenge-5",
+   "mode": "normal",
+   "level": 7,
+   "loadout": "none",
+   "before": 20,
+   "after": 67,
+   "delta": 47
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "none",
+   "before": 13,
+   "after": 60,
+   "delta": 47
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 47,
+   "after": 93,
+   "delta": 46
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "normal",
+   "level": 6,
+   "loadout": "none",
+   "before": 73,
+   "after": 27,
+   "delta": -46
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "none",
+   "before": 3,
+   "after": 45,
+   "delta": 42
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 33,
+   "after": 73,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "none",
+   "before": 0,
+   "after": 40,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 0,
+   "after": 40,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 5,
+   "loadout": "none",
+   "before": 100,
+   "after": 60,
+   "delta": -40
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "magnet",
+   "before": 23,
+   "after": 63,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 53,
+   "after": 93,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 40,
+   "after": 80,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 20,
+   "after": 60,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 20,
+   "after": 60,
+   "delta": 40
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "bodyguard",
+   "before": 57,
+   "after": 93,
+   "delta": 36
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 6,
+   "loadout": "none",
+   "before": 33,
+   "after": 67,
+   "delta": 34
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 33,
+   "after": 67,
+   "delta": 34
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "none",
+   "before": 13,
+   "after": 47,
+   "delta": 34
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 6,
+   "loadout": "none",
+   "before": 33,
+   "after": 67,
+   "delta": 34
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 9,
+   "loadout": "freeze-ray",
+   "before": 53,
+   "after": 87,
+   "delta": 34
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 87,
+   "after": 53,
+   "delta": -34
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 100,
+   "after": 67,
+   "delta": -33
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "surge",
+   "before": 67,
+   "after": 100,
+   "delta": 33
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 5,
+   "loadout": "none",
+   "before": 67,
+   "after": 100,
+   "delta": 33
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 100,
+   "after": 67,
+   "delta": -33
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "surge",
+   "before": 60,
+   "after": 93,
+   "delta": 33
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "normal",
+   "level": 9,
+   "loadout": "none",
+   "before": 20,
+   "after": 53,
+   "delta": 33
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "queen-pulse",
+   "before": 60,
+   "after": 93,
+   "delta": 33
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "nightmare",
+   "level": 6,
+   "loadout": "none",
+   "before": 93,
+   "after": 60,
+   "delta": -33
+  },
+  {
+   "runId": "revenge-5",
+   "mode": "nightmare",
+   "level": 7,
+   "loadout": "none",
+   "before": 100,
+   "after": 67,
+   "delta": -33
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "rookie",
+   "level": 7,
+   "loadout": "none",
+   "before": 67,
+   "after": 100,
+   "delta": 33
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "realistic",
+   "level": 6,
+   "loadout": "none",
+   "before": 25,
+   "after": 55,
+   "delta": 30
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 100,
+   "after": 73,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 9,
+   "loadout": "none",
+   "before": 0,
+   "after": 27,
+   "delta": 27
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 9,
+   "loadout": "rewind",
+   "before": 45,
+   "after": 18,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "aegis",
+   "before": 100,
+   "after": 73,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 9,
+   "loadout": "none",
+   "before": 13,
+   "after": 40,
+   "delta": 27
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "queen-pulse",
+   "before": 60,
+   "after": 87,
+   "delta": 27
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "queen-pulse",
+   "before": 100,
+   "after": 73,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "hard",
+   "level": 9,
+   "loadout": "bishop-step",
+   "before": 73,
+   "after": 100,
+   "delta": 27
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "none",
+   "before": 40,
+   "after": 13,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "nightmare",
+   "level": 7,
+   "loadout": "none",
+   "before": 20,
+   "after": 47,
+   "delta": 27
+  },
+  {
+   "runId": "revenge-5",
+   "mode": "nightmare",
+   "level": 6,
+   "loadout": "none",
+   "before": 80,
+   "after": 53,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "normal",
+   "level": 7,
+   "loadout": "none",
+   "before": 60,
+   "after": 87,
+   "delta": 27
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "none",
+   "before": 47,
+   "after": 20,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "hard",
+   "level": 9,
+   "loadout": "none",
+   "before": 40,
+   "after": 13,
+   "delta": -27
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 8,
+   "loadout": "knight-hop",
+   "before": 67,
+   "after": 93,
+   "delta": 26
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 8,
+   "loadout": "surge",
+   "before": 67,
+   "after": 93,
+   "delta": 26
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "queen-pulse",
+   "before": 67,
+   "after": 93,
+   "delta": 26
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "realistic",
+   "level": 7,
+   "loadout": "none",
+   "before": 25,
+   "after": 50,
+   "delta": 25
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "realistic",
+   "level": 8,
+   "loadout": "squad",
+   "before": 78,
+   "after": 53,
+   "delta": -25
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "none",
+   "before": 0,
+   "after": 23,
+   "delta": 23
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "rewind",
+   "before": 8,
+   "after": 30,
+   "delta": 22
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "squad",
+   "before": 95,
+   "after": 73,
+   "delta": -22
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 6,
+   "loadout": "freeze-ray",
+   "before": 67,
+   "after": 87,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "rookie",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 100,
+   "after": 80,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 67,
+   "after": 87,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "normal",
+   "level": 9,
+   "loadout": "none",
+   "before": 0,
+   "after": 20,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 100,
+   "after": 80,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 33,
+   "after": 53,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "surge",
+   "before": 100,
+   "after": 80,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 7,
+   "loadout": "none",
+   "before": 33,
+   "after": 53,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 100,
+   "after": 80,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 33,
+   "after": 53,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 33,
+   "after": 53,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "none",
+   "before": 33,
+   "after": 13,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 6,
+   "loadout": "magnet",
+   "before": 53,
+   "after": 73,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "bishop-step",
+   "before": 78,
+   "after": 98,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 80,
+   "after": 100,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "none",
+   "before": 33,
+   "after": 13,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "hard",
+   "level": 9,
+   "loadout": "freeze-ray",
+   "before": 27,
+   "after": 47,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 6,
+   "loadout": "none",
+   "before": 47,
+   "after": 67,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 7,
+   "loadout": "none",
+   "before": 60,
+   "after": 40,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 9,
+   "loadout": "none",
+   "before": 33,
+   "after": 13,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 47,
+   "after": 67,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "rookie",
+   "level": 8,
+   "loadout": "bishop-step",
+   "before": 80,
+   "after": 100,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "normal",
+   "level": 7,
+   "loadout": "none",
+   "before": 27,
+   "after": 47,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "normal",
+   "level": 8,
+   "loadout": "knight-hop",
+   "before": 73,
+   "after": 93,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "normal",
+   "level": 8,
+   "loadout": "queen-pulse",
+   "before": 93,
+   "after": 73,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "hard",
+   "level": 6,
+   "loadout": "none",
+   "before": 73,
+   "after": 53,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "hard",
+   "level": 9,
+   "loadout": "freeze-ray",
+   "before": 60,
+   "after": 80,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "nightmare",
+   "level": 7,
+   "loadout": "none",
+   "before": 60,
+   "after": 40,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "nightmare",
+   "level": 9,
+   "loadout": "queen-pulse",
+   "before": 73,
+   "after": 93,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "rookie",
+   "level": 6,
+   "loadout": "none",
+   "before": 93,
+   "after": 73,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "rookie",
+   "level": 8,
+   "loadout": "none",
+   "before": 93,
+   "after": 73,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "hard",
+   "level": 7,
+   "loadout": "none",
+   "before": 20,
+   "after": 40,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "freeze-ray",
+   "before": 80,
+   "after": 60,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "nightmare",
+   "level": 9,
+   "loadout": "none",
+   "before": 0,
+   "after": 20,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "nightmare",
+   "level": 9,
+   "loadout": "surge",
+   "before": 67,
+   "after": 87,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "nightmare",
+   "level": 10,
+   "loadout": "queen-pulse",
+   "before": 80,
+   "after": 100,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-5",
+   "mode": "normal",
+   "level": 6,
+   "loadout": "none",
+   "before": 47,
+   "after": 67,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-5",
+   "mode": "normal",
+   "level": 9,
+   "loadout": "none",
+   "before": 20,
+   "after": 40,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "rookie",
+   "level": 6,
+   "loadout": "none",
+   "before": 47,
+   "after": 67,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "rookie",
+   "level": 8,
+   "loadout": "knight-hop",
+   "before": 100,
+   "after": 80,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "normal",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 60,
+   "after": 80,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "normal",
+   "level": 10,
+   "loadout": "none",
+   "before": 27,
+   "after": 7,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "hard",
+   "level": 6,
+   "loadout": "none",
+   "before": 80,
+   "after": 60,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "hard",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 87,
+   "after": 67,
+   "delta": -20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "hard",
+   "level": 10,
+   "loadout": "none",
+   "before": 13,
+   "after": 33,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "nightmare",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 67,
+   "after": 87,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "nightmare",
+   "level": 8,
+   "loadout": "none",
+   "before": 47,
+   "after": 67,
+   "delta": 20
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "realistic",
+   "level": 9,
+   "loadout": "none",
+   "before": 0,
+   "after": 18,
+   "delta": 18
+  },
+  {
+   "runId": "revenge-1",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "knight-hop",
+   "before": 75,
+   "after": 93,
+   "delta": 18
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "realistic",
+   "level": 8,
+   "loadout": "freeze-ray",
+   "before": 75,
+   "after": 93,
+   "delta": 18
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "realistic",
+   "level": 8,
+   "loadout": "summon-knight",
+   "before": 75,
+   "after": 93,
+   "delta": 18
+  },
+  {
+   "runId": "revenge-4",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "summon-knight",
+   "before": 65,
+   "after": 83,
+   "delta": 18
+  },
+  {
+   "runId": "revenge-2",
+   "mode": "realistic",
+   "level": 8,
+   "loadout": "smoke",
+   "before": 83,
+   "after": 100,
+   "delta": 17
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "realistic",
+   "level": 6,
+   "loadout": "rewind",
+   "before": 33,
+   "after": 50,
+   "delta": 17
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "squad",
+   "before": 90,
+   "after": 73,
+   "delta": -17
+  },
+  {
+   "runId": "revenge-5",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "none",
+   "before": 30,
+   "after": 13,
+   "delta": -17
+  },
+  {
+   "runId": "revenge-6",
+   "mode": "realistic",
+   "level": 10,
+   "loadout": "none",
+   "before": 13,
+   "after": 30,
+   "delta": 17
+  },
+  {
+   "runId": "revenge-3",
+   "mode": "realistic",
+   "level": 6,
+   "loadout": "magnet",
+   "before": 73,
+   "after": 57,
+   "delta": -16
+  }
+ ],
+ "newStalls": [],
+ "bandExits": [
+  {
+   "runId": "revenge-5",
+   "level": 9,
+   "before": 38,
+   "after": 48,
+   "note": "too easy"
+  },
+  {
+   "runId": "revenge-5",
+   "level": 10,
+   "before": 30,
+   "after": 13,
+   "note": "too hard"
+  }
+ ],
+ "bandEntries": [
+  {
+   "runId": "revenge-1",
+   "level": 6,
+   "before": 25,
+   "after": 55
+  },
+  {
+   "runId": "revenge-1",
+   "level": 7,
+   "before": 25,
+   "after": 50
+  },
+  {
+   "runId": "revenge-1",
+   "level": 9,
+   "before": 0,
+   "after": 18
+  },
+  {
+   "runId": "revenge-1",
+   "level": 10,
+   "before": 0,
+   "after": 23
+  },
+  {
+   "runId": "revenge-2",
+   "level": 10,
+   "before": 3,
+   "after": 45
+  },
+  {
+   "runId": "revenge-6",
+   "level": 7,
+   "before": 80,
+   "after": 68
+  },
+  {
+   "runId": "revenge-6",
+   "level": 10,
+   "before": 13,
+   "after": 30
+  }
+ ],
+ "comparedCells": 2390,
+ "previousDate": "2026-09-01"
+}

@@ -1,0 +1,30 @@
+{
+ "retriesAllowed": 1,
+ "runs": 60,
+ "ladder": [
+  {
+   "rung": 2,
+   "runId": "revenge-18",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 57,
+   "retries": 75
+  },
+  {
+   "rung": 10,
+   "runId": "revenge-17",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 65,
+   "retries": 41
+  },
+  {
+   "rung": 8,
+   "runId": "revenge-19",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 18,
+   "retries": 79
+  }
+ ]
+}

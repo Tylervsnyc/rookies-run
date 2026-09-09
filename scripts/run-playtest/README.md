@@ -1,122 +1,95 @@
-# Rookies Run — Playtest System
+# Rookie's Revenge — playtest harness
 
-## Rookie's Revenge (current)
+Headless bots play the real engine (`lib/run`) so every level and run has a number
+before a human touches it. Rebuilt 2026-09-09 (see `docs/AUDIT-2026-09-09.md`);
+the rank-8 "Rookie's Run" pipeline that used to live here is gone.
 
-The game is now **Rookie's Revenge** (capture the king). The nightly pipeline for it:
+## The four rules
+
+1. **One contract.** `spec.ts` is `docs/LADDER-SPEC.md` as code: six checks, rung-sloped
+   bands, the 60-80 combo window, and the budgets those windows imply. Everything that
+   grades imports from it. If you want a different bar, change `spec.ts` and the doc.
+2. **Error bars or no verdict.** Every cell is a Wilson 95% interval. A check is PASS only
+   when the whole interval is inside the window, FAIL only when it is wholly outside,
+   otherwise **INCONCLUSIVE** with the trial count that would settle it. Never round a
+   straddling interval to a verdict — at 16 trials a cell is ±20 points and the spec
+   window is ±8.
+3. **Every number knows its engine.** `fingerprint.ts` stamps `<git sha>[+dirty]/<hash of
+   lib/run + registry>` on every artifact; `results.ts` writes the one envelope
+   (`data/run-playtest/results/<date>/<experiment>.json`) and the one index
+   (`results/INDEX.md`). `ladder-audit.ts --check-stale` says whether the filed numbers
+   describe the game in the tree. Two rows with different hashes are different games.
+4. **The ladder is the product.** `LADDER_RUNG_IDS` (`lib/run/ladder.ts`) = the ten
+   `live` runs = `REVENGE_RUN_IDS`. The nightly grades the ladder and nothing else;
+   candidates are graded by hand.
+
+## Commands
 
 ```bash
-npm run playtest:revenge            # full night: ~20-30 min on an M-series Mac
-npm run playtest:revenge -- --quick # smoke: < 2 min, none + finishers only, tiny trials
-scripts/run-revenge-nightly.sh      # cron wrapper: env, pull, run, Slack, commit digests (02:00)
+npm run playtest:ladder                 # ladder-audit.ts: all 10 rungs vs spec.ts, files a result (~96 trials/cell, 96 runs, ~1h on 8 cores)
+npm run playtest:ladder -- --quick      # 4 trials — smoke only
+npm run playtest:ladder -- --rung=3 --trials=48 --runs=40
+npm run playtest:ladder -- --sick       # summoning sickness ON (the ladder as it will be)
+npm run playtest:ladder -- --check-stale
+npm run playtest:report                 # print the latest filed audit with engine + freshness
+npm run playtest                        # revenge-nightly.ts: the full nightly (ladder audit first, then per-run context)
+npm run playtest -- --quick
+npx tsx scripts/run-playtest/revenge-nightly.ts --runs-filter=revenge-30   # grade one candidate
+npx tsx scripts/run-playtest/engine-regression.ts --trials=32 --runs=24    # re-grade vs the last filed audit
+npx tsx scripts/run-playtest/revenge.ts matrix --run=<id> --difficulty=normal --levels=7,8,9,10 --loadouts=none,<card>,<a>+<b> --trials=32
+npx tsx scripts/run-playtest/revenge.ts trace --run=<id> --level=8 --loadout=<a>+<b>
+npx tsx scripts/run-playtest/matrix-determinism-check.ts                   # the harness must agree with itself three ways
+npm run playtest:parity                 # bot games replayed in the real app, must match 8/8
+npx tsx scripts/run-playtest/combo-discover.ts --from-terrain --slots=7-10 --variants=20   # discovery (nightly job)
 ```
 
-For every run in `REVENGE_RUN_IDS` and `REVENGE_CANDIDATE_RUN_IDS` (`lib/run/runs.ts`) it runs:
+Method for every number of record: **Normal, T5 bot, T1 cards** (`realistic: false`).
+Passing the difficulty is load-bearing.
 
-| Step | What | File |
+## Automation
+
+| what | where | when |
 |---|---|---|
-| a | Matrix at realistic tiers: win % per level × loadout, loss modes, stall share | `revenge-core.ts` (`matrixParallel`) |
-| b | Full runs L1→L10 with random offer picks: reach / clear per level, authored + every mode | `revenge-core.ts` (`simulateRuns`) |
-| c | Matrix on each difficulty mode (rookie / normal / hard / nightmare), fewer trials | same |
-| d | AND-OR solver on the late levels, bounded depth + nodes | `revenge-core.ts` (`solveLevel`) |
-| e | Per-level feature vector centered on piece count (enemies, hunters vs marchers, keys on the king's lines, pawn-defended keys, pen size, walls, open sides, budget, sightline pressure, rook distance to key/king…) | `revenge-features.ts` |
-| f | Pearson + ridge regression of features vs no-ability win % and vs the finisher floor, plus plain-English threshold splits | `revenge-analysis.ts` |
-| g | Night-over-night deltas: any cell moving >15 pts, any new stall, any level leaving its band | `revenge-analysis.ts` (`compareNights`) |
-| h | Human traces from Supabase `run_traces` (reuses `pull-traces.ts`; creds from env) vs bot clear rate per level | `revenge-nightly.ts` |
-| h2 | Watching Tyler: replay his real traces through the engine, ask T5 what IT would play at every verified decision, mine lessons + an ability frequency table; feeds `--tyler-priors` in the bot | `learn-from-tyler.ts` |
-| i | 3 hypotheses per run (budget ±2, remove the nearest hunter, add a pawn defender / hunter), each with a predicted effect, each RUN tonight as an experiment; ledgered in `experiments.jsonl` | `revenge-analysis.ts` (`buildHypotheses`, `runExperiment`) |
+| Ladder audit + digest + Slack | `.github/workflows/revenge-nightly.yml` job `ladder` | 04:30 UTC nightly; **posts NIGHTLY FAILED on failure/timeout** |
+| Combo-gate discovery | same file, job `combo-discovery` | nightly, independent |
+| Engine regression | `.github/workflows/engine-regression.yml` | every push to `lib/run/**` or the registry; red = a rung changed grade |
+| Content pipeline | `scripts/pipeline.ts` (`lint` runs in `npm run check`) | by hand; see `docs/content-pipeline.md` |
 
-The morning report (`revenge-digest.ts`) goes to `data/run-playtest/revenge/digests/YYYY-MM-DD.md` (+ `latest.md`); raw JSON to `data/run-playtest/revenge/raw/YYYY-MM-DD/` (committed by the wrapper when under 2 MB); a ≤25-line Slack summary to `raw/<date>/slack.txt`.
-
-Band the report grades against (no-ability, realistic tiers): 100/100/100/100/90/50/55/50/30/30 ±15 across L1–L10, every finisher ≥ 80 %, zero stalls. Candidate runs get a PROMOTE / HOLD call on exactly that.
-
-## Combo-gated level discovery (`combo-discover.ts`, 2026-09-05)
-
-Tyler's favourite levels are the ones **no single ability solves and one PAIR
-does** (The Moat, The Colonnade). 23 abilities are built = 253 pairs, so the
-search is automated:
-
-```bash
-# ground truth on a shipped run, under its own allowedAbilities kit
-npx tsx scripts/run-playtest/combo-discover.ts --run=revenge-13 --levels=1-10 --score-all
-
-# discovery over generated candidates (revenge-generate.ts archetypes)
-npx tsx scripts/run-playtest/combo-discover.ts --from-generator --slots=6-10 --variants=6
-```
-
-**Combo-gating is KIT-relative.** `bishop-step`, `knight-hop` and `become-king`
-are universal solvents — they change what Rookie's geometry *is*, so they cross
-any terrain and solo almost every level (measured 2026-09-05; the first pass
-using an all-23 definition accepted 0 of the 20 shipped Moat/Colonnade levels).
-The gate is therefore defined against a 4-card kit: no-ability ~0 %, every card
-in the kit ~0 %, at least one pair from the kit >= 60 %. Kits are planned from
-`data/run-playtest/pair-hypotheses.json` (ranked pairs + anti-pairs).
-
-Funnel, cheapest first: structural lint (free) -> no-ability screen -> solvent
-probe -> kit singles in one batched round (a kit dies the moment one of its own
-cards solos the level) -> pair sweep on surviving kits only -> high-trial
-confirm. Resumable via `_ledger.jsonl`, sharded across CPUs like the matrix
-driver. Output: `data/run-playtest/combo-library/<pair>/<id>.json` (level def +
-paste-ready snippet + full matrix row + every gating kit), per-pair `INDEX.md`,
-and a top-level `SYNERGY.md`. It never writes to `lib/run`.
-
-Nightly wiring (not enabled): add a `combo` step to
-`.github/workflows/revenge-nightly.yml` running `--from-generator --minutes=N
---seed=$(date +%j)`; the ledger makes repeated runs additive rather than
-duplicative.
-
-One-off tools (same engine): `revenge.ts matrix|runs|solve|trace|lint` — `--run=<id>`, `--difficulty=<mode>`, `--json`. The hand-written v2 report is `docs/revenge-playtest.md`.
-
----
-
-## Legacy — rank-8 "Rookies Run" pipeline
-
-Everything below is the ORIGINAL rank-8 pipeline (`nightly.ts`, `sweep.ts`, `ablation.ts`, `features.ts`, `digest.ts`, `hypothesis-queue.ts`, `model-version.ts`, …). It still runs against the classic rank-8 runs and is kept for reference; it is not the game any more.
-
-Automated headless playtesting + difficulty calibration. Linear project: [Rookies Run Playtest System](https://linear.app/chesspathapp/project/rookies-run-playtest-system-02df85b27f07).
-
-## What it does
-
-Runs all current Rookies Run levels with three AI player tiers (T3 Casual, T4 Sharp, T5 Expert) and produces a morning digest covering:
-
-- Per-level win % at each tier
-- Fail-mode histograms (captured-by / move-limit / dead-end)
-- Ability impact via **ablation** — re-sweep with each ability removed
-- Level **feature vectors** (open files, density, threat zones, hazards, etc.)
-- Correlations between features and difficulty per tier
-
-## Running
-
-```bash
-# One-shot sweep (no ablation, no features) — fast smoke test
-npx tsx scripts/run-playtest/sweep.ts
-
-# Full nightly pipeline — sweep + ablation + features + digest
-npx tsx scripts/run-playtest/nightly.ts
-```
+There are **no local crons**. `scripts/run-revenge-nightly.sh` is a manual wrapper only.
 
 ## Files
 
-- `simulate.ts` — runs one `(puzzle, bot, seed)` game using the real engine
-- `sweep.ts` — orchestrates `levels × tiers × trials` sims
-- `ablation.ts` — re-sweep with each ability excluded from offer pool
-- `features.ts` — extract feature vector per level
-- `digest.ts` — markdown writer
-- `nightly.ts` — top-level orchestrator (sweep + ablation + features + digest)
-- `bots/t3.ts` — 1-ply principled
-- `bots/t4.ts` — 2-ply minimax
-- `bots/t5.ts` — 3-ply minimax (v0.1, no ability-aware planner yet)
-- `bots/shared.ts` — eval + helpers
+| file | job |
+|---|---|
+| `spec.ts` | the contract + Wilson intervals + budgets |
+| `fingerprint.ts`, `results.ts` | engine stamp; envelope + INDEX.md |
+| `ladder-audit.ts`, `ladder-report.ts` | grade the ten rungs; print the latest filed grade |
+| `engine-regression.ts` | before/after vs the last filed audit |
+| `revenge-core.ts` | the engine driver: `matrixParallel`, `simulateRuns`, `solveLevel`, bots T4/T5 (`bots/`) |
+| `revenge.ts` | CLI + worker (`matrix / runs / solve / trace / lint`) |
+| `revenge-nightly.ts`, `revenge-digest.ts`, `revenge-analysis.ts`, `revenge-features.ts`, `revenge-pipeline.ts` | the nightly: ladder audit first, then per-run context (matrix at realistic tiers, mode matrix, solver, features, night-over-night deltas, experiments), digest + Slack, registry verdicts for candidates |
+| `combo-discover.ts`, `combo-terrain.ts`, `revenge-generate.ts` | combo-gated level discovery + generators → `data/run-playtest/combo-library/` |
+| `difficulty-sweep*.ts`, `multi-route-*.ts`, `endless-formations.ts`, `tier-cap-audit.ts` | standing experiments; results filed under `results/` |
+| `revenge-parity.ts`, `matrix-determinism-check.ts`, `render-replay.ts`, `pull-traces.ts`, `learn-from-tyler.ts` | tools |
+| `archive/2026-09/` | one-off scripts from the tuning sprint, kept for provenance, do not run |
 
-## Output
+## Data
 
-All artifacts land in `data/run-playtest/`:
+```
+data/run-playtest/
+  results/<date>/<experiment>.json   every measurement, enveloped (results.ts)
+  results/INDEX.md                   one row per file — date · engine · budget · conclusion
+  revenge/digests/<date>.md          the nightly digest; latest.md is a SYMLINK
+  combo-library/<pair>/              discovered combo-gated levels; SYNERGY.md = the pair map
+  pair-hypotheses.json, new-ability-proposals.json   inputs to discovery
+  finale-remeasure-2026-09-06.json   STALE (pre capturing king) but imported by lib/run/endless.ts — see the audit
+  human-traces/                      Tyler's real games (gitignored)
+```
 
-- `digests/YYYY-MM-DD.md` — the morning digest
-- `digests/latest.md` — mirror of the most recent digest
-- `raw/YYYY-MM-DD/sweep.json` — raw outcomes
-- `raw/YYYY-MM-DD/ablation.json` — per-ability deltas
-- `raw/YYYY-MM-DD/features.json` — per-level feature vectors
+## Known limits of the bot
 
-## Determinism
-
-The engine is deterministic given a state — RNG is only used in offer rolls (seeded by `level + moveCount + captures.length`). Bots add controlled stochasticity by sampling from top-K moves when several tie in eval (T3/T4 only). T5 plays deterministically. Sweep seeds are `levelId__tier__trialIndex` hashed → consistent re-runs.
+- Cast rate < 10% on a card (currently `sacrifice`, `swap` as singles) means the bot cannot
+  use it; those cells are floors, not verdicts, and are excluded from claims.
+- The bot finds one-turn reactions to a present threat; it cannot find pre-emptive plays
+  or delayed fuses. Design a pair's payoff accordingly.
+- `T6` (MCTS-320) is the bot behind the `T5` label in `revenge-core.ts`.

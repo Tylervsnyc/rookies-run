@@ -1,0 +1,30 @@
+{
+ "dial": "both",
+ "runs": 60,
+ "ladder": [
+  {
+   "rung": 3,
+   "runId": "revenge-15",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 33,
+   "retries": 83
+  },
+  {
+   "rung": 1,
+   "runId": "revenge-21",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 38,
+   "retries": 53
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-22",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 7,
+   "retries": 82
+  }
+ ]
+}

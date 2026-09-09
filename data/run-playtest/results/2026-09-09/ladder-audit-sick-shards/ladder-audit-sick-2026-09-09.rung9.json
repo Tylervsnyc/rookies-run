@@ -1,0 +1,32 @@
+[
+ {
+  "rung": 9,
+  "runId": "revenge-22",
+  "grade": "TOO EASY",
+  "checks": {
+   "gate": true,
+   "used": true,
+   "band": false,
+   "run": false,
+   "scale": false,
+   "shape": false
+  },
+  "pairRow": [
+   78,
+   81,
+   84,
+   72
+  ],
+  "singleRow": [
+   0,
+   0,
+   0,
+   0
+  ],
+  "pairMean": 78.75,
+  "runPct": 0,
+  "avgPieces": 3.9,
+  "early": 3.3333333333333335,
+  "late": 5
+ }
+]

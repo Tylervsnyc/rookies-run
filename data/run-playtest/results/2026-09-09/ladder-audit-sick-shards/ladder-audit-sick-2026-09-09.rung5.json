@@ -1,0 +1,32 @@
+[
+ {
+  "rung": 5,
+  "runId": "revenge-12",
+  "grade": "BROKEN",
+  "checks": {
+   "gate": false,
+   "used": false,
+   "band": true,
+   "run": false,
+   "scale": false,
+   "shape": true
+  },
+  "pairRow": [
+   78,
+   91,
+   53,
+   78
+  ],
+  "singleRow": [
+   31,
+   66,
+   0,
+   0
+  ],
+  "pairMean": 75,
+  "runPct": 6.666666666666667,
+  "avgPieces": 4.9,
+  "early": 4.666666666666667,
+  "late": 5
+ }
+]

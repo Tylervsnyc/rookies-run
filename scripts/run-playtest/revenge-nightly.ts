@@ -47,7 +47,7 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { auditLadder, checkStale, type RungResult } from './ladder-audit';
 import { BUDGET } from './spec';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendFileSync, unlinkSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
 
 import type { DifficultyId } from '../../lib/run/difficulty';
@@ -640,7 +640,10 @@ async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
   };
   const md = renderDigest(input);
   writeFileSync(join(DIGESTS, `${ctx.date}.md`), md);
-  writeFileSync(join(DIGESTS, 'latest.md'), md);
+  // latest.md is a SYMLINK to the dated digest (2026-09-09): a copy went 62 days
+  // stale once. Re-point it; never write through it.
+  try { unlinkSync(join(DIGESTS, 'latest.md')); } catch { /* absent */ }
+  symlinkSync(`${ctx.date}.md`, join(DIGESTS, 'latest.md'));
   writeFileSync(join(rawDir, 'slack.txt'), renderSlack(input) + '\n');
   log(`digest written: ${join(DIGESTS, `${ctx.date}.md`)}`);
 }

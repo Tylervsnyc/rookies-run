@@ -1,0 +1,65 @@
+{
+ "curve": "A",
+ "runs": 60,
+ "shard": 2,
+ "shards": 8,
+ "ladder": [
+  {
+   "rung": 3,
+   "runId": "revenge-15",
+   "difficulty": "normal",
+   "clearPct": 28,
+   "retries": 76,
+   "deaths": {
+    "1": 17,
+    "3": 1,
+    "5": 4,
+    "7": 2,
+    "8": 3,
+    "9": 16
+   },
+   "avgAuthored": 2.4,
+   "avgAfter": 3.3,
+   "targetL1": 4,
+   "targetL10": 6
+  },
+  {
+   "rung": 1,
+   "runId": "revenge-21",
+   "difficulty": "hard",
+   "clearPct": 57,
+   "retries": 37,
+   "deaths": {
+    "4": 8,
+    "6": 11,
+    "7": 5,
+    "8": 1,
+    "9": 1
+   },
+   "avgAuthored": 2.2,
+   "avgAfter": 3.4,
+   "targetL1": 3,
+   "targetL10": 5
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-22",
+   "difficulty": "hard",
+   "clearPct": 2,
+   "retries": 101,
+   "deaths": {
+    "3": 11,
+    "4": 10,
+    "6": 10,
+    "7": 13,
+    "8": 1,
+    "9": 7,
+    "10": 7
+   },
+   "avgAuthored": 2.2,
+   "avgAfter": 5.1,
+   "targetL1": 7,
+   "targetL10": 10
+  }
+ ]
+}

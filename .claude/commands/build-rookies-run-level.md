@@ -58,7 +58,7 @@ Reads all current runs, plays each level × tier × trials, writes `data/run-pla
 
 ### Step 4 — Compare to rubric
 
-Open `data/run-playtest/digests/latest.md`. For each level in the new run:
+Open `data/run-playtest/revenge/digests/latest.md` (or run `npm run playtest:report`). For each level in the new run:
 
 - Is T3/T4/T5 win % inside the target band from `run-level-design.md`?
 - Is the fail-mode histogram **mixed** (good) or single-mode (bad — one-dimensional)?

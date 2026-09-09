@@ -30,7 +30,7 @@ import { REGISTRY, isPlayerFacing } from '../../lib/content/pipeline';
 import { getRunById } from '../../lib/run/runs';
 import { matrixParallel, winPct, type Cell } from './revenge-core';
 
-const OUT = 'data/run-playtest/multi-route-audit-2026-09-07.json';
+const OUT = 'data/run-playtest/results/2026-09-07/multi-route-audit-2026-09-07.json';
 const LEVELS = [7, 8, 9, 10];
 const SCREEN = 16;
 const CONFIRM = 32;

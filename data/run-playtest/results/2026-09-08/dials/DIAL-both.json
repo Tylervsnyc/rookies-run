@@ -1,0 +1,165 @@
+{
+ "dial": "both",
+ "ladder": [
+  {
+   "rung": 1,
+   "runId": "revenge-21",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 53,
+   "retries": 38
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-22",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 17,
+   "retries": 78
+  },
+  {
+   "rung": 7,
+   "runId": "revenge-25",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 33,
+   "retries": 68
+  },
+  {
+   "rung": 2,
+   "runId": "revenge-18",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 57,
+   "retries": 75
+  },
+  {
+   "rung": 10,
+   "runId": "revenge-17",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 60,
+   "retries": 51
+  },
+  {
+   "rung": 8,
+   "runId": "revenge-19",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 20,
+   "retries": 82
+  },
+  {
+   "rung": 3,
+   "runId": "revenge-15",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 33,
+   "retries": 83
+  },
+  {
+   "rung": 1,
+   "runId": "revenge-21",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 38,
+   "retries": 53
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-22",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 7,
+   "retries": 82
+  },
+  {
+   "rung": 4,
+   "runId": "revenge-23",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 58,
+   "retries": 48
+  },
+  {
+   "rung": 2,
+   "runId": "revenge-18",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 53,
+   "retries": 70
+  },
+  {
+   "rung": 10,
+   "runId": "revenge-17",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 70,
+   "retries": 37
+  },
+  {
+   "rung": 5,
+   "runId": "revenge-12",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 23,
+   "retries": 84
+  },
+  {
+   "rung": 3,
+   "runId": "revenge-15",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 13,
+   "retries": 90
+  },
+  {
+   "rung": 6,
+   "runId": "revenge-24",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 57,
+   "retries": 52
+  },
+  {
+   "rung": 4,
+   "runId": "revenge-23",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 58,
+   "retries": 42
+  },
+  {
+   "rung": 7,
+   "runId": "revenge-25",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 47,
+   "retries": 60
+  },
+  {
+   "rung": 5,
+   "runId": "revenge-12",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 27,
+   "retries": 93
+  },
+  {
+   "rung": 8,
+   "runId": "revenge-19",
+   "difficulty": "normal",
+   "dial": "both",
+   "clearPct": 25,
+   "retries": 78
+  },
+  {
+   "rung": 6,
+   "runId": "revenge-24",
+   "difficulty": "hard",
+   "dial": "both",
+   "clearPct": 33,
+   "retries": 56
+  }
+ ]
+}

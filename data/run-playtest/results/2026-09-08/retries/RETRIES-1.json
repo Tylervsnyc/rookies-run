@@ -1,0 +1,165 @@
+{
+ "retriesAllowed": 1,
+ "ladder": [
+  {
+   "rung": 1,
+   "runId": "revenge-21",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 53,
+   "retries": 38
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-22",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 38,
+   "retries": 62
+  },
+  {
+   "rung": 7,
+   "runId": "revenge-25",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 33,
+   "retries": 66
+  },
+  {
+   "rung": 2,
+   "runId": "revenge-18",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 57,
+   "retries": 75
+  },
+  {
+   "rung": 10,
+   "runId": "revenge-17",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 65,
+   "retries": 41
+  },
+  {
+   "rung": 8,
+   "runId": "revenge-19",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 18,
+   "retries": 79
+  },
+  {
+   "rung": 3,
+   "runId": "revenge-15",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 50,
+   "retries": 71
+  },
+  {
+   "rung": 1,
+   "runId": "revenge-21",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 38,
+   "retries": 53
+  },
+  {
+   "rung": 9,
+   "runId": "revenge-22",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 15,
+   "retries": 73
+  },
+  {
+   "rung": 4,
+   "runId": "revenge-23",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 62,
+   "retries": 45
+  },
+  {
+   "rung": 2,
+   "runId": "revenge-18",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 53,
+   "retries": 70
+  },
+  {
+   "rung": 10,
+   "runId": "revenge-17",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 68,
+   "retries": 33
+  },
+  {
+   "rung": 5,
+   "runId": "revenge-12",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 37,
+   "retries": 79
+  },
+  {
+   "rung": 3,
+   "runId": "revenge-15",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 32,
+   "retries": 76
+  },
+  {
+   "rung": 6,
+   "runId": "revenge-24",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 63,
+   "retries": 45
+  },
+  {
+   "rung": 4,
+   "runId": "revenge-23",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 58,
+   "retries": 40
+  },
+  {
+   "rung": 7,
+   "runId": "revenge-25",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 53,
+   "retries": 54
+  },
+  {
+   "rung": 5,
+   "runId": "revenge-12",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 28,
+   "retries": 89
+  },
+  {
+   "rung": 8,
+   "runId": "revenge-19",
+   "difficulty": "normal",
+   "retriesAllowed": 1,
+   "clearPct": 47,
+   "retries": 77
+  },
+  {
+   "rung": 6,
+   "runId": "revenge-24",
+   "difficulty": "hard",
+   "retriesAllowed": 1,
+   "clearPct": 30,
+   "retries": 58
+  }
+ ]
+}

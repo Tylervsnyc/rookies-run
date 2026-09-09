@@ -1,0 +1,25 @@
+Rookie's Revenge nightly — 2026-09-02 · 105 min
+revenge-1: new player clears 90% Normal / 95% Rookie — TOO EASY · veteran 93% / 100% · powers +33 pts (none 67%) · finishers ok · stalls 0
+revenge-2: new player clears 88% Normal / 100% Rookie — TOO EASY · veteran 100% / 100% · powers +24 pts (none 75%) · weak finisher: freeze-ray 75% L9 · stalls 0
+revenge-3: new player clears 88% Normal / 100% Rookie — TOO EASY · veteran 95% / 100% · powers +33 pts (none 66%) · weak finisher: knight-hop 78% L7 · stalls 0
+revenge-4: new player clears 98% Normal / 100% Rookie — TOO EASY · veteran 98% / 100% · powers +26 pts (none 73%) · weak finisher: freeze-ray 78% L9 · stalls 0
+revenge-5: new player clears 98% Normal / 100% Rookie — TOO EASY · veteran 100% / 100% · powers +23 pts (none 77%) · finishers ok · stalls 0
+revenge-6: new player clears 100% Normal / 100% Rookie — TOO EASY · veteran 98% / 100% · powers +27 pts (none 72%) · finishers ok · stalls 0
+revenge-1 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S decoy 100%, S rabies-dart 100% · bottom: D knighting 48%†, D rewind 47%†, D sacrifice 47%†
+revenge-2 tiers · top: S become-king 100%, S bishop-step 100%, S decoy 100%, S duchess 100%, S queen-pulse 100% · bottom: C sacrifice 56%†, C knighting 55%†, C rewind 52%†
+revenge-3 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S decoy 100%, S queen-pulse 100% · bottom: D knighting 41%†, D rewind 39%†, D swap 38%†
+revenge-4 tiers · top: S become-king 100%, S bishop-step 100%, S decoy 100%, S rabies-dart 100%, S vanguard 100% · bottom: C knighting 53%†, C rewind 53%†, C swap 50%†
+revenge-5 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S decoy 100%, S knight-hop 100% · bottom: D rewind 39%†, D knighting 38%†, D sacrifice 36%†
+revenge-6 tiers · top: S aegis 100%, S become-king 100%, S bishop-step 100%, S decoy 100%, S duchess 100% · bottom: C rewind 51%†, D sacrifice 49%†, D swap 48%†
+revenge-7 (cand) tiers · top: S become-king 100%, S bishop-step 100%, S decoy 100%, S knight-hop 100%, S queen-pulse 100% · bottom: C knighting 53%†, C swap 51%†, D rewind 48%†
+† = bot never casts it (floor, not a verdict)
+Movers vs 2026-09-01:
+  L10 surge [hard] 7% -> 87% (+80)
+  L10 freeze-ray [normal] 0% -> 73% (+73)
+  L10 queen-pulse [rookie] 27% -> 93% (+66)
+  L10 freeze-ray [realistic] 28% -> 93% (+65)
+  L10 bishop-step [rookie] 27% -> 87% (+60)
+  L10 freeze-ray [rookie] 20% -> 80% (+60)
+Pipeline: testing 12 (READY: bishop-squire, duchess, page, twin, vanguard · HOLD: knighting, revenge-7, sacrifice, swap, revenge-10, revenge-8, revenge-9) · approved 0 · live 22 · ideas 2
+  went live 7d: summon-knight, revenge-2, revenge-3, revenge-4, revenge-5, revenge-6
+Full report: data/run-playtest/revenge/digests/2026-09-02.md

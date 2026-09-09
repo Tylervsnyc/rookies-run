@@ -1,3 +1,7 @@
+> **LEGACY (2026-08-18).** Hand-written report from the first Revenge harness, before the
+> combo gate, the seeding fix (2026-09-06) and the contract (docs/LADDER-SPEC.md). Numbers
+> in here describe a different game. Kept for history; see docs/AUDIT-2026-09-09.md.
+
 # Rookie's Revenge — playtest report (v2)
 
 Harness: `scripts/run-playtest/revenge.ts` (`matrix` / `runs` / `solve` / `trace` / `lint`).

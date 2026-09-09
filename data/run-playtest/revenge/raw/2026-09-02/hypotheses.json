@@ -1,0 +1,269 @@
+[
+ {
+  "id": "2026-09-02:revenge-1:L8:move-limit:none",
+  "runId": "revenge-1",
+  "level": 8,
+  "mutation": {
+   "kind": "move-limit",
+   "delta": 2
+  },
+  "loadout": "none",
+  "predictedDelta": 7,
+  "predictedPct": 40,
+  "baselinePct": 33,
+  "predictionSource": "mode-slope",
+  "text": "L8: raise the move budget by 2 → no-ability win goes 33% → about 40%",
+  "why": "L8 no-ability is 33%, too hard for its band (35-65%). The move budget is the cleanest knob."
+ },
+ {
+  "id": "2026-09-02:revenge-1:L7:remove-piece:none",
+  "runId": "revenge-1",
+  "level": 7,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "d4",
+   "piece": "bishop"
+  },
+  "loadout": "none",
+  "predictedDelta": 8,
+  "predictedPct": 58,
+  "baselinePct": 50,
+  "predictionSource": "regression",
+  "text": "L7: remove the bishop on d4 → no-ability win goes 50% → about 58%",
+  "why": "L7 sits mid-curve (50%); removing its closest hunter (bishop d4) measures one piece's worth."
+ },
+ {
+  "id": "2026-09-02:revenge-2:L9:move-limit:none",
+  "runId": "revenge-2",
+  "level": 9,
+  "mutation": {
+   "kind": "move-limit",
+   "delta": 2
+  },
+  "loadout": "none",
+  "predictedDelta": 7,
+  "predictedPct": 40,
+  "baselinePct": 33,
+  "predictionSource": "mode-slope",
+  "text": "L9: raise the move budget by 2 → no-ability win goes 33% → about 40%",
+  "why": "Every level is in band. L9 is the tightest (33% no-ability) — measuring what +2 moves buys tells us how much room the budget knob has."
+ },
+ {
+  "id": "2026-09-02:revenge-2:L9:remove-piece:freeze-ray",
+  "runId": "revenge-2",
+  "level": 9,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "g4",
+   "piece": "knight"
+  },
+  "loadout": "freeze-ray",
+  "predictedDelta": 2,
+  "predictedPct": 77,
+  "baselinePct": 75,
+  "predictionSource": "regression",
+  "text": "L9: remove the knight on g4 → freeze-ray win goes 75% → about 77%",
+  "why": "freeze-ray is the weakest finisher anywhere (75% on L9, below the 80% floor). The knight on g4 is the hunter closest to the king."
+ },
+ {
+  "id": "2026-09-02:revenge-2:L5:add-hunter:none",
+  "runId": "revenge-2",
+  "level": 5,
+  "mutation": {
+   "kind": "add-hunter",
+   "square": "d3",
+   "piece": "knight"
+  },
+  "loadout": "none",
+  "predictedDelta": -8,
+  "predictedPct": 90,
+  "baselinePct": 98,
+  "predictionSource": "regression",
+  "text": "L5: add a knight on d3 → no-ability win goes 98% → about 90%",
+  "why": "L5 is the softest late level at 98% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is."
+ },
+ {
+  "id": "2026-09-02:revenge-3:L7:remove-piece:knight-hop",
+  "runId": "revenge-3",
+  "level": 7,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "b5",
+   "piece": "bishop"
+  },
+  "loadout": "knight-hop",
+  "predictedDelta": 2,
+  "predictedPct": 80,
+  "baselinePct": 78,
+  "predictionSource": "regression",
+  "text": "L7: remove the bishop on b5 → knight-hop win goes 78% → about 80%",
+  "why": "knight-hop is the weakest finisher anywhere (78% on L7, below the 80% floor). The bishop on b5 is the hunter closest to the king."
+ },
+ {
+  "id": "2026-09-02:revenge-3:L6:remove-piece:none",
+  "runId": "revenge-3",
+  "level": 6,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "a5",
+   "piece": "bishop"
+  },
+  "loadout": "none",
+  "predictedDelta": 8,
+  "predictedPct": 63,
+  "baselinePct": 55,
+  "predictionSource": "regression",
+  "text": "L6: remove the bishop on a5 → no-ability win goes 55% → about 63%",
+  "why": "L6 sits mid-curve (55%); removing its closest hunter (bishop a5) measures one piece's worth."
+ },
+ {
+  "id": "2026-09-02:revenge-4:L6:remove-piece:none",
+  "runId": "revenge-4",
+  "level": 6,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "c4",
+   "piece": "queen"
+  },
+  "loadout": "none",
+  "predictedDelta": 16,
+  "predictedPct": 69,
+  "baselinePct": 53,
+  "predictionSource": "regression",
+  "text": "L6: remove the queen on c4 → no-ability win goes 53% → about 69%",
+  "why": "L6 sits mid-curve (53%); removing its closest hunter (queen c4) measures one piece's worth."
+ },
+ {
+  "id": "2026-09-02:revenge-5:L8:move-limit:none",
+  "runId": "revenge-5",
+  "level": 8,
+  "mutation": {
+   "kind": "move-limit",
+   "delta": -2
+  },
+  "loadout": "none",
+  "predictedDelta": -2,
+  "predictedPct": 98,
+  "baselinePct": 100,
+  "predictionSource": "regression",
+  "text": "L8: lower the move budget by 2 → no-ability win goes 100% → about 98%",
+  "why": "L8 no-ability is 100%, too easy for its band (35-65%). The move budget is the cleanest knob."
+ },
+ {
+  "id": "2026-09-02:revenge-5:L10:remove-piece:freeze-ray",
+  "runId": "revenge-5",
+  "level": 10,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "h4",
+   "piece": "knight"
+  },
+  "loadout": "freeze-ray",
+  "predictedDelta": 2,
+  "predictedPct": 95,
+  "baselinePct": 93,
+  "predictionSource": "regression",
+  "text": "L10: remove the knight on h4 → freeze-ray win goes 93% → about 95%",
+  "why": "freeze-ray is the weakest finisher anywhere (93% on L10). The knight on h4 is the hunter closest to the king."
+ },
+ {
+  "id": "2026-09-02:revenge-5:L5:add-hunter:none",
+  "runId": "revenge-5",
+  "level": 5,
+  "mutation": {
+   "kind": "add-hunter",
+   "square": "d3",
+   "piece": "knight"
+  },
+  "loadout": "none",
+  "predictedDelta": -8,
+  "predictedPct": 92,
+  "baselinePct": 100,
+  "predictionSource": "regression",
+  "text": "L5: add a knight on d3 → no-ability win goes 100% → about 92%",
+  "why": "L5 is the softest late level at 100% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is."
+ },
+ {
+  "id": "2026-09-02:revenge-6:L9:move-limit:none",
+  "runId": "revenge-6",
+  "level": 9,
+  "mutation": {
+   "kind": "move-limit",
+   "delta": 2
+  },
+  "loadout": "none",
+  "predictedDelta": 12,
+  "predictedPct": 42,
+  "baselinePct": 30,
+  "predictionSource": "mode-slope",
+  "text": "L9: raise the move budget by 2 → no-ability win goes 30% → about 42%",
+  "why": "Every level is in band. L9 is the tightest (30% no-ability) — measuring what +2 moves buys tells us how much room the budget knob has."
+ },
+ {
+  "id": "2026-09-02:revenge-6:L8:remove-piece:freeze-ray",
+  "runId": "revenge-6",
+  "level": 8,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "g4",
+   "piece": "knight"
+  },
+  "loadout": "freeze-ray",
+  "predictedDelta": 2,
+  "predictedPct": 90,
+  "baselinePct": 88,
+  "predictionSource": "regression",
+  "text": "L8: remove the knight on g4 → freeze-ray win goes 88% → about 90%",
+  "why": "freeze-ray is the weakest finisher anywhere (88% on L8). The knight on g4 is the hunter closest to the king."
+ },
+ {
+  "id": "2026-09-02:revenge-6:L5:add-hunter:none",
+  "runId": "revenge-6",
+  "level": 5,
+  "mutation": {
+   "kind": "add-hunter",
+   "square": "d3",
+   "piece": "knight"
+  },
+  "loadout": "none",
+  "predictedDelta": -8,
+  "predictedPct": 92,
+  "baselinePct": 100,
+  "predictionSource": "regression",
+  "text": "L5: add a knight on d3 → no-ability win goes 100% → about 92%",
+  "why": "L5 is the softest late level at 100% no-ability. One more hunter (knight on d3) tests how steep the piece-count curve is."
+ },
+ {
+  "id": "2026-09-02:revenge-7:L9:move-limit:none",
+  "runId": "revenge-7",
+  "level": 9,
+  "mutation": {
+   "kind": "move-limit",
+   "delta": 2
+  },
+  "loadout": "none",
+  "predictedDelta": 2,
+  "predictedPct": 15,
+  "baselinePct": 13,
+  "predictionSource": "regression",
+  "text": "L9: raise the move budget by 2 → no-ability win goes 13% → about 15%",
+  "why": "L9 no-ability is 13%, too hard for its band (15-45%). The move budget is the cleanest knob."
+ },
+ {
+  "id": "2026-09-02:revenge-7:L10:remove-piece:freeze-ray",
+  "runId": "revenge-7",
+  "level": 10,
+  "mutation": {
+   "kind": "remove-piece",
+   "square": "h4",
+   "piece": "knight"
+  },
+  "loadout": "freeze-ray",
+  "predictedDelta": 2,
+  "predictedPct": 94,
+  "baselinePct": 92,
+  "predictionSource": "regression",
+  "text": "L10: remove the knight on h4 → freeze-ray win goes 92% → about 94%",
+  "why": "freeze-ray is the weakest finisher anywhere (92% on L10). The knight on h4 is the hunter closest to the king."
+ }
+]

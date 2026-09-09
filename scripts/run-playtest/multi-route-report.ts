@@ -1,9 +1,9 @@
-/** Reads data/run-playtest/multi-route-audit-2026-09-07.json and writes
- *  data/run-playtest/MULTI-ROUTE-AUDIT.md. Pure reporting — no simulation. */
+/** Reads data/run-playtest/results/2026-09-07/multi-route-audit-2026-09-07.json and writes
+ *  docs/findings/MULTI-ROUTE-AUDIT-2026-09-07.md. Pure reporting — no simulation. */
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const SRC = 'data/run-playtest/multi-route-audit-2026-09-07.json';
-const OUT = 'data/run-playtest/MULTI-ROUTE-AUDIT.md';
+const SRC = 'data/run-playtest/results/2026-09-07/multi-route-audit-2026-09-07.json';
+const OUT = 'docs/findings/MULTI-ROUTE-AUDIT-2026-09-07.md';
 const LEVELS = [7, 8, 9, 10];
 const SINGLE_BAR = 8;
 
