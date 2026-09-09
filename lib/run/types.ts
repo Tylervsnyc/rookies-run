@@ -317,10 +317,17 @@ export interface BoardState {
   /**
    * True while Rookie has an Aegis shield raised. Set by tapping the Aegis
    * ability card (which also decrements a charge). Consumed when an enemy
-   * tries to capture her (T1-T4) — T5 keeps the shield up permanently.
-   * Resets between levels.
+   * tries to capture her. Every tier breaks on the first hit it absorbs;
+   * T5 ALSO expires on its own (see shieldTurnsLeft). Resets between levels.
    */
   shieldUp: boolean;
+  /**
+   * Aegis T5 (2026-09-09 nerf — the old permanent shield let Tyler cruise to
+   * L19+ in Endless: "how would I lose?"): enemy turns the raised shield has
+   * left. Ticks down at the end of each enemy turn; at 0 the shield drops.
+   * Undefined / 0 for T1-T4, whose shield stays up until it takes a hit.
+   */
+  shieldTurnsLeft?: number;
   /**
    * Transient signal: set on the state returned from an enemy step when Aegis
    * intercepts a capture. UI watches `id` for changes to fire the lunge-and-

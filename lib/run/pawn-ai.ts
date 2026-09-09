@@ -518,9 +518,15 @@ function kingReaction(state: BoardState): BoardState | null {
   // He does not run from someone he can simply take. A king who can reach
   // Rookie captures instead of fleeing — the capture is resolved by the
   // ordinary capturers pass, so all this has to do is stand still and let it.
+  //
+  // And not into a raised Aegis either (2026-09-09): there is no capture to
+  // stand still for, so a shielded Rookie beside him is a threat like any
+  // other — he keeps running. (The old permanent T5 shield parked him next
+  // to her forever, then killed him when he bumped it — see king-invariant.)
   if (
     !isSmoked(state) &&
     (state.kingStunTurns ?? 0) <= 0 &&
+    !state.shieldUp &&
     chebyshev({ file: king.file, rank: king.rank }, state.rookie) <= 1
   ) {
     return null;
@@ -1379,6 +1385,14 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
     }
     // Rookie's Revenge: the king's stun ticks down at end of enemy turn; a
     // poison death (credited to Rookie) stuns him for the NEXT enemy turn.
+    // Aegis T5: the shield clock ticks at the end of each enemy turn; at 0
+    // the shield drops on its own. T1-T4 (no clock) hold until hit.
+    const shieldPatch: Partial<BoardState> = {};
+    if (s.shieldUp && (s.shieldTurnsLeft ?? 0) > 0 && !glass) {
+      const left = s.shieldTurnsLeft! - 1;
+      shieldPatch.shieldTurnsLeft = left;
+      if (left <= 0) shieldPatch.shieldUp = false;
+    }
     const kingStunPatch =
       s.winCondition === 'king'
         ? {
@@ -1449,6 +1463,7 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,
       ...kingStunPatch,
+      ...shieldPatch,
       // The king is re-armed once the turn goes back to Rookie. It CANNOT be
       // cleared at phase start instead: his reaction step never touches
       // enemyMovedSquares, so "nothing has moved yet" is still true on the
@@ -1514,7 +1529,6 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
   if (action.isCapture && !action.isDecoyCapture) {
     const blocked = tryAegisIntercept(state, action.mover);
     if (blocked) {
-      const aegisOwned = blocked.abilities.find((a) => a.id === 'aegis');
       const attackerSquare = coordKey({ file: action.mover.file, rank: action.mover.rank });
       const withFx: BoardState = {
         ...blocked,
@@ -1524,14 +1538,10 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
           id: Date.now() + Math.random(),
         },
       };
-      // Non-T5: shield is consumed by this hit. End the turn so the remaining
-      // budget can't slip a second capturer past a now-dropped shield.
-      if (!aegisOwned || aegisOwned.tier !== 5) return endTurn(withFx);
-      // T5: shield stays up forever — keep ticking the budget. Mark this
-      // attacker as having "acted" (it actually vanished) so we don't re-pick it.
-      const nextMoved = [...state.enemyMovedSquares, attackerSquare];
-      if (nextMoved.length >= budget) return endTurn(withFx);
-      return { ...withFx, turn: 'enemy', enemyMovedSquares: nextMoved };
+      // The shield is consumed by this hit at every tier (T5 used to stay up
+      // forever — nerfed 2026-09-09). End the turn so the remaining budget
+      // can't slip a second capturer past a now-dropped shield.
+      return endTurn(withFx);
     }
   }
 

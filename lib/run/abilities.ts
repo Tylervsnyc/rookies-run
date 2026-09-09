@@ -447,10 +447,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 3) return 1;
       return 2;
     case 'aegis':
+      // 1/2/2/3/3 — T5 used to be unlimited (permanent shield); nerfed 2026-09-09.
       if (tier === 1) return 1;
       if (tier === 2 || tier === 3) return 2;
-      if (tier === 4) return 3;
-      return -1;
+      return 3;
     case 'decoy':
       if (tier === 1) return 1;
       if (tier === 2) return 1;
@@ -625,7 +625,7 @@ const HOW: Record<AbilityId, string> = {
   drones: 'Tap card. Drones launch in fixed directions.',
   squad: 'Passive — allies spawn each level.',
   surge: 'Tap card. You get an extra move.',
-  aegis: 'Tap card. Shield stays up until used.',
+  aegis: 'Tap card. Shield stays up until it takes a hit.',
   decoy: 'Tap card, then tap an enemy.',
   boulder: 'Tap card, then tap an empty square. A block of stone lands there.',
   smoke: 'Tap card. You vanish at once. Capturing gives you away.',
@@ -738,7 +738,7 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 3) return 'Take 2 extra moves this turn.';
       return 'Take 1 extra move this turn.';
     case 'aegis':
-      if (tier === 5) return 'Raise a permanent shield. Attackers die.';
+      if (tier === 5) return 'Raise a shield for 3 turns. The first attacker to hit it dies, and the shield breaks.';
       if (tier === 3) return 'Raise a shield. The next attacker is stunned.';
       return 'Raise a shield. It blocks the next attack on you.';
     case 'decoy':
@@ -948,7 +948,7 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return '+1 extra move this turn. 2/level.';
       return '+1 extra move this turn. 1/level.';
     case 'aegis':
-      if (tier === 5) return 'Tap: permanent shield. Attackers die.';
+      if (tier === 5) return 'Tap: 3-turn shield. First attacker dies. 3/level.';
       if (tier === 4) return 'Tap: shield. 3 raises/level.';
       if (tier === 3) return 'Tap: shield + stuns attacker. 2/level.';
       if (tier === 2) return 'Tap: shield. 2 raises/level.';
@@ -1179,7 +1179,7 @@ export const UPGRADE_NOTES: Record<
     2: '',
     3: 'Blocked attackers get stunned',
     4: 'Stun gone; extra raise instead',
-    5: 'Permanent shield. Attackers die.',
+    5: 'Shield lasts 3 turns; the attacker it stops dies',
   },
   decoy: {
     2: 'Mark holds 1 turn → 2',
@@ -1924,6 +1924,7 @@ function applyAbilityActivateImpl(
       bonusMovesLeft: snap.bonusMovesLeft,
       abilities: snap.abilities,
       shieldUp: snap.shieldUp,
+      shieldTurnsLeft: snap.shieldUp ? state.shieldTurnsLeft : 0,
       cancellableActivation: undefined,
       activeAbility: null,
     };
@@ -2038,17 +2039,21 @@ function applyTransform(state: BoardState, abilityId: AbilityId): BoardState {
   };
 }
 
+/** Aegis T5: enemy turns a raised shield lasts before it drops on its own. */
+export const AEGIS_T5_TURNS = 3;
+
 function applyAegis(state: BoardState): BoardState {
   const owned = state.abilities.find((a) => a.id === 'aegis');
   if (!owned) return state;
   if (state.shieldUp) return state;
-  if (owned.tier !== 5 && owned.usesLeftThisLevel === 0) return state;
-  const nextAbilities =
-    owned.tier === 5 ? state.abilities : decrementUse(state.abilities, 'aegis');
+  if (owned.usesLeftThisLevel === 0) return state;
   return {
     ...state,
     shieldUp: true,
-    abilities: nextAbilities,
+    // T5: the shield is on a clock — 3 enemy turns, then it drops on its own.
+    // T1-T4 stay up until they take a hit.
+    shieldTurnsLeft: owned.tier === 5 ? AEGIS_T5_TURNS : 0,
+    abilities: decrementUse(state.abilities, 'aegis'),
     activeAbility: null,
     cancellableActivation: {
       abilityId: 'aegis',
@@ -4322,10 +4327,10 @@ function applyKnighting(state: BoardState, target: Coord): BoardState {
 }
 
 /**
- * Aegis intercept: if there's an Aegis charge available, consumes 1 charge
- * and either blocks the capture (kills the attacker on T5, or just stops
- * the capture). T3 also stuns the attacker for 1 turn. Returns null if Aegis
- * doesn't fire (no charges, no aegis owned).
+ * Aegis intercept: if a shield is raised, it absorbs the capture and BREAKS
+ * (every tier — the permanent T5 shield was nerfed 2026-09-09). T3 also
+ * stuns the attacker; T5 kills it (never the king). Returns null if no
+ * shield is up or Aegis isn't owned.
  *
  * Called by enemy-turn resolution BEFORE the capture lands.
  */
@@ -4356,15 +4361,15 @@ export function tryAegisIntercept(
     frozenTurnsLeft = { ...frozenTurnsLeft, [sq]: 2 };
   }
 
-  const shieldUp = owned.tier === 5;
-
   return {
     ...state,
     pieces,
     captures,
     frozenSquares,
     frozenTurnsLeft,
-    shieldUp,
+    // One hit and the shield is gone, whatever the tier.
+    shieldUp: false,
+    shieldTurnsLeft: 0,
   };
 }
 
