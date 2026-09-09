@@ -445,7 +445,7 @@ export function applyEndlessRamp(puzzle: RunPuzzle, depth: number, seed = 1): Ru
 }
 
 /** The authored pieces plus `count` reinforcements on safe squares. */
-function withReinforcements(puzzle: RunPuzzle, count: number, seed: number, depth: number): RunPuzzle['pieces'] {
+export function withReinforcements(puzzle: RunPuzzle, count: number, seed: number, depth: number): RunPuzzle['pieces'] {
   const startRank = puzzle.rookieStart.rank;
   // Which way is "ahead" for Rookie — she is placed on startRank and climbs.
   const ahead = startRank <= 4 ? startRank + 1 : startRank - 1;

@@ -368,6 +368,12 @@ export interface RunsOpts {
   /** Retries per level, like the app's difficulty modes (Infinity is capped at MAX_RETRIES). */
   retriesPerLevel?: number;
   seedPrefix?: string;
+  /**
+   * Rewrite each level's puzzle before it is played — the hook the ladder
+   * density sweep uses to add reinforcements without touching the game.
+   * `lv` is 1-based, like the app's level numbers.
+   */
+  puzzleTransform?: (puzzle: RunPuzzle, lv: number) => RunPuzzle;
 }
 
 /** Cap for "unlimited" retries so an unwinnable level can't spin forever (a real player gives up long before this). */
@@ -394,7 +400,7 @@ export function simulateRuns(cfg: RevengeCfg, n: number, tier: string, opts: Run
       reached[lv]++;
       let won = false;
       let attempt = 0;
-      const puzzle = puzzleFor(cfg, lv);
+      const puzzle = opts.puzzleTransform ? opts.puzzleTransform(puzzleFor(cfg, lv), lv) : puzzleFor(cfg, lv);
       // Retry loop — the app rebuilds the SAME level with a fresh seed + start
       // file, carrying the abilities / tempo / pending offer Rookie died with.
       for (;;) {
