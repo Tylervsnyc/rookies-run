@@ -309,7 +309,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Sacrifice',
     activation: 'targeted',
     typeLine: 'Targeted · Burst',
-    description: 'Your summon explodes. Every enemy within 2 squares of it is captured.',
+    description: 'Your summon explodes in the shape it moves. Everything on the squares it attacks, up to 2 away, is captured.',
   },
   knighting: {
     id: 'knighting',
@@ -640,7 +640,7 @@ const HOW: Record<AbilityId, string> = {
   dragon: 'Tap card, then tap a spawn square. Tap the dragon to move her.',
   vanguard: 'Tap card, then tap any square in range. Tap the knight to move it.',
   swap: 'Tap card, then tap one of your summons.',
-  sacrifice: 'Tap card, then tap one of your summons. The tinted box is the blast.',
+  sacrifice: 'Tap card, then tap one of your summons. The tinted squares are its blast — shape = how the piece moves, 2 squares out.',
   knighting: 'Tap card, then tap one of your summons.',
   snare: 'Tap card, then tap an empty square. The trap is invisible to them.',
   shove: 'Tap card, then tap a block of stone beside you. It rolls one square away. Lava never moves.',
@@ -823,11 +823,12 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 2) return 'Trade squares with one of your summons. Its clock gains 2 turns. Free action.';
       return 'Trade squares with one of your summons. Free action.';
     case 'sacrifice':
-      // ONE rule at every tier (2026-09-09): the blast is the 5x5 box around
-      // the summon. Enemies inside are captured; the king inside is stunned.
-      if (tier === 5) return 'Detonate a summon. Every enemy within 2 squares is captured; the king inside is stunned 3 turns.';
-      if (tier >= 2) return 'Detonate a summon. Every enemy within 2 squares is captured; the king inside is stunned 2 turns.';
-      return 'Detonate a summon. Every enemy within 2 squares is captured; the king inside is stunned 1 turn.';
+      // ONE rule at every tier (2026-09-09): the blast is piece-shaped — the
+      // squares the summon attacks, up to 2 away, blockers ignored. Enemies
+      // inside are captured; the king inside is stunned.
+      if (tier === 5) return 'Detonate a summon. Everything on the squares it attacks, up to 2 away, is captured; the king there is stunned 3 turns.';
+      if (tier >= 2) return 'Detonate a summon. Everything on the squares it attacks, up to 2 away, is captured; the king there is stunned 2 turns.';
+      return 'Detonate a summon. Everything on the squares it attacks, up to 2 away, is captured; the king there is stunned 1 turn.';
     case 'knighting':
       if (tier === 5) return 'Promote a summon straight to queen.';
       if (tier === 4) return 'Promote a summon or ANY rainbow ally two steps up.';
@@ -1038,10 +1039,10 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Trade, +2 turns on its clock. 1/level.';
       return 'Trade with a summon. 1/level.';
     case 'sacrifice':
-      if (tier === 5) return 'Detonate: 5x5 blast, king stun 3. 2/level.';
-      if (tier >= 3) return 'Detonate: 5x5 blast, king stun 2. 2/level.';
-      if (tier === 2) return 'Detonate: 5x5 blast, king stun 2. 1/level.';
-      return 'Detonate: 5x5 blast, king stun 1. 1/level.';
+      if (tier === 5) return 'Detonate: its attack squares, 2 out; king stun 3. 2/level.';
+      if (tier >= 3) return 'Detonate: its attack squares, 2 out; king stun 2. 2/level.';
+      if (tier === 2) return 'Detonate: its attack squares, 2 out; king stun 2. 1/level.';
+      return 'Detonate: its attack squares, 2 out; king stun 1. 1/level.';
     case 'knighting':
       if (tier === 5) return 'Summon straight to queen. 2/level.';
       if (tier === 4) return 'Any ally, two steps up. 2/level.';
@@ -4207,21 +4208,120 @@ export function sacrificeKingStunForTier(tier: AbilityTier): number {
 }
 
 /**
- * The Sacrifice blast: every square within 2 of the summon in all 8
- * directions — a 5x5 box, the summon's own square excluded. The SAME squares
- * the board tints while the card is armed, so what you see is what explodes.
+ * Blast shapes (2026-09-09, Tyler: PIECE-SHAPED, not a box). Keyed on how the
+ * summon moves; the dragon is her own kind (queen + knight = the full 5x5).
  */
-export function sacrificeBlastSquares(at: Coord): Coord[] {
+export type SacrificeBlastKind = 'pawn' | 'knight' | 'bishop' | 'rook' | 'queen' | 'dragon';
+
+/** Which blast shape a summon detonates with — its move pattern. */
+export function sacrificeBlastKind(piece: Pick<AllyPiece, 'type' | 'source'>): SacrificeBlastKind {
+  if (piece.source === 'dragon') return 'dragon';
+  switch (piece.type) {
+    case 'pawn':
+      return 'pawn';
+    case 'knight':
+      return 'knight';
+    case 'bishop':
+      return 'bishop';
+    case 'rook':
+      return 'rook';
+    case 'queen':
+      return 'queen';
+    case 'king':
+      // No ally is ever a king (Convert skips him); if one ever were, treat
+      // the blast as the queen shape capped like every other line piece.
+      return 'queen';
+  }
+}
+
+/**
+ * Preview tints — one per blast kind, distinct on the green/cream board so
+ * overlapping shapes still read as "this one belongs to that summon".
+ * `wash` floods the blast squares, `ring` outlines them (and rings enemies
+ * inside), `own` marks the summon's own square in its color.
+ */
+export const SACRIFICE_BLAST_TINTS: Record<
+  SacrificeBlastKind,
+  { name: string; wash: string; ring: string; own: string }
+> = {
+  queen: { name: 'ember', wash: 'rgba(249, 115, 22, 0.42)', ring: 'rgba(234, 88, 12, 0.95)', own: 'rgba(249, 115, 22, 0.28)' },
+  knight: { name: 'violet', wash: 'rgba(168, 85, 247, 0.42)', ring: 'rgba(126, 34, 206, 0.95)', own: 'rgba(168, 85, 247, 0.28)' },
+  bishop: { name: 'teal', wash: 'rgba(20, 184, 166, 0.46)', ring: 'rgba(13, 148, 136, 0.95)', own: 'rgba(20, 184, 166, 0.30)' },
+  rook: { name: 'gold', wash: 'rgba(250, 204, 21, 0.50)', ring: 'rgba(202, 138, 4, 0.95)', own: 'rgba(250, 204, 21, 0.34)' },
+  pawn: { name: 'rose', wash: 'rgba(244, 114, 182, 0.46)', ring: 'rgba(219, 39, 119, 0.95)', own: 'rgba(244, 114, 182, 0.30)' },
+  dragon: { name: 'red', wash: 'rgba(239, 68, 68, 0.42)', ring: 'rgba(185, 28, 28, 0.95)', own: 'rgba(239, 68, 68, 0.28)' },
+};
+
+/** How far a line-piece blast reaches along each of its lines. */
+export const SACRIFICE_BLAST_REACH = 2;
+
+/**
+ * The Sacrifice blast: the squares the summon ATTACKS from `from`, each line
+ * capped at 2 squares out, computed on an EMPTY board — it is an explosion,
+ * not a move, so blockers never shorten it. The summon's own square is
+ * excluded. The SAME squares the board tints while the card is armed, so what
+ * you see is what explodes.
+ *
+ *   pawn   — the two diagonal-forward squares (allies push toward rank 8)
+ *   knight — its 8 knight squares
+ *   bishop — 4 diagonals x 2 out = 8
+ *   rook   — 4 orthogonals x 2 out = 8
+ *   queen  — all 8 lines x 2 out = 16
+ *   dragon — queen lines + knight squares = the full 5x5 box (24)
+ */
+export function sacrificeBlastSquares(piece: Pick<AllyPiece, 'type' | 'source'>, from: Coord): Coord[] {
+  const kind = sacrificeBlastKind(piece);
   const out: Coord[] = [];
-  for (let df = -2; df <= 2; df++) {
-    for (let dr = -2; dr <= 2; dr++) {
-      if (df === 0 && dr === 0) continue;
-      const f = at.file + df;
-      const r = at.rank + dr;
-      if (allyInBounds(f, r)) out.push({ file: f, rank: r });
+  const add = (f: number, r: number) => {
+    if (allyInBounds(f, r)) out.push({ file: f, rank: r });
+  };
+  const lines = (dirs: ReadonlyArray<[number, number]>) => {
+    for (const [df, dr] of dirs) {
+      for (let step = 1; step <= SACRIFICE_BLAST_REACH; step++) add(from.file + df * step, from.rank + dr * step);
     }
+  };
+  const knight = () => {
+    for (const [df, dr] of ALLY_KNIGHT_DELTAS) add(from.file + df, from.rank + dr);
+  };
+  switch (kind) {
+    case 'pawn':
+      add(from.file - 1, from.rank + 1);
+      add(from.file + 1, from.rank + 1);
+      break;
+    case 'knight':
+      knight();
+      break;
+    case 'bishop':
+      lines(ALLY_BISHOP_DIRS);
+      break;
+    case 'rook':
+      lines(ALLY_ROOK_DIRS);
+      break;
+    case 'queen':
+      lines(ALLY_QUEEN_DIRS);
+      break;
+    case 'dragon':
+      lines(ALLY_QUEEN_DIRS);
+      knight();
+      break;
   }
   return out;
+}
+
+/**
+ * Every summon Sacrifice could detonate right now, with its blast — the one
+ * list the board preview draws from (per-summon color, so overlapping shapes
+ * stay legible).
+ */
+export function sacrificeBlastPreview(
+  state: BoardState,
+): Array<{ summon: Coord; kind: SacrificeBlastKind; squares: Coord[] }> {
+  const owned = state.abilities.find((a) => a.id === 'sacrifice');
+  if (!owned) return [];
+  return controlledAllies(state).map((a) => {
+    const summon = { file: a.file, rank: a.rank };
+    return { summon, kind: sacrificeBlastKind(a), squares: sacrificeBlastSquares(a, summon) };
+  });
 }
 
 /** Summons Sacrifice may detonate. */
@@ -4236,11 +4336,13 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
   if (!owned || owned.usesLeftThisLevel === 0) return state;
   const ally = controlledAllyAt(state, target);
   if (!ally) return state;
-  // ONE rule (2026-09-09): the blast is the 5x5 box around the summon. Every
-  // enemy inside is captured. The king is never captured by a blast — only
-  // Rookie takes him — but a king inside the box is stunned (1 / 2 / 3 turns
-  // by tier). Tiers change the stun and the charges, never the shape.
-  const blast = new Set(sacrificeBlastSquares(ally).map(toSquare));
+  // ONE rule (2026-09-09): the blast is PIECE-SHAPED — the squares the summon
+  // attacks, 2 out along each line, blockers ignored (sacrificeBlastSquares,
+  // shared with the board preview). Every enemy inside is captured. The king
+  // is never captured by a blast — only Rookie takes him — but a king inside
+  // is stunned (1 / 2 / 3 turns by tier). Tiers change the stun and the
+  // charges, never the shape.
+  const blast = new Set(sacrificeBlastSquares(ally, ally).map(toSquare));
   const victims = state.pieces.filter(
     (p) => p.type !== 'king' && blast.has(toSquare({ file: p.file, rank: p.rank })),
   );

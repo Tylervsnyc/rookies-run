@@ -6,9 +6,9 @@ import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
-import { canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
+import { SACRIFICE_BLAST_TINTS, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
 import { isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
-import type { AbilityTier } from '@/lib/run/abilities';
+import type { AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
@@ -18,6 +18,13 @@ import { LAVA_CSS, LAVA_SRC, LavaBubbles, hazardSquareStyle, lavaReducedMotionCs
 
 /** Red alarms Rookie cycles through, one per time she lands in check. */
 const ROOKIE_ALARM_CYCLE: RookieAlarm[] = ['siren', 'heartbeat', 'sos', 'shiver', 'ringPulse', 'flickerOut'];
+
+/** One summon's piece-shaped Sacrifice blast, for the armed-card preview. */
+export interface SacrificeBlastGroup {
+  summon: Coord;
+  kind: SacrificeBlastKind;
+  squares: Coord[];
+}
 
 interface BoardProps {
   state: BoardState;
@@ -55,9 +62,10 @@ interface BoardProps {
   abilityTier?: AbilityTier;
   /** Enemy squares the active Convert ability can target (pulsing rings). */
   convertTargets?: Coord[];
-  /** Sacrifice armed: the 5x5 blast box around each detonatable summon —
-   *  tinted so the player sees exactly what explodes BEFORE tapping. */
-  blastSquares?: Coord[];
+  /** Sacrifice armed: each detonatable summon with its piece-shaped blast —
+   *  tinted in that summon's own color so the player sees exactly what
+   *  explodes (and whose blast it is) BEFORE tapping. */
+  blastPreview?: SacrificeBlastGroup[];
   /** Transient Sacrifice detonation VFX — burst on the summon square plus a
    *  hit flash on every square the blast captured. */
   sacrificeFx?: { summonSq: string; capturedSqs: string[]; id: number } | null;
@@ -201,7 +209,7 @@ export function RunBoard({
   legalAbilityMoves,
   abilityTier,
   convertTargets,
-  blastSquares,
+  blastPreview,
   sacrificeFx = null,
   allyPoofFx = null,
   onSquareClick,
@@ -596,30 +604,58 @@ export function RunBoard({
       }
     }
 
-    // Sacrifice blast preview — an ember wash over the 5x5 box; enemies
-    // inside get a capture ring (they die), the king a stun-blue ring (he is
-    // stunned, never captured). Same squares the engine detonates.
-    if (blastSquares && blastSquares.length > 0) {
-      for (const c of blastSquares) {
-        const sq = toSquare(c);
+    // Sacrifice blast preview — each summon's piece-shaped blast washed in
+    // its OWN color (queen ember, knight violet, bishop teal, rook gold, pawn
+    // rose, dragon red); a square two blasts share is split diagonally between
+    // them. Enemies inside get a capture ring (they die), the king a stun-blue
+    // ring (he is stunned, never captured). The summon's own square carries a
+    // lighter wash of its color so the mapping is obvious. Same squares the
+    // engine detonates (sacrificeBlastSquares).
+    if (blastPreview && blastPreview.length > 0) {
+      const owners = new Map<string, SacrificeBlastKind[]>();
+      for (const g of blastPreview) {
+        for (const c of g.squares) {
+          const sq = toSquare(c);
+          const list = owners.get(sq) ?? [];
+          if (!list.includes(g.kind)) list.push(g.kind);
+          owners.set(sq, list);
+        }
+      }
+      for (const [sq, kinds] of owners) {
+        const c = fromSquare(sq);
         const enemy = state.pieces.find((p) => p.file === c.file && p.rank === c.rank);
         const prev = styles[sq] ?? {};
+        const tints = kinds.map((k) => SACRIFICE_BLAST_TINTS[k]);
         const ring = enemy
           ? enemy.type === 'king'
             ? 'radial-gradient(circle, transparent 60%, rgba(56,189,248,0.95) 60%)'
-            : 'radial-gradient(circle, transparent 60%, rgba(234,88,12,0.95) 60%)'
+            : `radial-gradient(circle, transparent 60%, ${tints[0].ring} 60%)`
           : null;
+        // One owner: flat wash. Two or more: diagonal split so both colors show.
+        const wash =
+          tints.length === 1
+            ? null
+            : `linear-gradient(135deg, ${tints
+                .map((t, i) => `${t.wash} ${(i / tints.length) * 100}% ${((i + 1) / tints.length) * 100}%`)
+                .join(', ')})`;
+        const layers = [ring, wash, prev.backgroundImage].filter(Boolean) as string[];
+        const rings = tints.map((t, i) => `inset 0 0 0 ${2 + i * 2}px ${t.ring.replace('0.95', '0.6')}`);
         styles[sq] = {
           ...prev,
-          backgroundColor: 'rgba(249, 115, 22, 0.38)',
-          backgroundImage: ring
-            ? prev.backgroundImage
-              ? `${ring}, ${prev.backgroundImage}`
-              : ring
-            : prev.backgroundImage,
-          boxShadow: prev.boxShadow
-            ? `${prev.boxShadow}, inset 0 0 0 2px rgba(234, 88, 12, 0.55)`
-            : 'inset 0 0 0 2px rgba(234, 88, 12, 0.55)',
+          backgroundColor: tints.length === 1 ? tints[0].wash : prev.backgroundColor,
+          backgroundImage: layers.length > 0 ? layers.join(', ') : prev.backgroundImage,
+          boxShadow: prev.boxShadow ? `${prev.boxShadow}, ${rings.join(', ')}` : rings.join(', '),
+        };
+      }
+      // The summon itself: a lighter wash of its own color under the piece.
+      for (const g of blastPreview) {
+        const sq = toSquare(g.summon);
+        const prev = styles[sq] ?? {};
+        const t = SACRIFICE_BLAST_TINTS[g.kind];
+        styles[sq] = {
+          ...prev,
+          backgroundColor: t.own,
+          boxShadow: prev.boxShadow ? `${prev.boxShadow}, inset 0 0 0 3px ${t.ring}` : `inset 0 0 0 3px ${t.ring}`,
         };
       }
     }
@@ -727,7 +763,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastSquares, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Summon-targeting support cards (Swap / Sacrifice / Knighting): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring
