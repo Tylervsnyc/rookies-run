@@ -300,13 +300,48 @@ interface PieceBlocksProps {
   className?: string;
   /** Override the default Rookie palette (e.g. golden King for Become King). */
   palette?: readonly string[];
+  /**
+   * Contain the sprite in a `fit` x `fit` pixel box: the whole block grid is
+   * scaled as ONE unit (whole-pixel blocks, even spacing) so its larger side
+   * equals `fit`, and centered on its ink. This is how a sprite lives inside
+   * a board cell — the caller measures the cell, the sprite can never spill.
+   * Without it the sprite renders at its natural cols x blockSize size.
+   */
+  fit?: number;
 }
 
 // Golden palette used when Rookie transforms into King (Become King ability).
 export const GOLDEN_KING_PALETTE = ['#FFF4B0', '#FFE066', '#FFD33A', '#FFC107', '#FFAA00', '#E8920C', '#C97A00', '#8C5200'];
 
-export function PieceBlocks({ piece, blockSize = 12, animate = true, className, palette }: PieceBlocksProps) {
-  const [mask, setMask] = useState<Mask | null>(() => MASK_CACHE.get(piece) ?? null);
+/**
+ * Crop a mask to the bounding box of its filled cells. Hand-authored masks
+ * (the dragon alternates especially) carry empty border rows/cols, and
+ * rasterized masks carry the 4% sampling margin — a sprite centered on its
+ * full grid is off-center on its ink. Centering on the ink is what reads as
+ * "in the middle of the square".
+ */
+function trimMask(mask: Mask): Mask {
+  let top = mask.length, bottom = -1, left = Infinity, right = -1;
+  mask.forEach((row, y) => row.forEach((filled, x) => {
+    if (!filled) return;
+    if (y < top) top = y;
+    if (y > bottom) bottom = y;
+    if (x < left) left = x;
+    if (x > right) right = x;
+  }));
+  if (bottom < 0) return mask;
+  return mask.slice(top, bottom + 1).map((row) => row.slice(left, right + 1));
+}
+
+const TRIM_CACHE = new Map<Mask, Mask>();
+function trimmed(mask: Mask): Mask {
+  let t = TRIM_CACHE.get(mask);
+  if (!t) { t = trimMask(mask); TRIM_CACHE.set(mask, t); }
+  return t;
+}
+
+export function PieceBlocks({ piece, blockSize = 12, animate = true, className, palette, fit }: PieceBlocksProps) {
+  const [rawMask, setMask] = useState<Mask | null>(() => MASK_CACHE.get(piece) ?? null);
   useEffect(() => {
     if (MASK_CACHE.has(piece)) {
       setMask(MASK_CACHE.get(piece)!);
@@ -317,34 +352,53 @@ export function PieceBlocks({ piece, blockSize = 12, animate = true, className, 
     return () => { cancelled = true; };
   }, [piece]);
 
+  const mask = rawMask ? trimmed(rawMask) : null;
   const tpl = PIECE_TEMPLATES[piece];
   const gap = Math.max(0, Math.round(blockSize * 0.08));
   const radius = Math.max(1, Math.round(blockSize * 0.18));
   const scale = blockSize / 14;
   const s = (v: number) => `${(v * scale).toFixed(2)}px`;
   const insetShadow = `inset 0 ${s(0.75)} 0 rgba(0,0,0,0.15), inset 0 -${s(0.75)} 0 rgba(255,255,255,0.15)`;
-  // Box = the REAL mask footprint (hand-authored dragon masks are larger than
-  // their template), so the piece is centered in its cell instead of spilling.
+  // Box = the ink footprint of the mask (trimmed), so the piece is centered
+  // on what you actually see.
   const cols = mask?.[0]?.length ?? tpl.cols;
   const rows = mask?.length ?? tpl.rows;
   const w = cols * blockSize + (cols - 1) * gap;
   const h = rows * blockSize + (rows - 1) * gap;
 
+  // Fitted mode: the layout box IS the fit box; the natural-size grid sits
+  // centered inside it and is scaled as a unit to touch the box on its
+  // larger side. Layout never exceeds `fit`, whatever the mask dimensions.
+  const outerW = fit ?? w;
+  const outerH = fit ?? h;
+  const gridScale = fit ? fit / Math.max(w, h) : 1;
+
   if (!mask) {
-    return <div className={className} style={{ width: w, height: h }} aria-hidden />;
+    return <div className={className} style={{ width: outerW, height: outerH }} aria-hidden />;
   }
 
   const CX = (cols - 1) / 2;
   const CY = (rows - 1) / 2;
 
   return (
-    <div className={className} style={{ position: 'relative', width: w, height: h }}>
+    <div className={className} style={{ position: 'relative', width: outerW, height: outerH }}>
       <style suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `
         @keyframes pieceBlocksBreathe {
           0%, 100% { filter: brightness(0.9) saturate(0.95); }
           50% { filter: brightness(1.5) saturate(1.2); }
         }
       ` }} />
+      <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          width: w,
+          height: h,
+          transform: `translate(-50%, -50%) scale(${gridScale})`,
+          transformOrigin: 'center',
+        }}
+      >
       {mask.map((row, y) => row.map((filled, x) => {
         if (!filled) return null;
         const pal = palette ?? ROOKIE_PALETTE;
@@ -370,6 +424,7 @@ export function PieceBlocks({ piece, blockSize = 12, animate = true, className, 
           />
         );
       }))}
+      </div>
     </div>
   );
 }

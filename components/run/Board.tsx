@@ -2452,10 +2452,36 @@ function SummonPoofLayer({
   );
 }
 
+/**
+ * How much of a board cell a summon sprite may fill (its larger side).
+ * Every ally — dragon included — obeys this ONE number; the sprite's own
+ * block count never decides its on-board size. 0.84 sits just under the
+ * enemy piece glyphs so a summon reads as a piece, not a poster.
+ */
+const ALLY_CELL_FIT = 0.84;
+
 function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
   const anyLastTurn = allies.some((a) => a.turnsLeft === 1);
+  // Measure the board so sprites can be sized from the CELL, not from
+  // their block count. PieceBlocks draws whole-pixel blocks at a fixed
+  // px size (18 blocks x 3px for the dragon), so with a fluid 12.5% cell
+  // a hard-coded scale is only right at one board width — on a phone she
+  // spilled out of her square (Tyler, 2026-09-09).
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [cellPx, setCellPx] = useState(0);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const measure = () => setCellPx(el.getBoundingClientRect().width / 8);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const fitPx = Math.floor(cellPx * ALLY_CELL_FIT);
   return (
     <div
+      ref={rootRef}
       aria-hidden
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 3 }}
     >
@@ -2505,21 +2531,19 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              // The Dragon's hand-authored mask is 18 blocks wide where the
-              // widest normal piece (knight / queen / king) is 16, so at the
-              // shared 0.88 she overhung her square (Tyler, 2026-09-08: "the
-              // dragon is a little outside the square"). 0.88 x 16/18 lands her
-              // footprint exactly on the rainbow queen's. Scaling the whole
-              // sprite rather than her blockSize keeps the block grid on whole
-              // pixels — fractional block math is what made the Breathing Rook
-              // spacing uneven, and it would show worse here at blockSize 3.
-              transform: `scale(${a.source === 'dragon' ? 0.78 : 0.88})`,
+              overflow: 'hidden',
             }}
           >
             {/* The Dragon has her OWN sprite — a hand-authored block dragon,
                 not the rainbow queen (Tyler: "it's just a queen right now.
-                We need to redesign"). Everything else keeps its piece glyph. */}
-            <PieceBlocks piece={a.source === 'dragon' ? 'D' : ALLY_BLOCK[a.type]} blockSize={3} animate />
+                We need to redesign"). Everything else keeps its piece glyph.
+                `fit` contains EVERY sprite (dragon 18 blocks, knight 16,
+                pawn 12) in the same ALLY_CELL_FIT box, centered on its ink —
+                no per-piece scale numbers. Rendered only once measured so
+                nothing flashes at natural (un-fitted) size. */}
+            {fitPx > 0 && (
+              <PieceBlocks piece={a.source === 'dragon' ? 'D' : ALLY_BLOCK[a.type]} blockSize={3} fit={fitPx} animate />
+            )}
           </div>
           {/* Turn countdown for timed summons (Duchess & friends) — small
               gold circle top-right; goes red + pulses on the last turn. */}
