@@ -100,6 +100,43 @@ have different rules for the king in different places."* So:
 **Recommendation: 1**, one rung at a time, measured after each — but it is his
 call, and it is a bigger bill than "add some pieces".
 
+
+## 4b. What one rebuild actually costs (attempted, then reverted)
+
+I rebuilt The Stacks L7 as a cost probe. It is NOT in the tree — the edit was
+reverted; `lib/run/runs/revenge-15.ts` is untouched. What it bought is a price
+tag for option 1.
+
+The diagnosis was exact. L7's king sits on g7 with rank 7 walled by stone at
+c7/e7/f7, so the ONLY square that threatens him is g8 — and g8 is adjacent, so
+he now eats her there. One approach square, and the king's new capture made it
+lethal. That is the whole bug, and it is geometry, not tuning.
+
+The rebuild opened the h-file as a third shaft, plugged it like the others, and
+moved the king onto it, so the pull becomes a real choice of target where the
+wrong plug walks you into the adjacent-square death. Three passes:
+
+1. **Open h-file, plug at h5, king h7.** Every loadout 100%, including `none` —
+   the plug was undefended, so she simply captured it. The b6/d6 plugs work
+   because a stump pawn punishes the capture; mine had no punisher.
+2. **Add the stump pawn at g6.** Gate half-returns: `none` 0%, `boulder` 0%,
+   `magnet` 34%, pair 47%. But `aegis` and `decoy` each read 100%.
+3. **Stopped there** and reverted.
+
+The lesson from pass 3 is the useful one, and it is narrower than I first wrote:
+this is **not** "a shield beats the capturing king everywhere" — on The Alcove
+`aegis` reads 0% on L7 and L9. It is that a level whose difficulty rests on ONE
+lethal square is trivially defused by any card that survives one hit. The
+original L7 did not have that shape; my rebuild did.
+
+**The price of option 1, honestly:** each broken finale is a geometry rebuild,
+not a retune, and each rebuild has to re-satisfy a four-card gate that the new
+king has also moved. Two evenings of measured work for the five broken rungs is
+a realistic estimate, not one.
+
+**Correction to section 2's table:** The Alcove's broken gate is `become-king`
+alone at **100% on both L7 and L9** — measured tonight. Not aegis.
+
 ## 5. Also measured overnight
 
 - **Summoning sickness** (`docs/SUMMONING-SICKNESS-FULL-2026-09-08.md`): ship it
