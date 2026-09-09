@@ -71,8 +71,9 @@ import { ALL_ABILITY_IDS, type AbilityId } from './abilities';
 import { isPlayerFacing } from '../content/pipeline';
 import { mulberry32 } from './seed';
 import { REVENGE_RUN_IDS, getRunById } from './runs';
-import type { DifficultyId } from './difficulty';
+import { DIFFICULTIES, type DifficultyId } from './difficulty';
 import { fromSquare, type RunPuzzle } from './types';
+import { FORMATION_FROM, applyFormation, formationForDepth, formationLabel, rookPathToKing } from './endless-formations';
 import remeasureRaw from '../../data/run-playtest/finale-remeasure-2026-09-06.json';
 
 /** URL/leaderboard id. Distinct so Endless never pollutes a daily run's board. */
@@ -426,26 +427,72 @@ export function endlessRamp(depth: number): EndlessRamp {
 }
 
 /**
+ * The move limit a level will really run under at `depth`: authored, minus
+ * the overdrive step (floored), minus the mode's own delta (floored again by
+ * applyDifficulty). Formations and reinforcements use it as the budget the
+ * shortest rook route must fit inside, so the ramp can never turn a board
+ * into one with no path that fits the clock.
+ */
+export function effectiveMoveLimitAt(puzzle: RunPuzzle, depth: number): number | undefined {
+  if (typeof puzzle.moveLimit !== 'number') return undefined;
+  const ramp = endlessRamp(depth);
+  const afterRamp = Math.max(MOVE_LIMIT_FLOOR, puzzle.moveLimit + ramp.moveLimitDelta);
+  return Math.max(MOVE_LIMIT_FLOOR, afterRamp + DIFFICULTIES[ramp.difficulty].moveLimitDelta);
+}
+
+export interface EndlessRampOpts {
+  /**
+   * The FORMATION layer (lib/run/endless-formations.ts) — on by default from
+   * FORMATION_FROM. The playtest harness turns it off to measure "before".
+   */
+  formations?: boolean;
+}
+
+/**
  * Apply the overdrive half of the ramp to an authored puzzle. The mode half is
  * applied downstream by `applyDifficulty` inside `puzzleToBoardState`, which is
  * handed `ramp.difficulty`. Pure; returns the puzzle untouched below
  * OVERDRIVE_FROM.
+ *
+ * Order matters and is deliberate (2026-09-09): FORMATION first, so its
+ * structure claims the squares it needs, THEN reinforcements fill in around
+ * it. Both are checked against `rookPathToKing` inside the level's effective
+ * move budget — see endless-formations.ts for why.
  */
-export function applyEndlessRamp(puzzle: RunPuzzle, depth: number, seed = 1): RunPuzzle {
+export function applyEndlessRamp(puzzle: RunPuzzle, depth: number, seed = 1, opts: EndlessRampOpts = {}): RunPuzzle {
   const ramp = endlessRamp(depth);
   const extra = reinforcementsAt(depth);
-  if (ramp.overdrive === 0 && extra === 0) return puzzle;
-  const out: RunPuzzle = { ...puzzle };
+  const formed = opts.formations === false || depth < FORMATION_FROM
+    ? puzzle
+    : applyFormation(puzzle, depth, seed, { moveBudget: effectiveMoveLimitAt(puzzle, depth) });
+  if (ramp.overdrive === 0 && extra === 0 && formed === puzzle) return puzzle;
+  const out: RunPuzzle = { ...formed };
   out.enemiesPerTurn = Math.min(maxEnemiesPerTurnAt(depth), (puzzle.enemiesPerTurn ?? 1) + ramp.enemiesPerTurnDelta);
   if (typeof puzzle.moveLimit === 'number') {
     out.moveLimit = Math.max(MOVE_LIMIT_FLOOR, puzzle.moveLimit + ramp.moveLimitDelta);
   }
-  if (extra > 0) out.pieces = withReinforcements(puzzle, extra, seed, depth);
+  if (extra > 0) out.pieces = withReinforcements(formed, extra, seed, depth, effectiveMoveLimitAt(puzzle, depth));
   return out;
 }
 
-/** The authored pieces plus `count` reinforcements on safe squares. */
-export function withReinforcements(puzzle: RunPuzzle, count: number, seed: number, depth: number): RunPuzzle['pieces'] {
+/**
+ * The authored pieces plus `count` reinforcements on safe squares.
+ *
+ * `moveBudget` (2026-09-09): a candidate square is also skipped if standing a
+ * piece there would leave some start square with NO plain-rook route to the
+ * king, or push the shortest route past the budget. Dense deep boards (a
+ * formation plus a dozen reinforcements) made that a real risk; before this
+ * the placer only avoided the king's neighbours and the pen. A board whose
+ * authored route is already unproven (`rookPathToKing` null) keeps the old
+ * unchecked behaviour — the check never makes a board emptier than it was.
+ */
+export function withReinforcements(
+  puzzle: RunPuzzle,
+  count: number,
+  seed: number,
+  depth: number,
+  moveBudget?: number,
+): RunPuzzle['pieces'] {
   const startRank = puzzle.rookieStart.rank;
   // Which way is "ahead" for Rookie — she is placed on startRank and climbs.
   const ahead = startRank <= 4 ? startRank + 1 : startRank - 1;
@@ -472,11 +519,21 @@ export function withReinforcements(puzzle: RunPuzzle, count: number, seed: numbe
   }
   // Seeded by session AND depth, so one depth is one board across reloads.
   const rng = mulberry32(((seed ^ (depth * 0x9e3779b9)) >>> 0) || 1);
-  const picks = shuffled(open, rng).slice(0, count);
-  return [
-    ...puzzle.pieces,
-    ...picks.map((c, i) => ({ type: reinforcementType(i), color: 'black' as const, file: c.file, rank: c.rank })),
-  ];
+  const basePath = rookPathToKing(puzzle);
+  const budget = basePath === null ? null : Math.max(basePath, moveBudget ?? Infinity);
+  const pieces = [...puzzle.pieces];
+  let added = 0;
+  for (const c of shuffled(open, rng)) {
+    if (added >= count) break;
+    const next = [...pieces, { type: reinforcementType(added), color: 'black' as const, file: c.file, rank: c.rank }];
+    if (budget !== null) {
+      const path = rookPathToKing({ ...puzzle, pieces: next });
+      if (path === null || path > budget) continue; // would seal him — try another square
+    }
+    pieces.push(next[next.length - 1]);
+    added++;
+  }
+  return pieces;
 }
 
 /** Short HUD line for the current depth, e.g. "HARD" or "NIGHTMARE +2". */
@@ -484,6 +541,11 @@ export function endlessRampLabel(depth: number): string {
   const r = endlessRamp(depth);
   const name = r.difficulty.toUpperCase();
   return r.overdrive > 0 ? `${name} +${r.overdrive}` : name;
+}
+
+/** The formation on this depth for the HUD / share line, e.g. "IRON CURTAIN" — '' below FORMATION_FROM. */
+export function endlessFormationLabel(seed: number, depth: number): string {
+  return formationLabel(formationForDepth(seed, depth));
 }
 
 // ── Personal best (localStorage, fails soft like the rest of the app) ────────
