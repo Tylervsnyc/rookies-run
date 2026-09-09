@@ -7011,6 +7011,21 @@ export const REVENGE_RUN_IDS: ReadonlyArray<string> = REVENGE_RUNS.map((r) => r.
  */
 export const REVENGE_CANDIDATE_RUN_IDS: ReadonlyArray<string> = REVENGE_RUN_CATALOG.filter((r) => stageOf(r.id) === 'testing').map((r) => r.id);
 
+/**
+ * Endless's level LIBRARY. Endless serves single levels, not runs, and needs
+ * BROAD boards (many routes, many kits) at depth — exactly what the 13
+ * pre-combo-gate runs are. Those were retired from the daily pool on
+ * 2026-09-09 (the ladder is the product), but their levels stay here: every
+ * approved|live run plus every retired run whose code is still in the
+ * catalogue. Never `testing` (unproven) and never `idea` (not in the bundle).
+ */
+export const ENDLESS_LIBRARY_RUN_IDS: ReadonlyArray<string> = REVENGE_RUN_CATALOG
+  .filter((r) => {
+    const s = stageOf(r.id);
+    return s === 'approved' || s === 'live' || s === 'retired';
+  })
+  .map((r) => r.id);
+
 export const STC_RUN_IDS = [
   'stc-king',
   'stc-bishop',

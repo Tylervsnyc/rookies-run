@@ -210,8 +210,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Coord, EnemyPiece } from '../types';
+} from '../../run-kit';
+import type { Coord, EnemyPiece } from '../../types';
 
 /**
  * The finisher list every Revenge slate guarantees. Duplicated here (not

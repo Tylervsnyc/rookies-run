@@ -227,8 +227,8 @@ import {
   STILL,
   type RunDef,
   type LevelBuilder,
-} from '../run-kit';
-import { king } from '../run-kit';
+} from '../../run-kit';
+import { king } from '../../run-kit';
 
 /**
  * The four stones that box a square in. `perch(3, 8)` = c8 is a perch: b8, c7

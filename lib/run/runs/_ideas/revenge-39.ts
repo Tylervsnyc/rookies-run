@@ -123,8 +123,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 /** Stone from a list of "file,rank" pairs written as algebraic names. */
 function stones(names: string): Coord[] {

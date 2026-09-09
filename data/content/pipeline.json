@@ -137,7 +137,7 @@
       },
       "retired": {
         "at": "2026-09-03",
-        "why": "Tyler 2026-09-03 playtest: allies won't take the king and block Rookie's path — it just doesn't work"
+        "why": "Tyler 2026-09-03 playtest: allies won't take the king and block Rookie's path \u2014 it just doesn't work"
       }
     },
     {
@@ -265,7 +265,7 @@
       },
       "retired": {
         "at": "2026-09-02",
-        "why": "BROKEN — Tyler 2026-09-02: 'bodyguard is BS doesn't work'. Pulled from the pool until rebuilt; investigate the summon path vs the passive rook spawn."
+        "why": "BROKEN \u2014 Tyler 2026-09-02: 'bodyguard is BS doesn't work'. Pulled from the pool until rebuilt; investigate the summon path vs the passive rook spawn."
       }
     },
     {
@@ -286,7 +286,7 @@
       "name": "Squire",
       "stage": "live",
       "created": "2026-08-31",
-      "notes": "A rainbow knight the player controls — a second body on the board. Built 2026-08-31; Tyler played it via ?loadout=summon-knight:5 and loved it, not formally approved yet. Candidate 4th starter.",
+      "notes": "A rainbow knight the player controls \u2014 a second body on the board. Built 2026-08-31; Tyler played it via ?loadout=summon-knight:5 and loved it, not formally approved yet. Candidate 4th starter.",
       "approved": {
         "at": "2026-08-31",
         "by": "Tyler"
@@ -299,7 +299,7 @@
       "id": "revenge-1",
       "kind": "run",
       "name": "Rookie's Revenge",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-18",
       "notes": "The daily run. Rank 8 is just a row. Take the king.",
       "approved": {
@@ -312,21 +312,25 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-1 testing"
       }
     },
     {
       "id": "revenge-2",
       "kind": "run",
       "name": "Pawn Storm",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-30",
       "notes": "More pawns every level. Bodies, not brains. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L9 freeze-ray only 69% (every finisher must be at least 80%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%); L9 freeze-ray only 69% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
@@ -335,19 +339,23 @@
       },
       "live": {
         "at": "2026-09-01"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-2 testing"
       }
     },
     {
       "id": "revenge-3",
       "kind": "run",
       "name": "The Royal Guard",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-30",
       "notes": "Few pawns, heavy pieces. Every line is watched. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
@@ -356,19 +364,23 @@
       },
       "live": {
         "at": "2026-09-01"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-3 testing"
       }
     },
     {
       "id": "revenge-4",
       "kind": "run",
       "name": "The Fortress",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-30",
       "notes": "Walls make the room. Pawns make the door. Drafted by revenge-generate.ts, hand-tuned.",
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
@@ -377,19 +389,23 @@
       },
       "live": {
         "at": "2026-09-01"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-4 testing"
       }
     },
     {
       "id": "revenge-5",
       "kind": "run",
       "name": "Stonework",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-08-30",
-      "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable — a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
+      "notes": "Every level is a building. Find the door. L10 (The Vault) is INTENTIONALLY unwinnable \u2014 a system check that the app's No-way-through fail-safe fires. The nightly will flag it IMPOSSIBLE every night until it is replaced with a real level; do not read that as a bug in the harness.",
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
@@ -398,6 +414,10 @@
       },
       "live": {
         "at": "2026-09-01"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-5 testing"
       }
     },
     {
@@ -469,11 +489,11 @@
       "name": "Swap",
       "stage": "live",
       "created": "2026-08-31",
-      "notes": "Trade places with your Squire — teleport through his square.",
+      "notes": "Trade places with your Squire \u2014 teleport through his square.",
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
+        "summary": "bot never casts it (0% of games) \u2014 no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -494,7 +514,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 49% at realistic tiers (lift +1 vs no ability), cast in 0% of games",
+        "summary": "bot never casts it (0% of games) \u2014 no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, D on revenge-6, C on revenge-7; avg win 49% at realistic tiers (lift +1 vs no ability), cast in 0% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "approved": {
@@ -509,7 +529,7 @@
       "id": "revenge-6",
       "kind": "run",
       "name": "Two Keys",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-01",
       "notes": "Double-key + open-flank archetypes, generated 2026-09-01 by the level factory loop. Name TBD by Tyler.",
       "approved": {
@@ -522,8 +542,12 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%); L10 freeze-ray only 75% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-6 testing"
       }
     },
     {
@@ -578,7 +602,7 @@
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",
-        "summary": "bot never casts it (0% of games) — no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, C on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
+        "summary": "bot never casts it (0% of games) \u2014 no read on power. Tier D on revenge-1, C on revenge-2, D on revenge-3, C on revenge-4, D on revenge-5, C on revenge-6, C on revenge-7; avg win 48% at realistic tiers (lift +0 vs no ability), cast in 0% of games",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-02.md"
       },
       "retired": {
@@ -606,13 +630,13 @@
       "id": "revenge-7",
       "kind": "run",
       "name": "Bramble Crown",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-01",
       "notes": "Generated 2026-09-01 via revenge-generate.ts (best per-slot candidate: swarm archetype L1-L7, walled-court L6, double-key L8 and L10, royal-guard L9). Matrix-verified against the revenge-1 difficulty curve (none 100/100/100/100/100/67/60/38/15/31, finishers >=94% every level, realistic tiers, 48 trials/cell).",
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
       },
       "approved": {
@@ -621,13 +645,17 @@
       },
       "live": {
         "at": "2026-09-02"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-7 testing"
       }
     },
     {
       "id": "revenge-8",
       "kind": "run",
       "name": "The Rampart",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-02",
       "notes": "Rung 8 of the 10-rung ladder, generated 2026-09-02 (swarm + corner-keep archetypes). Matrix-verified T5 realistic: none 100/100/100/100/92/58/52/38/33/37, finishers >= 79% (band 100/100/100/95/80/45/45/40/25/25 +/-15, finishers >= 75).",
       "approved": {
@@ -640,17 +668,21 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-8 testing"
       }
     },
     {
       "id": "revenge-9",
       "kind": "run",
       "name": "Cold Court",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-02",
-      "notes": "Rung 9 of the ladder, generated 2026-09-02 (royal-guard + walled-court archetypes — heavy hunters and walls). Matrix-verified T5 realistic: none 100/100/100/100/73/38/26/36/17/21, finishers >= 92% (band 100/100/95/90/70/40/35/30/20/20 +/-15, finishers >= 70).",
+      "notes": "Rung 9 of the ladder, generated 2026-09-02 (royal-guard + walled-court archetypes \u2014 heavy hunters and walls). Matrix-verified T5 realistic: none 100/100/100/100/73/38/26/36/17/21, finishers >= 92% (band 100/100/95/90/70/40/35/30/20/20 +/-15, finishers >= 70).",
       "approved": {
         "at": "2026-09-02",
         "by": "Tyler"
@@ -661,15 +693,19 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-9 testing"
       }
     },
     {
       "id": "revenge-10",
       "kind": "run",
       "name": "The Vault",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-02",
       "notes": "Rung 10, top of the ladder, generated 2026-09-02 (mixed heaviest: swarm, royal-guard, corner-keep, double-key). Matrix-verified T5 realistic: none 100/100/100/100/54/40/38/21/25/21, finishers >= 88% (band 100/95/90/85/60/35/30/25/15/15 +/-15, finishers >= 65).",
       "approved": {
@@ -682,15 +718,19 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-10 testing"
       }
     },
     {
       "id": "crucible",
       "kind": "run",
       "name": "The Crucible",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-02",
       "notes": "Full 10-level arc (2026-09-02) built from Tyler's playtest rules: two doors watched from L1 (double-key + sightline hunters = the run identity), double-defended keys from L4, marcher clocks, escalating courts; the original single proving level sits at L7 (budget 11 -> 13). Matrix-verified T5 realistic 96 trials: none 100/100/100/100/81/68/38/38/41/23 (band 100/100/100/95/85/60/50/45/35/30 +/-15), finishers >= 88.",
       "approved": {
@@ -703,8 +743,12 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage crucible testing"
       }
     },
     {
@@ -728,7 +772,7 @@
       "name": "Griffin",
       "stage": "idea",
       "created": "2026-09-02",
-      "notes": "Controllable summon, movement TBD — Tyler's nerdy-friend bestiary (Tyler, 2026-09-02)."
+      "notes": "Controllable summon, movement TBD \u2014 Tyler's nerdy-friend bestiary (Tyler, 2026-09-02)."
     },
     {
       "id": "vanguard-pawn",
@@ -742,7 +786,7 @@
       "id": "revenge-11",
       "kind": "run",
       "name": "Dead Bolt",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-03",
       "notes": "Hard run: every key double-locked, tight budgets, two queens from L8. Built 2026-09-03 because all live runs clear 71-96% on Normal.",
       "approved": {
@@ -755,27 +799,34 @@
       "testing": {
         "lastRun": "2026-09-04",
         "verdict": "HOLD",
-        "summary": "TOO EASY — a new player clears 100% of runs on Normal (target 40-60%); L8 knight-hop only 69% (every finisher must be at least 80%)",
+        "summary": "TOO EASY \u2014 a new player clears 100% of runs on Normal (target 40-60%); L8 knight-hop only 69% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-04.md"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-11 testing"
       }
     },
     {
       "id": "revenge-12",
       "kind": "run",
       "name": "The Moat",
-      "stage": "approved",
+      "stage": "live",
       "created": "2026-09-04",
       "notes": "Hard run for the swap/bishop-squire/knight-hop/poison-dart kit: rank 5 is water on every level; each level asks HOW you cross, not which pawn to dart. Built 2026-09-04 after Tyler: 'I keep darting the guard pawn on every level.'",
       "approved": {
         "at": "2026-09-04",
         "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
       }
     },
     {
       "id": "revenge-13",
       "kind": "run",
       "name": "The Colonnade",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-04",
       "notes": "Hard veteran run for the swap/bishop-squire/magnet/boulder kit: ranks 4-5 are dark-square pillars on every level (a light bishop passes, a rook needs a door). Sister run to The Moat, built 2026-09-04.",
       "approved": {
@@ -784,6 +835,10 @@
       },
       "live": {
         "at": "2026-09-05"
+      },
+      "retired": {
+        "at": "2026-09-09",
+        "why": "Pre-combo-gate run; the ladder is the product (2026-09-09 audit). Its levels still serve Endless via ENDLESS_LIBRARY_RUN_IDS. Restore to the pool with: pipeline.ts stage revenge-13 testing"
       }
     },
     {
@@ -800,63 +855,112 @@
       "name": "The Switchback",
       "stage": "testing",
       "created": "2026-09-05",
-      "notes": "Poison Dart + Bishop Squire free-capture-stun run. Signature: two stone bars on ranks 3 and 6 with offset openings, so every level charges moves to arrive. Finale: a sealed diagonal room reached only through a corridor guarded by an uncapturable pawn — dart it, and summon the Squire into the corridor the turn it dies. L7-L10: every single kit card 0%, pair 63-100%. Full runs 18% random / 33% with the pair (below target; L8 is the drag)."
+      "notes": "Poison Dart + Bishop Squire free-capture-stun run. Signature: two stone bars on ranks 3 and 6 with offset openings, so every level charges moves to arrive. Finale: a sealed diagonal room reached only through a corridor guarded by an uncapturable pawn \u2014 dart it, and summon the Squire into the corridor the turn it dies. L7-L10: every single kit card 0%, pair 63-100%. Full runs 18% random / 33% with the pair (below target; L8 is the drag)."
     },
     {
       "id": "revenge-17",
       "kind": "run",
       "name": "The Briar",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-05",
-      "notes": "Dragon + Sacrifice parachute-the-bomb run. Signature: a two-deep pawn hedge on ranks 6-7 where the back row defends the front and a rook capture is always recaptured. A dragon spawned beside the hedge and detonated the same turn opens the two files beside Rookie top to bottom and stuns the king. L7-L10: every single kit card 0-3%, pair 78-84%. Full runs 55% random / 50% with the pair (random converges on the pair since it is half the kit)."
+      "notes": "Dragon + Sacrifice parachute-the-bomb run. Signature: a two-deep pawn hedge on ranks 6-7 where the back row defends the front and a rook capture is always recaptured. A dragon spawned beside the hedge and detonated the same turn opens the two files beside Rookie top to bottom and stuns the king. L7-L10: every single kit card 0-3%, pair 78-84%. Full runs 55% random / 50% with the pair (random converges on the pair since it is half the kit).",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-18",
       "kind": "run",
       "name": "The Glasshouse",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-05",
-      "notes": "Freeze Ray + Vanguard pin-and-parachute run. Signature: a box of hazards around the king's corner with one missing pane that something is watching; from L7 he bricks the window up and the only sightline left is his. Finale: freeze him where he stands, drop the knight, walk it on, take him inside the pin. L7-L10: every single kit card 0%, pair 72-100% (serial reads). Full runs 43% random / 70% with the pair."
+      "notes": "Freeze Ray + Vanguard pin-and-parachute run. Signature: a box of hazards around the king's corner with one missing pane that something is watching; from L7 he bricks the window up and the only sightline left is his. Finale: freeze him where he stands, drop the knight, walk it on, take him inside the pin. L7-L10: every single kit card 0%, pair 72-100% (serial reads). Full runs 43% random / 70% with the pair.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-15",
       "kind": "run",
       "name": "The Stacks",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-05",
-      "notes": "Magnet + Boulder reposition-then-seal run. Signature: ranks 3-7 are solid stone with one-wide shafts, so one piece closes a whole route and every level asks which square an enemy stands on. A bishop in a shaft is frozen (a plug only a pull can move); the king's 2x2 corner room can never be held by a lone rook. Finale: boulder a stone into the room, magnet the plug off its defenders, take it free. L7-L10: every single kit card 0%, pair 97-100% (serial). Full runs 35% random / 25% with the pair — the pair pool is LOWER than random because upgraded high-tier Boulder walls Rookie's own shaft."
+      "notes": "Magnet + Boulder reposition-then-seal run. Signature: ranks 3-7 are solid stone with one-wide shafts, so one piece closes a whole route and every level asks which square an enemy stands on. A bishop in a shaft is frozen (a plug only a pull can move); the king's 2x2 corner room can never be held by a lone rook. Finale: boulder a stone into the room, magnet the plug off its defenders, take it free. L7-L10: every single kit card 0%, pair 97-100% (serial). Full runs 35% random / 25% with the pair \u2014 the pair pool is LOWER than random because upgraded high-tier Boulder walls Rookie's own shaft.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-19",
       "kind": "run",
       "name": "The Cliff",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-05",
-      "notes": "Convert + Summon Knight cage-and-take run, a pair the discovery harness found. Signature: one diagonal of stone a rook can never cross and a knight steps over. Finale: convert the pawn under the king's pen so his own guard becomes the cage, then the Squire jumps in and takes him. L7-L10: every single kit card 0%, pair 75-88% (serial). Full runs 8% random / 13% with the pair (L3 is a Squire-or-nothing gate). 2026-09-06 CONVERT REWORK: converted pieces are now controllable summons, and the stolen guard pawn (a7 / g7) attacks the king's square, so Convert ALONE now clears L7 and L8 at 100% (even with the same-turn daze — it strikes a turn later and he cannot step off) (L9/L10 still 0% single, pair 84-88%). Finale no longer combo-gated on L7-L8 — demoted testing → built until L7/L8 are redesigned (the guard under the pen must not attack the pen)."
+      "notes": "Convert + Summon Knight cage-and-take run, a pair the discovery harness found. Signature: one diagonal of stone a rook can never cross and a knight steps over. Finale: convert the pawn under the king's pen so his own guard becomes the cage, then the Squire jumps in and takes him. L7-L10: every single kit card 0%, pair 75-88% (serial). Full runs 8% random / 13% with the pair (L3 is a Squire-or-nothing gate). 2026-09-06 CONVERT REWORK: converted pieces are now controllable summons, and the stolen guard pawn (a7 / g7) attacks the king's square, so Convert ALONE now clears L7 and L8 at 100% (even with the same-turn daze \u2014 it strikes a turn later and he cannot step off) (L9/L10 still 0% single, pair 84-88%). Finale no longer combo-gated on L7-L8 \u2014 demoted testing \u2192 built until L7/L8 are redesigned (the guard under the pen must not attack the pen).",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-21",
       "kind": "run",
       "name": "The Slash",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-05",
-      "notes": "Boulder + Knight Hop cage-and-take run. Signature: one diagonal of stone corner to corner that only a knight crosses. Finale: jump the slash, drop two stones on the king's flight squares, slide onto his line. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 40% random / 85% with the pair. Boulder earned its place: the stone's job is one turn deep, which the bot models."
+      "notes": "Boulder + Knight Hop cage-and-take run. Signature: one diagonal of stone corner to corner that only a knight crosses. Finale: jump the slash, drop two stones on the king's flight squares, slide onto his line. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 40% random / 85% with the pair. Boulder earned its place: the stone's job is one turn deep, which the bot models.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-22",
       "kind": "run",
       "name": "The Millstone",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-06",
-      "notes": "Dragon + Duchess double-door run. Signature: the king lives on a four-square diamond around a stone pillar; the finale is a double door where one body opens it once and dies, and the second body walks through. L7-L10: every single kit card 0%, pair 72-88% (serial). Full runs 18% random / 45% with the pair. Tier caveat: at 2 charges one summon can trade twice alone."
+      "notes": "Dragon + Duchess double-door run. Signature: the king lives on a four-square diamond around a stone pillar; the finale is a double door where one body opens it once and dies, and the second body walks through. L7-L10: every single kit card 0%, pair 72-88% (serial). Full runs 18% random / 45% with the pair. Tier caveat: at 2 charges one summon can trade twice alone.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-23",
       "kind": "run",
       "name": "The Parapet",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-06",
-      "notes": "Knight Hop + Twin run. Signature: rank 6 is solid stone every level; the court is ranks 7-8. Finale: hop onto a square no rook line reaches, summon the Twin beside her, two rooks close the 2x2. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 33% random / 65% with the pair. TIER CAVEAT: knight-hop at T4 (two uses) solos L7-L9 at 78-97%; the gate holds at T1-T3 and T5."
+      "notes": "Knight Hop + Twin run. Signature: rank 6 is solid stone every level; the court is ranks 7-8. Finale: hop onto a square no rook line reaches, summon the Twin beside her, two rooks close the 2x2. L7-L10: every single kit card 0%, pair 100% (serial). Full runs 33% random / 65% with the pair. TIER CAVEAT: knight-hop at T4 (two uses) solos L7-L9 at 78-97%; the gate holds at T1-T3 and T5.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-20",
@@ -870,17 +974,31 @@
       "id": "revenge-24",
       "kind": "run",
       "name": "The Lattice",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-06",
-      "notes": "Duchess + Decoy (buy the body time) — the first designed home for either card. Signature: ranks 5-8 are stone on the DARK squares only, a checkerboard of panes, so no rook line survives up there (a king on a light square of ranks 6-8 can never be captured by Rookie) while the light diagonals run straight through and his pawns are frozen but still bite. L1-L2 ride an open channel; L3-L5 a defended cork (aegis/decoy 100%, magnet is the trap at 6-31%); L6 the panes close and the Duchess alone is the only thing that can reach him (100%, everything else 0%). L7-L10 add a WATCHER pawn on the one square that attacks him: the Duchess lands there and is eaten, so mark a pawn defended by a jammed bishop (threat 2 beats the watcher's 1, deterministically) and the court spends its whole turn eating its own man. Finale numbers of record (Normal, T5, --jobs=1 --trials=32): none 0%, aegis 0%, magnet 0%, decoy 0%, duchess 0% on all four levels; duchess+decoy 100/97/100/100. Every other kit pair 0% on all four — four unique-answer levels. Full runs 13/40 = 33% with random picks (all deaths move-limit at L6-L7), 35/40 = 88% with the pair as the pool. TIER CAVEAT: the gate holds at T1-T3 and breaks at T4+, where the Duchess gets a second charge and the body that re-takes the plugged post is unanswerable — the post can never have a spare defender because the only squares attacking it are the king's own and the watcher's."
+      "notes": "Duchess + Decoy (buy the body time) \u2014 the first designed home for either card. Signature: ranks 5-8 are stone on the DARK squares only, a checkerboard of panes, so no rook line survives up there (a king on a light square of ranks 6-8 can never be captured by Rookie) while the light diagonals run straight through and his pawns are frozen but still bite. L1-L2 ride an open channel; L3-L5 a defended cork (aegis/decoy 100%, magnet is the trap at 6-31%); L6 the panes close and the Duchess alone is the only thing that can reach him (100%, everything else 0%). L7-L10 add a WATCHER pawn on the one square that attacks him: the Duchess lands there and is eaten, so mark a pawn defended by a jammed bishop (threat 2 beats the watcher's 1, deterministically) and the court spends its whole turn eating its own man. Finale numbers of record (Normal, T5, --jobs=1 --trials=32): none 0%, aegis 0%, magnet 0%, decoy 0%, duchess 0% on all four levels; duchess+decoy 100/97/100/100. Every other kit pair 0% on all four \u2014 four unique-answer levels. Full runs 13/40 = 33% with random picks (all deaths move-limit at L6-L7), 35/40 = 88% with the pair as the pool. TIER CAVEAT: the gate holds at T1-T3 and breaks at T4+, where the Duchess gets a second charge and the body that re-takes the plugged post is unanswerable \u2014 the post can never have a spare defender because the only squares attacking it are the king's own and the watcher's.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-25",
       "kind": "run",
       "name": "The Alcove",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-06",
-      "notes": "Become King + Boulder (untouchable engineer) — the first run built on that pair. SIGNATURE: the king stands in a one-square-wide stone alcove on an edge file where every orthogonal line in and out is sealed; a stump SENTRY pawn covers the DOORSTEP beneath him (the only square that attacks him), one diagonal-up CORNER is bricked at build time and the other is his single flight square, unreachable forever. From L6 a SILL closes the doorstep's file, so no rook line in the game reaches it and the only way on is a diagonal step from a launch square. FINALE LINE: reach a launch square, then in one turn cast Become King (free), drop a stone on the corner (free), and step onto the doorstep — he cannot run, the sentry bounces off her royal hide, she reverts to a rook on the doorstep and slides onto him. SERIAL NUMBERS OF RECORD (Normal, T5 bot, kit at T1, jobs=1, 32 trials, L7-L10): no-ability 0/0/0/0, become-king alone 0/0/0/0, boulder alone 0/0/0/0, aegis 0/0/0/0, magnet 0/0/0/0, the PAIR 91/97/81/81. Mid-run single-card keys all clear at 100% with the right card (L3+L4 aegis, L5 boulder, L6 become-king). FULL RUNS: 14/40 = 35% with random picks from the kit (all deaths move-limit, arriving without the level's card), 16/40 = 40% with the pair-only pool — 13 of those 20 losses are on L4, whose key is aegis and which the pair-only pool cannot hold. TIER CAVEAT: the gate is exact at T1 and gone at T3 — become-king:4 alone reads 100% on all four finale levels, because two king moves let her take the corner diagonally from his vacated square; boulder:4 / aegis:4 / magnet:4 all still read 0%. Same family as the Colonnade's T4 Bishop Squire; pinning Become King's tier in this run would restore it."
+      "notes": "Become King + Boulder (untouchable engineer) \u2014 the first run built on that pair. SIGNATURE: the king stands in a one-square-wide stone alcove on an edge file where every orthogonal line in and out is sealed; a stump SENTRY pawn covers the DOORSTEP beneath him (the only square that attacks him), one diagonal-up CORNER is bricked at build time and the other is his single flight square, unreachable forever. From L6 a SILL closes the doorstep's file, so no rook line in the game reaches it and the only way on is a diagonal step from a launch square. FINALE LINE: reach a launch square, then in one turn cast Become King (free), drop a stone on the corner (free), and step onto the doorstep \u2014 he cannot run, the sentry bounces off her royal hide, she reverts to a rook on the doorstep and slides onto him. SERIAL NUMBERS OF RECORD (Normal, T5 bot, kit at T1, jobs=1, 32 trials, L7-L10): no-ability 0/0/0/0, become-king alone 0/0/0/0, boulder alone 0/0/0/0, aegis 0/0/0/0, magnet 0/0/0/0, the PAIR 91/97/81/81. Mid-run single-card keys all clear at 100% with the right card (L3+L4 aegis, L5 boulder, L6 become-king). FULL RUNS: 14/40 = 35% with random picks from the kit (all deaths move-limit, arriving without the level's card), 16/40 = 40% with the pair-only pool \u2014 13 of those 20 losses are on L4, whose key is aegis and which the pair-only pool cannot hold. TIER CAVEAT: the gate is exact at T1 and gone at T3 \u2014 become-king:4 alone reads 100% on all four finale levels, because two king moves let her take the corner diagonally from his vacated square; boulder:4 / aegis:4 / magnet:4 all still read 0%. Same family as the Colonnade's T4 Bishop Squire; pinning Become King's tier in this run would restore it.",
+      "approved": {
+        "at": "2026-09-09",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-09"
+      }
     },
     {
       "id": "revenge-26",
@@ -888,7 +1006,7 @@
       "name": "The Keep",
       "stage": "testing",
       "created": "2026-09-06",
-      "notes": "Signature pair BECOME KING + BOULDER (untouchable engineer) — NOTE: this pair collided with THE ALCOVE (revenge-25), which shipped from another session while this run was being measured, so this one is registered as an IDEA and deliberately NOT pushed to the playtest page; Tyler's call whether a second run on the same pair is wanted. Constant signature: the king's room is a RING of squares around a stone PILLAR, sealed by a stone lip with one gap, and from L5 on that gap is DIAGONAL — its whole rank and file are stone, so no rook move in the game can end on it and only a king steps in — with his last pawn, walled on its own rank and file so nothing can ever capture it, covering the doorway. Finale line: stone the two ring squares behind him (the two the king-arc cannot reach), cast Become King, step diagonally into the doorway, let the pawn's reply bounce off, and take him with the rook the crown turns back into. Serial numbers of record (Normal, jobs=1, 32 trials, L7-L10): 0% for no-ability AND 0% for every single kit card (become-king, boulder, aegis, magnet), pair 84/84/91/78%. No tier caveat — at become-king:5 / boulder:5 / aegis:5 / magnet:5 every single card still reads 0% on all four levels, the first Revenge finale that is not tier-fragile, because the gate is a square a rook cannot reach rather than a count of stones or turns. Full runs: 10/40 = 25% random picks (first combo run inside the Moat's 10-25% band; attrition is mid-run at L3/L4/L5) and 20/40 = 50% with the pair pool. Mid-run keys: L3/L6 Boulder, L4 Aegis, L5 Become King, Magnet the pure trap. MISSES the two rubric lines Tyler added 2026-09-06: the pair reads above the new 60-80% band on three of four levels, and L7-L10 are one line four times."
+      "notes": "Signature pair BECOME KING + BOULDER (untouchable engineer) \u2014 NOTE: this pair collided with THE ALCOVE (revenge-25), which shipped from another session while this run was being measured, so this one is registered as an IDEA and deliberately NOT pushed to the playtest page; Tyler's call whether a second run on the same pair is wanted. Constant signature: the king's room is a RING of squares around a stone PILLAR, sealed by a stone lip with one gap, and from L5 on that gap is DIAGONAL \u2014 its whole rank and file are stone, so no rook move in the game can end on it and only a king steps in \u2014 with his last pawn, walled on its own rank and file so nothing can ever capture it, covering the doorway. Finale line: stone the two ring squares behind him (the two the king-arc cannot reach), cast Become King, step diagonally into the doorway, let the pawn's reply bounce off, and take him with the rook the crown turns back into. Serial numbers of record (Normal, jobs=1, 32 trials, L7-L10): 0% for no-ability AND 0% for every single kit card (become-king, boulder, aegis, magnet), pair 84/84/91/78%. No tier caveat \u2014 at become-king:5 / boulder:5 / aegis:5 / magnet:5 every single card still reads 0% on all four levels, the first Revenge finale that is not tier-fragile, because the gate is a square a rook cannot reach rather than a count of stones or turns. Full runs: 10/40 = 25% random picks (first combo run inside the Moat's 10-25% band; attrition is mid-run at L3/L4/L5) and 20/40 = 50% with the pair pool. Mid-run keys: L3/L6 Boulder, L4 Aegis, L5 Become King, Magnet the pure trap. MISSES the two rubric lines Tyler added 2026-09-06: the pair reads above the new 60-80% band on three of four levels, and L7-L10 are one line four times."
     },
     {
       "id": "snare",
@@ -944,7 +1062,7 @@
       "name": "The Candle",
       "stage": "idea",
       "created": "2026-09-06",
-      "notes": "Hourglass + poison-dart combo run (let the fuse burn). Signature: a stone gallery over ranks 7-8 with a 2x2 turret and ONE stair, a bishop bricked into a niche as the only remote stun, and a procession of pawns as the visible clock. GATE 3-OF-4 at L7-L10 (T1, Normal, 32 trials): no-ability 0/0/0/3, hourglass alone 0 at EVERY tier, magnet 0 at every tier, aegis 0 at every tier, pair 63/69/78/69. MISS: poison-dart alone reads 78/75/13/78 — structural, not tuning: a glass-turn and an idle move produce the same enemy phases (the glass only saves one MOVE), MOVE_LIMIT_FLOOR=6 forbids the moveLimit 5 a one-move gate needs, and the dart has no line of sight or timing limit so the fuse can always be synced to the walk. Full runs 15% random / 10% pair-only."
+      "notes": "Hourglass + poison-dart combo run (let the fuse burn). Signature: a stone gallery over ranks 7-8 with a 2x2 turret and ONE stair, a bishop bricked into a niche as the only remote stun, and a procession of pawns as the visible clock. GATE 3-OF-4 at L7-L10 (T1, Normal, 32 trials): no-ability 0/0/0/3, hourglass alone 0 at EVERY tier, magnet 0 at every tier, aegis 0 at every tier, pair 63/69/78/69. MISS: poison-dart alone reads 78/75/13/78 \u2014 structural, not tuning: a glass-turn and an idle move produce the same enemy phases (the glass only saves one MOVE), MOVE_LIMIT_FLOOR=6 forbids the moveLimit 5 a one-move gate needs, and the dart has no line of sight or timing limit so the fuse can always be synced to the walk. Full runs 15% random / 10% pair-only."
     },
     {
       "id": "revenge-30",
@@ -952,7 +1070,7 @@
       "name": "The Squint",
       "stage": "testing",
       "created": "2026-09-06",
-      "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Signature = a blind cell whose throne is sealed on rank, file AND diagonal, with one diagonal DOORSTEP and one long squint-diagonal that reaches the post and never the throne. Kit coup/duchess/aegis/magnet. Finale gate MET at T1: L7-L10 none 0%, every single kit card 0%, pair 94/91/91/94 (32 trials). abilityTierCaps { coup: 2, duchess: 3 } — coup:3 solos the finale 100% (any guard within 2, plus a second charge, lets him be hopped across the board via wandering hunters); duchess:4 reads 31/31/28/56. Four different finale decisions: the line / which guard / the shuttered lane / the throne given back. HONEST MISS: pair is 91-94%, not 60-80 — the pair's line is 2-3 moves from any start and a perfect-information bot does not misstep a walk; every knob measured (clock does nothing, punishers are a cliff at 3-13%). Full runs 10% random, 70% pair-pool. Coup is at TESTING so this run is playtest-only."
+      "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Signature = a blind cell whose throne is sealed on rank, file AND diagonal, with one diagonal DOORSTEP and one long squint-diagonal that reaches the post and never the throne. Kit coup/duchess/aegis/magnet. Finale gate MET at T1: L7-L10 none 0%, every single kit card 0%, pair 94/91/91/94 (32 trials). abilityTierCaps { coup: 2, duchess: 3 } \u2014 coup:3 solos the finale 100% (any guard within 2, plus a second charge, lets him be hopped across the board via wandering hunters); duchess:4 reads 31/31/28/56. Four different finale decisions: the line / which guard / the shuttered lane / the throne given back. HONEST MISS: pair is 91-94%, not 60-80 \u2014 the pair's line is 2-3 moves from any start and a perfect-information bot does not misstep a walk; every knob measured (clock does nothing, punishers are a cliff at 3-13%). Full runs 10% random, 70% pair-pool. Coup is at TESTING so this run is playtest-only."
     },
     {
       "id": "revenge-31",
@@ -984,7 +1102,7 @@
       "name": "The Dogleg",
       "stage": "testing",
       "created": "2026-09-07",
-      "notes": "Combo run for the signature pair TWIN + REWIND ('insurance on a one-charge body'; the pair the discovery harness proved could gate, data/run-playtest/combo-library/rewind+twin). VERB: spend a body where nothing survives, then take the killing back — the only run in the catalogue whose answer is an UNDO. SIGNATURE: an L-shaped stone wall seals the king's corridor with no gap at all — every orthogonal boundary square is wall — so no rook, bishop or queen ray, no pawn and no walk ever enters it. The one way in is the NOOK: a corridor square whose only free neighbour outside is DIAGONAL, the outside corner of the dogleg. A line cannot turn that corner; a body BORN there is already inside. Inside, the single square that attacks the king (the POST) is covered by a jammed knight, so any rook standing on it dies — which is why the answer is a body you can get back. FOUR FINALE LINES, four different jobs for the body: L7 die on the post (one slide, seven moves); L8 buy the post (it is occupied by a knotted bishop, so the body's one move must be a CAPTURE); L9 wait first (the king is a rank lower, so the top of the shaft is a waiting room and the body must turn the corner and survive a phase before taking the post); L10 both, on the longest walk, mirrored, four body-moves against a four-turn leash. SERIAL NUMBERS (32 trials, jobs=1, Normal): none 0/0/0/0, twin 0/0/0/0, rewind 0/0/0/0, magnet 0/0/0/0, poison-dart 0/0/0/0, twin+rewind 69/78/63/63 — gate MET, inside the 60-80% band. Every other kit pair 0-9%. FULL RUNS (40 each): random offer picks 0/40, pool pinned to the pair 5/40 = 13%. TIER CAVEAT: abilityTierCaps twin:2. Twin T3 is the second charge and it breaks L7/L8 (75%/66% alone) because the first body can trade itself for the executioner; L9 and L10 are gated at every twin tier because their executioners sit in pockets no body can reach."
+      "notes": "Combo run for the signature pair TWIN + REWIND ('insurance on a one-charge body'; the pair the discovery harness proved could gate, data/run-playtest/combo-library/rewind+twin). VERB: spend a body where nothing survives, then take the killing back \u2014 the only run in the catalogue whose answer is an UNDO. SIGNATURE: an L-shaped stone wall seals the king's corridor with no gap at all \u2014 every orthogonal boundary square is wall \u2014 so no rook, bishop or queen ray, no pawn and no walk ever enters it. The one way in is the NOOK: a corridor square whose only free neighbour outside is DIAGONAL, the outside corner of the dogleg. A line cannot turn that corner; a body BORN there is already inside. Inside, the single square that attacks the king (the POST) is covered by a jammed knight, so any rook standing on it dies \u2014 which is why the answer is a body you can get back. FOUR FINALE LINES, four different jobs for the body: L7 die on the post (one slide, seven moves); L8 buy the post (it is occupied by a knotted bishop, so the body's one move must be a CAPTURE); L9 wait first (the king is a rank lower, so the top of the shaft is a waiting room and the body must turn the corner and survive a phase before taking the post); L10 both, on the longest walk, mirrored, four body-moves against a four-turn leash. SERIAL NUMBERS (32 trials, jobs=1, Normal): none 0/0/0/0, twin 0/0/0/0, rewind 0/0/0/0, magnet 0/0/0/0, poison-dart 0/0/0/0, twin+rewind 69/78/63/63 \u2014 gate MET, inside the 60-80% band. Every other kit pair 0-9%. FULL RUNS (40 each): random offer picks 0/40, pool pinned to the pair 5/40 = 13%. TIER CAVEAT: abilityTierCaps twin:2. Twin T3 is the second charge and it breaks L7/L8 (75%/66% alone) because the first body can trade itself for the executioner; L9 and L10 are gated at every twin tier because their executioners sit in pockets no body can reach."
     },
     {
       "id": "revenge-35",
@@ -1000,7 +1118,7 @@
       "name": "The Turnstile",
       "stage": "testing",
       "created": "2026-09-07",
-      "notes": "Concept type (A): the unbuilt harness-proven pair QUEEN PULSE + SMOKE, verb 'make him stop running, then arrive on a line no rook can walk'. Kit = queen-pulse / smoke / aegis / magnet, all four LIVE. SIGNATURE — THE TURNSTILE: on every level his 2x2 court is walled into the NE corner with exactly one door (g6) and one stone POST set directly outside it (g5), so no rank and no file passes through the doorway and only a 45-degree move can enter; L1/L2/L6 remove the post to prove that getting in was never the problem. FOUR FINALE LINES, all different: L7 two roads (h5 stops at the door and the cover is spent two moves later on g8; f5 runs the diagonal straight to h7 and both cards go down together); L8 the door IS the line (king on g8, so smoke must ride the crossing turn or the level is lost); L9 the post MOVES to the west wall (door f7, post e7, approach along the flank); L10 the kill square is INSIDE the pen (king on h7, only g7 and h8 hold him, two enemies a turn). SERIAL NUMBERS OF RECORD (32 trials, jobs=1, normal): no-ability 0/0/0/0, queen-pulse alone 0/0/0/0, smoke alone 0/0/0/0, aegis 0/0/0/0, magnet 0/0/0/0, the pair 72/63/72/72 — inside the 60-80 band. Mid ladder: L1-L2 free with no ability, L3-L6 all 0% bare with queen-pulse 100 on L3-L6, aegis 100 on L4-L5 and smoke 100 on L6. FULL RUNS (40): 10% random picks, 40% with pool=queen-pulse,smoke. TIER CAVEAT: queen-pulse breaks the gate at T2 (100/0/100/59) because a second queen move covers a whole 2x2 from inside it, so abilityTierCaps pins it at T1; smoke, aegis and magnet all read 0% at their ceilings; tier-cap-audit passes with 0 violations. Known soft spot, reported not chased: the 10% random-pick rate is an offer-preference artefact — L3 is gated on queen-pulse specifically and the bot took it 11 times in 40 runs against 43/32/31 for the other three cards."
+      "notes": "Concept type (A): the unbuilt harness-proven pair QUEEN PULSE + SMOKE, verb 'make him stop running, then arrive on a line no rook can walk'. Kit = queen-pulse / smoke / aegis / magnet, all four LIVE. SIGNATURE \u2014 THE TURNSTILE: on every level his 2x2 court is walled into the NE corner with exactly one door (g6) and one stone POST set directly outside it (g5), so no rank and no file passes through the doorway and only a 45-degree move can enter; L1/L2/L6 remove the post to prove that getting in was never the problem. FOUR FINALE LINES, all different: L7 two roads (h5 stops at the door and the cover is spent two moves later on g8; f5 runs the diagonal straight to h7 and both cards go down together); L8 the door IS the line (king on g8, so smoke must ride the crossing turn or the level is lost); L9 the post MOVES to the west wall (door f7, post e7, approach along the flank); L10 the kill square is INSIDE the pen (king on h7, only g7 and h8 hold him, two enemies a turn). SERIAL NUMBERS OF RECORD (32 trials, jobs=1, normal): no-ability 0/0/0/0, queen-pulse alone 0/0/0/0, smoke alone 0/0/0/0, aegis 0/0/0/0, magnet 0/0/0/0, the pair 72/63/72/72 \u2014 inside the 60-80 band. Mid ladder: L1-L2 free with no ability, L3-L6 all 0% bare with queen-pulse 100 on L3-L6, aegis 100 on L4-L5 and smoke 100 on L6. FULL RUNS (40): 10% random picks, 40% with pool=queen-pulse,smoke. TIER CAVEAT: queen-pulse breaks the gate at T2 (100/0/100/59) because a second queen move covers a whole 2x2 from inside it, so abilityTierCaps pins it at T1; smoke, aegis and magnet all read 0% at their ceilings; tier-cap-audit passes with 0 violations. Known soft spot, reported not chased: the 10% random-pick rate is an offer-preference artefact \u2014 L3 is gated on queen-pulse specifically and the bot took it 11 times in 40 runs against 43/32/31 for the other three cards."
     },
     {
       "id": "revenge-37",
@@ -1008,7 +1126,7 @@
       "name": "The Perch",
       "stage": "idea",
       "created": "2026-09-07",
-      "notes": "MISS — does not gate; add only, not built. Signature pair magnet + bishop-step (new-lines-for-line-tools), the first shipped kit ever to contain bishop-step, the last LIVE card with no home. Verb: move a guard you can never reach. Constant signature THE PERCHES — a single free square whose orthogonal neighbours are all stone, so no rook, no marching pawn and no rook-form Magnet can ever touch what stands there; a black pawn perched there cannot advance and covers exactly two squares, one of which is the door. Finale: a one-square throne bricked on all four diagonals, a doorman on its doorstep whose fourth wall is the king's own body, and a backstop pawn perched behind covering the doorstep. Four finale lines as designed: L7 reel the doorman one square onto the door and take him there; L8 the same lock mirrored so the launch moves f5 to c5; L9 L7 with two hunters and a move less; L10 the mirror with two hunters, enemiesPerTurn 2 and ten moves — none validated. Serial numbers of record (32 trials, jobs=1, normal): L7-L10 none 0/0/0/0, bishop-step 0/0/0/0, magnet 0/0/0/0, rewind 0/0/0/0, decoy 0/0/0/0, pair 0/0/0/0. Full runs 40: random picks 18% clears (finale 76/92/67/88), pool=bishop-step,magnet 95% clears (finale 100/98/100/97). TIER CAVEAT and the reason for the miss: there is no tier at which the pair is both findable and necessary. Bishop-step T1 needs a three-action turn (transform, pull, move) and the bot never chains three, so the pair reads 0%; at T2 the transform lasts two moves, the pull becomes unnecessary and bishop-step SOLOS the finale at 25/41/9/50; at T5 it is 0/0/0/0 again because a permanent bishop can never take a diagonal-proofed king. Magnet is 0% at every tier including T5 with no cap, denied structurally by the perch. Capping bishop-step at 1 would restore the gate and make the run unwinnable, so no cap is shipped. Corollary in DEAD ENDS: any pair where one card changes what the other card can target is a three-action turn and is unmeasurable by this harness — the whole new-lines-for-line-tools archetype (magnet+bishop-step, magnet+queen-pulse) should be struck from pair-hypotheses.json or the harness chaining deepened. L3/L4/L6 also miss (100% no-ability): a defended cork chain ends somewhere and a bare rook eats it from the tail. L5 is the one clean single-card gate in the run: 0% none, 100% bishop-step, 0% every other card."
+      "notes": "MISS \u2014 does not gate; add only, not built. Signature pair magnet + bishop-step (new-lines-for-line-tools), the first shipped kit ever to contain bishop-step, the last LIVE card with no home. Verb: move a guard you can never reach. Constant signature THE PERCHES \u2014 a single free square whose orthogonal neighbours are all stone, so no rook, no marching pawn and no rook-form Magnet can ever touch what stands there; a black pawn perched there cannot advance and covers exactly two squares, one of which is the door. Finale: a one-square throne bricked on all four diagonals, a doorman on its doorstep whose fourth wall is the king's own body, and a backstop pawn perched behind covering the doorstep. Four finale lines as designed: L7 reel the doorman one square onto the door and take him there; L8 the same lock mirrored so the launch moves f5 to c5; L9 L7 with two hunters and a move less; L10 the mirror with two hunters, enemiesPerTurn 2 and ten moves \u2014 none validated. Serial numbers of record (32 trials, jobs=1, normal): L7-L10 none 0/0/0/0, bishop-step 0/0/0/0, magnet 0/0/0/0, rewind 0/0/0/0, decoy 0/0/0/0, pair 0/0/0/0. Full runs 40: random picks 18% clears (finale 76/92/67/88), pool=bishop-step,magnet 95% clears (finale 100/98/100/97). TIER CAVEAT and the reason for the miss: there is no tier at which the pair is both findable and necessary. Bishop-step T1 needs a three-action turn (transform, pull, move) and the bot never chains three, so the pair reads 0%; at T2 the transform lasts two moves, the pull becomes unnecessary and bishop-step SOLOS the finale at 25/41/9/50; at T5 it is 0/0/0/0 again because a permanent bishop can never take a diagonal-proofed king. Magnet is 0% at every tier including T5 with no cap, denied structurally by the perch. Capping bishop-step at 1 would restore the gate and make the run unwinnable, so no cap is shipped. Corollary in DEAD ENDS: any pair where one card changes what the other card can target is a three-action turn and is unmeasurable by this harness \u2014 the whole new-lines-for-line-tools archetype (magnet+bishop-step, magnet+queen-pulse) should be struck from pair-hypotheses.json or the harness chaining deepened. L3/L4/L6 also miss (100% no-ability): a defended cork chain ends somewhere and a bare rook eats it from the tail. L5 is the one clean single-card gate in the run: 0% none, 100% bishop-step, 0% every other card."
     },
     {
       "id": "gauntlet",
@@ -1016,7 +1134,7 @@
       "name": "Gauntlet",
       "stage": "testing",
       "created": "2026-09-07",
-      "notes": "The catalogue's first LURE. A free instant with no target: throw down the gauntlet and for 2 enemy turns (3/3/4/5 by tier) the king ANSWERS — at the top of each enemy phase, instead of standing still, he takes one step toward Rookie. His pen does not hold an answering king, and the first step out of it drops the pen for the rest of the level, so the room you could never enter is also the room that kept him cornerable. He is proud, not suicidal: he refuses any square Rookie's current form attacks, exactly as a flee does, and he still flees first whenever he is threatened — so a rook sitting on his corridor simply closes it. The refusal is a SIGHT check, which is where the card's pair lives: under Smoke the court cannot see Rookie at all, so an answering king walks straight down her file into her rook. Every other card that touches the king takes a square from him, holds him, shoves him one square or lies about where she is; this one changes what he wants."
+      "notes": "The catalogue's first LURE. A free instant with no target: throw down the gauntlet and for 2 enemy turns (3/3/4/5 by tier) the king ANSWERS \u2014 at the top of each enemy phase, instead of standing still, he takes one step toward Rookie. His pen does not hold an answering king, and the first step out of it drops the pen for the rest of the level, so the room you could never enter is also the room that kept him cornerable. He is proud, not suicidal: he refuses any square Rookie's current form attacks, exactly as a flee does, and he still flees first whenever he is threatened \u2014 so a rook sitting on his corridor simply closes it. The refusal is a SIGHT check, which is where the card's pair lives: under Smoke the court cannot see Rookie at all, so an answering king walks straight down her file into her rook. Every other card that touches the king takes a square from him, holds him, shoves him one square or lies about where she is; this one changes what he wants."
     },
     {
       "id": "revenge-38",
@@ -1024,7 +1142,7 @@
       "name": "The Pinch",
       "stage": "idea",
       "created": "2026-09-07",
-      "notes": "Signature pair GAUNTLET + SMOKE, verb LURE — the first run in the catalogue whose answer is that you never get in, you make him come out. Concept (C): GAUNTLET is a NEW ability added in the same commit (testing stage), the catalogue's first lure — a free no-target instant that makes the king ANSWER for 2 enemy phases (3/3/4/5 by tier), stepping one square toward Rookie, out of a pen that never holds him again; he refuses any square her current form attacks, which is a SIGHT check, so under Smoke he walks straight onto her line. SIGNATURE: THE PINCH — his corner quarter is closed by an L of stone whose only flaw is a place where an inside square and an outside square touch ONLY AT A CORNER; no rank, no file and no rook crosses a corner, a king does. Finale lines: L7 taunt first then cover on the phase he arrives; L8 the quarter mirrored so rank 6 is wall and the d-FILE is the only line, watched from below, cover before challenge; L9 his own pawn plugs the pinch square and taking it parks Rookie in the doorway, so the line is take, step back along the rank, then throw; L10 a stone shelf at c5-e5 puts the travel and the wait both under the watching queen on four moves. SERIAL NUMBERS OF RECORD (32 trials, jobs=1, normal): L7 none 0 / gauntlet 6 / smoke 0 / magnet 0 / aegis 0 / pair 72 PASS; L8 0/0/0/0/0 / pair 78 PASS; L9 0/13/0/0/0 / pair 66 singles MISS; L10 0/13/0/0/0 / pair 88 MISS both. THE GATE IS MET ON L7 AND L8 AND MISSED ON L9 AND L10 (the challenge alone reads 13% on both, five points over the 8% bar; L10's pair is eight points over the band). Full runs: random picks 15% (6/40), pair pool 43% (17/40) — the bottleneck is L4, not the finale. Ladder misses too: L4 locks on the challenge rather than the authored magnet, and L5 does not lock at all (88% bare); magnet and aegis are pure traps in this kit. TIER CAVEAT: only magnet is capped (4, on the rule that T5 magnet moves the king and would duplicate the signature verb); gauntlet and smoke were NOT swept tier by tier, so their caps are unmeasured — smoke:3 (a second cover, hence a second attempt at the one phase that must be right) is the likely break. add only; NOT marked built."
+      "notes": "Signature pair GAUNTLET + SMOKE, verb LURE \u2014 the first run in the catalogue whose answer is that you never get in, you make him come out. Concept (C): GAUNTLET is a NEW ability added in the same commit (testing stage), the catalogue's first lure \u2014 a free no-target instant that makes the king ANSWER for 2 enemy phases (3/3/4/5 by tier), stepping one square toward Rookie, out of a pen that never holds him again; he refuses any square her current form attacks, which is a SIGHT check, so under Smoke he walks straight onto her line. SIGNATURE: THE PINCH \u2014 his corner quarter is closed by an L of stone whose only flaw is a place where an inside square and an outside square touch ONLY AT A CORNER; no rank, no file and no rook crosses a corner, a king does. Finale lines: L7 taunt first then cover on the phase he arrives; L8 the quarter mirrored so rank 6 is wall and the d-FILE is the only line, watched from below, cover before challenge; L9 his own pawn plugs the pinch square and taking it parks Rookie in the doorway, so the line is take, step back along the rank, then throw; L10 a stone shelf at c5-e5 puts the travel and the wait both under the watching queen on four moves. SERIAL NUMBERS OF RECORD (32 trials, jobs=1, normal): L7 none 0 / gauntlet 6 / smoke 0 / magnet 0 / aegis 0 / pair 72 PASS; L8 0/0/0/0/0 / pair 78 PASS; L9 0/13/0/0/0 / pair 66 singles MISS; L10 0/13/0/0/0 / pair 88 MISS both. THE GATE IS MET ON L7 AND L8 AND MISSED ON L9 AND L10 (the challenge alone reads 13% on both, five points over the 8% bar; L10's pair is eight points over the band). Full runs: random picks 15% (6/40), pair pool 43% (17/40) \u2014 the bottleneck is L4, not the finale. Ladder misses too: L4 locks on the challenge rather than the authored magnet, and L5 does not lock at all (88% bare); magnet and aegis are pure traps in this kit. TIER CAVEAT: only magnet is capped (4, on the rule that T5 magnet moves the king and would duplicate the signature verb); gauntlet and smoke were NOT swept tier by tier, so their caps are unmeasured \u2014 smoke:3 (a second cover, hence a second attempt at the one phase that must be right) is the likely break. add only; NOT marked built."
     },
     {
       "id": "revenge-39",
@@ -1032,7 +1150,7 @@
       "name": "The Balcony",
       "stage": "idea",
       "created": "2026-09-07",
-      "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Rescued 2026-09-07 from an untracked orphan file (revenge-99.ts) left by a killed agent; renumbered and registered. SINGLES GATE CLEAN: none/coup/duchess/aegis/snare all 0% on L7-L10, 32 trials, Normal. PAIR 100/94/28/91 — three finale levels are ABOVE the 60-80 band and L9 is below it, so the run does not meet the combo gate yet and stays an idea. The clock is NOT the knob: L7 still reads 100% at 5 moves and L9 only 41% at 9 / 38% at 11, and enemiesPerTurn 2 on L8/L10 changed nothing (100/91). It needs a geometry pass on the finale, not tuning."
+      "notes": "Signature pair COUP + DUCHESS (his sentry on the throne, him on the doorstep). Rescued 2026-09-07 from an untracked orphan file (revenge-99.ts) left by a killed agent; renumbered and registered. SINGLES GATE CLEAN: none/coup/duchess/aegis/snare all 0% on L7-L10, 32 trials, Normal. PAIR 100/94/28/91 \u2014 three finale levels are ABOVE the 60-80 band and L9 is below it, so the run does not meet the combo gate yet and stays an idea. The clock is NOT the knob: L7 still reads 100% at 5 moves and L9 only 41% at 9 / 38% at 11, and enemiesPerTurn 2 on L8/L10 changed nothing (100/91). It needs a geometry pass on the finale, not tuning."
     },
     {
       "id": "revenge-40",
@@ -1040,7 +1158,7 @@
       "name": "The Cairn",
       "stage": "idea",
       "created": "2026-09-07",
-      "notes": "Signature pair SHOVE + MAGNET (pull the plug, roll the wall). Rescued 2026-09-07 from an untracked orphan file (revenge-cairn.ts) left by a killed agent; renumbered and registered. COMBO GATE NOT MET on either half, 32 trials, Normal, L7-L10: shove ALONE reads 31% on L7 and 6% on L9 (the singles bar is 8%), and the pair reads only 22/0/56/3 — L8 and L10 are unbeatable by the pair the run was built for. Registered with its numbers so the next author starts from measurement instead of the header's prose."
+      "notes": "Signature pair SHOVE + MAGNET (pull the plug, roll the wall). Rescued 2026-09-07 from an untracked orphan file (revenge-cairn.ts) left by a killed agent; renumbered and registered. COMBO GATE NOT MET on either half, 32 trials, Normal, L7-L10: shove ALONE reads 31% on L7 and 6% on L9 (the singles bar is 8%), and the pair reads only 22/0/56/3 \u2014 L8 and L10 are unbeatable by the pair the run was built for. Registered with its numbers so the next author starts from measurement instead of the header's prose."
     },
     {
       "id": "panic",
@@ -1048,7 +1166,7 @@
       "name": "Panic",
       "stage": "testing",
       "created": "2026-09-07",
-      "notes": "Instant, free action, one enemy phase. The catalogue's first ZUGZWANG card: for the next enemy phase the king may not end his turn on the square he started it on. He still picks the best square he can see — unattacked by Rookie's current form, uncovered by her rainbow allies, farthest from her, exactly the flee's own safety test — and his pen still holds him, so a panic never opens his room. What it removes is the option every other king-card leaves him: STANDING STILL. A king who is not threatened normally never moves at all, so a throne no rook line reaches is a square he owns forever. Panic makes that square cost him a step, and if every step left to him is covered he takes the least-bad one anyway. The card is therefore only ever as good as the work done before it is thrown: fill or cover his safe steps first and it is a kill, throw it into a room with a spare square and you pushed him one square sideways for nothing. Tiers are quantity only (1/1/2/2/3 uses) — a duration ladder on a card that forces a step would be a second forced step, the classic gate-breaker."
+      "notes": "Instant, free action, one enemy phase. The catalogue's first ZUGZWANG card: for the next enemy phase the king may not end his turn on the square he started it on. He still picks the best square he can see \u2014 unattacked by Rookie's current form, uncovered by her rainbow allies, farthest from her, exactly the flee's own safety test \u2014 and his pen still holds him, so a panic never opens his room. What it removes is the option every other king-card leaves him: STANDING STILL. A king who is not threatened normally never moves at all, so a throne no rook line reaches is a square he owns forever. Panic makes that square cost him a step, and if every step left to him is covered he takes the least-bad one anyway. The card is therefore only ever as good as the work done before it is thrown: fill or cover his safe steps first and it is a kill, throw it into a room with a spare square and you pushed him one square sideways for nothing. Tiers are quantity only (1/1/2/2/3 uses) \u2014 a duration ladder on a card that forces a step would be a second forced step, the classic gate-breaker."
     },
     {
       "id": "revenge-41",
@@ -1056,7 +1174,7 @@
       "name": "The Niche",
       "stage": "testing",
       "created": "2026-09-07",
-      "notes": "Concept type (C): a NEW ability, PANIC (Instant, Royal, testing stage), paired with PAGE. VERB: zugzwang — the catalogue's first card that takes away STANDING STILL. Signature: THE NICHE, one square whose four orthogonal neighbours are stone and whose two lower diagonals are stone too, so no rank, file or pawn-diagonal in the game ever touches the king, and a FLEE king who is never threatened never moves; his room is the niche plus its two upper diagonals, the doors. L1-L2 the west wall is missing and rank 3 runs in. L3-L5 the mouth is open but a sealed door above lets him step out of reach: freeze-ray pins him, or a Page fills the doorway first. L6 the mouth is bricked and PANIC alone walks him onto her file. L7-L10 combo-gated. The four finale lines differ: L7 THE VACANT ROOM (stand in the open door, throw, then put the Page in the room he just left, where a pawn covers both doors and takes him in the far one); L8 THE LONG WAY ROUND (the seal has swapped sides, so the door in front of her is the one she can never enter and the one she must stand in is past his room); L9 THE QUIET TURN (his own jammed pawn holds the open door, and taking it stuns him, and a stunned king cannot panic, so the throw must wait a turn); L10 THE DOORWAY IS NOT SAFE (L9 plus a hunter that can reach the doorway, two enemies a turn). Serial numbers of record, 32 trials, jobs=1, Normal: L7-L10 none 0/0/0/0, panic 0/0/0/0, page 0/0/0/0, magnet 0/0/0/0, freeze-ray 0/0/0/0, panic+page 78/72/97/59. Gate MET (L10 at 59 is one point under 60, inside 32-trial noise; L9 at 97 is above the 60-80 band and is the run's one honest miss — the clock is not the knob there and every hunter tried broke the level instead of tightening it). Full runs, 40 each: random picks 13% full clears (the first combo run to meet the Moat's 10-25% target), pool=panic,page 48%. TIER CAVEAT: page holds at T1-T4 (0% on every finale) and BREAKS at T5 (47/41/100/100), so abilityTierCaps page:4; panic reads 0% alone at every tier and needs no cap, which is the payoff of giving it a quantity-only ladder. Panic is TESTING, so this run is playtest-only."
+      "notes": "Concept type (C): a NEW ability, PANIC (Instant, Royal, testing stage), paired with PAGE. VERB: zugzwang \u2014 the catalogue's first card that takes away STANDING STILL. Signature: THE NICHE, one square whose four orthogonal neighbours are stone and whose two lower diagonals are stone too, so no rank, file or pawn-diagonal in the game ever touches the king, and a FLEE king who is never threatened never moves; his room is the niche plus its two upper diagonals, the doors. L1-L2 the west wall is missing and rank 3 runs in. L3-L5 the mouth is open but a sealed door above lets him step out of reach: freeze-ray pins him, or a Page fills the doorway first. L6 the mouth is bricked and PANIC alone walks him onto her file. L7-L10 combo-gated. The four finale lines differ: L7 THE VACANT ROOM (stand in the open door, throw, then put the Page in the room he just left, where a pawn covers both doors and takes him in the far one); L8 THE LONG WAY ROUND (the seal has swapped sides, so the door in front of her is the one she can never enter and the one she must stand in is past his room); L9 THE QUIET TURN (his own jammed pawn holds the open door, and taking it stuns him, and a stunned king cannot panic, so the throw must wait a turn); L10 THE DOORWAY IS NOT SAFE (L9 plus a hunter that can reach the doorway, two enemies a turn). Serial numbers of record, 32 trials, jobs=1, Normal: L7-L10 none 0/0/0/0, panic 0/0/0/0, page 0/0/0/0, magnet 0/0/0/0, freeze-ray 0/0/0/0, panic+page 78/72/97/59. Gate MET (L10 at 59 is one point under 60, inside 32-trial noise; L9 at 97 is above the 60-80 band and is the run's one honest miss \u2014 the clock is not the knob there and every hunter tried broke the level instead of tightening it). Full runs, 40 each: random picks 13% full clears (the first combo run to meet the Moat's 10-25% target), pool=panic,page 48%. TIER CAVEAT: page holds at T1-T4 (0% on every finale) and BREAKS at T5 (47/41/100/100), so abilityTierCaps page:4; panic reads 0% alone at every tier and needs no cap, which is the payoff of giving it a quantity-only ladder. Panic is TESTING, so this run is playtest-only."
     },
     {
       "id": "chequer",
@@ -1064,7 +1182,7 @@
       "name": "Chequer",
       "stage": "testing",
       "created": "2026-09-08",
-      "notes": "The catalogue's first card that takes away a DIRECTION. Instant, free action, one enemy phase: the king may not set foot on a square of his own colour, so all four diagonal steps are illegal and for that phase he moves like a rook. A king's four diagonal neighbours are always his own colour and his four orthogonal neighbours are always the other one, so a chequer does not shrink his room by a random half — it hands him a flight set that is entirely ONE COLOUR, which one light-squared body can cover all at once and which a light-squared body can never use to reach a king standing on dark. That geometric fact is the card's whole reason to have a partner: alone it leaves him four squares and is worth one sidestep. It never compels a step (that is Panic) and never prevents one (that is Freeze); walled in with all four orthogonals gone he simply stands. Tiers are QUANTITY ONLY (1/1/2/2/3 uses) — a duration ladder would be a second sealed enemy phase and the classic gate-breaker."
+      "notes": "The catalogue's first card that takes away a DIRECTION. Instant, free action, one enemy phase: the king may not set foot on a square of his own colour, so all four diagonal steps are illegal and for that phase he moves like a rook. A king's four diagonal neighbours are always his own colour and his four orthogonal neighbours are always the other one, so a chequer does not shrink his room by a random half \u2014 it hands him a flight set that is entirely ONE COLOUR, which one light-squared body can cover all at once and which a light-squared body can never use to reach a king standing on dark. That geometric fact is the card's whole reason to have a partner: alone it leaves him four squares and is worth one sidestep. It never compels a step (that is Panic) and never prevents one (that is Freeze); walled in with all four orthogonals gone he simply stands. Tiers are QUANTITY ONLY (1/1/2/2/3 uses) \u2014 a duration ladder would be a second sealed enemy phase and the classic gate-breaker."
     },
     {
       "id": "revenge-42",
@@ -1072,7 +1190,7 @@
       "name": "The Inlay",
       "stage": "idea",
       "created": "2026-09-08",
-      "notes": "CONCEPT (C): a NEW ABILITY, CHEQUER — the catalogue's first card that takes away a DIRECTION. Instant, free, one enemy phase: the king may not set foot on a square of his own colour, so every diagonal step is illegal and he moves like a rook. Exact geometry: his four diagonal neighbours are always his own colour and his four orthogonal ones always the other, so a chequer hands him a flight set that is entirely ONE COLOUR and one body of that colour covers all of it. SIGNATURE (The Inlay): a six-square panel inlaid into the back rank (c7-e8) with the king always on the dark middle square d8, two one-square shafts (c-file, e-file) that never meet except on rank 1, one of them capped from L3 on, and behind each finale a dark BOLT-HOLE staircase running out of one dark door into squares no rook line reaches — take that door once and the level is gone. FOUR FINALE LINES, all different: L7 the hinge (Page below on c6, slide c7-c8); L8 the blade (c8/e8/d7 stone, no rook line reaches him, so the Page on a DARK c7 does the killing and Rookie never threatens); L9 the wrong corner (east approach, the body goes to e6, the square she has just left); L10 one shot (far shaft, back door through b7-b6-a5). NUMBERS OF RECORD, 32 trials, jobs=1, normal, L7-L10: none 0/0/0/0; chequer 0/0/72/25; page 66/100/41/75; aegis 0/0/0/0; magnet 0/0/6/0; chequer+page 56/88/47/63. Mid-run 32 trials: L3 chequer-only key (0/47/0/0/0), L4 page-only key (0/0/100/0/0), L5 page 97 magnet 31, L6 100% for every loadout including none. Full runs: 0/40 full clears with random picks (the ladder dies at L3, 28% clear, 23 dead-ends), 2/40 with pool=chequer,page. TIER: chequer:5 reads 0/0/69/28, identical to T1 — the uses-only ladder is tier-proof and needs no abilityTierCaps; page:4 reads 50/94/38/66, no worse than T1. THE GATE IS MISSED and the run stays at idea (NOT built, not on the playtest page). The miss is one engine fact: a summon dropped diagonally below the king CAPTURES HIM THE SAME TURN, because the spawn is a free action and the body-move is the turn, so summon-then-strike resolves before the enemy phase and he never gets his flee (traced on L8: Page spawns c7, moves c7xd8, won, four moves, no Chequer). Convert has a DAZE for exactly this reason; the summon family does not. Bishop Squire, the original partner, read 100% ALONE on all ten levels for the same reason and was swapped for Page (a pawn cannot chase). Page still reads 41-100%. What DID work and is worth reusing: the bolt-hole (it took no-ability from 0/56/0/75 to 0/0/0/0 and aegis and magnet to 0% across all four finales), and the card itself, which reads 0% alone on L7 and L8 at both T1 and T5 and never solos a level it is not the key of. THE FIX FOR THE NEXT BUILD, written in the header: put the king on rank 6 or 7 and stone his LOWER diagonals, so his dark doors are his UPPER ones — a pawn can never capture upward-backward, so a body dropped there covers his escapes without ever being able to kill him."
+      "notes": "CONCEPT (C): a NEW ABILITY, CHEQUER \u2014 the catalogue's first card that takes away a DIRECTION. Instant, free, one enemy phase: the king may not set foot on a square of his own colour, so every diagonal step is illegal and he moves like a rook. Exact geometry: his four diagonal neighbours are always his own colour and his four orthogonal ones always the other, so a chequer hands him a flight set that is entirely ONE COLOUR and one body of that colour covers all of it. SIGNATURE (The Inlay): a six-square panel inlaid into the back rank (c7-e8) with the king always on the dark middle square d8, two one-square shafts (c-file, e-file) that never meet except on rank 1, one of them capped from L3 on, and behind each finale a dark BOLT-HOLE staircase running out of one dark door into squares no rook line reaches \u2014 take that door once and the level is gone. FOUR FINALE LINES, all different: L7 the hinge (Page below on c6, slide c7-c8); L8 the blade (c8/e8/d7 stone, no rook line reaches him, so the Page on a DARK c7 does the killing and Rookie never threatens); L9 the wrong corner (east approach, the body goes to e6, the square she has just left); L10 one shot (far shaft, back door through b7-b6-a5). NUMBERS OF RECORD, 32 trials, jobs=1, normal, L7-L10: none 0/0/0/0; chequer 0/0/72/25; page 66/100/41/75; aegis 0/0/0/0; magnet 0/0/6/0; chequer+page 56/88/47/63. Mid-run 32 trials: L3 chequer-only key (0/47/0/0/0), L4 page-only key (0/0/100/0/0), L5 page 97 magnet 31, L6 100% for every loadout including none. Full runs: 0/40 full clears with random picks (the ladder dies at L3, 28% clear, 23 dead-ends), 2/40 with pool=chequer,page. TIER: chequer:5 reads 0/0/69/28, identical to T1 \u2014 the uses-only ladder is tier-proof and needs no abilityTierCaps; page:4 reads 50/94/38/66, no worse than T1. THE GATE IS MISSED and the run stays at idea (NOT built, not on the playtest page). The miss is one engine fact: a summon dropped diagonally below the king CAPTURES HIM THE SAME TURN, because the spawn is a free action and the body-move is the turn, so summon-then-strike resolves before the enemy phase and he never gets his flee (traced on L8: Page spawns c7, moves c7xd8, won, four moves, no Chequer). Convert has a DAZE for exactly this reason; the summon family does not. Bishop Squire, the original partner, read 100% ALONE on all ten levels for the same reason and was swapped for Page (a pawn cannot chase). Page still reads 41-100%. What DID work and is worth reusing: the bolt-hole (it took no-ability from 0/56/0/75 to 0/0/0/0 and aegis and magnet to 0% across all four finales), and the card itself, which reads 0% alone on L7 and L8 at both T1 and T5 and never solos a level it is not the key of. THE FIX FOR THE NEXT BUILD, written in the header: put the king on rank 6 or 7 and stone his LOWER diagonals, so his dark doors are his UPPER ones \u2014 a pawn can never capture upward-backward, so a body dropped there covers his escapes without ever being able to kill him."
     },
     {
       "id": "revenge-43",
@@ -1080,7 +1198,7 @@
       "name": "The Loophole",
       "stage": "idea",
       "created": "2026-09-08",
-      "notes": "CONCEPT (A): the unbuilt harness-proven pair DRAGON + FREEZE RAY, verb 'put a body in a hole nothing can walk to and buy the one enemy phase it has to live through'. SIGNATURE: ranks 5-8 are one solid mass of stone with three or four squares bored out of it — his cell (e7+e8, sealed against every rank, file and diagonal, and Rookie can never stand in it), one HOLE a knight's move from the square he is standing on, and a notched floor that leaves the Dragon born beside Rookie almost nowhere to fly but the hole. The Dragon (T1: one charge, TWO turns of life, born in Rookie's own 8-neighbourhood, queen+knight moves) is the only body that can enter a square with eight stone neighbours; the Freeze (no line needed, two enemy phases on a king, one on anyone else) buys the single phase between arriving and striking. FOUR FINALE LINES, four different decisions: L7 the hole is CORKED and a knight bricked into h8 takes back whatever lands there, so the card goes on the GUARD and his legs are irrelevant (e8 bricked); L8 nothing guards the hole but he can step, so the card goes on the KING; L9 he stands on e8 instead, the taught hole does not look at e8, the only square that does is g7 and the only square that reaches g7 is h5 — so both the hole and the step move to the h-file, and because both Dragon turns are spent flying the freeze must be cast BEFORE she exists; L10 the L7 lock with his legs given back, where the Dragon's own capture of the cork is the stun that holds him, so the card must still go on the knight and the strike must be a capture, not a landing. NUMBERS OF RECORD (32 trials, jobs=1, serial, normal): L7-L10 no-ability 0/0/0/0, dragon alone 0/0/0/0, freeze-ray alone 0/0/0/0, magnet 0/0/0/0, aegis 0/0/0/0, pair 72/59/63/78 (mean 68). GATE MET ON L7, L9, L10 AND MISSED BY ONE POINT ON L8 (59% vs the 60% floor), so this ships as `idea`, not `built` — every single card is 0% on all four finales, so the miss is the pair's findability on one level, not a leak. FULL RUNS: 1/40 random picks, 6/40 with pool=dragon,freeze-ray — both low, because L3 is a Dragon-only gate and the bot's offer heuristic takes the Dragon least of the four cards. TIER CAVEAT: the gate breaks at Dragon T2 (0/34/50/0) because a third turn of life lets her re-aim after he steps, and at T5 (9/100/97/16) because the range-3 drop puts her straight into the hole; abilityTierCaps { dragon: 1 } ships with it and tier-cap-audit passes (448000 slates, 0 violations). Freeze-ray, magnet and aegis are 0% on all four finales at every tier."
+      "notes": "CONCEPT (A): the unbuilt harness-proven pair DRAGON + FREEZE RAY, verb 'put a body in a hole nothing can walk to and buy the one enemy phase it has to live through'. SIGNATURE: ranks 5-8 are one solid mass of stone with three or four squares bored out of it \u2014 his cell (e7+e8, sealed against every rank, file and diagonal, and Rookie can never stand in it), one HOLE a knight's move from the square he is standing on, and a notched floor that leaves the Dragon born beside Rookie almost nowhere to fly but the hole. The Dragon (T1: one charge, TWO turns of life, born in Rookie's own 8-neighbourhood, queen+knight moves) is the only body that can enter a square with eight stone neighbours; the Freeze (no line needed, two enemy phases on a king, one on anyone else) buys the single phase between arriving and striking. FOUR FINALE LINES, four different decisions: L7 the hole is CORKED and a knight bricked into h8 takes back whatever lands there, so the card goes on the GUARD and his legs are irrelevant (e8 bricked); L8 nothing guards the hole but he can step, so the card goes on the KING; L9 he stands on e8 instead, the taught hole does not look at e8, the only square that does is g7 and the only square that reaches g7 is h5 \u2014 so both the hole and the step move to the h-file, and because both Dragon turns are spent flying the freeze must be cast BEFORE she exists; L10 the L7 lock with his legs given back, where the Dragon's own capture of the cork is the stun that holds him, so the card must still go on the knight and the strike must be a capture, not a landing. NUMBERS OF RECORD (32 trials, jobs=1, serial, normal): L7-L10 no-ability 0/0/0/0, dragon alone 0/0/0/0, freeze-ray alone 0/0/0/0, magnet 0/0/0/0, aegis 0/0/0/0, pair 72/59/63/78 (mean 68). GATE MET ON L7, L9, L10 AND MISSED BY ONE POINT ON L8 (59% vs the 60% floor), so this ships as `idea`, not `built` \u2014 every single card is 0% on all four finales, so the miss is the pair's findability on one level, not a leak. FULL RUNS: 1/40 random picks, 6/40 with pool=dragon,freeze-ray \u2014 both low, because L3 is a Dragon-only gate and the bot's offer heuristic takes the Dragon least of the four cards. TIER CAVEAT: the gate breaks at Dragon T2 (0/34/50/0) because a third turn of life lets her re-aim after he steps, and at T5 (9/100/97/16) because the range-3 drop puts her straight into the hole; abilityTierCaps { dragon: 1 } ships with it and tier-cap-audit passes (448000 slates, 0 violations). Freeze-ray, magnet and aegis are 0% on all four finales at every tier."
     },
     {
       "id": "revenge-44",
@@ -1088,7 +1206,7 @@
       "name": "The Embrasure",
       "stage": "testing",
       "created": "2026-09-08",
-      "notes": "Concept (A): the unbuilt pair BECOME KING + QUEEN PULSE (SYNERGY.md: gates a generated L8 at 60% with a unique answer). Kit = become-king / queen-pulse / magnet / decoy, all four LIVE. VERB: stand on the square that kills you. SIGNATURE — the embrasure: his corner is sealed on rank and file by two-thick stone and pierced by ONE angled diagonal slit, and the single square in that slit from which the shot lands is either watched by a pawn nothing of hers can reach, or touched by no rook line on the board. So the crown buys the square (it is the only thing that survives a covered square, or the only thing that can step onto an unreachable one) and the pulse is the only thing that can fire from it — and the two can never be worn at once, because a transform overwrites the form. FOUR FINALE LINES: L7 the crown is a SHIELD, firing step f6 at chebyshev 2 where the eval pays nothing; L8 the crown is shield AND ticket and a second job is on offer that loses (take the watcher and you are a rook on e7 with the bishop's reply waiting); L9 the crown is only a TICKET — nothing threatens f6, but no rook line lands on it; L10 the ORDER REVERSED — the pulse travels (a queen slides up the slit and STOPS by capturing the cork on g7) and the crown kills. SERIAL NUMBERS (32 trials, jobs=1, normal): no-ability 0/0/0/0, become-king 0/0/0/0, queen-pulse 0/0/0/0, magnet 0/0/0/0, decoy 0/0/0/0, pair 72/78/84/81 — twenty cells of zero, gate met, mean 78.75. L7 and L8 inside the 60-80 band; L9 84 and L10 81 are above the ceiling and reported as measured. Ladder: L1-L2 free, L3 queen-pulse alone 100 (everything else 0), L4 magnet, L5 decoy (magnet and become-king clear it too — an honest two-answer level), L6 become-king alone 100 (everything else 0). Full runs 40: random picks 12.5%, pool=become-king,queen-pulse 40%; the low random number is L3, gated on queen-pulse, which the offer heuristic took only 18 times in 40 runs. TIER CAVEAT: both signature cards break at their FIRST upgrade (become-king:2 reads 0/0/81/0, queen-pulse:2 reads 0/9/91/94) because the line is two turns long and every tier above T1 hands one card the second use or second turn the partner was bought for — abilityTierCaps become-king:1, queen-pulse:1, tier-cap-audit 0 violations."
+      "notes": "Concept (A): the unbuilt pair BECOME KING + QUEEN PULSE (SYNERGY.md: gates a generated L8 at 60% with a unique answer). Kit = become-king / queen-pulse / magnet / decoy, all four LIVE. VERB: stand on the square that kills you. SIGNATURE \u2014 the embrasure: his corner is sealed on rank and file by two-thick stone and pierced by ONE angled diagonal slit, and the single square in that slit from which the shot lands is either watched by a pawn nothing of hers can reach, or touched by no rook line on the board. So the crown buys the square (it is the only thing that survives a covered square, or the only thing that can step onto an unreachable one) and the pulse is the only thing that can fire from it \u2014 and the two can never be worn at once, because a transform overwrites the form. FOUR FINALE LINES: L7 the crown is a SHIELD, firing step f6 at chebyshev 2 where the eval pays nothing; L8 the crown is shield AND ticket and a second job is on offer that loses (take the watcher and you are a rook on e7 with the bishop's reply waiting); L9 the crown is only a TICKET \u2014 nothing threatens f6, but no rook line lands on it; L10 the ORDER REVERSED \u2014 the pulse travels (a queen slides up the slit and STOPS by capturing the cork on g7) and the crown kills. SERIAL NUMBERS (32 trials, jobs=1, normal): no-ability 0/0/0/0, become-king 0/0/0/0, queen-pulse 0/0/0/0, magnet 0/0/0/0, decoy 0/0/0/0, pair 72/78/84/81 \u2014 twenty cells of zero, gate met, mean 78.75. L7 and L8 inside the 60-80 band; L9 84 and L10 81 are above the ceiling and reported as measured. Ladder: L1-L2 free, L3 queen-pulse alone 100 (everything else 0), L4 magnet, L5 decoy (magnet and become-king clear it too \u2014 an honest two-answer level), L6 become-king alone 100 (everything else 0). Full runs 40: random picks 12.5%, pool=become-king,queen-pulse 40%; the low random number is L3, gated on queen-pulse, which the offer heuristic took only 18 times in 40 runs. TIER CAVEAT: both signature cards break at their FIRST upgrade (become-king:2 reads 0/0/81/0, queen-pulse:2 reads 0/9/91/94) because the line is two turns long and every tier above T1 hands one card the second use or second turn the partner was bought for \u2014 abilityTierCaps become-king:1, queen-pulse:1, tier-cap-audit 0 violations."
     },
     {
       "id": "revenge-45",
@@ -1096,7 +1214,7 @@
       "name": "The Rood",
       "stage": "idea",
       "created": "2026-09-08",
-      "notes": "CONCEPT (A): the unbuilt proven-gating pair TWIN + SACRIFICE, verb AIM. A free-standing stone CROSS (a vertical arm up the e-file, a horizontal arm along rank 6) with the king's court in the crook; g7/h6/h8 are stone so h7 is a bolt-hole no rank, file or diagonal in the game can ever touch. So the level is not about reaching him, it is about the one turn in which she may threaten him: arrival and stun must be the SAME turn, and the sacrifice blast is the only free capture in the kit. A Twin is a ROOK, so its blast is a CROSS of four unlimited arms fired from a square adjacent to Rookie — and her own body smothers an arm, so stand on the diagonal. Four finale lines: L7 the jamb two ways (east arm or south arm), L8 one road (b6 walled, a7 the only stand), L9 the long ray (the blast travels three squares down rank 7, four-move clock), L10 the arm pointing down (the body goes on b8 where she may never stand and fires south). NUMBERS OF RECORD, normal, 32 trials, jobs=1, L7-L10: none 0/0/0/0; sacrifice, magnet and aegis 0% in all twelve cells; TWIN ALONE 9/6/9/3; the pair 81/72/75/75 (mean 76, three of four inside the 60-80 band). THE GATE IS MISSED by one game in 32 on L7 and L9 (twin 9% vs a contract of 8%) — the leak is a real line (plant the twin on rank 8 in the same turn Rookie's own capture stuns him) that cannot be closed on this geometry without corking the rank she has to shoot down, so this ships as idea, not built. Tier cap twin:2 (T3 leaks 16/13, T5 is 97/84/16/94 because the body stops expiring and becomes a permanent second rook); sacrifice needs no cap, 0% at T5. Ladder: L1-L2 free, L3-L5 multi-answer road-cork levels (0% bare), L6 the pair taught at 88%. Full runs 2/40 random and 2/40 with the pair pool — both far below the catalogue, because L3-L5 are keyed on magnet/aegis so a pair-committed player has no early answer, and L6's bolt-hole (42% random) punishes a learner permanently. Known misses to fix before promotion: L3 and L4 are the same cork on the same road, and L6 wants a cork on rank 8 to shelter behind."
+      "notes": "CONCEPT (A): the unbuilt proven-gating pair TWIN + SACRIFICE, verb AIM. A free-standing stone CROSS (a vertical arm up the e-file, a horizontal arm along rank 6) with the king's court in the crook; g7/h6/h8 are stone so h7 is a bolt-hole no rank, file or diagonal in the game can ever touch. So the level is not about reaching him, it is about the one turn in which she may threaten him: arrival and stun must be the SAME turn, and the sacrifice blast is the only free capture in the kit. A Twin is a ROOK, so its blast is a CROSS of four unlimited arms fired from a square adjacent to Rookie \u2014 and her own body smothers an arm, so stand on the diagonal. Four finale lines: L7 the jamb two ways (east arm or south arm), L8 one road (b6 walled, a7 the only stand), L9 the long ray (the blast travels three squares down rank 7, four-move clock), L10 the arm pointing down (the body goes on b8 where she may never stand and fires south). NUMBERS OF RECORD, normal, 32 trials, jobs=1, L7-L10: none 0/0/0/0; sacrifice, magnet and aegis 0% in all twelve cells; TWIN ALONE 9/6/9/3; the pair 81/72/75/75 (mean 76, three of four inside the 60-80 band). THE GATE IS MISSED by one game in 32 on L7 and L9 (twin 9% vs a contract of 8%) \u2014 the leak is a real line (plant the twin on rank 8 in the same turn Rookie's own capture stuns him) that cannot be closed on this geometry without corking the rank she has to shoot down, so this ships as idea, not built. Tier cap twin:2 (T3 leaks 16/13, T5 is 97/84/16/94 because the body stops expiring and becomes a permanent second rook); sacrifice needs no cap, 0% at T5. Ladder: L1-L2 free, L3-L5 multi-answer road-cork levels (0% bare), L6 the pair taught at 88%. Full runs 2/40 random and 2/40 with the pair pool \u2014 both far below the catalogue, because L3-L5 are keyed on magnet/aegis so a pair-committed player has no early answer, and L6's bolt-hole (42% random) punishes a learner permanently. Known misses to fix before promotion: L3 and L4 are the same cork on the same road, and L6 wants a cork on rank 8 to shelter behind."
     },
     {
       "id": "revenge-46",
@@ -1104,7 +1222,7 @@
       "name": "The Stair",
       "stage": "testing",
       "created": "2026-09-08",
-      "notes": "Concept (A): the unbuilt, harness-proven pair CONVERT + QUEEN PULSE; verb = BUY THE STEP. Constant signature: a stepped wall of stone climbs to his corner, sealing his cell to every rank and file (g8 + h7 on every level), leaving exactly one diagonal — the banister — running up the stair's inside corners to his square, capped from below by stone so it has one usable step, and that step is watched by a pawn pinned by the stone under it. Kit = convert / queen-pulse / rewind / decoy, all four LIVE. Queen Pulse at T1 is ONE queen move, so it must be the kill and she must already be standing on the rail; Convert at T1 steals a pawn from anywhere with no line of sight, which is the only thing in the kit that can stop a man watching a square. Four finale lines, four decisions: L7 removal (steal the watcher, stand, pulse); L8 relocation (the man is ON the rail, so steal him and spend a turn walking him off before the pulse); L9 a different target (the step is occupied by a defended pawn — steal the DEFENDER and take the square by force); L10 the wrong brother (two steps, two watchers, one charge, and one of the steps is sealed to every rook move, so the pair can be played perfectly and still lose). Serial numbers of record, 32 trials, jobs=1, difficulty=normal, L7-L10: none 0/0/0/0; convert 3/9/6/0; queen-pulse 0/0/0/0; rewind 0/0/0/0; decoy 0/0/0/0; convert+queen-pulse 75/63/69/72 — every finale inside the 60-80 band. Full runs, 40 each: random picks 9/40 = 22.5 percent, pool=convert,queen-pulse 10/40 = 25 percent, with the pair pool's attrition entirely in the finale (L7 73, L8 59, L9 82). TIER CAVEAT: both halves break at T2 — Queen Pulse T2 is two queen moves on one cast so the watcher never gets its phase (0/0/0/44), and Convert T2 steals knights, which reach h8 from f7 or g6 (13/31/28/44) — so abilityTierCaps pins BOTH signature cards at T1; there is no higher tier at which this gate survives."
+      "notes": "Concept (A): the unbuilt, harness-proven pair CONVERT + QUEEN PULSE; verb = BUY THE STEP. Constant signature: a stepped wall of stone climbs to his corner, sealing his cell to every rank and file (g8 + h7 on every level), leaving exactly one diagonal \u2014 the banister \u2014 running up the stair's inside corners to his square, capped from below by stone so it has one usable step, and that step is watched by a pawn pinned by the stone under it. Kit = convert / queen-pulse / rewind / decoy, all four LIVE. Queen Pulse at T1 is ONE queen move, so it must be the kill and she must already be standing on the rail; Convert at T1 steals a pawn from anywhere with no line of sight, which is the only thing in the kit that can stop a man watching a square. Four finale lines, four decisions: L7 removal (steal the watcher, stand, pulse); L8 relocation (the man is ON the rail, so steal him and spend a turn walking him off before the pulse); L9 a different target (the step is occupied by a defended pawn \u2014 steal the DEFENDER and take the square by force); L10 the wrong brother (two steps, two watchers, one charge, and one of the steps is sealed to every rook move, so the pair can be played perfectly and still lose). Serial numbers of record, 32 trials, jobs=1, difficulty=normal, L7-L10: none 0/0/0/0; convert 3/9/6/0; queen-pulse 0/0/0/0; rewind 0/0/0/0; decoy 0/0/0/0; convert+queen-pulse 75/63/69/72 \u2014 every finale inside the 60-80 band. Full runs, 40 each: random picks 9/40 = 22.5 percent, pool=convert,queen-pulse 10/40 = 25 percent, with the pair pool's attrition entirely in the finale (L7 73, L8 59, L9 82). TIER CAVEAT: both halves break at T2 \u2014 Queen Pulse T2 is two queen moves on one cast so the watcher never gets its phase (0/0/0/44), and Convert T2 steals knights, which reach h8 from f7 or g6 (13/31/28/44) \u2014 so abilityTierCaps pins BOTH signature cards at T1; there is no higher tier at which this gate survives."
     },
     {
       "id": "revenge-47",
@@ -1120,7 +1238,7 @@
       "name": "The Kennel",
       "stage": "testing",
       "created": "2026-09-09",
-      "notes": "Signature pair RABIES DART + QUEEN PULSE, verb: break the ring at the corner and come in on the diagonal. Kit = rabies-dart / queen-pulse / magnet / rewind, all LIVE. Constant signature THE KENNEL: the king sits in a stone niche whose four orthogonal neighbours are stone (no rook line ever reaches him, on any level), and his diagonal corners hold CHAINED DOGS — knights with seven of eight jump squares stoned and one friendly pawn in the eighth, so they are furniture until they go mad, and a bite moves the DOG off its corner, opening a diagonal for one turn. The four finale lines differ: L7 one dog with one throat, the bite is a door AND a shield (land under the guard and dart in the same turn); L8 two dogs but only one door (g7 is stone behind f6) and enemiesPerTurn 2 revokes the shield, so the hunter must be taken; L9 the corner plug is a chained knight no dart can move — the bite removes the PAWN DEFENDING it and she opens the door with her own capture, whose one-turn stun is exactly the phase she must survive next to him; L10 the corner is already open and the bite is pure tempo, a knight in the opposite corner eating its own pawn for the two-turn stun. Numbers of record (32 trials, jobs=1, normal): none/rabies/queen-pulse/magnet/rewind all 0% on L7-L10; the pair 66/81/78/69. Full runs 40x: 25% random picks, 58% with the pair pool. TIER CAVEAT: Queen Pulse breaks the gate at T3 (the first tier with two uses: 0/25/0/0, T5 41/19/0/0), so abilityTierCaps pins it at 2; rabies-dart is 0/0/0/0 at every tier and needs no cap. tier-cap-audit 672k slates, 0 violations."
+      "notes": "Signature pair RABIES DART + QUEEN PULSE, verb: break the ring at the corner and come in on the diagonal. Kit = rabies-dart / queen-pulse / magnet / rewind, all LIVE. Constant signature THE KENNEL: the king sits in a stone niche whose four orthogonal neighbours are stone (no rook line ever reaches him, on any level), and his diagonal corners hold CHAINED DOGS \u2014 knights with seven of eight jump squares stoned and one friendly pawn in the eighth, so they are furniture until they go mad, and a bite moves the DOG off its corner, opening a diagonal for one turn. The four finale lines differ: L7 one dog with one throat, the bite is a door AND a shield (land under the guard and dart in the same turn); L8 two dogs but only one door (g7 is stone behind f6) and enemiesPerTurn 2 revokes the shield, so the hunter must be taken; L9 the corner plug is a chained knight no dart can move \u2014 the bite removes the PAWN DEFENDING it and she opens the door with her own capture, whose one-turn stun is exactly the phase she must survive next to him; L10 the corner is already open and the bite is pure tempo, a knight in the opposite corner eating its own pawn for the two-turn stun. Numbers of record (32 trials, jobs=1, normal): none/rabies/queen-pulse/magnet/rewind all 0% on L7-L10; the pair 66/81/78/69. Full runs 40x: 25% random picks, 58% with the pair pool. TIER CAVEAT: Queen Pulse breaks the gate at T3 (the first tier with two uses: 0/25/0/0, T5 41/19/0/0), so abilityTierCaps pins it at 2; rabies-dart is 0/0/0/0 at every tier and needs no cap. tier-cap-audit 672k slates, 0 violations."
     },
     {
       "id": "revenge-49",
@@ -1136,7 +1254,7 @@
       "name": "The Murder Hole",
       "stage": "testing",
       "created": "2026-09-09",
-      "notes": "Concept (A): the unbuilt harness-proven gating pair FREEZE RAY + TWIN. Kit = twin/freeze-ray/magnet/aegis, all LIVE. VERB: grow a rook in a room with no door. SIGNATURE: every level draws a MURDER HOLE — a one-square-wide blind corridor, both long sides stone, its near end sealed, its far end (the mouth) looking into the king's room. A rook moves on ranks and files, so no rook can ever stand in it; the back of the shaft touches the outside world only DIAGONALLY, and a summon is born on a diagonal Rookie cannot travel. FINALE LINES: L7 the plain hole (dart the KING, body second, twin crosses rank 7); L8 one shaft with TWO mouths — the dart names which rank he is standing on when you commit the body; L9 the mouth is covered by a pinned pawn on e8 that is a gun and not a hunter, so the dart holds a GUARD and not the king; L10 the shaft is occupied by one of his knights, so the twin's first move is a capture and the stun plus the two frozen turns are the exact arithmetic. SERIAL NUMBERS (32 trials, jobs=1, normal, L7-L10): none 0/0/0/0, twin 0/0/0/0, freeze-ray 0/0/0/0, magnet 0/0/0/0, aegis 0/0/0/0, pair 84/66/84/91. Gate met and clean (20 zero cells) but THREE of four finales are above the 60-80 band; only L8 is inside. L10 read 91% at moveLimit 6 AND 5 — the clock is no knob for a line the bot plays perfectly, and the one lengthener tried took it to 0%. FULL RUNS (40): random picks 0/40 = 0% (L3 and L7 are the walls; the two fillers are inert, so a wrong pick is a wasted slot), pool=twin,freeze-ray 9/40 = 23%. TIER CAVEAT: abilityTierCaps { twin: 2 } — twin T3 (8 turns of life instead of 4) breaks L9 at 94% and T4 at 91%, because a longer-lived twin outlives the pawn's recapture and finishes with no dart; freeze-ray is 0/0/0/0 even at T5 and needs no cap."
+      "notes": "Concept (A): the unbuilt harness-proven gating pair FREEZE RAY + TWIN. Kit = twin/freeze-ray/magnet/aegis, all LIVE. VERB: grow a rook in a room with no door. SIGNATURE: every level draws a MURDER HOLE \u2014 a one-square-wide blind corridor, both long sides stone, its near end sealed, its far end (the mouth) looking into the king's room. A rook moves on ranks and files, so no rook can ever stand in it; the back of the shaft touches the outside world only DIAGONALLY, and a summon is born on a diagonal Rookie cannot travel. FINALE LINES: L7 the plain hole (dart the KING, body second, twin crosses rank 7); L8 one shaft with TWO mouths \u2014 the dart names which rank he is standing on when you commit the body; L9 the mouth is covered by a pinned pawn on e8 that is a gun and not a hunter, so the dart holds a GUARD and not the king; L10 the shaft is occupied by one of his knights, so the twin's first move is a capture and the stun plus the two frozen turns are the exact arithmetic. SERIAL NUMBERS (32 trials, jobs=1, normal, L7-L10): none 0/0/0/0, twin 0/0/0/0, freeze-ray 0/0/0/0, magnet 0/0/0/0, aegis 0/0/0/0, pair 84/66/84/91. Gate met and clean (20 zero cells) but THREE of four finales are above the 60-80 band; only L8 is inside. L10 read 91% at moveLimit 6 AND 5 \u2014 the clock is no knob for a line the bot plays perfectly, and the one lengthener tried took it to 0%. FULL RUNS (40): random picks 0/40 = 0% (L3 and L7 are the walls; the two fillers are inert, so a wrong pick is a wasted slot), pool=twin,freeze-ray 9/40 = 23%. TIER CAVEAT: abilityTierCaps { twin: 2 } \u2014 twin T3 (8 turns of life instead of 4) breaks L9 at 94% and T4 at 91%, because a longer-lived twin outlives the pawn's recapture and finishes with no dart; freeze-ray is 0/0/0/0 even at T5 and needs no cap."
     },
     {
       "id": "revenge-51",
@@ -1144,7 +1262,7 @@
       "name": "The Espalier",
       "stage": "testing",
       "created": "2026-09-09",
-      "notes": "CONCEPT (A): convert + smoke, a harness-proven unbuilt pair (two unique-answer levels in the combo library). VERB: turn one of his own men, walk him up, and hide on the beat he arrives. SIGNATURE — THE ESPALIER: every pawn stands on a stone sill so his army never marches, every promotion square is stone so a turned man is never crowned, and the king sits in a niche whose only opening is a DIAGONAL door whose own rank and file are stone — Rookie can neither stand in it, attack it, nor deny it. The gate: a stolen man is DAZED one phase and the king flees through that door on exactly that phase; Smoke is the only card in the kit that stops him fleeing, and T1 Smoke is exactly one enemy turn. Difficulty comes from the MAN'S walk, not hers — he starts a rank below the shoulder, so the cover belongs to the arrival turn, not the theft. FOUR FINALE LINES: L7 the walk (timing of the cover); L8 two doors, the arriving man covering the second one with his forward step while his diagonal threatens the throne (a pawn's opposite polarities); L9 two shoulders, the east one watched by a nailed pawn on f8 that can never be answered, only avoided, plus a hunting queen (target choice, fatal if wrong); L10 the mirror, with the trap on the WEST shoulder so L9's reflex kills you. SERIAL NUMBERS (32 trials, jobs=1, normal, own kit): none/convert/smoke/magnet/aegis all 0% on L7-L10 — 20 cells of zero — and convert+smoke 72/59/81/84 (mean 74, nothing at 100%); convert+aegis 0/0/0/0, so the pair is the unique answer. FULL RUNS, 40: 23% with random picks, 40% with pool=convert,smoke. TIER CAVEAT: convert breaks at T3 on L7 (100%) because T3 is its second charge — abilityTierCaps { convert: 2 }; smoke, magnet and aegis read 0% at every tier. Mid-run: L1-L2 free bare, L3-L6 impossible bare, L6 the one clean single-card level (convert); aegis is a second answer on L3/L4/L5 because a blocked king-capture also spends his action."
+      "notes": "CONCEPT (A): convert + smoke, a harness-proven unbuilt pair (two unique-answer levels in the combo library). VERB: turn one of his own men, walk him up, and hide on the beat he arrives. SIGNATURE \u2014 THE ESPALIER: every pawn stands on a stone sill so his army never marches, every promotion square is stone so a turned man is never crowned, and the king sits in a niche whose only opening is a DIAGONAL door whose own rank and file are stone \u2014 Rookie can neither stand in it, attack it, nor deny it. The gate: a stolen man is DAZED one phase and the king flees through that door on exactly that phase; Smoke is the only card in the kit that stops him fleeing, and T1 Smoke is exactly one enemy turn. Difficulty comes from the MAN'S walk, not hers \u2014 he starts a rank below the shoulder, so the cover belongs to the arrival turn, not the theft. FOUR FINALE LINES: L7 the walk (timing of the cover); L8 two doors, the arriving man covering the second one with his forward step while his diagonal threatens the throne (a pawn's opposite polarities); L9 two shoulders, the east one watched by a nailed pawn on f8 that can never be answered, only avoided, plus a hunting queen (target choice, fatal if wrong); L10 the mirror, with the trap on the WEST shoulder so L9's reflex kills you. SERIAL NUMBERS (32 trials, jobs=1, normal, own kit): none/convert/smoke/magnet/aegis all 0% on L7-L10 \u2014 20 cells of zero \u2014 and convert+smoke 72/59/81/84 (mean 74, nothing at 100%); convert+aegis 0/0/0/0, so the pair is the unique answer. FULL RUNS, 40: 23% with random picks, 40% with pool=convert,smoke. TIER CAVEAT: convert breaks at T3 on L7 (100%) because T3 is its second charge \u2014 abilityTierCaps { convert: 2 }; smoke, magnet and aegis read 0% at every tier. Mid-run: L1-L2 free bare, L3-L6 impossible bare, L6 the one clean single-card level (convert); aegis is a second answer on L3/L4/L5 because a blocked king-capture also spends his action."
     },
     {
       "id": "revenge-52",
@@ -1152,7 +1270,7 @@
       "name": "The Comb",
       "stage": "testing",
       "created": "2026-09-09",
-      "notes": "CONCEPT (A): the unbuilt harness-proven pair QUEEN PULSE + VANGUARD (queen-pulse+vanguard gates moat-L7-v5-s250 at 97% with a unique answer; the only unbuilt gating pair whose level survives both bishop-step and knight-hop). Kit = queen-pulse / vanguard / aegis / decoy, all LIVE. VERB: get close enough to throw — the only run in the catalogue about a RADIUS rather than a line; Rookie never touches the king on any of the ten levels. SIGNATURE, the comb: rank 6 solid stone but for one square (the parting), the square above it stone (the tooth), two diagonal ladders of unreachable islands leading up to it from feet at a2 and h3, and a pocket past the spine whose every rank, file and diagonal neighbour is stone so only a knight's geometry touches the king — with exactly one of his knight-squares free (the peg), never within drop range of her floor. The pulse is the only thing that crosses the spine; the drop is the only thing that reaches the peg; neither is ever a weapon. FOUR FINALE LINES: L7 the two windows (either exit wins, mirror lines); L8 the wrong window (the east ladder lands her ON the only peg — the natural exit is fatal); L9 the corked parting (a pinned pawn ends the ride, so the pulse becomes her one capture and the peg moves to f7); L10 the watchmen (two knights on the floor contest the feet, and his second room c8 punishes any tempo lost on the climb). SERIAL NUMBERS, 32 trials, jobs=1, normal: L7-L10 none 0/0/0/0, queen-pulse 0/0/0/0, vanguard 0/0/0/0, aegis 0/0/0/0, decoy 0/0/0/0, PAIR 81/84/69/56 (mean 72.5, four different numbers — the spread Tyler asked for). Mid-run L3-L6 bare 0% with pulse/vanguard/aegis/vanguard as keys; L3 is soft (50% for its own key) and L5 has decoy as a co-answer. FULL RUNS 40x: 0% random picks, 5% with the pair pool — both below the 10-25% target, and the cause is L5 being gated on aegis four levels before a finale gated on the other two cards, not the finale itself. TIER CAVEAT: abilityTierCaps { vanguard: 1 } — the drop RADIUS is the break (T2 range 3 reads 97% alone on L7, T3 range 4 reads 100/88/100/100), while Queen Pulse needs no cap at any tier because no line on any finale touches the king's square."
+      "notes": "CONCEPT (A): the unbuilt harness-proven pair QUEEN PULSE + VANGUARD (queen-pulse+vanguard gates moat-L7-v5-s250 at 97% with a unique answer; the only unbuilt gating pair whose level survives both bishop-step and knight-hop). Kit = queen-pulse / vanguard / aegis / decoy, all LIVE. VERB: get close enough to throw \u2014 the only run in the catalogue about a RADIUS rather than a line; Rookie never touches the king on any of the ten levels. SIGNATURE, the comb: rank 6 solid stone but for one square (the parting), the square above it stone (the tooth), two diagonal ladders of unreachable islands leading up to it from feet at a2 and h3, and a pocket past the spine whose every rank, file and diagonal neighbour is stone so only a knight's geometry touches the king \u2014 with exactly one of his knight-squares free (the peg), never within drop range of her floor. The pulse is the only thing that crosses the spine; the drop is the only thing that reaches the peg; neither is ever a weapon. FOUR FINALE LINES: L7 the two windows (either exit wins, mirror lines); L8 the wrong window (the east ladder lands her ON the only peg \u2014 the natural exit is fatal); L9 the corked parting (a pinned pawn ends the ride, so the pulse becomes her one capture and the peg moves to f7); L10 the watchmen (two knights on the floor contest the feet, and his second room c8 punishes any tempo lost on the climb). SERIAL NUMBERS, 32 trials, jobs=1, normal: L7-L10 none 0/0/0/0, queen-pulse 0/0/0/0, vanguard 0/0/0/0, aegis 0/0/0/0, decoy 0/0/0/0, PAIR 81/84/69/56 (mean 72.5, four different numbers \u2014 the spread Tyler asked for). Mid-run L3-L6 bare 0% with pulse/vanguard/aegis/vanguard as keys; L3 is soft (50% for its own key) and L5 has decoy as a co-answer. FULL RUNS 40x: 0% random picks, 5% with the pair pool \u2014 both below the 10-25% target, and the cause is L5 being gated on aegis four levels before a finale gated on the other two cards, not the finale itself. TIER CAVEAT: abilityTierCaps { vanguard: 1 } \u2014 the drop RADIUS is the break (T2 range 3 reads 97% alone on L7, T3 range 4 reads 100/88/100/100), while Queen Pulse needs no cap at any tier because no line on any finale touches the king's square."
     }
   ]
 }

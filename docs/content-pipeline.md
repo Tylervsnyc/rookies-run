@@ -4,14 +4,27 @@ One registry decides what real players can see: `data/content/pipeline.json`.
 Every ability id and every Revenge run id has a record with a stage:
 
 ```
-idea → built → testing → approved → live        (+ retired, from anywhere)
+idea → testing → approved → live        (+ retired, from anywhere)
 ```
+
+Where a run's file lives says its stage (enforced by `npx tsx scripts/pipeline.ts lint`,
+part of `npm run check`):
+
+| Stage | File | Imported by `lib/run/extra-runs.ts`? |
+|---|---|---|
+| `idea` | `lib/run/runs/_ideas/<id>.ts` | no — never in the bundle |
+| `testing` / `approved` / `live` | `lib/run/runs/<id>.ts` | yes |
+| `retired` | either | no |
+
+**The ladder is the product (2026-09-09).** Every `LADDER_RUNG_IDS` entry must be
+`approved`/`live` (the build asserts it), and `REVENGE_RUN_IDS` — the daily pool and
+picker — is exactly the ladder. The 13 pre-combo-gate runs (revenge-1..11, 13,
+crucible) were retired that day; `pipeline.ts stage <id> testing` brings one back.
 
 | Stage | Meaning | Who moves it |
 |---|---|---|
 | `idea` | Written down, no code. | `pipeline.ts add` |
-| `built` | Code exists, not yet swept. Rare — `built <id>` jumps straight to testing. | `pipeline.ts built` |
-| `testing` | Code exists. Hidden from players; reachable only via dev hooks (`?run=<id>`, `?loadout=<id>:<tier>`). The nightly grades it and writes `testing: { verdict READY/HOLD, summary, digestPath }`. | nightly (verdicts) |
+| `testing` | Code exists (`pipeline.ts built <id>` moves an idea here). Hidden from players; reachable only via dev hooks (`?run=<id>`, `?loadout=<id>:<tier>`). The nightly grades it and writes `testing: { verdict READY/HOLD, summary, digestPath }`. | nightly (verdicts) |
 | `approved` | Tyler signed off. Player-facing on the next build (pools are built from the registry). | **Tyler** (`approve`) |
 | `live` | Approved AND in a player-reachable pool. Flipped by the nightly after it pulls main, or by `mark-live`. | nightly / `mark-live` |
 | `retired` | Cut. Stripped from saved profiles, never offered, still loadable via dev hooks if the code exists. | `retire` |
@@ -19,9 +32,9 @@ idea → built → testing → approved → live        (+ retired, from anywher
 **Player-facing = approved or live.** Everything the app builds from —
 `STARTER_ABILITIES`, `REVENGE_ABILITIES` (the offer pool), `REVENGE_RUN_IDS`
 (daily rotation + picker) — is the code catalog filtered by
-`isPlayerFacing()` from `lib/content/pipeline.ts`. There is no other switch;
-the old `SUMMON_KNIGHT_ENABLED` flag and the hand-kept `HIDDEN_RUNS` /
-`REVENGE_CANDIDATE_RUN_IDS` lists are gone.
+`isPlayerFacing()` from `lib/content/pipeline.ts`. `HIDDEN_RUNS` and
+`REVENGE_CANDIDATE_RUN_IDS` still exist in `runs.ts` but are DERIVED from the
+registry (not player-facing / stage testing), never hand-kept.
 
 ## CLI
 
@@ -33,6 +46,7 @@ npx tsx scripts/pipeline.ts approve twin        # Tyler's sign-off → approved
 npx tsx scripts/pipeline.ts mark-live [id]      # approved → live if it is in the built pool
 npx tsx scripts/pipeline.ts retire twin "Too strong with Surge."
 npx tsx scripts/pipeline.ts stage twin testing  # escape hatch: any stage by hand
+npx tsx scripts/pipeline.ts lint                # files <-> registry <-> imports <-> ladder agree
 ```
 
 ## How Tyler approves
@@ -62,9 +76,8 @@ out of the pools again.
 
 ## Notes
 
-- `revenge-5` L10 (The Vault) is intentionally unwinnable — a system check
-  for the "No way through" fail-safe. The nightly will call it IMPOSSIBLE
-  every night until it is swapped for a real level; that is expected.
+- The nightly grades the LADDER only (`.github/workflows/revenge-nightly.yml`).
+  Grade a testing run by hand: `npx tsx scripts/run-playtest/revenge-nightly.ts --runs-filter=<id>`.
 - `ability-lab` (`?run=ability-lab`) is a dev sandbox, not content — it is
   always hidden and includes testing-stage abilities on purpose.
 - The nightly harness sweeps every BUILT ability (testing|approved|live), so

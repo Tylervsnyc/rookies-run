@@ -240,8 +240,8 @@ import {
   STILL,
   FLEE,
   type RunDef,
-} from '../run-kit';
-import type { Coord } from '../types';
+} from '../../run-kit';
+import type { Coord } from '../../types';
 
 /**
  * THE HEARTH — the constant terrain (see the header). `m` is the left file of

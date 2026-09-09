@@ -2,7 +2,8 @@
  * Rookie's Revenge — content pipeline registry.
  *
  * ONE record per ability id and per run id, in `data/content/pipeline.json`,
- * moving through: idea → built → testing → approved → live (+ retired).
+ * moving through: idea → testing → approved → live (+ retired). (`built` was a
+ * declared stage no item ever occupied; removed 2026-09-09.)
  *
  * This module is PURE (no fs) so it can be imported by app code at build
  * time — `lib/run/runs.ts` and `lib/run/profile.ts` read it to decide what
@@ -15,10 +16,10 @@
 import registry from '../../data/content/pipeline.json';
 
 export type ContentKind = 'ability' | 'run';
-export type ContentStage = 'idea' | 'built' | 'testing' | 'approved' | 'live' | 'retired';
+export type ContentStage = 'idea' | 'testing' | 'approved' | 'live' | 'retired';
 export type TestVerdict = 'READY' | 'HOLD';
 
-export const STAGES: ReadonlyArray<ContentStage> = ['idea', 'built', 'testing', 'approved', 'live', 'retired'];
+export const STAGES: ReadonlyArray<ContentStage> = ['idea', 'testing', 'approved', 'live', 'retired'];
 
 export interface TestingBlock {
   /** YYYY-MM-DD of the last nightly that graded this item. */
@@ -104,8 +105,8 @@ export function advance(reg: Registry, id: string, stage: ContentStage, meta: Ad
   if (meta.notes) next.notes = meta.notes;
   switch (stage) {
     case 'approved':
-      if (item.stage !== 'testing' && item.stage !== 'built') {
-        throw new Error(`pipeline: "${id}" is ${item.stage}; only built/testing content can be approved`);
+      if (item.stage !== 'testing') {
+        throw new Error(`pipeline: "${id}" is ${item.stage}; only testing content can be approved`);
       }
       next.approved = { at, by: meta.by ?? 'Tyler' };
       delete next.retired;
@@ -124,7 +125,6 @@ export function advance(reg: Registry, id: string, stage: ContentStage, meta: Ad
         delete next.live;
       }
       break;
-    case 'built':
     case 'idea':
       delete next.approved;
       delete next.live;

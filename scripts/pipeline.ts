@@ -3,7 +3,8 @@
  *
  *   npx tsx scripts/pipeline.ts list
  *   npx tsx scripts/pipeline.ts add <ability|run> <id> "<name>" "<notes>"   (→ idea)
- *   npx tsx scripts/pipeline.ts built <id>                                   (→ testing)
+ *   npx tsx scripts/pipeline.ts built <id>                                   (→ testing; "built" is the verb, not a stage)
+ *   npx tsx scripts/pipeline.ts lint                                          (files <-> registry <-> imports <-> ladder agree; exit 1 if not)
  *   npx tsx scripts/pipeline.ts approve <id>                                 (→ approved, by Tyler)
  *   npx tsx scripts/pipeline.ts mark-live [id]                               (approved → live if reachable in this build)
  *   npx tsx scripts/pipeline.ts retire <id> "<why>"
@@ -13,6 +14,8 @@
 
 import { STAGES, addItem, advance, isStage, shortReason, summarize, type ContentItem, type ContentKind, type ContentStage } from '../lib/content/pipeline';
 import { REGISTRY_PATH, isReachableByPlayers, loadRegistry, saveRegistry, syncLive } from '../lib/content/pipeline-io';
+import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
 
 const [cmd, ...rest] = process.argv.slice(2);
 
@@ -64,8 +67,67 @@ function list(): void {
   }
 }
 
+/**
+ * The audit rule (2026-09-09): one run = one file = one registry entry, and
+ * where the file lives says what stage it is.
+ *   lib/run/runs/<id>.ts          stage testing | approved | live, imported by extra-runs.ts
+ *   lib/run/runs/_ideas/<id>.ts   stage idea, NOT imported
+ *   retired                        file may be in either place; never imported
+ *   every LADDER_RUNG_IDS entry    stage approved | live
+ * Runs defined inside runs.ts itself (revenge-1..13, crucible) are exempt from
+ * the file rule but still need a registry entry.
+ */
+function lint(): number {
+  const reg = loadRegistry();
+  const problems: string[] = [];
+  const runsDir = join(process.cwd(), 'lib', 'run', 'runs');
+  const ideasDir = join(runsDir, '_ideas');
+  const extra = readFileSync(join(process.cwd(), 'lib', 'run', 'extra-runs.ts'), 'utf8');
+  const ladderSrc = readFileSync(join(process.cwd(), 'lib', 'run', 'ladder.ts'), 'utf8');
+  const rungIds = [...ladderSrc.matchAll(/^\s+'([a-z0-9-]+)',\s*\/\//gm)].map((m) => m[1]);
+  const files = (dir: string) => (existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.ts')).map((f) => f.replace(/\.ts$/, '')) : []);
+  const built = files(runsDir);
+  const ideas = files(ideasDir);
+  const stageOfId = (id: string) => reg.items.find((i) => i.id === id)?.stage;
+  const imported = (id: string) => new RegExp(`from '\\./runs/${id}'`).test(extra);
+
+  for (const id of built) {
+    const st = stageOfId(id);
+    if (!st) problems.push(`${id}: file in lib/run/runs/ but no registry entry (pipeline.ts add run ${id} ...)`);
+    else if (st === 'idea') problems.push(`${id}: stage idea but file is in lib/run/runs/ — move to _ideas/ and drop the import`);
+    else if (st === 'retired' && imported(id)) problems.push(`${id}: retired but still imported by extra-runs.ts`);
+    else if (st !== 'retired' && !imported(id)) problems.push(`${id}: stage ${st} but not imported by extra-runs.ts`);
+  }
+  for (const id of ideas) {
+    const st = stageOfId(id);
+    if (!st) problems.push(`${id}: file in _ideas/ but no registry entry`);
+    else if (st !== 'idea' && st !== 'retired') problems.push(`${id}: stage ${st} but file is in _ideas/ — move it to lib/run/runs/ and import it`);
+    if (imported(id)) problems.push(`${id}: _ideas/ file is imported by extra-runs.ts`);
+    if (built.includes(id)) problems.push(`${id}: exists in BOTH lib/run/runs/ and _ideas/`);
+  }
+  for (const id of rungIds) {
+    const st = stageOfId(id);
+    if (st !== 'approved' && st !== 'live') problems.push(`ladder rung ${id}: stage ${st ?? 'missing'} — every rung must be approved|live`);
+  }
+  const seen = new Set<string>();
+  for (const i of reg.items) {
+    if (seen.has(i.id)) problems.push(`${i.id}: duplicate registry entry`);
+    seen.add(i.id);
+  }
+  if (problems.length) {
+    console.error(`pipeline lint: ${problems.length} problem(s)`);
+    for (const p of problems) console.error('  - ' + p);
+    return 1;
+  }
+  console.log(`pipeline lint: ok — ${built.length} built run files, ${ideas.length} ideas, ${rungIds.length} ladder rungs all player-facing`);
+  return 0;
+}
+
 function main(): void {
   switch (cmd) {
+    case 'lint':
+      process.exit(lint());
+
     case undefined:
     case 'list':
       return list();
@@ -137,7 +199,7 @@ function main(): void {
     }
 
     default:
-      die(`unknown command "${cmd}" — list | add | built | approve | mark-live | retire | stage`);
+      die(`unknown command "${cmd}" — list | lint | add | built | approve | mark-live | retire | stage`);
   }
 }
 

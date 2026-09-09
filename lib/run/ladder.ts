@@ -39,30 +39,18 @@
  * The ladder's job is unlocking, so power sets the order; difficulty is fixed
  * per-run instead (see the finale rework below).
  *
- *  #  run         name            signature pair            unlocks       pair avg
- *  1  revenge-21  The Slash       boulder + knight-hop      Boulder         100
- *  2  revenge-18  The Glasshouse  freeze-ray + vanguard     Vanguard         88
- *  3  revenge-15  The Stacks      magnet + boulder          Decoy           100
- *  4  revenge-23  The Parapet     knight-hop + twin         Twin            100
- *  5  revenge-12  The Moat        bishop-squire + swap      Swap, Squire      —
- *  6  revenge-24  The Lattice     duchess + decoy           Duchess          94
- *  7  revenge-25  The Alcove      become-king + boulder     Become King      67
- *  8  revenge-19  The Cliff       convert + summon-knight   Convert          71
- *  9  revenge-22  The Millstone   dragon + duchess          DRAGON           79
- * 10  revenge-17  The Briar       dragon + sacrifice        Sacrifice        79
+ * The rungs, their signature pairs and what each unlocks are the comments on
+ * LADDER_RUNG_IDS below. Their MEASURED difficulty is NOT recorded here — a
+ * table in this header went stale within two days twice (2026-09-07/08). The
+ * contract every rung must satisfy is docs/LADDER-SPEC.md; the current numbers
+ * come from `npx tsx scripts/run-playtest/ladder-audit.ts` and live in the
+ * results ledger under data/run-playtest/, stamped with the engine that
+ * produced them.
  *
- * The grants are unchanged in total (17 abilities) — only when you get them.
- *
- * ── KNOWN DEBT: the gate is a floor with no ceiling ────────────────────────
- * `pair avg` above is the pair's mean clear rate on L7-L10
- * (`data/run-playtest/finale-remeasure-2026-09-06.json`). A run qualifies at
- * >= 60%, which proves the combo is REQUIRED but never that it is HARD — and
- * The Slash, The Stacks and The Parapet all read 100/100/100/100, i.e. the
- * finale solves itself the moment you hold both cards. That is exactly the
- * "later levels are too easy" note from Tyler's 2026-09-07 playtest. The rule
- * should be a 60-80% BAND (The Alcove at 67 is the model). Adding the ceiling
- * to the nightly harness is queued; the three 100% finales are being reworked
- * first.
+ * THE LADDER IS THE PRODUCT (Tyler, 2026-09-09): every rung is stage `live` in
+ * data/content/pipeline.json, and `REVENGE_RUN_IDS` (daily pool + picker) is
+ * exactly these ten runs. The assert below fails the build if a rung is ever
+ * not player-facing — there is no second switch.
  *
  * ── UNLOCKS ────────────────────────────────────────────────────────────────
  * A combo run's kit NAMES the two cards its finale requires, and `rollOffer`

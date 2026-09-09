@@ -70,7 +70,7 @@
 import { ALL_ABILITY_IDS, type AbilityId } from './abilities';
 import { isPlayerFacing } from '../content/pipeline';
 import { mulberry32 } from './seed';
-import { REVENGE_RUN_IDS, getRunById } from './runs';
+import { ENDLESS_LIBRARY_RUN_IDS, getRunById } from './runs';
 import { DIFFICULTIES, type DifficultyId } from './difficulty';
 import { fromSquare, type RunPuzzle } from './types';
 import { FORMATION_FROM, applyFormation, formationForDepth, formationLabel, rookPathToKing } from './endless-formations';
@@ -172,10 +172,17 @@ export interface EndlessLevelRef {
   runName: string;
 }
 
-/** Every level Endless is willing to serve, cheapest signal first. */
+/**
+ * Every level Endless is willing to serve, cheapest signal first.
+ *
+ * Source = ENDLESS_LIBRARY_RUN_IDS (runs.ts), NOT the daily pool: since the
+ * 2026-09-09 audit the daily pool is the ten combo-gated ladder runs, whose
+ * finales are one-pair walls. Endless's broad boards are the 13 pre-gate runs,
+ * now `retired` from the daily but kept in the catalogue for exactly this.
+ */
 export function endlessLevelPool(): EndlessLevelRef[] {
   const pool: EndlessLevelRef[] = [];
-  for (const runId of REVENGE_RUN_IDS) {
+  for (const runId of ENDLESS_LIBRARY_RUN_IDS) {
     const run = getRunById(runId);
     for (let i = 0; i < run.levels.length; i++) {
       const level = i + 1;

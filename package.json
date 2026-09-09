@@ -8,16 +8,17 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "tsx --test lib/run/__tests__/*.test.ts",
-    "check": "eslint . && tsc --noEmit",
+    "check": "eslint . && tsc --noEmit && tsx scripts/pipeline.ts lint",
     "validate": "npm run check && next build",
-    "playtest": "tsx scripts/run-playtest/nightly.ts",
+    "playtest": "tsx scripts/run-playtest/revenge-nightly.ts",
     "playtest:sweep": "tsx scripts/run-playtest/sweep.ts",
     "playtest:parity": "tsx scripts/run-playtest/revenge-parity.ts",
     "playtest:revenge": "tsx scripts/run-playtest/revenge-nightly.ts",
     "ios:add": "cap add ios",
     "ios:sync": "cap sync ios",
     "ios:open": "cap open ios",
-    "ios:assets": "tsx scripts/generate-ios-assets.ts"
+    "ios:assets": "tsx scripts/generate-ios-assets.ts",
+    "pipeline": "tsx scripts/pipeline.ts"
   },
   "dependencies": {
     "@capacitor/core": "8.4.2",

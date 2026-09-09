@@ -18,7 +18,6 @@ type Stage = ContentStage | 'unregistered';
 
 const STAGE_STYLE: Record<Stage, string> = {
   idea: 'bg-slate-100 text-slate-700 border-slate-200',
-  built: 'bg-violet-50 text-violet-700 border-violet-200',
   testing: 'bg-amber-50 text-amber-800 border-amber-200',
   approved: 'bg-sky-50 text-sky-800 border-sky-200',
   live: 'bg-emerald-50 text-emerald-800 border-emerald-200',
@@ -72,7 +71,7 @@ function ActionBar({ id, stage, writable, writeHint, onAction }: ActionProps): R
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const canApprove = stage === 'testing' || stage === 'built';
+  const canApprove = stage === 'testing';
   const canRetire = stage !== 'retired' && stage !== 'unregistered';
   const canReopen = stage === 'retired' || stage === 'approved' || stage === 'live';
   const tip = writable ? undefined : writeHint;
@@ -96,7 +95,7 @@ function ActionBar({ id, stage, writable, writeHint, onAction }: ActionProps): R
           type="button"
           className={`${BTN} border-emerald-300 bg-emerald-600 text-white hover:bg-emerald-700`}
           disabled={!writable || !canApprove || busy}
-          title={tip ?? (canApprove ? 'testing/built → approved (player-facing on next build)' : 'Only testing or built content can be approved')}
+          title={tip ?? (canApprove ? 'testing → approved (player-facing on next build)' : 'Only testing content can be approved')}
           onClick={() => void run('approve')}
         >
           Approve
@@ -490,7 +489,7 @@ function IdeasSection({
 // ─────────────────────────────────────────────────────────────────────────────
 // Page
 
-const STAGE_ORDER: Stage[] = ['testing', 'built', 'approved', 'live', 'idea', 'unregistered', 'retired'];
+const STAGE_ORDER: Stage[] = ['testing', 'approved', 'live', 'idea', 'unregistered', 'retired'];
 
 export function ContentDashboard({ data }: { data: ContentSnapshot }): React.ReactElement {
   const router = useRouter();
@@ -541,7 +540,7 @@ export function ContentDashboard({ data }: { data: ContentSnapshot }): React.Rea
             </div>
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
-            {(['idea', 'built', 'testing', 'approved', 'live', 'retired'] as ContentStage[]).map((s) => (
+            {(['idea', 'testing', 'approved', 'live', 'retired'] as ContentStage[]).map((s) => (
               <a key={s} href={`#${s === 'idea' ? 'ideas' : 'abilities'}`} className={`rounded-lg border px-3 py-1.5 ${STAGE_STYLE[s]}`}>
                 <div className="text-[10px] font-semibold uppercase tracking-wide opacity-80">{s}</div>
                 <div className="text-lg font-extrabold leading-tight">{data.counts[s]}</div>

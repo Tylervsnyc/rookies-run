@@ -285,7 +285,7 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
+} from '../../run-kit';
 
 /**
  * THE WALL. The L of stone that closes the top-right quarter: file e at ranks

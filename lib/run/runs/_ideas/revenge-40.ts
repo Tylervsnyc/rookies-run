@@ -148,8 +148,8 @@ import {
   FLEE,
   STILL,
   type RunDef,
-} from '../run-kit';
-import type { Hazard } from '../types';
+} from '../../run-kit';
+import type { Hazard } from '../../types';
 
 /** The finishers — mirrors REVENGE_CORE in runs.ts (kept local: importing it would cycle). */
 const REVENGE_CORE_IDS: ReadonlyArray<string> = [

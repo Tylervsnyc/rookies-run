@@ -253,8 +253,8 @@ import {
   STILL,
   type LevelBuilder,
   type RunDef,
-} from '../run-kit';
-import type { Hazard } from '../types';
+} from '../../run-kit';
+import type { Hazard } from '../../types';
 
 const key = (f: number, r: number) => `${f},${r}`;
 
