@@ -4,7 +4,7 @@ import { withClick } from '@/lib/sounds';
 import { useEffect } from 'react';
 import { ABILITY_DEFS, blurbDetailForTier, type AbilityId } from '@/lib/run/abilities';
 import { abilityUnlockedBy } from '@/lib/run/achievements';
-import { AbilityCardFull, preloadAbilityArt } from './AbilityCard';
+import { AbilityCardFull, FULL_CARD_W_PER_H, preloadAbilityArt } from './AbilityCard';
 
 interface Props {
   abilityId: AbilityId | undefined;
@@ -132,7 +132,7 @@ export function AbilityUnlockModal({ abilityId, onClose }: Props) {
 
         <div
           className="relative flex flex-col items-center"
-          style={{ width: 'var(--rr-card-w)', ['--rr-card-w' as string]: 'min(100cqw, (100cqh - 200px) * 0.714, 420px)', gap: 12 }}
+          style={{ width: 'var(--rr-card-w)', ['--rr-card-w' as string]: `min(100cqw, (100cqh - 200px) * ${FULL_CARD_W_PER_H.toFixed(3)}, 420px)`, gap: 12 }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="text-center w-full" style={{ minHeight: 58 }}>

@@ -10,7 +10,13 @@ import {
   type AbilityTier,
   type OwnedAbility,
 } from '@/lib/run/abilities';
-import { AbilityCardMini, RACK_CARD_W } from './AbilityCard';
+import {
+  AbilityCardMini,
+  RACK_ART_INSET,
+  RACK_CARD_PAD,
+  RACK_FOOTER_H,
+  RACK_NAME_H,
+} from './AbilityCard';
 
 /**
  * Height reserved under the cards for the info slot. The slot is the ONE
@@ -96,7 +102,12 @@ export function AbilityRack({
         }
       `}</style>
       <div className="flex flex-col gap-1.5">
-        <div className="flex gap-2.5 justify-center items-end pb-1">
+        {/* Three equal cells filling the board's width — the card is as wide
+            as the rack allows (Tyler 2026-09-09: "as big as possible"); its
+            height follows from the square art (see AbilityCardMini). */}
+        <div
+          className="grid grid-cols-3 gap-2 items-stretch w-full max-w-[min(92vw,440px)] mx-auto pb-1"
+        >
           {abilities.map((a) => (
             <RackEntry
               key={a.id}
@@ -208,14 +219,23 @@ function AbilityInfoPanel({
   );
 }
 
+/**
+ * Mirrors the card's skeleton (name strip + square art + footer row) so an
+ * empty cell is exactly as tall as a filled one at any rack width.
+ */
 function EmptySlot() {
   return (
     <div
       aria-hidden="true"
-      className="shrink-0 rounded-[9px] border-2 border-dashed border-chess-text/15 flex items-center justify-center"
-      style={{ width: RACK_CARD_W, aspectRatio: '5 / 7' }}
+      className="relative w-full min-w-0 rounded-[9px] border-2 border-dashed border-chess-text/15"
+      style={{ padding: RACK_CARD_PAD - 2 }}
     >
-      <span className="text-chess-text/20 text-xl font-black select-none">+</span>
+      <div style={{ height: RACK_NAME_H }} />
+      <div className="aspect-square" style={{ marginLeft: RACK_ART_INSET, marginRight: RACK_ART_INSET }} />
+      <div style={{ height: RACK_FOOTER_H }} />
+      <span className="absolute inset-0 flex items-center justify-center text-chess-text/20 text-xl font-black select-none">
+        +
+      </span>
     </div>
   );
 }

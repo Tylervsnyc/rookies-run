@@ -217,12 +217,13 @@ function AbilityTile({ id }: { id: AbilityId }) {
   return (
     <div
       className="w-full rounded-[12px] p-[3px]"
-      style={{ aspectRatio: '4 / 5', background: 'linear-gradient(135deg,#b8852b,#6a4612 30%,#ffd87a 60%,#b8852b)', boxShadow: '0 5px 12px rgba(0,0,0,0.45)' }}
+      style={{ background: 'linear-gradient(135deg,#b8852b,#6a4612 30%,#ffd87a 60%,#b8852b)', boxShadow: '0 5px 12px rgba(0,0,0,0.45)' }}
     >
-      <div className="w-full h-full rounded-[9px] overflow-hidden flex flex-col" style={{ background: '#f6e7c5' }}>
-        <div className="flex-1 min-h-0 relative" style={{ background: 'radial-gradient(ellipse at center,#ffe9a8 0%,#d49a2a 100%)' }}>
+      <div className="w-full rounded-[9px] overflow-hidden flex flex-col" style={{ background: '#f6e7c5' }}>
+        {/* Square art window — the files are 1:1, never crop them. */}
+        <div className="relative w-full aspect-square" style={{ background: 'radial-gradient(ellipse at center,#ffe9a8 0%,#d49a2a 100%)' }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/abilities/${artFile(id)}`} alt="" className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+          <img src={`/abilities/${artFile(id)}`} alt="" className="absolute inset-0 w-full h-full object-contain" draggable={false} />
         </div>
         <div className="px-1 py-[3px] text-[9.5px] font-black text-center leading-tight truncate" style={{ color: '#3d2806', letterSpacing: '0.02em' }}>{ABILITY_DEFS[id].name}</div>
       </div>

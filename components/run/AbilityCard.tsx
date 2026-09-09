@@ -4,9 +4,9 @@
  * AbilityCard — the MTG-style trading-card render for a single ability.
  *
  * Two layouts:
- *   - 'mini'  : 5:7 thumbnail used in the AbilityRack below the board.
- *               Name + art + uses pips + an (i) corner button that opens the
- *               blurb in the rack's info slot (AbilityRack).
+ *   - 'mini'  : rack card used in the AbilityRack below the board. Sized by
+ *               its grid cell; a square (uncropped) art window with one thin
+ *               name strip above and one thin footer row (i · pips · gem).
  *   - 'full'  : tall card used in the offer modal. Name banner, large art,
  *               type line, text box, tier gem.
  *
@@ -384,8 +384,23 @@ interface MiniProps {
   infoOpen?: boolean;
 }
 
-/** Rack card width (Tyler 2026-09-03: "make these ability cards bigger, they look so darn good"). */
-export const RACK_CARD_W = 100;
+/**
+ * Rack card geometry (Tyler 2026-09-09: "as big as possible", art NEVER
+ * cropped). The card is sized by its grid cell — AbilityRack gives it a
+ * third of the rack width — and its HEIGHT follows the art: every file in
+ * public/abilities is 512x512, so the art window is a square and the card
+ * is that square plus one thin name strip above and one thin footer row
+ * below. Height = width - 2*RACK_CARD_PAD - 2*RACK_ART_INSET
+ *              + RACK_NAME_H + RACK_FOOTER_H + 2*RACK_CARD_PAD.
+ * The EmptySlot in AbilityRack mirrors this skeleton so all three cells
+ * come out the same height.
+ */
+export const RACK_CARD_PAD = 2;
+export const RACK_ART_INSET = 3;
+export const RACK_NAME_H = 15;
+export const RACK_FOOTER_H = 22;
+/** Left inset of the footer row so the pips clear the (i) button. */
+const RACK_INFO_W = 24;
 
 /**
  * The rack card has exactly ONE explainer surface: the (i) button in its
@@ -412,17 +427,17 @@ export function AbilityCardMini({
 
   return (
     <div
-      className={`relative snap-start shrink-0 ${active ? 'ability-card-active' : ''} ${
+      className={`relative w-full min-w-0 ${active ? 'ability-card-active' : ''} ${
         flashing ? 'ability-card-flash' : ''
       } transition-transform`}
-      style={{ width: RACK_CARD_W, aspectRatio: '5 / 7', borderRadius: 9 }}
+      style={{ borderRadius: 9 }}
     >
       <button
         type="button"
         onClick={withClick(onClick)}
         disabled={disabled}
         aria-label={`${def.name} — ${blurb.what} ${blurb.how}`}
-        className={`block w-full h-full group ${disabled ? 'opacity-45' : 'active:scale-95'} transition-transform`}
+        className={`block w-full group ${disabled ? 'opacity-45' : 'active:scale-95'} transition-transform`}
         style={{
           borderRadius: 9,
           background: 'transparent',
@@ -434,16 +449,15 @@ export function AbilityCardMini({
         }}
       >
         <div
-          className="absolute inset-0"
           style={{
             background: t.border,
             borderRadius: 7,
-            padding: 2,
+            padding: RACK_CARD_PAD,
             boxShadow: t.halo ? `${t.halo}, 0 1px 3px rgba(0,0,0,0.25)` : '0 1px 3px rgba(0,0,0,0.25)',
           }}
         >
           <div
-            className={`relative w-full h-full rounded-[5px] flex flex-col overflow-hidden ${
+            className={`relative w-full rounded-[5px] flex flex-col overflow-hidden ${
               t.foil ? 'foil-card' : ''
             }`}
             style={{
@@ -451,23 +465,23 @@ export function AbilityCardMini({
               color: t.text,
             }}
           >
-            {/* Name banner */}
+            {/* Name banner — ONE thin strip. */}
             <div
-              className="text-[9.5px] font-black uppercase leading-tight tracking-[0.04em] px-1 pt-[4px] pb-[3px] truncate text-center"
-              style={{ letterSpacing: '0.04em' }}
+              className="shrink-0 flex items-center justify-center px-1 text-[9.5px] font-black uppercase leading-none tracking-[0.04em]"
+              style={{ height: RACK_NAME_H }}
             >
-              {def.name}
+              <span className="block w-full truncate text-center">{def.name}</span>
             </div>
 
-            {/* Art window */}
+            {/* Art window — a SQUARE, because the art is. object-contain so
+                the illustration is never cropped (Tyler, 2026-09-09: "All
+                the ability card illustrations are being cut off"). */}
             <div
-              className="mx-[3px] rounded-[3px] overflow-hidden"
+              className="shrink-0 rounded-[3px] overflow-hidden aspect-square"
               style={{
+                marginLeft: RACK_ART_INSET,
+                marginRight: RACK_ART_INSET,
                 background: t.art,
-                // 56% (was 64%) — the footer needs two rows now: the (i)
-                // button sits above the uses pips, never over the art
-                // (Tyler, 2026-09-09: "I love all of our pictures").
-                height: '56%',
                 boxShadow: 'inset 0 0 6px rgba(0,0,0,0.25)',
               }}
             >
@@ -475,15 +489,20 @@ export function AbilityCardMini({
               <img
                 src={`/abilities/${artFile(ability.id)}`}
                 alt=""
-                className="w-full h-full object-cover"
+                className="block w-full h-full object-contain"
                 loading="eager"
                 decoding="async"
                 draggable={false}
               />
             </div>
 
-            {/* Footer: uses pips + tier gem */}
-            <div className="flex-1 flex items-end justify-between px-[3px] pb-[3px] pt-[2px]">
+            {/* Footer — ONE thin row: [ (i) ] pips ........ gem. The (i)
+                itself is rendered OUTSIDE this button (below); this row just
+                leaves it room on the left. */}
+            <div
+              className="shrink-0 flex items-center justify-between"
+              style={{ height: RACK_FOOTER_H, paddingLeft: RACK_INFO_W, paddingRight: RACK_ART_INSET }}
+            >
               <UsesPips
                 uses={ability.usesLeftThisLevel}
                 max={max}
@@ -511,12 +530,11 @@ export function AbilityCardMini({
       </button>
 
       {/*
-        (i) — lower-left of the card, directly above the uses pips and
-        OUTSIDE the card button (a button can't nest a button). Never over
-        the art. Visible circle is 18px; the hit box is 30px and the card
-        beside it is 100x140, so the tap target is well past 44px. Stays
-        tappable on a spent (disabled) card — you can always read what a
-        power does.
+        (i) — lower-left of the card, on the footer row beside the uses pips
+        and OUTSIDE the card button (a button can't nest a button). Never
+        over the art. Visible circle is 18px; the hit box is 34px (it
+        overhangs the card's corner, not the art). Stays tappable on a spent
+        (disabled) card — you can always read what a power does.
       */}
       {onInfo && (
         <button
@@ -530,10 +548,10 @@ export function AbilityCardMini({
           aria-pressed={infoOpen}
           className="absolute flex items-center justify-center active:scale-90 transition-transform"
           style={{
-            left: 0,
-            bottom: 8,
-            width: 30,
-            height: 30,
+            left: -4,
+            bottom: -4,
+            width: 34,
+            height: 34,
             WebkitTapHighlightColor: 'transparent',
             touchAction: 'manipulation',
           }}
@@ -584,6 +602,15 @@ interface FullProps {
  * art poked past the rounded frame on iOS. A mask + isolated layer forces
  * a real compositing clip. Chrome never needed it; harmless there.
  */
+/**
+ * Full-card aspect (width : height). Taller than a Magic card (5:7) because
+ * the art window is a full square — 92% of the width — and the text box
+ * still needs room under it. AbilityUnlockModal sizes the card from the
+ * viewport height with this same ratio.
+ */
+export const FULL_CARD_ASPECT = '5 / 7.6';
+export const FULL_CARD_W_PER_H = 5 / 7.6;
+
 const CLIP: CSSProperties = {
   overflow: 'hidden',
   isolation: 'isolate',
@@ -607,7 +634,7 @@ export function AbilityCardFull({
       onClick={withClick(onClick)}
       className="relative block w-full mx-auto group active:scale-[0.98] transition-transform"
       style={{
-        aspectRatio: '5 / 7',
+        aspectRatio: FULL_CARD_ASPECT,
         background: t.border,
         borderRadius: '5cqw',
         padding: '2cqw',
@@ -649,7 +676,7 @@ export function AbilityCardFull({
         <div
           className="shrink-0 flex items-center justify-center text-center"
           style={{
-            height: '11%',
+            height: '9%',
             padding: '0 4cqw',
             fontFamily: "'DM Sans', system-ui, sans-serif",
             fontWeight: 900,
@@ -664,13 +691,13 @@ export function AbilityCardFull({
           <span className="block w-full truncate">{def.name}</span>
         </div>
 
-        {/* Art window — the hero. Inset from the frame, own rounded clip. */}
+        {/* Art window — the hero. Inset from the frame, own rounded clip.
+            A SQUARE (the art is 512x512) so nothing is ever cropped. */}
         <div
-          className="relative shrink-0"
+          className="relative shrink-0 aspect-square"
           style={{
             ...CLIP,
             margin: '0 4cqw',
-            height: '60%',
             borderRadius: '2.5cqw',
             background: t.art,
             boxShadow:
@@ -681,7 +708,7 @@ export function AbilityCardFull({
           <img
             src={`/abilities/${artFile(id)}`}
             alt=""
-            className="block w-full h-full object-cover"
+            className="block w-full h-full object-contain"
             loading="eager"
             decoding="async"
             draggable={false}
