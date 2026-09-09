@@ -155,8 +155,39 @@ function enemySprite(type: PieceType, rabid: boolean, decoy: boolean): string {
   if (decoy) return base + DECOY_SUFFIX;
   return base;
 }
-function tintedPiece(base: string, filter: string) {
+// Enemy pawns are the most common piece on the board and the stock sprite
+// fills its whole cell — Tyler (2026-09-09): "the pawn is so big lol". Every
+// place that draws an enemy pawn (the board, tints, death/capture overlays)
+// goes through enemyPieceComp so they all shrink together.
+const PAWN_SCALE = 0.78;
+function scaledPiece(base: string, scale: number) {
   const Base = defaultPieces[base as keyof typeof defaultPieces];
+  const Scaled = () => (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+      }}
+    >
+      <div style={{ width: `${scale * 100}%`, height: `${scale * 100}%` }}>
+        {Base ? <Base /> : null}
+      </div>
+    </div>
+  );
+  Scaled.displayName = `Scaled-${base}`;
+  return Scaled;
+}
+const SCALED_PAWN = scaledPiece('bP', PAWN_SCALE);
+function enemyPieceComp(type: PieceType): (() => React.JSX.Element) | undefined {
+  if (type === 'pawn') return SCALED_PAWN;
+  return defaultPieces[ENEMY_SPRITE[type] as keyof typeof defaultPieces];
+}
+function tintedPiece(base: string, filter: string) {
+  const Base =
+    base === 'bP' ? SCALED_PAWN : defaultPieces[base as keyof typeof defaultPieces];
   const Tinted = () => (
     <div style={{ width: '100%', height: '100%', filter }}>
       {Base ? <Base /> : null}
@@ -838,8 +869,9 @@ export function RunBoard({
   }, [threatened]);
 
   const pieces = useMemo(
-    () => vanillaPieces ? { ...defaultPieces, ...STATUS_PIECES } : ({
+    () => vanillaPieces ? { ...defaultPieces, bP: SCALED_PAWN, ...STATUS_PIECES } : ({
       ...defaultPieces,
+      bP: SCALED_PAWN,
       ...STATUS_PIECES,
       // Custom Rookie sprite for each of her three forms.
       wR: () => (
@@ -1346,10 +1378,7 @@ export function RunBoard({
           <>
             {attackerAtRookie && captureSlideDone &&
               (() => {
-                const PieceComp =
-                  defaultPieces[
-                    ENEMY_SPRITE[attackerAtRookie.type] as keyof typeof defaultPieces
-                  ];
+                const PieceComp = enemyPieceComp(attackerAtRookie.type);
                 return (
                   <div
                     aria-hidden
@@ -2004,7 +2033,7 @@ function PoisonDeathLayer({
         const cx = (c.file - 1) * 12.5 + 6.25;
         const cy = (8 - c.rank) * 12.5 + 6.25;
         const PieceComp =
-          defaultPieces[ENEMY_SPRITE[d.pieceType] as keyof typeof defaultPieces];
+          enemyPieceComp(d.pieceType);
         return (
           <div key={`${idKey}-${i}`} style={{ position: 'absolute', inset: 0 }}>
             {/* Toxic puddle wash on the square. */}
@@ -2185,7 +2214,7 @@ function EnemyCaptureImpact({
   const toX = (to.file - 1) * 12.5;
   const toY = (8 - to.rank) * 12.5;
   const VictimComp = fx.victimType
-    ? defaultPieces[ENEMY_SPRITE[fx.victimType] as keyof typeof defaultPieces]
+    ? enemyPieceComp(fx.victimType)
     : null;
   const idKey = Math.floor(fx.id);
   const slide = PIECE_SLIDE_MS;
