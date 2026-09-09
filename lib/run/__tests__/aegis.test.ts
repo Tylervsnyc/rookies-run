@@ -47,7 +47,7 @@ function board(tier: AbilityTier, pieces: EnemyPiece[], rookie = 'a1', enemiesPe
 const count = (s: BoardState, type: EnemyPiece['type']) => s.pieces.filter((p) => p.type === type).length;
 
 test('raises per level: 1/2/2/3/3', () => {
-  assert.deepEqual([1, 2, 3, 4, 5].map((t) => maxUsesForTier('aegis', t as AbilityTier)), [1, 2, 2, 3, 3]);
+  assert.deepEqual([1, 2, 3, 4, 5].map((t) => maxUsesForTier('aegis', t as AbilityTier)), [1, 2, 2, 2, 2]);
 });
 
 test('freeze length: 1 turn at T1-T2, 2 turns at T3-T5', () => {
@@ -83,11 +83,11 @@ for (const tier of [1, 2, 3, 4, 5] as AbilityTier[]) {
   });
 }
 
-test('T5: 3 raises per level, each on a 3-turn clock', () => {
+test('T5: 2 raises per level, each on a 3-turn clock', () => {
   const s = applyAbilityActivate(board(5, [E('h8', 'king')]), 'aegis');
   assert.equal(s.shieldUp, true);
   assert.equal(s.shieldTurnsLeft, AEGIS_T5_TURNS);
-  assert.equal(s.abilities[0].usesLeftThisLevel, 2, 'a T5 raise spends a charge');
+  assert.equal(s.abilities[0].usesLeftThisLevel, 1, 'a T5 raise spends one of its two charges');
 });
 
 test('T5 shield drops on its own after 3 enemy turns with nothing hitting it', () => {

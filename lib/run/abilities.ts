@@ -447,10 +447,11 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 3) return 1;
       return 2;
     case 'aegis':
-      // 1/2/2/3/3 raises a level (T5 used to be an unlimited permanent shield; nerfed 2026-09-09).
+      // 1/2/2/2/2 raises a level. T5 used to be an unlimited permanent shield,
+      // then 3 raises — Tyler reached endless L30 "pretty easily" (2026-09-09):
+      // "it should just be 2 uses at the top."
       if (tier === 1) return 1;
-      if (tier === 2 || tier === 3) return 2;
-      return 3;
+      return 2;
     case 'decoy':
       if (tier === 1) return 1;
       if (tier === 2) return 1;
@@ -949,8 +950,8 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return '+1 extra move this turn. 2/level.';
       return '+1 extra move this turn. 1/level.';
     case 'aegis':
-      if (tier === 5) return 'Tap: 3-turn shield, never breaks. Each attacker frozen 2. 3/level.';
-      if (tier === 4) return 'Tap: shield. Attacker frozen 2. 3 raises/level.';
+      if (tier === 5) return 'Tap: 3-turn shield, never breaks. Each attacker frozen 2. 2/level.';
+      if (tier === 4) return 'Tap: shield. Attacker frozen 2. 2 raises/level.';
       if (tier === 3) return 'Tap: shield. Attacker frozen 2. 2 raises/level.';
       if (tier === 2) return 'Tap: shield. Attacker frozen 1. 2 raises/level.';
       return 'Tap: shield. Attacker frozen 1. 1/level.';
