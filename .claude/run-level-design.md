@@ -173,6 +173,71 @@ The Warren's finale read 16-34% for its own pair and looked unbeatable. The huma
 
 **Second trap from the same run:** `fastScore` pays +25 for a move that attacks the king, so a stand square that is ALSO a sentry's kill square is the top-scored move in every rollout and every rollout dies on it. The Warren L10 read 3% at 7 moves and 6% at 10 until that square was stoned, then 63%. If a finale reads near zero at every clock, look for a poisoned high-score square before touching the clock.
 
+### A shield cannot be half a gate unless its payoff is a CAPTURE (The Oubliette, 2026-09-09)
+
+`aegis+dragon` is a harness-proven gating pair (moat-L10-v14-s249, 80%, unique
+answer). The Oubliette (revenge-49) built ten levels around the other thing a
+shield can do — **stand on a square that kills you for one enemy phase, then
+deliver** — and the pair measured **0/0/16/0** on L7-L10 while every single card
+read 0%. Six finale geometries, traced, at every clock, with and without
+hunters, with the lip clean and with it occupied: **the bot never once walked
+onto the covered square on purpose.** Three things in `scripts/run-playtest/bots/`
+compound into a wall:
+
+- `ability-eval.ts` → `aegisBonus` returns **25 only when `rookieInThreat` is
+  already true, and 5 otherwise**. A pre-emptive shield is worth almost nothing
+  to the search.
+- `mcts.ts` → without the shield every rollout that steps onto the lip dies, so
+  `doomed` marks the move a loss and it is picked only when everything else is
+  also doomed (one trace played it on the last legal move of the move limit).
+- `fastScore` subtracts 20 for a pawn one diagonal step away — the exact
+  configuration the design puts her in.
+
+Note what the one gating `aegis+dragon` level in the library does instead: its
+recorded reason is *"the shield converts a defended blocker into a **takeable**
+one"*. **The measurable shield gate is "take the defended thing and eat the
+reply" — the shape The Picket (revenge-35, page + aegis) already ships — not
+"stand where you die".** This is the Glasshouse's "provable but unfindable" with
+a sharper edge, and it generalises past Aegis to **Smoke, Become King, and any
+future card whose value is surviving a turn: the bot will not buy safety it does
+not yet need.** Grade a defensive card on that axis before building a run for it.
+
+### The bot's positional term is a trap on an open board (The Oubliette, 2026-09-09)
+
+`fastScore` scores `(8 - chebyshev(rookie, king)) * 3`. The Oubliette's first
+build left rank 3 open across the board and the bot walked to a square **two**
+squares from the king — behind a wall, useless — and shuffled there for the whole
+move limit, because that square scores 18 and the winning lip scores 15. **The
+key square must be the NEAREST REACHABLE square to the king, and every square
+nearer than it must be stone.** This is a stronger form of the Warren's "carve
+the finale out of solid stone" and it applies to *any* kit, not only to cards
+that target empty squares. A partial funnel is worse than none: with rank 3
+stoned except one file, the bot climbed to rank 3 in the wrong file and could
+not cross to the road at all.
+
+### A cork defended by the KING is not defended (The Oubliette L3, 2026-09-09)
+
+A walled knight in the king's one doorway, with the king as its only defender,
+read **100% bare**. Any capture credited to Rookie's side stuns him for a turn
+(`engine.ts:123`), so the recapture never comes: **taking a king-defended piece
+is free, always, in every level in this game.** A defender has to be a piece that
+is not the king.
+
+### The dragon WALKS (The Oubliette, 2026-09-09)
+
+Three separate dragon-alone leaks, each fatal on its own, all of one family: the
+dragon has queen rays **and** knight jumps, so "the only square that reaches the
+king" must mean the only square reachable by a body *over several turns*, not in
+one. (a) the watcher pawn's own square was a knight square of the king, so the
+dragon ate the watcher and stood one step from him; (b) lip, hole and watcher
+were collinear, so with the hole empty the dragon slid straight through it;
+(c) an unpinned mouth pawn marched off and left a square that was a knight jump
+from the watcher. The seal that works: **put the watcher on the same side of the
+hole as the lip** (the square between them is then an orthogonal neighbour of the
+hole, hence stone), **stone every knight square of the watcher**, and **pin every
+pawn with stone directly in front of it**. All three leaks reopen above T1, where
+a dragon with two charges and five turns can walk a body in over several phases.
+
 ## Patterns that work
 
 ### The gated finale (Moat / Colonnade / Vault, 2026-09-04..05)
