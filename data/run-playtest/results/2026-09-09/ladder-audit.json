@@ -1,0 +1,1315 @@
+{
+ "schema": 1,
+ "experiment": "ladder-audit",
+ "date": "2026-09-09",
+ "at": "2026-09-09T19:55:22.159Z",
+ "engine": {
+  "sha": "2241571",
+  "dirty": false,
+  "libHash": "69cbff9e1102"
+ },
+ "budget": {
+  "trials": 32,
+  "runs": 24,
+  "jobs": 3,
+  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>"
+ },
+ "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 3 · TOO HARD 4 · FLAT 0 · INCONCLUSIVE 3 (of 10)",
+ "body": {
+  "sick": false,
+  "method": "Normal, T5, T1 cards",
+  "rows": [
+   {
+    "rung": 1,
+    "runId": "revenge-21",
+    "name": "The Slash",
+    "pair": [
+     "boulder",
+     "knight-hop"
+    ],
+    "kit": [
+     "boulder",
+     "knight-hop",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "hard",
+      "trialsNeeded": 96
+     },
+     "scale": false,
+     "shape": true
+    },
+    "pairByLevel": [
+     {
+      "wins": 11,
+      "n": 32,
+      "pct": 34.4,
+      "lo": 20.4,
+      "hi": 51.7
+     },
+     {
+      "wins": 18,
+      "n": 32,
+      "pct": 56.3,
+      "lo": 39.3,
+      "hi": 71.8
+     },
+     {
+      "wins": 11,
+      "n": 32,
+      "pct": 34.4,
+      "lo": 20.4,
+      "hi": 51.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 40,
+     "n": 128,
+     "pct": 31.3,
+     "lo": 23.9,
+     "hi": 39.7
+    },
+    "run": {
+     "wins": 13,
+     "n": 24,
+     "pct": 54.2,
+     "lo": 35.1,
+     "hi": 72.1
+    },
+    "avgPieces": 2.7,
+    "early": 2.3333333333333335,
+    "late": 3,
+    "targets": {
+     "band": 80,
+     "run": 65,
+     "scale": 3
+    }
+   },
+   {
+    "rung": 2,
+    "runId": "revenge-18",
+    "name": "The Glasshouse",
+    "pair": [
+     "freeze-ray",
+     "vanguard"
+    ],
+    "kit": [
+     "freeze-ray",
+     "vanguard",
+     "poison-dart",
+     "magnet"
+    ],
+    "grade": "INCONCLUSIVE",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 122
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 91
+     },
+     "scale": false,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 92,
+     "n": 128,
+     "pct": 71.9,
+     "lo": 63.5,
+     "hi": 78.9
+    },
+    "run": {
+     "wins": 15,
+     "n": 24,
+     "pct": 62.5,
+     "lo": 42.7,
+     "hi": 78.8
+    },
+    "avgPieces": 1.9,
+    "early": 1.6666666666666667,
+    "late": 2,
+    "targets": {
+     "band": 77,
+     "run": 61.7,
+     "scale": 3.6
+    }
+   },
+   {
+    "rung": 3,
+    "runId": "revenge-15",
+    "name": "The Stacks",
+    "pair": [
+     "magnet",
+     "boulder"
+    ],
+    "kit": [
+     "magnet",
+     "boulder",
+     "aegis",
+     "decoy"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "hard",
+      "trialsNeeded": 86
+     },
+     "scale": false,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 0,
+     "n": 128,
+     "pct": 0,
+     "lo": 0,
+     "hi": 2.9
+    },
+    "run": {
+     "wins": 8,
+     "n": 24,
+     "pct": 33.3,
+     "lo": 18,
+     "hi": 53.3
+    },
+    "avgPieces": 3.7,
+    "early": 3.6666666666666665,
+    "late": 4,
+    "targets": {
+     "band": 74,
+     "run": 58.4,
+     "scale": 4.2
+    }
+   },
+   {
+    "rung": 4,
+    "runId": "revenge-23",
+    "name": "The Parapet",
+    "pair": [
+     "knight-hop",
+     "twin"
+    ],
+    "kit": [
+     "knight-hop",
+     "twin",
+     "aegis",
+     "decoy"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "scale": false,
+     "shape": true
+    },
+    "pairByLevel": [
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 19,
+      "n": 32,
+      "pct": 59.4,
+      "lo": 42.3,
+      "hi": 74.5
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 19,
+     "n": 128,
+     "pct": 14.8,
+     "lo": 9.7,
+     "hi": 22
+    },
+    "run": {
+     "wins": 6,
+     "n": 24,
+     "pct": 25,
+     "lo": 12,
+     "hi": 44.9
+    },
+    "avgPieces": 3.6,
+    "early": 3,
+    "late": 5,
+    "targets": {
+     "band": 71,
+     "run": 55.1,
+     "scale": 4.8
+    }
+   },
+   {
+    "rung": 5,
+    "runId": "revenge-12",
+    "name": "The Moat",
+    "pair": [
+     "bishop-squire",
+     "swap"
+    ],
+    "kit": [
+     "swap",
+     "bishop-squire",
+     "knight-hop",
+     "poison-dart"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 129
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "scale": false,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 20,
+      "n": 32,
+      "pct": 62.5,
+      "lo": 45.3,
+      "hi": 77.1
+     },
+     {
+      "wins": 26,
+      "n": 32,
+      "pct": 81.3,
+      "lo": 64.7,
+      "hi": 91.1
+     },
+     {
+      "wins": 17,
+      "n": 32,
+      "pct": 53.1,
+      "lo": 36.4,
+      "hi": 69.1
+     },
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 88,
+     "n": 128,
+     "pct": 68.8,
+     "lo": 60.3,
+     "hi": 76.1
+    },
+    "run": {
+     "wins": 5,
+     "n": 24,
+     "pct": 20.8,
+     "lo": 9.2,
+     "hi": 40.5
+    },
+    "avgPieces": 4.9,
+    "early": 4.666666666666667,
+    "late": 5,
+    "targets": {
+     "band": 68,
+     "run": 51.8,
+     "scale": 5.4
+    }
+   },
+   {
+    "rung": 6,
+    "runId": "revenge-24",
+    "name": "The Lattice",
+    "pair": [
+     "duchess",
+     "decoy"
+    ],
+    "kit": [
+     "duchess",
+     "decoy",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "easy",
+      "trialsNeeded": 86
+     },
+     "scale": false,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 125,
+     "n": 128,
+     "pct": 97.7,
+     "lo": 93.3,
+     "hi": 99.2
+    },
+    "run": {
+     "wins": 16,
+     "n": 24,
+     "pct": 66.7,
+     "lo": 46.7,
+     "hi": 82
+    },
+    "avgPieces": 4.9,
+    "early": 3,
+    "late": 6.666666666666667,
+    "targets": {
+     "band": 65,
+     "run": 48.5,
+     "scale": 6
+    }
+   },
+   {
+    "rung": 7,
+    "runId": "revenge-25",
+    "name": "The Alcove",
+    "pair": [
+     "become-king",
+     "boulder"
+    ],
+    "kit": [
+     "become-king",
+     "boulder",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "INCONCLUSIVE",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": false,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "hard",
+      "trialsNeeded": 150
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "hard",
+      "trialsNeeded": 80
+     },
+     "scale": false,
+     "shape": true
+    },
+    "pairByLevel": [
+     {
+      "wins": 9,
+      "n": 32,
+      "pct": 28.1,
+      "lo": 15.6,
+      "hi": 45.4
+     },
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 7,
+      "n": 32,
+      "pct": 21.9,
+      "lo": 11,
+      "hi": 38.8
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 62,
+     "n": 128,
+     "pct": 48.4,
+     "lo": 40,
+     "hi": 57
+    },
+    "run": {
+     "wins": 7,
+     "n": 24,
+     "pct": 29.2,
+     "lo": 14.9,
+     "hi": 49.2
+    },
+    "avgPieces": 3.3,
+    "early": 2.6666666666666665,
+    "late": 4.333333333333333,
+    "targets": {
+     "band": 62,
+     "run": 45.2,
+     "scale": 6.6
+    }
+   },
+   {
+    "rung": 8,
+    "runId": "revenge-19",
+    "name": "The Cliff",
+    "pair": [
+     "convert",
+     "summon-knight"
+    ],
+    "kit": [
+     "convert",
+     "summon-knight",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "INCONCLUSIVE",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "easy",
+      "trialsNeeded": 126
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 91
+     },
+     "scale": false,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 22,
+      "n": 32,
+      "pct": 68.8,
+      "lo": 51.4,
+      "hi": 82
+     },
+     {
+      "wins": 24,
+      "n": 32,
+      "pct": 75,
+      "lo": 57.9,
+      "hi": 86.7
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "summon-knight",
+      "est": {
+       "wins": 1,
+       "n": 32,
+       "pct": 3.1,
+       "lo": 0.6,
+       "hi": 15.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 90,
+     "n": 128,
+     "pct": 70.3,
+     "lo": 61.9,
+     "hi": 77.5
+    },
+    "run": {
+     "wins": 9,
+     "n": 24,
+     "pct": 37.5,
+     "lo": 21.2,
+     "hi": 57.3
+    },
+    "avgPieces": 4.8,
+    "early": 4,
+    "late": 5.666666666666667,
+    "targets": {
+     "band": 59,
+     "run": 41.900000000000006,
+     "scale": 7.2
+    }
+   },
+   {
+    "rung": 9,
+    "runId": "revenge-22",
+    "name": "The Millstone",
+    "pair": [
+     "dragon",
+     "duchess"
+    ],
+    "kit": [
+     "dragon",
+     "duchess",
+     "magnet",
+     "aegis"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 80
+     },
+     "scale": false,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 26,
+      "n": 32,
+      "pct": 81.3,
+      "lo": 64.7,
+      "hi": 91.1
+     },
+     {
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 101,
+     "n": 128,
+     "pct": 78.9,
+     "lo": 71,
+     "hi": 85.1
+    },
+    "run": {
+     "wins": 7,
+     "n": 24,
+     "pct": 29.2,
+     "lo": 14.9,
+     "hi": 49.2
+    },
+    "avgPieces": 3.9,
+    "early": 3.3333333333333335,
+    "late": 5,
+    "targets": {
+     "band": 56,
+     "run": 38.6,
+     "scale": 7.8
+    }
+   },
+   {
+    "rung": 10,
+    "runId": "revenge-17",
+    "name": "The Briar",
+    "pair": [
+     "dragon",
+     "sacrifice"
+    ],
+    "kit": [
+     "dragon",
+     "sacrifice",
+     "aegis",
+     "poison-dart"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "scale": true,
+     "shape": false
+    },
+    "pairByLevel": [
+     {
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
+     },
+     {
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "aegis",
+      "est": {
+       "wins": 1,
+       "n": 32,
+       "pct": 3.1,
+       "lo": 0.6,
+       "hi": 15.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 117,
+     "n": 128,
+     "pct": 91.4,
+     "lo": 85.3,
+     "hi": 95.1
+    },
+    "run": {
+     "wins": 18,
+     "n": 24,
+     "pct": 75,
+     "lo": 55.1,
+     "hi": 88
+    },
+    "avgPieces": 17.6,
+    "early": 12.333333333333334,
+    "late": 24.666666666666668,
+    "targets": {
+     "band": 53,
+     "run": 35.3,
+     "scale": 8.399999999999999
+    }
+   }
+  ]
+ }
+}
