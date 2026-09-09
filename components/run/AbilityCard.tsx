@@ -5,7 +5,8 @@
  *
  * Two layouts:
  *   - 'mini'  : 5:7 thumbnail used in the AbilityRack below the board.
- *               Name + art + uses pips. Tooltip-on-press handled by caller.
+ *               Name + art + uses pips + an (i) corner button that opens the
+ *               blurb in the rack's info slot (AbilityRack).
  *   - 'full'  : tall card used in the offer modal. Name banner, large art,
  *               type line, text box, tier gem.
  *
@@ -14,7 +15,7 @@
  * uses the `.foil-card` class from globals.css.
  */
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { type CSSProperties } from 'react';
 import type {
   AbilityBlurb,
   AbilityId,
@@ -376,17 +377,30 @@ interface MiniProps {
   onClick: () => void;
   /** Force the card into its grayed, untappable state (tutorial gating). */
   disabled?: boolean;
+  /** The (i) corner button — opens this ability's explainer in the rack's info slot. */
+  onInfo?: () => void;
+  /** True while this card's explainer is the one showing in the info slot. */
+  infoOpen?: boolean;
 }
 
 /** Rack card width (Tyler 2026-09-03: "make these ability cards bigger, they look so darn good"). */
 export const RACK_CARD_W = 100;
 
+/**
+ * The rack card has exactly ONE explainer surface: the (i) button in its
+ * corner, which opens the blurb in the rack's info slot BELOW the rack.
+ * The card-flip peek (hover / long-press) that used to live here is gone —
+ * two places for the same text is one too many, and the flip was invisible
+ * to anyone who never thought to hold the card (Tyler, 2026-09-09).
+ */
 export function AbilityCardMini({
   ability,
   active,
   flashing,
   onClick,
   disabled: forceDisabled = false,
+  onInfo,
+  infoOpen = false,
 }: MiniProps) {
   const def = ABILITY_DEFS[ability.id];
   const t = TIER[ability.tier];
@@ -395,89 +409,32 @@ export function AbilityCardMini({
   const max = Math.max(1, maxUsesDisplay(ability));
   const blurb = blurbDetailForTier(ability.id, ability.tier);
 
-  // Peek = card-flip explainer. Hover on desktop, long-press (~400ms) on
-  // touch. Long-press also suppresses the next click so reading doesn't
-  // burn a use.
-  const [peeking, setPeeking] = useState(false);
-  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const longPressedRef = useRef(false);
-
-  // Deselecting (tap the active card again) must land on the FRONT face —
-  // iOS fires mouseenter on tap, which used to leave the card peeking.
-  useEffect(() => {
-    if (!active) setPeeking(false);
-  }, [active]);
-
-  const clearPress = () => {
-    if (pressTimer.current) {
-      clearTimeout(pressTimer.current);
-      pressTimer.current = null;
-    }
-  };
-  const startPress = () => {
-    longPressedRef.current = false;
-    clearPress();
-    pressTimer.current = setTimeout(() => {
-      longPressedRef.current = true;
-      setPeeking(true);
-    }, 400);
-  };
-  const endPress = () => {
-    clearPress();
-    if (longPressedRef.current) setPeeking(false);
-  };
-  const handleClick = () => {
-    if (longPressedRef.current) {
-      longPressedRef.current = false;
-      return;
-    }
-    onClick();
-  };
-
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      onPointerDown={startPress}
-      onPointerUp={endPress}
-      onPointerLeave={endPress}
-      onPointerCancel={endPress}
-      onMouseEnter={() => { if (window.matchMedia?.('(hover: hover)').matches) setPeeking(true); }}
-      onMouseLeave={() => setPeeking(false)}
-      disabled={disabled}
-      aria-label={`${def.name} — ${blurb.what} ${blurb.how}`}
-      className={`relative snap-start shrink-0 group ${
-        active ? 'ability-card-active' : ''
-      } ${flashing ? 'ability-card-flash' : ''} ${
-        disabled ? 'opacity-45' : 'active:scale-95'
+    <div
+      className={`relative snap-start shrink-0 ${active ? 'ability-card-active' : ''} ${
+        flashing ? 'ability-card-flash' : ''
       } transition-transform`}
-      style={{
-        width: RACK_CARD_W,
-        aspectRatio: '5 / 7',
-        borderRadius: 9,
-        background: 'transparent',
-        perspective: '600px',
-        boxShadow: 'none',
-        WebkitTapHighlightColor: 'transparent',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        touchAction: 'manipulation',
-      }}
+      style={{ width: RACK_CARD_W, aspectRatio: '5 / 7', borderRadius: 9 }}
     >
-      <div
-        className="relative w-full h-full"
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        aria-label={`${def.name} — ${blurb.what} ${blurb.how}`}
+        className={`block w-full h-full group ${disabled ? 'opacity-45' : 'active:scale-95'} transition-transform`}
         style={{
-          transformStyle: 'preserve-3d',
-          transform: peeking ? 'rotateY(180deg)' : 'rotateY(0deg)',
-          transition: 'transform 360ms cubic-bezier(0.4, 0.2, 0.2, 1)',
+          borderRadius: 9,
+          background: 'transparent',
+          boxShadow: 'none',
+          WebkitTapHighlightColor: 'transparent',
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          touchAction: 'manipulation',
         }}
       >
-        {/* FRONT FACE */}
         <div
           className="absolute inset-0"
           style={{
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
             background: t.border,
             borderRadius: 7,
             padding: 2,
@@ -547,72 +504,55 @@ export function AbilityCardMini({
             </div>
           </div>
         </div>
+      </button>
 
-        {/* BACK FACE — explainer */}
-        <div
-          className="absolute inset-0"
+      {/*
+        (i) — sits in the art window's top-right corner, OUTSIDE the card
+        button (a button can't nest a button). Visible circle is 18px; the
+        hit box is 30px and the card beside it is 100x140, so the tap target
+        is well past 44px. Stays tappable on a spent (disabled) card — you
+        can always read what a power does.
+      */}
+      {onInfo && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onInfo();
+          }}
+          aria-label={`${infoOpen ? 'Hide' : 'Show'} what ${def.name} does`}
+          aria-pressed={infoOpen}
+          className="absolute flex items-center justify-center active:scale-90 transition-transform"
           style={{
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            background: t.border,
-            borderRadius: 7,
-            padding: 2,
-            boxShadow: t.halo ? `${t.halo}, 0 1px 3px rgba(0,0,0,0.25)` : '0 1px 3px rgba(0,0,0,0.25)',
+            top: 14,
+            right: 0,
+            width: 30,
+            height: 30,
+            WebkitTapHighlightColor: 'transparent',
+            touchAction: 'manipulation',
           }}
         >
-          <div
-            className="relative w-full h-full rounded-[5px] flex flex-col overflow-hidden"
+          <span
+            className="flex items-center justify-center font-black select-none"
             style={{
-              background: t.foil ? '#fff7e3' : t.face,
-              color: t.text,
+              width: 18,
+              height: 18,
+              borderRadius: 999,
+              fontSize: 11,
+              lineHeight: 1,
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              color: infoOpen ? '#1b2b5c' : '#FFD700',
+              background: infoOpen ? '#FFD700' : 'rgba(12,20,48,0.82)',
+              border: `1px solid ${infoOpen ? '#FFD700' : 'rgba(255,215,0,0.7)'}`,
+              boxShadow: '0 1px 3px rgba(0,0,0,0.45)',
             }}
           >
-            <div
-              className="text-[9.5px] font-black uppercase leading-tight tracking-[0.04em] px-1 pt-[4px] pb-[3px] truncate text-center"
-              style={{ letterSpacing: '0.04em', borderBottom: `1px solid ${t.gem}33` }}
-            >
-              {def.name}
-            </div>
-            <div
-              className="flex-1 px-[5px] py-[4px] flex flex-col gap-[3px] text-[8.5px] leading-[1.25] text-center"
-              style={{ color: t.text, hyphens: 'auto' }}
-            >
-              <div className="font-black">{blurb.what}</div>
-              <div className="font-medium" style={{ opacity: 0.65 }}>
-                {blurb.how}
-              </div>
-              {blurb.limit ? (
-                <div
-                  className="font-bold mt-auto"
-                  style={{ opacity: 0.7, fontSize: '7px' }}
-                >
-                  {blurb.limit}
-                </div>
-              ) : null}
-            </div>
-            <div className="flex items-end justify-end px-[3px] pb-[3px]">
-              <span
-                className="text-[9px] font-black"
-                style={{
-                  color: t.gem,
-                  width: 12,
-                  height: 12,
-                  borderRadius: 999,
-                  border: `1px solid ${t.gem}`,
-                  lineHeight: '9px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {ability.tier}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </button>
+            i
+          </span>
+        </button>
+      )}
+    </div>
   );
 }
 

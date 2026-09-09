@@ -805,6 +805,19 @@ export default function RookiesRunPage() {
   );
 
   const [showTempoHelp, setShowTempoHelp] = useState(false);
+  /**
+   * Which rack card's (i) explainer is open in the rack's info slot — the
+   * ONE place ability text shows during a run. Closed by any tap on the
+   * board, any drop, arming a card, or a new level. Never above the board.
+   */
+  const [infoAbilityId, setInfoAbilityId] = useState<AbilityId | null>(null);
+  const toggleInfoAbility = useCallback(
+    (id: AbilityId) => setInfoAbilityId((cur) => (cur === id ? null : id)),
+    [],
+  );
+  useEffect(() => {
+    setInfoAbilityId(null);
+  }, [state.level]);
   const openTempoHelp = useCallback(() => {
     ensureAudioWarm();
     setShowTempoHelp(true);
@@ -1219,6 +1232,7 @@ export default function RookiesRunPage() {
   const onActivateAbility = useCallback(
     (id: AbilityId) => {
       ensureAudioWarm();
+      setInfoAbilityId(null);
       // Tapping the same card again cancels an armed (aimed) ability.
       if (state.activeAbility?.id === id) {
         setState((s) => applyAbilityCancel(s));
@@ -1232,6 +1246,7 @@ export default function RookiesRunPage() {
   const onSquareClick = useCallback(
     (square: string) => {
       ensureAudioWarm();
+      setInfoAbilityId(null);
       if (state.status !== 'playing' || state.turn !== 'rookie') return;
 
       // Ability resolution mode.
@@ -1346,6 +1361,7 @@ export default function RookiesRunPage() {
   const onPieceDrop = useCallback(
     (_sourceSquare: string, targetSquare: string) => {
       ensureAudioWarm();
+      setInfoAbilityId(null);
       if (state.status !== 'playing' || state.turn !== 'rookie') return false;
       if (state.activeAbility) return false;
       const target = fromSquare(targetSquare);
@@ -1940,6 +1956,25 @@ export default function RookiesRunPage() {
     );
   }
 
+  /**
+   * SMOKED — a live rule line, not just a card blurb. Tyler, 2026-09-08: "we
+   * need to be more clear about the rules of smoke, esp in earlier levels it's
+   * unclear if you can capture things safely with it on." You CAN: the
+   * capture lands, and then it gives you away. Shown in the rack's info slot
+   * while the cover is actually up.
+   */
+  const smokeStatus =
+    state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0
+      ? {
+          label: `Smoked · ${state.smokeTurnsLeft ?? 0}`,
+          text: `Nothing can capture you and the king stops running. ${
+            state.abilities.find((a) => a.id === 'smoke')?.tier === 5
+              ? 'Capturing keeps you hidden.'
+              : 'Capturing is safe — but it drops the smoke.'
+          }`,
+        }
+      : null;
+
   return (
     <div className="h-full overflow-auto bg-chess-page" style={isStc ? undefined : { background: 'linear-gradient(180deg, #182a5c 0%, #0f1c3f 60%)' }}>
       <style>{`
@@ -2091,32 +2126,12 @@ export default function RookiesRunPage() {
         </div>
 
         {/*
-          SMOKED — a live status line, not just a card blurb. Tyler,
-          2026-09-08: "we need to be more clear about the rules of smoke, esp
-          in earlier levels it's unclear if you can capture things safely with
-          it on." You CAN: the capture lands, and then it gives you away. That
-          sentence has to be on screen while the cover is actually up, at the
-          moment the choice is in front of you — a line on an offer card two
-          minutes ago is not an answer.
+          No status strips between the tempo bar and the board. The live
+          "Smoked · N" rule (Tyler, 2026-09-08) now lives in the rack's info
+          slot BELOW the board — see `smokeStatus` — because anything mounted
+          here shifts the board down, and THE BOARD MUST NEVER MOVE
+          (Tyler, 2026-09-09).
         */}
-        {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (() => {
-          const turns = state.smokeTurnsLeft ?? 0;
-          const keepsCover = state.abilities.find((a) => a.id === 'smoke')?.tier === 5;
-          return (
-            <div
-              className="w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto rounded-lg px-3 py-2 flex items-center gap-3"
-              style={{ background: 'rgba(120,134,168,0.24)', border: '1.5px solid rgba(176,190,220,0.55)' }}
-            >
-              <span className="text-[11px] font-black uppercase tracking-[0.14em] shrink-0" style={{ color: '#DCE4F5' }}>
-                Smoked · {turns}
-              </span>
-              <span className="text-[11px] font-bold leading-tight" style={{ color: 'rgba(220,228,245,0.85)' }}>
-                Nothing can capture you and the king stops running.{' '}
-                {keepsCover ? 'Capturing keeps you hidden.' : 'Capturing is safe — but it drops the smoke.'}
-              </span>
-            </div>
-          );
-        })()}
 
         <div
           className={`w-full max-w-[min(92vw,440px)] md:max-w-[520px] mx-auto ${isStc ? '' : 'rounded-[20px] p-2'}`}
@@ -2153,6 +2168,10 @@ export default function RookiesRunPage() {
           activeId={state.activeAbility?.id ?? null}
           disabledIds={summonSupportDisabled}
           onActivate={onActivateAbility}
+          infoId={infoAbilityId}
+          onToggleInfo={toggleInfoAbility}
+          status={smokeStatus}
+          hint={state.status === 'playing' && !state.activeAbility ? 'Tap Rookie to see her moves.' : null}
         />
         </div>
 
@@ -2206,11 +2225,6 @@ export default function RookiesRunPage() {
           </div>
         )}
 
-        {state.status === 'playing' && !state.activeAbility && (
-          <p className="text-center text-sm text-chess-text-muted">
-            Tap Rookie to see her moves.
-          </p>
-        )}
       </div>
 
       {!isStc && state.pendingOffer && state.status === 'playing' && (
