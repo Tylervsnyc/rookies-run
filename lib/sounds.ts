@@ -573,3 +573,60 @@ export function vibrateOnError(): void {
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// Button click SFX (every tappable control) + mute flag
+// ---------------------------------------------------------------------------
+
+const SOUND_ENABLED_KEY = 'rr_sound_enabled';
+
+/** Are UI sound effects on? Default on. Stored in localStorage `rr_sound_enabled`. */
+export function isSoundEnabled(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    return localStorage.getItem(SOUND_ENABLED_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+export function setSoundEnabled(on: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(SOUND_ENABLED_KEY, on ? '1' : '0');
+  } catch {
+    // ignore
+  }
+}
+
+let lastClickAt = 0;
+
+/**
+ * Play the Chess Path button click. Safe to call from any tap handler:
+ * respects the mute flag, unlocks the AudioContext synchronously inside the
+ * gesture (iOS), debounces touchstart+click double-fires, never throws.
+ */
+export function clickSfx(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (!isSoundEnabled()) return;
+    const now = performance.now();
+    if (now - lastClickAt < 60) return;
+    lastClickAt = now;
+    warmupAudio();
+    playButtonClick();
+  } catch {
+    // never block the tap
+  }
+}
+
+/**
+ * Wrap an onClick so it plays the click SFX first.
+ * `withClick(handler)` → onClick that clicks, then calls handler(e).
+ */
+export function withClick<E = unknown>(handler?: (e: E) => void): (e: E) => void {
+  return (e: E) => {
+    clickSfx();
+    handler?.(e);
+  };
+}

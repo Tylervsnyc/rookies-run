@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 import { useEffect, useState } from 'react';
 import { fireConfetti } from '@/lib/confetti';
 import type { RunStats } from '@/lib/run/history';
@@ -331,7 +332,7 @@ export function RunSummaryModal({
           {shareCard && (
             <button
               type="button"
-              onClick={() => setPreviewOpen(true)}
+              onClick={withClick(() => setPreviewOpen(true))}
               aria-label="Preview share card"
               className="rounded-md overflow-hidden active:scale-95 transition-transform"
               style={{ width: 44, height: 55, boxShadow: '0 0 0 2px rgba(255,255,255,0.25)' }}
@@ -339,11 +340,11 @@ export function RunSummaryModal({
               <ShareCardScaled data={shareCard} width={44} />
             </button>
           )}
-          <button type="button" onClick={handleShare} disabled={shareState === 'busy'} className="min-h-[40px] px-4 text-[12px] font-black rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}>
+          <button type="button" onClick={withClick(handleShare)} disabled={shareState === 'busy'} className="min-h-[40px] px-4 text-[12px] font-black rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: '#fff' }}>
             {shareLabel}
           </button>
           {completed && nextRunName && onNextRun && (
-            <button type="button" onClick={onReplay} className="min-h-[40px] px-4 text-[12px] font-black" style={{ color: MUTED }}>
+            <button type="button" onClick={withClick(onReplay)} className="min-h-[40px] px-4 text-[12px] font-black" style={{ color: MUTED }}>
               Replay this run
             </button>
           )}
@@ -396,7 +397,7 @@ function SharePreview({ data, shareLabel, onShare, onClose }: { data: ShareCardD
           {shareLabel}
         </StampButton>
       </div>
-      <button type="button" onClick={onClose} className="min-h-[44px] px-4 text-[13px] font-black" style={{ color: MUTED }}>
+      <button type="button" onClick={withClick(onClose)} className="min-h-[44px] px-4 text-[13px] font-black" style={{ color: MUTED }}>
         Close
       </button>
     </div>

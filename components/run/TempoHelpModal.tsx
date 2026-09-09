@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 interface TempoHelpModalProps {
   onClose: () => void;
 }
@@ -44,7 +45,7 @@ export function TempoHelpModal({ onClose }: TempoHelpModalProps) {
         >
           <button
             type="button"
-            onClick={onClose}
+            onClick={withClick(onClose)}
             aria-label="Close"
             className="absolute top-3 right-3 w-7 h-7 rounded-full bg-chess-text/10 hover:bg-chess-text/20 active:scale-90 flex items-center justify-center text-chess-text-muted transition-all"
           >
@@ -82,7 +83,7 @@ export function TempoHelpModal({ onClose }: TempoHelpModalProps) {
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={withClick(onClose)}
             className="w-full py-3 bg-amber-400 hover:bg-amber-500 active:scale-[0.99] text-amber-950 font-black text-sm uppercase tracking-wide transition-all"
           >
             Got it

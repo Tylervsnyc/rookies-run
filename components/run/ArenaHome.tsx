@@ -5,7 +5,7 @@ import { DemoBoard } from './DemoBoard';
 import { REVENGE_RED, REVENGE_RED_DARK, RevengeMarkSvg } from './RookiesRevengeLogo';
 import { artFile } from './AbilityCard';
 import { ABILITY_DEFS, type AbilityId } from '@/lib/run/abilities';
-import { playTabSwitchSound } from '@/lib/sounds';
+import { clickSfx, playTabSwitchSound, withClick } from '@/lib/sounds';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
@@ -106,7 +106,7 @@ function NameSheet({ current, onSave, onClose }: {
         <div className="mt-3 flex gap-2">
           <button
             type="button"
-            onClick={onClose}
+            onClick={withClick(onClose)}
             className="arena-press flex-1 min-h-[48px] rounded-[14px] text-[14px] font-black"
             style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', boxShadow: '0 4px 0 rgba(0,0,0,0.4)', ['--depth' as string]: '4px' }}
           >
@@ -115,6 +115,7 @@ function NameSheet({ current, onSave, onClose }: {
           <button
             type="submit"
             disabled={!valid}
+            onClick={clickSfx}
             className="arena-press flex-1 min-h-[48px] rounded-[14px] text-[14px] font-black"
             style={{
               background: valid ? REVENGE_RED : 'rgba(255,255,255,0.12)',
@@ -197,7 +198,7 @@ function CpButton({ children, color = REVENGE_RED, shadow = REVENGE_RED_DARK, de
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={withClick(onClick)}
       aria-label={ariaLabel}
       className={`arena-press w-full rounded-[16px] font-black flex items-center justify-center gap-3 ${className}`}
       style={{ background: color, color: '#fff', boxShadow: `0 ${depth}px 0 ${shadow}`, ['--depth' as string]: `${depth}px` }}
@@ -273,7 +274,7 @@ function Arena({ flipped, onBack, runName, runBlurb, poolSize, difficultyName }:
           <div className="rounded-[14px] h-full flex flex-col p-3.5" style={{ background: 'linear-gradient(180deg,#1c2f63 0%,#0f1c3f 100%)', boxShadow: 'inset 0 0 0 2px rgba(0,0,0,0.35)' }}>
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: '#FF6B66' }}>Today&rsquo;s map</span>
-              <button type="button" onClick={onBack} className="min-h-[32px] text-[11px] font-black px-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}>Back</button>
+              <button type="button" onClick={withClick(onBack)} className="min-h-[32px] text-[11px] font-black px-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}>Back</button>
             </div>
             <div className="mt-2 text-[30px] font-black leading-none" style={OUTLINE}>{runName}</div>
             <div className="mt-2 text-[13px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.8)' }}>{runBlurb}</div>
@@ -372,7 +373,7 @@ function EndlessStrip({ best, onPlay }: { best: number; onPlay: () => void }) {
   return (
     <button
       type="button"
-      onClick={onPlay}
+      onClick={withClick(onPlay)}
       aria-label="Play Endless"
       data-testid="home-endless"
       className="arena-press w-full rounded-[16px] flex items-center gap-3 px-4 min-h-[70px] text-left"
@@ -496,7 +497,7 @@ function RanksTab({ handle, board, loading, iso }: {
               type="button"
               role="tab"
               aria-selected={which === b}
-              onClick={() => setWhich(b)}
+              onClick={withClick(() => setWhich(b))}
               className="flex-1 rounded-lg py-1.5 text-[11px] font-black uppercase tracking-wider active:opacity-80"
               style={which === b
                 ? { background: GOLD, color: '#2a1c00' }
@@ -573,7 +574,7 @@ function CodexTab({ profile, onTrophies }: { profile?: PlayerProfile; onTrophies
         <span className="text-[14px] font-black" style={OUTLINE}>The Codex</span>
         <span className="text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.7)' }}>Win rungs to fill it</span>
       </div>
-      <button type="button" onClick={onTrophies} className="mt-2 grid grid-cols-2 gap-2 text-left active:opacity-80" aria-label="Open the Codex">
+      <button type="button" onClick={withClick(onTrophies)} className="mt-2 grid grid-cols-2 gap-2 text-left active:opacity-80" aria-label="Open the Codex">
         <Panel className="p-3">
           <div className="text-[11px] font-black uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>Powers</div>
           <div className="text-[26px] font-black leading-none mt-1" style={GOLD_TEXT}>{have.length}<span className="text-[14px] text-white/60">/{abilitiesTotal}</span></div>
@@ -647,7 +648,7 @@ export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profi
           </div>
           <button
             type="button"
-            onClick={() => setNamingOpen(true)}
+            onClick={withClick(() => setNamingOpen(true))}
             aria-label={`Change your leaderboard name (currently ${handle})`}
             data-testid="home-handle"
             className="arena-press rounded-lg px-2.5 min-h-[32px] flex items-center gap-1.5"

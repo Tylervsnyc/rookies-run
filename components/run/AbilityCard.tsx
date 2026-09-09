@@ -47,6 +47,7 @@ interface TierStyle {
 
 export { artFile } from '@/lib/run/ability-art';
 import { artFile } from '@/lib/run/ability-art';
+import { clickSfx, withClick } from '@/lib/sounds';
 
 /**
  * Warm every ability's art into the browser cache so the offer modal paints
@@ -418,7 +419,7 @@ export function AbilityCardMini({
     >
       <button
         type="button"
-        onClick={onClick}
+        onClick={withClick(onClick)}
         disabled={disabled}
         aria-label={`${def.name} — ${blurb.what} ${blurb.how}`}
         className={`block w-full h-full group ${disabled ? 'opacity-45' : 'active:scale-95'} transition-transform`}
@@ -522,6 +523,7 @@ export function AbilityCardMini({
           type="button"
           onClick={(e) => {
             e.stopPropagation();
+            clickSfx();
             onInfo();
           }}
           aria-label={`${infoOpen ? 'Hide' : 'Show'} what ${def.name} does`}
@@ -602,7 +604,7 @@ export function AbilityCardFull({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={withClick(onClick)}
       className="relative block w-full mx-auto group active:scale-[0.98] transition-transform"
       style={{
         aspectRatio: '5 / 7',

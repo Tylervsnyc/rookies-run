@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 import { RUNS, type RunDef } from '@/lib/run/runs';
 import { RookiesRevengeLogo } from './RookiesRevengeLogo';
 
@@ -29,7 +30,7 @@ export function RunPickerModal({
       <div className="w-full max-w-sm bg-chess-surface rounded-3xl shadow-2xl flex flex-col relative overflow-hidden max-h-full">
         <button
           type="button"
-          onClick={onClose}
+          onClick={withClick(onClose)}
           aria-label="Close"
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-chess-text/10 hover:bg-chess-text/20 active:scale-90 flex items-center justify-center text-chess-text-muted transition-all z-10"
         >
@@ -72,7 +73,7 @@ function RunRow({ run, index, active, onClick }: RunRowProps) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={withClick(onClick)}
       className={`text-left rounded-xl p-3 border-2 transition-all active:scale-[0.98] flex items-center gap-3 ${
         active
           ? 'bg-indigo-500/15 border-indigo-400 dark:border-indigo-500'

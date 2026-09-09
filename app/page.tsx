@@ -41,7 +41,7 @@ import {
   playCardPlaySound,
   playLevelClearSound,
   playMoveSound,
-  warmupAudio, playCorrectSound, playTransformBackSound, playTransformIntoSound, playFreezeSound, playSurgeSound } from '@/lib/sounds';
+  warmupAudio, withClick, playCorrectSound, playTransformBackSound, playTransformIntoSound, playFreezeSound, playSurgeSound } from '@/lib/sounds';
 import { haptic, hapticError, hapticSuccess } from '@/lib/haptics';
 import {
   ABILITY_DEFS,
@@ -2013,7 +2013,7 @@ export default function RookiesRunPage() {
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
               type="button"
-              onClick={() => setShowRunPicker(true)}
+              onClick={withClick(() => setShowRunPicker(true))}
               className="text-left active:opacity-70 transition-opacity shrink-0"
               aria-label="Switch run"
             >
@@ -2028,7 +2028,7 @@ export default function RookiesRunPage() {
             <MusicMenu />
             <button
               type="button"
-              onClick={() => setShowTrophies(true)}
+              onClick={withClick(() => setShowTrophies(true))}
               aria-label="Trophy room"
               className="w-8 h-8 rounded-lg bg-chess-surface shadow-sm flex items-center justify-center active:scale-90 transition-transform"
             >
@@ -2124,7 +2124,7 @@ export default function RookiesRunPage() {
           </div>
           <button
             type="button"
-            onClick={openTempoHelp}
+            onClick={withClick(openTempoHelp)}
             aria-label="How tempo works"
             className="min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-90 transition-transform shrink-0"
           >
@@ -2227,7 +2227,7 @@ export default function RookiesRunPage() {
             </span>
             <button
               type="button"
-              onClick={() => setState((s) => applyAbilityCancel(s))}
+              onClick={withClick(() => setState((s) => applyAbilityCancel(s)))}
               className="px-3 min-h-[44px] rounded bg-chess-text/10 text-chess-text text-[11px] font-bold active:scale-95 shrink-0"
             >
               Cancel

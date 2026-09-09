@@ -9,6 +9,7 @@ import {
   type OwnedAbility,
 } from '@/lib/run/abilities';
 import { artFile } from './AbilityCard';
+import { clickSfx, withClick } from '@/lib/sounds';
 import { PointerArrow } from './BoardOverlay';
 
 interface AbilityOfferModalProps {
@@ -183,7 +184,9 @@ export function AbilityOfferModal({
                   disabled={locked}
                   aria-disabled={locked}
                   onClick={() => {
-                    if (!locked) onPick(option);
+                    if (locked) return;
+                    clickSfx();
+                    onPick(option);
                   }}
                   className={`offer-card-enter relative flex rounded-xl p-[2px] text-left transition-transform ${
                     locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
@@ -292,7 +295,7 @@ export function AbilityOfferModal({
             <div className="flex justify-center mt-1 sm:mt-2">
               <button
                 type="button"
-                onClick={onSkip}
+                onClick={withClick(onSkip)}
                 className="min-h-[44px] px-3 text-xs font-bold text-chess-text-muted underline underline-offset-2 active:opacity-60"
               >
                 Skip (½ tempo back)

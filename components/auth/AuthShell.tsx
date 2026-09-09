@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { RevengeMarkSvg } from '@/components/run/RookiesRevengeLogo';
 import { REVENGE_RED, REVENGE_RED_DARK } from '@/lib/brand';
+import { clickSfx, withClick } from '@/lib/sounds';
 
 /**
  * The frame every /auth/* page sits in — Revenge's navy arena, the reticle
@@ -57,6 +58,7 @@ export function PrimaryButton({ children, loading, disabled, type = 'submit' }: 
     <button
       type={type}
       disabled={disabled || loading}
+      onClick={clickSfx}
       className="w-full min-h-[52px] py-3 rounded-[14px] font-black text-[16px] text-white flex items-center justify-center gap-2 active:translate-y-[4px] active:shadow-none transition-transform disabled:opacity-50 disabled:shadow-none disabled:active:translate-y-0"
       style={{ background: REVENGE_RED, boxShadow: `0 5px 0 ${REVENGE_RED_DARK}`, textShadow: '0 2px 0 rgba(0,0,0,0.45)' }}
     >
@@ -130,7 +132,7 @@ export function PasswordInput({
       />
       <button
         type="button"
-        onClick={onToggle}
+        onClick={withClick(onToggle)}
         className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-black uppercase tracking-wider text-chess-text-muted hover:text-white transition-colors min-h-[44px] px-1"
         tabIndex={-1}
         aria-label={show ? 'Hide password' : 'Show password'}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
+import { withClick } from '@/lib/sounds';
 import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
 import type { PlayerProfile } from '@/lib/run/profile';
 import {
@@ -83,7 +84,7 @@ function DifficultyChooser({ rungIndex, runId, runName, profile, onPick, onClose
             <div className="text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: '#FF6B66' }}>Rung {rungIndex + 1}</div>
             <div className="text-[20px] font-black leading-tight truncate" style={OUTLINE}>{runName}</div>
           </div>
-          <button type="button" onClick={onClose} className="min-h-[36px] min-w-[44px] text-[11px] font-black px-2.5 rounded-lg shrink-0" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}>Close</button>
+          <button type="button" onClick={withClick(onClose)} className="min-h-[36px] min-w-[44px] text-[11px] font-black px-2.5 rounded-lg shrink-0" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}>Close</button>
         </div>
         <div className="mt-1 px-1 text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>Pick a difficulty. Stars are per mode — clear it on any mode to open the next rung.</div>
         <div className="mt-2.5 flex flex-col gap-2">
@@ -97,7 +98,7 @@ function DifficultyChooser({ rungIndex, runId, runName, profile, onPick, onClose
                 key={d}
                 type="button"
                 disabled={locked}
-                onClick={() => onPick(d)}
+                onClick={withClick(() => onPick(d))}
                 data-difficulty={d}
                 className="arena-press w-full rounded-[14px] min-h-[52px] px-3 py-2 flex items-center gap-3 text-left"
                 style={{
@@ -178,7 +179,7 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
               key={r.id}
               type="button"
               disabled={!playable}
-              onClick={() => { if (playable) setChoosing(i); }}
+              onClick={withClick(() => { if (playable) setChoosing(i); })}
               data-rung={i + 1}
               data-run-id={r.id}
               data-best={r.best ?? ''}

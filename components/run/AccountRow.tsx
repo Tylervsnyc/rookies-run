@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { clickSfx, withClick } from '@/lib/sounds';
 import { useUser } from '@/hooks/useUser';
 import { FEATURE_FLAGS } from '@/lib/config/feature-flags';
 
@@ -36,10 +37,10 @@ function AccountRowInner() {
           <div className="text-[11px] text-chess-text-muted leading-snug">One account for the whole family of apps.</div>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
-          <Link href="/auth/login?redirect=/" className={LINK_CLASS} style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}>
+          <Link href="/auth/login?redirect=/" onClick={clickSfx} className={LINK_CLASS} style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}>
             Sign in
           </Link>
-          <Link href="/auth/signup?redirect=/" className={LINK_CLASS} style={{ color: '#0a1230', background: '#f5cf5a' }}>
+          <Link href="/auth/signup?redirect=/" onClick={clickSfx} className={LINK_CLASS} style={{ color: '#0a1230', background: '#f5cf5a' }}>
             Sign up
           </Link>
         </div>
@@ -55,7 +56,7 @@ function AccountRowInner() {
       </div>
       <button
         type="button"
-        onClick={() => void signOut()}
+        onClick={withClick(() => void signOut())}
         className={`${LINK_CLASS} shrink-0`}
         style={{ color: '#fff', background: 'rgba(0,0,0,0.3)' }}
       >

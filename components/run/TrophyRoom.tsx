@@ -14,6 +14,7 @@ import { DIFFICULTIES, DIFFICULTY_ORDER } from '@/lib/run/difficulty';
 import { artFile } from './AbilityCard';
 import { TrophyGlyph } from './AchievementToast';
 import { AccountRow } from './AccountRow';
+import { withClick } from '@/lib/sounds';
 
 interface Props {
   profile: PlayerProfile;
@@ -35,7 +36,7 @@ function BackButton({ onClick, compact = false }: { onClick: () => void; compact
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={withClick(onClick)}
       aria-label="Back to the Arena"
       className={`rounded-[14px] font-black flex items-center justify-center gap-2 active:translate-y-[4px] active:shadow-none transition-transform ${compact ? 'min-h-[44px] px-4 text-[13px]' : 'w-full min-h-[56px] text-[18px]'}`}
       style={{ background: '#E53935', color: '#fff', boxShadow: '0 5px 0 #B71C1C', textShadow: '0 2px 0 rgba(0,0,0,0.45)' }}
@@ -93,7 +94,7 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
           {onReplayTutorial && (
             <button
               type="button"
-              onClick={onReplayTutorial}
+              onClick={withClick(onReplayTutorial)}
               className="w-full min-h-[44px] py-3 rounded-2xl font-black text-[13px] tracking-wide active:translate-y-px transition-transform"
               style={{ background: '#1c2f63', border: '2px solid #3a4f8f', color: '#fff', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.14), inset 0 -3px 0 rgba(0,0,0,0.35)' }}
             >
@@ -200,7 +201,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={withClick(onClick)}
       className="flex-1 min-h-[44px] rounded-xl text-[12px] font-black tracking-wide transition-colors"
       style={
         active

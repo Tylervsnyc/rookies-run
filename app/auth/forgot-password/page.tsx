@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { withClick } from '@/lib/sounds';
 import { createClient } from '@/lib/supabase/client';
 import { trackEvent } from '@/lib/analytics/posthog';
 import {
@@ -210,14 +211,14 @@ function ForgotPasswordContent() {
       <div className="flex items-center justify-between pt-3">
         <button
           type="button"
-          onClick={() => { setStep('email'); setError(null); setResent(false); }}
+          onClick={withClick(() => { setStep('email'); setError(null); setResent(false); })}
           className="text-chess-text-muted text-sm font-bold hover:text-white transition-colors min-h-[44px]"
         >
           Change email
         </button>
         <button
           type="button"
-          onClick={handleResend}
+          onClick={withClick(handleResend)}
           className="text-sm font-black hover:underline min-h-[44px]"
           style={{ color: GOLD }}
         >

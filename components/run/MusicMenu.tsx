@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { clickSfx, withClick } from '@/lib/sounds';
 import {
   MUSIC_TRACKS,
   getMusicPrefs,
@@ -67,6 +68,7 @@ export function MusicMenu() {
       <button
         type="button"
         onClick={() => {
+          clickSfx();
           startMusicIfEnabled(); // this tap counts as the unlock gesture
           setOpen((o) => !o);
         }}
@@ -145,7 +147,7 @@ function TrackRow({
       type="button"
       role="menuitemradio"
       aria-checked={selected}
-      onClick={onSelect}
+      onClick={withClick(onSelect)}
       className={`w-full min-h-[44px] px-2 rounded-lg flex items-center justify-between text-left text-sm font-bold transition-colors ${
         selected ? 'bg-chess-text/10 text-chess-text' : 'text-chess-text-muted hover:bg-chess-text/5'
       }`}

@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
 import { StampButton, StampCard, StampChip } from './StampCard';
 
@@ -46,7 +47,7 @@ export function LevelLostModal({ level, totalLevels, retriesLeft, reason, diffic
       <StampButton color={REVENGE_RED} shadow={REVENGE_RED_DARK} onClick={onRetry}>
         Retry level
       </StampButton>
-      <button type="button" onClick={onGiveUp} className="min-h-[40px] text-[12px] font-black" style={{ color: 'rgba(255,255,255,0.6)' }}>
+      <button type="button" onClick={withClick(onGiveUp)} className="min-h-[40px] text-[12px] font-black" style={{ color: 'rgba(255,255,255,0.6)' }}>
         Give up the run
       </button>
     </StampCard>

@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 import { ABILITY_DEFS, type AbilityId } from '@/lib/run/abilities';
 import { artFile } from './AbilityCard';
 import { REVENGE_RED, REVENGE_RED_DARK, RevengeMarkSvg } from './RookiesRevengeLogo';
@@ -78,7 +79,7 @@ export function EndlessIntro({ kit, best, onStart }: { kit: AbilityId[]; best: n
         )}
         <button
           type="button"
-          onClick={onStart}
+          onClick={withClick(onStart)}
           data-testid="endless-start"
           className="arena-press w-full rounded-[16px] font-black flex items-center justify-center gap-3 min-h-[64px]"
           style={{ background: REVENGE_RED, color: '#fff', boxShadow: `0 6px 0 ${REVENGE_RED_DARK}` }}

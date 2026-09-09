@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 import { useEffect, useRef, useState } from 'react';
 import {
   ABILITY_DEFS,
@@ -192,7 +193,7 @@ function AbilityInfoPanel({
       </div>
       <button
         type="button"
-        onClick={onClose}
+        onClick={withClick(onClose)}
         aria-label="Close info"
         className="shrink-0 -mr-2 -my-1 min-w-[44px] min-h-[44px] flex items-center justify-center active:scale-90 transition-transform"
       >

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, type CSSProperties, type ReactNode } from 'react';
-import { playCorrectSound } from '@/lib/sounds';
+import { playCorrectSound, withClick } from '@/lib/sounds';
 
 /**
  * StampCard — the between-level popup (Tyler picked "The Stamp", 2026-09-03,
@@ -108,7 +108,7 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
         {onClose && (
           <button
             type="button"
-            onClick={onClose}
+            onClick={withClick(onClose)}
             aria-label="Close"
             className="absolute top-2 right-2 z-10 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-[22px] font-black leading-none active:scale-90 transition-transform"
             style={{ color: 'rgba(255,255,255,0.7)', background: 'rgba(0,0,0,0.25)' }}
@@ -229,7 +229,7 @@ export function StampButton({ children, color, shadow, onClick, testId }: { chil
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={withClick(onClick)}
       data-testid={testId}
       className="rr-stamp-press w-full rounded-[16px] font-black flex items-center justify-center min-h-[54px] text-[18px] uppercase tracking-[0.04em]"
       style={{ background: color, color: '#fff', boxShadow: `0 6px 0 ${shadow}` }}

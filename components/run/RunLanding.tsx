@@ -5,6 +5,7 @@ import { TrophyGlyph } from './AchievementToast';
 import { ACHIEVEMENTS } from '@/lib/run/achievements';
 import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { useEffect, useState } from 'react';
+import { clickSfx, withClick } from '@/lib/sounds';
 import {
   DIFFICULTIES,
   DIFFICULTY_ORDER,
@@ -108,6 +109,7 @@ export function RunLanding({
                     aria-disabled={locked}
                     data-difficulty={id}
                     onClick={() => {
+                      clickSfx();
                       if (locked) {
                         setLockHint(difficultyLockHint(id));
                         return;
@@ -184,7 +186,7 @@ export function RunLanding({
         {profile && onTrophies && (
           <button
             type="button"
-            onClick={onTrophies}
+            onClick={withClick(onTrophies)}
             className="w-full flex items-center justify-between gap-2 rounded-xl border border-chess-text/12 bg-chess-page px-3 py-2 active:scale-[0.99] transition-transform"
             aria-label="Open trophy room"
           >
@@ -204,7 +206,7 @@ export function RunLanding({
 
         <button
           type="button"
-          onClick={onStart}
+          onClick={withClick(onStart)}
           className="w-full py-3 rounded-2xl bg-chess-text text-white font-black text-[14px] tracking-wide active:translate-y-px transition-transform"
           style={{ boxShadow: '0 4px 0 #1a2c33, 0 6px 12px rgba(0,0,0,0.12)' }}
         >

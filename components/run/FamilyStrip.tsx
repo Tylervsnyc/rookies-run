@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { clickSfx } from '@/lib/sounds';
 import { useUser } from '@/hooks/useUser';
 import { FEATURE_FLAGS } from '@/lib/config/feature-flags';
 import { FAMILY_APPS, openFamilyApp, useFamilyStats, type FamilyAppId } from '@/lib/family/client';
@@ -44,6 +45,7 @@ function AppTile({ id }: { id: FamilyAppId }) {
       rel="noopener noreferrer"
       onClick={(e) => {
         e.preventDefault();
+        clickSfx();
         openFamilyApp(id);
       }}
       aria-label={`Open ${app.name} on the App Store`}
@@ -75,6 +77,7 @@ function FamilyStripInner() {
       {signedOut && FEATURE_FLAGS.ACCOUNTS && (
         <Link
           href="/auth/signup?redirect=/"
+          onClick={clickSfx}
           className="min-h-[44px] rounded-lg px-2 flex items-center text-[10px] font-black uppercase tracking-wider active:opacity-70"
           style={{ ...TILE_STYLE, color: '#f5cf5a' }}
         >

@@ -1,5 +1,6 @@
 'use client';
 
+import { withClick } from '@/lib/sounds';
 import { useEffect } from 'react';
 import { ABILITY_DEFS, blurbDetailForTier, type AbilityId } from '@/lib/run/abilities';
 import { abilityUnlockedBy } from '@/lib/run/achievements';
@@ -168,7 +169,7 @@ export function AbilityUnlockModal({ abilityId, onClose }: Props) {
             </div>
             <button
               type="button"
-              onClick={onClose}
+              onClick={withClick(onClose)}
               className="w-full min-h-[50px] py-3 rounded-2xl bg-amber-400 text-[#2A3C45] font-black text-[15px] tracking-wide active:translate-y-px transition-transform"
               style={{ boxShadow: '0 4px 0 #b98a1a, 0 6px 12px rgba(0,0,0,0.3)' }}
             >

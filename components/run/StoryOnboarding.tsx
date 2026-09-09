@@ -47,6 +47,7 @@ import {
   playMoveSound,
   playSurgeSound,
   playTransformIntoSound,
+  withClick,
 } from '@/lib/sounds';
 import { haptic, hapticSuccess } from '@/lib/haptics';
 
@@ -1452,7 +1453,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
           {!finalScreen && (
             <button
               type="button"
-              onClick={() => finish('skipped')}
+              onClick={withClick(() => finish('skipped'))}
               className="min-h-[44px] min-w-[44px] px-2 -mr-2 text-[11px] uppercase tracking-[0.18em] font-bold text-white/60 active:opacity-60"
             >
               Skip
@@ -1495,7 +1496,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             </p>
             <button
               type="button"
-              onClick={() => finish('completed')}
+              onClick={withClick(() => finish('completed'))}
               className="w-full py-4 min-h-[56px] rounded-2xl text-white font-black text-[17px] tracking-wide active:translate-y-px transition-transform"
               style={CTA_STYLE}
             >
@@ -1636,11 +1637,11 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
 
             {/* CTA */}
             {stuck ? (
-              <button type="button" onClick={resetBeat} className={CTA_CLASS} style={CTA_STYLE}>
+              <button type="button" onClick={withClick(resetBeat)} className={CTA_CLASS} style={CTA_STYLE}>
                 Reset
               </button>
             ) : beat === 9 && freezePhase === 'captured' ? (
-              <button type="button" onClick={goToFreezeReady} className={CTA_CLASS} style={CTA_STYLE}>
+              <button type="button" onClick={withClick(goToFreezeReady)} className={CTA_CLASS} style={CTA_STYLE}>
                 Next <span className="opacity-80">&rarr;</span>
               </button>
             ) : hint && !won ? (
@@ -1650,7 +1651,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             ) : beat === 10 && !tempoDone ? (
               <p className="min-h-[44px]" />
             ) : showNext ? (
-              <button type="button" onClick={next} className={CTA_CLASS} style={CTA_STYLE}>
+              <button type="button" onClick={withClick(next)} className={CTA_CLASS} style={CTA_STYLE}>
                 Next <span className="opacity-80">&rarr;</span>
               </button>
             ) : (
