@@ -46,7 +46,7 @@ Worse, rung 7's **combo gate is broken**: a single card now clears a finale
 level at 100%, so The Alcove no longer requires its pair at all. The gate
 contract — every single card <= 8% — is violated on the live ladder.
 
-## Why it cuts both ways
+## How it cuts both ways
 
 A capturing king is not a uniform difficulty tax. On the tight rooms (Slash,
 Stacks, Parapet) he eats the stone/plug/twin the solution depends on, and the
@@ -56,16 +56,37 @@ The same rule makes tight levels impossible and loose levels free.
 
 ## The call for Tyler (not made overnight)
 
-1. **Revert the capturing king** and get ten tuned rungs back for free. Cheapest
-   by far, but it was a deliberate feature with its own measurement (`ad62843`).
-2. **Keep it and re-tune the six broken rungs** to the new king. That is real
-   design work per run, and rung 7 needs its gate rebuilt, not just its clock.
-3. **Keep it but pin it off on the combo runs**, the way revenge-21 already pins
-   Hard's enemy delta to 0. Contained, and it preserves the feature wherever it
-   was actually wanted.
+The capturing king is not an accident and it is not up for a quiet revert. From
+`d83153c` itself, in Tyler's words: *"I do think the king should be able to
+capture, it will make the game more difficult"*, and then *"we can't have
+different rules for the king in different places."* That rules out both easy
+outs — reverting the feature, and pinning the capture off on the combo runs the
+way revenge-21 pins Hard's enemy delta. One rule, everywhere, was the ask.
 
-Recommendation: **3**, then re-measure. It keeps the feature, restores the
-ladder, and does not ask anyone to re-tune six runs by hand tonight.
+So the honest options are:
+
+1. **Re-tune the six broken rungs to the new king.** Respects both things he
+   wants — a king who takes, and a ladder that ramps. Real per-run design work:
+   Slash, Stacks and Parapet need their lines rebuilt, Lattice and Alcove need
+   difficulty put back, and rung 7 needs its GATE rebuilt, not just its clock.
+2. **Revert the king** — cheapest, restores ten tuned rungs for free, and
+   contradicts an explicit design decision he made yesterday.
+
+Recommendation: **1**, one rung at a time, measured after each.
+
+### The mechanic that actually broke, and what a re-tune must do
+
+The king captures ONLY Rookie, and only from an adjacent square. So every
+solution that parks her next to him for one turn — which is most tight-room
+lines, because that is how you arrive — now loses on the spot. That is why the
+tight runs died at 0-15% and the loose ones got EASIER: on an open board the
+capture spends his action and drags him off his safe square into the answer.
+
+A re-tuned finale therefore has to land the killing blow **from a distance** (a
+rook line onto his square) or **through a stun**, never by standing beside him
+and waiting a turn. That is a line-level rewrite, not a clock change — which is
+why the 2026-09-07 retunes, which only moved move limits, cannot be recovered by
+moving them again.
 
 ## What this invalidates
 
