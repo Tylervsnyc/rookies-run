@@ -488,6 +488,14 @@ export function stepAllyTurnReactive(state: BoardState): BoardState {
 
 function kingReaction(state: BoardState): BoardState | null {
   if (state.winCondition !== 'king' || state.kingBehavior !== 'flee') return null;
+  // ONE reaction per enemy phase, full stop. stepEnemyTurn calls this after
+  // EVERY army action, so at enemiesPerTurn >= 2 — which Endless reaches on its
+  // overdrive ramp — he reacted once per guard move and took two steps in one
+  // phase. Tyler, 2026-09-09, Endless round 12: "the king moved two times... it
+  // was on c7 and the king moved to d8. But the king moved to c8 in between."
+  // f92684f added kingMovedThisPhase for the step-AND-capture case and wired it
+  // into the capturers pass only; nothing stopped a second REACTION.
+  if (state.kingMovedThisPhase === true) return null;
   const answering = (state.tauntTurns ?? 0) > 0;
   // Panic: like a thrown Gauntlet, it is not a threat he has to SEE. A
   // panicking king moves under Smoke too.
