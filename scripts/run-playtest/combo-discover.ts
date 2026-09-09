@@ -140,6 +140,7 @@
  */
 
 import { spawn } from 'node:child_process';
+import { GATE_NONE_MAX, GATE_SINGLE_MAX, PAIR_MAX, PAIR_MIN } from './spec';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -579,7 +580,7 @@ interface LibraryEntry {
   pure: boolean;
   /** The measured matrix row: none, every single tested, every pair tested. */
   matrix: Record<string, Row>;
-  thresholds: { noneMax: number; singleMax: number; pairMin: number; screenTrials: number; pairTrials: number; confirmTrials: number; tier: string; realistic: boolean };
+  thresholds: { noneMax: number; singleMax: number; pairMin: number; pairMax: number; screenTrials: number; pairTrials: number; confirmTrials: number; tier: string; realistic: boolean };
   pool: { abilities: string[]; excluded: string[] };
   puzzle: RunPuzzle;
   /** Paste-ready runs.ts snippet (generated candidates only). */
@@ -693,7 +694,7 @@ function writeSynergy(): void {
   L.push('');
   L.push('The Colonnade *is* gated — against its own kit. `runs.ts` gives it `allowedAbilities: [swap, bishop-squire, magnet, boulder]`, and that is every card the player can ever hold there. So the definition used here is:');
   L.push('');
-  L.push('> Given a 4-card **kit** K: no-ability ~0%, every single card in K ~0%, and at least one **pair** drawn from K >= 60%.');
+  L.push(`> Given a 4-card **kit** K: no-ability <= ${GATE_NONE_MAX}%, every single card in K <= ${GATE_SINGLE_MAX}%, and at least one **pair** drawn from K inside ${PAIR_MIN}-${PAIR_MAX}% (the ceiling proves the level is HARD, not just that the pair is REQUIRED — spec.ts).`);
   L.push('');
   L.push('A level gated under MANY kits is more valuable (it can ship in several runs); within one kit, fewer winning pairs is better. A level that also survives every single card in the game is marked `pure` — a bonus tier, never required.');
   L.push('');
@@ -806,10 +807,10 @@ function readOpts(): Opts {
     pairTrials: num('pair-trials', 10),
     confirmTrials: num('confirm-trials', 30),
     screenKill: num('screen-kill', 20),
-    noneMax: num('none-max', 8),
-    singleMax: num('single-max', 8),
-    pairMin: num('pair-min', 60),
-    pairMax: num('pair-max', 80),
+    noneMax: num('none-max', GATE_NONE_MAX),
+    singleMax: num('single-max', GATE_SINGLE_MAX),
+    pairMin: num('pair-min', PAIR_MIN),
+    pairMax: num('pair-max', PAIR_MAX),
     routesMin: num('routes-min', 1),
     tier: arg('tier', 'T5')!,
     realistic: r !== 'off' && r !== 'false',
@@ -989,7 +990,7 @@ async function main(): Promise<void> {
         pure,
         matrix,
         thresholds: {
-          noneMax: o.noneMax, singleMax: o.singleMax, pairMin: o.pairMin,
+          noneMax: o.noneMax, singleMax: o.singleMax, pairMin: o.pairMin, pairMax: o.pairMax,
           screenTrials: o.screenTrials, pairTrials: o.pairTrials, confirmTrials: o.confirmTrials,
           tier: o.tier, realistic: o.realistic,
         },

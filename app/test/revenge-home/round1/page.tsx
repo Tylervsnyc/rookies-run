@@ -156,7 +156,7 @@ function ConceptStack() {
               </div>
             </div>
           </div>
-          <div className="mt-3"><BigButton label="HUNT THE KING" sub="Normal · 3 retries" /></div>
+          <div className="mt-3"><BigButton label="HUNT THE KING" sub="Normal · 1 retry" /></div>
         </section>
 
         {/* Leaderboard */}
@@ -340,7 +340,7 @@ function ConceptArena() {
               <Eyebrow dark>Today&apos;s rules</Eyebrow>
               {[
                 ['15 levels', 'Same board for every player on Earth.'],
-                ['3 retries', 'Normal difficulty. Switch in settings.'],
+                ['1 retry', 'Normal difficulty. Switch in settings.'],
                 ['Score', 'Speed × captures × no-retry bonus.'],
               ].map(([t, s]) => (
                 <div key={t} className="flex gap-3 items-start">

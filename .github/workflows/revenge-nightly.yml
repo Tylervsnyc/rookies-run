@@ -94,6 +94,7 @@ jobs:
           git config user.name "Rookie Playtest Bot"
           git config user.email "playtest@rookies-run.local"
           git add data/run-playtest/revenge/digests/
+          git add data/run-playtest/results/ || true
           git add data/run-playtest/revenge/experiments.jsonl || true
           git add data/content/pipeline.json || true
           if git diff --cached --quiet; then

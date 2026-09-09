@@ -475,6 +475,7 @@ const B7_SILL_2C = alcove(2, 7, -1, { sill: true, twoCorners: true });
 
 const RUN_REVENGE_25: RunDef = {
   id: 'revenge-25',
+  signaturePair: ['become-king', 'boulder'],
   name: 'The Alcove',
   blurb: 'Stone on every straight line. He leaves by the corners — so do you.',
   allowedAbilities: ['become-king', 'boulder', 'aegis', 'magnet'],

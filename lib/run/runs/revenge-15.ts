@@ -212,6 +212,7 @@ const alcoves = (stone: Coord[], ...squares: Coord[]): Coord[] =>
 
 export const RUN_REVENGE_15: RunDef = {
   id: 'revenge-15',
+  signaturePair: ['magnet', 'boulder'],
   name: 'The Stacks',
   blurb: 'A wall with slots cut in it. He thinks a plug is a wall.',
   allowedAbilities: ['magnet', 'boulder', 'aegis', 'decoy'],

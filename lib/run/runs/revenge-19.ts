@@ -290,6 +290,7 @@ const MIRROR = (s: number, ...gaps: number[]): Coord[] => {
 };
 const RUN_REVENGE_19: RunDef = {
   id: 'revenge-19',
+  signaturePair: ['convert', 'summon-knight'],
   name: 'The Cliff',
   blurb: 'He built his court on the cliff. Knights climb.',
   allowedAbilities: ['convert', 'summon-knight', 'aegis', 'magnet'],

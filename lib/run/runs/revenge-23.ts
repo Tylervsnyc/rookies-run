@@ -287,6 +287,7 @@ function ROOM(f: number): string[] {
 
 const RUN_REVENGE_23: RunDef = {
   id: 'revenge-23',
+  signaturePair: ['knight-hop', 'twin'],
   name: 'The Parapet',
   blurb: 'A wall the whole width of the board. He is on top of it.',
   allowedAbilities: ['knight-hop', 'twin', 'aegis', 'decoy'],

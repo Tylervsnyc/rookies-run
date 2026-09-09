@@ -233,6 +233,7 @@ const REVENGE_CORE_22: ReadonlyArray<string> = [
 
 const RUN_REVENGE_22: RunDef = {
   id: 'revenge-22',
+  signaturePair: ['dragon', 'duchess'],
   name: 'The Millstone',
   blurb: 'He walks in circles around a stone. Give him nowhere to step.',
   allowedAbilities: ['dragon', 'duchess', 'magnet', 'aegis'],

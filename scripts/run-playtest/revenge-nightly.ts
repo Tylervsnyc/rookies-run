@@ -45,6 +45,8 @@
  */
 
 import { execFileSync, spawnSync } from 'node:child_process';
+import { auditLadder, checkStale, type RungResult } from './ladder-audit';
+import { BUDGET } from './spec';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -464,12 +466,21 @@ function pullHumanTraces(runIds: string[], opts: Opts, caveats: string[]): Human
 // write the digest. Used by the full night AND --render-only.
 
 interface AssembleCtx {
+  /** The spec.ts ladder audit run tonight (null on --render-only). */
+  ladder?: LadderSection | null;
   date: string;
   quick: boolean;
   wallSeconds: number;
   caveats: string[];
   /** Run hypotheses/experiments for these run ids (full night); render-only passes []. */
   hypothesisRuns: string[];
+}
+
+export interface LadderSection {
+  rows: RungResult[];
+  summary: string;
+  file: string;
+  budget: { trials: number; runs: number };
 }
 
 async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
@@ -624,6 +635,8 @@ async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
     hypotheses,
     experiments,
     caveats,
+    ladder: ctx.ladder ?? null,
+    stale: checkStale().message,
   };
   const md = renderDigest(input);
   writeFileSync(join(DIGESTS, `${ctx.date}.md`), md);
@@ -713,7 +726,20 @@ async function main(): Promise<void> {
   }
   if (opts.quick) caveats.push('Quick mode: trial counts are tiny and only no-ability + the five finishers were swept, so every percentage is coarse and movers vs last night are mostly noise.');
 
-  await assemble(opts, { date, quick: opts.quick, wallSeconds: Math.round((Date.now() - t0) / 1000), caveats, hypothesisRuns: done });
+  // THE CONTRACT (spec.ts = docs/LADDER-SPEC.md), graded with error bars. This
+  // is the section that decides anything; everything above it is context.
+  let ladder: LadderSection | null = null;
+  try {
+    const b = opts.quick ? BUDGET.quick : BUDGET.nightly;
+    const tl = Date.now();
+    const a = await auditLadder({ trials: b.trials, runs: b.runs, jobs: opts.jobs ?? 8, sick: false, log });
+    ladder = { rows: a.rows, summary: a.summary, file: a.file, budget: b };
+    log(`ladder audit: ${a.summary} (${secs(tl)})`);
+  } catch (e) {
+    caveats.push(`Ladder audit failed: ${(e as Error).message.slice(0, 200)}`);
+  }
+
+  await assemble(opts, { date, quick: opts.quick, wallSeconds: Math.round((Date.now() - t0) / 1000), caveats, hypothesisRuns: done, ladder });
   log(`done in ${((Date.now() - t0) / 60000).toFixed(1)} min`);
 }
 

@@ -97,7 +97,14 @@ export function clearPct(r?: RunsReport): number | null {
   return Math.round((r.fullClears / r.runs) * 100);
 }
 
-/** THE difficulty bands (Tyler, 2026-08-30): new-player full-run clear on Normal 40–60 %, Rookie ≥ 70 %. */
+/**
+ * New-player full-run clear (Tyler, 2026-08-30: 40-60% on Normal, 70%+ on Rookie).
+ * INFORMATIONAL since 2026-09-09: the contract that grades a run is spec.ts /
+ * docs/LADDER-SPEC.md (rung-sloped pair band + full-run band with error bars,
+ * measured by ladder-audit.ts). This read stays in the digest as context but
+ * is no longer a promote/hold reason — it competed with the spec and the two
+ * disagreed nightly.
+ */
 export const NEWPLAYER_NORMAL_LOW = 40;
 export const NEWPLAYER_NORMAL_HIGH = 60;
 export const NEWPLAYER_NORMAL_TOO_EASY = 85;
@@ -173,18 +180,21 @@ export interface Verdict {
   notes: string[];
 }
 
-/** Promote/hold call: new-player clear bands first, then finisher floor and stalls. */
+/**
+ * Promote/hold SANITY call for candidate runs: impossible levels, finisher
+ * floor, stalls. Difficulty is NOT judged here — that is spec.ts via
+ * ladder-audit.ts, with error bars. A candidate that passes this is playable;
+ * whether it is a rung is the audit's call.
+ */
 export function verdictFor(summary: LevelSummary[], players?: PlayerSims, cells: Cell[] = [], solver: SolveResult[] = []): Verdict {
   const reasons: string[] = [];
   const notes: string[] = [];
   const impossible = impossibleLevels(cells, solver);
   for (const i of impossible) reasons.push(describeImpossible(i));
+  // New-player clear is context, not a gate (spec.ts is the gate — see header above).
   const d = difficultyCall(players);
-  if (d.call === 'unmeasured') reasons.push('new-player simulation did not run — no difficulty read');
-  else if (d.normal !== null && d.normal > NEWPLAYER_NORMAL_TOO_EASY) reasons.push(`TOO EASY — a new player clears ${d.normal}% of runs on Normal (target ${NEWPLAYER_NORMAL_LOW}-${NEWPLAYER_NORMAL_HIGH}%)`);
-  else if (d.call === 'too easy') reasons.push(`too easy — new player clears ${d.normal}% on Normal (target ${NEWPLAYER_NORMAL_LOW}-${NEWPLAYER_NORMAL_HIGH}%)`);
-  else if (d.call === 'too hard') reasons.push(`too hard — new player clears ${d.normal}% on Normal (target ${NEWPLAYER_NORMAL_LOW}-${NEWPLAYER_NORMAL_HIGH}%)`);
-  if (d.rookie !== null && d.rookie < NEWPLAYER_ROOKIE_MIN) reasons.push(`beginners walled — new player clears only ${d.rookie}% on Rookie (need ${NEWPLAYER_ROOKIE_MIN}%+)`);
+  if (d.call === 'unmeasured') notes.push('new-player simulation did not run');
+  else notes.push(`new player clears ${d.normal}% on Normal / ${d.rookie ?? '-'}% on Rookie (context only; the graded contract is spec.ts)`);
   for (const s of summary) {
     if (!s.inBand) notes.push(`L${s.level} no-ability ${s.nonePct}% is ${s.bandNote} for the legacy band (${bandFor(s.level).low}-${bandFor(s.level).high}%)`);
     if (s.finisherFloor < FINISHER_FLOOR_MIN) reasons.push(`L${s.level} ${s.worstFinisher.id} only ${s.worstFinisher.pct}% (every finisher must be at least ${FINISHER_FLOOR_MIN}%)`);

@@ -141,6 +141,7 @@ const STUMPS = (...files: number[]) => files.map((f) => X(f, 7));
 
 const RUN_REVENGE_17: RunDef = {
   id: 'revenge-17',
+  signaturePair: ['dragon', 'sacrifice'],
   name: 'The Briar',
   blurb: 'He grew a hedge and called it a kingdom.',
   allowedAbilities: ['dragon', 'sacrifice', 'aegis', 'poison-dart'],

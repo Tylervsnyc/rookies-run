@@ -38,6 +38,13 @@ export interface RunDef {
    */
   allowedAbilities?: ReadonlyArray<string>;
   /**
+   * The two cards a combo-gated run's finale (L7-L10) requires — the pair the
+   * ladder audit measures (docs/LADDER-SPEC.md). Lives on the run so no script
+   * keeps its own copy (three did, and one keyed the wrong run). Both ids must
+   * be in `allowedAbilities`.
+   */
+  signaturePair?: readonly [string, string];
+  /**
    * Rookie's Revenge — grant a FREE ability offer at the start of every
    * level (before the first move). Level offers never touch tempo and can't
    * be skipped. Tempo offers still roll on top as usual.
@@ -6485,6 +6492,7 @@ const MOAT = (...gaps: number[]): Hazard[] =>
 
 const RUN_REVENGE_12: RunDef = {
   id: 'revenge-12',
+  signaturePair: ['bishop-squire', 'swap'],
   name: 'The Moat',
   blurb: 'Water on every side. He thinks water is a wall.',
   allowedAbilities: ['swap', 'bishop-squire', 'knight-hop', 'poison-dart'],

@@ -300,6 +300,7 @@ const TALL_HOUSE: ReadonlyArray<Coord> = [
 
 const RUN_REVENGE_18: RunDef = {
   id: 'revenge-18',
+  signaturePair: ['freeze-ray', 'vanguard'],
   name: 'The Glasshouse',
   blurb: 'One room, one window. Something is watching the window.',
   allowedAbilities: ['freeze-ray', 'vanguard', 'poison-dart', 'magnet'],

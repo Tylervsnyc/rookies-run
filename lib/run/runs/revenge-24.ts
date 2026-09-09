@@ -425,6 +425,7 @@ function LATTICE(open: Coord[] = [], plus: Coord[] = []): Coord[] {
 
 const RUN_REVENGE_24: RunDef = {
   id: 'revenge-24',
+  signaturePair: ['duchess', 'decoy'],
   name: 'The Lattice',
   blurb: 'Stone on every dark square. Rooks die up there; queens walk.',
   allowedAbilities: ['duchess', 'decoy', 'aegis', 'magnet'],

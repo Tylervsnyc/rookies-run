@@ -1,121 +1,223 @@
 /**
- * LADDER AUDIT — grades all ten rungs against docs/LADDER-SPEC.md.
+ * LADDER AUDIT — grades every rung against the contract in spec.ts
+ * (= docs/LADDER-SPEC.md), with error bars, and files the result in the
+ * results ledger stamped with the engine that produced it.
  *
- *   npx tsx scripts/run-playtest/ladder-audit.ts [trials] [runs]
+ *   npx tsx scripts/run-playtest/ladder-audit.ts [--trials=96] [--runs=96] [--jobs=8]
+ *                                                 [--rung=N] [--sick] [--quick]
+ *   npx tsx scripts/run-playtest/ladder-audit.ts --check-stale
  *
- * Everything on Normal, T5 bot, T1 cards — the method every run's "numbers of
- * record" block uses. Passing a difficulty is load-bearing: without it the
- * harness runs the default and a run that pins its own Hard/Nightmare deltas
- * (revenge-21) reads nothing like its docs.
+ * Method (every number of record): Normal, T5 bot, T1 cards. Passing the
+ * difficulty is load-bearing — a run that pins its own Hard/Nightmare deltas
+ * (revenge-21) reads nothing like its docs without it.
+ *
+ * Verdicts are PASS / FAIL / INCONCLUSIVE per check. INCONCLUSIVE means the 95%
+ * interval straddles the window at this budget — the table says how many trials
+ * would settle it. It is never rounded to a verdict: at 16 trials a cell is
+ * ±20 points and the spec window is ±8, which is how the old nightly could
+ * report "182 cells moved more than 15 points" in one night.
+ *
+ * `--sick` forces summoning sickness on (the ladder as it WILL be once its
+ * finales are re-tuned for it — Tyler 2026-09-09). `--check-stale` compares the
+ * engine fingerprint of the latest filed audit with the current tree and
+ * prints which rungs' numbers still describe this game.
  */
-import { writeFileSync } from 'node:fs';
 import { LADDER_RUNG_IDS } from '../../lib/run/ladder';
 import { getRunById } from '../../lib/run/runs';
 import { DIFFICULTIES } from '../../lib/run/difficulty';
-import { matrixParallel, winPct, puzzleFor, simulateRuns, type Cell } from './revenge-core';
+import { matrixParallel, puzzleFor, simulateRuns, type Cell } from './revenge-core';
+import {
+  BAND_TOL, BUDGET, FINALE_LEVELS, GATE_NONE_MAX, GATE_SINGLE_MAX, RUN_TOL, SCALE_LATE_GAP, SHAPE_MIN_SPAN,
+  USED_MIN_GAP, USED_MIN_LEVELS, bandTarget, fmtEstimate, gradeCeiling, gradeWindow, pooled, rungGrade, runTarget,
+  scaleFloor, wilson, type Estimate, type Graded, type RungChecks, type RungGrade,
+} from './spec';
+import { engineFingerprint, fmtFingerprint, sameEngine } from './fingerprint';
+import { latestResult, writeResult } from './results';
 
-const TRIALS = Number(process.argv[2] ?? 32);
-const RUNS = Number(process.argv[3] ?? 60);
-/**
- * Grade the ladder WITH summoning sickness (Tyler, 2026-09-09: sickness goes on
- * the ladder too). The rule ships to the ladder once these finales are re-tuned
- * for it, so the targets have to be measured against the ladder as it WILL be.
- *   npx tsx ladder-audit.ts <trials> <runs> sick
- */
-const SICK = process.argv[4] === 'sick';
-/** One rung per process (1-10), so ten rungs can run five-up. Omit for all. */
-const ONLY = process.argv[5] ? Number(process.argv[5]) : null;
-const JOBS = ONLY ? 2 : 8;
-const OUT_BASE = SICK ? 'data/run-playtest/ladder-audit-sick-2026-09-09' : 'data/run-playtest/ladder-audit-2026-09-09';
-const OUT = ONLY ? `${OUT_BASE}.rung${ONLY}.json` : `${OUT_BASE}.json`;
-const LEVELS = [7, 8, 9, 10];
 const ISO = '2026-08-18';
 
-const PAIRS: Record<string, [string, string]> = {
-  'revenge-21': ['boulder', 'knight-hop'],
-  'revenge-18': ['freeze-ray', 'vanguard'],
-  'revenge-15': ['magnet', 'boulder'],
-  'revenge-23': ['knight-hop', 'twin'],
-  'revenge-12': ['bishop-squire', 'swap'],
-  'revenge-24': ['duchess', 'decoy'],
-  'revenge-25': ['become-king', 'boulder'],
-  'revenge-19': ['convert', 'summon-knight'],
-  'revenge-22': ['dragon', 'duchess'],
-  'revenge-17': ['dragon', 'sacrifice'],
-};
+function num(name: string, def: number): number {
+  const hit = process.argv.find((a) => a.startsWith(`--${name}=`));
+  return hit ? Number(hit.split('=')[1]) : def;
+}
+const flag = (name: string) => process.argv.includes(`--${name}`);
 
-const bandTarget = (r: number) => 80 - 3 * (r - 1);
-const runTarget = (r: number) => 65 - 3.3 * (r - 1);
-const scaleFloor = (r: number) => 3 + 0.6 * (r - 1);
-const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+export interface RungResult {
+  rung: number;
+  runId: string;
+  name: string;
+  pair: [string, string];
+  kit: string[];
+  grade: RungGrade;
+  checks: RungChecks;
+  /** Per finale level. */
+  pairByLevel: Estimate[];
+  /** Worst single (or none) per finale level. */
+  worstSingleByLevel: Array<{ loadout: string; est: Estimate }>;
+  pairMean: Estimate;
+  run: Estimate;
+  avgPieces: number;
+  early: number;
+  late: number;
+  targets: { band: number; run: number; scale: number };
+}
 
-(async () => {
-  const out: any[] = [];
-  for (let i = 0; i < LADDER_RUNG_IDS.length; i++) {
-    const r = i + 1;
-    if (ONLY && r !== ONLY) continue;
-    const runId = LADDER_RUNG_IDS[i];
-    const run = getRunById(runId);
-    const kit = [...(run.allowedAbilities ?? [])] as string[];
-    const pairKey = `${PAIRS[runId][0]}+${PAIRS[runId][1]}`;
+export interface AuditOpts {
+  trials: number;
+  runs: number;
+  jobs: number;
+  sick: boolean;
+  /** 1-based rung to audit alone; undefined = all. */
+  only?: number;
+  log?: (s: string) => void;
+}
 
-    const cells: Cell[] = await matrixParallel({ runId, difficulty: 'normal', summonSickness: SICK }, {
-      levels: LEVELS, loadouts: ['none', ...kit, pairKey], trials: TRIALS, tier: 'T5', realistic: false, jobs: JOBS,
-    });
-    const by: Record<string, Record<number, number>> = {};
-    for (const c of cells) { by[c.loadout] ??= {}; by[c.loadout][c.level] = winPct(c); }
+export async function auditRung(r: number, o: AuditOpts): Promise<RungResult> {
+  const runId = LADDER_RUNG_IDS[r - 1];
+  const run = getRunById(runId);
+  if (!run.signaturePair) throw new Error(`${runId} has no signaturePair — set it on the RunDef`);
+  const pair = run.signaturePair as [string, string];
+  const kit = [...(run.allowedAbilities ?? [])] as string[];
+  const pairKey = `${pair[0]}+${pair[1]}`;
 
-    const pairRow = LEVELS.map((l) => by[pairKey]?.[l] ?? 0);
-    const singleRow = LEVELS.map((l) => Math.max(...['none', ...kit].map((k) => by[k]?.[l] ?? 0)));
-    const pairMean = mean(pairRow);
+  const cells: Cell[] = await matrixParallel(
+    { runId, difficulty: 'normal', summonSickness: o.sick },
+    { levels: [...FINALE_LEVELS], loadouts: ['none', ...kit, pairKey], trials: o.trials, tier: 'T5', realistic: false, jobs: o.jobs },
+  );
+  const cell = (loadout: string, level: number) => cells.find((c) => c.loadout === loadout && c.level === level);
+  const est = (loadout: string, level: number): Estimate => {
+    const c = cell(loadout, level);
+    return wilson(c?.wins ?? 0, c?.trials ?? 0);
+  };
 
-    // 4) whole-run clear at the real retry budget
-    const rep = simulateRuns({ runId, difficulty: 'normal', iso: ISO, summonSickness: SICK }, RUNS, 'T5', {
-      retriesPerLevel: DIFFICULTIES.normal.retriesPerLevel,
-      seedPrefix: `audit:normal:${runId}`,
-    });
-    const runPct = (rep.fullClears / RUNS) * 100;
+  const pairByLevel = FINALE_LEVELS.map((l) => est(pairKey, l));
+  const worstSingleByLevel = FINALE_LEVELS.map((l) => {
+    let worst = { loadout: 'none', est: est('none', l) };
+    for (const k of kit) {
+      const e = est(k, l);
+      if (e.pct > worst.est.pct) worst = { loadout: k, est: e };
+    }
+    return worst;
+  });
+  const pairMean = pooled(pairByLevel);
 
-    // 5) scale
-    const counts: number[] = [];
-    for (let lv = 0; lv < run.levels.length; lv++) counts.push(puzzleFor({ runId }, lv + 1).pieces.length);
-    const avgPieces = mean(counts);
-    const early = mean(counts.slice(0, 3));
-    const late = mean(counts.slice(7, 10));
+  // 1. GATE — the worst single across the finale, graded as a ceiling. The
+  // whole finale is one claim, so pool the worst cell per level.
+  const gateCells = worstSingleByLevel.map((w) => w.est);
+  const gateWorst = gateCells.reduce((a, b) => (b.hi > a.hi ? b : a));
+  const gate: Graded = gradeCeiling(gateWorst, Math.max(GATE_SINGLE_MAX, GATE_NONE_MAX));
 
-    const checks = {
-      gate: singleRow.every((v) => v <= 8),
-      used: pairRow.filter((v, k) => v - singleRow[k] >= 50).length >= 3,
-      band: Math.abs(pairMean - bandTarget(r)) <= 8,
-      run: Math.abs(runPct - runTarget(r)) <= 10,
-      scale: avgPieces >= scaleFloor(r) && late >= early + 2,
-      shape: Math.max(...pairRow) - Math.min(...pairRow) >= 15 && pairRow[3] <= pairRow[0],
-    };
-    // Two INDEPENDENT verdicts. The first version ORed them and stamped a rung
-    // by whichever fired first, which labelled The Cliff "TOO EASY" while its
-    // runs cleared at 5% — its finale reads 71% and players die before they
-    // ever see it. Level difficulty and run difficulty are different questions
-    // and a rung can fail them in opposite directions, so they are reported
-    // separately or the table lies.
-    const dir = (v: number, target: number, tol: number) =>
-      Math.abs(v - target) <= tol ? 'ok' : v > target ? 'easy' : 'HARD';
-    const levelVerdict = dir(pairMean, bandTarget(r), 8);
-    const runVerdict = dir(runPct, runTarget(r), 10);
-    const grade = !checks.gate ? 'BROKEN'
-      : levelVerdict !== 'ok' || runVerdict !== 'ok' ? `lvl:${levelVerdict} run:${runVerdict}`
-      : !checks.scale || !checks.shape ? 'FLAT'
-      : 'PASS';
+  // 2. USED
+  const used = pairByLevel.filter((p, i) => p.pct - worstSingleByLevel[i].est.pct >= USED_MIN_GAP).length >= USED_MIN_LEVELS;
 
-    const mark = (b: boolean) => (b ? 'ok  ' : 'FAIL');
-    console.log(
-      `rung ${String(r).padStart(2)} ${runId.padEnd(11)} ${grade.padEnd(18)}` +
-      ` gate ${mark(checks.gate)} used ${mark(checks.used)} band ${mark(checks.band)} run ${mark(checks.run)} scale ${mark(checks.scale)} shape ${mark(checks.shape)}` +
-      `  | pair ${pairRow.map((v) => String(Math.round(v)).padStart(3)).join('/')} mean ${pairMean.toFixed(0).padStart(3)} (want ${bandTarget(r)})` +
-      `  run ${runPct.toFixed(0).padStart(3)}% (want ${runTarget(r).toFixed(0)})  pieces ${avgPieces.toFixed(1)} (want ${scaleFloor(r).toFixed(1)})`);
-    out.push({ rung: r, runId, grade, levelVerdict, runVerdict, checks, pairRow, singleRow, pairMean, runPct, avgPieces, early, late });
-    writeFileSync(OUT, JSON.stringify(out, null, 1));
+  // 3. BAND
+  const band = gradeWindow(pairMean, bandTarget(r) - BAND_TOL, bandTarget(r) + BAND_TOL);
+
+  // 4. RUN — at the real retry budget
+  const rep = simulateRuns({ runId, difficulty: 'normal', iso: ISO, summonSickness: o.sick }, o.runs, 'T5', {
+    retriesPerLevel: DIFFICULTIES.normal.retriesPerLevel,
+    seedPrefix: `audit:normal:${runId}`,
+  });
+  const runEst = wilson(rep.fullClears, o.runs);
+  const runG = gradeWindow(runEst, runTarget(r) - RUN_TOL, runTarget(r) + RUN_TOL);
+
+  // 5. SCALE
+  const counts: number[] = [];
+  for (let lv = 0; lv < run.levels.length; lv++) counts.push(puzzleFor({ runId }, lv + 1).pieces.length);
+  const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+  const avgPieces = mean(counts);
+  const early = mean(counts.slice(0, 3));
+  const late = mean(counts.slice(7, 10));
+  const scale = avgPieces >= scaleFloor(r) && late >= early + SCALE_LATE_GAP;
+
+  // 6. SHAPE
+  const pcts = pairByLevel.map((p) => p.pct);
+  const shape = Math.max(...pcts) - Math.min(...pcts) >= SHAPE_MIN_SPAN && pcts[3] <= pcts[0];
+
+  const checks: RungChecks = { gate, used, band, run: runG, scale, shape };
+  return {
+    rung: r, runId, name: run.name, pair, kit, grade: rungGrade(checks), checks,
+    pairByLevel, worstSingleByLevel, pairMean, run: runEst, avgPieces, early, late,
+    targets: { band: bandTarget(r), run: runTarget(r), scale: scaleFloor(r) },
+  };
+}
+
+function fmtRow(x: RungResult): string {
+  const g = (gr: Graded) => (gr.verdict === 'PASS' ? 'ok  ' : gr.verdict === 'FAIL' ? 'FAIL' : `?${gr.trialsNeeded ?? ''}`.padEnd(4));
+  const b = (ok: boolean) => (ok ? 'ok  ' : 'FAIL');
+  return (
+    `rung ${String(x.rung).padStart(2)} ${x.runId.padEnd(11)} ${x.grade.padEnd(13)}` +
+    ` gate ${g(x.checks.gate)} used ${b(x.checks.used)} band ${g(x.checks.band)} run ${g(x.checks.run)} scale ${b(x.checks.scale)} shape ${b(x.checks.shape)}` +
+    `  | pair ${x.pairByLevel.map((p) => String(Math.round(p.pct)).padStart(3)).join('/')} = ${fmtEstimate(x.pairMean)} (want ${x.targets.band}±${BAND_TOL})` +
+    `  run ${fmtEstimate(x.run)} (want ${x.targets.run.toFixed(0)}±${RUN_TOL})  pieces ${x.avgPieces.toFixed(1)} (≥${x.targets.scale.toFixed(1)})`
+  );
+}
+
+export function summarize(rows: RungResult[]): string {
+  const n = (g: RungGrade) => rows.filter((o) => o.grade === g).length;
+  return `PASS ${n('PASS')} · BROKEN ${n('BROKEN')} · TOO EASY ${n('TOO EASY')} · TOO HARD ${n('TOO HARD')} · FLAT ${n('FLAT')} · INCONCLUSIVE ${n('INCONCLUSIVE')} (of ${rows.length})`;
+}
+
+export async function auditLadder(o: AuditOpts): Promise<{ rows: RungResult[]; file: string; summary: string }> {
+  const log = o.log ?? ((s: string) => console.log(s));
+  const rows: RungResult[] = [];
+  const experiment = o.sick ? 'ladder-audit-sick' : 'ladder-audit';
+  for (let r = 1; r <= LADDER_RUNG_IDS.length; r++) {
+    if (o.only && r !== o.only) continue;
+    const x = await auditRung(r, o);
+    rows.push(x);
+    log(fmtRow(x));
   }
-  console.log(`\nsummoning sickness: ${SICK ? 'ON (the ladder as it WILL be)' : 'off (the ladder as it is today)'}`);
-  const n = (g: string) => out.filter((o) => o.grade === g).length;
-  console.log(`\nPASS ${n('PASS')}  BROKEN ${n('BROKEN')}  TOO EASY ${n('TOO EASY')}  TOO HARD ${n('TOO HARD')}  FLAT ${n('FLAT')}`);
-})();
+  const summary = summarize(rows);
+  const file = writeResult(
+    {
+      experiment: o.only ? `${experiment}-rung${o.only}` : experiment,
+      budget: { trials: o.trials, runs: o.runs, jobs: o.jobs, seed: `matrix per (run,level,loadout,trial); runs audit:normal:<runId>` },
+      conclusion: `${summary}${o.sick ? ' · summoning sickness ON' : ''}`,
+      doc: 'docs/LADDER-SPEC.md',
+    },
+    { sick: o.sick, method: 'Normal, T5, T1 cards', rows },
+  );
+  log(`\n${summary}`);
+  log(`summoning sickness: ${o.sick ? 'ON (the ladder as it WILL be)' : 'off (the ladder as it is today)'}`);
+  log(`filed: ${file}`);
+  return { rows, file, summary };
+}
+
+/** Compare the latest filed audit's engine with the current tree. */
+export function checkStale(sick = false): { fresh: boolean; message: string } {
+  const now = engineFingerprint();
+  const last = latestResult<{ rows: RungResult[] }>(sick ? 'ladder-audit-sick' : 'ladder-audit');
+  if (!last) return { fresh: false, message: `no ladder audit on file — current engine ${fmtFingerprint(now)}` };
+  if (sameEngine(last.engine, now)) {
+    return { fresh: true, message: `ladder numbers are CURRENT: audited ${last.date} on ${fmtFingerprint(last.engine)} (${last.body.rows.length} rungs; ${last.conclusion})` };
+  }
+  return {
+    fresh: false,
+    message: `ladder numbers are STALE: last audit ${last.date} on ${fmtFingerprint(last.engine)}, engine is now ${fmtFingerprint(now)} — re-run ladder-audit.ts before quoting any rung`,
+  };
+}
+
+if (require.main === module) {
+  (async () => {
+    if (flag('check-stale')) {
+      const r = checkStale(flag('sick'));
+      console.log(r.message);
+      process.exit(r.fresh ? 0 : 2);
+    }
+    const quick = flag('quick');
+    const only = process.argv.find((a) => a.startsWith('--rung='));
+    const o: AuditOpts = {
+      trials: num('trials', quick ? BUDGET.quick.trials : BUDGET.bandTrials),
+      runs: num('runs', quick ? BUDGET.quick.runs : BUDGET.runTrials),
+      jobs: num('jobs', 8),
+      sick: flag('sick'),
+      only: only ? Number(only.split('=')[1]) : undefined,
+    };
+    console.log(`engine ${fmtFingerprint(engineFingerprint())} · ${o.trials} trials/cell, ${o.runs} full runs, jobs ${o.jobs}${o.sick ? ' · SICK' : ''}`);
+    await auditLadder(o);
+  })().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

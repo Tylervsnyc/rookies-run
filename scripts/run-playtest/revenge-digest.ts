@@ -11,6 +11,9 @@
  */
 
 import type { DifficultyId } from '../../lib/run/difficulty';
+import { BAND_TOL, RUN_TOL, fmtEstimate } from './spec';
+import type { LadderSection } from './revenge-nightly';
+import { DIFFICULTIES } from '../../lib/run/difficulty';
 import { FINISHERS, winPct, type Cell, type RunsReport, type SolveResult } from './revenge-core';
 import type { RevengeFeatures } from './revenge-features';
 import { shortReason, type ContentItem, type PipelineSummary } from '../../lib/content/pipeline';
@@ -63,6 +66,11 @@ export interface RunReport {
 }
 
 const STARTERS_LABEL = 'knight-hop, surge, freeze-ray';
+
+/** "Rookie unlimited, Normal 1, Hard 1, Nightmare 0" — always from difficulty.ts, never typed by hand. */
+function retriesLabel(): string {
+  return MODES.map((m) => `${DIFFICULTIES[m].name} ${Number.isFinite(DIFFICULTIES[m].retriesPerLevel) ? DIFFICULTIES[m].retriesPerLevel : 'unlimited'}`).join(', ');
+}
 
 function callWord(call: ReturnType<typeof difficultyCall>['call'], normal: number | null): string {
   if (call === 'unmeasured') return 'unmeasured';
@@ -120,6 +128,10 @@ export interface DigestInput {
   hypotheses: Hypothesis[];
   experiments: ExperimentResult[];
   caveats: string[];
+  /** The spec.ts ladder audit — the graded contract. Null when it did not run. */
+  ladder?: LadderSection | null;
+  /** checkStale() message: do the filed ladder numbers describe this engine? */
+  stale?: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -194,6 +206,27 @@ export function headline(input: DigestInput): string {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+function renderLadderSection(input: DigestInput): string[] {
+  const L: string[] = [];
+  if (input.stale) L.push(`_${input.stale}_`, '');
+  if (!input.ladder) {
+    L.push('The ladder audit did not run tonight, so there is **no graded verdict** — everything below is context.');
+    return L;
+  }
+  const lad = input.ladder;
+  L.push(`Measured on Normal, T5, T1 cards at ${lad.budget.trials} trials/cell and ${lad.budget.runs} full runs; 95% intervals in brackets. **PASS** = the whole interval is inside the window, **FAIL** = wholly outside, **?N** = INCONCLUSIVE at this budget (N trials/cell would settle it). Result file: \`${lad.file}\`.`);
+  L.push('');
+  L.push(`**${lad.summary}**`);
+  L.push('');
+  L.push('| rung | run | grade | gate | used | pair L7-L10 | pair mean (want) | full run (want) | pieces (≥) | shape |');
+  L.push('|---|---|---|---|---|---|---|---|---|---|');
+  const g = (gr: { verdict: string; trialsNeeded?: number }) => (gr.verdict === 'PASS' ? 'ok' : gr.verdict === 'FAIL' ? '**FAIL**' : `?${gr.trialsNeeded ?? ''}`);
+  for (const r of lad.rows) {
+    L.push(`| ${r.rung} | ${r.runId} ${r.name} (${r.pair.join('+')}) | **${r.grade}** | ${g(r.checks.gate)} | ${r.checks.used ? 'ok' : 'FAIL'} | ${r.pairByLevel.map((p) => Math.round(p.pct)).join('/')} | ${fmtEstimate(r.pairMean)} (${r.targets.band}±${BAND_TOL}) ${g(r.checks.band)} | ${fmtEstimate(r.run)} (${r.targets.run.toFixed(0)}±${RUN_TOL}) ${g(r.checks.run)} | ${r.avgPieces.toFixed(1)} (${r.targets.scale.toFixed(1)}) ${r.checks.scale ? 'ok' : 'FAIL'} | ${r.checks.shape ? 'ok' : 'FAIL'} |`);
+  }
+  return L;
+}
+
 export function renderDigest(input: DigestInput): string {
   const L: string[] = [];
   const mins = (input.wallSeconds / 60).toFixed(1);
@@ -202,7 +235,11 @@ export function renderDigest(input: DigestInput): string {
   L.push(`**Date:** ${input.date} · **Mode:** ${input.quick ? 'quick smoke (few trials — numbers are rough)' : 'full'} · **Wall time:** ${mins} min`);
   L.push(`**Bot:** T5 MCTS · **Live run:** ${input.trials.realistic} trials per cell at realistic tiers, ${input.trials.mode} per difficulty mode, ${input.trials.runs} full runs per mode · **Experiments:** ${input.trials.experiment} trials · candidates run lighter (see each run)`);
   L.push('');
-  L.push(`## Headline`);
+  L.push(`## Ladder contract (docs/LADDER-SPEC.md)`);
+  L.push('');
+  L.push(...renderLadderSection(input));
+  L.push('');
+  L.push(`## Headline (context)`);
   L.push('');
   L.push(headline(input));
   L.push('');
@@ -210,7 +247,7 @@ export function renderDigest(input: DigestInput): string {
   // Standing sections (Tyler, 2026-08-30): difficulty = the NEW PLAYER's clear rate, then ability tier list, every run.
   L.push(`## Run difficulty and ability tiers`);
   L.push('');
-  L.push(`Difficulty is measured on the player who actually exists: a **new player** with only the 3 starters (${STARTERS_LABEL}), taking the offers the app forces (never dismissing), with the mode's retries (Rookie unlimited, Normal 3). Target: ${NEWPLAYER_NORMAL_LOW}-${NEWPLAYER_NORMAL_HIGH}% full-run clear on Normal, ${NEWPLAYER_ROOKIE_MIN}%+ on Rookie; over ${NEWPLAYER_NORMAL_TOO_EASY}% on Normal is TOO EASY.`);
+  L.push(`Difficulty is measured on the player who actually exists: a **new player** with only the 3 starters (${STARTERS_LABEL}), taking the offers the app forces (never dismissing), with the mode's retries (${retriesLabel()}). Context only — the graded contract is docs/LADDER-SPEC.md (spec.ts), measured with error bars by ladder-audit.ts; the ${NEWPLAYER_NORMAL_LOW}-${NEWPLAYER_NORMAL_HIGH}% Normal / ${NEWPLAYER_ROOKIE_MIN}%+ Rookie targets below are the older new-player read.`);
   L.push('');
   for (const r of input.runs) {
     const d = difficultyCall(r.players);
@@ -501,13 +538,13 @@ export function renderDigest(input: DigestInput): string {
   L.push(`- **No ability** = the T5 MCTS bot with no powers, offers dismissed. It is a floor for a good player, not a beginner's number.`);
   L.push(`- **Finishers** = ${FINISHERS.join(', ')} — the cards that take the king directly. Every offer slate carries at least two, so the worst finisher is the run's safety net.`);
   L.push(`- **Stall** = 300 turns with the king alive. Always a bug or an unreachable pen; the target is zero.`);
-  L.push(`- **Difficulty** = the new-player sim (3 starters, forced offers, mode retries): ${NEWPLAYER_NORMAL_LOW}-${NEWPLAYER_NORMAL_HIGH}% full-run clear on Normal is the target, ${NEWPLAYER_ROOKIE_MIN}%+ on Rookie, over ${NEWPLAYER_NORMAL_TOO_EASY}% on Normal is too easy. The old no-ability band (100/100/100/100/90/50/55/50/30/30 ±15) is shown per level for reference only.`);
+  L.push(`- **Difficulty** is graded by ONE contract: docs/LADDER-SPEC.md as code in scripts/run-playtest/spec.ts, measured by ladder-audit.ts with 95% intervals (PASS / FAIL / INCONCLUSIVE). The new-player sim and the legacy no-ability band in this report are context.`);
   L.push(`- Start files are random per game, so a single cell wobbles ±10 between nights at ${input.trials.realistic} trials (more on the lighter candidate passes). Trust clusters and repeated nights.`);
   L.push('');
   L.push(`**How to read these numbers** (the harness plays the exact engine the app does — verified ply-for-ply, see \`docs/revenge-parity.md\` — but it skips five app-side rules):`);
   L.push('');
   L.push(`1. **Free offers are not skippable in the app.** On L1, L3, L6 and L9 a real player MUST take a card before moving; the harness dismisses it. So the "none" and single-ability cells on those levels UNDERSTATE a real player's kit — the random-pick full runs are the honest number there.`);
-  L.push(`2. **Retries.** The app gives Rookie unlimited, Normal 3, Hard 1, Nightmare 0 retries per level, each with a fresh start file and seed. Every full-run clear rate here is a LOWER bound on what a player with retries sees.`);
+  L.push(`2. **Retries.** The app gives ${retriesLabel()} retries per level (from lib/run/difficulty.ts), each with a fresh start file and seed. Full-run sims use the mode's real budget.`);
   L.push(`3. **Offer pool.** The app rolls only the player's unlocked abilities (a new player has Knight Hop, Surge and Freeze Ray; Drones is retired). The harness draws from all ${input.runs[0] ? input.runs[0].realistic.cells.filter((c) => c.loadout !== 'none').length : 18} — so full-run pick mixes are wider than a new player's.`);
   L.push(`4. **Default difficulty.** A fresh profile plays Rookie; the main table is Normal. The four modes are swept explicitly above — read the Rookie row for the new-player experience.`);
   L.push(`5. **"Out of moves" vs "No way through".** The app's solver ends a proven-dead level early; the harness plays on to the move limit. Same loss, two labels — counted together as m.`);
@@ -657,6 +694,15 @@ export function renderPipelineSlack(p: PipelineSummary): string[] {
 export function renderSlack(input: DigestInput): string {
   const L: string[] = [];
   L.push(`Rookie's Revenge nightly — ${input.date}${input.quick ? ' (quick)' : ''} · ${(input.wallSeconds / 60).toFixed(0)} min`);
+  if (input.ladder) {
+    L.push(`LADDER (spec.ts, ${input.ladder.budget.trials} trials/cell, ${input.ladder.budget.runs} runs): ${input.ladder.summary}`);
+    for (const r of input.ladder.rows) {
+      if (r.grade === 'PASS') continue;
+      L.push(`  rung ${r.rung} ${r.runId} ${r.grade} — pair ${fmtEstimate(r.pairMean)} want ${r.targets.band}±${BAND_TOL} · run ${fmtEstimate(r.run)} want ${r.targets.run.toFixed(0)}±${RUN_TOL}${r.checks.gate.verdict !== 'PASS' ? ` · gate ${r.checks.gate.verdict}` : ''}`);
+    }
+  } else {
+    L.push('LADDER: audit did not run tonight — no graded verdict.');
+  }
   for (const r of input.runs) for (const i of r.verdict.impossible) L.push(`IMPOSSIBLE: ${r.runId} ${describeImpossible(i)}`);
   for (const r of input.runs.filter((x) => !x.candidate)) {
     const d = difficultyCall(r.players);

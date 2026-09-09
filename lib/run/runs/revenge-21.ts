@@ -190,6 +190,7 @@ const REVENGE_CORE_21: ReadonlyArray<string> = [
 
 const RUN_REVENGE_21: RunDef = {
   id: 'revenge-21',
+  signaturePair: ['boulder', 'knight-hop'],
   name: 'The Slash',
   blurb: 'One line of stone. He thinks a line is a wall.',
   allowedAbilities: ['boulder', 'knight-hop', 'aegis', 'magnet'],

@@ -1,0 +1,62 @@
+# Engine regression gate — every push that changes the game re-grades the
+# ladder against docs/LADDER-SPEC.md (spec.ts) and posts the delta vs the last
+# filed audit to Slack. The capturing king (2026-09-07) rewrote six of ten
+# rungs and nobody measured for a day; this is that measurement, automatic.
+#
+# Red check = a rung changed GRADE. That is information, not a block: re-tune,
+# or accept the new baseline knowingly (the run also files itself in the
+# results ledger, so the next comparison is against it).
+
+name: Engine regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/run/**'
+      - 'data/content/pipeline.json'
+      - 'scripts/run-playtest/revenge-core.ts'
+      - 'scripts/run-playtest/bots/**'
+  workflow_dispatch:
+
+concurrency:
+  group: engine-regression
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  regress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Re-grade the ladder and compare
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          # 4-core runner: 32 trials/cell x 6 loadouts x 4 levels x 10 rungs +
+          # 24 full runs per rung ≈ 40-60 min. Verdicts will often be
+          # INCONCLUSIVE at this budget; the grade DELTA is what this job reads.
+          npx tsx scripts/run-playtest/engine-regression.ts --trials=32 --runs=24 --jobs=3 || echo "REGRESSION_EXIT=$?" >> "$GITHUB_ENV"
+      - name: File the result
+        run: |
+          git config user.name "Rookie Playtest Bot"
+          git config user.email "playtest@rookies-run.local"
+          git add data/run-playtest/results/ || true
+          if ! git diff --cached --quiet; then
+            git commit -m "Engine regression: ladder re-graded for $(git rev-parse --short HEAD~0) ($(date -u +%Y-%m-%d))"
+            git stash --include-untracked -q || true
+            git pull --rebase origin main
+            git push origin main
+          fi
+      - name: Report
+        run: |
+          if [ "${REGRESSION_EXIT:-0}" = "3" ]; then echo "::error::a ladder rung changed grade — see the Slack line"; exit 1; fi
+          if [ -n "${REGRESSION_EXIT:-}" ]; then echo "::error::engine-regression failed (exit $REGRESSION_EXIT)"; exit 1; fi
