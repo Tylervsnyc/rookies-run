@@ -1523,8 +1523,8 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
     return { ...withFx, turn: 'enemy', enemyMovedSquares: nextMoved };
   }
 
-  // Aegis intercept — if Rookie is about to be captured AND she has Aegis
-  // charges, fire it instead. Attacker either dies (T5) or is just blocked.
+  // Aegis intercept — if Rookie is about to be captured with a shield up, the
+  // attacker bounces off and is FROZEN (never captured — Tyler, 2026-09-09).
   // (Decoy captures are friendly fire and never trigger Aegis.)
   if (action.isCapture && !action.isDecoyCapture) {
     const blocked = tryAegisIntercept(state, action.mover);
@@ -1538,10 +1538,15 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
           id: Date.now() + Math.random(),
         },
       };
-      // The shield is consumed by this hit at every tier (T5 used to stay up
-      // forever — nerfed 2026-09-09). End the turn so the remaining budget
-      // can't slip a second capturer past a now-dropped shield.
-      return endTurn(withFx);
+      // T1-T4: the hit consumes the shield — end the turn so the remaining
+      // budget can't slip a second capturer past a now-dropped shield.
+      if (!blocked.shieldUp) return endTurn(withFx);
+      // T5: the shield holds. The attacker has spent its action (and is
+      // frozen, so it can't be re-picked); the rest of the army carries on —
+      // anyone else who lunges at her freezes too.
+      const nextMoved = [...state.enemyMovedSquares, attackerSquare];
+      if (nextMoved.length >= budget) return endTurn(withFx);
+      return { ...withFx, turn: 'enemy', enemyMovedSquares: nextMoved };
     }
   }
 

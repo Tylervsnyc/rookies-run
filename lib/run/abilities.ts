@@ -204,7 +204,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Aegis',
     activation: 'instant',
     typeLine: 'Instant · Shield',
-    description: 'Tap to raise a shield. Blocks the next capture.',
+    description: 'Tap to raise a shield. Blocks the next capture and freezes the attacker.',
   },
   decoy: {
     id: 'decoy',
@@ -447,7 +447,7 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 3) return 1;
       return 2;
     case 'aegis':
-      // 1/2/2/3/3 — T5 used to be unlimited (permanent shield); nerfed 2026-09-09.
+      // 1/2/2/3/3 raises a level (T5 used to be an unlimited permanent shield; nerfed 2026-09-09).
       if (tier === 1) return 1;
       if (tier === 2 || tier === 3) return 2;
       return 3;
@@ -625,7 +625,7 @@ const HOW: Record<AbilityId, string> = {
   drones: 'Tap card. Drones launch in fixed directions.',
   squad: 'Passive — allies spawn each level.',
   surge: 'Tap card. You get an extra move.',
-  aegis: 'Tap card. Shield stays up until it takes a hit.',
+  aegis: 'Tap card. Shield stays up until it takes a hit. Whoever hits it freezes.',
   decoy: 'Tap card, then tap an enemy.',
   boulder: 'Tap card, then tap an empty square. A block of stone lands there.',
   smoke: 'Tap card. You vanish at once. Capturing gives you away.',
@@ -738,9 +738,9 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 3) return 'Take 2 extra moves this turn.';
       return 'Take 1 extra move this turn.';
     case 'aegis':
-      if (tier === 5) return 'Raise a shield for 3 turns. The first attacker to hit it dies, and the shield breaks.';
-      if (tier === 3) return 'Raise a shield. The next attacker is stunned.';
-      return 'Raise a shield. It blocks the next attack on you.';
+      if (tier === 5) return 'Raise a shield for 3 turns. Every attacker that hits it is frozen 2 turns. It does not break.';
+      if (tier >= 3) return 'Raise a shield. It blocks the next attack, and the attacker is frozen 2 turns.';
+      return 'Raise a shield. It blocks the next attack, and the attacker is frozen 1 turn.';
     case 'decoy':
       if (tier === 5) return 'Mark an enemy. Its team will keep attacking it.';
       if (tier === 4)
@@ -949,11 +949,11 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return '+1 extra move this turn. 2/level.';
       return '+1 extra move this turn. 1/level.';
     case 'aegis':
-      if (tier === 5) return 'Tap: 3-turn shield. First attacker dies. 3/level.';
-      if (tier === 4) return 'Tap: shield. 3 raises/level.';
-      if (tier === 3) return 'Tap: shield + stuns attacker. 2/level.';
-      if (tier === 2) return 'Tap: shield. 2 raises/level.';
-      return 'Tap: shield blocks next capture. 1/level.';
+      if (tier === 5) return 'Tap: 3-turn shield, never breaks. Each attacker frozen 2. 3/level.';
+      if (tier === 4) return 'Tap: shield. Attacker frozen 2. 3 raises/level.';
+      if (tier === 3) return 'Tap: shield. Attacker frozen 2. 2 raises/level.';
+      if (tier === 2) return 'Tap: shield. Attacker frozen 1. 2 raises/level.';
+      return 'Tap: shield. Attacker frozen 1. 1/level.';
     case 'decoy':
       if (tier === 5) return 'Mark stays until captured. 1/level.';
       if (tier === 4) return 'Mark 3 turns. Capturers freeze. 2/level.';
@@ -1177,10 +1177,10 @@ export const UPGRADE_NOTES: Record<
     5: '2 extra moves → 3',
   },
   aegis: {
-    2: '',
-    3: 'Blocked attackers get stunned',
-    4: 'Stun gone; extra raise instead',
-    5: 'Shield lasts 3 turns; the attacker it stops dies',
+    2: '1 raise a level → 2',
+    3: 'Attacker frozen 1 turn → 2',
+    4: '2 raises a level → 3',
+    5: 'Shield lasts 3 turns and never breaks; every attacker freezes',
   },
   decoy: {
     2: 'Mark holds 1 turn → 2',
@@ -4444,35 +4444,43 @@ export function tryAegisIntercept(
   const owned = state.abilities.find((a) => a.id === 'aegis');
   if (!owned) return null;
 
-  let pieces = state.pieces;
-  let captures = state.captures;
-  // T5 kills the attacker — NEVER the king. Only Rookie takes the king, and
-  // taking him is the win; an Aegis kill would delete him with no win and
-  // leave a level that cannot be finished (Tyler's 2026-09-09 endless run).
-  // A king who walks into the shield simply bounces off it.
-  if (owned.tier === 5 && attacker.type !== 'king') {
-    pieces = pieces.filter((p) => p !== attacker);
-    captures = [...captures, attacker.type];
-  }
+  // Nothing is ever captured by the shield (Tyler, 2026-09-09: "Aegis
+  // shouldn't capture attacking pieces, just freeze them. It's too powerful
+  // and confusing."). The attacker — the KING included — is FROZEN with the
+  // same mechanic Freeze Ray uses, so it reads the same on the board. A
+  // frozen king cannot flee or react (pawn-ai skips him), which is exactly
+  // what the Freeze Ray already does to him; the king invariant only cares
+  // that he stays on the board, and he does.
+  //
+  // Mid-enemy-turn freezes carry +1: the counter ticks at the END of this
+  // very turn (the attacker already spent its action bouncing off the
+  // shield), so N+1 here means the piece misses its next N enemy turns —
+  // same convention as a sprung snare.
+  const sq = toSquare({ file: attacker.file, rank: attacker.rank });
+  const turns = aegisFreezeTurns(owned.tier) + 1;
+  const frozenSquares = state.frozenSquares.includes(sq)
+    ? state.frozenSquares
+    : [...state.frozenSquares, sq];
+  const frozenTurnsLeft = {
+    ...state.frozenTurnsLeft,
+    [sq]: Math.max(state.frozenTurnsLeft[sq] ?? 0, turns),
+  };
 
-  let frozenSquares = state.frozenSquares;
-  let frozenTurnsLeft = state.frozenTurnsLeft;
-  if (owned.tier === 3) {
-    const sq = toSquare({ file: attacker.file, rank: attacker.rank });
-    if (!frozenSquares.includes(sq)) frozenSquares = [...frozenSquares, sq];
-    frozenTurnsLeft = { ...frozenTurnsLeft, [sq]: 2 };
-  }
-
+  // T1-T4: one hit and the shield is gone. T5: the shield is on its 3-turn
+  // clock and does NOT break — every attacker that hits it is frozen.
+  const holds = owned.tier === 5;
   return {
     ...state,
-    pieces,
-    captures,
     frozenSquares,
     frozenTurnsLeft,
-    // One hit and the shield is gone, whatever the tier.
-    shieldUp: false,
-    shieldTurnsLeft: 0,
+    shieldUp: holds,
+    shieldTurnsLeft: holds ? state.shieldTurnsLeft : 0,
   };
+}
+
+/** Enemy turns an attacker that hits the Aegis shield is frozen for. */
+export function aegisFreezeTurns(tier: AbilityTier): number {
+  return tier >= 3 ? 2 : 1;
 }
 
 /**
