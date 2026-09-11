@@ -6,3 +6,7 @@
  */
 export const REVENGE_RED = '#E53935';
 export const REVENGE_RED_DARK = '#B71C1C';
+
+/** The mark's ground (2026-09-11 rebrand): crimson tile behind the hero rook. */
+export const REVENGE_CRIMSON = '#C62828';
+export const REVENGE_CRIMSON_DEEP = '#7F1414';

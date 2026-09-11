@@ -8,8 +8,8 @@
  *   ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732*.png  (2732², x3, BG)
  *   app/icon.png, app/apple-icon.png, public/og/run.png
  *
- * The art is the locked Rookie's Revenge mark (2026-08-18): the straight
- * rainbow rook inside the red target reticle, rendered from
+ * The art is the Rookie's Revenge mark (2026-09-11): the straight rainbow
+ * rook, hero-sized, on a crimson rounded tile, rendered from
  * components/run/RookiesRevengeLogo.tsx — the single source of truth. Never
  * redraw the rook; if the mark changes, re-run this.
  *
@@ -50,9 +50,10 @@ function framed(canvas: number, frac: number, bg: string): string {
 </svg>`;
 }
 
-async function render(canvas: number, frac: number, bg: string): Promise<Buffer> {
+async function render(canvas: number, frac: number, bg: string, flatten = true): Promise<Buffer> {
   // App Store Connect rejects icons with an alpha channel → flatten.
-  return sharp(Buffer.from(framed(canvas, frac, bg)), { density: 300 }).resize(canvas, canvas).flatten({ background: bg }).png().toBuffer();
+  const img = sharp(Buffer.from(framed(canvas, frac, bg)), { density: 300 }).resize(canvas, canvas);
+  return (flatten ? img.flatten({ background: bg }) : img).png().toBuffer();
 }
 
 async function main() {
@@ -60,8 +61,8 @@ async function main() {
   mkdirSync(SPLASH_DIR, { recursive: true });
   mkdirSync(REVENGE_DIR, { recursive: true });
 
-  // iOS icon: white square, mark at 84% (Apple masks the corners itself).
-  const icon = await render(1024, 0.84, '#fff');
+  // iOS icon: the crimson tile IS the icon — fill the canvas (Apple masks the corners itself).
+  const icon = await render(1024, 1, '#7F1414');
   writeFileSync(join(ICON_DIR, 'AppIcon-512@2x.png'), icon);
   writeFileSync(join(REVENGE_DIR, 'icon-1024.png'), icon);
   console.log(`icon    1024²  ${(icon.length / 1024).toFixed(0)}KB`);
@@ -72,8 +73,8 @@ async function main() {
   console.log(`splash  2732²  ${(splash.length / 1024).toFixed(0)}KB  ×${SPLASH_FILES.length}`);
 
   // Web icons (favicon + apple-touch).
-  writeFileSync(join(APP_DIR, 'icon.png'), await render(512, 0.9, '#fff'));
-  writeFileSync(join(APP_DIR, 'apple-icon.png'), await render(180, 0.84, '#fff'));
+  writeFileSync(join(APP_DIR, 'icon.png'), await render(512, 1, 'transparent', false));
+  writeFileSync(join(APP_DIR, 'apple-icon.png'), await render(180, 1, '#7F1414'));
   writeFileSync(join(REVENGE_DIR, 'mark.svg'), markSvg);
   console.log('web     app/icon.png (512²)  app/apple-icon.png (180²)  public/revenge/mark.svg');
 

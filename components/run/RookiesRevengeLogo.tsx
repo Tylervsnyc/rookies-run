@@ -1,19 +1,23 @@
 'use client';
 
 import { ROOK_BLOCKS, lighten, darken } from '@/lib/daily-rook-blocks';
-import { REVENGE_RED, REVENGE_RED_DARK } from '@/lib/brand';
+import { REVENGE_RED, REVENGE_RED_DARK, REVENGE_CRIMSON, REVENGE_CRIMSON_DEEP } from '@/lib/brand';
 
 /**
- * Rookie's Revenge — canonical mark.
- * The straight 22-block rainbow rook, centered inside a red target reticle
- * (outer ring, faded inner ring, center dot, 4 ticks). Pure SVG so the same
+ * Rookie's Revenge — canonical mark (2026-09-11).
+ * The straight 22-block rainbow rook, hero-sized, on a crimson rounded tile.
+ * Same formula as her siblings (Chess Path = sky, Chess Boxing = ring):
+ * the rook is the brand, the ground says which app. Pure SVG so the same
  * geometry ships as app icon, favicon, OG image, and in-app lockups.
+ *
+ * The old red target reticle is retired from the mark; `RevengeReticle` stays
+ * exported for the lock-on effect and other in-game uses.
  *
  * Everything else (wordmark, tiles) is built FROM this mark — never redraw it.
  */
 
 export const REVENGE_TAGLINE = 'The game ended. And Rookie took that personally.';
-export { REVENGE_RED, REVENGE_RED_DARK } from '@/lib/brand';
+export { REVENGE_RED, REVENGE_RED_DARK, REVENGE_CRIMSON, REVENGE_CRIMSON_DEEP } from '@/lib/brand';
 
 const COLS = 5;
 const ROWS = 6;
@@ -24,20 +28,29 @@ const STROKE = 4.5;
 const R_OUTER = C - STROKE * 1.5;      // 93.25
 const R_INNER = R_OUTER * 0.68;
 const TICK = VB * 0.09;
-const ROOK_H = VB * 0.56;              // rook height inside the ring
+const ROOK_H = VB * 0.56;              // rook height inside the ring (reticle geometry, kept for RevengeReticle users)
+/** Mark geometry: tile corner radius (iOS squircle ratio) and rook height on the tile. */
+export const MARK_RADIUS = VB * 0.2237;
+export const MARK_ROOK_H = VB * 0.62;
 
-export function RevengeMarkSvg({ size = 200, ringColor = REVENGE_RED, className, title = "Rookie's Revenge" }: {
+export function RevengeMarkSvg({ size = 200, className, title = "Rookie's Revenge", tile = true }: {
   size?: number; ringColor?: string; className?: string; title?: string;
+  /** false = rook only, transparent ground (for lockups that supply their own). */
+  tile?: boolean;
 }) {
-  const block = ROOK_H / (ROWS + (ROWS - 1) * (3 / 22)); // block+gap so 6 rows = ROOK_H
-  const gap = block * (3 / 22);
+  const block = MARK_ROOK_H / (ROWS + (ROWS - 1) * 0.15);
+  const gap = block * 0.15;
   const rookW = COLS * block + (COLS - 1) * gap;
   const x0 = C - rookW / 2;
-  const y0 = C - ROOK_H / 2;
+  const y0 = C - MARK_ROOK_H / 2;
   return (
     <svg width={size} height={size} viewBox={`0 0 ${VB} ${VB}`} className={className} role="img" aria-label={title}>
       <title>{title}</title>
       <defs>
+        <linearGradient id="rvg-tile" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={REVENGE_CRIMSON} />
+          <stop offset="100%" stopColor={REVENGE_CRIMSON_DEEP} />
+        </linearGradient>
         {ROOK_BLOCKS.map((b) => (
           <linearGradient key={`g-${b.x}-${b.y}`} id={`rvg-${b.x}${b.y}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={lighten(b.color, 18)} />
@@ -47,7 +60,7 @@ export function RevengeMarkSvg({ size = 200, ringColor = REVENGE_RED, className,
           </linearGradient>
         ))}
       </defs>
-      {/* rook */}
+      {tile && <rect x={0} y={0} width={VB} height={VB} rx={MARK_RADIUS} fill="url(#rvg-tile)" />}
       {ROOK_BLOCKS.map((b) => (
         <rect
           key={`${b.x}-${b.y}`}
@@ -55,13 +68,10 @@ export function RevengeMarkSvg({ size = 200, ringColor = REVENGE_RED, className,
           y={y0 + b.y * (block + gap)}
           width={block}
           height={block}
-          rx={block * 0.09}
+          rx={block * 0.14}
           fill={`url(#rvg-${b.x}${b.y})`}
-          stroke="rgba(0,0,0,0.15)"
-          strokeWidth={0.6}
         />
       ))}
-      <RevengeReticle ringColor={ringColor} />
     </svg>
   );
 }
@@ -91,18 +101,11 @@ export function RevengeReticleSvg({ size = 200, ringColor = REVENGE_RED, classNa
   );
 }
 
-/** App-icon tile: white rounded square with the mark. `radius` as fraction of size (iOS ≈ 0.2237). */
-export function RevengeIcon({ size = 120, bg = '#fff', ringColor = REVENGE_RED, radius = 0.2237, className }: {
+/** App-icon tile. The mark already carries its crimson tile; this just sizes it (radius is baked into the mark). */
+export function RevengeIcon({ size = 120, className }: {
   size?: number; bg?: string; ringColor?: string; radius?: number; className?: string;
 }) {
-  return (
-    <div
-      className={className}
-      style={{ width: size, height: size, borderRadius: size * radius, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
-    >
-      <RevengeMarkSvg size={size * 0.84} ringColor={ringColor} />
-    </div>
-  );
+  return <RevengeMarkSvg size={size} className={className} />;
 }
 
 /** Horizontal lockup: mark + "Rookie's" over a red REVENGE pill, text column matched to mark height. `scale` 1 = 150px mark. */
