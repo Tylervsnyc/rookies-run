@@ -12,7 +12,7 @@ import { AbilityRack } from '@/components/run/AbilityRack';
 import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { preloadAbilityArt } from '@/components/run/AbilityCard';
 import { RunLanding } from '@/components/run/RunLanding';
-import { ArenaHome } from '@/components/run/ArenaHome';
+import { ArenaHome, type Tab as HomeTab } from '@/components/run/ArenaHome';
 import { submitScore } from '@/lib/run/leaderboard-client';
 import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
@@ -1549,7 +1549,13 @@ export default function RookiesRunPage() {
     setShowIntro(false);
   }, [resetRunFrom]);
 
+  // Which ArenaHome tab the player should land on when they leave a run —
+  // captured from `meta` BEFORE goHome wipes the URL (a ladder rung goes back
+  // to the Ladder tab; daily and Endless go back to Revenge).
+  const [homeTab, setHomeTab] = useState<HomeTab>('Revenge');
+
   const goHome = useCallback(() => {
+    setHomeTab(meta.ladder ? 'Ladder' : 'Revenge');
     const next = (() => {
       if (typeof window === 'undefined') return meta;
       if (window.location.search) window.history.replaceState(null, '', '/');
@@ -1559,6 +1565,25 @@ export default function RookiesRunPage() {
     resetRunFrom(next);
     setShowIntro(true);
   }, [meta, resetRunFrom]);
+
+  /**
+   * LAUNCH A RUN BY URL, the same soft way. "Next run", the run picker and a
+   * Ladder rung all used to `window.location.href = ...`, and every one of
+   * those reloads killed the music (same bug as the X above, three more
+   * doors). Rewrite the URL in place, rebuild `meta`, reset the run, and put
+   * the board up: the mount-time intro effect deliberately skips `?go=1` and
+   * `?ladder=1`, so the board has to be shown explicitly here.
+   */
+  const launchRunUrl = useCallback((url: string) => {
+    if (typeof window === 'undefined') return;
+    window.history.replaceState(null, '', url);
+    const next = buildMeta();
+    setMeta(next);
+    resetRunFrom(next);
+    setShowEndlessIntro(false);
+    setShowIntro(false);
+    ensureAudioWarm();
+  }, [resetRunFrom, ensureAudioWarm]);
 
   // Difficulty retry: rebuild THIS level with the carried powers/tempo/offer
   // (same carry pattern as goToNextLevel). Loss bookkeeping (lossesByLevelRef,
@@ -1621,11 +1646,11 @@ export default function RookiesRunPage() {
       // A bare /run with no ?run= would kick STC runs back to DEFAULT_RUN_ID.
       // Straight onto the board — a cold open lands on the home screen,
       // which read as "the button did nothing" (Tyler 2026-09-03).
-      window.location.href = `/?run=${encodeURIComponent(nextRunId)}&go=1`;
+      launchRunUrl(`/?run=${encodeURIComponent(nextRunId)}&go=1`);
       return;
     }
     trackEvent('run_advanced', { from: meta.runId, to: nextRunId });
-  }, [meta.runId, nextRunId]);
+  }, [meta.runId, nextRunId, launchRunUrl]);
 
   const [showRunPicker, setShowRunPicker] = useState(false);
 
@@ -1673,12 +1698,13 @@ export default function RookiesRunPage() {
         trackEvent('run_picked', { from: meta.runId, to: runId });
         // Always navigate to /?run=<id>. /stc redirects to stc-king,
         // so staying on that pathname would clobber the picked run.
-        window.location.href = `/?run=${encodeURIComponent(runId)}`;
+        setShowRunPicker(false);
+        launchRunUrl(`/?run=${encodeURIComponent(runId)}`);
         return;
       }
       trackEvent('run_picked', { from: meta.runId, to: runId });
     },
-    [meta.runId],
+    [meta.runId, launchRunUrl],
   );
 
   const levelReached = runComplete
@@ -1940,9 +1966,10 @@ export default function RookiesRunPage() {
             onStart={dismissIntro}
             onLadderStart={(id, d) => {
               const mode = d ? `&difficulty=${encodeURIComponent(d)}` : '';
-              window.location.href = `/?run=${encodeURIComponent(id)}&ladder=1${mode}`;
+              launchRunUrl(`/?run=${encodeURIComponent(id)}&ladder=1${mode}`);
             }}
             onEndless={() => startEndless()}
+            initialTab={homeTab}
             iso={meta.iso}
             runId={meta.runId}
             profile={progress.profile}
@@ -2009,14 +2036,22 @@ export default function RookiesRunPage() {
       <div className={`max-w-md md:max-w-lg mx-auto w-full px-4 md:px-6 pb-3 flex flex-col gap-2 ${isStc ? 'pt-1.5' : 'rr-navy pt-[calc(env(safe-area-inset-top)+6px)]'}`}>
         <header className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
+            {/* Revenge: the logo is the way back to the home screen (Tyler
+                2026-09-11: it used to open the legacy run list). STC keeps
+                its run picker — that surface has no ArenaHome. */}
             <button
               type="button"
-              onClick={withClick(() => setShowRunPicker(true))}
-              className="text-left active:opacity-70 transition-opacity shrink-0"
-              aria-label="Switch run"
+              onClick={withClick(isStc ? () => setShowRunPicker(true) : goHome)}
+              className="text-left active:opacity-70 transition-opacity shrink-0 min-h-[44px] flex flex-col justify-center"
+              aria-label={isStc ? 'Switch run' : 'Main menu'}
             >
               {/* Revenge: bigger lockup, white "Rookie's" on navy (Tyler 2026-09-03); the rules strip is gone. */}
               {isStc ? <StcRunLogo scale={0.45} /> : <RookiesRevengeLogo scale={0.42} dark />}
+              {!isStc && (
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/60 leading-none mt-0.5">
+                  Main menu
+                </span>
+              )}
             </button>
             {isStc && <RulesInline winCondition={state.winCondition} />}
           </div>

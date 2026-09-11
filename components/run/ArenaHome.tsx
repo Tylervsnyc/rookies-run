@@ -39,6 +39,12 @@ interface ArenaHomeProps {
   onLadderStart?: (runId: string, difficulty?: DifficultyId) => void;
   /** ENDLESS — the strip under the daily button on the Revenge tab. */
   onEndless?: () => void;
+  /**
+   * Tab to open on. Leaving a run lands back where it was launched from
+   * (a ladder rung → 'Ladder', daily / Endless → 'Revenge') instead of
+   * always resetting to the daily tab.
+   */
+  initialTab?: Tab;
   iso: string;
   runId: string;
   profile?: PlayerProfile;
@@ -165,7 +171,7 @@ const OUTLINE: CSSProperties = { color: '#fff', textShadow: '0 2px 0 rgba(0,0,0,
 const GOLD_TEXT: CSSProperties = { color: GOLD, textShadow: '0 2px 0 rgba(0,0,0,0.5)' };
 const FRAME: CSSProperties = { background: 'linear-gradient(180deg,#3d5297 0%,#1b2b5c 100%)', boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -4px 0 rgba(0,0,0,0.4), 0 10px 26px rgba(0,0,0,0.45)' };
 const TABS = ['Ladder', 'Ranks', 'Revenge', 'Codex'] as const;
-type Tab = (typeof TABS)[number];
+export type Tab = (typeof TABS)[number];
 // Painted-relic set (Tyler 2026-09-03: the cartoon icons clashed with the illustrated ability art above them).
 const TAB_ART: Record<Tab, string> = { Ladder: 'ladder-x1', Ranks: 'ranks-p1', Revenge: 'revenge-x1', Codex: 'codex-p1' };
 
@@ -603,8 +609,11 @@ function CodexTab({ profile, onTrophies }: { profile?: PlayerProfile; onTrophies
 }
 
 // ── The shell ────────────────────────────────────────────────────────────────
-export function ArenaHome({ onStart, onLadderStart, onEndless, iso, runId, profile, onTrophies }: ArenaHomeProps) {
-  const [tab, setTab] = useState<Tab>('Revenge');
+export function ArenaHome({ onStart, onLadderStart, onEndless, initialTab, iso, runId, profile, onTrophies }: ArenaHomeProps) {
+  const [tab, setTab] = useState<Tab>(initialTab ?? 'Revenge');
+  // The shell is unmounted during play, so the initial state covers the common
+  // case; this keeps the prop honest if it ever changes while mounted.
+  useEffect(() => { if (initialTab) setTab(initialTab); }, [initialTab]);
   const [flipped, setFlipped] = useState(false);
   const countdown = useCountdownToMidnight();
   const [handle, setHandleState] = useState('Rook');
