@@ -105,8 +105,17 @@ jobs:
             # and never deleted here: the old `git restore . && git clean` step
             # threw away anything the harness left behind.
             git stash --include-untracked -q || true
-            git pull --rebase origin main
-            git push origin main
+            # Someone pushes during a 3-hour run most nights (2026-09-09: the
+            # smoke's rebase died on pipeline.json + latest.md). The nightly's
+            # files are the nightly's: on a conflicting hunk keep tonight's
+            # version (-X theirs = the commit being replayed), then retry the
+            # push a few times in case another push lands in between.
+            for attempt in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push origin main; then break; fi
+              echo "push attempt $attempt failed — retrying"
+              git rebase --abort 2>/dev/null || true
+              sleep 20
+            done
           fi
 
       - name: Keep raw JSON as an artifact
@@ -159,8 +168,12 @@ jobs:
             N=$(ls -d data/run-playtest/combo-library/*+*/ 2>/dev/null | wc -l | tr -d ' ')
             git commit -m "Rookie's Revenge: nightly combo discovery $(date -u +%Y-%m-%d) ($N gating pairs in library)"
             git stash --include-untracked -q || true
-            git pull --rebase origin main
-            git push origin main
+            for attempt in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push origin main; then break; fi
+              echo "push attempt $attempt failed — retrying"
+              git rebase --abort 2>/dev/null || true
+              sleep 20
+            done
           fi
       - name: Alert Slack on failure
         if: failure() || cancelled()

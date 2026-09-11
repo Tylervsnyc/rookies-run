@@ -53,8 +53,11 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "Engine regression: ladder re-graded for $(git rev-parse --short HEAD~0) ($(date -u +%Y-%m-%d))"
             git stash --include-untracked -q || true
-            git pull --rebase origin main
-            git push origin main
+            for attempt in 1 2 3; do
+              if git pull --rebase -X theirs origin main && git push origin main; then break; fi
+              git rebase --abort 2>/dev/null || true
+              sleep 20
+            done
           fi
       - name: Report
         run: |
