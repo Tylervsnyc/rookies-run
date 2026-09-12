@@ -45,7 +45,9 @@
  */
 
 import { execFileSync, spawnSync } from 'node:child_process';
-import { auditLadder, checkStale, type RungResult } from './ladder-audit';
+import { auditLadder, auditRung, checkStale, summarize, type RungResult } from './ladder-audit';
+import { LADDER_RUNG_IDS } from '../../lib/run/ladder';
+import { writeResult } from './results';
 import { BUDGET } from './spec';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendFileSync, unlinkSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
@@ -121,6 +123,10 @@ interface Opts {
   renderOnly: boolean;
   simsOnly: boolean;
   from: string | null;
+  /** Cloud shard: 1-based ladder rung. Sims + the spec audit for that rung only. */
+  shard: number | null;
+  /** Cloud merge: stitch ladder-rung*.json from shards into the graded ladder, then assemble. */
+  merge: boolean;
 }
 
 function num(name: string, def: number): number {
@@ -168,7 +174,14 @@ function parseArgs(): Opts {
     renderOnly: process.argv.includes('--render-only'),
     simsOnly: process.argv.includes('--sims-only'),
     from: process.argv.find((a) => a.startsWith('--from='))?.split('=')[1] ?? null,
+    shard: process.argv.some((a) => a.startsWith('--shard=')) ? num('shard', 0) : null,
+    merge: process.argv.includes('--merge'),
   };
+  if (o.shard) {
+    const id = LADDER_RUNG_IDS[o.shard - 1];
+    if (!id) throw new Error(`--shard=${o.shard}: the ladder has ${LADDER_RUNG_IDS.length} rungs`);
+    o.runsFilter = [id];
+  }
   const rf = process.argv.find((a) => a.startsWith('--runs-filter='));
   if (rf) o.runsFilter = rf.split('=')[1].split(',').map((s) => s.trim()).filter(Boolean);
   return o;
@@ -650,6 +663,56 @@ async function assemble(opts: Opts, ctx: AssembleCtx): Promise<void> {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Cloud merge (2026-09-12): the nightly runs one GitHub job per rung
+ * (--shard=N), each uploading raw/<date>/ as an artifact. This step runs after
+ * all shards are downloaded into the same raw/<date>/: it stitches the per-rung
+ * spec audits into ONE ladder-audit result (one fingerprint, one INDEX row),
+ * then assembles the digest exactly as a single-machine night would, including
+ * hypotheses + experiments for every run that has raw output.
+ */
+async function mergeShards(opts: Opts): Promise<void> {
+  const date = opts.from ?? today();
+  const rawDir = join(RAW_ROOT, date);
+  if (!existsSync(rawDir)) throw new Error(`no raw dir for ${date}`);
+  const caveats: string[] = [];
+  const rows: RungResult[] = [];
+  let budget: { trials: number; runs: number } | null = null;
+  let quick = false;
+  const missing: number[] = [];
+  for (let r = 1; r <= LADDER_RUNG_IDS.length; r++) {
+    const f = readJson<{ rung: number; budget: { trials: number; runs: number }; caveats: string[]; row: RungResult }>(join(rawDir, `ladder-rung${r}.json`));
+    if (!f) { missing.push(r); continue; }
+    rows.push(f.row);
+    budget = f.budget;
+    if (f.budget.trials <= BUDGET.quick.trials) quick = true;
+    for (const c of f.caveats ?? []) if (!caveats.includes(c)) caveats.push(c);
+  }
+  if (missing.length) caveats.push(`Ladder shards missing for rung${missing.length > 1 ? 's' : ''} ${missing.join(', ')} — those rows are absent from tonight's graded table.`);
+  let ladder: LadderSection | null = null;
+  if (rows.length && budget) {
+    const summary = summarize(rows);
+    const file = writeResult(
+      {
+        experiment: 'ladder-audit',
+        date,
+        budget: { trials: budget.trials, runs: budget.runs, jobs: opts.jobs ?? 4, seed: `matrix per (run,level,loadout,trial); runs audit:normal:<runId>; ${rows.length} cloud shards` },
+        conclusion: `${summary}${missing.length ? ` · ${missing.length} shard(s) missing` : ''}`,
+        doc: 'docs/LADDER-SPEC.md',
+      },
+      { sick: false, method: 'Normal, T5, T1 cards (GitHub Actions, one job per rung)', rows },
+    );
+    ladder = { rows, summary, file, budget };
+    log(`ladder (merged ${rows.length} shards): ${summary} -> ${file}`);
+  } else {
+    caveats.push('No ladder shard produced a graded row tonight.');
+  }
+  const ids = runsInRaw(rawDir);
+  const shardMinutes = readJson<{ wallSeconds?: number }>(join(rawDir, 'summary.json'))?.wallSeconds ?? 0;
+  await assemble(opts, { date, quick, wallSeconds: shardMinutes, caveats, hypothesisRuns: ids, ladder });
+  log(`merge done for ${date}: ${ids.length} runs, ${rows.length} rungs graded`);
+}
+
 async function main(): Promise<void> {
   const opts = parseArgs();
   const t0 = Date.now();
@@ -664,6 +727,11 @@ async function main(): Promise<void> {
       caveats: [`Digest re-rendered from raw JSON on ${today()}${prevSummary?.quick ? '; the night itself was a quick smoke (tiny trial counts)' : ''}.`],
       hypothesisRuns: [],
     });
+    return;
+  }
+
+  if (opts.merge) {
+    await mergeShards(opts);
     return;
   }
 
@@ -723,6 +791,17 @@ async function main(): Promise<void> {
     }
   }
   if (done.length === 0) throw new Error('no run produced raw output');
+  if (opts.shard) {
+    // The graded contract for this rung alone. Filed into raw/ (NOT the
+    // results ledger) — the merge step stitches the 10 rows into one
+    // ladder-audit result with one engine fingerprint.
+    const b = opts.quick ? BUDGET.quick : BUDGET.nightly;
+    const tl = Date.now();
+    const row = await auditRung(opts.shard, { trials: b.trials, runs: b.runs, jobs: opts.jobs ?? 4, sick: false, only: opts.shard, log });
+    writeJson(rawDir, `ladder-rung${opts.shard}.json`, { rung: opts.shard, budget: b, caveats, row });
+    log(`shard ${opts.shard} (${done.join(', ')}): rung ${row.grade} (${secs(tl)}); total ${((Date.now() - t0) / 60000).toFixed(1)} min`);
+    return;
+  }
   if (opts.simsOnly) {
     log(`sims-only: raw written for ${done.join(', ')} in ${((Date.now() - t0) / 60000).toFixed(1)} min — run --render-only --from=${date} to rebuild the digest`);
     return;

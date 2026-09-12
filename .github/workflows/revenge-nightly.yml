@@ -1,8 +1,17 @@
 # Rookie's Revenge — nightly playtest in the cloud.
 #
-# Two independent jobs:
-#   ladder           the 10 LADDER_RUNG_IDS at full budget -> digest -> Slack
-#                    -> commit + push. The ladder is the product (Tyler,
+# Jobs:
+#   plan             reads LADDER_RUNG_IDS from code -> the matrix + tonight's date
+#   ladder-rung      ONE JOB PER RUNG (2026-09-12). A rung takes ~45 min on a
+#                    4-core runner, so ten in a row is 7.5 h and the single job
+#                    timed out at 240 min every night after the 2026-09-09
+#                    audit (Sep 10/11/12). The repo is public = Actions minutes
+#                    are free and 20 jobs run at once, so the ladder now
+#                    finishes in about one rung's time. Each shard runs the
+#                    sims + the spec.ts audit for its rung and uploads raw/.
+#   ladder-merge     downloads every shard -> one graded ladder-audit result
+#                    (one fingerprint, one INDEX row) -> digest -> Slack ->
+#                    commit + push. The ladder is the product (Tyler,
 #                    2026-09-09), so it is the only thing graded nightly.
 #                    Candidate (testing-stage) runs are NOT swept here: the
 #                    pool grew to 38 runs and the old all-runs sweep timed out
@@ -14,7 +23,8 @@
 # A failed or timed-out ladder job POSTS TO SLACK. Silence is never success.
 #
 # Manual run: Actions tab -> "Revenge nightly" -> Run workflow (quick=true
-# for a 2-minute smoke).
+# for a smoke; rung=N to grade a single rung — the morning tuning routine
+# uses this to re-grade one rung after a change).
 
 name: Revenge nightly
 
@@ -27,9 +37,13 @@ on:
   workflow_dispatch:
     inputs:
       quick:
-        description: 'Quick 2-minute smoke instead of the full harness'
+        description: 'Quick smoke instead of the full harness'
         type: boolean
         default: false
+      rung:
+        description: 'Grade only this 1-based ladder rung (blank = all)'
+        type: string
+        default: ''
 
 concurrency:
   group: revenge-nightly
@@ -39,12 +53,44 @@ permissions:
   contents: write
 
 jobs:
-  ladder:
+  plan:
     runs-on: ubuntu-latest
-    # 10 runs x full budget measured ~2.5h on the 4-core runner (2026-09-04:
-    # 12 runs = 249 min). If this trips, the budget below is wrong — shrink it,
-    # never raise the timeout.
-    timeout-minutes: 240
+    timeout-minutes: 10
+    outputs:
+      rungs: ${{ steps.plan.outputs.rungs }}
+      date: ${{ steps.plan.outputs.date }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - id: plan
+        run: |
+          # The rung list comes from code so this file never holds a second copy.
+          N=$(npx tsx -e "import('./lib/run/ladder').then(m => console.log(m.LADDER_RUNG_IDS.length))")
+          ONLY="${{ inputs.rung }}"
+          if [ -n "$ONLY" ]; then
+            RUNGS="[$ONLY]"
+          else
+            RUNGS=$(node -e "console.log(JSON.stringify(Array.from({length:$N},(_,i)=>i+1)))")
+          fi
+          echo "rungs=$RUNGS" >> "$GITHUB_OUTPUT"
+          echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+          echo "ladder: $N rungs -> shards $RUNGS"
+
+  ladder-rung:
+    needs: plan
+    runs-on: ubuntu-latest
+    # One rung measured ~46 min of sims on the 4-core runner (2026-09-12 log)
+    # plus the spec audit. If a shard trips this, the per-rung budget is
+    # wrong — shrink it, never raise the timeout.
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        rung: ${{ fromJson(needs.plan.outputs.rungs) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,29 +101,63 @@ jobs:
 
       - run: npm ci
 
-      - name: Run the ladder
+      - name: Sims + spec audit for rung ${{ matrix.rung }}
+        run: |
+          # Noise per cell is roughly +/-17 points at 16 trials — the digest is
+          # a TREND read; the graded verdict comes from the spec audit below
+          # it, which carries its own 95% interval.
+          FLAGS="--shard=${{ matrix.rung }} --from=${{ needs.plan.outputs.date }} --jobs=4 --trials=16 --mode-trials=8 --runs=16 --player-runs=24 --exp-trials=16"
+          if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick $FLAGS"; fi
+          npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
+
+      - name: Upload this rung's raw JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raw-rung-${{ matrix.rung }}
+          path: data/run-playtest/revenge/raw/${{ needs.plan.outputs.date }}/
+          retention-days: 30
+          if-no-files-found: ignore
+
+  ladder-merge:
+    needs: [plan, ladder-rung]
+    # Run even when a shard failed: the digest says which rungs are missing,
+    # and the failure alert below still fires for the failed shards' status.
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Download every shard
+        uses: actions/download-artifact@v4
+        with:
+          pattern: raw-rung-*
+          merge-multiple: true
+          path: data/run-playtest/revenge/raw/${{ needs.plan.outputs.date }}/
+
+      - name: Merge shards -> graded ladder -> digest
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          # The run set is the ladder, read from code so this file never holds
-          # a second copy of the list.
-          RUNGS=$(npx tsx -e "import('./lib/run/ladder').then(m => console.log(m.LADDER_RUNG_IDS.join(',')))")
-          echo "ladder: $RUNGS"
-          # GitHub's hosted runners have ~4 cores vs the dev Mac's 10+, so the
-          # budget is about half the local default. Noise per cell is roughly
-          # +/-17 points at 16 trials — the digest is a TREND read; a verdict on
-          # one rung is confirmed locally with ladder-audit.ts before acting.
-          FLAGS="--runs-filter=$RUNGS --trials=16 --mode-trials=8 --runs=16 --player-runs=24 --cand-trials=16 --cand-mode-trials=8 --cand-runs=16 --cand-player-runs=24 --exp-trials=16"
-          if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick --runs-filter=$RUNGS"; fi
+          ls data/run-playtest/revenge/raw/${{ needs.plan.outputs.date }}/ | head -50
+          FLAGS="--merge --from=${{ needs.plan.outputs.date }} --jobs=4 --trials=16 --mode-trials=8 --runs=16 --player-runs=24 --exp-trials=16"
+          if [ "${{ inputs.quick }}" = "true" ]; then FLAGS="--quick $FLAGS"; fi
           npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
 
       - name: Post Slack summary
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          RAW="data/run-playtest/revenge/raw/$TODAY"
+          RAW="data/run-playtest/revenge/raw/${{ needs.plan.outputs.date }}"
           if [ -z "$SLACK_WEBHOOK_URL" ]; then echo "slack skipped (no webhook)"; exit 0; fi
           if [ ! -f "$RAW/slack.txt" ]; then
             echo "harness produced no slack.txt — treating as failure"
@@ -89,8 +169,7 @@ jobs:
 
       - name: Commit digests and push
         run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          RAW="data/run-playtest/revenge/raw/$TODAY"
+          TODAY=${{ needs.plan.outputs.date }}
           git config user.name "Rookie Playtest Bot"
           git config user.email "playtest@rookies-run.local"
           git add data/run-playtest/revenge/digests/
@@ -100,12 +179,12 @@ jobs:
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "Rookie's Revenge: nightly ladder digest $TODAY (GitHub Actions)"
+            git commit -m "Rookie's Revenge: nightly ladder digest $TODAY (GitHub Actions, sharded)"
             # Raw JSON is kept as a workflow artifact (below), never committed
             # and never deleted here: the old `git restore . && git clean` step
             # threw away anything the harness left behind.
             git stash --include-untracked -q || true
-            # Someone pushes during a 3-hour run most nights (2026-09-09: the
+            # Someone pushes during the run most nights (2026-09-09: the
             # smoke's rebase died on pipeline.json + latest.md). The nightly's
             # files are the nightly's: on a conflicting hunk keep tonight's
             # version (-X theirs = the commit being replayed), then retry the
@@ -118,7 +197,7 @@ jobs:
             done
           fi
 
-      - name: Keep raw JSON as an artifact
+      - name: Keep the merged raw JSON as an artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -128,12 +207,12 @@ jobs:
           if-no-files-found: ignore
 
       - name: Alert Slack on failure
-        if: failure() || cancelled()
+        if: failure() || cancelled() || needs.ladder-rung.result != 'success'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           [ -z "$SLACK_WEBHOOK_URL" ] && exit 0
-          MSG="NIGHTLY FAILED — Rookie's Revenge ladder job ended ${{ job.status }} (timeout is 240 min). No digest tonight. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MSG="NIGHTLY PROBLEM — Rookie's Revenge ladder: shards ended ${{ needs.ladder-rung.result }}, merge ended ${{ job.status }} (shard timeout 150 min, merge 120). Check which rungs are missing from the digest. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           PAYLOAD=$(python3 -c 'import json,sys; print(json.dumps({"text": sys.argv[1]}))' "$MSG")
           curl -sS -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL" || true
 
