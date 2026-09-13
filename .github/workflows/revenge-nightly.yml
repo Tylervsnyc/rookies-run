@@ -83,10 +83,12 @@ jobs:
   ladder-rung:
     needs: plan
     runs-on: ubuntu-latest
-    # One rung measured ~46 min of sims on the 4-core runner (2026-09-12 log)
-    # plus the spec audit. If a shard trips this, the per-rung budget is
-    # wrong — shrink it, never raise the timeout.
-    timeout-minutes: 150
+    # Measured 2026-09-13 (first sharded night): sims ~45 min + the spec audit
+    # at BUDGET.nightly (48 trials) = 55-110 min for nine rungs, and rung 7
+    # (revenge-25, The Alcove) ran past 150 min and was cancelled. Shards are
+    # free, parallel jobs, so the cap is generous; if one trips THIS, the
+    # rung's games are pathologically long — look at the run, not the cap.
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
