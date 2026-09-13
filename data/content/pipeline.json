@@ -804,10 +804,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L7: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 47%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L8: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 65%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L5 has 16 stalls (king unreachable); L6 bishop-step only 0% (every finisher must be at least 80%); L6 has 13 stalls (king unreachable); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%); L10 has 15 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -860,10 +860,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L8: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 98%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L9: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: budget blown, no line found, app fail-safe would fire (\"No way through\"); L10: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 78%, solver: no line, app fail-safe would fire (\"No way through\"); L4 knight-hop only 38% (every finisher must be at least 80%); L4 has 9 stalls (king unreachable); L5 surge only 50% (every finisher must be at least 80%); L5 has 8 stalls (king unreachable); L6 bishop-step only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 4 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L4 knight-hop only 38% (every finisher must be at least 80%); L5 knight-hop only 56% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -881,10 +881,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L2 bishop-step only 69% (every finisher must be at least 80%); L3 queen-pulse only 6% (every finisher must be at least 80%); L4 queen-pulse only 13% (every finisher must be at least 80%); L4 has 1 stall (king unreachable); L6 freeze-ray only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 freeze-ray only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L2 bishop-step only 69% (every finisher must be at least 80%); L3 queen-pulse only 6% (every finisher must be at least 80%); L4 queen-pulse only 13% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 freeze-ray only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -902,10 +902,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L3: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 67%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L7: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 83%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L8: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 67%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L9: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 67%, solver: no line, app fail-safe would fire (\"No way through\"); L1 bishop-step only 0% (every finisher must be at least 80%); L3 bishop-step only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L1 bishop-step only 0% (every finisher must be at least 80%); L3 bishop-step only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -923,10 +923,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L9: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 95%, solver: no line, app fail-safe would fire (\"No way through\"); L3 freeze-ray only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L5 has 16 stalls (king unreachable); L6 freeze-ray only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L3 freeze-ray only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -944,10 +944,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L4 surge only 31% (every finisher must be at least 80%); L4 has 11 stalls (king unreachable); L5 knight-hop only 69% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L5 knight-hop only 69% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -965,10 +965,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L7: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L8: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L9: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: no line, app fail-safe would fire (\"No way through\"); L10: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: no line, app fail-safe would fire (\"No way through\"); L4 bishop-step only 0% (every finisher must be at least 80%); L4 has 16 stalls (king unreachable); L5 freeze-ray only 0% (every finisher must be at least 80%); L5 has 16 stalls (king unreachable); L6 bishop-step only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L4 bishop-step only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -986,10 +986,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L7: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L8: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L9: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: no line, app fail-safe would fire (\"No way through\"); L10: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: no line, app fail-safe would fire (\"No way through\"); L4 bishop-step only 0% (every finisher must be at least 80%); L4 has 8 stalls (king unreachable); L5 bishop-step only 0% (every finisher must be at least 80%); L5 has 16 stalls (king unreachable); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -1015,10 +1015,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L8: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 100%, solver: not run on this level, app fail-safe would fire (\"No way through\"); L10: IMPOSSIBLE — 0% with every loadout (6 tried), stall/move-limit 83%, solver: no line, app fail-safe would fire (\"No way through\"); L3 knight-hop only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L4 has 11 stalls (king unreachable); L5 freeze-ray only 0% (every finisher must be at least 80%); L5 has 16 stalls (king unreachable); L6 freeze-ray only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L3 knight-hop only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
@@ -1036,10 +1036,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-12",
+        "lastRun": "2026-09-13",
         "verdict": "HOLD",
-        "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L4 surge only 38% (every finisher must be at least 80%); L4 has 10 stalls (king unreachable); L5 bishop-step only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L6 has 16 stalls (king unreachable); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%); L10 has 16 stalls (king unreachable)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-12.md"
+        "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-13.md"
       }
     },
     {
