@@ -2,19 +2,19 @@
  "schema": 1,
  "experiment": "ladder-audit",
  "date": "2026-09-13",
- "at": "2026-09-13T03:55:57.661Z",
+ "at": "2026-09-13T12:21:15.375Z",
  "engine": {
-  "sha": "1a021ef",
+  "sha": "f8b5eaa",
   "dirty": false,
-  "libHash": "6d217e7a1dc1"
+  "libHash": "7d648c64653f"
  },
  "budget": {
   "trials": 48,
   "runs": 40,
   "jobs": 4,
-  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>; 9 cloud shards"
+  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>; 10 cloud shards"
  },
- "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 3 · TOO HARD 4 · FLAT 0 · INCONCLUSIVE 2 (of 9) · 1 shard(s) missing",
+ "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 3 · TOO HARD 5 · FLAT 0 · INCONCLUSIVE 2 (of 10)",
  "body": {
   "sick": false,
   "method": "Normal, T5, T1 cards (GitHub Actions, one job per rung)",
@@ -785,6 +785,134 @@
      "band": 65,
      "run": 48.5,
      "scale": 6
+    }
+   },
+   {
+    "rung": 7,
+    "runId": "revenge-25",
+    "name": "The Alcove",
+    "pair": [
+     "become-king",
+     "boulder"
+    ],
+    "kit": [
+     "become-king",
+     "boulder",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 94
+     },
+     "scale": false,
+     "shape": true
+    },
+    "pairByLevel": [
+     {
+      "wins": 10,
+      "n": 48,
+      "pct": 20.8,
+      "lo": 11.7,
+      "hi": 34.3
+     },
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 32,
+      "n": 48,
+      "pct": 66.7,
+      "lo": 52.5,
+      "hi": 78.3
+     },
+     {
+      "wins": 8,
+      "n": 48,
+      "pct": 16.7,
+      "lo": 8.7,
+      "hi": 29.6
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 88,
+     "n": 192,
+     "pct": 45.8,
+     "lo": 38.9,
+     "hi": 52.9
+    },
+    "run": {
+     "wins": 17,
+     "n": 40,
+     "pct": 42.5,
+     "lo": 28.5,
+     "hi": 57.8
+    },
+    "avgPieces": 3.3,
+    "early": 2.6666666666666665,
+    "late": 4.333333333333333,
+    "targets": {
+     "band": 62,
+     "run": 45.2,
+     "scale": 6.6
     }
    },
    {
