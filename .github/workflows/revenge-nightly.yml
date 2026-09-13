@@ -154,6 +154,8 @@ jobs:
           npx tsx scripts/run-playtest/revenge-nightly.ts $FLAGS
 
       - name: Post Slack summary
+        # A branch re-grade reports through the routine that asked for it, not here.
+        if: github.ref == 'refs/heads/main'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
@@ -168,6 +170,9 @@ jobs:
             && echo "slack posted" || echo "warn: slack post failed"
 
       - name: Commit digests and push
+        # Only from main: a rung re-grade dispatched on a tuning branch
+        # (--ref <branch> -f rung=N) must never push that branch into main.
+        if: github.ref == 'refs/heads/main'
         run: |
           TODAY=${{ needs.plan.outputs.date }}
           git config user.name "Rookie Playtest Bot"
@@ -237,6 +242,7 @@ jobs:
         run: |
           npx tsx scripts/run-playtest/combo-discover.ts --from-terrain --slots=7-10 --variants=20 --max-kits=8 --jobs=3 --minutes=150 --seed=$(date -u +%j)
       - name: Commit the library and push
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name "Rookie Playtest Bot"
           git config user.email "playtest@rookies-run.local"
