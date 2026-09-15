@@ -144,7 +144,7 @@ const RUN_REVENGE_17: RunDef = {
   signaturePair: ['dragon', 'sacrifice'],
   name: 'The Briar',
   blurb: 'He grew a hedge and called it a kingdom.',
-  allowedAbilities: ['dragon', 'sacrifice', 'aegis', 'poison-dart'],
+  allowedAbilities: ['dragon', 'sacrifice', 'poison-dart'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

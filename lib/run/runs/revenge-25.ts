@@ -478,7 +478,7 @@ const RUN_REVENGE_25: RunDef = {
   signaturePair: ['become-king', 'boulder'],
   name: 'The Alcove',
   blurb: 'Stone on every straight line. He leaves by the corners — so do you.',
-  allowedAbilities: ['become-king', 'boulder', 'aegis', 'magnet'],
+  allowedAbilities: ['become-king', 'boulder', 'magnet'],
   // TIER CAP (2026-09-06). The finale gate is EXACT at T1 and gone the moment
   // Become King gets its second charge — measured L7-L10, 32 trials, serial:
   // T1 0/0/0/0, T2 100/19/94/100, T4 100/100/100/100. The header's own "WHY

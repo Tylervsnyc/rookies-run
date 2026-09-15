@@ -6493,7 +6493,7 @@ const RUN_REVENGE_12: RunDef = {
   signaturePair: ['bishop-squire', 'swap'],
   name: 'The Moat',
   blurb: 'Water on every side. He thinks water is a wall.',
-  allowedAbilities: ['swap', 'bishop-squire', 'knight-hop', 'poison-dart'],
+  allowedAbilities: ['swap', 'bishop-squire', 'knight-hop'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

@@ -236,7 +236,7 @@ const RUN_REVENGE_22: RunDef = {
   signaturePair: ['dragon', 'duchess'],
   name: 'The Millstone',
   blurb: 'He walks in circles around a stone. Give him nowhere to step.',
-  allowedAbilities: ['dragon', 'duchess', 'magnet', 'aegis'],
+  allowedAbilities: ['dragon', 'duchess', 'magnet'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

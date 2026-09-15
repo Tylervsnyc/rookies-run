@@ -428,7 +428,7 @@ const RUN_REVENGE_24: RunDef = {
   signaturePair: ['duchess', 'decoy'],
   name: 'The Lattice',
   blurb: 'Stone on every dark square. Rooks die up there; queens walk.',
-  allowedAbilities: ['duchess', 'decoy', 'aegis', 'magnet'],
+  allowedAbilities: ['duchess', 'decoy', 'magnet'],
   // TIER CAP — T1, tightened from T3 on 2026-09-07. The Duchess ALONE is still
   // 0% at T2 and T3, which is what bought her T3 before; but paired with Decoy
   // the finale reads 75/84/69/38 at T1 and 91/88/59/91 at T2 (and 94/97/47/97

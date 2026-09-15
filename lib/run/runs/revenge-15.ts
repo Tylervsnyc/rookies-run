@@ -215,7 +215,7 @@ export const RUN_REVENGE_15: RunDef = {
   signaturePair: ['magnet', 'boulder'],
   name: 'The Stacks',
   blurb: 'A wall with slots cut in it. He thinks a plug is a wall.',
-  allowedAbilities: ['magnet', 'boulder', 'aegis', 'decoy'],
+  allowedAbilities: ['magnet', 'boulder', 'aegis'],
   // Boulder T4/T5 make this run unwinnable (0% on every finale level, measured
   // 2026-09-08) — she walls her own one-wide shaft and cannot afford to undo it.
   // Correctness cap only; see the tier sweep in the header.

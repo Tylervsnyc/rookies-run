@@ -193,7 +193,7 @@ const RUN_REVENGE_21: RunDef = {
   signaturePair: ['boulder', 'knight-hop'],
   name: 'The Slash',
   blurb: 'One line of stone. He thinks a line is a wall.',
-  allowedAbilities: ['boulder', 'knight-hop', 'aegis', 'magnet'],
+  allowedAbilities: ['boulder', 'knight-hop', 'aegis'],
   // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
   // makes THIS run EASIER, measured twice: no-retry 50% Normal vs 50% Hard, real-retry 55% vs 60%. The cause is the
   // documented one (.claude/run-level-design.md, "Pawn walls march") — the

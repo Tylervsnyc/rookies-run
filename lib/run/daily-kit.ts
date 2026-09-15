@@ -4,7 +4,7 @@ import { getRunById, isKnownRunId } from './runs';
 import { getDailyOverride } from './daily';
 
 /** How many powers a daily run offers. Tyler (2026-09-02): four, so it fits the home screen. */
-export const DAILY_KIT_SIZE = 4;
+export const DAILY_KIT_SIZE = 3;
 
 /**
  * Today's kit — the ONE list of abilities a daily run offers, seeded by the

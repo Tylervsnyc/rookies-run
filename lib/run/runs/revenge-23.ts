@@ -290,7 +290,7 @@ const RUN_REVENGE_23: RunDef = {
   signaturePair: ['knight-hop', 'twin'],
   name: 'The Parapet',
   blurb: 'A wall the whole width of the board. He is on top of it.',
-  allowedAbilities: ['knight-hop', 'twin', 'aegis', 'decoy'],
+  allowedAbilities: ['knight-hop', 'twin', 'decoy'],
   // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
   // makes THIS run EASIER, measured twice: no-retry 30% Normal vs 37% Hard, real-retry 42% vs 50%. The cause is the
   // documented one (.claude/run-level-design.md, "Pawn walls march") — the

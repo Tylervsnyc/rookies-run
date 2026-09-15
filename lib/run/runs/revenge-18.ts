@@ -303,7 +303,7 @@ const RUN_REVENGE_18: RunDef = {
   signaturePair: ['freeze-ray', 'vanguard'],
   name: 'The Glasshouse',
   blurb: 'One room, one window. Something is watching the window.',
-  allowedAbilities: ['freeze-ray', 'vanguard', 'poison-dart', 'magnet'],
+  allowedAbilities: ['freeze-ray', 'vanguard', 'poison-dart'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
