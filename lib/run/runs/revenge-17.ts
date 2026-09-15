@@ -34,7 +34,7 @@
  *   L5  aegis KEY (walk onto the h6 plug and TANK the recapture, then take
  *       him through h7). poison-dart is the slow second answer. dragon TRAP
  *       — every body it can reach is covered by knight f8.
- *   L6  dragon KEY, ALONE and only (a7/b7/c8 are walls: NO rook line ever
+ *   L6  dragon KEY, ALONE and only (2026-09-15: hunting bishop removed) (a7/b7/c8 are walls: NO rook line ever
  *       reaches his corner, so the level cannot be walked — measured 0% for
  *       no-ability, sacrifice, aegis and the dart, 100% for the dragon).
  *   L7  PAIR. Closed hedge b-g, flanks walled, crown above, stumps on d7/e7.
@@ -231,9 +231,11 @@ const RUN_REVENGE_17: RunDef = {
     // air (the hedge starts at d), and a body dropped on c6 knight-jumps to
     // b8, INSIDE the room, where nothing on his side attacks it. KEY =
     // dragon, alone. aegis and the dart are traps: there is no key to take.
+    // (2026-09-15: the dark bishop that hunted from h2 is gone — Tyler: "a
+    // dark-squared bishop kept blocking where I wanted to summon the dragon".)
     make(
       6,
-      [...HEDGE(4, 5, 6, 7, 8), pawn(4, 8), bishop(8, 2), king(1, 8)],
+      [...HEDGE(4, 5, 6, 7, 8), pawn(4, 8), king(1, 8)],
       {
         ...FLEE,
         moveLimit: 9,
