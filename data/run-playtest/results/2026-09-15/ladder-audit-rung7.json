@@ -1,0 +1,264 @@
+{
+ "schema": 1,
+ "experiment": "ladder-audit-rung7",
+ "date": "2026-09-15",
+ "at": "2026-09-15T16:26:05.250Z",
+ "engine": {
+  "sha": "09498b7",
+  "dirty": false,
+  "libHash": "464b156fe4d3"
+ },
+ "budget": {
+  "trials": 4,
+  "runs": 4,
+  "jobs": 4,
+  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>; ceiling depth 7 nodes 150000"
+ },
+ "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 0 · TOO HARD 0 · BOT-BLIND 0 · FLAT 0 · INCONCLUSIVE 1 (of 1)",
+ "body": {
+  "sick": false,
+  "method": "Normal, T5; GATE/USED at T1 cards, BAND/SHAPE/REPEAT at arrival tiers (pair + kit)",
+  "rows": [
+   {
+    "rung": 7,
+    "runId": "revenge-25",
+    "name": "The Alcove",
+    "pair": [
+     "become-king",
+     "boulder"
+    ],
+    "kit": [
+     "become-king",
+     "boulder",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "INCONCLUSIVE",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": false,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "easy",
+      "trialsNeeded": 92
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 97
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": true,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 0,
+      "n": 4,
+      "pct": 0,
+      "lo": 0,
+      "hi": 49
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 0,
+      "n": 4,
+      "pct": 0,
+      "lo": 0,
+      "hi": 49
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 8,
+     "n": 16,
+     "pct": 50,
+     "lo": 28,
+     "hi": 72
+    },
+    "run": {
+     "wins": 2,
+     "n": 4,
+     "pct": 50,
+     "lo": 15,
+     "hi": 85
+    },
+    "avgPieces": 3.3,
+    "early": 2.6666666666666665,
+    "late": 4.333333333333333,
+    "targets": {
+     "band": 62,
+     "run": 45.2,
+     "scale": 6.6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 4,
+     "modal": "become-king+magnet:4",
+     "modalShare": 0.25,
+     "tiers": {
+      "become-king": 1,
+      "boulder": 2,
+      "aegis": 2,
+      "magnet": 1
+     },
+     "pairHeldPct": 50,
+     "extra": "aegis",
+     "pairLoadout": "become-king+boulder:2",
+     "kitLoadout": "become-king+boulder:2+aegis:2"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 3,
+      "n": 4,
+      "pct": 75,
+      "lo": 30.1,
+      "hi": 95.4
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 2,
+      "n": 4,
+      "pct": 50,
+      "lo": 15,
+      "hi": 85
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 13,
+     "n": 16,
+     "pct": 81.3,
+     "lo": 57,
+     "hi": 93.4
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 3,
+      "n": 4,
+      "pct": 75,
+      "lo": 30.1,
+      "hi": 95.4
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 15,
+     "n": 16,
+     "pct": 93.8,
+     "lo": 71.7,
+     "hi": 98.9
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "boulder@far>become-king | cap:rook/step",
+       "wins": 7,
+       "share": 0.71
+      },
+      "8": {
+       "signature": "boulder@pen>boulder@far>become-king | cap:rook/orth",
+       "wins": 7,
+       "share": 0.43
+      },
+      "9": null,
+      "10": null
+     },
+     "repeats": []
+    }
+   }
+  ]
+ }
+}

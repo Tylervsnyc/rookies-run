@@ -1,0 +1,263 @@
+{
+ "schema": 1,
+ "experiment": "ladder-audit-rung1",
+ "date": "2026-09-15",
+ "at": "2026-09-15T16:25:39.919Z",
+ "engine": {
+  "sha": "09498b7",
+  "dirty": false,
+  "libHash": "464b156fe4d3"
+ },
+ "budget": {
+  "trials": 4,
+  "runs": 4,
+  "jobs": 4,
+  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>"
+ },
+ "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 0 · TOO HARD 1 · BOT-BLIND 0 · FLAT 0 · INCONCLUSIVE 0 (of 1)",
+ "body": {
+  "sick": false,
+  "method": "Normal, T5; GATE/USED at T1 cards, BAND/SHAPE/REPEAT at arrival tiers (pair + kit)",
+  "rows": [
+   {
+    "rung": 1,
+    "runId": "revenge-21",
+    "name": "The Slash",
+    "pair": [
+     "boulder",
+     "knight-hop"
+    ],
+    "kit": [
+     "boulder",
+     "knight-hop",
+     "aegis",
+     "magnet"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 73
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": true,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 0,
+      "n": 4,
+      "pct": 0,
+      "lo": 0,
+      "hi": 49
+     },
+     {
+      "wins": 1,
+      "n": 4,
+      "pct": 25,
+      "lo": 4.6,
+      "hi": 69.9
+     },
+     {
+      "wins": 2,
+      "n": 4,
+      "pct": 50,
+      "lo": 15,
+      "hi": 85
+     },
+     {
+      "wins": 0,
+      "n": 4,
+      "pct": 0,
+      "lo": 0,
+      "hi": 49
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 4,
+       "pct": 0,
+       "lo": 0,
+       "hi": 49
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 3,
+     "n": 16,
+     "pct": 18.8,
+     "lo": 6.6,
+     "hi": 43
+    },
+    "run": {
+     "wins": 3,
+     "n": 4,
+     "pct": 75,
+     "lo": 30.1,
+     "hi": 95.4
+    },
+    "avgPieces": 2.7,
+    "early": 2.3333333333333335,
+    "late": 3,
+    "targets": {
+     "band": 80,
+     "run": 65,
+     "scale": 3
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 3,
+     "modal": "aegis:3+boulder:2+knight-hop",
+     "modalShare": 0.33,
+     "tiers": {
+      "boulder": 2,
+      "knight-hop": 1,
+      "aegis": 1,
+      "magnet": 2
+     },
+     "pairHeldPct": 67,
+     "extra": "aegis",
+     "pairLoadout": "boulder:2+knight-hop",
+     "kitLoadout": "boulder:2+knight-hop+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 3,
+      "n": 4,
+      "pct": 75,
+      "lo": 30.1,
+      "hi": 95.4
+     },
+     {
+      "wins": 1,
+      "n": 4,
+      "pct": 25,
+      "lo": 4.6,
+      "hi": 69.9
+     },
+     {
+      "wins": 2,
+      "n": 4,
+      "pct": 50,
+      "lo": 15,
+      "hi": 85
+     },
+     {
+      "wins": 0,
+      "n": 4,
+      "pct": 0,
+      "lo": 0,
+      "hi": 49
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 6,
+     "n": 16,
+     "pct": 37.5,
+     "lo": 18.5,
+     "hi": 61.4
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     },
+     {
+      "wins": 4,
+      "n": 4,
+      "pct": 100,
+      "lo": 51,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 16,
+     "n": 16,
+     "pct": 100,
+     "lo": 80.6,
+     "hi": 100
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "boulder@pen>knight-hop | cap:rook/orth",
+       "wins": 7,
+       "share": 0.43
+      },
+      "8": {
+       "signature": "boulder@far>aegis>knight-hop | cap:rook/step",
+       "wins": 5,
+       "share": 0.4
+      },
+      "9": null,
+      "10": null
+     },
+     "repeats": []
+    }
+   }
+  ]
+ }
+}
