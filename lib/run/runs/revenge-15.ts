@@ -26,18 +26,18 @@
  *  - MAGNET is the opener. Stand on the shaft's file, grab the plug (in a
  *    one-wide shaft it is always the first piece on her line) and drag it DOWN
  *    two squares, off its defenders; take it there for free. KEY on L3, L4,
- *    L7, L8, L9, L10. TRAP on L5 (the shaft is already open and the king
- *    himself can't be pulled below T5) and on L6 (slower than the decoy that
+ *    L7, L8, L9, L10. TRAP on L5 (nothing to pull that matters) and on L6 (slower than the decoy that
  *    opens the shaft AND stuns).
  *  - BOULDER is the sealer, and the only card that touches his room. One
  *    stone in a square of the 2x2 he is not standing in makes the room small
- *    enough for one rook to hold. KEY on L5, L7, L8, L9, L10. TRAP on
- *    L1-L4 and L6: a stone can never remove a plug, and in a one-wide shaft
+ *    enough for one rook to hold. KEY on L7, L8, L9, L10. TRAP on
+ *    L1-L6: a stone can never remove a plug, and in a one-wide shaft
  *    every stone she drops is a wall across her own only route.
  *  - AEGIS tanks the recapture on a plug that is defended ONCE: take it
  *    anyway, eat the reply, walk on. KEY on L4, playable on L6. TRAP on L3
  *    and L10 (two defenders — and on L10 two enemies a turn, so the shield
- *    stops the first reply and the second one kills her) and on L5/L7/L8/L9,
+ *    stops the first reply and the second one kills her) and on L7/L8/L9,
+ *    KEY on L5 (walk in beside him with the shield up),
  *    where the lock is his room, not a guard.
  *  - DECOY is the free stun that also relocates: mark a guard and its own
  *    side eats it. On L6 it is the only way to move a knight that has no legal
@@ -234,14 +234,16 @@ export const RUN_REVENGE_15: RunDef = {
   offerCoreMin: 2,
   levels: [
     // L1 — THE OPEN SHAFT. Two shafts (d and f); the d one has a pawn in it,
-    // the f one is empty top to bottom. Still king e8. Ride the open shaft
-    // to f7, step onto rank 8, take him. Teaches the whole board in one move.
+    // the f one is empty top to bottom. Still king h8 (moved from e8
+    // 2026-09-15: beside both shaft tops he struck Rookie the moment she
+    // arrived). Ride the open shaft to f8 and take him along the gallery.
+    // Any starting card works.
     make(
       1,
       [
         pawn(4, 5),
         pawn(3, 8),
-        king(5, 8),
+        king(8, 8),
       ],
       { ...STILL, moveLimit: 6, hazards: STACKS(4, 6) },
     ),
@@ -298,18 +300,18 @@ export const RUN_REVENGE_15: RunDef = {
         kingPen: ['g8', 'h8'],
       },
     ),
-    // L5 — THE DODGE. The shaft (e) is wide open — nothing is in your way at
-    // all. The lock is his ROOM: the 2x2 corner g7/h7/g8/h8, two of it cut as
-    // ALCOVES into the stone. A lone rook can never hold a 2x2: every square
-    // she takes covers exactly two of the other three (g8 sees g7 and h8, h8
-    // sees h7 and g8, g7 sees h7 and g8 …) and he steps to the fourth,
-    // forever. BOULDER: one stone in a square he is not standing in and the
-    // room is small enough to hold. KEY = boulder — and the only card in the
-    // kit that does anything here at all.
+    // L5 — SHIELD UP, WALK IN (reworked 2026-09-15, Tyler: "L5 has basically
+    // no pieces"). The shaft (e) is open, a bishop hunts the floor, a pawn on
+    // f8 screens the gallery, and he sits in the h7 alcove, where no rook line
+    // reaches (g7 is his room, h6 is stone). Up the shaft, take the f8 pawn,
+    // then step to h8 beside him with the shield up: he strikes, the shield
+    // holds and freezes him, take him. KEY = aegis.
     make(
       5,
       [
-        king(7, 7),
+        pawn(6, 8),
+        bishop(2, 1),
+        king(8, 7),
       ],
       {
         ...FLEE,
