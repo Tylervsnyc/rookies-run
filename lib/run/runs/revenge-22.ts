@@ -15,10 +15,9 @@
  *   duchess  KEY L5 (with the Dragon), half of every finale; trap on L6.
  *   magnet   KEY L3 (pull the plug off its defended square). Trap on every
  *            finale: no enemy there is on a line she can pull usefully at T1.
- *   abilityTierCaps { dragon: 4, duchess: 3 }: every finale is "two bodies",
- *   and the tier that grants a SECOND CHARGE (Dragon T5, Duchess T4) is a
- *   second body in one card. Measured below: every single card reads 0% on
- *   L7-L10 at T1, T2, T3 and Dragon T4.
+ *   NO tier caps (Tyler, 2026-09-15: every ladder set's 3 cards run their
+ *   normal path to T5). The finale is measured against the second charge
+ *   (Dragon T5, Duchess T4+) and the longer leashes, not protected from them.
  *
  * L1  THE DOOR       walk in (free).
  * L2  THE PLUG       capture order: bishop first, then the pawn, then him.
@@ -215,7 +214,6 @@ const RUN_REVENGE_22: RunDef = {
   name: 'The Millstone',
   blurb: 'He walks in circles around a stone. Give him nowhere to step.',
   allowedAbilities: ['dragon', 'duchess', 'magnet'],
-  abilityTierCaps: { dragon: 4, duchess: 3 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
