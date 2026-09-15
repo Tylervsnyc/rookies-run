@@ -328,7 +328,6 @@ const RUN_REVENGE_19: RunDef = {
   name: 'The Cliff',
   blurb: 'He built his court on the cliff. Knights climb.',
   allowedAbilities: ['convert', 'summon-knight', 'magnet'],
-  abilityTierCaps: { convert: 1, 'summon-knight': 2 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
