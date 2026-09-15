@@ -260,7 +260,7 @@ const RUN_REVENGE_22: RunDef = {
     make(
       3,
       L3_MAP.pieces,
-      { ...STILL, moveLimit: 7, hazards: L3_MAP.hazards, kingPen: L3_MAP.kingPen },
+      { ...STILL, moveLimit: 10, hazards: L3_MAP.hazards, kingPen: L3_MAP.kingPen },
     ),
     // L4 — THE BATTERING RAM (a body's KEY). The same door, the same
     // pinned pawn — and this time its defender is a bishop standing IN the
@@ -275,7 +275,7 @@ const RUN_REVENGE_22: RunDef = {
       [bishop(6, 8), pawn(5, 7), knight(2, 4), king(6, 7)],
       {
         ...STILL,
-        moveLimit: 8,
+        moveLimit: 11,
         hazards: MILL(7, 7, {
           doors: ['e7', 'f8'],
           plus: [X(5, 6), X(5, 8), X(4, 6), X(4, 8), X(5, 5), X(6, 4), X(8, 4), X(6, 5), X(8, 5)],
@@ -327,7 +327,7 @@ const RUN_REVENGE_22: RunDef = {
     make(
       7,
       L7_MAP.pieces,
-      { ...FLEE, moveLimit: 8, hazards: L7_MAP.hazards, kingPen: L7_MAP.kingPen },
+      { ...FLEE, moveLimit: 7, hazards: L7_MAP.hazards, kingPen: L7_MAP.kingPen },
     ),
     // L8 — THE HALLWAY (Dragon first, because the guard steps out). King g5
     // at the end of rank 5. His own pawn d5 stands in the hallway. The pawn
@@ -349,7 +349,7 @@ const RUN_REVENGE_22: RunDef = {
     make(
       9,
       L9_MAP.pieces,
-      { ...FLEE, moveLimit: 8, hazards: L9_MAP.hazards, kingPen: L9_MAP.kingPen },
+      { ...FLEE, moveLimit: 10, hazards: L9_MAP.hazards, kingPen: L9_MAP.kingPen },
     ),
     // L10 — THE RUN (let him run, then catch him). King d7 in a pawn box,
     // escape e6, both watched. The Duchess takes d5 and steps to c6: he runs
@@ -359,7 +359,7 @@ const RUN_REVENGE_22: RunDef = {
     make(
       10,
       L10_MAP.pieces,
-      { ...FLEE, moveLimit: 8, hazards: L10_MAP.hazards, kingPen: L10_MAP.kingPen },
+      { ...FLEE, moveLimit: 9, hazards: L10_MAP.hazards, kingPen: L10_MAP.kingPen },
     ),
   ],
 };
