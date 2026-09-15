@@ -204,11 +204,10 @@
  *   L4     doorstep clear, but the one file into the alcove is BARRED by a
  *          knotted bishop defended by a stump pawn. Eat the recapture (AEGIS)
  *          or pull the bar sideways off the file (MAGNET, three moves slower).
- *   L5     he pulls the sentry in and walls both shoulders, and he RUNS. The
- *          doorstep is still rook-reachable but the file below is barred low, so
- *          she has to spend a move stepping onto his file from a rank — and he
- *          spends it walking into a corner no line of hers reaches. Stone the
- *          corner first: BOULDER.
+ *   L5     (reworked 2026-09-15, Tyler: "L5-7: boulder the king in, again".)
+ *          The b-side alcove, open file, still king — and a knotted bishop on
+ *          his doorstep that the sentry defends. Drag it two squares down, off
+ *          the sentry's eye, take it, slide up onto him: MAGNET.
  *   L6     the SILL. No rook line to the doorstep exists any more, and he stands
  *          still, so there is no corner to close. The whole level is the STEP:
  *          BECOME KING.
@@ -242,17 +241,17 @@
  *                king cannot be pulled below T5. The trap card.
  *
  * KEY / TRAP map:
- *   become-king  KEY L6, half of L7-L10; second answer on L3 and L5. TRAP
+ *   become-king  KEY L6, half of L7-L10; second answer on L3. TRAP
  *                L1-L2 and L4 — on the open levels the file already goes there,
  *                and one king step is a whole card spent on one square.
- *   boulder      KEY L5, half of L7-L10. TRAP L1-L4 and L6 (a still king has no
+ *   boulder      Half of L7-L10. TRAP L1-L6 (a still king has no
  *                corner to close, and her own stone in a one-file approach is a
  *                wall she built for herself — the Stacks lesson).
  *   aegis        KEY L3 and L4, the two levels whose answer is to be captured
  *                and live. TRAP L5-L10: nothing that hits her stands between her
  *                and him, and a shield never moves her.
- *   magnet       KEY nowhere by design — the trap card. The slow second answer
- *                on L4, and actively fatal on L3, where pulling the plug out of
+ *   magnet       KEY L5 (pull the doorstep bishop off the sentry). The slow
+ *                second answer on L4, and actively fatal on L3, where pulling the plug out of
  *                the doorstep drops it one square lower in the only file in the
  *                level that goes anywhere.
  *
@@ -535,16 +534,18 @@ const RUN_REVENGE_25: RunDef = {
         kingPen: B7.pen,
       },
     ),
-    // L5 — THE CORNERS. He pulls the sentry in and walls both shoulders, and he
-    // RUNS. The doorstep is still rook-reachable, but the g-file is barred low
-    // at g3, so she has to spend a move stepping onto his file from a rank — and
-    // he spends it walking into a corner no line of hers will ever reach.
-    // Stone both corners on the way in: BOULDER.
-    make(5, [...G7_SEALED.pieces, pawn(3, 7)], {
-      ...FLEE,
-      moveLimit: 6,
-      hazards: [...G7_SEALED.hazards, X(7, 3), X(3, 6)],
-      kingPen: G7_SEALED.pen,
+    // L5 — PULL IT DOWN (reworked 2026-09-15 — Tyler: "L5-7: boulder the king
+    // in, again"). The b-side alcove with NO sill, so the b-file runs straight
+    // onto him — but a bishop is knotted on his doorstep b6 (a5/c5 stone) and
+    // the sentry c7 defends it. Take it and the sentry takes you. MAGNET: stand
+    // on the b-file below, drag the bishop two squares down to b4, off the
+    // sentry's eye, take it there, and slide up the file onto him. He stands
+    // still — nothing to wall.
+    make(5, [...B7.pieces, bishop(2, 6)], {
+      ...STILL,
+      moveLimit: 7,
+      hazards: [...B7.hazards, X(1, 5), X(3, 5)],
+      kingPen: B7.pen,
     }),
     // L6 — THE SILL. One stone under the doorstep and no rook in the game can
     // stand on it again: flanks stone, file stone. He stands still, so there are
