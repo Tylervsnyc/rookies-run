@@ -45,8 +45,11 @@ on:
         type: string
         default: ''
 
+# One queue per branch + rung (2026-09-15). A single shared group let GitHub
+# keep only ONE pending run, so parallel rung re-grades on tuning branches
+# cancelled each other. The scheduled nightly on main keeps its own group.
 concurrency:
-  group: revenge-nightly
+  group: revenge-nightly-${{ github.ref }}-${{ inputs.rung || 'all' }}
   cancel-in-progress: false
 
 permissions:
