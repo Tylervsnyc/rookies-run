@@ -76,6 +76,11 @@
  * boulder/decoy/convert/twin/page/sacrifice/swap (each either stops the king
  * for free or is a third body — a second answer).
  *
+ * 2026-09-15 (Tyler: "L1-2 same thing"; "L7-L10: the exact same move every
+ * level"): L2 now has no summon in it (take the pawn in the door, the capture
+ * stuns him), and L9 is a different line (the Dragon jumps the watcher from
+ * h6, then the Duchess takes the door and him). L7, L8, L10 still use the
+ * double door below.
  * L7-L10 intended lines (all the same line, rising pressure):
  *   L7  THE DOUBLE DOOR — east wheel: king g6, door f7 (pawn), watcher e8,
  *       line a2-g8 through the window e6. Rookie to e4 (the unique closest
@@ -256,17 +261,18 @@ const RUN_REVENGE_22: RunDef = {
         kingPen: RING(7, 7),
       },
     ),
-    // L2 — THE SIDE DOOR. The west wheel (core b7). Still king on c7 and
-    // the wall to his EAST (d7) is missing: the door is on rank 7. Climb an
-    // open file to the seventh, run west along it, take him. A knight cuts
-    // the middle of the board while you pick the file.
+    // L2 — THE PAWN IN THE DOOR (reworked 2026-09-15 — Tyler: "L1-2 same
+    // thing: summon the duchess, win"). The west wheel, and now he RUNS: his
+    // ring is b6/a7/c7/b8. His own pawn stands in the door d7, jammed by the
+    // stone under it. Come along rank 7 behind it and take it: the capture
+    // stuns him, and from d7 the rook is already looking at c7. No card.
     make(
       2,
-      [knight(5, 4), pawn(8, 5), king(3, 7)],
+      [knight(5, 4), pawn(8, 5), pawn(4, 7), king(3, 7)],
       {
-        ...STILL,
+        ...FLEE,
         moveLimit: 8,
-        hazards: MILL(2, 7, { doors: ['d7'] }),
+        hazards: MILL(2, 7, { doors: ['d7'], plus: [X(4, 6)] }),
         kingPen: RING(2, 7),
       },
     ),
@@ -374,9 +380,12 @@ const RUN_REVENGE_22: RunDef = {
         kingPen: ['b6', 'c7'],
       },
     ),
-    // L9 — THE HUB. The wheel in the middle (core e7): king e6, door f7,
-    // watcher g8, and the only line into the door is the anti-diagonal from
-    // h5 through g6. Two enemies a turn, a bishop and a knight on the floor.
+    // L9 — THE WATCHER FIRST (reworked 2026-09-15). The wheel in the middle
+    // (core e7): king e6, door f7, watcher g8, and the only line into the
+    // door is the anti-diagonal from h5 through g6. This time nobody has to be
+    // sacrificed: h6 is open, and from h6 the Dragon JUMPS onto the watcher.
+    // With g8 gone the door has no guard — the Duchess comes down h5-g6, takes
+    // f7 and then him. Two enemies a turn, a bishop and a knight on the floor.
     make(
       9,
       [pawn(6, 7), pawn(7, 8), bishop(2, 2), knight(2, 5), king(5, 6)],
@@ -384,7 +393,7 @@ const RUN_REVENGE_22: RunDef = {
         ...FLEE,
         enemiesPerTurn: 2,
         moveLimit: 11,
-        hazards: [...HUB_LOCK],
+        hazards: HUB_LOCK.filter((c) => !(c.file === 8 && c.rank === 6)),
         kingPen: ['e6', 'f7'],
       },
     ),
