@@ -37,9 +37,11 @@
  * (The Briar), not shafts (The Stacks) — one unbroken wall the full width
  * of the board, and the whole question of the run is HOW YOU GET UP.
  *   L1-L4  the wall has a STAIR (one gap). Walk up it.
- *   L5     no stair. The first time the wall is whole: hop it.
- *   L6     the stair is back, but his room is 2x2 and one rook cannot hold
- *          it: bring the second rook.
+ *   L5     the stair is back, but his room is 2x2 and one rook cannot hold
+ *          it: bring the second rook. (Swapped with the hop level 2026-09-15,
+ *          Tyler: "L6 is a similar thing to L5; ideally they'd be switched".)
+ *   L6     no stair, and he runs along the wall top in a row (f7-h7). Hop
+ *          the wall onto c7 and the whole rank is hers.
  *   L7-L10 no stair, and his room is 2x2. Hop it AND bring the second rook.
  * The court is guarded by pawns that can never move: each stands on rank 8
  * over a stone on rank 7 (a pawn walks straight and is jammed forever),
@@ -55,14 +57,13 @@
  * (stone kills the Twin's lines — antiPair), not freeze-ray / smoke /
  * convert / vanguard (each is a known knight-hop partner and would be a
  * second key on the finales), no second summon (one body-move per turn).
- *   knight-hop  KEY on L5 alone (a still king in a one-square cell: hop to
- *               the square in front of him and take him). Half of L7-L10.
- *               TRAP on L1-L4 and L6: the stair is open, the hop is a
- *               wasted card, and on L6 a second line is what is missing,
- *               not a way up.
- *   twin        KEY on L6 alone (stair open, 2x2 room, one rook short).
- *               Half of L7-L10. TRAP on L1-L5: nothing there needs a second
- *               rook, and on L5 she cannot cross the wall at all.
+ *   knight-hop  KEY on L6 alone (hop the wall onto c7 and own his row).
+ *               Half of L7-L10. TRAP on L1-L5: the stair is open, the hop
+ *               is a wasted card, and on L5 a second line is what is
+ *               missing, not a way up.
+ *   twin        KEY on L5 alone (stair open, 2x2 room, one rook short).
+ *               Half of L7-L10. TRAP on L1-L4 and L6: nothing there needs a
+ *               second rook, and on L6 she cannot cross the wall at all.
  *   aegis       KEY on L4: the stair is plugged by a bishop frozen in stone
  *               that a jammed pawn defends. Take the plug, eat the reply,
  *               walk up (a knight on h3 hunts, so she raises the shield in
@@ -385,31 +386,14 @@ const RUN_REVENGE_23: RunDef = {
         kingPen: ['a8', 'b8'],
       },
     ),
-    // L5 — THE WHOLE WALL. No stair. A still king on d8 in a one-square
-    // cell; a pawn on f8 over a stone on f7 watches e7 and g7. The square in
-    // front of him, d7, is a knight's jump from c5. Hop up, and a rook on d7
-    // is looking straight at him. KEY = knight-hop, alone.
+    // L5 — THE OPEN COURT. (Was L6; swapped with the wall level, Tyler
+    // 2026-09-15.) The stair is at d6 and the court is empty, but his room
+    // is 2x2 in the far corner (g7/h7/g8/h8). One rook can never corner a
+    // fleeing king in a 2x2: whichever rank she owns, he steps to the other.
+    // Walk up, and bring the SECOND rook: Rookie on rank 7, the Twin on rank
+    // 8, and he has no square. KEY = twin, alone.
     make(
       5,
-      [
-        pawn(6, 8),
-        knight(7, 4),
-        king(4, 8),
-      ],
-      {
-        ...STILL,
-        moveLimit: 8,
-        hazards: PARAPET([], [X(6, 7)]),
-        kingPen: ['d8'],
-      },
-    ),
-    // L6 — THE OPEN COURT. The stair is back (d6) and the court is empty,
-    // but his room is 2x2 in the far corner (g7/h7/g8/h8). One rook can
-    // never corner a fleeing king in a 2x2: whichever rank she owns, he
-    // steps to the other. Walk up, and bring the SECOND rook: Rookie on
-    // rank 7, the Twin on rank 8, and he has no square. KEY = twin, alone.
-    make(
-      6,
       [
         king(8, 8),
       ],
@@ -418,6 +402,26 @@ const RUN_REVENGE_23: RunDef = {
         moveLimit: 10,
         hazards: PARAPET([4]),
         kingPen: ROOM(7),
+      },
+    ),
+    // L6 — THE WALL WALK. (Was L5, reworked.) No stair at all, and he RUNS
+    // along the top of the wall: his room is the row f7/g7/h7. A rook can
+    // own a row — if she can get onto it. Hop the wall from d5 or b5 onto
+    // c7, and from c7 the whole of rank 7 is hers: f7, g7 and h7 at once, and
+    // he has nowhere to step. The f8 pawn watches e7 and g7, so the hop to e7
+    // is the wrong one. KEY = knight-hop, alone.
+    make(
+      6,
+      [
+        pawn(6, 8),
+        knight(7, 4),
+        king(8, 7),
+      ],
+      {
+        ...FLEE,
+        moveLimit: 8,
+        hazards: PARAPET([]),
+        kingPen: ['f7', 'g7', 'h7'],
       },
     ),
     // L7 — THE WEST GALLERY. CHOOSE THE DOOR. No stair, 2x2 room
