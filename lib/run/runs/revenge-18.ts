@@ -13,19 +13,26 @@
  * sightline left in the level is HIS: a king in a glass room can see you
  * coming, and he moves.
  *
- * THE ARC
- *   L1-L2  the house, no ability. Walk the window; then learn that the eye
- *          watching it has to die first (it is still on your side of the
- *          glass, so you can just take it).
- *   L3-L5  his room is TWO squares on a DIAGONAL (f7/g8 and mirrors) with the
- *          squares between them glassed, so NO rook square in the world sees
- *          both. Threaten one and he steps to the other. Chasing is not a
- *          plan — FREEZE him and the step never happens. Single-ability
- *          puzzles: freeze is the key on all three.
+ * THE ARC (L1-L4 reworked 2026-09-15 — Tyler: "L1-4 were the same thing:
+ * freeze the king, then take him." Each now freezes a DIFFERENT thing.)
+ *   L1     FREEZE THE EYE: a boxed pawn watches the window.
+ *   L2     FREEZE THE DEFENDER: take the defended plug in front of him.
+ *   L3     FREEZE THE KING: his room is two squares on a diagonal (unchanged).
+ *   L4     FREEZE THE DOORMAN: his pawn blocks his escape square and walks
+ *          out on the first turn — freeze it before it does.
+ *   L5     freeze the king in the long room (unchanged).
  *   L6     the hinge. The window g6 has glass above it: you can stand IN the
  *          window and still not pass, and no rook line enters the room at all.
  *          Only a body dropped over the wall reaches him — VANGUARD, alone.
- *   L7-L10 the finale, COMBO-GATED, and it stacks the two lessons:
+ *   L7-L10 the finale, COMBO-GATED, freeze + vanguard. L7 and L10 pin the
+ *          KING (below). L8 and L9 were rebuilt 2026-09-15 (Tyler: "L8 is the
+ *          same pattern as L7, just moved over"; "L9: Vanguard alone solved
+ *          it") as the SENTRY lock: the only knight square on him holds his
+ *          pawn, defended by a pawn with a bishop behind it on the same
+ *          diagonal. Freeze the front pawn, throw the knight onto the sentry,
+ *          take him. A second knight (tier 3+) trades into the bishop, so a
+ *          lone upgraded vanguard does not get through. L9 adds a hunter and
+ *          two enemies a turn. The L7/L10 notes below are still current.
  *          Lock 1 — the house is sealed. No rook line on the board touches the
  *                   room, so the rook is out of the game and a body must go
  *                   over the glass. freeze / poison / magnet / no-ability all
@@ -310,30 +317,36 @@ const RUN_REVENGE_18: RunDef = {
   offerCore: REVENGE_CORE,
   offerCoreMin: 2,
   levels: [
-    // L1 — THE PANE. Still king h8 in a glasshouse: floor f6-h6, left wall
-    // e6-e8. One square of the floor is missing — g6. Walk the g-file, step
-    // through the window, take the room. Nothing is watching it yet.
+    // L1 — FREEZE THE EYE. Still king h7 at the end of a glass tube (e7-g7,
+    // walled above and below). The window is d7: stand on it and rank 7 runs
+    // straight to him. A pawn on c8 — boxed in glass, no rook line reaches it
+    // — watches the window. Freeze the pawn, step into the window, take him.
+    // The king is not the thing to freeze here.
     make(
       1,
-      [pawn(7, 4), king(8, 8)],
+      [pawn(3, 8), king(8, 7)],
       {
         ...STILL,
-        moveLimit: 8,
-        hazards: [...PANE(GLASS_R(6, 6, 8), 'g6'), ...GLASS_F(5, 6, 8)],
+        moveLimit: 7,
+        hazards: [
+          X(2, 8), X(4, 8), X(3, 7),
+          X(5, 8), X(6, 8), X(7, 8), X(8, 8),
+          X(5, 6), X(6, 6), X(7, 6), X(8, 6),
+          X(7, 5),
+        ],
       },
     ),
-    // L2 — THE FIRST EYE. Still king a8, the house mirrored (floor a6-c6,
-    // right wall d6-d8), pane b6. Bishop f2 looks straight up the long
-    // diagonal at b6: step into the window and it takes you. It is undefended
-    // and still on YOUR side of the glass — take the eye, then walk in. That
-    // order is the whole run.
+    // L2 — FREEZE THE DEFENDER. Still king a8. The window a6 opens the a-file,
+    // but a bishop is stuck on a7 in front of him and the b8 pawn defends it.
+    // Take a7 and the capture stuns him — then b8 takes you back. Freeze b8
+    // first: take a7, he is stunned, the defender cannot move, take him.
     make(
       2,
-      [bishop(6, 2), king(1, 8)],
+      [bishop(1, 7), pawn(2, 8), king(1, 8)],
       {
         ...STILL,
-        moveLimit: 9,
-        hazards: [...PANE(GLASS_R(6, 1, 3), 'b6'), ...GLASS_F(4, 6, 8)],
+        moveLimit: 7,
+        hazards: [X(2, 6), X(3, 6), X(2, 7), X(3, 7), X(3, 8)],
       },
     ),
     // L3 — HE MOVES (freeze KEY). First fleeing king, and the first thing this
@@ -358,25 +371,19 @@ const RUN_REVENGE_18: RunDef = {
         kingPen: ['f7', 'g8'],
       },
     ),
-    // L4 — THE OTHER SIDE (freeze KEY, magnet TRAP). The same room mirrored:
-    // king c7, his second square b8, window c5. A knight hunts her on the open
-    // floor now, so the turn the pin costs is a turn she has to find. Magnet
-    // reads 0% here: the only lines she can stand on that reach into the room
-    // die in glass, and he cannot be pulled at all. A drop DOES work — c6 sees
-    // b8 — which is fine; this is where both keys are still on the table.
+    // L4 — FREEZE THE DOORMAN. He runs, room a8/b8 — but his pawn is
+    // standing in b8, so right now his door is shut. The pawn walks down to
+    // b7 on the first enemy turn and the door is open. a1 is glass, so the
+    // a-file takes her two moves to reach. Freeze the PAWN on your first
+    // move: the door is still shut when you land on his file. Take him.
     make(
       4,
-      [knight(7, 3), king(3, 7)],
+      [pawn(2, 8), king(1, 8)],
       {
         ...FLEE,
         moveLimit: 7,
-        hazards: [
-          X(6, 6), X(6, 7), X(6, 8),
-          X(5, 5), X(5, 6), X(5, 7), X(5, 8),
-          X(3, 5), X(2, 5), X(1, 5),
-          X(3, 8), X(2, 7), X(1, 6),
-        ],
-        kingPen: ['c7', 'b8'],
+        hazards: [X(1, 1), X(2, 6), X(3, 6), X(3, 7), X(3, 8)],
+        kingPen: ['a8', 'b8'],
       },
     ),
     // L5 — THE LONG ROOM (freeze KEY). Same diagonal cell, slid into the
@@ -435,35 +442,43 @@ const RUN_REVENGE_18: RunDef = {
       [king(1, 8)],
       { ...FLEE, moveLimit: 9, hazards: [...WEST_SILL], kingPen: ['a8', 'b8'] },
     ),
-    // L8 — THE TWO ARMS. The mid house with a shelf laid either side of its
-    // pocket (c4/e4/f4), which does two things: it drops the throw down to the
-    // rank below again, and it pushes e6 — the square that kills him on d8 —
-    // out of Rookie's drop radius entirely. So the pocket d5 now serves TWO
-    // corridors that do not connect. d5->e7 takes him on c8; d5->c7->e6 takes
-    // him on d8; and no knight step crosses from e7 to e6. DEMAND: pin him
-    // BEFORE the knight lands. Land on e7 first and he simply steps to d8, and
-    // the knight has to walk all the way back through the pocket to follow him
-    // — which is more turns than a Vanguard knight is alive for. A bishop
-    // hunts her while she works out which arm she is committing to.
+    // L8 — THE SENTRY. A different lock from L7: the king does not need
+    // pinning at all. He sits in a glass cell on h7, and the ONLY square a
+    // knight can take him from is f6 — where his pawn stands. Take it with the
+    // knight and the e7 pawn takes the knight back; take THAT pawn with a
+    // second knight and the bishop on d8, standing behind it on the same
+    // diagonal, takes that one. DEMAND: freeze the right guard. Freeze e7
+    // (it is also the bishop's screen), drop the knight, take f6 — nothing
+    // can answer — then take him. Freezing the king does nothing here.
     make(
       8,
-      [bishop(8, 2), king(3, 8)],
-      { ...FLEE, moveLimit: 7, hazards: [...MID_SHELF], kingPen: ['c8', 'd8'] },
+      [pawn(6, 6), pawn(5, 7), bishop(4, 8), king(8, 7)],
+      {
+        ...FLEE,
+        moveLimit: 7,
+        hazards: [
+          X(6, 5), X(5, 6), X(3, 6), X(6, 7), X(3, 8), X(4, 5), X(7, 6), X(7, 8),
+          X(6, 8), X(7, 5), X(8, 6), X(8, 8), X(7, 7), X(4, 7), X(5, 8), X(3, 7), X(5, 5),
+        ],
+        kingPen: ['h7'],
+      },
     ),
-    // L9 — TWO A TURN. The eastern house, with the shape left alone on
-    // purpose: this is the finale level about TEMPO rather than geometry. Two
-    // enemies a turn, and the knight is the point — it is the one hunter that
-    // can follow her onto the launch squares under g5, so the two clear turns
-    // the pin-and-walk needs are turns she has to buy.
+    // L9 — TWO A TURN, WEST CELL. The sentry lock from L8 built on the other
+    // side of the board, with a hunter loose on the floor and two enemies a
+    // turn, so the one safe turn you need has to be found while a bishop is
+    // chasing you. He sits in a glass cell on a7; the only knight square on
+    // him is c6, where his pawn stands; the d7 pawn defends it and the e8
+    // bishop stands behind d7. DEMAND: freeze d7, throw the knight onto c6,
+    // take him — with the hunter on your heels.
     make(
       9,
-      [knight(3, 3), king(8, 8)],
+      [pawn(3, 6), pawn(4, 7), bishop(5, 8), bishop(6, 1), king(1, 7)],
       {
         ...FLEE,
         enemiesPerTurn: 2,
         moveLimit: 7,
-        hazards: [...EAST_HOUSE],
-        kingPen: ['g8', 'h8'],
+        hazards: [X(3, 5), X(4, 6), X(6, 6), X(3, 7), X(6, 8), X(5, 5), X(2, 6), X(2, 8), X(3, 8), X(2, 5), X(1, 6), X(1, 8), X(2, 7), X(5, 7), X(4, 8), X(6, 7), X(4, 5)],
+        kingPen: ['a7'],
       },
     ),
     // L10 — THE TALL ROOM. The glasshouse built as a COLUMN: his room is a7/a8
