@@ -45,10 +45,10 @@
  */
 
 import { execFileSync, spawnSync } from 'node:child_process';
-import { auditLadder, auditRung, checkStale, summarize, type RungResult } from './ladder-audit';
+import { AUDIT_METHOD, auditLadder, auditRung, checkStale, summarize, type RungResult } from './ladder-audit';
 import { LADDER_RUNG_IDS } from '../../lib/run/ladder';
 import { writeResult } from './results';
-import { BUDGET } from './spec';
+import { BUDGET, FINALE_LEVELS } from './spec';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, appendFileSync, unlinkSync, symlinkSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -436,6 +436,24 @@ function pullHumanTraces(runIds: string[], opts: Opts, caveats: string[]): Human
   if (!existsSync(dir)) return haveCreds ? { since, source, byRun: runIds.map((id) => ({ runId: id, traces: 0, wins: 0, byLevel: [] })) } : null;
 
   const files = readdirSync(dir).filter((f) => f.endsWith('.json'));
+  // The app posts a trace at the FIRST death and again at run end; both carry
+  // the same meta.startedAt and the later one holds every event. Before
+  // 2026-09-15 each post counted as its own run (a retried run read as one
+  // loss + one win). Keep one per (run, startedAt), the one with most events,
+  // at Normal (what the ladder is graded on).
+  type Meta = { runId?: string; level?: number; outcome?: string; startedAt?: string; iso?: string; difficulty?: string };
+  const latest = new Map<string, { meta: Meta; events: number }>();
+  for (const f of files) {
+    let body: { meta?: Meta; events?: unknown[] } | undefined;
+    try { body = JSON.parse(readFileSync(join(dir, f), 'utf8')) as typeof body; } catch { continue; }
+    const meta = body?.meta;
+    if (!meta?.runId) continue;
+    if (meta.difficulty && meta.difficulty !== 'normal') continue;
+    const key = `${meta.runId}|${meta.startedAt ?? f}`;
+    const n = body?.events?.length ?? 0;
+    const prev = latest.get(key);
+    if (!prev || n > prev.events) latest.set(key, { meta, events: n });
+  }
   const byRun: HumanSummary['byRun'] = [];
   for (const runId of runIds) {
     const total = levelCountFor(runId);
@@ -443,13 +461,8 @@ function pullHumanTraces(runIds: string[], opts: Opts, caveats: string[]): Human
     const cleared = new Array<number>(total + 1).fill(0);
     let traces = 0;
     let wins = 0;
-    for (const f of files) {
-      if (!f.startsWith(`${runId}-L`)) continue;
-      let meta: { runId?: string; level?: number; outcome?: string; startedAt?: string; iso?: string } | undefined;
-      try {
-        meta = (JSON.parse(readFileSync(join(dir, f), 'utf8')) as { meta?: typeof meta }).meta;
-      } catch { continue; }
-      if (!meta || meta.runId !== runId) continue;
+    for (const { meta } of latest.values()) {
+      if (meta.runId !== runId) continue;
       const when = (meta.startedAt ?? meta.iso ?? '').slice(0, 10);
       if (when && when < since) continue;
       const endLevel = Math.max(1, Math.min(total, Number(meta.level ?? 1)));
@@ -689,6 +702,25 @@ async function mergeShards(opts: Opts): Promise<void> {
     for (const c of f.caveats ?? []) if (!caveats.includes(c)) caveats.push(c);
   }
   if (missing.length) caveats.push(`Ladder shards missing for rung${missing.length > 1 ? 's' : ''} ${missing.join(', ')} — those rows are absent from tonight's graded table.`);
+  // Human check (2026-09-15): real finale clears the bot can't reproduce turn
+  // TOO HARD into BOT-BLIND; two finale levels won by the same human line fail
+  // REPEAT. Read-only GETs on run_traces; skipped without creds.
+  const haveCreds = !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (rows.length && !opts.skipHumans && haveCreds) {
+    try {
+      const t = Date.now();
+      const { humanCheck, applyHumanCheck, fileHumanCheck, summarizeHumanCheck } = await import('./human-check');
+      const since = new Date(Date.parse(`${date}T00:00:00Z`) - 7 * 86400_000).toISOString().slice(0, 10);
+      const hc = await humanCheck({ since, levels: [...FINALE_LEVELS], trials: quick ? BUDGET.quick.trials : BUDGET.humanTrials, jobs: opts.jobs ?? 4, log });
+      applyHumanCheck(rows, hc);
+      const hcFile = fileHumanCheck({ ...hc, date }, opts.jobs ?? 4);
+      log(`human check: ${summarizeHumanCheck(hc)} (${secs(t)}) -> ${hcFile}`);
+    } catch (e) {
+      caveats.push(`Human check failed: ${(e as Error).message.slice(0, 200)}`);
+    }
+  } else if (rows.length && !haveCreds) {
+    caveats.push('Human check skipped: no Supabase credentials (BOT-BLIND cannot be read tonight).');
+  }
   let ladder: LadderSection | null = null;
   if (rows.length && budget) {
     const summary = summarize(rows);
@@ -700,7 +732,7 @@ async function mergeShards(opts: Opts): Promise<void> {
         conclusion: `${summary}${missing.length ? ` · ${missing.length} shard(s) missing` : ''}`,
         doc: 'docs/LADDER-SPEC.md',
       },
-      { sick: false, method: 'Normal, T5, T1 cards (GitHub Actions, one job per rung)', rows },
+      { sick: false, method: `${AUDIT_METHOD} (GitHub Actions, one job per rung; human check folded in)`, rows },
     );
     ladder = { rows, summary, file, budget };
     log(`ladder (merged ${rows.length} shards): ${summary} -> ${file}`);
@@ -797,7 +829,10 @@ async function main(): Promise<void> {
     // ladder-audit result with one engine fingerprint.
     const b = opts.quick ? BUDGET.quick : BUDGET.nightly;
     const tl = Date.now();
-    const row = await auditRung(opts.shard, { trials: b.trials, runs: b.runs, jobs: opts.jobs ?? 4, sick: false, only: opts.shard, log });
+    // The solver ceiling only runs on finale levels the bot reads under the
+    // BOT-BLIND bar, so its cost lands on exactly the rungs where it can
+    // change a grade. Off in quick smokes.
+    const row = await auditRung(opts.shard, { trials: b.trials, runs: b.runs, jobs: opts.jobs ?? 4, sick: false, only: opts.shard, ceiling: opts.quick ? null : BUDGET.ceiling, log });
     writeJson(rawDir, `ladder-rung${opts.shard}.json`, { rung: opts.shard, budget: b, caveats, row });
     log(`shard ${opts.shard} (${done.join(', ')}): rung ${row.grade} (${secs(tl)}); total ${((Date.now() - t0) / 60000).toFixed(1)} min`);
     return;

@@ -41,6 +41,7 @@ import { T4 } from './bots/t4';
 import { T5 } from './bots/t5';
 import type { Bot, BotAction, BotContext } from './types';
 import { rngFromString } from './utils/rng';
+import { LineRecorder, kingHomeOfState } from './line-signature';
 
 export const REVENGE_ISO = '2026-08-18';
 export const MAX_TURNS = 300;
@@ -212,6 +213,8 @@ export function playGame(
   seed: string,
   offerPolicy: OfferPolicy,
   onPick?: (id: AbilityId) => void,
+  /** Every Rookie-side action that was applied (line-signature.ts records winning lines from this). */
+  onStep?: (before: BoardState, action: BotAction, after: BoardState) => void,
 ): { result: GameResult; final: BoardState } {
   const rng = rngFromString(seed + ':bot');
   const ctx: BotContext = {
@@ -263,6 +266,7 @@ export function playGame(
     const action: BotAction = bot.decide(state, ctx);
     prev = state;
     state = applyBotAction(state, action);
+    onStep?.(prev, action, state);
     if (usesBefore() !== before) usedAbility = true;
     if (state === prev) break; // no-op → dead end
   }
@@ -306,6 +310,8 @@ export interface Cell {
   deadEnd: number;
   usedAbility: number;
   avgMoves: number;
+  /** Winning-line signature → wins (line-signature.ts). Only when the cell was run with signatures on. */
+  signatures?: Record<string, number>;
 }
 
 export function winPct(c: Cell): number {
@@ -320,16 +326,23 @@ export function runMatrixCell(
   tier: string,
   realistic: boolean,
   seedPrefix = 'revenge',
+  recordLines = false,
 ): Cell {
   const bot = botFor(tier);
   const cell: Cell = {
     level, loadout, trials, wins: 0, captured: 0, stall: 0, moveLimit: 0, deadEnd: 0, usedAbility: 0, avgMoves: 0,
+    ...(recordLines ? { signatures: {} } : {}),
   };
   let moves = 0;
   for (let t = 0; t < trials; t++) {
     const seed = `${seedPrefix}:${level}:${loadout}:${t}`;
     const start = startState(cfg, level, loadoutFor(loadout, level, realistic, cfg.runId), seed);
-    const { result } = playGame(start, bot, seed, 'dismiss');
+    const rec = recordLines ? new LineRecorder(kingHomeOfState(start)) : null;
+    const { result } = playGame(start, bot, seed, 'dismiss', undefined, rec ? (b, a, s) => rec.step(b, a, s) : undefined);
+    if (result.win && rec && cell.signatures) {
+      const sig = rec.signature();
+      cell.signatures[sig] = (cell.signatures[sig] ?? 0) + 1;
+    }
     if (result.win) cell.wins++;
     else if (result.failMode === 'captured') cell.captured++;
     else if (result.failMode === 'stall') cell.stall++;
@@ -368,6 +381,20 @@ export interface RunsReport {
   retriesUsed?: number;
   /** Deaths per level INCLUDING the ones a retry rescued. */
   deathsAt?: Record<number, number>;
+  /**
+   * What a run HOLDS when it reaches `arrivalLevel` (default 7, the finale):
+   * sorted loadout key ("aegis+boulder:3+knight-hop:2", tier 1 unpinned) →
+   * how many runs arrived with it. The finale is graded at these tiers, not
+   * T1 (Tyler 2026-09-15 arrived at L7 with Boulder T3-T5).
+   */
+  arrivals?: Record<string, number>;
+  arrivalLevel?: number;
+}
+
+/** Loadout key for a held set: sorted by id, `id` at T1 and `id:tier` above it (loadoutFor reads both). */
+export function heldLoadoutKey(abilities: ReadonlyArray<{ id: string; tier: number }>): string {
+  if (!abilities.length) return 'none';
+  return [...abilities].sort((a, b) => a.id.localeCompare(b.id)).map((a) => (a.tier > 1 ? `${a.id}:${a.tier}` : a.id)).join('+');
 }
 
 export interface RunsOpts {
@@ -382,6 +409,8 @@ export interface RunsOpts {
    * `lv` is 1-based, like the app's level numbers.
    */
   puzzleTransform?: (puzzle: RunPuzzle, lv: number) => RunPuzzle;
+  /** Level whose arrival loadout is snapshotted into `arrivals` (default 7). */
+  arrivalLevel?: number;
 }
 
 /** Cap for "unlimited" retries so an unwinnable level can't spin forever (a real player gives up long before this). */
@@ -399,6 +428,8 @@ export function simulateRuns(cfg: RevengeCfg, n: number, tier: string, opts: Run
   const prefix = opts.seedPrefix ?? 'revenge-run';
   const unlocked = opts.unlockedAbilities ? ([...opts.unlockedAbilities] as NonNullable<BoardState['unlockedAbilities']>) : undefined;
   let retriesUsed = 0;
+  const arrivalLevel = opts.arrivalLevel ?? 7;
+  const arrivals: Record<string, number> = {};
   const t0 = Date.now();
   for (let r = 0; r < n; r++) {
     let abilities: OwnedAbility[] = [];
@@ -425,8 +456,16 @@ export function simulateRuns(cfg: RevengeCfg, n: number, tier: string, opts: Run
           ...(unlocked ? { unlockedAbilities: unlocked } : {}),
           ...(cfg.difficulty ? { difficulty: cfg.difficulty } : {}),
         });
+        // Arrival = what the run PLAYS the level with: its first Rookie action
+        // on the first attempt, i.e. after that level's own offer was taken.
+        let snapped = !(lv === arrivalLevel && attempt === 0);
         const { result, final } = playGame(start, bot, seed, 'random', (id) => {
           pickCounts[id] = (pickCounts[id] ?? 0) + 1;
+        }, (before) => {
+          if (snapped) return;
+          snapped = true;
+          const key = heldLoadoutKey(before.abilities);
+          arrivals[key] = (arrivals[key] ?? 0) + 1;
         });
         abilities = final.abilities;
         tempo = final.tempo;
@@ -466,6 +505,8 @@ export function simulateRuns(cfg: RevengeCfg, n: number, tier: string, opts: Run
     retriesPerLevel: retries,
     retriesUsed,
     deathsAt,
+    arrivals,
+    arrivalLevel,
   };
 }
 
@@ -676,12 +717,17 @@ export interface MatrixOpts {
   tier: string;
   realistic: boolean;
   jobs?: number;
+  /** Record winning-line signatures per cell (check 7, REPEAT). */
+  signatures?: boolean;
+  /** Explicit (level, loadout) cells instead of levels × loadouts (human-check: each level at the loadout a human held). */
+  pairs?: Array<[number, string]>;
 }
 
 export async function matrixParallel(cfg: RevengeCfg, opts: MatrixOpts): Promise<Cell[]> {
   if (cfg.puzzles) throw new Error('matrixParallel cannot ship puzzle overrides to workers — run in-process');
   const jobs: string[] = [];
-  for (const lv of opts.levels) for (const lo of opts.loadouts) jobs.push(`${lv}:${lo}`);
+  if (opts.pairs) for (const [lv, lo] of opts.pairs) jobs.push(`${lv}:${lo}`);
+  else for (const lv of opts.levels) for (const lo of opts.loadouts) jobs.push(`${lv}:${lo}`);
   const shards = shard(jobs, defaultJobs(opts.jobs));
   const all = await Promise.all(
     shards.map((s) =>
@@ -693,6 +739,10 @@ export async function matrixParallel(cfg: RevengeCfg, opts: MatrixOpts): Promise
         `--tier=${opts.tier}`,
         `--run=${cfg.runId}`,
         ...(opts.realistic ? ['--realistic'] : []),
+        ...(opts.signatures ? ['--signatures'] : []),
+        // Before 2026-09-15 this flag never reached the workers, so
+        // `ladder-audit --sick` graded the matrix WITHOUT summoning sickness.
+        ...(cfg.summonSickness ? ['--sick'] : []),
         ...(cfg.difficulty ? [`--difficulty=${cfg.difficulty}`] : []),
         ...(cfg.iso ? [`--iso=${cfg.iso}`] : []),
       ]),
@@ -724,6 +774,7 @@ export async function solveParallel(cfg: RevengeCfg, opts: SolveOpts): Promise<S
         `--pairs=${s.join(',')}`,
         `--depth=${opts.depth}`,
         `--nodes=${opts.nodes}`,
+        ...(cfg.summonSickness ? ['--sick'] : []),
         ...(cfg.difficulty ? [`--difficulty=${cfg.difficulty}`] : []),
         ...(cfg.iso ? [`--iso=${cfg.iso}`] : []),
       ]),

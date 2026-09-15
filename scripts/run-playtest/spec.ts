@@ -48,6 +48,24 @@ export const SCALE_LATE_GAP = 2;
 export const SHAPE_MIN_SPAN = 15;
 
 /**
+ * 7. REPEAT — no two of L7-L10 share a winning-line signature
+ * (line-signature.ts). A level's signature is its most common winning line,
+ * counted only when it covers ≥ REPEAT_MIN_SHARE of that level's wins and at
+ * least REPEAT_MIN_WINS wins (below that it is noise, not a pattern).
+ */
+export const REPEAT_MIN_SHARE = 0.4;
+export const REPEAT_MIN_WINS = 2;
+
+/**
+ * BOT-BLIND — a human cleared the level on the first attempt (or the solver
+ * proved a forced win) while the bot's 95% UPPER bound at that loadout is
+ * below this. The bot cannot see the line, so its TOO HARD is not evidence.
+ * 16 zero-win trials put the Wilson upper bound at 19.4%, so a human-check
+ * cell needs ≥ 16 trials to be able to say it.
+ */
+export const BOT_BLIND_MAX = 20;
+
+/**
  * The combo-gate acceptance window used by combo-discover.ts for a level that
  * is not yet on a rung (so has no rung slope): the flat band Tyler named
  * (2026-09-07), which the rung slope (check 3) refines once the level is placed.
@@ -153,6 +171,14 @@ export const BUDGET = {
   nightly: { trials: 48, runs: 40 },
   /** Quick smoke. */
   quick: { trials: 4, runs: 4 },
+  /**
+   * Solver ceiling (ladder-audit --ceiling): run ONLY on finale levels where
+   * the bot's arrival-kit upper bound is under BOT_BLIND_MAX, so the nightly
+   * pays for it only where it can change a grade. Depth = Rookie moves.
+   */
+  ceiling: { depth: 7, nodes: 150_000 },
+  /** human-check: trials per (level, human loadout) cell. ≥ 16 so a zero-win cell can read BOT-BLIND. */
+  humanTrials: 16,
 } as const;
 
 /** Bot cast rate under this → the cell is a floor, not a verdict; exclude it from claims. */
@@ -160,7 +186,17 @@ export const NEVER_CAST_RATE = 0.1;
 
 // ── Rung grade ──────────────────────────────────────────────────────────────
 
-export type RungGrade = 'PASS' | 'BROKEN' | 'TOO EASY' | 'TOO HARD' | 'FLAT' | 'INCONCLUSIVE';
+export type RungGrade = 'PASS' | 'BROKEN' | 'TOO EASY' | 'TOO HARD' | 'BOT-BLIND' | 'FLAT' | 'INCONCLUSIVE';
+
+/** Evidence that the bot is blind to a line a human (or the solver) found. */
+export interface BotBlindFlag {
+  level: number;
+  source: 'human' | 'solver';
+  /** The loadout the bot was measured at ("boulder:3+knight-hop:2"). */
+  loadout: string;
+  bot: Estimate;
+  detail: string;
+}
 
 export interface RungChecks {
   gate: Graded;
@@ -169,16 +205,31 @@ export interface RungChecks {
   run: Graded;
   scale: boolean;
   shape: boolean;
+  /** 7. REPEAT — true = L7-L10 winning lines are all different (or too few wins to tell). Absent on audits filed before 2026-09-15. */
+  repeat?: boolean;
+  /** BOT-BLIND evidence (human-check.ts / the solver ceiling). Non-empty overrides TOO HARD. */
+  botBlind?: BotBlindFlag[];
 }
 
 /** docs/LADDER-SPEC.md "Grades", with INCONCLUSIVE when the error bars don't settle it. */
 export function rungGrade(c: RungChecks): RungGrade {
   if (c.gate.verdict === 'FAIL') return 'BROKEN';
   const offBand = [c.band, c.run].filter((g) => g.verdict === 'FAIL');
-  if (offBand.length) return offBand.some((g) => g.direction === 'hard') ? 'TOO HARD' : 'TOO EASY';
+  if (offBand.length) {
+    const hard = offBand.some((g) => g.direction === 'hard');
+    // A TOO HARD the bot cannot see through is not a verdict (2026-09-15:
+    // Tyler cleared The Slash and The Alcove the bot graded TOO HARD).
+    if (hard && c.botBlind?.length) return 'BOT-BLIND';
+    return hard ? 'TOO HARD' : 'TOO EASY';
+  }
   if (c.gate.verdict === 'INCONCLUSIVE' || c.band.verdict === 'INCONCLUSIVE' || c.run.verdict === 'INCONCLUSIVE') return 'INCONCLUSIVE';
-  if (!c.scale || !c.shape) return 'FLAT';
+  if (!c.scale || !c.shape || c.repeat === false) return 'FLAT';
   return 'PASS';
+}
+
+/** How a grade reads in a table — BOT-BLIND always says what to do about it. */
+export function fmtGrade(g: RungGrade): string {
+  return g === 'BOT-BLIND' ? 'BOT-BLIND (needs human read)' : g;
 }
 
 export function fmtEstimate(e: Estimate): string {

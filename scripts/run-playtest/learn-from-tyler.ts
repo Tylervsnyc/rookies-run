@@ -45,6 +45,7 @@ import {
 } from '../../lib/run/abilities';
 import { applyRookieMove } from '../../lib/run/engine';
 import { getRunById } from '../../lib/run/runs';
+import { isDifficultyId, type DifficultyId } from '../../lib/run/difficulty';
 import { puzzleForDate, puzzleToBoardState } from '../../lib/run/seed';
 import { fromSquare, toSquare, type BoardState, type Coord } from '../../lib/run/types';
 import { applyBotAction } from './bots/apply';
@@ -58,18 +59,22 @@ import { hashString, rngFromString } from './utils/rng';
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 
-interface TraceMeta {
+export interface TraceMeta {
   runId: string;
   iso: string;
   level: number;
   totalLevels: number;
   outcome: 'won' | 'lost' | string;
   startedAt?: string;
+  /** The LAST attempt's seed only (run-end POST); per-attempt seeds come from `level-start` events. */
+  aiRngSeed?: number;
+  difficulty?: string;
+  device?: string;
 }
 
-type TraceEvent = Record<string, unknown> & { kind: string; level: number; t: number };
+export type TraceEvent = Record<string, unknown> & { kind: string; level: number; t: number };
 
-interface Trace {
+export interface Trace {
   id: string;
   meta: TraceMeta;
   events: TraceEvent[];
@@ -181,12 +186,12 @@ async function fetchTraces(days: number, caveats: string[]): Promise<{ traces: T
 // ─────────────────────────────────────────────────────────────────────────────
 // Replay — rebuild board states by pushing Tyler's events through the engine.
 
-interface LevelSegment {
+export interface LevelSegment {
   level: number;
   events: TraceEvent[];
 }
 
-function segment(events: TraceEvent[]): LevelSegment[] {
+export function segment(events: TraceEvent[]): LevelSegment[] {
   const segs: LevelSegment[] = [];
   for (const ev of events) {
     const lv = Number(ev.level ?? 0);
@@ -212,7 +217,7 @@ interface Carry {
   pendingOffer: BoardState['pendingOffer'];
 }
 
-function buildLevelState(runId: string, iso: string, level: number, carry: Carry, seed: number, hint: Coord | null): BoardState {
+function buildLevelState(runId: string, iso: string, level: number, carry: Carry, seed: number, hint: Coord | null, difficulty: DifficultyId = 'normal'): BoardState {
   const puzzle = puzzleForDate(iso, level - 1, runId);
   let st = puzzleToBoardState(puzzle, {
     abilities: carry.abilities,
@@ -220,10 +225,10 @@ function buildLevelState(runId: string, iso: string, level: number, carry: Carry
     pendingOffer: carry.pendingOffer,
     runId,
     aiRngSeed: seed,
-    // Difficulty is NOT recorded in the trace. Normal is what Tyler plays;
-    // a wrong guess fails the anchors and the level reports as
-    // unreconstructable rather than silently lying.
-    difficulty: 'normal',
+    // Difficulty comes from meta.difficulty / the level-start event when the
+    // trace has it; older traces default to Normal, and a wrong guess fails
+    // the anchors (the level reports as unreconstructable, never a lie).
+    difficulty,
   });
   if (hint && hint.rank === st.rookie.rank) {
     const occupied = st.pieces.some((p) => p.file === hint.file && p.rank === hint.rank)
@@ -268,7 +273,7 @@ interface ReplayResult {
  *    no marker in the stream. When sync breaks and the breaking event looks
  *    like a fresh level start, we rebuild and continue (max 3 restarts).
  */
-function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry, seed: number): ReplayResult {
+function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry, seed: number, difficulty: DifficultyId = 'normal'): ReplayResult {
   const evs = seg.events;
   const decisions: ReplayResult['decisions'] = [];
   let tylerActions = 0;
@@ -287,7 +292,7 @@ function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry
     return null;
   };
 
-  let st = buildLevelState(runId, iso, seg.level, carry, seed, hintFrom(0));
+  let st = buildLevelState(runId, iso, seg.level, carry, seed, hintFrom(0), difficulty);
   let inSync = true;
 
   const isTylerAction = (k: string) => k === 'rookie-move' || k === 'squire-move' || k === 'ability-activate';
@@ -299,7 +304,7 @@ function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry
     // the start rank of a fresh build), rebuild and keep replaying.
     if (restartsLeft > 0) {
       const h = hintFrom(atIdx);
-      const fresh = buildLevelState(runId, iso, seg.level, carry, seed, h);
+      const fresh = buildLevelState(runId, iso, seg.level, carry, seed, h, difficulty);
       if (h && h.rank === fresh.rookie.rank && h.file === fresh.rookie.file) {
         restartsLeft--;
         st = fresh;
@@ -326,7 +331,7 @@ function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry
       }
       continue;
     }
-    if (kind === 'enemy-tick' || kind === 'ally-tick' || kind === 'drone-tick') continue; // informational
+    if (kind === 'enemy-tick' || kind === 'ally-tick' || kind === 'drone-tick' || kind === 'retry' || kind === 'level-start') continue; // informational
 
     if (kind === 'offer-pick' || kind === 'offer-skip') {
       // Applied even while desynced: the ability ledger must stay truthful
@@ -502,7 +507,18 @@ const CANDIDATE_SEEDS = (traceId: string, level: number): number[] => [
   hashString(`${traceId}:${level}:b`) >>> 0 || 5,
 ];
 
-interface TraceReplay {
+export interface LevelReplay {
+  level: number;
+  verified: number;
+  tylerActions: number;
+  clean: boolean;
+  /** Replayed from recorded `level-start` seeds (exact) instead of candidate-seed guessing. */
+  exact: boolean;
+  /** The engine itself saw the king fall in reconstruction. */
+  engineWon: boolean;
+}
+
+export interface TraceReplay {
   trace: Trace;
   decisions: DecisionPoint[];
   tylerActions: number;
@@ -510,28 +526,71 @@ interface TraceReplay {
   levelNotes: string[]; // desync notes, per level
   levelsCleanlyReplayed: number;
   levelsTotal: number;
+  levels: LevelReplay[];
 }
 
-function replayTrace(trace: Trace): TraceReplay {
+/**
+ * Split a level's events into attempts at each `level-start` event (the app
+ * records one per attempt since 2026-09-15, carrying that attempt's aiRngSeed).
+ * Events before the first level-start (none, normally) ride with the first.
+ */
+function attemptsOf(seg: LevelSegment): Array<{ seed: number | null; difficulty: string | null; seg: LevelSegment }> {
+  const out: Array<{ seed: number | null; difficulty: string | null; seg: LevelSegment }> = [];
+  const before: TraceEvent[] = [];
+  for (const ev of seg.events) {
+    if (ev.kind === 'level-start') {
+      out.push({
+        seed: typeof ev.aiRngSeed === 'number' ? (ev.aiRngSeed as number) : null,
+        difficulty: typeof ev.difficulty === 'string' ? (ev.difficulty as string) : null,
+        seg: { level: seg.level, events: out.length ? [] : before },
+      });
+    } else if (out.length) out[out.length - 1].seg.events.push(ev);
+    else before.push(ev);
+  }
+  return out.length ? out : [{ seed: null, difficulty: null, seg }];
+}
+
+export function replayTrace(trace: Trace): TraceReplay {
   const segs = segment(trace.events);
   const decisions: DecisionPoint[] = [];
   const levelNotes: string[] = [];
+  const levels: LevelReplay[] = [];
   let tylerActions = 0;
   let verified = 0;
   let clean = 0;
   let carry: Carry = { abilities: [], tempo: 0, pendingOffer: null };
+  const metaDifficulty = (isDifficultyId(String(trace.meta.difficulty)) ? trace.meta.difficulty : 'normal') as DifficultyId;
 
   for (let si = 0; si < segs.length; si++) {
     const seg = segs[si];
     let best: ReplayResult | null = null;
-    for (const seed of CANDIDATE_SEEDS(trace.id, seg.level)) {
-      const r = replayLevel(trace.meta.runId, trace.meta.iso, seg, carry, seed);
-      if (!best || r.verified > best.verified) best = r;
-      if (r.desyncAt === null) { best = r; break; } // fully clean — stop searching
+    const attempts = attemptsOf(seg);
+    const exact = attempts.every((a) => a.seed !== null);
+    if (exact) {
+      // EXACT replay: one attempt at a time, each from its recorded seed, the
+      // loadout carried across the retry like the app does.
+      let merged: ReplayResult | null = null;
+      let c = carry;
+      for (const a of attempts) {
+        const diff = (a.difficulty && isDifficultyId(a.difficulty) ? a.difficulty : metaDifficulty) as DifficultyId;
+        const r = replayLevel(trace.meta.runId, trace.meta.iso, a.seg, c, a.seed!, diff);
+        c = { abilities: r.endState.abilities, tempo: r.endState.tempo, pendingOffer: r.endState.pendingOffer };
+        merged = merged
+          ? { ...r, decisions: [...merged.decisions, ...r.decisions], tylerActions: merged.tylerActions + r.tylerActions, verified: merged.verified + r.verified, desyncAt: merged.desyncAt ?? r.desyncAt }
+          : r;
+      }
+      best = merged;
+    } else {
+      for (const seed of CANDIDATE_SEEDS(trace.id, seg.level)) {
+        const r = replayLevel(trace.meta.runId, trace.meta.iso, seg, carry, seed, metaDifficulty);
+        if (!best || r.verified > best.verified) best = r;
+        if (r.desyncAt === null) { best = r; break; } // fully clean — stop searching
+      }
     }
     if (!best) continue;
     tylerActions += best.tylerActions;
     verified += best.verified;
+    levels.push({ level: seg.level, verified: best.verified, tylerActions: best.tylerActions, clean: best.desyncAt === null, exact, engineWon: best.cleared });
     if (best.desyncAt === null) clean++;
     else levelNotes.push(`L${seg.level}: sync lost after ${best.verified}/${best.tylerActions} actions — ${best.desyncAt}`);
 
@@ -550,7 +609,7 @@ function replayTrace(trace: Trace): TraceReplay {
     carry = { abilities: best.endState.abilities, tempo: best.endState.tempo, pendingOffer: best.endState.pendingOffer };
   }
 
-  return { trace, decisions, tylerActions, verified, levelNotes, levelsCleanlyReplayed: clean, levelsTotal: segs.length };
+  return { trace, decisions, tylerActions, verified, levelNotes, levelsCleanlyReplayed: clean, levelsTotal: segs.length, levels };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

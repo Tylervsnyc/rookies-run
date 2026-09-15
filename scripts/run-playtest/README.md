@@ -31,6 +31,8 @@ npm run playtest:ladder -- --quick      # 4 trials — smoke only
 npm run playtest:ladder -- --rung=3 --trials=48 --runs=40
 npm run playtest:ladder -- --sick       # summoning sickness ON (the ladder as it will be)
 npm run playtest:ladder -- --check-stale
+npm run playtest:ladder -- --rung=7 --ceiling  # + solver on finale levels the bot reads < 20% (BOT-BLIND evidence)
+npx tsx scripts/run-playtest/human-check.ts --date=2026-09-15 --handle=Rook-4545 [--solve]  # humans vs bot at the loadout they held (read-only)
 npm run playtest:report                 # print the latest filed audit with engine + freshness
 npm run playtest                        # revenge-nightly.ts: the full nightly (ladder audit first, then per-run context)
 npm run playtest -- --quick
@@ -43,8 +45,9 @@ npm run playtest:parity                 # bot games replayed in the real app, mu
 npx tsx scripts/run-playtest/combo-discover.ts --from-terrain --slots=7-10 --variants=20   # discovery (nightly job)
 ```
 
-Method for every number of record: **Normal, T5 bot, T1 cards** (`realistic: false`).
-Passing the difficulty is load-bearing.
+Method for every number of record: **Normal, T5 bot**. GATE/USED at **T1 cards**; BAND,
+SHAPE and REPEAT at **arrival tiers** (what the full-run sim holds on reaching L7 — see
+`docs/LADDER-SPEC.md`, 2026-09-15). Passing the difficulty is load-bearing.
 
 ## Automation
 
@@ -63,7 +66,9 @@ There are **no local crons**. `scripts/run-revenge-nightly.sh` is a manual wrapp
 |---|---|
 | `spec.ts` | the contract + Wilson intervals + budgets |
 | `fingerprint.ts`, `results.ts` | engine stamp; envelope + INDEX.md |
-| `ladder-audit.ts`, `ladder-report.ts` | grade the ten rungs; print the latest filed grade |
+| `ladder-audit.ts`, `ladder-report.ts` | grade the ten rungs (T1 + arrival columns, solver ceiling); print the latest filed grade |
+| `line-signature.ts` | winning-line signatures for check 7 (REPEAT), bot games and human traces |
+| `human-check.ts` | human traces vs the bot at the human's loadout → BOT-BLIND + human REPEAT; nightly merge folds it into the ladder |
 | `engine-regression.ts` | before/after vs the last filed audit |
 | `revenge-core.ts` | the engine driver: `matrixParallel`, `simulateRuns`, `solveLevel`, bots T4/T5 (`bots/`) |
 | `revenge.ts` | CLI + worker (`matrix / runs / solve / trace / lint`) |
@@ -91,5 +96,7 @@ data/run-playtest/
 - Cast rate < 10% on a card (currently `sacrifice`, `swap` as singles) means the bot cannot
   use it; those cells are floors, not verdicts, and are excluded from claims.
 - The bot finds one-turn reactions to a present threat; it cannot find pre-emptive plays
-  or delayed fuses. Design a pair's payoff accordingly.
+  or delayed fuses. Design a pair's payoff accordingly. Where a human clears what the bot
+  reads < 20%, the rung grades **BOT-BLIND (needs human read)**, not TOO HARD
+  (`human-check.ts`, 2026-09-15).
 - `T6` (MCTS-320) is the bot behind the `T5` label in `revenge-core.ts`.

@@ -11,7 +11,7 @@
  */
 
 import type { DifficultyId } from '../../lib/run/difficulty';
-import { BAND_TOL, RUN_TOL, fmtEstimate } from './spec';
+import { BAND_TOL, RUN_TOL, fmtEstimate, fmtGrade } from './spec';
 import type { LadderSection } from './revenge-nightly';
 import { DIFFICULTIES } from '../../lib/run/difficulty';
 import { FINISHERS, winPct, type Cell, type RunsReport, type SolveResult } from './revenge-core';
@@ -214,16 +214,27 @@ function renderLadderSection(input: DigestInput): string[] {
     return L;
   }
   const lad = input.ladder;
-  L.push(`Measured on Normal, T5, T1 cards at ${lad.budget.trials} trials/cell and ${lad.budget.runs} full runs; 95% intervals in brackets. **PASS** = the whole interval is inside the window, **FAIL** = wholly outside, **?N** = INCONCLUSIVE at this budget (N trials/cell would settle it). Result file: \`${lad.file}\`.`);
+  L.push(`Measured on Normal, T5 at ${lad.budget.trials} trials/cell and ${lad.budget.runs} full runs; 95% intervals in brackets. GATE/USED use T1 cards; **BAND, SHAPE and REPEAT use ARRIVAL tiers** (what the full-run sim holds on reaching L7). **PASS** = the whole interval is inside the window, **FAIL** = wholly outside, **?N** = INCONCLUSIVE at this budget (N trials/cell would settle it). **BOT-BLIND** = a human (or the solver) cleared a finale level the bot reads under 20%: the TOO HARD is the bot's blind spot and needs a human read. Result file: \`${lad.file}\`.`);
   L.push('');
   L.push(`**${lad.summary}**`);
   L.push('');
-  L.push('| rung | run | grade | gate | used | pair L7-L10 | pair mean (want) | full run (want) | pieces (≥) | shape |');
-  L.push('|---|---|---|---|---|---|---|---|---|---|');
+  L.push('| rung | run | grade | gate | used | pair T1 L7-L10 | pair ARRIVAL L7-L10 = mean (want) | kit arrival | full run (want) | pieces (≥) | shape | repeat |');
+  L.push('|---|---|---|---|---|---|---|---|---|---|---|---|');
   const g = (gr: { verdict: string; trialsNeeded?: number }) => (gr.verdict === 'PASS' ? 'ok' : gr.verdict === 'FAIL' ? '**FAIL**' : `?${gr.trialsNeeded ?? ''}`);
+  const lv = (es: Array<{ pct: number }> | undefined) => (es ?? []).map((p) => Math.round(p.pct)).join('/');
   for (const r of lad.rows) {
-    L.push(`| ${r.rung} | ${r.runId} ${r.name} (${r.pair.join('+')}) | **${r.grade}** | ${g(r.checks.gate)} | ${r.checks.used ? 'ok' : 'FAIL'} | ${r.pairByLevel.map((p) => Math.round(p.pct)).join('/')} | ${fmtEstimate(r.pairMean)} (${r.targets.band}±${BAND_TOL}) ${g(r.checks.band)} | ${fmtEstimate(r.run)} (${r.targets.run.toFixed(0)}±${RUN_TOL}) ${g(r.checks.run)} | ${r.avgPieces.toFixed(1)} (${r.targets.scale.toFixed(1)}) ${r.checks.scale ? 'ok' : 'FAIL'} | ${r.checks.shape ? 'ok' : 'FAIL'} |`);
+    const arr = r.pairArrivalMean ? `${lv(r.pairArrivalByLevel)} = ${fmtEstimate(r.pairArrivalMean)} (${r.targets.band}±${BAND_TOL}) ${g(r.checks.band)} \`${r.arrival?.pairLoadout}\`` : `- (pre-arrival audit: T1 ${fmtEstimate(r.pairMean)})`;
+    const kit = r.kitArrivalMean ? `${fmtEstimate(r.kitArrivalMean)} \`${r.arrival?.kitLoadout}\`` : '-';
+    const rep = r.checks.repeat === undefined ? '-' : r.checks.repeat ? 'ok' : '**FAIL**';
+    L.push(`| ${r.rung} | ${r.runId} ${r.name} (${r.pair.join('+')}) | **${fmtGrade(r.grade)}** | ${g(r.checks.gate)} | ${r.checks.used ? 'ok' : 'FAIL'} | ${lv(r.pairByLevel)} | ${arr} | ${kit} | ${fmtEstimate(r.run)} (${r.targets.run.toFixed(0)}±${RUN_TOL}) ${g(r.checks.run)} | ${r.avgPieces.toFixed(1)} (${r.targets.scale.toFixed(1)}) ${r.checks.scale ? 'ok' : 'FAIL'} | ${r.checks.shape ? 'ok' : 'FAIL'} | ${rep} |`);
   }
+  const notes: string[] = [];
+  for (const r of lad.rows) {
+    for (const [a, b, sig] of r.lines?.repeats ?? []) notes.push(`- rung ${r.rung} ${r.name}: REPEAT (bot lines) L${a} = L${b} — \`${sig}\``);
+    for (const [a, b, sig] of r.humanRepeats ?? []) notes.push(`- rung ${r.rung} ${r.name}: REPEAT (human line) L${a} = L${b} — \`${sig}\``);
+    for (const f of r.checks.botBlind ?? []) notes.push(`- rung ${r.rung} ${r.name}: BOT-BLIND L${f.level} (${f.source}) — ${f.detail}`);
+  }
+  if (notes.length) L.push('', ...notes);
   return L;
 }
 
@@ -698,7 +709,8 @@ export function renderSlack(input: DigestInput): string {
     L.push(`LADDER (spec.ts, ${input.ladder.budget.trials} trials/cell, ${input.ladder.budget.runs} runs): ${input.ladder.summary}`);
     for (const r of input.ladder.rows) {
       if (r.grade === 'PASS') continue;
-      L.push(`  rung ${r.rung} ${r.runId} ${r.grade} — pair ${fmtEstimate(r.pairMean)} want ${r.targets.band}±${BAND_TOL} · run ${fmtEstimate(r.run)} want ${r.targets.run.toFixed(0)}±${RUN_TOL}${r.checks.gate.verdict !== 'PASS' ? ` · gate ${r.checks.gate.verdict}` : ''}`);
+      const blind = [...new Set((r.checks.botBlind ?? []).map((f) => `L${f.level}`))];
+      L.push(`  rung ${r.rung} ${r.runId} ${fmtGrade(r.grade)} — pair arrival ${r.pairArrivalMean ? fmtEstimate(r.pairArrivalMean) : '-'} (T1 ${fmtEstimate(r.pairMean)}) want ${r.targets.band}±${BAND_TOL} · run ${fmtEstimate(r.run)} want ${r.targets.run.toFixed(0)}±${RUN_TOL}${r.checks.gate.verdict !== 'PASS' ? ` · gate ${r.checks.gate.verdict}` : ''}${r.checks.repeat === false ? ' · REPEAT' : ''}${blind.length ? ` · bot-blind ${blind.join('/')}` : ''}`);
     }
   } else {
     L.push('LADDER: audit did not run tonight — no graded verdict.');

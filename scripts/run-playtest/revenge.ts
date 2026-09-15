@@ -76,6 +76,7 @@ const CFG: RevengeCfg = {
   runId: RUN_ID,
   ...(DIFFICULTY ? { difficulty: DIFFICULTY } : {}),
   ...(arg('iso') ? { iso: arg('iso') } : {}),
+  ...(arg('sick') === 'true' ? { summonSickness: true } : {}),
   // --pool=surge,freeze-ray,drones — restrict offers to the player's unlocked
   // set (the starter kit). Applies to `runs` (offers taken) and `matrix`.
   ...(arg('pool') ? { pool: arg('pool')!.split(',').map((x) => x.trim()).filter(Boolean) as AbilityId[] } : {}),
@@ -167,7 +168,7 @@ function matrixWorkerPairs(): boolean {
     const lv = p.slice(0, i);
     const lo = p.slice(i + 1);
     validateLoadouts([lo]);
-    cells.push(runMatrixCell(CFG, Number(lv), lo, trials, tier, realistic));
+    cells.push(runMatrixCell(CFG, Number(lv), lo, trials, tier, realistic, 'revenge', arg('signatures') === 'true'));
   }
   process.stdout.write(JSON.stringify(cells));
   return true;
