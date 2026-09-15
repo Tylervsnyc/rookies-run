@@ -2,22 +2,22 @@
  "schema": 1,
  "experiment": "ladder-audit",
  "date": "2026-09-15",
- "at": "2026-09-15T12:12:46.115Z",
+ "at": "2026-09-15T17:46:21.079Z",
  "engine": {
-  "sha": "d72be3c",
+  "sha": "cc977eb",
   "dirty": false,
-  "libHash": "ba67d7d45074"
+  "libHash": "464b156fe4d3"
  },
  "budget": {
-  "trials": 48,
-  "runs": 40,
-  "jobs": 4,
-  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>; 10 cloud shards"
+  "trials": 32,
+  "runs": 24,
+  "jobs": 3,
+  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>"
  },
- "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 3 · TOO HARD 5 · FLAT 0 · INCONCLUSIVE 2 (of 10)",
+ "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 3 · TOO HARD 4 · BOT-BLIND 0 · FLAT 0 · INCONCLUSIVE 3 (of 10)",
  "body": {
   "sick": false,
-  "method": "Normal, T5, T1 cards (GitHub Actions, one job per rung)",
+  "method": "Normal, T5; GATE/USED at T1 cards, BAND/SHAPE/REPEAT at arrival tiers (pair + kit)",
   "rows": [
    {
     "rung": 1,
@@ -36,8 +36,9 @@
     "grade": "TOO HARD",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": false,
      "band": {
@@ -46,40 +47,42 @@
      },
      "run": {
       "verdict": "INCONCLUSIVE",
-      "direction": "hard",
-      "trialsNeeded": 96
+      "direction": "ok",
+      "trialsNeeded": 86
      },
      "scale": false,
-     "shape": true
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 22,
-      "n": 48,
-      "pct": 45.8,
-      "lo": 32.6,
-      "hi": 59.7
+      "wins": 11,
+      "n": 32,
+      "pct": 34.4,
+      "lo": 20.4,
+      "hi": 51.7
      },
      {
-      "wins": 29,
-      "n": 48,
-      "pct": 60.4,
-      "lo": 46.3,
-      "hi": 73
+      "wins": 18,
+      "n": 32,
+      "pct": 56.3,
+      "lo": 39.3,
+      "hi": 71.8
      },
      {
-      "wins": 20,
-      "n": 48,
-      "pct": 41.7,
-      "lo": 28.8,
-      "hi": 55.7
+      "wins": 11,
+      "n": 32,
+      "pct": 34.4,
+      "lo": 20.4,
+      "hi": 51.7
      },
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      }
     ],
     "worstSingleByLevel": [
@@ -87,56 +90,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 71,
-     "n": 192,
-     "pct": 37,
-     "lo": 30.5,
-     "hi": 44
+     "wins": 40,
+     "n": 128,
+     "pct": 31.3,
+     "lo": 23.9,
+     "hi": 39.7
     },
     "run": {
-     "wins": 19,
-     "n": 40,
-     "pct": 47.5,
-     "lo": 32.9,
-     "hi": 62.5
+     "wins": 16,
+     "n": 24,
+     "pct": 66.7,
+     "lo": 46.7,
+     "hi": 82
     },
     "avgPieces": 2.7,
     "early": 2.3333333333333335,
@@ -145,6 +148,120 @@
      "band": 80,
      "run": 65,
      "scale": 3
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 22,
+     "modal": "aegis+boulder+knight-hop:3",
+     "modalShare": 0.14,
+     "tiers": {
+      "boulder": 2,
+      "knight-hop": 1,
+      "aegis": 1,
+      "magnet": 1
+     },
+     "pairHeldPct": 73,
+     "extra": "aegis",
+     "pairLoadout": "boulder:2+knight-hop",
+     "kitLoadout": "boulder:2+knight-hop+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 22,
+      "n": 32,
+      "pct": 68.8,
+      "lo": 51.4,
+      "hi": 82
+     },
+     {
+      "wins": 17,
+      "n": 32,
+      "pct": 53.1,
+      "lo": 36.4,
+      "hi": 69.1
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 60,
+     "n": 128,
+     "pct": 46.9,
+     "lo": 38.4,
+     "hi": 55.5
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 128,
+     "n": 128,
+     "pct": 100,
+     "lo": 97.1,
+     "hi": 100
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": {
+       "signature": "boulder@pen>knight-hop | cap:rook/orth",
+       "wins": 53,
+       "share": 0.42
+      },
+      "8": {
+       "signature": "boulder@pen>knight-hop | cap:rook/orth",
+       "wins": 54,
+       "share": 0.46
+      },
+      "9": null,
+      "10": null
+     },
+     "repeats": [
+      [
+       7,
+       8,
+       "boulder@pen>knight-hop | cap:rook/orth"
+      ]
+     ]
     }
    },
    {
@@ -164,8 +281,9 @@
     "grade": "INCONCLUSIVE",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": true,
      "band": {
@@ -176,39 +294,41 @@
      "run": {
       "verdict": "INCONCLUSIVE",
       "direction": "ok",
-      "trialsNeeded": 96
+      "trialsNeeded": 91
      },
      "scale": false,
-     "shape": false
+     "shape": false,
+     "repeat": false,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 39,
-      "n": 48,
-      "pct": 81.3,
-      "lo": 68.1,
-      "hi": 89.8
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
      },
      {
-      "wins": 33,
-      "n": 48,
-      "pct": 68.8,
-      "lo": 54.7,
-      "hi": 80.1
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
      },
      {
-      "wins": 33,
-      "n": 48,
-      "pct": 68.8,
-      "lo": 54.7,
-      "hi": 80.1
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
      },
      {
-      "wins": 33,
-      "n": 48,
-      "pct": 68.8,
-      "lo": 54.7,
-      "hi": 80.1
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
      }
     ],
     "worstSingleByLevel": [
@@ -216,56 +336,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 138,
-     "n": 192,
+     "wins": 92,
+     "n": 128,
      "pct": 71.9,
-     "lo": 65.1,
-     "hi": 77.8
+     "lo": 63.5,
+     "hi": 78.9
     },
     "run": {
-     "wins": 21,
-     "n": 40,
-     "pct": 52.5,
-     "lo": 37.5,
-     "hi": 67.1
+     "wins": 15,
+     "n": 24,
+     "pct": 62.5,
+     "lo": 42.7,
+     "hi": 78.8
     },
     "avgPieces": 1.9,
     "early": 1.6666666666666667,
@@ -274,6 +394,138 @@
      "band": 77,
      "run": 61.7,
      "scale": 3.6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 17,
+     "modal": "freeze-ray+magnet:2+vanguard:2",
+     "modalShare": 0.12,
+     "tiers": {
+      "freeze-ray": 1,
+      "vanguard": 1,
+      "poison-dart": 1,
+      "magnet": 1
+     },
+     "pairHeldPct": 82,
+     "extra": "poison-dart",
+     "pairLoadout": "freeze-ray+vanguard",
+     "kitLoadout": "freeze-ray+vanguard+poison-dart"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 92,
+     "n": 128,
+     "pct": 71.9,
+     "lo": 63.5,
+     "hi": 78.9
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 22,
+      "n": 32,
+      "pct": 68.8,
+      "lo": 51.4,
+      "hi": 82
+     },
+     {
+      "wins": 18,
+      "n": 32,
+      "pct": 56.3,
+      "lo": 39.3,
+      "hi": 71.8
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 19,
+      "n": 32,
+      "pct": 59.4,
+      "lo": 42.3,
+      "hi": 74.5
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 82,
+     "n": 128,
+     "pct": 64.1,
+     "lo": 55.5,
+     "hi": 71.9
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": {
+       "signature": "vanguard@far>freeze-ray@king | cap:ally/L",
+       "wins": 47,
+       "share": 0.98
+      },
+      "8": {
+       "signature": "vanguard@far>freeze-ray@king | cap:ally/L",
+       "wins": 41,
+       "share": 0.66
+      },
+      "9": {
+       "signature": "vanguard@far>freeze-ray@king | cap:ally/L",
+       "wins": 44,
+       "share": 0.64
+      },
+      "10": {
+       "signature": "vanguard@diag>freeze-ray@king | cap:ally/L",
+       "wins": 42,
+       "share": 0.5
+      }
+     },
+     "repeats": [
+      [
+       7,
+       8,
+       "vanguard@far>freeze-ray@king | cap:ally/L"
+      ],
+      [
+       7,
+       9,
+       "vanguard@far>freeze-ray@king | cap:ally/L"
+      ],
+      [
+       8,
+       9,
+       "vanguard@far>freeze-ray@king | cap:ally/L"
+      ]
+     ]
     }
    },
    {
@@ -293,8 +545,9 @@
     "grade": "TOO HARD",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": false,
      "band": {
@@ -302,40 +555,43 @@
       "direction": "hard"
      },
      "run": {
-      "verdict": "FAIL",
-      "direction": "hard"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 96
      },
      "scale": false,
-     "shape": false
+     "shape": false,
+     "repeat": true,
+     "botBlind": []
     },
     "pairByLevel": [
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      },
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      },
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      },
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      }
     ],
     "worstSingleByLevel": [
@@ -343,56 +599,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
      "wins": 0,
-     "n": 192,
+     "n": 128,
      "pct": 0,
      "lo": 0,
-     "hi": 2
+     "hi": 2.9
     },
     "run": {
-     "wins": 12,
-     "n": 40,
-     "pct": 30,
-     "lo": 18.1,
-     "hi": 45.4
+     "wins": 13,
+     "n": 24,
+     "pct": 54.2,
+     "lo": 35.1,
+     "hi": 72.1
     },
     "avgPieces": 3.7,
     "early": 3.6666666666666665,
@@ -401,6 +657,106 @@
      "band": 74,
      "run": 58.4,
      "scale": 4.2
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 15,
+     "modal": "aegis+decoy:2+magnet:2",
+     "modalShare": 0.13,
+     "tiers": {
+      "magnet": 2,
+      "boulder": 2,
+      "aegis": 1,
+      "decoy": 2
+     },
+     "pairHeldPct": 20,
+     "extra": "aegis",
+     "pairLoadout": "magnet:2+boulder:2",
+     "kitLoadout": "magnet:2+boulder:2+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 0,
+     "n": 128,
+     "pct": 0,
+     "lo": 0,
+     "hi": 2.9
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 26,
+      "n": 32,
+      "pct": 81.3,
+      "lo": 64.7,
+      "hi": 91.1
+     },
+     {
+      "wins": 22,
+      "n": 32,
+      "pct": 68.8,
+      "lo": 51.4,
+      "hi": 82
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 16,
+      "n": 32,
+      "pct": 50,
+      "lo": 33.6,
+      "hi": 66.4
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 94,
+     "n": 128,
+     "pct": 73.4,
+     "lo": 65.2,
+     "hi": 80.3
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": null,
+      "10": null
+     },
+     "repeats": []
     }
    },
    {
@@ -420,8 +776,9 @@
     "grade": "TOO HARD",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": false,
      "band": {
@@ -431,39 +788,41 @@
      "run": {
       "verdict": "INCONCLUSIVE",
       "direction": "hard",
-      "trialsNeeded": 93
+      "trialsNeeded": 80
      },
      "scale": false,
-     "shape": true
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
     },
     "pairByLevel": [
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      },
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      },
      {
-      "wins": 25,
-      "n": 48,
-      "pct": 52.1,
-      "lo": 38.3,
-      "hi": 65.5
+      "wins": 19,
+      "n": 32,
+      "pct": 59.4,
+      "lo": 42.3,
+      "hi": 74.5
      },
      {
       "wins": 0,
-      "n": 48,
+      "n": 32,
       "pct": 0,
       "lo": 0,
-      "hi": 7.4
+      "hi": 10.7
      }
     ],
     "worstSingleByLevel": [
@@ -471,56 +830,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 25,
-     "n": 192,
-     "pct": 13,
-     "lo": 9,
-     "hi": 18.5
+     "wins": 19,
+     "n": 128,
+     "pct": 14.8,
+     "lo": 9.7,
+     "hi": 22
     },
     "run": {
-     "wins": 16,
-     "n": 40,
-     "pct": 40,
-     "lo": 26.3,
-     "hi": 55.4
+     "wins": 7,
+     "n": 24,
+     "pct": 29.2,
+     "lo": 14.9,
+     "hi": 49.2
     },
     "avgPieces": 3.6,
     "early": 3,
@@ -529,6 +888,138 @@
      "band": 71,
      "run": 55.1,
      "scale": 4.8
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 10,
+     "modal": "decoy:3+knight-hop+twin",
+     "modalShare": 0.2,
+     "tiers": {
+      "knight-hop": 1,
+      "twin": 1,
+      "aegis": 2,
+      "decoy": 1
+     },
+     "pairHeldPct": 60,
+     "extra": "decoy",
+     "pairLoadout": "knight-hop+twin",
+     "kitLoadout": "knight-hop+twin+decoy"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     },
+     {
+      "wins": 19,
+      "n": 32,
+      "pct": 59.4,
+      "lo": 42.3,
+      "hi": 74.5
+     },
+     {
+      "wins": 0,
+      "n": 32,
+      "pct": 0,
+      "lo": 0,
+      "hi": 10.7
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 19,
+     "n": 128,
+     "pct": 14.8,
+     "lo": 9.7,
+     "hi": 22
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 16,
+      "n": 32,
+      "pct": 50,
+      "lo": 33.6,
+      "hi": 66.4
+     },
+     {
+      "wins": 14,
+      "n": 32,
+      "pct": 43.8,
+      "lo": 28.2,
+      "hi": 60.7
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 72,
+     "n": 128,
+     "pct": 56.3,
+     "lo": 47.6,
+     "hi": 64.5
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": {
+       "signature": "decoy@line>knight-hop | cap:rook/step",
+       "wins": 21,
+       "share": 0.86
+      },
+      "8": {
+       "signature": "decoy@line>knight-hop | cap:rook/step",
+       "wins": 21,
+       "share": 0.67
+      },
+      "9": {
+       "signature": "knight-hop>twin@line | cap:ally/orth",
+       "wins": 35,
+       "share": 0.69
+      },
+      "10": {
+       "signature": "decoy@line>knight-hop | cap:rook/step",
+       "wins": 14,
+       "share": 0.79
+      }
+     },
+     "repeats": [
+      [
+       7,
+       8,
+       "decoy@line>knight-hop | cap:rook/step"
+      ],
+      [
+       7,
+       10,
+       "decoy@line>knight-hop | cap:rook/step"
+      ],
+      [
+       8,
+       10,
+       "decoy@line>knight-hop | cap:rook/step"
+      ]
+     ]
     }
    },
    {
@@ -548,50 +1039,53 @@
     "grade": "TOO HARD",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": true,
      "band": {
       "verdict": "INCONCLUSIVE",
       "direction": "ok",
-      "trialsNeeded": 134
+      "trialsNeeded": 126
      },
      "run": {
       "verdict": "FAIL",
       "direction": "hard"
      },
      "scale": false,
-     "shape": false
+     "shape": false,
+     "repeat": true,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 29,
-      "n": 48,
-      "pct": 60.4,
-      "lo": 46.3,
-      "hi": 73
+      "wins": 20,
+      "n": 32,
+      "pct": 62.5,
+      "lo": 45.3,
+      "hi": 77.1
      },
      {
-      "wins": 38,
-      "n": 48,
-      "pct": 79.2,
-      "lo": 65.7,
-      "hi": 88.3
+      "wins": 26,
+      "n": 32,
+      "pct": 81.3,
+      "lo": 64.7,
+      "hi": 91.1
      },
      {
-      "wins": 27,
-      "n": 48,
-      "pct": 56.3,
-      "lo": 42.3,
-      "hi": 69.3
+      "wins": 17,
+      "n": 32,
+      "pct": 53.1,
+      "lo": 36.4,
+      "hi": 69.1
      },
      {
-      "wins": 34,
-      "n": 48,
-      "pct": 70.8,
-      "lo": 56.8,
-      "hi": 81.8
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
      }
     ],
     "worstSingleByLevel": [
@@ -599,56 +1093,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 128,
-     "n": 192,
-     "pct": 66.7,
-     "lo": 59.7,
-     "hi": 73
+     "wins": 88,
+     "n": 128,
+     "pct": 68.8,
+     "lo": 60.3,
+     "hi": 76.1
     },
     "run": {
-     "wins": 6,
-     "n": 40,
-     "pct": 15,
-     "lo": 7.1,
-     "hi": 29.1
+     "wins": 5,
+     "n": 24,
+     "pct": 20.8,
+     "lo": 9.2,
+     "hi": 40.5
     },
     "avgPieces": 4.9,
     "early": 4.666666666666667,
@@ -657,6 +1151,114 @@
      "band": 68,
      "run": 51.8,
      "scale": 5.4
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 12,
+     "modal": "bishop-squire:2+knight-hop+swap",
+     "modalShare": 0.08,
+     "tiers": {
+      "swap": 1,
+      "bishop-squire": 2,
+      "knight-hop": 2,
+      "poison-dart": 2
+     },
+     "pairHeldPct": 33,
+     "extra": "knight-hop",
+     "pairLoadout": "bishop-squire:2+swap",
+     "kitLoadout": "bishop-squire:2+swap+knight-hop:2"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 17,
+      "n": 32,
+      "pct": 53.1,
+      "lo": 36.4,
+      "hi": 69.1
+     },
+     {
+      "wins": 24,
+      "n": 32,
+      "pct": 75,
+      "lo": 57.9,
+      "hi": 86.7
+     },
+     {
+      "wins": 24,
+      "n": 32,
+      "pct": 75,
+      "lo": 57.9,
+      "hi": 86.7
+     },
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 90,
+     "n": 128,
+     "pct": 70.3,
+     "lo": 61.9,
+     "hi": 77.5
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 17,
+      "n": 32,
+      "pct": 53.1,
+      "lo": 36.4,
+      "hi": 69.1
+     },
+     {
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
+     },
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 103,
+     "n": 128,
+     "pct": 80.5,
+     "lo": 72.8,
+     "hi": 86.4
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": {
+       "signature": "knight-hop>bishop-squire@pen | cap:ally/step",
+       "wins": 53,
+       "share": 0.55
+      },
+      "9": null,
+      "10": {
+       "signature": "bishop-squire@far>swap@pen | cap:rook/step",
+       "wins": 57,
+       "share": 0.4
+      }
+     },
+     "repeats": []
     }
    },
    {
@@ -676,8 +1278,9 @@
     "grade": "TOO EASY",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": true,
      "band": {
@@ -687,38 +1290,40 @@
      "run": {
       "verdict": "INCONCLUSIVE",
       "direction": "easy",
-      "trialsNeeded": 93
+      "trialsNeeded": 86
      },
      "scale": false,
-     "shape": false
+     "shape": false,
+     "repeat": true,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 48,
-      "n": 48,
+      "wins": 32,
+      "n": 32,
       "pct": 100,
-      "lo": 92.6,
+      "lo": 89.3,
       "hi": 100
      },
      {
-      "wins": 45,
-      "n": 48,
+      "wins": 30,
+      "n": 32,
       "pct": 93.8,
-      "lo": 83.2,
-      "hi": 97.9
+      "lo": 79.9,
+      "hi": 98.3
      },
      {
-      "wins": 45,
-      "n": 48,
-      "pct": 93.8,
-      "lo": 83.2,
-      "hi": 97.9
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
      },
      {
-      "wins": 48,
-      "n": 48,
+      "wins": 32,
+      "n": 32,
       "pct": 100,
-      "lo": 92.6,
+      "lo": 89.3,
       "hi": 100
      }
     ],
@@ -727,56 +1332,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 186,
-     "n": 192,
-     "pct": 96.9,
-     "lo": 93.4,
-     "hi": 98.6
+     "wins": 125,
+     "n": 128,
+     "pct": 97.7,
+     "lo": 93.3,
+     "hi": 99.2
     },
     "run": {
-     "wins": 24,
-     "n": 40,
-     "pct": 60,
-     "lo": 44.6,
-     "hi": 73.7
+     "wins": 16,
+     "n": 24,
+     "pct": 66.7,
+     "lo": 46.7,
+     "hi": 82
     },
     "avgPieces": 4.9,
     "early": 3,
@@ -785,6 +1390,110 @@
      "band": 65,
      "run": 48.5,
      "scale": 6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 20,
+     "modal": "decoy+duchess+magnet:2",
+     "modalShare": 0.15,
+     "tiers": {
+      "duchess": 1,
+      "decoy": 1,
+      "aegis": 1,
+      "magnet": 2
+     },
+     "pairHeldPct": 80,
+     "extra": "aegis",
+     "pairLoadout": "duchess+decoy",
+     "kitLoadout": "duchess+decoy+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 125,
+     "n": 128,
+     "pct": 97.7,
+     "lo": 93.3,
+     "hi": 99.2
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 28,
+      "n": 32,
+      "pct": 87.5,
+      "lo": 71.9,
+      "hi": 95
+     },
+     {
+      "wins": 28,
+      "n": 32,
+      "pct": 87.5,
+      "lo": 71.9,
+      "hi": 95
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 120,
+     "n": 128,
+     "pct": 93.8,
+     "lo": 88.2,
+     "hi": 96.8
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": null,
+      "10": {
+       "signature": "decoy@adj>duchess@far | cap:ally/diag",
+       "wins": 64,
+       "share": 0.73
+      }
+     },
+     "repeats": []
     }
    },
    {
@@ -801,53 +1510,57 @@
      "aegis",
      "magnet"
     ],
-    "grade": "TOO HARD",
+    "grade": "INCONCLUSIVE",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": false,
      "band": {
-      "verdict": "FAIL",
-      "direction": "hard"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 128
      },
      "run": {
       "verdict": "INCONCLUSIVE",
-      "direction": "ok",
-      "trialsNeeded": 94
+      "direction": "hard",
+      "trialsNeeded": 86
      },
      "scale": false,
-     "shape": true
+     "shape": true,
+     "repeat": true,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 10,
-      "n": 48,
-      "pct": 20.8,
-      "lo": 11.7,
-      "hi": 34.3
+      "wins": 9,
+      "n": 32,
+      "pct": 28.1,
+      "lo": 15.6,
+      "hi": 45.4
      },
      {
-      "wins": 38,
-      "n": 48,
-      "pct": 79.2,
-      "lo": 65.7,
-      "hi": 88.3
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
      },
      {
-      "wins": 32,
-      "n": 48,
-      "pct": 66.7,
-      "lo": 52.5,
-      "hi": 78.3
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
      },
      {
-      "wins": 8,
-      "n": 48,
-      "pct": 16.7,
-      "lo": 8.7,
-      "hi": 29.6
+      "wins": 7,
+      "n": 32,
+      "pct": 21.9,
+      "lo": 11,
+      "hi": 38.8
      }
     ],
     "worstSingleByLevel": [
@@ -855,56 +1568,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 88,
-     "n": 192,
-     "pct": 45.8,
-     "lo": 38.9,
-     "hi": 52.9
+     "wins": 62,
+     "n": 128,
+     "pct": 48.4,
+     "lo": 40,
+     "hi": 57
     },
     "run": {
-     "wins": 17,
-     "n": 40,
-     "pct": 42.5,
-     "lo": 28.5,
-     "hi": 57.8
+     "wins": 8,
+     "n": 24,
+     "pct": 33.3,
+     "lo": 18,
+     "hi": 53.3
     },
     "avgPieces": 3.3,
     "early": 2.6666666666666665,
@@ -913,6 +1626,118 @@
      "band": 62,
      "run": 45.2,
      "scale": 6.6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 19,
+     "modal": "aegis:2+become-king+boulder:2",
+     "modalShare": 0.16,
+     "tiers": {
+      "become-king": 1,
+      "boulder": 2,
+      "aegis": 1,
+      "magnet": 3
+     },
+     "pairHeldPct": 53,
+     "extra": "aegis",
+     "pairLoadout": "become-king+boulder:2",
+     "kitLoadout": "become-king+boulder:2+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 20,
+      "n": 32,
+      "pct": 62.5,
+      "lo": 45.3,
+      "hi": 77.1
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 89,
+     "n": 128,
+     "pct": 69.5,
+     "lo": 61.1,
+     "hi": 76.8
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
+     },
+     {
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 108,
+     "n": 128,
+     "pct": 84.4,
+     "lo": 77.1,
+     "hi": 89.7
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "boulder@far>become-king | cap:rook/step",
+       "wins": 46,
+       "share": 0.74
+      },
+      "8": {
+       "signature": "boulder@pen>boulder@far>become-king | cap:rook/orth",
+       "wins": 46,
+       "share": 0.52
+      },
+      "9": {
+       "signature": "boulder@pen>become-king | cap:rook/step",
+       "wins": 56,
+       "share": 0.46
+      },
+      "10": null
+     },
+     "repeats": []
     }
    },
    {
@@ -940,44 +1765,46 @@
      "band": {
       "verdict": "INCONCLUSIVE",
       "direction": "easy",
-      "trialsNeeded": 129
+      "trialsNeeded": 126
      },
      "run": {
       "verdict": "INCONCLUSIVE",
       "direction": "ok",
-      "trialsNeeded": 85
+      "trialsNeeded": 91
      },
      "scale": false,
-     "shape": true
+     "shape": false,
+     "repeat": true,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 37,
-      "n": 48,
-      "pct": 77.1,
-      "lo": 63.5,
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 22,
+      "n": 32,
+      "pct": 68.8,
+      "lo": 51.4,
+      "hi": 82
+     },
+     {
+      "wins": 24,
+      "n": 32,
+      "pct": 75,
+      "lo": 57.9,
       "hi": 86.7
-     },
-     {
-      "wins": 29,
-      "n": 48,
-      "pct": 60.4,
-      "lo": 46.3,
-      "hi": 73
-     },
-     {
-      "wins": 32,
-      "n": 48,
-      "pct": 66.7,
-      "lo": 52.5,
-      "hi": 78.3
-     },
-     {
-      "wins": 34,
-      "n": 48,
-      "pct": 70.8,
-      "lo": 56.8,
-      "hi": 81.8
      }
     ],
     "worstSingleByLevel": [
@@ -985,56 +1812,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "summon-knight",
       "est": {
        "wins": 1,
-       "n": 48,
-       "pct": 2.1,
-       "lo": 0.4,
-       "hi": 10.9
+       "n": 32,
+       "pct": 3.1,
+       "lo": 0.6,
+       "hi": 15.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 132,
-     "n": 192,
-     "pct": 68.8,
+     "wins": 90,
+     "n": 128,
+     "pct": 70.3,
      "lo": 61.9,
-     "hi": 74.9
+     "hi": 77.5
     },
     "run": {
-     "wins": 13,
-     "n": 40,
-     "pct": 32.5,
-     "lo": 20.1,
-     "hi": 48
+     "wins": 9,
+     "n": 24,
+     "pct": 37.5,
+     "lo": 21.2,
+     "hi": 57.3
     },
     "avgPieces": 4.8,
     "early": 4,
@@ -1043,6 +1870,106 @@
      "band": 59,
      "run": 41.900000000000006,
      "scale": 7.2
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 14,
+     "modal": "aegis+convert:2+summon-knight",
+     "modalShare": 0.14,
+     "tiers": {
+      "convert": 1,
+      "summon-knight": 1,
+      "aegis": 1,
+      "magnet": 1
+     },
+     "pairHeldPct": 71,
+     "extra": "aegis",
+     "pairLoadout": "convert+summon-knight",
+     "kitLoadout": "convert+summon-knight+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     },
+     {
+      "wins": 21,
+      "n": 32,
+      "pct": 65.6,
+      "lo": 48.3,
+      "hi": 79.6
+     },
+     {
+      "wins": 22,
+      "n": 32,
+      "pct": 68.8,
+      "lo": 51.4,
+      "hi": 82
+     },
+     {
+      "wins": 24,
+      "n": 32,
+      "pct": 75,
+      "lo": 57.9,
+      "hi": 86.7
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 90,
+     "n": 128,
+     "pct": 70.3,
+     "lo": 61.9,
+     "hi": 77.5
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 119,
+     "n": 128,
+     "pct": 93,
+     "lo": 87.2,
+     "hi": 96.3
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": null,
+      "10": null
+     },
+     "repeats": []
     }
    },
    {
@@ -1062,8 +1989,9 @@
     "grade": "TOO EASY",
     "checks": {
      "gate": {
-      "verdict": "PASS",
-      "direction": "ok"
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
      },
      "used": true,
      "band": {
@@ -1072,40 +2000,42 @@
      },
      "run": {
       "verdict": "INCONCLUSIVE",
-      "direction": "hard",
-      "trialsNeeded": 77
+      "direction": "ok",
+      "trialsNeeded": 80
      },
      "scale": false,
-     "shape": false
+     "shape": false,
+     "repeat": false,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 37,
-      "n": 48,
-      "pct": 77.1,
-      "lo": 63.5,
-      "hi": 86.7
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
      },
      {
-      "wins": 41,
-      "n": 48,
-      "pct": 85.4,
-      "lo": 72.8,
-      "hi": 92.8
-     },
-     {
-      "wins": 39,
-      "n": 48,
+      "wins": 26,
+      "n": 32,
       "pct": 81.3,
-      "lo": 68.1,
-      "hi": 89.8
+      "lo": 64.7,
+      "hi": 91.1
      },
      {
-      "wins": 34,
-      "n": 48,
-      "pct": 70.8,
-      "lo": 56.8,
-      "hi": 81.8
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
      }
     ],
     "worstSingleByLevel": [
@@ -1113,56 +2043,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 151,
-     "n": 192,
-     "pct": 78.6,
-     "lo": 72.3,
-     "hi": 83.9
+     "wins": 101,
+     "n": 128,
+     "pct": 78.9,
+     "lo": 71,
+     "hi": 85.1
     },
     "run": {
-     "wins": 11,
-     "n": 40,
-     "pct": 27.5,
-     "lo": 16.1,
-     "hi": 42.8
+     "wins": 7,
+     "n": 24,
+     "pct": 29.2,
+     "lo": 14.9,
+     "hi": 49.2
     },
     "avgPieces": 3.9,
     "early": 3.3333333333333335,
@@ -1171,6 +2101,120 @@
      "band": 56,
      "run": 38.6,
      "scale": 7.8
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 13,
+     "modal": "aegis:2+dragon+duchess",
+     "modalShare": 0.23,
+     "tiers": {
+      "dragon": 1,
+      "duchess": 1,
+      "magnet": 1,
+      "aegis": 1
+     },
+     "pairHeldPct": 62,
+     "extra": "aegis",
+     "pairLoadout": "dragon+duchess",
+     "kitLoadout": "dragon+duchess+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 25,
+      "n": 32,
+      "pct": 78.1,
+      "lo": 61.2,
+      "hi": 89
+     },
+     {
+      "wins": 26,
+      "n": 32,
+      "pct": 81.3,
+      "lo": 64.7,
+      "hi": 91.1
+     },
+     {
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
+     },
+     {
+      "wins": 23,
+      "n": 32,
+      "pct": 71.9,
+      "lo": 54.6,
+      "hi": 84.4
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 101,
+     "n": 128,
+     "pct": 78.9,
+     "lo": 71,
+     "hi": 85.1
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
+     },
+     {
+      "wins": 20,
+      "n": 32,
+      "pct": 62.5,
+      "lo": 45.3,
+      "hi": 77.1
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 106,
+     "n": 128,
+     "pct": 82.8,
+     "lo": 75.3,
+     "hi": 88.4
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": {
+       "signature": "dragon@far>duchess@far | cap:ally/step",
+       "wins": 54,
+       "share": 0.43
+      },
+      "10": {
+       "signature": "dragon@far>duchess@far | cap:ally/step",
+       "wins": 43,
+       "share": 0.44
+      }
+     },
+     "repeats": [
+      [
+       9,
+       10,
+       "dragon@far>duchess@far | cap:ally/step"
+      ]
+     ]
     }
    },
    {
@@ -1204,36 +2248,38 @@
       "direction": "easy"
      },
      "scale": true,
-     "shape": false
+     "shape": false,
+     "repeat": false,
+     "botBlind": []
     },
     "pairByLevel": [
      {
-      "wins": 42,
-      "n": 48,
-      "pct": 87.5,
-      "lo": 75.3,
-      "hi": 94.1
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
      },
      {
-      "wins": 45,
-      "n": 48,
+      "wins": 30,
+      "n": 32,
       "pct": 93.8,
-      "lo": 83.2,
-      "hi": 97.9
+      "lo": 79.9,
+      "hi": 98.3
      },
      {
-      "wins": 44,
-      "n": 48,
-      "pct": 91.7,
-      "lo": 80.4,
-      "hi": 96.7
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
      },
      {
-      "wins": 44,
-      "n": 48,
-      "pct": 91.7,
-      "lo": 80.4,
-      "hi": 96.7
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
      }
     ],
     "worstSingleByLevel": [
@@ -1241,56 +2287,56 @@
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
       }
      },
      {
-      "loadout": "poison-dart",
+      "loadout": "aegis",
       "est": {
-       "wins": 2,
-       "n": 48,
-       "pct": 4.2,
-       "lo": 1.2,
-       "hi": 14
-      }
-     },
-     {
-      "loadout": "none",
-      "est": {
-       "wins": 0,
-       "n": 48,
-       "pct": 0,
-       "lo": 0,
-       "hi": 7.4
+       "wins": 1,
+       "n": 32,
+       "pct": 3.1,
+       "lo": 0.6,
+       "hi": 15.7
       }
      },
      {
       "loadout": "none",
       "est": {
        "wins": 0,
-       "n": 48,
+       "n": 32,
        "pct": 0,
        "lo": 0,
-       "hi": 7.4
+       "hi": 10.7
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 32,
+       "pct": 0,
+       "lo": 0,
+       "hi": 10.7
       }
      }
     ],
     "pairMean": {
-     "wins": 175,
-     "n": 192,
-     "pct": 91.1,
-     "lo": 86.3,
-     "hi": 94.4
+     "wins": 117,
+     "n": 128,
+     "pct": 91.4,
+     "lo": 85.3,
+     "hi": 95.1
     },
     "run": {
-     "wins": 29,
-     "n": 40,
-     "pct": 72.5,
-     "lo": 57.2,
-     "hi": 83.9
+     "wins": 18,
+     "n": 24,
+     "pct": 75,
+     "lo": 55.1,
+     "hi": 88
     },
     "avgPieces": 17.6,
     "early": 12.333333333333334,
@@ -1299,6 +2345,124 @@
      "band": 53,
      "run": 35.3,
      "scale": 8.399999999999999
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 18,
+     "modal": "aegis+dragon+poison-dart:2",
+     "modalShare": 0.17,
+     "tiers": {
+      "dragon": 1,
+      "sacrifice": 1,
+      "aegis": 1,
+      "poison-dart": 1
+     },
+     "pairHeldPct": 50,
+     "extra": "aegis",
+     "pairLoadout": "dragon+sacrifice",
+     "kitLoadout": "dragon+sacrifice+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 27,
+      "n": 32,
+      "pct": 84.4,
+      "lo": 68.2,
+      "hi": 93.1
+     },
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
+     },
+     {
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 117,
+     "n": 128,
+     "pct": 91.4,
+     "lo": 85.3,
+     "hi": 95.1
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 30,
+      "n": 32,
+      "pct": 93.8,
+      "lo": 79.9,
+      "hi": 98.3
+     },
+     {
+      "wins": 31,
+      "n": 32,
+      "pct": 96.9,
+      "lo": 84.3,
+      "hi": 99.4
+     },
+     {
+      "wins": 29,
+      "n": 32,
+      "pct": 90.6,
+      "lo": 75.8,
+      "hi": 96.8
+     },
+     {
+      "wins": 32,
+      "n": 32,
+      "pct": 100,
+      "lo": 89.3,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 122,
+     "n": 128,
+     "pct": 95.3,
+     "lo": 90.2,
+     "hi": 97.8
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": {
+       "signature": "dragon@far>sacrifice@far | cap:rook/step",
+       "wins": 57,
+       "share": 0.51
+      },
+      "8": {
+       "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+       "wins": 61,
+       "share": 0.44
+      },
+      "9": {
+       "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+       "wins": 60,
+       "share": 0.68
+      },
+      "10": null
+     },
+     "repeats": [
+      [
+       8,
+       9,
+       "dragon@far>sacrifice@far | cap:rook/orth"
+      ]
+     ]
     }
    }
   ]

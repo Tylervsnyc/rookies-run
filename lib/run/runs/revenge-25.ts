@@ -487,7 +487,6 @@ const RUN_REVENGE_25: RunDef = {
   // the level. Nothing else in the kit needs a cap (boulder:4, aegis:4,
   // magnet:4 all still read 0/0/0/0), so this is the smallest cap that makes
   // the gate tier-proof: Become King is offerable, never upgradable, here.
-  abilityTierCaps: { 'become-king': 1 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

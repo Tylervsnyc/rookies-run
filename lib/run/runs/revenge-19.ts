@@ -3,6 +3,52 @@
  * CONVERT + SUMMON-KNIGHT (the Squire); redesigned 2026-09-06 for the
  * controllable Convert.
  *
+ * ===== 2026-09-15 — 3-CARD KIT, AEGIS OUT, TIER CAPS =====
+ * Tyler cleared it on Normal (1 death, L7): "really, really fun", properly
+ * hard. Plan crispy-noodling-graham Phase 3: kits go to 3 cards, Aegis only on
+ * early rungs. Changes, and only these:
+ *   - KIT = convert / summon-knight / magnet. Aegis was L5's key; L5 is
+ *     re-keyed to Convert T1 (below). offerCore = the pair (the old finisher
+ *     list named cards outside the kit, so it never applied).
+ *   - abilityTierCaps { convert: 1, 'summon-knight': 2 }. Measured today
+ *     (Normal, T5, Convert T1 unless named, 12-24 trials):
+ *       Convert T2 (steals knights) pair L7-L10 58/100/58/83; T3 83/100/100/100.
+ *         At T2 the L8 recapturer (c8) and the L10 recapturer (d7) are
+ *         stealable, so L8, L9 and L10 all become "steal the recapturer" —
+ *         one line three times — and Tyler's L8 was his T3 queen+knight steal.
+ *       Squire ALONE: T2 0/0/0/0, T3 0/44/38/31, T4 0/56/13/56 (T3 is the
+ *         second charge: two knights solo the finale). Cap = the highest tier
+ *         where every single card is <= 8%.
+ *     Side effect Tyler asked for: nothing in this run depends on a Convert
+ *     upgrade. Every level is planned with a T1 (pawns-only) Convert.
+ *   - L5 re-keyed, clock 9 -> 10. Same toll board.
+ *   - Engine today: the king ALWAYS takes a Rookie who ends next to him; L7
+ *     re-measured under it (clock 6 tried: pair 58/42 kit 38, under L10 —
+ *     reverted to 7).
+ * Arrival (audit seeds, 40 runs): convert + summon-knight:2 (+ magnet:2), 94%
+ * of arrivals hold the pair; full runs 20/40.
+ * MEASURED 2026-09-15 (T5, Normal, 16 trials, T1 cards; arrival 24 trials):
+ *          none convert squire magnet  pair  kit | arrival pair  arrival kit
+ *   L1-L2  100   100    100    100     100   100 |
+ *   L3       0     0    100      0     100   100 |
+ *   L4       0   100     88      0     100   100 |
+ *   L5       0    25     44      0     100    94 |
+ *   L6       0     0     31      0      88    94 |
+ *   L7       0     0      0      0      69    69 |     79            71
+ *   L8       0     0      0      0      63    63 |     54            67
+ *   L9       0     0      0      0      81    38 |     58            71
+ *   L10      0     0      0      0      69    69 |     42            58
+ * Arrival pair mean 58 (rung 8 window 51-67); span 37, L10 <= L7. REPEAT (bot
+ * lines, arrival pair + kit): L7 `summon-knight@far>convert@adj`, L8-L10 no
+ * line over 40% — passes, but L9's split includes L7's signature (L9 steals
+ * a7, under the king; L7 steals b7, beside him — both "adj").
+ * L5 Convert alone reads 25% because the bot never casts it in a lost game
+ * (the pawn pays off a turn later, when the bishop eats it; fact h); the
+ * solver proves a forced Convert-only win in 7.
+ * Solver, pair at T1, depth 8: forced win in 4 on L7, L8, L9 and L10 (L7
+ * checked under the always-swinging king).
+ * ================================================================
+ *
  * ===== 2026-09-06 REDESIGN FOR CONTROLLABLE CONVERT =====
  * Convert changed twice on 2026-09-06 (commits 3b0961b, 2c4e5a2): a stolen
  * piece is now a CONTROLLED SUMMON — tap it to move it (that is the one
@@ -121,9 +167,9 @@
  *   3. The stolen pawn can never queen: stone, the king, or a guard ahead
  *      of it, and no enemy on a rank-8 diagonal in front of it.
  *
- * KIT = convert / summon-knight / aegis / magnet (`allowedAbilities` IS the
- * kit). No universal solvents. Aegis does not cross stone, a Magnet pull
- * line stops at it; both are traps on L7-L10 and keys on L5 / L6.
+ * KIT = convert / summon-knight / magnet (`allowedAbilities` IS the kit; aegis
+ * dropped 2026-09-15). No universal solvents. A Magnet pull line stops at
+ * stone; it is a trap on L7-L10 and the intended key on L6.
  *
  * KEY / TRAP per level (T5 bot, T1 cards, Normal):
  *   L1  none needed — goat path at e, slide to the top, along rank 8.
@@ -133,8 +179,9 @@
  *   L4  convert KEY (and the Squire, two-key, unchanged from v1): fleeing
  *       king in a diagonal pen (b8/a7); flip the b6 guard so its cover takes
  *       a7 away, then e1-e8.
- *   L5  aegis KEY (intended): plug on e6 the d7 guard takes back, boxed
- *       bishop c8 behind it. Unchanged.
+ *   L5  convert KEY (T1, 2026-09-15): steal the toll-keeper d7; his own
+ *       boxed bishop c8 eats it, the plug e6 is free, e6-e8, take him. The
+ *       Squire also reads it (two-key). Teaches "steal the recapturer" (L9).
  *   L6  magnet KEY (intended): pull the plug out, slide through with a
  *       capture, walk the d-file up. Unchanged.
  *   L7  PAIR: steal b7 (cage a8), Squire d4/e5 -> c6, x b8. 7 moves.
@@ -251,19 +298,6 @@ import {
 import type { Coord } from '../types';
 
 /**
- * The finisher list every Revenge slate guarantees. Duplicated here (not
- * imported from runs.ts) because runs.ts imports this module's registry —
- * a value import would close the cycle.
- */
-const REVENGE_FINISHERS: ReadonlyArray<string> = [
-  'surge',
-  'freeze-ray',
-  'knight-hop',
-  'bishop-step',
-  'queen-pulse',
-];
-
-/**
  * The cliff: one stone on every file where rank = file + k, minus the gap
  * files. k=1 is a2..g8 (plateau top-left), k=2 is a3..f8 (a higher terrace).
  */
@@ -293,12 +327,12 @@ const RUN_REVENGE_19: RunDef = {
   signaturePair: ['convert', 'summon-knight'],
   name: 'The Cliff',
   blurb: 'He built his court on the cliff. Knights climb.',
-  allowedAbilities: ['convert', 'summon-knight', 'aegis', 'magnet'],
+  allowedAbilities: ['convert', 'summon-knight', 'magnet'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
-  offerCore: REVENGE_FINISHERS,
-  offerCoreMin: 2,
+  offerCore: ['convert', 'summon-knight'],
+  offerCoreMin: 1,
   levels: [
     // L1 — THE GOAT PATH. Still king c8 behind his guard (b7/d7); the cliff
     // has a gap on the e-file. Slide e1-e8 in one move (the d7 pawn watches
@@ -353,13 +387,15 @@ const RUN_REVENGE_19: RunDef = {
     // recaptures, its diagonal opens and it defends e6 in turn, so BAITING
     // the recapture with a Squire only feeds two bodies to the toll. Take
     // the plug, eat the reply, e6-e8, take the bishop (stun), take him.
-    // KEY = aegis.
+    // 2026-09-15, Aegis gone: KEY = convert (T1). Steal the toll-keeper d7 —
+    // dazed, it is eaten by the bishop it was boxing in, e6 has no guard,
+    // and Rookie climbs. Solver: forced win in 7 with Convert alone.
     make(
       5,
       [pawn(5, 6), pawn(4, 7), bishop(3, 8), knight(8, 4), king(2, 8)],
       {
         ...FLEE,
-        moveLimit: 9,
+        moveLimit: 10, // 9 -> 10 (2026-09-15): room for the steal-and-wait line
         hazards: [...CLIFF(1, 5), X(5, 5), X(4, 6), X(2, 7)],
         kingPen: ['a8', 'b8'],
       },

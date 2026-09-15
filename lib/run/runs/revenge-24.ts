@@ -439,7 +439,6 @@ const RUN_REVENGE_24: RunDef = {
   // level: she can pick the wrong door, be eaten, chase a fled king, and still
   // arrive. Ceiling T1. (The old T4 note stands too: T4 is a second CHARGE and
   // solos three of the four finales.)
-  abilityTierCaps: { duchess: 1 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

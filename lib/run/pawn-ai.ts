@@ -801,32 +801,6 @@ export function decoyCapturer(state: BoardState): { from: Coord; to: Coord } | n
   };
 }
 
-/**
- * Squares touching the king where Rookie would be taken if she ended her move
- * there — the board's red "danger" tint. Mirrors the engine exactly: empty
- * while he is stunned, frozen, or smoked out, and while she is in king form
- * (she is impervious then). Enemy-occupied squares are left out: landing
- * there is a capture, and every capture stuns him for a turn.
- */
-export function kingDangerSquares(state: BoardState): Coord[] {
-  if (state.winCondition !== 'king' || state.status !== 'playing') return [];
-  if (isSmoked(state) || state.form === 'king') return [];
-  if ((state.kingStunTurns ?? 0) > 0) return [];
-  const king = state.pieces.find((p) => p.type === 'king');
-  if (!king) return [];
-  if (state.frozenSquares.includes(toSquare(king))) return [];
-  const out: Coord[] = [];
-  for (const [df, dr] of QUEEN_DIRS) {
-    const c: Coord = { file: king.file + df, rank: king.rank + dr };
-    if (!inBounds(c)) continue;
-    if (isHazard(state.hazards, c)) continue;
-    if (enemyAt(state.pieces, c)) continue;
-    const hypo: BoardState = { ...state, rookie: c, enemyVacatedSquares: [] };
-    if (pieceLegalMoves(king, hypo).some((m) => m.file === c.file && m.rank === c.rank)) out.push(c);
-  }
-  return out;
-}
-
 /** True when any non-king enemy has a legal move right now (frozen ones included — they thaw). */
 export function anyGuardCanMove(state: BoardState): boolean {
   return state.pieces.some((p) => p.type !== 'king' && pieceLegalMoves(p, state).length > 0);
