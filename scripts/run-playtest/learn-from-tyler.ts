@@ -273,7 +273,7 @@ interface ReplayResult {
  *    no marker in the stream. When sync breaks and the breaking event looks
  *    like a fresh level start, we rebuild and continue (max 3 restarts).
  */
-function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry, seed: number, difficulty: DifficultyId = 'normal'): ReplayResult {
+function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry, seed: number, difficulty: DifficultyId = 'normal', startSq: Coord | null = null): ReplayResult {
   const evs = seg.events;
   const decisions: ReplayResult['decisions'] = [];
   let tylerActions = 0;
@@ -292,7 +292,8 @@ function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry
     return null;
   };
 
-  let st = buildLevelState(runId, iso, seg.level, carry, seed, hintFrom(0), difficulty);
+  // A recorded level-start square beats inferring it from the first move.
+  let st = buildLevelState(runId, iso, seg.level, carry, seed, startSq ?? hintFrom(0), difficulty);
   let inSync = true;
 
   const isTylerAction = (k: string) => k === 'rookie-move' || k === 'squire-move' || k === 'ability-activate';
@@ -534,20 +535,24 @@ export interface TraceReplay {
  * records one per attempt since 2026-09-15, carrying that attempt's aiRngSeed).
  * Events before the first level-start (none, normally) ride with the first.
  */
-function attemptsOf(seg: LevelSegment): Array<{ seed: number | null; difficulty: string | null; seg: LevelSegment }> {
-  const out: Array<{ seed: number | null; difficulty: string | null; seg: LevelSegment }> = [];
+interface Attempt { seed: number | null; difficulty: string | null; start: Coord | null; seg: LevelSegment }
+
+function attemptsOf(seg: LevelSegment): Attempt[] {
+  const out: Attempt[] = [];
   const before: TraceEvent[] = [];
   for (const ev of seg.events) {
     if (ev.kind === 'level-start') {
+      // app/page.tsx records { level, levelIndex, runId, aiRngSeed, rookieStart, abilities, difficulty, ... }
       out.push({
         seed: typeof ev.aiRngSeed === 'number' ? (ev.aiRngSeed as number) : null,
         difficulty: typeof ev.difficulty === 'string' ? (ev.difficulty as string) : null,
+        start: typeof ev.rookieStart === 'string' ? fromSquare(ev.rookieStart as string) : null,
         seg: { level: seg.level, events: out.length ? [] : before },
       });
     } else if (out.length) out[out.length - 1].seg.events.push(ev);
     else before.push(ev);
   }
-  return out.length ? out : [{ seed: null, difficulty: null, seg }];
+  return out.length ? out : [{ seed: null, difficulty: null, start: null, seg }];
 }
 
 export function replayTrace(trace: Trace): TraceReplay {
@@ -573,7 +578,7 @@ export function replayTrace(trace: Trace): TraceReplay {
       let c = carry;
       for (const a of attempts) {
         const diff = (a.difficulty && isDifficultyId(a.difficulty) ? a.difficulty : metaDifficulty) as DifficultyId;
-        const r = replayLevel(trace.meta.runId, trace.meta.iso, a.seg, c, a.seed!, diff);
+        const r = replayLevel(trace.meta.runId, trace.meta.iso, a.seg, c, a.seed!, diff, a.start);
         c = { abilities: r.endState.abilities, tempo: r.endState.tempo, pendingOffer: r.endState.pendingOffer };
         merged = merged
           ? { ...r, decisions: [...merged.decisions, ...r.decisions], tylerActions: merged.tylerActions + r.tylerActions, verified: merged.verified + r.verified, desyncAt: merged.desyncAt ?? r.desyncAt }
