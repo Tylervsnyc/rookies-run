@@ -745,3 +745,253 @@ implementation risk in this engine.
   to `applyBotAction` (all resolve through the existing targeted/instant
   paths; no new action kinds). The `+`-joined compound loadout in
   `revenge-core.ts` already measures pairs.
+
+---
+
+## 6. Pick-Axe — mined from today's playtest (2026-09-15)
+
+Tyler, mid-playtest: "a miner ability where you can break through stones —
+wouldn't that be fun?" Distinct verb from the pool: nothing today REMOVES a
+hazard. Boulder and Shove both ADD/MOVE stone; Pick-Axe DELETES it. Tyler's
+favorite card is Boulder (wall him in); Pick-Axe is its mirror — the tool
+that undoes a wall, hers or the level's.
+
+**The fantasy, one line:** she swings, the rock cracks, and a door exists
+where a wall used to be.
+
+### Targeting and effect, by tier
+
+**Type line:** Targeted · Terrain. **Activation:** `targeted` (pick-square,
+the stone). Candidate set: hazard squares in Rookie's 8-neighbourhood, kind
+`'stone'` only (never `'lava'` — a pick cannot drain a river, same rule
+Shove already follows). A struck stone is removed from `hazards` entirely:
+no destination square, nothing rolls, the square is just empty afterward.
+
+| Tier | Effect text | Uses/level | Which stones | Range |
+|---|---|---|---|---|
+| 1 | Break a stone beside you. Authored walls hold. | 1 | Boulder-dropped stone only, never `fixed`, never an authored pen wall | adjacent (Chebyshev 1) |
+| 2 | Break a stone beside you. Authored walls hold. | 2 | same | adjacent |
+| 3 | Break any loose stone beside you, dropped or authored, except `fixed`. | 2 | loose stone (authored non-`fixed` walls now breakable) | adjacent |
+| 4 | Break any loose stone within 2 on your line. `fixed` stones crack too, but leave rubble (still a hazard, now `kind: 'stone', fixed: false`) — one more swing clears it. | 3 | everything except a second swing needed on `fixed` | 2, rook line only |
+| 5 | Break any stone you can reach, `fixed` included, one swing. | unlimited | everything | 2, rook line only |
+
+Upgrade notes: T2 "", T3 "The pick bites authored stone too", T4 "Reach: 2
+squares on your line; fixed stone takes two swings", T5 "Unlimited swings,
+fixed stone breaks in one."
+
+**Why `fixed` stays a wall until T4.** `fixed: true` (lib/run/types.ts
+~41-59) is the run author's one lever to refuse a card square by square —
+Shove already respects it absolutely. Pick-Axe respecting it through T3
+means every terrain run built before today stays intact at the tiers most
+players actually hold (T1-T3 in a normal run); only a maxed T4/T5 pick can
+touch an authored pen, and even then T4 costs two swings. This is the
+"never trivializes a pen" guardrail, not a courtesy — see Risks below.
+
+**Cost:** free action, like every card except a body-move (per the ladder
+decision on 2026-09-06/09-12: summons, Sacrifice, Boulder and Magnet are
+all free; only Rookie's own step or a controlled summon's step ends the
+turn). Breaking a stone and then sliding through the gap is one turn.
+
+### Interactions
+
+- **Boulder.** The obvious loop: drop, break, drop somewhere better. A
+  player holding both can relocate a stone anywhere on the board over two
+  turns (drop, if wrong break it, drop again) — this is intentionally
+  slower than Shove (one tap, one square, same turn) so the two don't
+  compete for the same job. Boulder + Pick-Axe is BUILD-then-EDIT, not
+  MOVE. T4+ crush (Boulder places on a pawn) and Pick-Axe removing that
+  same square afterward are unrelated — nothing carries over.
+- **Shove.** Overlapping toolkit (Shove relocates, Pick-Axe deletes) —
+  same anti-pair logic as two solvents in one kit (see Shove's own
+  "universal-solvent warning"). Together they are a full quarry crew: shove
+  what you can reuse, break what you can't. Reads as redundant in most
+  kits; only worth pairing in a run built explicitly around a stone-heavy
+  signature with two different holes to make (see Pit Stop sketch below).
+- **Magnet.** Strong secondary pair: pull a guard onto the square a broken
+  stone just exposed a line to, then take it. Magnet does the reposition,
+  Pick-Axe does the demolition — neither alone opens a defended door.
+- **Walls around the king pen / the pen limit.** Breaking a pen wall does
+  NOT add the freed square to `kingPen` — the pen array is fixed at level
+  load (same rule Coup's post-swap push respects only for the king's own
+  square). A hole in the pen wall lets ROOKIE in; it does not let the king
+  OUT, so Pick-Axe never accidentally gives him a new flee square. This is
+  the load-bearing safety rule: a miner's ability can never make a level
+  easier for the ENEMY.
+- **Capture-stun.** None — breaking stone is never a capture, never credits
+  `captures`, never stuns. A pawn standing on a stone is impossible (stones
+  and pieces never share a square) so there is no crush case to define,
+  unlike Shove/Boulder.
+- **Snare / Scarecrow.** A pick never targets a snared or strawed square
+  (both already occupy the "not a hazard, but also not free" category);
+  reuse the same exclusion Shove uses for `state.snares` / `state.scarecrow`.
+
+### Combo sketch — pairs with Magnet ("The Quarry, reworked" or a new run)
+
+No single card should clear a Pick-Axe finale; the pair does. Two concrete
+L7-L10-style finales, each demanding a DIFFERENT use of Pick-Axe + Magnet:
+
+**Sketch A — THE DOOR AND THE GUARD.** His cell is one stone thick; the
+only guard who'd let a line in stands two squares off, twice defended.
+Pick-Axe alone opens the wall but the guard still blocks the line; Magnet
+alone can't reach him without a wall gone first.
+
+```
+8 . . . k . . . .
+7 . . # # # . . .
+6 . . # . # . . .
+5 . . n . . . . .
+4 . . . . . . . .
+3 . . . . . . . .
+2 . . . . . . . .
+1 . . . R . . . .
+  a b c d e f g h
+```
+Line: break the c6/e6 stone facing her file (d1), pull the knight (n, c5)
+onto her open line with Magnet, take it next move (stun), slide in on the
+king. Different beat from Sketch B: here the break comes FIRST because the
+guard isn't in the way yet, he's the payoff after the wall drops.
+
+**Sketch B — THE GUARD FIRST.** Same shape, but the guard now stands ON the
+stone the pick would break (illegal target — a pick never targets an
+occupied square, same as Shove). Magnet must move him off it before the
+stone is even breakable.
+
+```
+8 . . k . . . . .
+7 . # n # . . . .
+6 . # . # . . . .
+5 . . . . . . . .
+4 . . . . . . . .
+3 . . . . . . . .
+2 . . . . . . . .
+1 . . . R . . . .
+  a b c d e f g h
+```
+Line: pull the knight (b7→her line), take it (stun), NOW the b7 stone is
+uncovered — break it, slide through the new gap. Order reversed from
+Sketch A: guard-first here, wall-first there.
+
+**Sketch C — TWO WALLS, ONE PICK.** A double-chamber pen (his room, then an
+inner cell) where the outer wall is authored (`fixed`, needs T4) and the
+inner is Boulder-dropped mid-level by a guard AI... no, guards don't drop
+stone — instead: inner wall is loose (T1-T3 breakable), outer is `fixed`
+(T4 needed). Tests that the player picked the RIGHT tier, not just the
+right pair.
+
+```
+8 . . . k . . . .
+7 . . F F F . . .
+6 . . F . F . . .
+5 . . . L . . . .
+4 . . . L . . . .
+3 . . . . . . . .
+2 . . . . . . . .
+1 . . . R . . . .
+  a b c d e f g h
+```
+(`F` = fixed authored wall, `L` = loose Boulder-family/authored-but-not-
+fixed stone.) At T1-T3 the pick breaks the loose inner ring but stalls on
+`F`; only a T4 pick (two swings) or T5 (one swing) finishes the job. This
+is the level that proves the tier gate matters, not just the card.
+
+### Ladder placement
+
+Power-curve order (Dragon last, per `feedback_revenge_ladder_power_curve`):
+Pick-Axe changes geometry the way Boulder/Shove do (mid-weight terrain
+tool, not a form-change solvent), so it slots in the SAME band as Boulder
+and Shove — after the finisher cards (Surge/Freeze/Knight-Hop tier) but
+before the run-ending universal solvents (Become King, Queen Pulse) and
+well before Dragon. Concretely: offer it starting around the rung that
+already carries Shove/Boulder (mid-ladder, level-offer slots on L3/L6/L9
+per run, not L1) so it never appears before the player has seen an
+authored wall be a real obstacle.
+
+### Trap / abuse risks and the rule that stops them
+
+- **Risk: trivializes a pen.** A maxed Pick-Axe (T5, unlimited, `fixed`
+  breaks in one swing) can eat ANY terrain signature alone, same class of
+  problem as Shove/Knight-Hop/Bishop-Step. **Rule:** it is a universal
+  solvent from T4 up and MUST follow the same kit-composition ban already
+  in `.claude/run-level-design.md` — never in a terrain kit unless it IS
+  half the signature pair, and any run that wants to be pick-proof marks
+  its gate walls `fixed` AND caps the run's `abilityTierCaps['pick-axe']`
+  below T4 (the same mechanism used for `bishop-squire`/`knight-hop`/
+  `duchess`/`become-king` caps today).
+- **Risk: breaks a level's intended gate retroactively.** Every EXISTING
+  terrain run (Vault, Keep, Stacks, Lattice, Colonnade, Parapet, Glasshouse,
+  Alcove) currently assumes stone is permanent once placed. Shipping
+  Pick-Axe at T3+ in ANY run that also offers those levels' authored walls
+  silently un-gates them unless each run's `abilityTierCaps` is audited
+  first (`npx tsx scripts/run-playtest/tier-cap-audit.ts` before ship,
+  same as any new card that touches `hazards`).
+- **Risk: authored pen walls (`fixed`) were the ONE guarantee a level
+  author had.** Fixed becomes "temporarily fixed" once Pick-Axe T4 exists.
+  **Rule:** a fixed stone still costs two swings at T4 — deliberately
+  slower than any single-card play — so a pen wall stays a real tempo cost
+  even at max tier, never a free pass.
+
+### Bot + solver notes
+
+- `scripts/run-playtest/bots/shared.ts` `candidatesForAbility` needs a
+  `case 'pick-axe':` returning one `ability-target` candidate per stone in
+  `pickAxeTargets(state)` (mirror the `shove`/`boulder` targeted-square
+  branches already in that switch, ~L394 onward). No new `ActionCandidate`
+  kind — it resolves through the existing `ability-target` path in
+  `applyBotAction`, same as Shove.
+- `lib/run/solver.ts` treats any card without an abstraction as "not
+  proven lost" (budget-blown / unmodeled situations return `true`,
+  ~L151/L252) — Pick-Axe needs an abstraction added alongside Shove's
+  before the solver can prove a Pick-Axe finale is actually gated, or every
+  level touching it will read as unproven rather than solved. Don't ship
+  a Pick-Axe-gated finale before this lands, or the matrix numbers are
+  meaningless (bot floor, not design ceiling — same caveat the doc already
+  gives L10 support cards).
+
+### Implementation checklist
+
+1. `AbilityId` — add `'pick-axe'` to the union in `lib/run/abilities.ts`
+   (~L42, alongside `'shove'`) and `ABILITY_DEFS` entry (name, type line,
+   description).
+2. `maxUsesForTier('pick-axe', tier)` — 1/2/2/3/unlimited per the table
+   above.
+3. `HOW` / `whatForTier('pick-axe', tier)` / `UPGRADE_NOTES['pick-axe']` —
+   card-face copy per tier, house style (short, no emojis).
+4. `pickAxeTargets(state)` + `abilityLegalMoves` wiring — new function
+   mirroring `shoveTargets` (~L2650-2700): 8-neighbourhood stone squares,
+   kind filter (`!== 'lava'`), `fixed` gate by tier, never a snared/
+   strawed/occupied square, T4+ line-of-2 reach.
+5. Effect branch in `applyAbilityTargetedImpl` (mirror `applyShove`
+   ~L2707+): remove the struck stone from `hazards`; T4 partial break sets
+   `fixed: false` on the same square instead of removing it (rubble, one
+   more swing); no capture/stun/tempo/decoy side effects (nothing dies).
+6. `canEverCastInLevel` / `targetMakersFor` — `pick-axe` needs no target
+   maker (it acts on hazards already on the board, like `boulder`/`shove`
+   themselves); confirm it's NOT added to `['boulder']` at `targetMakersFor
+   ('shove')` (~L1399) since Pick-Axe doesn't need a Boulder-placed stone
+   to function on authored terrain.
+7. Art: `public/abilities/pick-axe-1.png` → sharp 512px WebP per the
+   Performance Conventions rule (never point `artFile()` at a `.png`); card
+   glyph in `AbilityCard`.
+8. Panel text in `app/page.tsx` (offer card blurb, tier-up toast).
+9. `data/content/pipeline.json` — new item, `"kind": "ability"`,
+   `"stage": "idea"`, `"created": "2026-09-15"`, notes citing this doc and
+   Tyler's playtest quote.
+10. Bot: `candidatesForAbility` case (above) + confirm `applyBotAction`
+    needs no new branch (targeted-square path is generic).
+11. `allowedAbilities` — add to any new run's 4-card kit per the combo-gate
+    contract; do NOT add to an existing live run's kit without auditing
+    `abilityTierCaps` on every terrain level that run offers (Risks above).
+
+### Open questions for Tyler
+
+1. Does breaking a stone ever cost a body-move (like a real "turn to swing
+   the pick"), or is it free like every other card on this ladder? This
+   doc assumes free, matching the 2026-09-06/09-12 ladder decision — flag
+   if Pick-Axe should be the first exception.
+2. Should a broken `fixed` stone at T4 (the "rubble, one more swing" rule)
+   also be Shove-able once cracked, or should rubble stay `fixed: true`
+   until fully destroyed so Shove can't finish a T4 pick's job for free?
+3. Is Pick-Axe + Boulder (build-then-edit) worth a dedicated new run, or
+   should it ship first as a filler/trap card in an existing Shove or
+   Magnet-signature run and earn its own run later once the matrix proves
+   a real pair?
