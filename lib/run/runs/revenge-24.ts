@@ -7,6 +7,82 @@
  * dragon+duchess, The Millstone's double door).
  *
  * ---------------------------------------------------------------------------
+ * 2026-09-15 VARIETY + DIFFICULTY PASS (plan crispy-noodling-graham, Phase 3).
+ * Read this block first; everything below it describes replaced builds.
+ *
+ * WHY. Tyler cleared the rung with 3 stars and no deaths. The nightly read the
+ * pair at 97% (TOO EASY), and his traces show ONE line on the finale: mark a
+ * piece NEXT TO THE KING, let him eat it, walk the Duchess in (human REPEAT
+ * L9 = L10; L10 easier than L9). The engine made that line universal today:
+ * the king always takes what touches him, and on a Decoy mark the STRONGEST
+ * attacker takes it (queen > king > bishop > pawn, then nearest, file, rank).
+ * Every old finale had a pawn beside the king, so every old finale fell to
+ * "mark it, the king steps onto it stunned for two turns, the Duchess walks
+ * in" — measured W2 on the old L9 by exhaustive search.
+ *
+ * KIT -> 3 cards: duchess, decoy, magnet. Aegis is gone (early rungs only).
+ *
+ * TWO ENGINE FACTS THIS PASS IS BUILT ON (both found by exhaustive search on
+ * the live engine, not read off comments):
+ *   1. A MARK NOBODY CAN REACH DOES NOTHING. If no enemy can take or approach
+ *      the marked piece, the army falls back to ordinary play — including the
+ *      marked piece itself taking the Duchess. So there is no "blank the
+ *      guard" in this run: every working mark is a FEED, something eats it,
+ *      and eating it is one enemy action. The arrow always shows the eater.
+ *   2. NORMAL FLOORS EVERY MOVE LIMIT AT 6 (apply-difficulty MOVE_LIMIT_FLOOR).
+ *      Authored limits under 6 are not what a player gets; the finale
+ *      limits here are authored above the floor on purpose.
+ *
+ * THE FOUR FINALE QUESTIONS (no piece touches the king on L7/L8; L9/L10 have
+ * a door beside him whose approach is closed, so his swing is a trap there):
+ *   L7  WHICH BAIT — two doors two squares out; feed the bishop so the
+ *       single-guarded door is free this turn. The easy finale, on purpose.
+ *   L8  FEED THE LOCK ITSELF — two enemies per turn: the L7 answer (feed the
+ *       bishop a spare pawn) loses to the second hand; mark the guard so the
+ *       bishop eats IT. Launch square d5 only.
+ *   L9  THE PLUG — the mark goes down a TURN BEFORE the body: feed the plug
+ *       so it steps off the only diagonal, then run the Duchess through.
+ *   L10 ROOKIE GOES IN — two enemies per turn, three bodies: Rookie takes
+ *       the guarded bishop under a mark, the Duchess spawns INSIDE the
+ *       lattice from Rookie's square, takes the door, takes him.
+ * EARLY LEVELS: L3 and L4 keep "the king takes the mark" (now shown by the
+ * arrow) but each has a second verb (Duchess diagonal / Magnet pull); L5 was
+ * rebuilt so its Decoy line is a pawn eating its own doorman, no king.
+ *
+ * DEAD ENDS TODAY (measured):
+ *   - Tightening authored limits to the exact forced-win depth (3/3/4) read
+ *     25-100% without --difficulty and meant nothing on Normal (floor 6).
+ *   - A long floor walk on L8 (d3/e3 stone) took it 100% -> 38% on Normal:
+ *     too much; d3/e3 reopened.
+ *   - L10 v1 left the d5 bishop one free square (e6). From g4/h4/h3 that step
+ *     counts as closing on Rookie, so it walked onto the launch square and
+ *     lost every game started on g/h. g4/h4/h3 are now fallen panes.
+ *   - One enemy per turn on L10 changed nothing measurable (it reopens the
+ *     king-swing shortcut in principle); two stays.
+ *
+ * MEASURED 2026-09-15 (live engine e744b95 + this file, --difficulty=normal, T5):
+ *   L3-L6, 16 trials:   none  duchess decoy magnet | pair
+ *     L3                  0%    100%   100%   13%  | 100%
+ *     L4                  0%    100%   100%   56%  | 100%
+ *     L5                  0%    100%   100%   25%  | 100%
+ *     L6                  0%    100%     0%    0%  | 100%
+ *   L7-L10 singles (none/duchess/decoy/magnet), 16 trials: 0% on all four.
+ *   Pair cells, 32 trials:
+ *                          L7    L8    L9    L10   mean
+ *     duchess+decoy       100%   66%   59%   34%   65
+ *     duchess+decoy:2      97%   81%   53%   22%   63   <- arrival pair
+ *     +magnet:2 (kit)     100%   69%   66%   69%   76   <- arrival kit
+ *   Arrival loadouts at L7 (40 runs): decoy:2+duchess+magnet 13,
+ *   decoy+duchess+magnet:2 13, decoy:3+duchess 3. Before this pass the nightly
+ *   pair read 100/94/94/100 = 97%.
+ *   Full runs, 40, no retries: 6/40 clear; deaths L3 3, L6 7, L7 1, L8 7,
+ *   L9 12, L10 4 (was 23/40, deaths mostly L6).
+ *   Magnet at T2 lifts L10 (22 -> 69): a pull that clears Rookie's walk to d4.
+ *   That is Magnet as the supporting key on one finale, not a solvent (0%
+ *   alone). Solver (exhaustive, 6 enemy tie-breaks): every finale is a forced
+ *   win for the pair from every start file, W2-W4; none of the singles has a
+ *   forced win within 5 moves.
+ * ---------------------------------------------------------------------------
  * 2026-09-07 DIFFICULTY REWORK (Tyler: "the design is really cool but later
  * levels need more difficulty, and ways to solve. I love the combination of
  * abilities, it's just too easy."). The gate rule these runs were built to —
@@ -428,7 +504,10 @@ const RUN_REVENGE_24: RunDef = {
   signaturePair: ['duchess', 'decoy'],
   name: 'The Lattice',
   blurb: 'Stone on every dark square. Rooks die up there; queens walk.',
-  allowedAbilities: ['duchess', 'decoy', 'aegis', 'magnet'],
+  // KIT (2026-09-15): 3 cards, Aegis dropped (plan Phase 3: Aegis only on the
+  // early rungs). Magnet stays as the trap/extra: a key on L3-L5, 0% alone on
+  // every finale.
+  allowedAbilities: ['duchess', 'decoy', 'magnet'],
   // TIER CAP — T1, tightened from T3 on 2026-09-07. The Duchess ALONE is still
   // 0% at T2 and T3, which is what bought her T3 before; but paired with Decoy
   // the finale reads 75/84/69/38 at T1 and 91/88/59/91 at T2 (and 94/97/47/97
@@ -478,15 +557,15 @@ const RUN_REVENGE_24: RunDef = {
         kingPen: ['g8'],
       },
     ),
-    // L3 — THE DEFENDED CORK (AEGIS / DECOY). The e-channel is open and an
-    // entombed bishop corks it on the open pane e7, one square under his
-    // feet. This one is DEFENDED: the pawn on the open pane f8 covers e7 and
-    // can never leave it, because its own pawn on f7 is jammed against the
-    // stone below and blocks the only square it could walk to. Take the cork
-    // and f8 takes you back. AEGIS: take it anyway — a blocked capture is
-    // cancelled, so the defender never moves and the doorway is yours.
-    // DECOY: mark f8 instead and the CORK eats it, walking out of the
-    // doorway to do it. An eater always vacates its own square.
+    // L3 — THE DEFENDED CORK (DECOY / DUCHESS / MAGNET). The e-channel is open
+    // and an entombed bishop corks it on the open pane e7, one square under his
+    // feet. The pawn on f8 covers e7 and can never leave (its own f7 pawn blocks
+    // it), so taking the cork gets you taken back. DECOY: mark the cork. The king
+    // is next to it and the strongest attacker always takes the mark (the arrow
+    // shows him), so HE eats his own bishop and stands stunned in the doorway —
+    // slide up and take him. DUCHESS: she needs no door at all, the a4-e8
+    // diagonal runs straight through the lattice to him. MAGNET: drag the cork
+    // down the channel and take it in the open.
     make(
       3,
       [
@@ -501,16 +580,12 @@ const RUN_REVENGE_24: RunDef = {
         kingPen: ['e8'],
       },
     ),
-    // L4 — THE DOUBLE LOCK. The same cork with the king directly above it and
-    // TWO defenders: pawns on the open panes b8 and d8, each jammed forever
-    // behind a filled pane. It measured as the level that proves a second
-    // defender is worth nothing — a shield ENDS the enemy turn, so the reply
-    // that matters is always the first one. The intended line here is the
-    // decoy LURE: mark b8 or d8, the cork itself eats it, and the c-file is
-    // open from c4 to his square. (Magnet can also drag the cork two squares
-    // down to c5, off both defenders, and take it in the open — that is the
-    // one place in the run the pull pays, and only about a third of the
-    // time.)
+    // L4 — THE DOUBLE LOCK (MAGNET / DECOY). The same cork with the king
+    // directly above it and TWO defenders on b8 and d8, each jammed behind a
+    // filled pane. MAGNET is the clean key: pull the cork two squares down to c5,
+    // off both defenders, and take it in the open. DECOY works the L3 way (mark
+    // the cork, the king eats it) — L3 and L4 are the two levels that teach "he
+    // takes what is next to him". The Duchess has no diagonal in here.
     make(
       4,
       [
@@ -525,27 +600,27 @@ const RUN_REVENGE_24: RunDef = {
         kingPen: ['c8'],
       },
     ),
-    // L5 — THE DOORMAN (DECOY). The d-channel is open (d6, d8) and a bishop
-    // stands in the doorway on d7, jammed between his own pawns on c6/e6/c8
-    // and his king on e8 — it will never move. One pawn, c8, defends it, and
-    // he is not on the channel: the only line to e8 in the level is along
-    // rank 8 from d8, and d7 is in the way. Take the doorman and c8 takes you
-    // back. MARK him instead: his own pawn eats him, and the eater is
-    // standing in the doorway with nothing behind it. (Aegis tanks the
-    // recapture and Magnet drags the doorman out — this door has three keys;
-    // it is the friendly-fire lesson, not a lock.)
+    // L5 — THE DOORMAN (MAGNET / DECOY / DUCHESS; the king is not involved).
+    // Reworked 2026-09-15: Tyler solved L3, L4 and the old L5 with the same
+    // "mark the piece next to the king" line. The doorman is now TWO squares
+    // below him: a bishop entombed on the open pane d6, guarded by the pawn on
+    // the open pane c7 (c6 is filled, so c7 can never march). Take the doorman
+    // and c7 takes you back. DECOY: mark the doorman and its OWN guard eats it —
+    // the pawn is now standing on d6 with nothing behind it; take it, take him.
+    // MAGNET: pull the doorman down the d-file. DUCHESS: a long way round, but
+    // she gets there. Three keys, three different verbs.
     make(
       5,
       [
-        bishop(4, 7),
-        pawn(3, 8), pawn(3, 6), pawn(5, 6),
-        king(5, 8),
+        bishop(4, 6),
+        pawn(3, 7),
+        king(4, 8),
       ],
       {
         ...STILL,
         moveLimit: 10,
-        hazards: LATTICE([X(4, 6), X(4, 8)]),
-        kingPen: ['e8'],
+        hazards: LATTICE([X(4, 6), X(3, 7), X(4, 8)], [X(3, 6)]),
+        kingPen: ['d8'],
       },
     ),
     // L6 — THE FIRST CELL (DUCHESS). Every pane is in place. He stands on f7,
@@ -567,117 +642,105 @@ const RUN_REVENGE_24: RunDef = {
         hazards: LATTICE(),
       },
     ),
-    // L7 — TWO DOORS (2026-09-07: 75% for the pair, 0% for every card alone).
-    // He is on f7 and his back diagonals e8/g8 are STONE, so there is nothing
-    // behind him and nothing to mark that does not matter. In front of him are
-    // two pawns that look the same: e6 and g6. Both are one Duchess move away
-    // (she launches from f5 or h5, Rookie standing on g4 or h4), both put her
-    // diagonally on his square, and only one of them lives.
-    //   e6 is DOUBLE-LOCKED: the pawn d7 guards it AND so does the bishop
-    //     frozen on d5 — c4 and e4 are stone and c6/e6 are his own men, so it
-    //     has no move for the whole level and never threatens Rookie. One
-    //     charge cannot clear two locks; take e6 and the other one takes her.
-    //   g6 is SINGLE-LOCKED, by h7. Mark h7, take g6 (the capture stuns him so
-    //     he cannot flinch), she lives the turn, and she takes him off g6.
-    // There is deliberately NO bait bishop on this level: at one enemy action a
-    // friendly-fire eat spends the army's whole turn and would rescue the
-    // double-locked door too, which is exactly what made the old 97% build. The
-    // only question here is which door has one lock, and the wrong answer dies
-    // on the next enemy turn, not on this one.
+    // L7 — WHICH BAIT (2026-09-15 rebuild). Nothing touches the king: e8's
+    // two diagonal neighbours d7 and f7 are empty, and the doors are the pawns one
+    // step further out, c6 and g6. A Duchess who takes a door is looking at him
+    // through the empty square, and the capture stuns him so he cannot step away.
+    // g6 is guarded once (h7). c6 is guarded twice (b7 and the bishop jammed on
+    // b5). A mark nobody can reach does NOTHING (the army simply plays on), so
+    // "blank the guard" is not a move in this run — every working mark is a
+    // FEED: something has to eat it, and eating it is the army's whole turn.
+    // Mark c6 and the bishop eats it (a bishop outranks the h7 pawn), which is
+    // the turn h7 needed: the Duchess takes g6 down the long diagonal and takes
+    // him next turn. Marking h7 or b7 feeds nobody; taking c6 dies to two locks.
     make(
       7,
       [
-        pawn(5, 6), pawn(7, 6),
-        pawn(4, 7), pawn(8, 7),
-        bishop(4, 5),
-        king(6, 7),
+        pawn(3, 6), pawn(7, 6),
+        pawn(2, 7), pawn(8, 7),
+        bishop(2, 5),
+        king(5, 8),
       ],
       {
         ...FLEE,
         moveLimit: 6,
-        hazards: LATTICE([], [X(3, 4), X(5, 4), X(6, 4), X(5, 8), X(7, 8)]),
+        hazards: LATTICE([], [X(1, 8), X(3, 8), X(7, 8), X(5, 6), X(1, 6), X(1, 4), X(2, 4), X(3, 4)]),
       },
     ),
-    // L8 — THE PLUG (decoy FIRST, body second). The post g6 is unwatched and
-    // he has no square — but the ONLY approach to it, f5, is a pawn, pinned
-    // by the stone on f4 and defended by e6, and it covers both launch
-    // squares beside it (e4 is a second pawn, pinned by e3; g4 is under its
-    // diagonal). No body can be summoned onto f5, and a Duchess who takes it
-    // is eaten by e6. Friendly fire never empties the SQUARE it hits, but it
-    // always empties the square the EATER stood on: mark e4 — the pawn f5
-    // defends — and f5 walks off the approach to eat it. THEN stand on g4,
-    // spawn on f5, step to g6, take him. The bait on b7 is a trap here: the
-    // bishop eats it and the plug never moves. h5 is stone so g6 cannot be
-    // sniped down its own line while it stands empty.
+    // L8 — FEED THE LOCK ITSELF (two enemies per turn). One door, e6, guarded
+    // once, by f7 — and a bishop jammed on g8 between f7 and h7. With two hands
+    // the L7 answer loses: mark h7, the bishop eats it with one hand and f7 eats
+    // the Duchess with the other. The only mark that lives is f7 itself: the
+    // bishop eats its own guard, the second hand has nothing left to hit, and the
+    // Duchess on e6 takes him through d7. Marking e6 before she lands is the
+    // third trap: f7 eats the door and uncovers the bishop's diagonal onto it.
+    // The floor is the other half: c4/d3/e3/f5 are stone, so the only launch is
+    // d5 and Rookie has to walk round to d4/e4 from the right to reach it.
     make(
       8,
       [
-        pawn(5, 8), pawn(7, 8), pawn(5, 6), pawn(4, 7),
-        pawn(6, 5), pawn(5, 4),
-        bishop(3, 8), pawn(2, 7),
-        king(6, 7),
+        pawn(5, 6),
+        pawn(6, 7), pawn(8, 7), bishop(7, 8),
+        king(3, 8),
       ],
       {
         ...FLEE,
-        moveLimit: 6,
-        hazards: LATTICE([], [X(6, 4), X(5, 3), X(8, 5)]),
+        moveLimit: 8,
+        enemiesPerTurn: 2,
+        hazards: LATTICE([], [X(2, 7), X(5, 8), X(3, 6), X(1, 8), X(6, 5), X(3, 4)]),
       },
     ),
-    // L9 — YOU CANNOT BLANK BOTH (2026-09-07: 69% for the pair, 0% alone).
-    // The first cell in the run on RANK 6: he is on e6, deep inside the
-    // lattice, and d5, f5 and f7 are filled panes — a stone box with exactly
-    // one door, the pawn on d7. A rank-7 door is the one square in this
-    // geometry that can be watched TWICE by pawns: c8 and e8 both cover it,
-    // and neither of them is his own square. So the L7 answer is dead here —
-    // blank c8 and e8 eats her, blank e8 and c8 does. One charge, two locks.
-    // The only line left is the one the run is named for: feed the court its
-    // own man. The bishop on a8 is jammed behind its own pawn b7 (a8 has
-    // exactly one diagonal), so marking b7 makes the bishop eat it, and that
-    // eat is the army's WHOLE action — nobody is left to recapture on d7.
-    // Both watchers are pawns (threat 1) and the eater is a bishop (threat 2),
-    // so the tie-break is deterministic. Rookie's approach is the far corner:
-    // the door is reached along a4-b5-c6-d7, so she wants a3/b3/b4/a4/c4.
-    // Marking d7 itself is the prettiest trap — a watcher eats the decoy and
-    // then STANDS on the door.
+    // L9 — THE PLUG (mark a turn EARLY). The door d7 touches him; its only
+    // approach is the g4-f5-e6-d7 diagonal, and the pawn on e6 plugs it (c6,
+    // f7, c8 and d4 are stone). Nothing guards the door once she is on it. The
+    // mark is not for this turn: mark the pawn on d5 and the plug steps DOWN to
+    // eat it, which opens the diagonal — and only then, next turn, can she run
+    // g4-d7, take the door and take him from beside him. The second line is
+    // also a turn early: mark the DOOR, the king steps onto d7 to eat it (and
+    // is stunned), and next turn the Duchess takes the plug on e6 — which is
+    // now the square beside him — and then him. Either way the mark has to go
+    // down before the body, which is what the old L9 never asked.
     make(
       9,
       [
-        pawn(4, 7), pawn(3, 8), pawn(5, 8),
-        pawn(2, 7), bishop(1, 8),
-        king(5, 6),
+        pawn(4, 7),
+        pawn(5, 6),
+        pawn(4, 5),
+        king(5, 8),
       ],
       {
         ...FLEE,
-        moveLimit: 6,
-        hazards: LATTICE([], [X(4, 5), X(6, 5), X(6, 7)]),
+        moveLimit: 8,
+        hazards: LATTICE([], [X(6, 7), X(3, 6), X(3, 8), X(4, 4)]),
       },
     ),
-    // L10 — THE BAIT IS THE TRAP (2026-09-07: 38% for the pair, 0% alone).
-    // The capstone, and it punishes the level before it. He is on d7 walled in
-    // stone on three diagonals (c8, e8, e6); the only door is the pawn c6, and
-    // its only lock is b7. Across the board sits the L9 shape, laid out as a
-    // lure: the bishop g8 jammed against the pawn f7 (h7 is stone). Mark f7 and
-    // the bishop eats it exactly as it did on L9 — but the army has TWO hands
-    // here, so the eat costs it one action and b7 recaptures the Duchess on c6
-    // with the other. Buying the turn no longer buys anything; the only mark
-    // that lives is the guard of the square she lands on, b7 itself. Marking
-    // c6 is the third trap: b7 eats the decoy and stands on the door.
-    // b5 and d4 are stone, so the launch is c4/e4 (or the long c6-d5-e4-f3-g2-h1
-    // diagonal), and the fallen panes on c2/c3/e2/e3 make the walk the longest
-    // in the run.
+    // L10 — ROOKIE GOES IN (two enemies per turn). The capstone asks for all
+    // three bodies. The door f7 touches him and nothing guards it, but the only
+    // square that reaches it is e6, and the only square beside e6 that is not
+    // stone is d5 — a bishop, guarded by the pawn c6. So Rookie has to take d5
+    // herself and survive on it: mark b5 (c6's other target) and take the bishop
+    // in the same turn. c6 eats b5 with one hand; the second hand has nothing that
+    // can see her. Next turn she spawns the Duchess on e6 from INSIDE the lattice,
+    // the Duchess takes f7, and then him. Traps: mark the door and the king eats
+    // it but c6 still takes Rookie with the second hand; take d5 unmarked and c6
+    // takes her. Two more lines, both a turn early: mark c6 so the bishop
+    // eats it and the Duchess launches from the empty d5, or mark d5 so c6
+    // eats the bishop and Rookie takes the pawn left standing on d5.
+    // g4/h4/h3 are fallen panes: from any of them the d5 bishop's one free
+    // step (to e6) counts as closing on Rookie, and a bishop on e6 would sit on
+    // the launch square. From everywhere else it never moves.
     make(
       10,
       [
-        pawn(3, 6), pawn(2, 7),
-        pawn(6, 7), bishop(7, 8),
-        king(4, 7),
+        pawn(6, 7),
+        pawn(3, 6), bishop(4, 5), pawn(2, 5),
+        king(7, 8),
       ],
       {
         ...FLEE,
-        moveLimit: 6,
+        moveLimit: 8,
         enemiesPerTurn: 2,
-        hazards: LATTICE([], [X(6, 5), X(4, 4), X(2, 5), X(3, 2), X(3, 3), X(5, 2), X(5, 3),
-          X(5, 6), X(3, 8), X(5, 8), X(8, 7)]),
+        hazards: LATTICE([], [X(8, 7), X(5, 8), X(7, 6), X(6, 5), X(3, 4), X(5, 4), X(2, 4), X(7, 4), X(8, 4), X(8, 3)]),
       },
     ),
   ],
