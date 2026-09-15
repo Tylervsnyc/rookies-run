@@ -6672,7 +6672,11 @@ const RUN_REVENGE_12: RunDef = {
       },
     ),
     // L9 — THE FAR CORNER. Same idea as L7, two enemies a turn, and the walk
-    // is the point: the sluice is f5 (f4 walls it) and the king is at f8, the
+    // is the point. 2026-09-15 (no tier caps, Tyler): a T4 knight-hop walked
+    // to h4 once its knight left and hopped g6 -> f8 alone (56%). The room is
+    // now f7/g7/h7/g8 with f8/h8 stone and the king on g8, so a knight on g6
+    // attacks nothing of his; clock 12 -> 9 and a g2 pawn, T4 singles 0.
+    // Original notes: the sluice is f5 (f4 walls it) and the king is at f8, the
     // far corner of a room walled at e6/e7/e8 — the bishop crosses at g6 and
     // still has to traverse before the swap is worth spending. Rank 6 is
     // stone from a6 to f6 and at h6, so g6 is the ONLY square on the far bank
@@ -6683,18 +6687,19 @@ const RUN_REVENGE_12: RunDef = {
       9,
       [
         knight(8, 4), knight(4, 4), knight(5, 2),
-        king(6, 8),
+        pawn(7, 2),
+        king(7, 8),
       ],
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 12,
+        moveLimit: 9,
         hazards: [
           ...MOAT(6), X(6, 4),
           X(1, 6), X(2, 6), X(3, 6), X(4, 6), X(5, 6), X(6, 6), X(8, 6),
-          X(5, 7), X(5, 8),
+          X(5, 7), X(5, 8), X(6, 8), X(8, 8),
         ],
-        kingPen: ['g6', 'f7', 'g7', 'h7', 'f8', 'g8', 'h8'],
+        kingPen: ['f7', 'g7', 'h7', 'g8'],
       },
     ),
     // L10 — THE KEEP. The ORDER. King g8 in the corner room (walls f7/f8);
@@ -6711,9 +6716,12 @@ const RUN_REVENGE_12: RunDef = {
     // g7 in ONE move. Stop on f6 and h7 eats him; reach g7 and the swap IS
     // the capture. That is Tyler's Squire -> Swap -> capture line, and it is
     // now the only way into the keep. Two enemies a turn. 2026-09-15: ten
-    // moves (was 12) and a third light bishop (e2) plus pawns b3/h3 on the
-    // near bank, so the run ends on its hardest rung (arrival pair 83 -> ~69,
-    // level with L7; the light bishops still can never cross the dark c5). Knight-hop still finishes from f6 at arrival (it is the
+    // moves -> 8 (was 12) and a third light bishop (e2) plus pawns b3/h3 on
+    // the near bank, so the run ends on its hardest rung (arrival pair 83 ->
+    // ~69, level with L7; light bishops still never cross the dark c5). No
+    // tier caps (Tyler): a T4 knight-hop crossed c5 and walked rank 7 to the
+    // gaoler, or hopped g4 -> f6 -> g8 (81% alone). c7/d7/e8 and e4/g4 are
+    // stone now — none is on the bishop's c5-d6-e7-f6-g7 road. T4 singles 0. Knight-hop still finishes from f6 at arrival (it is the
     // extra card, and a trap everywhere else in the finale).
     make(
       10,
@@ -6727,10 +6735,10 @@ const RUN_REVENGE_12: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 10,
+        moveLimit: 8,
         hazards: [
           ...MOAT(3), X(3, 6), X(3, 8), X(6, 7), X(6, 8),
-          X(5, 6), X(8, 6),
+          X(5, 6), X(8, 6), X(3, 7), X(4, 7), X(5, 8), X(5, 4), X(7, 4),
         ],
         kingPen: ['g7', 'g8', 'h8'],
       },
