@@ -53,8 +53,13 @@
  *    7      0      0      0      0 |   88    100          9
  *    8      0      0      0      0 |   94    100         10  (100 at 11)
  *    9      0      0      0      0 |   81     88          8
- *   10      0      6      0      6 |   13     ~38          9  (0 at 8; bot rarely finds
- *                                                           "stone behind you")
+ *   10      0      0      0      0 |    3     78          9  (32 trials; arrival
+ *        pair magnet:2+boulder 19%, kit magnet:2+boulder+aegis 78%)
+ * L10 LEAK FIX (2026-09-15): the c6 pocket bishop used to walk down to d5, the
+ * plug stepped into its pocket, and Magnet alone picked off both (15% on the
+ * GitHub grade). A frozen pawn in a b7 pocket now defends c6, so the walk-down
+ * line dies on the capture. Singles 0/0/0/0 at 32 trials. Clock 10 was tried and
+ * rejected: Magnet alone rose to 19% while the T1 pair stayed at 3%.
  * Solver (no-boulder loadouts): none/magnet/aegis no forced win at depth 7 on
  * L7-L10. The pair's losses are move-limit losses (bot hunting stone squares).
  * Every pair line above was replayed by hand and wins.
@@ -188,9 +193,9 @@ export const RUN_REVENGE_15: RunDef = {
     }),
     // L10 LAND IT, THEN WALL IT. Plug d7 held by c8+e8; pocket bishop c6 watches d5 and
     // d7-e8. Pull to d6 (not d5), climb, stone d7 behind you, take e8 (stun), slide in.
-    make(10, [bishop(4, 7), pawn(3, 8), pawn(5, 8), bishop(3, 6), pawn(1, 8), king(8, 8)], {
+    make(10, [bishop(4, 7), pawn(3, 8), pawn(5, 8), bishop(3, 6), pawn(2, 7), pawn(1, 8), king(8, 8)], {
       ...FLEE, moveLimit: 9,
-      hazards: carve(STACKS(4), X(3, 6), X(7, 7), X(8, 7)),
+      hazards: carve(STACKS(4), X(3, 6), X(2, 7), X(7, 7), X(8, 7)),
       kingPen: ['g7', 'h7', 'g8', 'h8'],
     }),
   ],
