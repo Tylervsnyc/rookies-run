@@ -528,15 +528,17 @@ function kingReaction(state: BoardState): BoardState | null {
   // gate on both runs. Still ONE rule for the king everywhere — he takes what
   // stands next to him; he just doesn't trade kings.
   //
-  // And not into a raised Aegis either (2026-09-09): there is no capture to
-  // stand still for, so a shielded Rookie beside him is a threat like any
-  // other — he keeps running. (The old permanent T5 shield parked him next
-  // to her forever, then killed him when he bumped it — see king-invariant.)
+  // A raised Aegis does NOT change this (Tyler, 2026-09-15: "the king always
+  // swings when touching Rookie"). He stands and swings; the shield answers
+  // the swing and FREEZES him, exactly like any other attacker. One rule the
+  // player can plan around: touching the king means he takes a swing. (The
+  // old "keep running from a shield" exception made his behavior depend on a
+  // card state the player could not see him read. The permanent T5 shield
+  // that once parked him forever is gone — T5 is a 3-turn clock now.)
   if (
     !isSmoked(state) &&
     (state.kingStunTurns ?? 0) <= 0 &&
     state.form !== 'king' &&
-    !state.shieldUp &&
     chebyshev({ file: king.file, rank: king.rank }, state.rookie) <= 1
   ) {
     return null;
@@ -755,7 +757,7 @@ function chooseEnemyAction(
   // fire against the decoy, not a loss.
   const decoy = decoyViewState(state);
   if (decoy) {
-    const inner = chooseEnemyActionAgainst(decoy.view, excludeSquares);
+    const inner = chooseEnemyActionAgainst(decoy.view, excludeSquares, true);
     if (inner) {
       return {
         mover: inner.mover,
@@ -770,9 +772,76 @@ function chooseEnemyAction(
   return chooseEnemyActionAgainst(state, excludeSquares);
 }
 
+/** Fixed tie-break for decoy captures: nearest to its target, then file, then rank. */
+function orderedCapturer<T extends { piece: EnemyPiece; target: Coord }>(tied: T[]): T {
+  return [...tied].sort((a, b) => {
+    const da = chebyshev(a.piece, a.target);
+    const db = chebyshev(b.piece, b.target);
+    if (da !== db) return da - db;
+    if (a.piece.file !== b.piece.file) return a.piece.file - b.piece.file;
+    return a.piece.rank - b.piece.rank;
+  })[0];
+}
+
+/**
+ * Which enemy will take the Decoy mark on the coming enemy turn, if the turn
+ * ran from this board — the same decision chooseEnemyAction makes (fixed
+ * order, no RNG). Null when no mark is up or nobody can reach it yet. The
+ * board draws an arrow from `from` to `to` while the mark is active.
+ */
+export function decoyCapturer(state: BoardState): { from: Coord; to: Coord } | null {
+  if (state.scarecrow && state.scarecrow.turnsLeft > 0) return null; // straw outranks the mark
+  const decoy = decoyViewState(state);
+  if (!decoy) return null;
+  const inner = chooseEnemyActionAgainst(decoy.view, new Set(state.enemyMovedSquares), true);
+  if (!inner || !inner.isCapture) return null;
+  return {
+    from: { file: inner.mover.file, rank: inner.mover.rank },
+    to: { file: decoy.decoyPiece.file, rank: decoy.decoyPiece.rank },
+  };
+}
+
+/**
+ * Squares touching the king where Rookie would be taken if she ended her move
+ * there — the board's red "danger" tint. Mirrors the engine exactly: empty
+ * while he is stunned, frozen, or smoked out, and while she is in king form
+ * (she is impervious then). Enemy-occupied squares are left out: landing
+ * there is a capture, and every capture stuns him for a turn.
+ */
+export function kingDangerSquares(state: BoardState): Coord[] {
+  if (state.winCondition !== 'king' || state.status !== 'playing') return [];
+  if (isSmoked(state) || state.form === 'king') return [];
+  if ((state.kingStunTurns ?? 0) > 0) return [];
+  const king = state.pieces.find((p) => p.type === 'king');
+  if (!king) return [];
+  if (state.frozenSquares.includes(toSquare(king))) return [];
+  const out: Coord[] = [];
+  for (const [df, dr] of QUEEN_DIRS) {
+    const c: Coord = { file: king.file + df, rank: king.rank + dr };
+    if (!inBounds(c)) continue;
+    if (isHazard(state.hazards, c)) continue;
+    if (enemyAt(state.pieces, c)) continue;
+    const hypo: BoardState = { ...state, rookie: c, enemyVacatedSquares: [] };
+    if (pieceLegalMoves(king, hypo).some((m) => m.file === c.file && m.rank === c.rank)) out.push(c);
+  }
+  return out;
+}
+
+/** True when any non-king enemy has a legal move right now (frozen ones included — they thaw). */
+export function anyGuardCanMove(state: BoardState): boolean {
+  return state.pieces.some((p) => p.type !== 'king' && pieceLegalMoves(p, state).length > 0);
+}
+
 function chooseEnemyActionAgainst(
   state: BoardState,
   excludeSquares: ReadonlySet<string>,
+  /**
+   * Decoy view: the capture of the mark is decided by a FIXED order, never
+   * the seeded RNG, so the arrow the board draws (decoyCapturer) is always
+   * the piece that takes it. Order: strongest attacker (queen > king > minor
+   * > pawn), then nearest to the mark, then lowest file, then lowest rank.
+   */
+  deterministicCapture = false,
 ): EnemyAction | null {
   const rng = aiRng(state);
   // Frozen squares are treated as if those pieces have already moved.
@@ -906,7 +975,7 @@ function chooseEnemyActionAgainst(
     const topVal = capturers.filter((c) => c.victimValue === bestVal);
     const bestThreat = Math.max(...topVal.map((c) => c.attackerThreat));
     const tied = topVal.filter((c) => c.attackerThreat === bestThreat);
-    const pick = pickRandom(tied, rng);
+    const pick = deterministicCapture ? orderedCapturer(tied) : pickRandom(tied, rng);
     return {
       mover: pick.piece,
       target: pick.target,

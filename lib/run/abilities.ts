@@ -451,9 +451,12 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 4) return 2;
       return 1;
     case 'boulder':
-      // 2/2/3/3/∞ placements per level (T1 tuned 1→2 — one stone never seals a pen).
+      // 2/2/3/4/∞ stones per level — ONE card tap = ONE stone at every tier
+      // (Tyler, 2026-09-15). T4 used to drop 2 per tap; it is now simply one
+      // more stone than T3. (T1 tuned 1→2 — one stone never seals a pen.)
       if (tier <= 2) return 2;
-      if (tier <= 4) return 3;
+      if (tier === 3) return 3;
+      if (tier === 4) return 4;
       return -1;
     case 'smoke':
       // 1/1/2/2/1 — T5 is one long cover.
@@ -619,7 +622,7 @@ const HOW: Record<AbilityId, string> = {
   boulder: 'Tap card, then tap an empty square. A block of stone lands there.',
   smoke: 'Tap card. You vanish at once. Capturing gives you away.',
   rewind: "Tap card. The enemies' last turn unhappens. Yours stays.",
-  magnet: 'Tap card, tap an enemy on your line, then tap the square it lands on.',
+  magnet: 'Tap card, tap an enemy on your line (or diagonal, from tier 3), then tap the square it lands on.',
   bodyguard: 'Tap card. A rook appears beside you.',
   'summon-knight': 'Tap card, then tap a square beside you. Tap the knight to move it.',
   'bishop-squire': 'Tap card, then tap a square beside you. Tap the bishop to move it.',
@@ -737,7 +740,6 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       return 'Mark an enemy for 1 turn. Its team will attack it.';
     case 'boulder':
       if (tier === 5) return 'Drop a stone on any square — crush an enemy pawn under it. Unlimited drops.';
-      if (tier === 4) return 'Drop a stone on any square — crush an enemy pawn under it. Each use drops 2.';
       if (tier >= 2) return 'Drop a stone on any square — crush an enemy pawn under it.';
       return 'Drop a block of stone on an empty square. It blocks everyone, for good.';
     case 'smoke': {
@@ -757,8 +759,9 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 3) return "Undo the enemies' last turn — and the king is stunned while they replay it.";
       return "Undo the enemies' last turn. Your move stays.";
     case 'magnet':
-      if (tier === 5) return 'Pull an enemy on your line any distance you choose — even the king, one square.';
-      if (tier === 4) return 'Pull an enemy on your line any distance you choose.';
+      if (tier === 5) return 'Pull an enemy on your line or diagonal any distance you choose — even the king, one square.';
+      if (tier === 4) return 'Pull an enemy on your line or diagonal any distance you choose.';
+      if (tier === 3) return 'Pull an enemy on your line or diagonal up to 3 squares — you pick how far.';
       if (tier >= 2) return 'Pull an enemy on your line up to 3 squares — you pick how far.';
       return 'Pull an enemy on your line up to 2 squares — you pick how far.';
     case 'bodyguard':
@@ -944,7 +947,7 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       return 'Mark an enemy for 1 turn. 1/level.';
     case 'boulder':
       if (tier === 5) return 'Crush pawns. Unlimited stones.';
-      if (tier === 4) return 'Crush a pawn; 2 stones per use. 3/level.';
+      if (tier === 4) return 'Crush a pawn under a stone. 4/level.';
       if (tier === 3) return 'Crush a pawn under a stone. 3/level.';
       if (tier === 2) return 'Crush a pawn under a stone. 2/level.';
       return 'Drop a stone. 2/level.';
@@ -961,9 +964,9 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Undo their last turn. 2/level.';
       return 'Undo their last turn. 1/level.';
     case 'magnet':
-      if (tier === 5) return 'Pull any distance you choose. Even the king. 2/level.';
-      if (tier === 4) return 'Pull any distance you choose. 2/level.';
-      if (tier === 3) return 'Pull up to 3 — you choose. 2/level.';
+      if (tier === 5) return 'Pull any distance, diagonals too. Even the king. 2/level.';
+      if (tier === 4) return 'Pull any distance, diagonals too. 2/level.';
+      if (tier === 3) return 'Pull up to 3, diagonals too. 2/level.';
       if (tier === 2) return 'Pull up to 3 — you choose. 1/level.';
       return 'Pull up to 2 — you choose. 1/level.';
     case 'bodyguard':
@@ -1167,7 +1170,7 @@ export const UPGRADE_NOTES: Record<
   boulder: {
     2: 'Crush enemy pawns under your drops',
     3: '',
-    4: 'Each use drops 2 stones',
+    4: 'Stones per level 3 → 4',
     5: 'Unlimited stones',
   },
   smoke: {
@@ -1184,7 +1187,7 @@ export const UPGRADE_NOTES: Record<
   },
   magnet: {
     2: 'Pull reach 2 squares → 3',
-    3: '',
+    3: 'Pulls along diagonals too',
     4: 'Pulls from any distance',
     5: 'Even the king moves: yanked 1 square',
   },
@@ -1952,8 +1955,7 @@ function applyAbilityActivateImpl(
 
 export function applyAbilityCancel(state: BoardState): BoardState {
   if (!state.activeAbility) return state;
-  // Cancelling mid-Boulder-T4 forfeits the owed free second drop.
-  return { ...state, activeAbility: null, boulderDropsLeft: undefined };
+  return { ...state, activeAbility: null };
 }
 
 function decrementUse(
@@ -2281,11 +2283,9 @@ function applyAbilityTargetedImpl(
         : undefined;
     const statusOverlay = crushed ? clearStatusOnSquare(state, sq) : null;
     const clearDecoy = !!crushed && state.decoyTarget === sq;
-    // T4+: each use drops TWO boulders. The first drop of a use spends the
-    // charge and owes one free follow-up placement (activeAbility stays
-    // armed; cancelling forfeits it).
-    const chained = (state.boulderDropsLeft ?? 0) > 0;
-    const owesSecond = !chained && owned.tier >= 4;
+    // ONE tap = ONE stone at every tier (Tyler, 2026-09-15). The T4 "second
+    // free drop" re-arm is gone: every stone needs a fresh card tap, so the
+    // card always tells the truth about what the next tap does.
     const next: BoardState = {
       ...state,
       ...(statusOverlay ?? {}),
@@ -2298,9 +2298,8 @@ function applyAbilityTargetedImpl(
       decoyTurnsLeft: clearDecoy ? 0 : state.decoyTurnsLeft,
       // A dropped boulder is ROCK, never lava (2026-09-06 hazard-kind split).
       hazards: [...state.hazards, { file: target.file, rank: target.rank, kind: 'stone' }],
-      abilities: chained ? state.abilities : decrementUse(state.abilities, abilityId),
+      abilities: decrementUse(state.abilities, abilityId),
       activeAbility: null,
-      boulderDropsLeft: undefined,
       cancellableActivation: undefined,
       ...(crushed ? stunKingAfterCapture(state) : {}),
       lastAbilityFx: {
@@ -2310,13 +2309,6 @@ function applyAbilityTargetedImpl(
         id: Date.now() + Math.random(),
       },
     };
-    if (owesSecond && boulderTargets(next).length > 0) {
-      return {
-        ...next,
-        activeAbility: { id: 'boulder', step: 'pick-square' },
-        boulderDropsLeft: 1,
-      };
-    }
     return next;
   }
 
@@ -3395,8 +3387,12 @@ export function magnetPullDistance(tier: AbilityTier): number {
   return 99;
 }
 
-/** Directions Rookie's CURRENT form slides in (used for Magnet lines). */
-function magnetDirs(form: RookieForm): ReadonlyArray<[number, number]> {
+/**
+ * Directions Magnet reaches along. Her CURRENT form's lines — and from T3 the
+ * diagonals too, whatever her form (Tyler, 2026-09-15).
+ */
+function magnetDirs(form: RookieForm, tier: number): ReadonlyArray<[number, number]> {
+  if (tier >= 3) return ALLY_QUEEN_DIRS;
   if (form === 'bishop') return ALLY_BISHOP_DIRS;
   if (form === 'queen') return ALLY_QUEEN_DIRS;
   // Rook — and knight / king / pawn forms fall back to her home lines.
@@ -3411,7 +3407,7 @@ function magnetDirs(form: RookieForm): ReadonlyArray<[number, number]> {
 export function magnetTargets(state: BoardState): Coord[] {
   const owned = state.abilities.find((a) => a.id === 'magnet');
   const out: Coord[] = [];
-  for (const [df, dr] of magnetDirs(state.form)) {
+  for (const [df, dr] of magnetDirs(state.form, owned?.tier ?? 1)) {
     let f = state.rookie.file + df;
     let r = state.rookie.rank + dr;
     let dist = 1;

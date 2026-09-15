@@ -24,6 +24,7 @@
 import { formForAbility, transformDurationForTier } from './abilities';
 import type { AbilityId, OwnedAbility } from './abilities';
 import { enemyAt, rookieLegalMoves } from './movement';
+import { anyGuardCanMove } from './pawn-ai';
 import { toSquare } from './types';
 import type { BoardState, Coord, EnemyPiece, RookieForm } from './types';
 
@@ -36,8 +37,6 @@ const KING_DELTAS: ReadonlyArray<[number, number]> = [
 
 /** Abilities the solver models. Anything else with charges = "can't judge". */
 const TRANSFORM_IDS: AbilityId[] = ['bishop-step', 'knight-hop', 'queen-pulse', 'become-king'];
-/** Purely defensive abilities that never change whether the king is catchable. */
-const IGNORABLE_IDS: AbilityId[] = ['aegis'];
 
 function surgeBonusForTier(tier: number): number {
   if (tier <= 2) return 1;
@@ -260,13 +259,19 @@ export function isUnwinnable(state: BoardState): boolean {
   if ((state.snares?.length ?? 0) > 0 || state.scarecrow) return false;
   if (state.activeAbility || state.pendingOffer) return false;
   if (state.abilities.some((a) => a.id === 'squad')) return false;
+  // A raised shield changes what the king does (he swings and freezes on it)
+  // and the abstraction does not model that — so never call it dead.
+  if (state.shieldUp) return false;
+  // The search treats guards as FIXED obstacles. While any of them can still
+  // move, one may step out of a line (or into a capture that stuns the king),
+  // so "no way through" is not proven. (The Briar L7 false loss, 2026-09-15.)
+  if (anyGuardCanMove(state)) return false;
 
   const transforms: OwnedAbility[] = [];
   let surge: OwnedAbility | null = null;
   const charges: Record<string, number> = {};
   for (const a of state.abilities) {
     if (a.usesLeftThisLevel === 0) continue;
-    if (IGNORABLE_IDS.includes(a.id)) continue;
     if (TRANSFORM_IDS.includes(a.id)) {
       transforms.push(a);
       charges[a.id] = a.usesLeftThisLevel;
@@ -274,7 +279,7 @@ export function isUnwinnable(state: BoardState): boolean {
       surge = a;
       charges.surge = a.usesLeftThisLevel;
     } else {
-      return false; // boulder / freeze / magnet / ... could change the answer
+      return false; // aegis / boulder / freeze / magnet / ... could change the answer
     }
   }
 

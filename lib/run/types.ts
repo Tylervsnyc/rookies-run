@@ -499,11 +499,7 @@ export interface BoardState {
    * the Rewind ability. Cleared by a cast (no chaining).
    */
   enemyRewindStack?: BoardState[];
-  /**
-   * Boulder T4 — after the first drop of a use, one more FREE placement is
-   * owed (the use drops two boulders). Set by the boulder branch of
-   * applyAbilityTargeted; cleared by the second drop or by cancelling.
-   */
+  /** @deprecated Always undefined since 2026-09-15 (one tap = one stone). Kept so older tooling still type-checks. */
   boulderDropsLeft?: number;
   /**
    * Squire (summon-knight) at T5 — the knight's move is a FREE action, once

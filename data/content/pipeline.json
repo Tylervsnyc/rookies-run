@@ -510,7 +510,7 @@
       "name": "Sacrifice",
       "stage": "live",
       "created": "2026-08-31",
-      "notes": "Squire explodes, capturing every enemy on his knight-squares.",
+      "notes": "A summon explodes in its own piece's shape, 2 squares out: enemies inside are captured, the king inside is stunned (never captured). Free action.",
       "testing": {
         "lastRun": "2026-09-02",
         "verdict": "HOLD",

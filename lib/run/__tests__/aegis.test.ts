@@ -134,15 +134,16 @@ test('T1-T4 shields hold until hit (no clock)', () => {
   assert.equal(s.shieldUp, true);
 });
 
-test('the king keeps running from a shielded Rookie instead of parking beside her', () => {
+test('the king swings at a shielded Rookie beside him and freezes on the shield (2026-09-15)', () => {
   const base = board(5, [E('d5', 'king')], 'd4');
   const shielded: BoardState = { ...applyAbilityActivate(base, 'aegis'), turn: 'enemy' };
-  const after = stepEnemyTurn(shielded);
+  const after = runEnemyTurn(shielded);
   const king = after.pieces.find((p) => p.type === 'king')!;
-  assert.notEqual(toSquare(king), 'd5', 'he moved');
-  assert.equal(after.shieldUp, true, 'nothing hit the shield');
+  assert.equal(after.status, 'playing');
+  assert.equal(toSquare(king), 'd5', 'he stood his ground and swung');
+  assert.ok(after.frozenSquares.includes('d5'), 'the shield froze him');
 
-  // Without a shield the old rule stands: adjacent, he holds still and takes her.
+  // Without a shield: adjacent, he holds still and takes her.
   const bare: BoardState = { ...base, turn: 'enemy' };
   const afterBare = runEnemyTurn(bare);
   assert.equal(afterBare.status, 'lost');
@@ -150,9 +151,7 @@ test('the king keeps running from a shielded Rookie instead of parking beside he
 
 for (const tier of [1, 3, 5] as AbilityTier[]) {
   test(`T${tier}: a king who bumps the shield is frozen, never removed`, () => {
-    // Drive the intercept directly with the king as the attacker (the AI
-    // makes him flee a shielded Rookie, so the capturers pass rarely picks
-    // him — but a cornered king with no flee square still can).
+    // Drive the intercept directly with the king as the attacker.
     const base = board(tier, [E('a2', 'king')], 'a1');
     let s = applyAbilityActivate(base, 'aegis');
     const kingBefore = s.pieces.find((p) => p.type === 'king')!;
