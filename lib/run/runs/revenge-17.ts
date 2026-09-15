@@ -18,29 +18,42 @@
  * f+1 — it opens the TWO FILES BESIDE HER, top to bottom, and stuns the king
  * two turns while she walks up one of them. That geometry is the run.
  *
- * KIT = dragon / sacrifice / aegis / poison-dart (`allowedAbilities` IS the
- * kit — daily-kit.ts draws all four). No universal solvents. Both fillers
- * answer the SAME question the hedge asks ("this key is defended") one guard
- * at a time, which is exactly why they die on the finale, where every key is
- * defended twice and the mouth is covered besides.
+ * KIT = dragon / sacrifice / poison-dart (`allowedAbilities` IS the kit;
+ * 3 cards since 2026-09-15 — aegis dropped, Aegis lives on early rungs only,
+ * which also removed the in-kit aegis+dragon finale bypass). No universal
+ * solvents. The dart answers the SAME question the hedge asks ("this key is
+ * defended") one guard at a time, and slowly, which is why it is a key on
+ * L4/L5 and a helper on L8, and dies on the rest of the finale.
  *
  * KEY / TRAP per level:
  *   L1  none needed — walk around the end of the hedge.
  *   L2  none needed — one undefended plug on each flank; pick a side.
  *   L3  none needed — first fleeing king; walk into his room and close it.
- *   L4  poison-dart / aegis KEY (the a-file plug is defended once, from b7:
- *       kill the defender or eat the reply). dragon/sacrifice are TRAPS —
- *       knight d8 posts b7 so no body survives beside it.
- *   L5  aegis KEY (walk onto the h6 plug and TANK the recapture, then take
- *       him through h7). poison-dart is the slow second answer. dragon TRAP
- *       — every body it can reach is covered by knight f8.
+ *   L4  poison-dart KEY (the a-file plug is defended once, from b7: kill
+ *       the defender, then the plug is free). The dragon is the slow second
+ *       answer; sacrifice alone has nothing to detonate.
+ *   L5  poison-dart KEY (dart the h6 plug's defender or the knight on f8,
+ *       then walk the h-file). The dragon also gets there. Measured with
+ *       aegis gone (16 trials): none 31, dragon 100, sacrifice 63, dart 100.
  *   L6  dragon KEY, ALONE and only (a7/b7/c8 are walls: NO rook line ever
  *       reaches his corner, so the level cannot be walked — measured 0% for
- *       no-ability, sacrifice, aegis and the dart, 100% for the dragon).
- *   L7  PAIR. Closed hedge b-g, flanks walled, crown above, stumps on d7/e7.
- *   L8  PAIR. Same wall, his room in the far a8/b8 corner — one door (c8).
- *   L9  PAIR. Hedge wall to wall, corner room, one file that can ever open.
- *   L10 PAIR. Wall-to-wall hedge, TWO enemies a turn, seven moves.
+ *       no-ability, sacrifice and the dart, 100% for the dragon). The roaming
+ *       dark-squared bishop is GONE (Tyler 2026-09-15: it kept parking on the
+ *       squares he wanted to summon from — a gotcha, not a decision).
+ *   L7  PAIR — WHERE TO LAUNCH. Closed hedge b-g, crown above, stumps on
+ *       d7/e7; stone on b5/c5/d5/g5 leaves f5 as the pad. Blast the right
+ *       side open and STEP onto a stunned king. (Tyler's best level. Kept.)
+ *   L8  PAIR — THE FAR DOOR. Same wall, his room in the a8/b8 corner, one
+ *       door (c8). Dragon close, blast, slide in. (Tyler: "really hard".
+ *       Kept untouched; the dart is a real helper here.)
+ *   L9  PAIR — POINT-BLANK. A one-wide lane plugged by TWO stone-boxed
+ *       bishops, each covered by a frozen knight. Take the one uncovered
+ *       square in the gap (d4), grow the dragon in the lane, and blast
+ *       THROUGH the first plug. Anything that bites a plug is taken back.
+ *   L10 ALL THREE — CLEAR THE POST, THEN BLAST. King off every lane; one
+ *       post (b6) that reaches the launch square, watched by a knight. Dart
+ *       the knight, take the post, blow his diagonal, run the e-file.
+ *       The hardest level on the ladder.
  *
  * THE ANTI-DRAIN RUNNER (the tuning that made the finale hold). A 2-deep
  * pawn hedge is not actually static: the front row MARCHES (pawn priority is
@@ -54,48 +67,31 @@
  * they went in. Note also that two enemies a turn made things EASIER before
  * the runner (twice the marching); it is a real difficulty knob only now.
  *
- * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
- * Everything under MEASURED below was taken with a harness whose result depended
- * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
- * counter into its rollout RNG seed, so a cell read one number alone and another
- * as a later column of a multi-column run (repeating ONE cell four times in one
- * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
- * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
- * reproducible across invocation shapes — guarded by
- * scripts/run-playtest/matrix-determinism-check.ts.
- *
- * FINALE, numbers of record. `revenge.ts matrix --run=revenge-17 --levels=7,8,9,10
- * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
- *    L       none      aegis     dragon  poisondar  sacrifice  |  dragon+sacrifice
- *    7         0%         0%         0%         0%         0%  |  69%
- *    8         0%         3%         0%         3%         0%  |  88%
- *    9         0%         0%         0%         0%         0%  |  91%
- *   10         0%         0%         0%         0%         0%  |  69%
- * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 3%); the pair reads 69/88/91/69.
- * The header below was WRONG by up to 15 points on the pair (84/78/81/84 then, 69/88/91/69 now) — it was
- * measured with the flawed method. The direction of every gate claim survives;
- * the exact percentages did not.
- * ──
- * MEASURED (32 trials/cell, Normal, --jobs=1, 2026-09-05, `revenge.ts
- * matrix`). NOTE: --jobs=2 cells cross-talk badly when several agents share
- * the machine (L7 no-ability read 44% in one parallel sweep and 0% in three
- * isolated reads) — trust the serial read.
- *          none  dragon  sacrifice  aegis  dart   dragon+sacrifice
- *   L1-L2  100%   100%     100%     100%   100%        100%
- *   L3      91%   100%      84%      84%   100%        100%
- *   L4      34%    66%      28%     100%    94%        100%
- *   L5      41%   100%      56%     100%   100%        100%
- *   L6       0%   100%       0%       0%     0%        100%
- *   L7       0%     0%       0%       0%     0%         84%
- *   L8       0%     0%       0%       0%     3%         78%
- *   L9       0%     0%       0%       0%     0%         81%
- *   L10      0%     0%       0%       0%     0%         84%
- * The finale is combo-gated on the Moat's standard: nothing alone clears
- * L7-L10, the pair clears 78-84%. Full runs (40, Normal): 55% with random
- * picks, 50% with pool=dragon,sacrifice — the two numbers sit on top of each
- * other because the signature pair is HALF a four-card kit, so a random
- * picker converges on it; the run's real filter is L6 (dragon or nothing,
- * ~78% cleared in run context) and the L7-L10 clock.
+ * ── MEASURED 2026-09-15 (3-card kit, L7 launch pad, L9/L10 rebuilt) ──
+ * `revenge.ts matrix --run=revenge-17 --levels=1-10 --loadouts=none,dragon,
+ * sacrifice,poison-dart,dragon+sacrifice,dragon+sacrifice+poison-dart
+ * --trials=16 --jobs=1`, T1 cards, Normal. 16 trials = roughly +/-20 points.
+ *    L    none  dragon  sacrifice  dart  |  pair  kit(all 3)
+ *    1    100    100      100      100  |  100   100
+ *    2    100    100      100      100  |  100   100
+ *    3     69    100       94      100  |  100   100
+ *    4     38     81       44      100  |  100   100
+ *    5     31    100       63      100  |  100   100
+ *    6      0    100        0        0  |  100   100
+ *    7      0      0        0        0  |   69    94
+ *    8      0      0        0        0  |   94    94
+ *    9      0      0        0        0  |   63    81
+ *   10      0      0        0        0  |    0    56
+ * GATE holds on every finale level (no single card clears one). The pair
+ * mean over L7-L10 is 56.5, inside rung 10's 45-61 window. L10 is the only
+ * level that needs all three cards. Winning lines (bot, pair + kit cells)
+ * are four different shapes: L7 dragon@far>sacrifice@far | step; L8 split,
+ * no line over 40%; L9 dragon@line>sacrifice@line | orth; L10
+ * poison-dart>dragon@diag>sacrifice@diag | orth.
+ * Full runs, local (24, Normal, 1 retry): 17/24. Arrival tiers in the sim
+ * were all T1.
+ * Before today (4-card kit with aegis, old L9/L10): pair 88/94/92/92, full
+ * runs 73%, grade TOO EASY, human REPEAT L7 = L10.
  */
 
 import {
@@ -113,17 +109,14 @@ import {
 import type { EnemyPiece } from '../types';
 
 /**
- * The finisher list every Revenge slate guarantees. Duplicated here (not
- * imported from runs.ts) because runs.ts imports this module's registry —
- * a value import would close the cycle.
+ * The offer core. It used to be the global REVENGE finisher list (surge,
+ * freeze-ray, ...) — none of which are in this run's kit, so the "at least
+ * two core cards" guarantee could never be met and silently did nothing.
+ * The core is now the signature pair: every slate carries at least one half
+ * of it. With a 3-card kit and a 3-wide slate the L1 offer already shows the
+ * whole kit; this keeps later refills from ever being dart-only.
  */
-const REVENGE_FINISHERS: ReadonlyArray<string> = [
-  'surge',
-  'freeze-ray',
-  'knight-hop',
-  'bishop-step',
-  'queen-pulse',
-];
+const SIGNATURE_PAIR: ReadonlyArray<string> = ['dragon', 'sacrifice'];
 
 /** The hedge: a two-deep pawn thicket on ranks 6 and 7 over these files. */
 const HEDGE = (...files: number[]): EnemyPiece[] =>
@@ -144,12 +137,12 @@ const RUN_REVENGE_17: RunDef = {
   signaturePair: ['dragon', 'sacrifice'],
   name: 'The Briar',
   blurb: 'He grew a hedge and called it a kingdom.',
-  allowedAbilities: ['dragon', 'sacrifice', 'aegis', 'poison-dart'],
+  allowedAbilities: ['dragon', 'sacrifice', 'poison-dart'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
-  offerCore: REVENGE_FINISHERS,
-  offerCoreMin: 2,
+  offerCore: SIGNATURE_PAIR,
+  offerCoreMin: 1,
   levels: [
     // L1 — THE GATE. Still king e8 behind a four-file hedge (c-f). Both ends
     // of the hedge are open air: walk round it, up an edge file, and along
@@ -185,7 +178,7 @@ const RUN_REVENGE_17: RunDef = {
     // takes you. The rank-8 walk from the open right is cut by the hazard on
     // f8, and knight d8 is posted so that b7 itself can never be picked off
     // by a body. KEY = poison-dart (kill the defender, then the plug is
-    // free) or aegis (take the plug anyway and eat the reply). Waiting for
+    // free). Waiting for
     // the plug to march itself down the file is the slow, unreliable third
     // answer, and the seven-move clock rarely allows it.
     make(
@@ -206,10 +199,8 @@ const RUN_REVENGE_17: RunDef = {
     // L5 — THE SHIELDED DOOR. King h8, cell h7/h8, hedge b-g, hazard g8. The
     // h-file is wide open to h7 — his doorway — and knight f8 is the only
     // thing covering it (its every other jump is its own hedge, so it can
-    // never leave the post). Walk in and EAT the recapture: KEY = aegis. The
-    // dart is the slow version; a dragon dropped on h7 dies to the same
-    // knight, and the long way round (a-file, rank 8, take the knight) does
-    // not fit the clock.
+    // never leave the post). KEY = poison-dart: kill the knight (or the
+    // plug's defender) and walk in. The dragon is the other way through.
     make(
       5,
       [
@@ -230,10 +221,11 @@ const RUN_REVENGE_17: RunDef = {
     // either of his squares — the level cannot be walked. But c6/c7 are open
     // air (the hedge starts at d), and a body dropped on c6 knight-jumps to
     // b8, INSIDE the room, where nothing on his side attacks it. KEY =
-    // dragon, alone. aegis and the dart are traps: there is no key to take.
+    // dragon, alone. The dart is a trap: there is no key to take. Nothing
+    // on his side moves, so the summon squares are exactly what you see.
     make(
       6,
-      [...HEDGE(4, 5, 6, 7, 8), pawn(4, 8), bishop(8, 2), king(1, 8)],
+      [...HEDGE(4, 5, 6, 7, 8), pawn(4, 8), king(1, 8)],
       {
         ...FLEE,
         moveLimit: 9,
@@ -246,9 +238,10 @@ const RUN_REVENGE_17: RunDef = {
     // it the CROWN — a pawn on every rank-8 square but his two — which
     // defends the whole back row and re-seals any file drained by hand; and
     // in front of his door, STUMPS on d7/e7, so the two files that point
-    // straight at him can never open at all. The way in is sideways: blow
-    // c6+c7 out with one blast (dragon on d5), take the crown pawn on c8,
-    // step along rank 8 while he is stunned.
+    // straight at him can never open at all. The way in is sideways: stand
+    // on f4, grow the dragon on f5 (the launch pad the stones leave), blow
+    // out the right side of the hedge, climb to f8 and step onto him while
+    // he is stunned.
     make(
       7,
       [
@@ -262,7 +255,14 @@ const RUN_REVENGE_17: RunDef = {
       {
         ...FLEE,
         moveLimit: 6,
-        hazards: [X(1, 6), X(1, 7), X(8, 6), X(8, 7), ...STUMPS(4, 5)],
+        hazards: [
+          X(1, 6), X(1, 7), X(8, 6), X(8, 7), ...STUMPS(4, 5),
+          // The launch pad (2026-09-15). Stone on b5/c5/d5/g5 takes away the
+          // left-side and far-right launch squares; f5 (the square Tyler
+          // used) is the pad that works. Pair 94 -> 75, every single card
+          // still 0 (16 trials).
+          X(2, 5), X(3, 5), X(4, 5), X(7, 5),
+        ],
         kingPen: ['d8', 'e8'],
       },
     ),
@@ -287,49 +287,65 @@ const RUN_REVENGE_17: RunDef = {
         kingPen: ['a8', 'b8'],
       },
     ),
-    // L9 — WALL TO WALL. The hedge runs a-h, the crown runs a8-f8, and he is
-    // in the corner behind stumps on g7/h7: no flank, no straight file, one
-    // door (f8). The bomb has to sit on e5 or g5 — anywhere else and the hole
-    // opens in a wall instead of the door.
+    // L9 — THE THORN LANE. A stone row on rank 4 with ONE gap (d4), and
+    // the lane above it plugged TWICE: bishops on d6 and d7, boxed in stone
+    // so they can never step aside, each covered by a pair of frozen knights
+    // (b7/f7 cover d6, b8/f8 cover d7). He sits on d8 at the top of the lane.
+    // Anything that TAKES a plug is taken back. The dart kills one plug and
+    // the other still stands. The question is point-blank: stand in the gap
+    // on d4 (the one square nothing covers), grow the dragon on d5, and
+    // detonate. Her blast reaches two squares up THROUGH the first bishop,
+    // clears both plugs and both inner knights, and the file is open to him.
     make(
       9,
       [
-        ...ROW6(1, 2, 3, 4, 5, 6, 7, 8),
-        ...ROW7(1, 2, 3, 4, 5, 6),
-        ...CROWN(1, 2, 3, 4, 5, 6),
-        pawn(1, 3), pawn(1, 4), pawn(1, 5),
-        bishop(2, 2),
-        king(8, 8),
+        pawn(1, 5), pawn(2, 5), pawn(6, 5), pawn(7, 5), pawn(8, 5),
+        pawn(1, 6), pawn(2, 6), pawn(6, 6), pawn(7, 6), pawn(8, 6),
+        pawn(1, 7), knight(2, 7), bishop(4, 6), bishop(4, 7), knight(6, 7), pawn(7, 7), pawn(8, 7),
+        pawn(1, 8), knight(2, 8), knight(6, 8), pawn(7, 8), pawn(8, 8),
+        king(4, 8),
       ],
       {
         ...FLEE,
-        moveLimit: 9,
-        hazards: [X(8, 6), ...STUMPS(7, 8)],
-        kingPen: ['g8', 'h8'],
+        moveLimit: 6,
+        hazards: [
+          X(1, 4), X(2, 4), X(3, 4), X(5, 4), X(6, 4), X(7, 4), X(8, 4),
+          X(3, 5), X(5, 5), X(3, 6), X(5, 6), X(3, 7), X(5, 7), X(3, 8), X(5, 8),
+        ],
+        kingPen: ['d8'],
       },
     ),
-    // L10 — THE CROWN OF THORNS. Wall-to-wall hedge, a crown of six, a queen
-    // on the low bank, TWO enemies a turn and eight moves — the thicket walks
-    // at her while she works, and every square she wants to stand on is one
-    // pawn-step from being covered. Stand on b4, grow the dragon on c5,
-    // detonate: b6 and b7 come out, he is stunned two turns, and the b-file
-    // runs from her feet to the crown pawn on b8 with his door beside it.
+    // L10 — THE CROWN OF THORNS. The hardest level on the ladder, and the
+    // only one that needs all three cards. He has stepped OFF every lane:
+    // king e8, behind two frozen pawn columns (d5-d7, e5-e7), d8 stone. The
+    // only door into the building is the b-file, and the one post at its
+    // top that can reach the launch square, b6, is watched by a KNIGHT on
+    // a8. Every square a dragon could knight-jump onto him from is stone or
+    // pawn, and every square beside him is too, so she can never take him
+    // herself. The line: DART the knight first (it is the one guard that
+    // moves, so it is a present threat, not a gotcha), take the post on b6,
+    // grow the dragon on c6 — his long diagonal, behind the d7 pawn — and
+    // detonate. The blast reaches him THROUGH d7, stuns him, and blows out
+    // d7, d6, e6, e7 and e5; the rook runs b6-e6 and takes him up the e-file.
+    // Dragon + sacrifice without the dart: the knight takes her on b6.
     make(
       10,
       [
-        ...ROW6(1, 2, 3, 4, 5, 6, 7, 8),
-        ...ROW7(1, 2, 5, 6, 7, 8),
-        ...CROWN(1, 2, 5, 6, 7, 8),
-        pawn(8, 3), pawn(8, 4), pawn(8, 5),
-        queen(7, 2),
-        king(3, 8),
+        pawn(1, 5), pawn(3, 5), pawn(4, 5), pawn(5, 5), pawn(6, 5), pawn(7, 5), pawn(8, 5),
+        pawn(1, 6), pawn(4, 6), pawn(5, 6), pawn(6, 6), pawn(7, 6), pawn(8, 6),
+        pawn(4, 7), pawn(5, 7), pawn(7, 7), pawn(8, 7),
+        knight(1, 8), pawn(3, 8), pawn(6, 8), knight(7, 8), pawn(8, 8),
+        king(5, 8),
       ],
       {
         ...FLEE,
         enemiesPerTurn: 2,
         moveLimit: 6,
-        hazards: [...STUMPS(3, 4)],
-        kingPen: ['c8', 'd8'],
+        hazards: [
+          X(1, 4), X(3, 4), X(4, 4), X(5, 4), X(6, 4), X(7, 4), X(8, 4),
+          X(1, 7), X(3, 7), X(6, 7), X(2, 8), X(4, 8),
+        ],
+        kingPen: ['e8'],
       },
     ),
   ],
