@@ -17,6 +17,7 @@ import { submitScore } from '@/lib/run/leaderboard-client';
 import { ONBOARDING_KEY, StoryOnboarding } from '@/components/run/StoryOnboarding';
 import { RulesInline } from '@/components/run/RulesInline';
 import { TempoHelpModal } from '@/components/run/TempoHelpModal';
+import { LevelRulesModal } from '@/components/run/LevelRulesModal';
 import { RunPickerModal } from '@/components/run/RunPickerModal';
 import { RookiesRevengeLogo } from '@/components/run/RookiesRevengeLogo';
 import { LowMovesEmergency } from '@/components/run/LowMovesEmergency';
@@ -41,6 +42,8 @@ import {
   playCardPlaySound,
   playLevelClearSound,
   playMoveSound,
+  playSacrificeArmSound,
+  playSacrificeBoomSound,
   warmupAudio, withClick, playCorrectSound, playTransformBackSound, playTransformIntoSound, playFreezeSound, playSurgeSound } from '@/lib/sounds';
 import { haptic, hapticError, hapticSuccess } from '@/lib/haptics';
 import {
@@ -273,6 +276,27 @@ interface RunMeta {
    * Null for every other flow, which is what keeps Daily and Ladder untouched.
    */
   endless: EndlessSession | null;
+}
+
+/**
+ * Anonymous install id for playtest traces (localStorage uuid). Returns '' when
+ * storage is unavailable — a trace without a device is still a good trace.
+ */
+const DEVICE_ID_KEY = 'rookies-run-device-id';
+function deviceId(): string {
+  try {
+    let id = localStorage.getItem(DEVICE_ID_KEY);
+    if (!id) {
+      id =
+        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+      localStorage.setItem(DEVICE_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return '';
+  }
 }
 
 /**
@@ -704,6 +728,43 @@ export default function RookiesRunPage() {
     [],
   );
 
+  // Every time a level BEGINS (first load, next level, retry, restart) this
+  // ticks, and the effect below records a `level-start` event with enough to
+  // replay the attempt exactly (seed, start square, kit + tiers, difficulty).
+  const [levelAttempt, setLevelAttempt] = useState(0);
+  useEffect(() => {
+    const sig = {
+      level: state.level,
+      levelIndex,
+      runId: meta.runId,
+      aiRngSeed: state.aiRngSeed,
+      rookieStart: toSquare(state.rookie),
+    };
+    // A mount followed by an immediate reset would log the same start twice.
+    const last = traceEventsRef.current[traceEventsRef.current.length - 1];
+    if (
+      last?.kind === 'level-start' &&
+      last.level === sig.level &&
+      last.levelIndex === sig.levelIndex &&
+      last.runId === sig.runId &&
+      last.aiRngSeed === sig.aiRngSeed &&
+      last.rookieStart === sig.rookieStart
+    ) {
+      return;
+    }
+    recordEvent({
+      kind: 'level-start',
+      ...sig,
+      abilities: state.abilities.map((a) => ({ id: a.id, tier: a.tier, usesLeft: a.usesLeftThisLevel })),
+      difficulty: state.difficulty ?? 'normal',
+      moveLimit: state.moveLimit,
+      enemiesPerTurn: state.enemiesPerTurn,
+      kingBehavior: state.kingBehavior ?? null,
+    });
+    // Fires on the attempt tick only — `state` here is the freshly built board.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [levelAttempt]);
+
   // Phase flags.
   const [dying, setDying] = useState(false);
   const [deathSettled, setDeathSettled] = useState(false);
@@ -805,6 +866,7 @@ export default function RookiesRunPage() {
   );
 
   const [showTempoHelp, setShowTempoHelp] = useState(false);
+  const [showLevelRules, setShowLevelRules] = useState(false);
   /**
    * Which rack card's (i) explainer is open in the rack's info slot — the
    * ONE place ability text shows during a run. Closed by any tap on the
@@ -1216,6 +1278,11 @@ export default function RookiesRunPage() {
         setSelectedSquare(null);
         setState(next);
         if (id === 'surge') void playSurgeSound();
+        // Sacrifice armed: the charge-up beat — finger on the big red button.
+        if (id === 'sacrifice' && next.activeAbility?.id === 'sacrifice') {
+          playSacrificeArmSound();
+          haptic('heavy');
+        }
       }
     },
     [state, recordEvent],
@@ -1296,7 +1363,11 @@ export default function RookiesRunPage() {
           });
           setState(next);
           if (state.activeAbility.id === 'freeze-ray') void playFreezeSound();
-          else playCardPlaySound();
+          else if (state.activeAbility.id === 'sacrifice') {
+            playSacrificeBoomSound();
+            haptic('heavy');
+            setTimeout(() => haptic('heavy'), 120);
+          } else playCardPlaySound();
           haptic('heavy');
           trackEvent('run_ability_used', {
             iso: meta.iso,
@@ -1451,6 +1522,7 @@ export default function RookiesRunPage() {
       setState(next.state);
       setSelectedSquare(null);
       setShowLevelCleared(false);
+      setLevelAttempt((n) => n + 1);
       return;
     }
     const nextPuzzle = puzzleForDate(meta.iso, nextIdx, meta.runId);
@@ -1473,6 +1545,7 @@ export default function RookiesRunPage() {
     setState(nextState);
     setSelectedSquare(null);
     setShowLevelCleared(false);
+    setLevelAttempt((n) => n + 1);
   }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, meta.endless, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
 
   /**
@@ -1492,6 +1565,7 @@ export default function RookiesRunPage() {
     setClockSec(0);
     setState(fresh.state);
     setSelectedSquare(null);
+    setLevelAttempt((n) => n + 1);
     setLevelsCleared(0);
     setLevelsLost(0);
     lossesByLevelRef.current = {};
@@ -1618,13 +1692,22 @@ export default function RookiesRunPage() {
     setLossReason(null);
     trackedLossRef.current = false;
     tracePostedRef.current = false;
+    recordEvent({
+      kind: 'retry',
+      level: state.level,
+      levelIndex,
+      retriesUsed: retriesUsedRef.current[levelIndex],
+      difficulty: state.difficulty ?? 'normal',
+      runId: meta.runId,
+    });
+    setLevelAttempt((n) => n + 1);
     trackEvent('run_level_retried', {
       iso: meta.iso,
       level: levelIndex + 1,
       difficulty: state.difficulty ?? 'normal',
       retriesUsed: retriesUsedRef.current[levelIndex],
     });
-  }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty]);
+  }, [levelIndex, meta.iso, meta.runId, meta.refreshAll, state.abilities, state.tempo, state.pendingOffer, state.unlockedAbilities, state.difficulty, state.level, recordEvent]);
 
   // STC and Revenge runs are separate cycles — never advance across the line.
   // The non-STC cycle stays inside the player-facing Revenge pool: classic
@@ -1666,6 +1749,7 @@ export default function RookiesRunPage() {
     showLevelCleared ||
     runComplete ||
     showTempoHelp ||
+    showLevelRules ||
     showRunPicker ||
     showTrophies ||
     progress.queue.unlocks.length > 0;
@@ -1742,6 +1826,9 @@ export default function RookiesRunPage() {
         totalLevels,
         outcome: runComplete ? 'won' : 'lost',
         startedAt: new Date(traceStartRef.current).toISOString(),
+        // Anonymous, stable per install — groups one player's traces (stored
+        // in run_traces.device). Never tied to an account.
+        device: deviceId(),
       },
       events: traceEventsRef.current,
     };
@@ -2155,6 +2242,25 @@ export default function RookiesRunPage() {
               formMovesLeft={state.formMovesLeft}
             />
           </div>
+          {!isStc && state.winCondition === 'king' && (
+            <button
+              type="button"
+              onClick={withClick(() => setShowLevelRules(true))}
+              aria-label="How enemies move here"
+              className="min-h-[44px] flex items-center active:scale-95 transition-transform shrink-0"
+            >
+              <span
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] leading-none"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.22)', color: '#DCE4F5' }}
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 11v6M12 7.5v.5" />
+                </svg>
+                Rules
+              </span>
+            </button>
+          )}
           <button
             type="button"
             onClick={withClick(openTempoHelp)}
@@ -2281,6 +2387,9 @@ export default function RookiesRunPage() {
       )}
 
       {showTempoHelp && <TempoHelpModal onClose={closeTempoHelp} />}
+      {showLevelRules && (
+        <LevelRulesModal state={state} oneLife={!!endless} onClose={() => setShowLevelRules(false)} />
+      )}
       <RunAchievementPop
         achievement={progress.queue.achievements[0]}
         onDone={progress.shiftAchievement}

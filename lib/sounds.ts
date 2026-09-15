@@ -468,6 +468,86 @@ export function playCardPlaySound(): void {
   })();
 }
 
+/**
+ * Sacrifice ARMED — a rising charge-up whine (the "finger on the big red
+ * button" beat). Synth only, no asset.
+ */
+export function playSacrificeArmSound(): void {
+  if (typeof window === 'undefined') return;
+  void (async () => {
+    const ctx = await ensureAudioReady();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const wobble = ctx.createOscillator();
+    const wobbleGain = ctx.createGain();
+    const gain = ctx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(140, t);
+    osc.frequency.exponentialRampToValueAtTime(620, t + 0.42);
+    wobble.frequency.value = 18;
+    wobbleGain.gain.value = 22;
+    wobble.connect(wobbleGain);
+    wobbleGain.connect(osc.frequency);
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(700, t);
+    lp.frequency.exponentialRampToValueAtTime(2600, t + 0.42);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(0.09, t + 0.05);
+    gain.gain.setValueAtTime(0.09, t + 0.36);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    osc.connect(lp);
+    lp.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    wobble.start(t);
+    osc.stop(t + 0.52);
+    wobble.stop(t + 0.52);
+  })();
+}
+
+/** Sacrifice DETONATED — a noise blast over a deep falling thump. */
+export function playSacrificeBoomSound(): void {
+  if (typeof window === 'undefined') return;
+  void (async () => {
+    const ctx = await ensureAudioReady();
+    if (!ctx) return;
+    const t = ctx.currentTime;
+    // Low thump.
+    const osc = ctx.createOscillator();
+    const og = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(160, t);
+    osc.frequency.exponentialRampToValueAtTime(38, t + 0.45);
+    og.gain.setValueAtTime(0.0001, t);
+    og.gain.linearRampToValueAtTime(0.5, t + 0.01);
+    og.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+    osc.connect(og);
+    og.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.62);
+    // Noise crack + rumble tail.
+    const len = Math.floor(ctx.sampleRate * 0.7);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.2);
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(3200, t);
+    lp.frequency.exponentialRampToValueAtTime(260, t + 0.6);
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.32, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+    noise.connect(lp);
+    lp.connect(ng);
+    ng.connect(ctx.destination);
+    noise.start(t);
+  })();
+}
+
 /** Play check sound - sharp synthesized tone like Lichess */
 export async function playCheckSound(): Promise<void> {
   const ctx = await ensureAudioReady();

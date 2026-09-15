@@ -7,7 +7,7 @@ import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
 import { SACRIFICE_BLAST_TINTS, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
-import { isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
+import { decoyCapturer, isRookieThreatened, kingDangerSquares, nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
@@ -647,7 +647,9 @@ export function RunBoard({
           boxShadow: prev.boxShadow ? `${prev.boxShadow}, ${rings.join(', ')}` : rings.join(', '),
         };
       }
-      // The summon itself: a lighter wash of its own color under the piece.
+      // The summon itself: THE BIG RED BUTTON (Tyler, 2026-09-15). A bold
+      // pulsing red bullseye over its own color, so "tap here to blow it up"
+      // is unmissable.
       for (const g of blastPreview) {
         const sq = toSquare(g.summon);
         const prev = styles[sq] ?? {};
@@ -655,7 +657,10 @@ export function RunBoard({
         styles[sq] = {
           ...prev,
           backgroundColor: t.own,
-          boxShadow: prev.boxShadow ? `${prev.boxShadow}, inset 0 0 0 3px ${t.ring}` : `inset 0 0 0 3px ${t.ring}`,
+          backgroundImage:
+            'radial-gradient(circle, rgba(255,255,255,0.95) 0 9%, rgba(220,38,38,0.95) 9% 22%, rgba(255,255,255,0.85) 22% 31%, rgba(220,38,38,0.9) 31% 44%, transparent 45%)',
+          boxShadow: 'inset 0 0 0 4px rgba(220,38,38,1), inset 0 0 22px rgba(248,113,113,0.95)',
+          animation: 'rrSacrificeTarget 0.8s ease-in-out infinite',
         };
       }
     }
@@ -750,6 +755,24 @@ export function RunBoard({
       };
     }
 
+    // King danger — the squares touching him where he would take her if she
+    // ended her move there. Cleared while he is stunned, frozen or smoked
+    // (kingDangerSquares mirrors the engine). Layered UNDER any dots/rings.
+    if (kingGoal && state.turn === 'rookie') {
+      const tint = 'linear-gradient(rgba(239,68,68,0.34), rgba(239,68,68,0.34))';
+      for (const c of kingDangerSquares(state)) {
+        const sq = toSquare(c);
+        const prev = styles[sq] ?? {};
+        styles[sq] = {
+          ...prev,
+          backgroundImage: prev.backgroundImage ? `${prev.backgroundImage}, ${tint}` : tint,
+          boxShadow: prev.boxShadow
+            ? `${prev.boxShadow}, inset 0 0 0 1px rgba(220,38,38,0.55)`
+            : 'inset 0 0 0 1px rgba(220,38,38,0.55)',
+        };
+      }
+    }
+
     // 8th-rank "level cleared" gold blaze.
     if (state.status === 'won' && rankGoal) {
       for (let f = 1; f <= 8; f++) {
@@ -763,7 +786,13 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+
+  // Decoy: the piece that WILL take the mark, so the lure is plannable.
+  const decoyArrow = useMemo(
+    () => (state.status === 'playing' && state.decoyTarget ? decoyCapturer(state) : null),
+    [state],
+  );
 
   // Summon-targeting support cards (Swap / Sacrifice): the legal
   // "moves" are your own summons. Give those squares the same pulsing-ring
@@ -1363,6 +1392,7 @@ export function RunBoard({
             <RookieCell form={state.form} />
           </div>
         )}
+        {decoyArrow && <DecoyArrow from={decoyArrow.from} to={decoyArrow.to} />}
         {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (
           <SquareChip
             square={toSquare(state.rookie)}
@@ -2339,7 +2369,80 @@ function KingGoalLabel({
       : status === 'stunned'
         ? { color: '#4c1d95', background: 'rgba(233,213,255,0.95)', border: 'rgba(168,85,247,0.9)' }
         : { color: '#7a4a00', background: 'rgba(255,240,180,0.92)', border: 'rgba(232,156,26,0.8)' };
-  return <SquareChip square={square} label={label} palette={palette} />;
+  return (
+    <SquareChip
+      square={square}
+      label={label}
+      palette={palette}
+      icon={status === 'stunned' ? <DizzyIcon /> : undefined}
+    />
+  );
+}
+
+/** Small spiral — "seeing stars". Inline SVG, no emoji. */
+function DizzyIcon() {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      width="1.1em"
+      height="1.1em"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      style={{ display: 'inline-block', verticalAlign: '-0.2em', marginRight: 2, animation: 'rrDizzySpin 1.2s linear infinite' }}
+      aria-hidden
+    >
+      <path d="M8 8.2c0-.9.9-1.2 1.5-.7.9.7.3 2.3-1 2.4-1.8.1-2.8-1.9-1.9-3.4 1.1-1.9 4-1.9 5.1.1 1.3 2.3-.4 5.2-3.2 5.3C5.2 12 3.3 9 4.4 6.2" />
+    </svg>
+  );
+}
+
+/**
+ * Decoy preview — a violet arrow from the enemy that will capture the marked
+ * piece to the mark. Pure overlay (never takes taps). Board coordinates: file
+ * a..h left to right, rank 8 at the top (same as SquareChip).
+ */
+function DecoyArrow({ from, to }: { from: Coord; to: Coord }) {
+  const cx = (c: Coord) => c.file - 0.5;
+  const cy = (c: Coord) => 8 - c.rank + 0.5;
+  const x1 = cx(from);
+  const y1 = cy(from);
+  const x2 = cx(to);
+  const y2 = cy(to);
+  const len = Math.hypot(x2 - x1, y2 - y1) || 1;
+  // Stop short of the target's center so the head sits on its edge.
+  const ex = x2 - ((x2 - x1) / len) * 0.3;
+  const ey = y2 - ((y2 - y1) / len) * 0.3;
+  const sx = x1 + ((x2 - x1) / len) * 0.25;
+  const sy = y1 + ((y2 - y1) / len) * 0.25;
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 8 8"
+      preserveAspectRatio="none"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}
+    >
+      <defs>
+        <marker id="rr-decoy-head" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="3.2" markerHeight="3.2" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z" fill="rgba(217,70,239,1)" stroke="#fff" strokeWidth="1" />
+        </marker>
+      </defs>
+      <line x1={sx} y1={sy} x2={ex} y2={ey} stroke="rgba(255,255,255,0.9)" strokeWidth={0.2} strokeLinecap="round" />
+      <line
+        x1={sx}
+        y1={sy}
+        x2={ex}
+        y2={ey}
+        stroke="rgba(217,70,239,1)"
+        strokeWidth={0.11}
+        strokeLinecap="round"
+        strokeDasharray="0.28 0.14"
+        markerEnd="url(#rr-decoy-head)"
+        style={{ animation: 'rrDecoyDash 0.9s linear infinite' }}
+      />
+    </svg>
+  );
 }
 
 /**
@@ -2406,10 +2509,12 @@ function SquareChip({
   square,
   label,
   palette,
+  icon,
 }: {
   square: string;
   label: string;
   palette: { color: string; background: string; border: string };
+  icon?: React.ReactNode;
 }) {
   const { file, rank } = fromSquare(square);
   const below = rank > 1;
@@ -2445,6 +2550,7 @@ function SquareChip({
           userSelect: 'none',
         }}
       >
+        {icon}
         {label}
       </span>
     </div>
