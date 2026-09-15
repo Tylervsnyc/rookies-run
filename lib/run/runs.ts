@@ -6407,8 +6407,10 @@ const RUN_REVENGE_11: RunDef = {
 
 /**
  * revenge-12 — THE MOAT. Built 2026-09-04 for the daily kit
- * swap / bishop-squire / knight-hop / poison-dart (`allowedAbilities` IS the
- * kit — daily-kit.ts draws all four). Tyler's playtest note: "I keep
+ * swap / bishop-squire / knight-hop / poison-dart. KIT IS NOW THREE CARDS
+ * (2026-09-15): bishop-squire + swap + knight-hop. Poison Dart is gone (Tyler,
+ * Sep 4: "useless"), so every dart KEY/TRAP note below is history; L3/L4 were
+ * reworked to stand without it. Tyler's playtest note: "I keep
  * rabies-darting the pawn that's protecting the pawn to clear a path." So
  * the constant signature here is WATER, not guards: rank 5 is a moat of
  * hazards on every level, the king's room sits beyond it, and the question
@@ -6493,12 +6495,12 @@ const RUN_REVENGE_12: RunDef = {
   signaturePair: ['bishop-squire', 'swap'],
   name: 'The Moat',
   blurb: 'Water on every side. He thinks water is a wall.',
-  allowedAbilities: ['swap', 'bishop-squire', 'knight-hop', 'poison-dart'],
+  allowedAbilities: ['bishop-squire', 'swap', 'knight-hop'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
-  offerCore: REVENGE_CORE,
-  offerCoreMin: 2,
+  offerCore: ['bishop-squire', 'swap'],
+  offerCoreMin: 1,
   levels: [
     // L1 — THE FORD. Still king e8 behind a two-square ford (d5/e5). Key e6
     // on his file, undefended (shell c7/g7 sits off its diagonals). Slide the
@@ -6526,29 +6528,32 @@ const RUN_REVENGE_12: RunDef = {
     ),
     // L3 — THE CORRIDOR. First flee king: g6 in a rank-6 corridor f6-h6
     // (walls f7/g7/h7). A rook ON rank 6 is lethal (every flee square shares
-    // the rank) — but the only bridge is a5 and rank 6 is barred by pawn b6
-    // (held by c7). Knight-hop from d4/b4 lands on c6/e6 over the water:
-    // KEY. Bishop h2 rakes f4. Nine moves: darting c7 and walking the
-    // a-file, or Squire a5xb6 + Swap, also get there — two moves slower.
+    // the rank). 2026-09-15: the bridge moved a5 -> c5 and the barrier is an
+    // UNDEFENDED pawn d6 (b6 is loose change): c-file up, take d6 for the
+    // stun, take him. v1 (a5 bridge, b6 held by c7) was BOT-BLIND — the bot
+    // read 0% with every loadout but knight-hop and it ended ~40% of sim runs
+    // on L3. Knight-hop is still the fast road.
     make(
       3,
       [
-        pawn(2, 6), pawn(3, 7),
+        pawn(4, 6), pawn(2, 6),
         bishop(8, 2),
         king(7, 6),
       ],
       {
         ...FLEE,
         moveLimit: 9,
-        hazards: [...MOAT(1), X(6, 7), X(7, 7), X(8, 7)],
+        hazards: [...MOAT(3), X(6, 7), X(7, 7), X(8, 7)],
         kingPen: ['f6', 'g6', 'h6'],
       },
     ),
     // L4 — THE SLOW LOCK. King e8 in a 2x2 room (walls c7/c8/f7/f8), ford
     // d5/e5. Key e6 on his file is held by KNIGHT g7 — take it and the
     // knight takes you; hop onto it and the knight takes you. Poison the
-    // knight, wait on the e-file, take the key when it dies: KEY. Bishop b2
-    // rakes the d4/e5 diagonal, marcher h3. Nine moves — the wait fits.
+    // knight, wait on the e-file, take the key when it dies. Bishop b2
+    // rakes the d4/e5 diagonal, marcher h3. Nine moves. 2026-09-15: with the
+    // dart gone this is a breather — the bot clears it 88-100% with anything
+    // (the bishop squire takes g7 from the near bank, or Rookie simply walks).
     make(
       4,
       [
@@ -6581,7 +6586,7 @@ const RUN_REVENGE_12: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 11,
+        moveLimit: 14,
         hazards: [...MOAT(3), X(7, 6), X(8, 7), X(6, 7), X(7, 8)],
         kingPen: ['f6', 'g7', 'h8'],
       },
@@ -6593,20 +6598,22 @@ const RUN_REVENGE_12: RunDef = {
     // by knight e7, whose only jumps are c6/c8 — it never crosses to become
     // a free stun, so a hop-capture on g6 is recaptured. The bishop takes
     // it from f6 (f6xe7, stun), or you dart it while the bishop walks.
-    // Queen a4 rakes rank 4 but pawn c4 shields d4-h4: dart THAT pawn and
-    // the whole bank is hers. Ten moves.
+    // 2026-09-15: the queen on a4 is now a bishop on b3 and the clock is 13
+    // (was 10) — this is the first pair level, and at 10 moves with a queen
+    // raking rank 4 it ended 2 of every 3 sim runs that reached it (kit 38%).
+    // Now pair ~80, full kit ~100, every single card 0.
     make(
       6,
       [
         pawn(7, 6),
         knight(5, 7),
-        queen(1, 4), pawn(3, 4),
+        bishop(2, 3), pawn(3, 4),
         pawn(8, 2),
         king(7, 8),
       ],
       {
         ...FLEE,
-        moveLimit: 10,
+        moveLimit: 13,
         hazards: [...MOAT(5), X(5, 4), X(5, 6), X(6, 7), X(6, 8)],
         kingPen: ['g7', 'h7', 'g8', 'h8'],
       },
@@ -6618,12 +6625,15 @@ const RUN_REVENGE_12: RunDef = {
     // two squares a knight-hop would have to launch from to land on b6 — sit
     // on them and the hop has no runway (d2 defends e4, so taking one is not
     // free). d6 is stone, so the bishop's step off the sluice is b6 and the
-    // swap has to land Rookie inside the room. Every single card reads 0;
-    // squire+swap 69, squire+hop 66, hop+dart 53.
+    // swap has to land Rookie inside the room. 2026-09-15: the d2 knight is a
+    // d3 pawn — two hunters, not three. L7 was the run-killer after the L3/L6
+    // fixes (54% of arrivals). Pair ~67, full kit ~75, singles 0. The kit's
+    // line differs from the pair's: hop over, Squire INTO the pen, the bishop
+    // takes him (Tyler's own L7 clear, Sep 15).
     make(
       7,
       [
-        knight(1, 4), knight(5, 4), knight(4, 2),
+        knight(1, 4), knight(5, 4), pawn(4, 3),
         king(3, 7),
       ],
       {
@@ -6638,21 +6648,26 @@ const RUN_REVENGE_12: RunDef = {
     ),
     // L8 — THE OPEN ROOM. King f7 in a 3x3 room e6-g8 (walls d6-d8 /
     // h6-h8, pillar f6) — he has space, so one rook only chases him. No
-    // bridge: the f5 gap is a sluice (walls f4/f6), bishop-only. Knight-hop
-    // from c4/d4 lands on e6 INSIDE the room over the water: KEY. Then it
-    // is two bodies (Squire) or a stun (dart a knight as it comes) to close
-    // the room — the knights e4/g4/d3 hunt her across the water. Ten moves.
+    // bridge: the f5 gap is a sluice (walls f4/f6), bishop-only. Two bodies
+    // close the room: the bishop crosses, Swap puts Rookie in, and whichever
+    // of them he steps next to takes him. 2026-09-15: Tyler LOST here. The
+    // leak was a knight-hop LANDING ON THE SLUICE f5 and summoning the bishop
+    // into the room (kit 10/12 that way) — d4/h4/e3/g3 are now stone, so no
+    // knight reaches f5, and the knights start e4/g4/c3. Clock 10 -> 12.
     make(
       8,
       [
-        knight(5, 4), knight(7, 4), knight(4, 3),
+        knight(5, 4), knight(7, 4), knight(3, 3),
         pawn(2, 3),
         king(6, 7),
       ],
       {
         ...FLEE,
-        moveLimit: 10,
-        hazards: [...MOAT(6), X(6, 4), X(6, 6), X(4, 6), X(4, 7), X(4, 8), X(8, 6), X(8, 7), X(8, 8)],
+        moveLimit: 12,
+        hazards: [
+          ...MOAT(6), X(6, 4), X(6, 6), X(5, 3), X(7, 3), X(4, 4), X(8, 4),
+          X(4, 6), X(4, 7), X(4, 8), X(8, 6), X(8, 7), X(8, 8),
+        ],
         kingPen: ['e6', 'g6', 'e7', 'f7', 'g7', 'e8', 'f8', 'g8'],
       },
     ),
@@ -6695,8 +6710,10 @@ const RUN_REVENGE_12: RunDef = {
     // ORDER matters — the bishop must take e7 and then slide THROUGH f6 to
     // g7 in ONE move. Stop on f6 and h7 eats him; reach g7 and the swap IS
     // the capture. That is Tyler's Squire -> Swap -> capture line, and it is
-    // now the only way into the keep. Two enemies a turn, twelve moves.
-    // Every single card reads 0; squire+swap 78, squire+hop 53.
+    // now the only way into the keep. Two enemies a turn. 2026-09-15: ten
+    // moves (was 12) so the run ends on its hardest rung (pair 83 -> ~58,
+    // below L7). Knight-hop still finishes from f6 at arrival (it is the
+    // extra card, and a trap everywhere else in the finale).
     make(
       10,
       [
@@ -6708,7 +6725,7 @@ const RUN_REVENGE_12: RunDef = {
       {
         ...FLEE,
         enemiesPerTurn: 2,
-        moveLimit: 12,
+        moveLimit: 10,
         hazards: [
           ...MOAT(3), X(3, 6), X(3, 8), X(6, 7), X(6, 8),
           X(5, 6), X(8, 6),
