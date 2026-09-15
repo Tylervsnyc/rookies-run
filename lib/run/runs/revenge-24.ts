@@ -651,32 +651,31 @@ const RUN_REVENGE_24: RunDef = {
         hazards: LATTICE([], [X(4, 5), X(6, 5), X(6, 7)]),
       },
     ),
-    // L10 — THE BAIT IS THE TRAP (2026-09-07: 38% for the pair, 0% alone).
-    // The capstone, and it punishes the level before it. He is on d7 walled in
-    // stone on three diagonals (c8, e8, e6); the only door is the pawn c6, and
-    // its only lock is b7. Across the board sits the L9 shape, laid out as a
-    // lure: the bishop g8 jammed against the pawn f7 (h7 is stone). Mark f7 and
-    // the bishop eats it exactly as it did on L9 — but the army has TWO hands
-    // here, so the eat costs it one action and b7 recaptures the Duchess on c6
-    // with the other. Buying the turn no longer buys anything; the only mark
-    // that lives is the guard of the square she lands on, b7 itself. Marking
-    // c6 is the third trap: b7 eats the decoy and stands on the door.
-    // b5 and d4 are stone, so the launch is c4/e4 (or the long c6-d5-e4-f3-g2-h1
-    // diagonal), and the fallen panes on c2/c3/e2/e3 make the walk the longest
-    // in the run.
+    // L10 — THE BAIT IS THE TRAP (reworked 2026-09-15 — Tyler: "L10 was easier
+    // than L9"). He sits on e8 now, walled in on d8/f8/e7; the door is still
+    // the pawn c6, on his diagonal through d7, and its only lock is b7. Moving
+    // him off d7 took away the shortcut that made this easy: when he stood
+    // beside c6 he ate a decoy on the door himself and handed her a stunned
+    // king in the doorway. Now the door is not his neighbour. Across the board
+    // sits the L9 shape as a lure: the bishop g8 jammed against the pawn f7.
+    // Mark f7 and the bishop eats it exactly as on L9 — but the army has TWO
+    // hands here, so b7 still recaptures the Duchess on c6 with the other.
+    // The only mark that lives is the guard of the square she lands on, b7.
+    // b5 and d4 are stone, so the launch is c4/e4 (or the long diagonal).
     make(
       10,
       [
         pawn(3, 6), pawn(2, 7),
         pawn(6, 7), bishop(7, 8),
-        king(4, 7),
+        king(5, 8),
       ],
       {
         ...FLEE,
         moveLimit: 6,
         enemiesPerTurn: 2,
         hazards: LATTICE([], [X(6, 5), X(4, 4), X(2, 5), X(3, 2), X(3, 3), X(5, 2), X(5, 3),
-          X(5, 6), X(3, 8), X(5, 8), X(8, 7)]),
+          X(5, 6), X(3, 8), X(4, 8), X(6, 8), X(5, 7), X(8, 7)]),
+        kingPen: ['e8'],
       },
     ),
   ],
