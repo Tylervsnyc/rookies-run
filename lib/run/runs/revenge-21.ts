@@ -60,13 +60,8 @@
  * step next to him, he freezes). Those lines need the jump too, so the combo
  * gate holds; they are the price of keeping Aegis in the rung-1 kit.
  *
- * TIER CAP. knight-hop is capped at T1 (`abilityTierCaps`). The full-run sim put
- * it at T2 on arrival at L7, and T2 is two knight turns: after the jump she is
- * still a knight, which is a second jump (the classic gate-breaker, see
- * .claude/run-level-design.md) and also forbids the rook finish. One knight
- * move is the whole card in this run. Aegis is capped at T1 too (one raise a
- * level): T2 is a second survived hit. Upgrades flow to Boulder, Tyler's
- * favourite card.
+ * NO TIER CAPS (Tyler, 2026-09-15): every card climbs its normal path to T5.
+ * The finales are measured against upgraded singles (card:3-5) below.
  */
 
 import { bishop, king, make, pawn, X } from '../run-kit';
@@ -101,8 +96,6 @@ const RUN_REVENGE_21: RunDef = {
   name: 'The Slash',
   blurb: 'One line of stone. He thinks a line is a wall.',
   allowedAbilities: ['boulder', 'knight-hop', 'aegis'],
-  // One knight move is the whole card here (see header, TIER CAP).
-  abilityTierCaps: { 'knight-hop': 1, aegis: 1 },
   // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
   // made this stone run EASIER (the enemy phase drains corridors open), and
   // the finales are short exact lines where Hard's moveLimitDelta -2 would be
@@ -188,6 +181,8 @@ const RUN_REVENGE_21: RunDef = {
       hazards: [
         ...SLASH(),
         ...S('b4', 'b5', 'b6', 'c4', 'c6', 'd5', 'd6', 'e4'),
+        // every other knight square of c5 (an upgraded knight walks in).
+        ...S('a4', 'a6', 'b3', 'b7', 'd7', 'e6'),
         ...S('a2', 'c1', 'e1', 'f2', 'g1', 'g2', 'h1'),
       ],
       kingPen: ['c5'],
