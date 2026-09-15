@@ -219,7 +219,6 @@ export const RUN_REVENGE_15: RunDef = {
   // Boulder T4/T5 make this run unwinnable (0% on every finale level, measured
   // 2026-09-08) — she walls her own one-wide shaft and cannot afford to undo it.
   // Correctness cap only; see the tier sweep in the header.
-  abilityTierCaps: { boulder: 3 },
   // PER-RUN DIFFICULTY OVERRIDE (2026-09-07). Hard's global `+1 enemy per turn`
   // makes THIS run EASIER, measured twice: no-retry 27% Normal vs 30% Hard, real-retry 37% vs 47%. The cause is the
   // documented one (.claude/run-level-design.md, "Pawn walls march") — the

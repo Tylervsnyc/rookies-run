@@ -7,7 +7,7 @@ import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
 import { SACRIFICE_BLAST_TINTS, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
-import { decoyCapturer, isRookieThreatened, kingDangerSquares, nextEnemyMovers } from '@/lib/run/pawn-ai';
+import { decoyCapturer, isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
 import type { AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
@@ -755,24 +755,6 @@ export function RunBoard({
       };
     }
 
-    // King danger — the squares touching him where he would take her if she
-    // ended her move there. Cleared while he is stunned, frozen or smoked
-    // (kingDangerSquares mirrors the engine). Layered UNDER any dots/rings.
-    if (kingGoal && state.turn === 'rookie') {
-      const tint = 'linear-gradient(rgba(239,68,68,0.34), rgba(239,68,68,0.34))';
-      for (const c of kingDangerSquares(state)) {
-        const sq = toSquare(c);
-        const prev = styles[sq] ?? {};
-        styles[sq] = {
-          ...prev,
-          backgroundImage: prev.backgroundImage ? `${prev.backgroundImage}, ${tint}` : tint,
-          boxShadow: prev.boxShadow
-            ? `${prev.boxShadow}, inset 0 0 0 1px rgba(220,38,38,0.55)`
-            : 'inset 0 0 0 1px rgba(220,38,38,0.55)',
-        };
-      }
-    }
-
     // 8th-rank "level cleared" gold blaze.
     if (state.status === 'won' && rankGoal) {
       for (let f = 1; f <= 8; f++) {
@@ -786,7 +768,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Decoy: the piece that WILL take the mark, so the lure is plannable.
   const decoyArrow = useMemo(

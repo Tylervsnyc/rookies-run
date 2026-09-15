@@ -136,6 +136,10 @@ never turns a FAIL on GATE into anything else, and it never makes a rung PASS.
 
 ---
 
+## Card rule (Tyler, 2026-09-15)
+
+Every rung offers exactly 3 cards, and every card upgrades on its normal path to T5. No `abilityTierCaps` on ladder runs; `pipeline.ts lint` fails the build if one appears. If an upgrade trivializes a level, change the board.
+
 ## Grades
 
 - **PASS** — all seven.

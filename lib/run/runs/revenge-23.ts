@@ -307,7 +307,6 @@ const RUN_REVENGE_23: RunDef = {
   // walk to a knight's jump from him, hop onto him. Ceiling T3 — the tier a
   // player realistically reaches by the finale anyway, and the one the gate
   // was measured against.
-  abilityTierCaps: { 'knight-hop': 3 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

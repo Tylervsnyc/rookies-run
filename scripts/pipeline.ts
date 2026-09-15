@@ -124,6 +124,18 @@ function lint(): number {
   for (const id of rungIds) {
     const st = stageOfId(id);
     if (st !== 'approved' && st !== 'live') problems.push(`ladder rung ${id}: stage ${st ?? 'missing'} — every rung must be approved|live`);
+    // Tyler, 2026-09-15: every ladder card upgrades normally to T5. If an
+    // upgrade breaks a level, fix the board — never cap the card.
+    const src = built.includes(id)
+      ? readFileSync(join(runsDir, `${id}.ts`), 'utf8')
+      : (() => {
+          const all = readFileSync(join(process.cwd(), 'lib', 'run', 'runs.ts'), 'utf8');
+          const at = all.indexOf(`id: '${id}'`);
+          if (at < 0) return '';
+          const end = all.indexOf('\n};', at);
+          return all.slice(at, end < 0 ? undefined : end);
+        })();
+    if (/^\s*abilityTierCaps\s*:/m.test(src)) problems.push(`ladder rung ${id}: sets abilityTierCaps — ladder cards must upgrade normally (fix the board instead)`);
   }
   const seen = new Set<string>();
   for (const i of reg.items) {
