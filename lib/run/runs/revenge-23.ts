@@ -46,7 +46,7 @@
  *               L7-L9 and the only one on L10.
  *
  * NO TIER CAPS (Tyler, 2026-09-15: every card on its normal path to T5). The
- * old `abilityTierCaps: { 'knight-hop': 3 }` is gone. Knight Hop T4 is its
+ * old knight-hop T3 tier cap is gone. Knight Hop T4 is its
  * two-use tier: hop up, then hop onto him. It broke L9 and L10 (94% alone), and
  * the fix is the BOARD, not the card:
  *   L9  d8 is stone — the square a second hop onto his room launches from.
