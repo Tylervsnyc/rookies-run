@@ -22,14 +22,21 @@
  * Switchback), not a hedge (The Briar): one line, and everything is about
  * which side of it you are on.
  *
- *   L1-L2  the slash has a FORD (one missing stone). Walk through it.
- *   L3     first flee king, ford open. His room is two squares in a ROW —
- *          one rook on rank 8 sees both, he has nowhere to step. Free.
+ *   (2026-09-15, Tyler: "L1-5 feel samey — the same hop-to-the-knight-square
+ *   trick." L2, L3 and L5 rebuilt so each asks one different small thing.
+ *   Knight-hop is still a backup answer on L2-L5; each level's own idea is
+ *   the short one.)
+ *   L1     the slash has a FORD (one missing stone). Walk through it.
+ *   L2     TAKE THE GUARD. He runs in a 2x2, but a frozen pawn stands under
+ *          him on his file. Take it: the capture stuns him. No card.
+ *   L3     ONE STONE. His room is an L of three on the a-file edge. One
+ *          stone straightens it into a line the rook owns: BOULDER.
  *   L4     the ford is PLUGGED by a bishop frozen in a knot of stone and
  *          defended by a stump pawn no rook can reach. Take the plug, eat
  *          the reply: AEGIS.
- *   L5     the ford is open but his room is a 2x2 — a rook can never hold a
- *          2x2 against a stepping king. Two stones make it a 1x2: BOULDER.
+ *   L5     SHIELD UP, WALK IN. A 3x3 room no rook or two stones can hold.
+ *          He always strikes a rook beside him — raise the shield, step in
+ *          on his line, he swings and freezes: AEGIS.
  *   L6     no ford. Row room again — so the rook owns it — but the only way
  *          over the slash is a jump: KNIGHT-HOP.
  *   L7-L10 no ford AND a room a rook cannot hold. Jump the slash (only the
@@ -224,24 +231,27 @@ const RUN_REVENGE_21: RunDef = {
       hazards: SLASH(4),
       kingPen: ['a8'],
     }),
-    // L2 — THE OTHER SLASH. Mirrored: a8-h1 with e4 missing, still king h8
-    // in the far corner. Up the e-file through the ford, along rank 8. A
-    // light bishop (sealed on her side by a light slash) hunts her.
-    make(2, [bishop(2, 1), pawn(7, 8), king(8, 8)], {
-      ...STILL,
+    // L2 — TAKE THE GUARD. Mirrored slash (a8-h1), ford at e4. He runs
+    // inside a 2x2 (g7-h8) that a lone rook can never hold — but a pawn
+    // stands on g6, under him on the g-file. Cross, take the pawn: the
+    // capture stuns him, and from g6 the rook already sees g7/g8. No card.
+    // A light bishop (sealed on her side by the light slash) hunts her.
+    make(2, [bishop(2, 1), pawn(7, 6), king(7, 8)], {
+      ...FLEE,
       moveLimit: 7,
-      hazards: BACKSLASH(5),
-      kingPen: ['h8'],
+      hazards: [...BACKSLASH(5), X(7, 5)],
+      kingPen: ['g8', 'h8', 'g7', 'h7'],
     }),
-    // L3 — HE RUNS. First flee king: a8 in a two-square ROW (a8/b8). Ford
-    // at e5. Cross, get onto rank 8: a rook on the eighth sees both his
-    // squares, so he has nowhere to step. Free — this is the lesson the
-    // finale inverts.
-    make(3, [bishop(8, 2), king(1, 8)], {
+    // L3 — ONE STONE. Ford at e5. He runs in an L of three squares on the
+    // a-file edge (a5/a6/b6): a rook on the a-file sees two of them, a rook
+    // on rank 6 sees the other two, and he always has the third. One stone
+    // on a5 (or b6) straightens the L into a line — then the rook owns it.
+    // BOULDER, one drop. A light bishop hunts her side.
+    make(3, [bishop(8, 2), king(1, 6)], {
       ...FLEE,
       moveLimit: 7,
       hazards: SLASH(5),
-      kingPen: ['a8', 'b8'],
+      kingPen: ['a6', 'a5', 'b6'],
     }),
     // L4 — THE PLUG. Ford at d4, and a bishop stands in it, frozen in a
     // knot: c3/e5 are slash, c5 holds a pawn, e3 holds a pawn. The c5 pawn
@@ -262,15 +272,16 @@ const RUN_REVENGE_21: RunDef = {
         kingPen: ['d8'],
       },
     ),
-    // L5 — THE ROOM. Ford at e5, open. His room is a 2x2 (a7/a8/b7/b8): a
-    // rook sees one file or one rank of it and he steps to the other,
-    // forever. Two stones on the squares he steps to make it a row again.
-    // BOULDER.
-    make(5, [bishop(7, 1), king(1, 8)], {
+    // L5 — SHIELD UP, WALK IN. Ford at e5. His room is a 3x3 (a6-c8): no
+    // rook line holds it and two stones do not either. But the king always
+    // strikes a rook that ends beside him — so raise the shield and step in
+    // next to him, on his line. He swings, the shield holds, he is frozen:
+    // take him. AEGIS.
+    make(5, [bishop(7, 1), king(2, 7)], {
       ...FLEE,
       moveLimit: 8,
       hazards: SLASH(5),
-      kingPen: ['a8', 'b8', 'a7', 'b7'],
+      kingPen: ['a8', 'b8', 'c8', 'a7', 'b7', 'c7', 'a6', 'b6', 'c6'],
     }),
     // L6 — THE JUMP. No ford. Row room (a8/b8), so a rook on rank 8 owns
     // it — but nothing walks over the slash. Jump it: KNIGHT-HOP, alone.
