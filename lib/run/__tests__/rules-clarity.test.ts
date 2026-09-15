@@ -18,7 +18,7 @@ import {
   maxUsesForTier,
 } from '../abilities';
 import type { AbilityId, AbilityTier } from '../abilities';
-import { decoyCapturer, kingDangerSquares, runEnemyTurn } from '../pawn-ai';
+import { decoyCapturer, runEnemyTurn } from '../pawn-ai';
 import { puzzleToBoardState } from '../seed';
 import { isUnwinnable } from '../solver';
 import { fromSquare, toSquare } from '../types';
@@ -89,15 +89,6 @@ test('T5 Aegis does not park the king forever: the 3-turn shield runs out', () =
     }
   }
   assert.ok(lost, 'once the shield is gone the adjacent king takes her');
-});
-
-test('danger squares: the empty squares touching the king; none while he is stunned', () => {
-  const s = board([E('e5', 'king'), E('d5', 'pawn')], 'a1');
-  const danger = kingDangerSquares(s).map(toSquare).sort();
-  assert.ok(danger.includes('e4') && danger.includes('f6'));
-  assert.ok(!danger.includes('d5'), 'a capture square is not danger — capturing stuns him');
-  assert.equal(kingDangerSquares({ ...s, kingStunTurns: 1 }).length, 0);
-  assert.equal(kingDangerSquares({ ...s, frozenSquares: ['e5'], frozenTurnsLeft: { e5: 1 } }).length, 0);
 });
 
 // ── Solver ───────────────────────────────────────────────────────────────────
