@@ -315,10 +315,14 @@ const RUN_REVENGE_21: RunDef = {
     // off the corner, mirrored slash, two a turn, four moves. The bar has to
     // go on the right row AND cover the right end of it — the open h-file
     // behind him is the door the corner rooms never had.
+    // 2026-09-15 TUNE: this level was clearing 0/48 (0%, hi 7.4) at the
+    // 2026-09-14 nightly audit — long room + lifted off corner + two
+    // enemies/turn stacked on top of the other finale levels' clock left no
+    // room for error. moveLimit 4 -> 5: one spare move, same pattern.
     make(10, [bishop(2, 1), bishop(4, 1), king(6, 8)], {
       ...FLEE,
       enemiesPerTurn: 2,
-      moveLimit: 4,
+      moveLimit: 5,
       hazards: BACKSLASH(),
       kingPen: ['e8', 'f8', 'g8', 'e7', 'f7', 'g7'],
     }),
