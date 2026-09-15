@@ -48,10 +48,13 @@
  *    3      0    100      0      0 |          (solver: aegis W5 too)
  *    4      0      0     50    100 |
  *    5      0      0    100    100 |          (solver: magnet W6, bot 0/6)
- *    7      0      0      0      0 |   25    100   clock 9 (read at 7)
- *    8      0      0      0      0 |   38    100   clock 11 (read at 8)
- *    9      0      0      0      0 |   63     38   clock 8 (read at 7)
- *   10      0     13      0      0 |   25     75   clock 8 (read at 9)
+ *  Finale at 16 trials (real run file):
+ *    L    none  magnet boulder  aegis | pair  kit(+aegis)   clock
+ *    7      0      0      0      0 |   88    100          9
+ *    8      0      0      0      0 |   94    100         10  (100 at 11)
+ *    9      0      0      0      0 |   81     88          8
+ *   10      0      6      0      6 |   13     ~38          9  (0 at 8; bot rarely finds
+ *                                                           "stone behind you")
  * Solver (no-boulder loadouts): none/magnet/aegis no forced win at depth 7 on
  * L7-L10. The pair's losses are move-limit losses (bot hunting stone squares).
  * Every pair line above was replayed by hand and wins.
@@ -171,7 +174,7 @@ export const RUN_REVENGE_15: RunDef = {
     // pawn h8; pocket bishop f6 guards h8 through g7. Stone g7, pull, eat c8, take h8
     // (stun), step down onto him.
     make(8, [bishop(2, 7), pawn(1, 8), pawn(3, 8), pawn(8, 8), bishop(6, 6), king(8, 7)], {
-      ...FLEE, moveLimit: 11,
+      ...FLEE, moveLimit: 10,
       hazards: carve(STACKS(2), X(8, 7), X(6, 6), X(7, 7)),
       kingPen: ['g8', 'h8', 'h7'],
     }),
@@ -186,7 +189,7 @@ export const RUN_REVENGE_15: RunDef = {
     // L10 LAND IT, THEN WALL IT. Plug d7 held by c8+e8; pocket bishop c6 watches d5 and
     // d7-e8. Pull to d6 (not d5), climb, stone d7 behind you, take e8 (stun), slide in.
     make(10, [bishop(4, 7), pawn(3, 8), pawn(5, 8), bishop(3, 6), pawn(1, 8), king(8, 8)], {
-      ...FLEE, moveLimit: 8,
+      ...FLEE, moveLimit: 9,
       hazards: carve(STACKS(4), X(3, 6), X(7, 7), X(8, 7)),
       kingPen: ['g7', 'h7', 'g8', 'h8'],
     }),
