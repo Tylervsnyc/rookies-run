@@ -33,75 +33,67 @@
  *       is stranded.)
  *   L5  THE LONG ROOM — freeze the king while a bishop hunts you (unchanged).
  *   L6  THE PARACHUTE — vanguard alone, the hinge (unchanged).
- *   L7-L10, four different questions of the same pair (all combo-gated):
- *   L7  THE SILL (kept — Tyler's model). Freeze the KING; the knight is thrown
- *       from BELOW a stone shelf into a pocket and walks b5->c7->a8.
- *   L8  THE DOORMAN. Freeze the DEFENDER, not the king. The one square that
- *       attacks h8 holds a pawn (g6), and h7 defends it. The knight takes g6 —
- *       that capture STUNS him, so he cannot step to g8 — and h7 would take the
- *       knight back. Freeze h7, take g6, take him. Freezing the king instead
- *       loses the knight.
- *   L9  THE CORK. Freeze the king LATE. Rank 5 is a solid glass floor with one
- *       pawn stuck in it (c5), and that pawn watches b4/d4. The only way to b7
- *       (the one square that attacks d8) runs THROUGH c5: throw the knight on
- *       his file (d3), take the cork, then pin him as the knight lands on b7 —
- *       nothing in the world attacks e8, so an unpinned king just steps over.
- *   L10 THE TALL ROOM (kept). His room is a column (a7/a8), the pocket d5 is
- *       sealed, d5->c7 is the only way in and NOTHING attacks a7. One step up
- *       and the level is over, with a knight hunting her at two enemies a turn.
+ *   L7-L10, four different questions of the same pair (all combo-gated and
+ *   UPGRADE-PROOF — no tier caps, see rule 2):
+ *   L7  THE BODYGUARD. The one square that attacks e8 (d6) holds a pawn; the
+ *       pawn beside him (e7) defends it, and a bishop on f8 waits behind e7.
+ *       Freeze e7 — it stays put and blocks the bishop — drop the knight, take
+ *       d6 (the capture stuns him), take him.
+ *   L8  THE CORNER GUARD. Two captures and the freeze comes LATE: take the
+ *       cork e5 first, then freeze b7 (bishop a8 behind it) in the turn you
+ *       take c6, then take d8.
+ *   L9  THE FAR GUARD. The freeze comes FIRST and lands four files away: the
+ *       cork e5 is guarded by d6 with a bishop behind on c7. Freeze d6, take
+ *       e5, take g6, take h8.
+ *   L10 DOWN HIS FILE. The guard is a bishop on d5, on the king's own file,
+ *       with a second bishop on e4 behind it. Freeze d5, take c6, take d8 —
+ *       at two enemies a turn with a knight hunting her on the floor.
  *
  * THE RULES THAT CAME OUT OF THE REWORK (engine as of 2026-09-15)
  *  1. A knight dropped ON a square that attacks the king takes him the SAME
- *     turn: the drop is free and the knight's first move is the capture, so
- *     he never gets an enemy turn to run. Every square that attacks his room
- *     must be out of drop range from every square Rookie can stand on. L9's
- *     first builds leaked 69-100% to vanguard alone through exactly this (d5
- *     and h5 were two squares from f7).
- *  2. VANGUARD IS CAPPED AT T1 (`abilityTierCaps`). T2 widens the drop to 3
- *     squares, which reaches the kill square directly on L7 (vanguard:2 alone
- *     = 100%) — that is the "Vanguard alone solved L9" Tyler saw, holding T2.
- *  3. With poison-dart in the kit a rook-kill finale is a trap for the
- *     designer: any single enemy piece whose death opens the rook's line also
- *     STUNS the king for the turn she steps onto it (poison death, or a pawn
- *     baited onto the line and recaptured). Three rook-kill builds of L9 leaked
- *     25-100% to poison or vanguard alone. Two sealed pawns can never both
- *     watch one line square either — their forward squares land on the line
- *     or the corridor. So all four finales are knight-kills.
- *  4. The bot is a rollout search: a pre-emptive freeze (freeze the watcher a
- *     turn before you need it) and a knight walk of 3+ hops from a drop zone
- *     that is not the nearest square to the king both read ~0-6% while the
- *     solver proves them. L9 went 6% -> 81% by glassing the equidistant rank-3
- *     squares so the only nearest safe squares are in range of the drop.
+ *     turn (the drop is free, its first move is the capture). And every
+ *     capture by her side stuns him for the enemy turn, so a knight that
+ *     arrives by capture also wins. The only things that stop a lone knight
+ *     are a recapture, or a king who steps away from a non-capture arrival.
+ *  2. NO TIER CAPS (Tyler, 2026-09-15: every ladder card upgrades to T5).
+ *     Vanguard T2-T4 drops 3-4 squares and holds two charges from T3, so the
+ *     first rework's finales fell to Vanguard alone at 83-100%. What holds:
+ *     - a rank-3 glass FLOOR keeps Rookie on ranks 1-2, so the kill square
+ *       is always far and always OCCUPIED (an undroppable square);
+ *     - that pawn is defended by a STACK: a guard with a bishop behind it on
+ *       the same diagonal. Freeze the guard and it blocks the bishop; take the
+ *       pawn and the guard recaptures, then the bishop recaptures the second
+ *       knight. Two charges are never enough;
+ *     - every guard's knight squares and every pawn's capture squares are
+ *       glass, so the stack cannot be picked off or BAITED off its post (L10
+ *       leaked 42% to Vanguard T3 through a pawn lured onto b5).
+ *  3. "Freeze the king while the knight walks in" (the old L7/L10) cannot be
+ *     upgrade-proof AND findable: a T1 drop plus one hop reaches at most 4
+ *     squares, which is exactly the T3-T4 drop radius. The floor version is
+ *     solver-proven (W5-W6) and the bot reads it 0% even at T6.
+ *  4. The bot is a rollout search: a knight walk of 3+ hops, or a pre-emptive
+ *     freeze with no capture that turn, reads ~0% while the solver proves it.
+ *     Every finale line here captures something every turn.
  *  5. MOVE_LIMIT_FLOOR = 6: a moveLimit under 6 in this file is a comment.
  *
  * KIT ROLES
- *   freeze-ray  — KEY L3 L4 L5 and half of every finale; the finale asks it to
- *                 hit the king (L7, L9, L10) or the defender (L8). TRAP on L6.
+ *   freeze-ray  — KEY L3 L4 L5 and half of every finale (the guard, never the
+ *                 king, on L7-L10). TRAP on L6.
  *   vanguard    — KEY L6, half of every finale, second answer on L3/L4.
- *   poison-dart — KEY nowhere. Slow second answer on L4. Every finale reads 0%:
- *                 no dart may touch the king and every finale is a knight-kill.
+ *   poison-dart — KEY nowhere. Slow second answer on L4. Every finale reads 0%
+ *                 even at T4: no dart may touch the king, and the rook never
+ *                 gets past the floor.
  * boulder / magnet / knight-hop / bishop-step / become-king are absent: stones
  * seal a house built of walls, and the rest are universal solvents.
  *
  * MEASURED 2026-09-15 (local, 16 trials/cell, T5, Normal, jobs=2 — direction;
- * the graded numbers are the GitHub nightly for rung 2 on this branch):
- *    L     none  freeze  vanguard  poison | pair T1  pair freeze:2 (arrival)
- *    1     100%   100%     100%     100%  |  100%     100%
- *    2     100%   100%     100%     100%  |  100%     100%
- *    3      25%   100%      75%      13%  |  100%     100%
- *    4       0%    94%     100%     100%  |  100%     100%
- *    5      69%   100%      75%      56%  |  100%     100%
- *    6       0%     0%     100%       0%  |  100%     100%
- *    7       0%     0%       0%       0%  |   81%      81%
- *    8       0%     0%       0%       0%  |   88%     100%
- *    9       0%     0%       0%       0%  |   81%      69%
- *   10       0%     0%       0%       0%  |   69%      56%
- * GATE holds on every finale level (every single card and no-ability 0%,
- * also freeze-ray:2 alone 0%). Solver proves the pair on L7 (W3), L8 (W3),
- * L9 (W4), L10 (W4). Quick-audit signatures: L7 vanguard@far>freeze-ray@king,
- * L9 vanguard@line>freeze-ray@king, L10 vanguard@diag>freeze-ray@king, L8's
- * line freezes the h7 defender. Still open: SCALE (2.1 pieces/level, the
- * contract wants 3.6).
+ * the graded numbers are the GitHub nightly for rung 2):
+ *    L    none  freeze:4  poison:4  van  van:3  van:4 | pair T1  freeze:2+van:2
+ *    7     0%      0%        0%     0%    0%     0%   |   88%       100%
+ *    8     0%      0%        0%     0%    0%     0%   |   63%       100%
+ *    9     0%      0%        0%     0%    0%     0%   |   38%        81%
+ *   10     0%      0%        0%     0%    0%     0%   |   69%        81%
+ * L1-L6 are not gated and only get easier with upgrades.
  */
 
 import {
@@ -147,42 +139,6 @@ const PANE = (glass: Coord[], ...panes: string[]): Coord[] =>
   glass.filter((c) => !panes.includes(NAME(c)));
 
 
-/** The west house — king a8, room a8/b8, stone b5, kill square c7. */
-const WEST_HOUSE: ReadonlyArray<Coord> = [
-  X(5, 5), X(5, 6), X(5, 7), X(5, 8),
-  X(4, 5), X(3, 5), X(1, 5),
-  X(2, 4),
-  X(4, 7), X(2, 6), X(1, 6),
-];
-
-/**
- * L7's house — the WEST house with the buttress under b5 widened into an
- * unbroken SILL, a4-d4. It changes exactly one thing and that thing is the
- * level: the square Rookie naturally walks to, the one facing the room, is
- * stone, and so is the corner. b5 is still the only pocket a knight can be
- * dropped into, but the only squares left in range of it are on the rank
- * BELOW the sill. You cannot throw the knight from where you want to stand.
- */
-const WEST_SILL: ReadonlyArray<Coord> = [
-  ...WEST_HOUSE,
-  X(1, 4), X(3, 4), X(4, 4),
-];
-
-/**
- * L10's house — the same glasshouse built TALL. His room is a COLUMN, a7/a8,
- * not a shelf; the pocket d5 is sealed on all four sides; and the corridor
- * out of it is one-way. d5 -> c7 is the only knight step that enters the
- * house at all, c7 is the only square that attacks a8, and NOTHING in the
- * world attacks a7. If he takes the step up, the level is over.
- */
-const TALL_HOUSE: ReadonlyArray<Coord> = [
-  X(1, 5), X(2, 5), X(3, 5),
-  X(1, 6), X(2, 6), X(3, 6),
-  X(3, 4), X(4, 4), X(4, 6), X(4, 7), X(4, 8),
-  X(5, 5), X(5, 6), X(5, 7), X(5, 8),
-  X(2, 4), X(6, 4),
-];
-
 const RUN_REVENGE_18: RunDef = {
   id: 'revenge-18',
   signaturePair: ['freeze-ray', 'vanguard'],
@@ -192,7 +148,6 @@ const RUN_REVENGE_18: RunDef = {
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
-  abilityTierCaps: { vanguard: 1 },
   offerCore: REVENGE_CORE,
   offerCoreMin: 2,
   levels: [
@@ -230,7 +185,7 @@ const RUN_REVENGE_18: RunDef = {
     // the step he was going to take never happens: f6, then take him.
     make(
       3,
-      [king(6, 7)],
+      [bishop(2, 2), king(6, 7)],
       {
         ...FLEE,
         moveLimit: 7,
@@ -267,7 +222,7 @@ const RUN_REVENGE_18: RunDef = {
     // about noticing that the second line is a decoy.
     make(
       5,
-      [bishop(3, 2), king(5, 7)],
+      [bishop(3, 2), pawn(1, 4), king(5, 7)],
       {
         ...FLEE,
         moveLimit: 5,
@@ -288,7 +243,7 @@ const RUN_REVENGE_18: RunDef = {
     // glass onto f7 and let it take him. This is the run's hinge.
     make(
       6,
-      [knight(3, 4), pawn(7, 3), king(8, 8)],
+      [knight(3, 4), pawn(7, 3), pawn(2, 5), king(8, 8)],
       {
         ...FLEE,
         moveLimit: 6,
@@ -296,79 +251,77 @@ const RUN_REVENGE_18: RunDef = {
         kingPen: ['h8'],
       },
     ),
-    // L7 — THE SILL. From here the glasshouse has NO pane at all: the box is
-    // sealed, no rook line on the board reaches inside it, so the rook is out
-    // of the game and a body has to go over the glass. b5 is the pocket — a
-    // square walled on all four sides that no rook can ever stand on — and the
-    // corridor out of it is b5->c7, the one square in the world that attacks
-    // a8. What this level adds to that is the SILL: the buttress under the
-    // house is now an unbroken shelf a4-d4, so the square Rookie wants to
-    // stand on (the one facing the room) and the corner beside it are stone.
-    // The only squares left within a Vanguard throw of the pocket are on the
-    // rank below the sill. DEMAND: you cannot throw the knight from where you
-    // want to stand. She gets a LONGER clock than the old build (7 -> 9) and
-    // it is still the hardest thing in the run so far — the shape did that,
-    // not the timer.
+    // L7 — THE BODYGUARD (freeze the guard at his side). See header.
     make(
       7,
-      [king(1, 8)],
-      { ...FLEE, moveLimit: 9, hazards: [...WEST_SILL], kingPen: ['a8', 'b8'] },
-    ),
-    // L8 — THE DOORMAN (freeze the DEFENDER). Sealed corner box: king h8, pen
-    // g8/h8. The ONLY square that attacks either one is g6, and a pawn stands
-    // on it (glass g5 under it); h7 defends it (glass h6). Throw the knight to
-    // e5/f4/h4 and take g6 — the capture stuns him, so he cannot step to g8 —
-    // and FREEZE h7 in the same turn, or it takes the knight back. Then take
-    // him. The trap is the L7 habit: freeze the king, and h7 eats the knight.
-    make(
-      8,
-      [pawn(7, 6), pawn(8, 7), king(8, 8)],
+      [pawn(4, 6), pawn(5, 7), bishop(6, 8), knight(1, 1), king(5, 8)],
       {
         ...FLEE,
         moveLimit: 6,
-        hazards: [X(7, 5), X(6, 6), X(8, 6), X(6, 7), X(5, 7), X(6, 8)],
-        kingPen: ['h8', 'g8'],
+        hazards: [
+          ...GLASS_R(3, 1, 8),
+          X(3, 5), X(5, 5),
+          X(4, 5), X(5, 6),
+          X(3, 7), X(6, 6), X(7, 7),
+          X(4, 8), X(7, 8), X(3, 8), X(3, 6), X(6, 5), X(4, 7), X(8, 7),
+        ],
+        kingPen: ['e8'],
       },
     ),
-    // L9 — THE CORK (freeze the king LATE). Glass box d8/e8; nothing can
-    // attack e8 (c7 d6 f6 g7 glass), and the only square that attacks d8 is b7.
-    // Rank 5 is a solid glass floor with ONE pawn stuck in it on c5 — it covers
-    // b4 and d4, the nearest squares to him. b7 is reached only through c5, and
-    // c5 only from d3. Throw the knight onto his file (d3), take the cork, and
-    // pin him the turn the knight lands on b7: a free king steps to e8 and a
-    // lone knight can never reach him there. Rank 3 east of e3 is glass so the
-    // nearest safe squares are the ones in range of d3.
+    // L8 — THE CORNER GUARD (take the cork, then freeze late). See header.
     make(
-      9,
-      [pawn(3, 5), king(4, 8)],
+      8,
+      [pawn(5, 5), pawn(3, 6), pawn(2, 7), bishop(1, 8), king(4, 8)],
       {
         ...FLEE,
         moveLimit: 7,
         hazards: [
-          X(3, 8), X(6, 8), X(4, 7), X(5, 7),
-          X(3, 7), X(4, 6), X(6, 6), X(7, 7),
-          X(3, 6), X(5, 6), X(6, 7), X(1, 6),
-          X(1, 5), X(2, 5), X(4, 5), X(5, 5), X(6, 5), X(7, 5), X(8, 5),
-          X(3, 4), X(1, 4), X(5, 4), X(6, 4), X(7, 4), X(8, 4),
-          X(2, 3), X(6, 3), X(7, 3), X(8, 3),
+          ...GLASS_R(3, 1, 8),
+          X(2, 5), X(4, 5), X(6, 4),
+          X(5, 4), X(3, 5), X(2, 6),
+          X(1, 5), X(1, 7), X(2, 4), X(2, 8), X(4, 4), X(5, 7),
+          X(4, 6), X(5, 6), X(6, 7), X(3, 7),
         ],
-        kingPen: ['d8', 'e8'],
+        kingPen: ['d8'],
       },
     ),
-    // L10 — THE TALL ROOM (kept). His room is a column, a7/a8. The pocket d5
-    // is sealed on all four sides, d5->c7 is the only knight step into the
-    // house, c7 is the only square that attacks a8, and NOTHING attacks a7.
-    // One step up the column and the level is over. DEMAND: the pin has to be
-    // right the first time, with a knight hunting her at two enemies a turn.
+    // L9 — THE FAR GUARD (freeze first, three captures). See header.
+    make(
+      9,
+      [pawn(7, 6), pawn(5, 5), pawn(4, 6), bishop(3, 7), king(8, 8)],
+      {
+        ...FLEE,
+        moveLimit: 7,
+        hazards: [
+          ...GLASS_R(3, 1, 8),
+          X(8, 5), X(3, 5), X(4, 4),
+          X(7, 5), X(5, 4), X(4, 5),
+          X(6, 7), X(5, 7), X(6, 8), X(6, 4), X(8, 4),
+          X(3, 4), X(3, 6), X(4, 7),
+          X(2, 5), X(2, 7), X(3, 8), X(5, 8), X(6, 5),
+          X(1, 6), X(1, 8), X(5, 6), X(2, 6), X(2, 8), X(4, 8),
+        ],
+        kingPen: ['h8'],
+      },
+    ),
+    // L10 — DOWN HIS FILE (freeze the bishop, two enemies a turn). See header.
     make(
       10,
-      [knight(7, 4), king(1, 8)],
+      [pawn(3, 6), bishop(4, 5), bishop(5, 4), knight(8, 1), king(4, 8)],
       {
         ...FLEE,
         enemiesPerTurn: 2,
         moveLimit: 7,
-        hazards: [...TALL_HOUSE],
-        kingPen: ['a8', 'a7'],
+        hazards: [
+          ...GLASS_R(3, 1, 8),
+          X(2, 5),
+          X(4, 2), X(6, 2),
+          X(3, 5), X(3, 4), X(5, 6), X(6, 5),
+          X(2, 4), X(2, 6), X(3, 7), X(5, 7), X(6, 4), X(6, 6),
+          X(4, 6), X(7, 5), X(1, 5), X(1, 7), X(2, 8), X(5, 5),
+          X(2, 7), X(6, 7),
+        ],
+        kingPen: ['d8'],
       },
     ),
   ],
