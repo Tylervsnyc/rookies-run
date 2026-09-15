@@ -49,7 +49,7 @@
  *    4      0      0     50    100 |
  *    5      0      0    100    100 |          (solver: magnet W6, bot 0/6)
  *    7      0      0      0      0 |   25    100   clock 9 (read at 7)
- *    8      0      0      0      0 |   38    100   clock 10 (read at 8)
+ *    8      0      0      0      0 |   38    100   clock 11 (read at 8)
  *    9      0      0      0      0 |   63     38   clock 8 (read at 7)
  *   10      0     13      0      0 |   25     75   clock 8 (read at 9)
  * Solver (no-boulder loadouts): none/magnet/aegis no forced win at depth 7 on
@@ -141,12 +141,12 @@ export const RUN_REVENGE_15: RunDef = {
     }),
     // L3 plug e7 held by d8+f8; king b8 on the gallery line. MAGNET (aegis tanks).
     make(3, [bishop(5, 7), pawn(4, 8), pawn(6, 8), king(2, 8)], {
-      ...FLEE, moveLimit: 8, hazards: STACKS(5), kingPen: ['a8', 'b8', 'c8'],
+      ...FLEE, moveLimit: 10, hazards: STACKS(5), kingPen: ['a8', 'b8', 'c8'],
     }),
     // L4 open shaft c, king h8 in the 2x2 corner, nothing to eat near him. BOULDER
     // (stone g7+h7, then slide) or AEGIS (stand beside him).
     make(4, [pawn(1, 8), pawn(2, 8), king(8, 8)], {
-      ...FLEE, moveLimit: 8, hazards: carve(STACKS(3), X(7, 7), X(8, 7)),
+      ...FLEE, moveLimit: 10, hazards: carve(STACKS(3), X(7, 7), X(8, 7)),
       kingPen: ['g7', 'h7', 'g8', 'h8'],
     }),
     // L5 king hides in the h7 alcove under pawn h8; a pocket bishop f6 guards h8 via g7.
@@ -171,7 +171,7 @@ export const RUN_REVENGE_15: RunDef = {
     // pawn h8; pocket bishop f6 guards h8 through g7. Stone g7, pull, eat c8, take h8
     // (stun), step down onto him.
     make(8, [bishop(2, 7), pawn(1, 8), pawn(3, 8), pawn(8, 8), bishop(6, 6), king(8, 7)], {
-      ...FLEE, moveLimit: 10,
+      ...FLEE, moveLimit: 11,
       hazards: carve(STACKS(2), X(8, 7), X(6, 6), X(7, 7)),
       kingPen: ['g8', 'h8', 'h7'],
     }),
