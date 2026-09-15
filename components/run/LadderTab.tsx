@@ -160,7 +160,7 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
           {clearedCount}/10 cleared{openIdx >= 0 ? ` · next: rung ${openIdx + 1}` : ''}
         </span>
       </div>
-      <div className="mt-2 flex-1 min-h-0 grid grid-cols-2 grid-rows-5 gap-x-2 gap-y-[7px]">
+      <div className="mt-2 flex-1 min-h-0 grid grid-cols-2 grid-rows-5 gap-x-2 gap-y-[7px] pb-3">
         {rungs.map((r, i) => {
           const playable = !r.comingSoon && r.state !== 'locked' && !!onLadderStart;
           const st = r.state === 'cleared' ? 'done' : r.state === 'open' && !r.comingSoon ? 'next' : 'locked';
