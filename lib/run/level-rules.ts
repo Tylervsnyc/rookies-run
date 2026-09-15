@@ -30,7 +30,7 @@ export function levelRules(state: BoardState): LevelRule[] {
       what: 'Never end next to him',
       detail: owns('aegis')
         ? 'End your move touching the king and he takes you. With a shield up, he freezes instead.'
-        : 'End your move touching the king and he takes you. The red squares show where.',
+        : 'End your move touching the king and he takes you.',
     });
     out.push({
       what: 'Captures stun him',
