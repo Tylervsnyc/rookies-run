@@ -37,14 +37,21 @@
  *   decoy       KEY on L4 — Tyler's model line, KEPT exactly: mark the plug,
  *               d7 eats it, take d7, turn into a knight, take the king.
  *               Also works on L5 (distracts the knight hunter).
- *               FINALES: TRAP on L10 (nothing can act on a mark; Knight Hop +
- *               Decoy 0%). SUPPORTING on L7-L9, and there it is a real second
- *               pair, reported not hidden (Knight Hop + Decoy, T1, 32 trials):
- *               L7 63-75% and L8 56% (mark the pawn beside him, the king eats
- *               it, hop onto him — the L4 chain again, with the king as the
- *               eater), L9 41% (the mark stops him running for a turn, one rook
- *               on the top rank is enough). The pair is still the stronger line
- *               on L7-L9 and the only one on L10.
+ *               FINALES: TRAP on L10 (Knight Hop + Decoy 13%). SUPPORTING on
+ *               L7-L9, and there it is a real second pair, reported not hidden
+ *               (Knight Hop + Decoy, T1): L7 63-75% and L8 56% (mark the pawn
+ *               beside him, the king eats it, hop onto him — the L4 chain
+ *               again, with the king as the eater), L9 41% (the mark stops him
+ *               running for a turn). The pair is still the stronger line on
+ *               L7-L9 and the only one on L10.
+ *
+ * NO TIER CAPS (Tyler, 2026-09-15: every card on its normal path to T5). The
+ * old `abilityTierCaps: { 'knight-hop': 3 }` is gone. Knight Hop T4 is its
+ * two-use tier: hop up, then hop onto him. It broke L9 and L10 (94% alone), and
+ * the fix is the BOARD, not the card:
+ *   L9  d8 is stone — the square a second hop onto his room launches from.
+ *   L10 d8 and e8 are stone — the second hop re-launched from rank 8.
+ * Every single kit card at T4 and T5 now reads 0% on L7-L10 (16 trials).
  *
  * L1-L6 — WARMUP AND SINGLE KEYS
  *   L1 THE STAIR        still king, gap under him: ride up.
@@ -71,30 +78,36 @@
  *                     and a bishop move twice a turn below.
  *                     knight-hop>twin@pen | cap:ally/step
  *   L9 THE HIGH RANK  Nothing to capture, ride from range. Room a7/b7/a8/b8;
- *                     rank 7 is stone except d7/e7; hop up from c5-f5, summon
- *                     the Twin on the top rank, it rides into the corner. The
- *                     bishop on b1 is the only hunter (readable: one piece, one
- *                     colour, watching the launch squares).
+ *                     rank 7 is stone except d7/e7 and d8 is stone; hop up to
+ *                     d7, summon the Twin on c8, and it takes him on the top
+ *                     rank that same turn. The bishop on b1 is the only hunter
+ *                     (readable: one piece, one colour, watching the launch
+ *                     squares).
  *                     knight-hop>twin@line | cap:ally/orth
  *   L10 THE SENTRY    The stair is back and it is guarded. Below the wall is
  *                     stone except rank 1, rank 3 and the e-file corridor; the
  *                     pawn on d7 takes whatever ends on e6. Send the Twin up
  *                     first, the pawn takes it, take the pawn (stun), and from
  *                     e6 hop onto g7. The L4 chain with the Twin as the bait.
+ *                     Hopping onto d7 instead strands Rookie (stone all round).
  *                     twin@diag>knight-hop | cap:knight/L
  *
- * MEASURED 2026-09-15 (Normal, T5 bot, local, `revenge.ts matrix`, jobs=2;
- * 32 trials unless marked *16). T1 singles: none / knight-hop / twin / decoy
- * are 0% on all of L7-L10, and so are knight-hop:2 and knight-hop:3 alone.
+ * MEASURED 2026-09-15, after the no-caps fixes (Normal, T5 bot, local
+ * `revenge.ts matrix`, jobs=2, 16 trials; L7/L8 pair rows 32 trials).
+ * Singles: none / knight-hop / twin / decoy at T1, T4 and T5 are 0% on
+ * L7-L10.
  *   pair            L7   L8   L9   L10
- *   T1 kh+twin      88   66   81   44*
- *   T2 kh:2+twin    88   81   59   56*
- *   T3 kh:3+twin   100   91   69*  63*
- *   kit kh:2+tw+dc  97  100   84   50*
- * Arrival (60 full runs, 1 retry): knight-hop arrives T1/T2/T3 in 16/10/13
- * runs, twin mostly T1. BAND (rung 4: 63-79) reads ~70 at T1 and T2, ~81 at
- * T3. Full runs 28/60 (47%, want 45-65) — L4 is where most runs end.
- * SCALE: 48 pieces (4.8/level), L8-L10 average 6 vs L1-L3 average 3.
+ *   T1 kh+twin      88   66   69   31
+ *   T2 kh:2+twin    88   81   56   31
+ *   T3 kh:3+twin   100   94   19   19
+ *   T4 kh:4+twin   100   88   13   38
+ *   kit kh:2+tw+dc  97  100   63   31
+ * L9 and L10 read low at T3/T4 because the bot stops finding the line when
+ * the knight form lasts several turns. The line itself is unchanged (a
+ * scripted T3 line still wins). Knight Hop arrives at L7 as T1 in most sim
+ * runs, so the arrival grade should use the T1/T2 rows.
+ * Full runs (before the L9/L10 stones): 28-30/60 at 1 retry (want 45-65).
+ * SCALE: 4.8 pieces/level; L8-L10 average 6 vs L1-L3 average 3.
  * The GitHub re-grade (48 trials/cell) is the number of record.
  */
 
@@ -153,10 +166,6 @@ const RUN_REVENGE_23: RunDef = {
   // (moveLimitDelta -2) and its fleeing king; only the enemy-count delta is
   // pinned to 0.
   difficultyOverrides: { hard: { enemiesPerTurnDelta: 0 } },
-  // TIER CAP — knight-hop T4 is its only two-use tier (hop up, then hop onto
-  // him). Re-checked 2026-09-15 on the new finales: knight-hop:2 and :3 alone
-  // read 0% on L7-L10; T4 is never offered.
-  abilityTierCaps: { 'knight-hop': 3 },
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
@@ -310,7 +319,7 @@ const RUN_REVENGE_23: RunDef = {
       {
         ...FLEE,
         moveLimit: 8,
-        hazards: PARAPET([], [X(3, 7), X(6, 7), X(7, 7), X(8, 7), X(1, 4), X(8, 4), X(7, 2)]),
+        hazards: PARAPET([], [X(3, 7), X(4, 8), X(6, 7), X(7, 7), X(8, 7), X(1, 4), X(8, 4), X(7, 2)]),
         kingPen: ROOM(1),
       },
     ),
@@ -327,7 +336,7 @@ const RUN_REVENGE_23: RunDef = {
         ...FLEE,
         moveLimit: 8,
         hazards: PARAPET([5], [
-          X(1, 7), X(2, 7), X(3, 7), X(3, 8), X(5, 7), X(6, 7), X(6, 8), X(8, 7),
+          X(1, 7), X(2, 7), X(3, 7), X(3, 8), X(4, 8), X(5, 7), X(5, 8), X(6, 7), X(6, 8), X(8, 7),
           X(1, 5), X(2, 5), X(3, 5), X(4, 5), X(6, 5), X(7, 5), X(8, 5),
           X(1, 4), X(2, 4), X(3, 4), X(4, 4), X(6, 4), X(7, 4), X(8, 4),
           X(1, 2), X(2, 2), X(3, 2), X(4, 2), X(6, 2), X(7, 2), X(8, 2),
