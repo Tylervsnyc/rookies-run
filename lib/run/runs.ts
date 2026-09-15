@@ -6653,7 +6653,7 @@ const RUN_REVENGE_12: RunDef = {
     // of them he steps next to takes him. 2026-09-15: Tyler LOST here. The
     // leak was a knight-hop LANDING ON THE SLUICE f5 and summoning the bishop
     // into the room (kit 10/12 that way) — d4/h4/e3/g3 are now stone, so no
-    // knight reaches f5, and the knights start e4/g4/c3. Clock 10 -> 12.
+    // knight reaches f5, and the knights start e4/g4/c3. Clock 10 -> 11.
     make(
       8,
       [
@@ -6663,7 +6663,7 @@ const RUN_REVENGE_12: RunDef = {
       ],
       {
         ...FLEE,
-        moveLimit: 12,
+        moveLimit: 11,
         hazards: [
           ...MOAT(6), X(6, 4), X(6, 6), X(5, 3), X(7, 3), X(4, 4), X(8, 4),
           X(4, 6), X(4, 7), X(4, 8), X(8, 6), X(8, 7), X(8, 8),
@@ -6711,15 +6711,17 @@ const RUN_REVENGE_12: RunDef = {
     // g7 in ONE move. Stop on f6 and h7 eats him; reach g7 and the swap IS
     // the capture. That is Tyler's Squire -> Swap -> capture line, and it is
     // now the only way into the keep. Two enemies a turn. 2026-09-15: ten
-    // moves (was 12) so the run ends on its hardest rung (pair 83 -> ~58,
-    // below L7). Knight-hop still finishes from f6 at arrival (it is the
+    // moves (was 12) and a third light bishop (e2) plus pawns b3/h3 on the
+    // near bank, so the run ends on its hardest rung (arrival pair 83 -> ~69,
+    // level with L7; the light bishops still can never cross the dark c5). Knight-hop still finishes from f6 at arrival (it is the
     // extra card, and a trap everywhere else in the finale).
     make(
       10,
       [
         pawn(7, 6),
         knight(5, 7), knight(8, 7),
-        bishop(1, 2), bishop(7, 2),
+        bishop(1, 2), bishop(7, 2), bishop(5, 2),
+        pawn(8, 3), pawn(2, 3),
         king(7, 8),
       ],
       {
