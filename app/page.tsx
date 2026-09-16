@@ -2088,11 +2088,7 @@ export default function RookiesRunPage() {
     state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0
       ? {
           label: `Hidden · ${state.smokeTurnsLeft ?? 0}`,
-          text: `Nothing can capture you and the king stops running. ${
-            state.abilities.find((a) => a.id === 'smoke')?.tier === 5
-              ? 'Capturing keeps you hidden.'
-              : 'Capturing is safe — but it drops the smoke.'
-          }`,
+          text: 'Nothing can capture you and the king stops running. Capturing is safe — but it drops the smoke.',
         }
       : null;
 

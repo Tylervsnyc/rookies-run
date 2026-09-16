@@ -459,8 +459,10 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 4) return 4;
       return -1;
     case 'smoke':
-      // 1/1/2/2/1 — T5 is one long cover.
+      // 1/1/2/2/3 — T5 is one more cover, NOT a capture-proof rampage
+      // (Tyler, 2026-09-16: "stealth is too powerful in the ultimate").
       if (tier === 3 || tier === 4) return 2;
+      if (tier === 5) return 3;
       return 1;
     case 'rewind':
       // 1/2/2/2/3 — enemy-only rewind (2026-09-02): T2 is simply MORE
@@ -748,10 +750,9 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       // protect you from? Is smoke like an Aegis then?"). It is: no enemy can
       // capture you at all while it lasts, AND the king stops fleeing because
       // he can't see you — which is the reason to cast it, and was written
-      // nowhere. Capturing gives away your position (except at T5).
+      // nowhere. Capturing always gives away your position.
       const turns = tier === 1 ? 1 : tier <= 3 ? 2 : 3;
-      const tail = tier === 5 ? 'Capturing keeps you hidden.' : 'Capturing gives you away.';
-      return `${turns} turn${turns === 1 ? '' : 's'}: nothing can capture you and the king stops running. ${tail}`;
+      return `${turns} turn${turns === 1 ? '' : 's'}: nothing can capture you and the king stops running. Capturing gives you away.`;
     }
     case 'rewind':
       if (tier === 5) return "Undo the last TWO enemy turns — and every piece you rewind is frozen for a turn.";
@@ -952,7 +953,7 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Crush a pawn under a stone. 2/level.';
       return 'Drop a stone. 2/level.';
     case 'smoke':
-      if (tier === 5) return 'Untouchable 3 turns, even if you capture. 1/level.';
+      if (tier === 5) return 'Untouchable 3 turns; king stops running. 3/level.';
       if (tier === 4) return 'Untouchable 3 turns; king stops running. 2/level.';
       if (tier === 3) return 'Untouchable 2 turns; king stops running. 2/level.';
       if (tier === 2) return 'Untouchable 2 turns; king stops running. 1/level.';
@@ -1177,7 +1178,7 @@ export const UPGRADE_NOTES: Record<
     2: 'Vanish 1 turn → 2',
     3: '',
     4: 'Vanish 2 turns → 3',
-    5: 'Captures no longer break cover',
+    5: 'Covers per level 2 → 3',
   },
   rewind: {
     2: '1 rewind per level → 2',
@@ -3165,13 +3166,12 @@ function applySmoke(state: BoardState): BoardState {
 }
 
 /**
- * Smoke ends early when Rookie herself captures — except at T5. Returns the
- * patch to spread onto the post-capture state (or {} when nothing changes).
+ * Smoke ends early when Rookie herself captures — at every tier (the T5
+ * capture-proof exemption was removed 2026-09-16). Returns the patch to
+ * spread onto the post-capture state (or {} when nothing changes).
  */
 export function breakSmokeOnCapture(state: BoardState): Pick<BoardState, 'smokeTurnsLeft'> | Record<string, never> {
   if (!isSmoked(state)) return {};
-  const owned = state.abilities.find((a) => a.id === 'smoke');
-  if (owned && owned.tier === 5) return {};
   return { smokeTurnsLeft: 0 };
 }
 
