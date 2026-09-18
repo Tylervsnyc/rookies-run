@@ -2,8 +2,17 @@ default_platform(:ios)
 
 APP_ID   = "com.learnthroughstories.rookiesrun"
 TEAM_ID  = "4L856PWBZN"
-KC_PATH  = "/tmp/rookiesrun.keychain-db"
-KC_PASS  = "rookiesrun"
+# DURABLE keychain, SHARED with Chess Boxing (same team, one distribution cert
+# signs every app). This used to be /tmp/rookiesrun.keychain-db: macOS cleans
+# /tmp, the private key vanished, and `cert` then tried to mint a new
+# certificate against an account already at Apple's cap (2026-09-18).
+KC_PATH  = File.expand_path("~/Library/Keychains/chessbox-signing.keychain-db")
+# The password is NOT written here: this repo is public. It is read off this
+# Mac from Chess Boxing's Fastfile (private repo), or from REVENGE_KC_PASS.
+KC_PASS  = ENV["REVENGE_KC_PASS"] || begin
+  src = File.expand_path("~/chess-learning-tree/ios/App/fastlane/Fastfile")
+  File.read(src)[/^KC_PASS\s*=\s*"([^"]+)"/, 1] or raise "No keychain password: set REVENGE_KC_PASS"
+end
 
 platform :ios do
   desc "Create app record, cert, profile, archive, upload to TestFlight"
@@ -38,8 +47,8 @@ platform :ios do
     end
 
     # 2. Distribution certificate into a dedicated unlocked keychain.
-    # /tmp is wiped on reboot, so (re)create the keychain every run — cert
-    # errors with "Keychain not found" otherwise (bit us 2026-08-17).
+    # Never recreated in practice — it lives in ~/Library/Keychains. If it is
+    # ever missing, stop and restore it rather than letting `cert` mint a new one.
     unless File.exist?(KC_PATH)
       create_keychain(
         path: KC_PATH,
