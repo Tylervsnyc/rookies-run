@@ -2,9 +2,58 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies, headers } from 'next/headers';
 import { sharedCookieOptions } from '@/lib/supabase/cookie-domain';
 
+/**
+ * The request-scoped Supabase client every API route authenticates with.
+ *
+ * TWO auth transports, same privileges:
+ *
+ *   cookies (web)  — the @supabase/ssr session cookies on run.chesspath.app,
+ *                    refreshed by middleware. Unchanged.
+ *   bearer (app)   — an `Authorization: Bearer <access_token>` header.
+ *
+ * The bearer path exists for the Rookie's Revenge iOS app. Its pages are served
+ * from the device at `capacitor://localhost`, so calls to run.chesspath.app are
+ * cross-origin and WKWebView will not send our cookies — a cookie-only API is
+ * unreachable from the app no matter how good the signal is. supabase-js keeps
+ * the session on the client anyway, so the app sends the access token it
+ * already holds and the server verifies it.
+ *
+ * This grants nothing extra: Supabase verifies the JWT signature and every
+ * query still runs under that user's RLS policies, exactly as with a cookie.
+ */
 export async function createClient() {
-  const cookieStore = await cookies();
   const requestHeaders = await headers();
+  const authorization = requestHeaders.get('authorization');
+
+  if (authorization?.startsWith('Bearer ')) {
+    const token = authorization.slice('Bearer '.length);
+
+    const client = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        // No cookie jar on this transport: the token is the whole session, and
+        // there is nowhere to write a refreshed one back to. The client owns
+        // refresh and sends a fresh token on the next call.
+        cookies: { getAll: () => [], setAll: () => {} },
+        // Data queries (PostgREST) send this header as-is, so RLS sees the user.
+        global: { headers: { Authorization: authorization } },
+      }
+    );
+
+    // The global header covers DATA requests only. `auth.getUser()` with no
+    // argument ignores it and reads the (empty) cookie session instead, which
+    // made every route 401 a perfectly valid token — indistinguishable from a
+    // forged one in testing, which is exactly how it slipped through. Passing
+    // the token explicitly makes getUser() verify THIS token with Supabase.
+    // Every API route calls getUser() bare, so this is wired once, here.
+    const bareGetUser = client.auth.getUser.bind(client.auth);
+    client.auth.getUser = (jwt?: string) => bareGetUser(jwt ?? token);
+
+    return client;
+  }
+
+  const cookieStore = await cookies();
 
   // SHARED_AUTH_COOKIE: on a chesspath.app host, write auth cookies with
   // Domain=.chesspath.app (see lib/supabase/cookie-domain.ts). Flag off or any

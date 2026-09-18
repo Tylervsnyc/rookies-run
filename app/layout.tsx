@@ -7,6 +7,7 @@ import { RookieErrorBoundary } from '@/components/ui/RookieErrorBoundary';
 import { NativeSplash } from '@/components/run/NativeSplash';
 import { StatusBarSync } from '@/components/run/StatusBarSync';
 import { ProfileSync } from '@/components/run/ProfileSync';
+import { OfflineBridge } from '@/components/providers/OfflineBridge';
 
 const TITLE = "Rookie's Revenge";
 const DESCRIPTION =
@@ -77,6 +78,8 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        {/* iOS bundle only: re-points /api at the server + queues saves offline. */}
+        <OfflineBridge />
         <NativeSplash />
         <Suspense fallback={null}>
           <AbortErrorSuppressor />

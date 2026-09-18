@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@/hooks/useUser';
 import { createClient } from '@/lib/supabase/client';
+import { IS_OFFLINE_APP } from '@/lib/config/offline';
 import { getDailyVaultDates, getRunIdForDate, getTodayInTZ } from '@/lib/run/daily';
 import { getRunById } from '@/lib/run/runs';
 
@@ -69,7 +70,9 @@ export function VaultList({ onClose }: VaultListProps) {
             // Standalone app puts no signup wall on past runs — every date is a
             // plain deep link. (Chess Path gated non-today dates behind
             // /auth/signup, a route that doesn't exist in this repo.)
-            const href = `/${d}`;
+            // The iOS bundle has no server to run the /[date] redirect, so it
+            // links straight to where that redirect lands.
+            const href = IS_OFFLINE_APP ? `/?date=${d}&run=${runId}` : `/${d}`;
 
             return (
               <Link

@@ -1,5 +1,40 @@
 import { createBrowserClient } from '@supabase/ssr';
+import { IS_OFFLINE_APP } from '@/lib/config/offline';
 import { sharedCookieOptions } from '@/lib/supabase/cookie-domain';
+
+/**
+ * Session storage for the offline app bundle.
+ *
+ * @supabase/ssr keeps the session in document.cookie so the server can read
+ * it. Two reasons that's wrong inside the app: the server never sees these
+ * cookies anyway (pages are served from capacitor://localhost, and the API is
+ * called with a bearer token instead — see lib/supabase/server.ts), and
+ * WKWebView is unreliable about persisting cookies on a custom scheme, which
+ * would sign the user out on every cold start. localStorage persists.
+ *
+ * Same key names as the cookie transport, so nothing else has to know.
+ */
+const localStorageCookies = {
+  getAll() {
+    try {
+      return Object.keys(localStorage)
+        .filter((name) => name.startsWith('sb-'))
+        .map((name) => ({ name, value: localStorage.getItem(name) ?? '' }));
+    } catch {
+      return [];
+    }
+  },
+  setAll(cookies: { name: string; value: string }[]) {
+    try {
+      for (const { name, value } of cookies) {
+        if (value) localStorage.setItem(name, value);
+        else localStorage.removeItem(name);
+      }
+    } catch {
+      /* private mode / quota — the session just won't persist this launch */
+    }
+  },
+};
 
 // Singleton client instance to avoid multiple instances
 let clientInstance: ReturnType<typeof createBrowserClient> | null = null;
@@ -22,7 +57,7 @@ export function createClient() {
   clientInstance = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    webOptions()
+    IS_OFFLINE_APP ? { cookies: localStorageCookies } : webOptions()
   );
 
   return clientInstance;

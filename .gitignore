@@ -53,3 +53,7 @@ ios/App/fastlane/screenshots
 ios/App/fastlane/test_output
 *.ipa
 *.dSYM.zip
+
+# offline iOS bundle (scripts/build-offline.mjs)
+.offline-build/
+capacitor-bundle/
