@@ -1,0 +1,674 @@
+{
+ "id": "moat-L7-v6-s261",
+ "date": "2026-09-18",
+ "slot": 7,
+ "source": {
+  "kind": "terrain",
+  "archetype": "moat",
+  "genSeed": 261
+ },
+ "title": "THE MOAT",
+ "gatedUnder": [
+  {
+   "kit": [
+    "bishop-squire",
+    "dragon",
+    "duchess",
+    "summon-knight"
+   ],
+   "anchors": [
+    "bishop-squire+dragon",
+    "duchess+summon-knight"
+   ],
+   "reason": "two bodies, two lines | two bodies, two lines",
+   "winningPairs": [
+    {
+     "pair": "dragon+duchess",
+     "winPct": 67
+    }
+   ]
+  },
+  {
+   "kit": [
+    "bishop-squire",
+    "duchess",
+    "dragon",
+    "page"
+   ],
+   "anchors": [
+    "bishop-squire+duchess",
+    "dragon+page"
+   ],
+   "reason": "two bodies, two lines | two bodies, two lines",
+   "winningPairs": [
+    {
+     "pair": "dragon+duchess",
+     "winPct": 67
+    }
+   ]
+  },
+  {
+   "kit": [
+    "duchess",
+    "vanguard",
+    "aegis",
+    "dragon"
+   ],
+   "anchors": [
+    "duchess+vanguard",
+    "aegis+dragon"
+   ],
+   "reason": "two bodies, two lines | defense + summon",
+   "winningPairs": [
+    {
+     "pair": "dragon+duchess",
+     "winPct": 67
+    }
+   ]
+  }
+ ],
+ "kitsGating": 3,
+ "kitsTested": 8,
+ "winningPairs": [
+  {
+   "pair": "dragon+duchess",
+   "winPct": 67
+  }
+ ],
+ "solventsSolving": [
+  {
+   "ability": "knight-hop",
+   "winPct": 10
+  }
+ ],
+ "pure": false,
+ "matrix": {
+  "none": {
+   "winPct": 0,
+   "trials": 30,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 30,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-step": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 10,
+   "avgMoves": 5.1
+  },
+  "knight-hop": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 8,
+   "avgMoves": 5.4
+  },
+  "become-king": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 9,
+   "avgMoves": 7.1
+  },
+  "magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "queen-pulse": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-squire": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "page": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 4,
+   "stall": 0,
+   "deadEnd": 6,
+   "avgMoves": 4.7
+  },
+  "convert": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 2
+  },
+  "poison-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "duchess": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "summon-knight": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "twin": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "aegis": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "magnet+queen-pulse": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon+magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "magnet+rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon+queen-pulse": {
+   "winPct": 40,
+   "trials": 10,
+   "wins": 4,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 7.5
+  },
+  "queen-pulse+rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon+rewind": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.9
+  },
+  "become-king+dragon": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 4,
+   "stall": 0,
+   "deadEnd": 5,
+   "avgMoves": 7.5
+  },
+  "become-king+bishop-squire": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "become-king+queen-pulse": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-squire+dragon": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-squire+queen-pulse": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon+poison-dart": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.5
+  },
+  "poison-dart+queen-pulse": {
+   "winPct": 20,
+   "trials": 10,
+   "wins": 2,
+   "captured": 0,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.3
+  },
+  "become-king+poison-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 3,
+   "stall": 0,
+   "deadEnd": 7,
+   "avgMoves": 7.9
+  },
+  "bishop-squire+duchess": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-squire+summon-knight": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon+duchess": {
+   "winPct": 67,
+   "trials": 30,
+   "wins": 20,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.1
+  },
+  "dragon+summon-knight": {
+   "winPct": 50,
+   "trials": 10,
+   "wins": 5,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.5
+  },
+  "duchess+summon-knight": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-squire+page": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 4,
+   "avgMoves": 7.5
+  },
+  "duchess+page": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 1,
+   "avgMoves": 8.5
+  },
+  "dragon+page": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.4
+  },
+  "duchess+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "aegis+duchess": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "aegis+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "dragon+vanguard": {
+   "winPct": 87,
+   "trials": 30,
+   "wins": 26,
+   "captured": 0,
+   "moveLimit": 4,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.8
+  },
+  "aegis+dragon": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  }
+ },
+ "thresholds": {
+  "noneMax": 8,
+  "singleMax": 8,
+  "pairMin": 60,
+  "pairMax": 80,
+  "screenTrials": 10,
+  "pairTrials": 10,
+  "confirmTrials": 30,
+  "tier": "T5",
+  "realistic": true
+ },
+ "pool": {
+  "abilities": [
+   "freeze-ray",
+   "knight-hop",
+   "bishop-step",
+   "queen-pulse",
+   "aegis",
+   "convert",
+   "poison-dart",
+   "decoy",
+   "rabies-dart",
+   "become-king",
+   "boulder",
+   "smoke",
+   "rewind",
+   "magnet",
+   "summon-knight",
+   "bishop-squire",
+   "page",
+   "twin",
+   "duchess",
+   "dragon",
+   "vanguard",
+   "swap",
+   "sacrifice"
+  ],
+  "excluded": []
+ },
+ "puzzle": {
+  "level": 7,
+  "rookieStart": {
+   "file": 4,
+   "rank": 1
+  },
+  "pieces": [
+   {
+    "type": "king",
+    "color": "black",
+    "file": 2,
+    "rank": 8
+   },
+   {
+    "type": "pawn",
+    "color": "black",
+    "file": 1,
+    "rank": 7
+   },
+   {
+    "type": "pawn",
+    "color": "black",
+    "file": 2,
+    "rank": 7
+   },
+   {
+    "type": "pawn",
+    "color": "black",
+    "file": 3,
+    "rank": 7
+   },
+   {
+    "type": "pawn",
+    "color": "black",
+    "file": 7,
+    "rank": 7
+   },
+   {
+    "type": "knight",
+    "color": "black",
+    "file": 4,
+    "rank": 6
+   }
+  ],
+  "hazards": [
+   {
+    "file": 1,
+    "rank": 5
+   },
+   {
+    "file": 2,
+    "rank": 5
+   },
+   {
+    "file": 3,
+    "rank": 5
+   },
+   {
+    "file": 4,
+    "rank": 5
+   },
+   {
+    "file": 5,
+    "rank": 5
+   },
+   {
+    "file": 6,
+    "rank": 5
+   },
+   {
+    "file": 8,
+    "rank": 5
+   },
+   {
+    "file": 7,
+    "rank": 4
+   },
+   {
+    "file": 7,
+    "rank": 6
+   },
+   {
+    "file": 4,
+    "rank": 8
+   },
+   {
+    "file": 3,
+    "rank": 6
+   },
+   {
+    "file": 1,
+    "rank": 6
+   },
+   {
+    "file": 4,
+    "rank": 7
+   }
+  ],
+  "moveLimit": 9,
+  "winCondition": "king",
+  "kingBehavior": "flee",
+  "kingPen": [
+   "a8",
+   "b8",
+   "c8"
+  ]
+ },
+ "snippet": "    // L7 — THE MOAT. One gate, plugged. Crossing on foot costs everything.\n    make(\n      7,\n      [\n        king(2, 8), pawn(1, 7), pawn(2, 7), pawn(3, 7), pawn(7, 7), knight(4, 6),\n      ],\n      {\n        ...FLEE,\n        moveLimit: 9,\n        hazards: [X(1, 5), X(2, 5), X(3, 5), X(4, 5), X(5, 5), X(6, 5), X(8, 5), X(7, 4), X(7, 6), X(4, 8), X(3, 6), X(1, 6), X(4, 7)],\n        kingPen: ['a8', 'b8', 'c8'],\n      },\n    ),"
+}

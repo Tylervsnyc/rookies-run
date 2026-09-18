@@ -1,0 +1,603 @@
+{
+ "id": "moat-L8-v1-s261",
+ "date": "2026-09-18",
+ "slot": 8,
+ "source": {
+  "kind": "terrain",
+  "archetype": "moat",
+  "genSeed": 261
+ },
+ "title": "THE MOAT",
+ "gatedUnder": [
+  {
+   "kit": [
+    "rabies-dart",
+    "vanguard",
+    "bishop-squire",
+    "bishop-step"
+   ],
+   "anchors": [
+    "rabies-dart+vanguard",
+    "bishop-squire+bishop-step"
+   ],
+   "reason": "a second body plus a way to clear or hold the square it needs | a body covers one line while Rookie changes geometry",
+   "winningPairs": [
+    {
+     "pair": "bishop-step+rabies-dart",
+     "winPct": 80
+    }
+   ]
+  }
+ ],
+ "kitsGating": 1,
+ "kitsTested": 8,
+ "winningPairs": [
+  {
+   "pair": "bishop-step+rabies-dart",
+   "winPct": 80
+  }
+ ],
+ "solventsSolving": [
+  {
+   "ability": "knight-hop",
+   "winPct": 40
+  },
+  {
+   "ability": "become-king",
+   "winPct": 60
+  }
+ ],
+ "pure": false,
+ "matrix": {
+  "none": {
+   "winPct": 0,
+   "trials": 30,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 30,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-step": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 4,
+   "avgMoves": 8.7
+  },
+  "knight-hop": {
+   "winPct": 40,
+   "trials": 10,
+   "wins": 4,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 6,
+   "avgMoves": 6.5
+  },
+  "become-king": {
+   "winPct": 60,
+   "trials": 10,
+   "wins": 6,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 4,
+   "avgMoves": 6.6
+  },
+  "magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "queen-pulse": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.6
+  },
+  "dragon": {
+   "winPct": 30,
+   "trials": 30,
+   "wins": 9,
+   "captured": 0,
+   "moveLimit": 21,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.3
+  },
+  "rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "convert": {
+   "winPct": 13,
+   "trials": 30,
+   "wins": 4,
+   "captured": 0,
+   "moveLimit": 26,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.2
+  },
+  "decoy": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "duchess": {
+   "winPct": 23,
+   "trials": 30,
+   "wins": 7,
+   "captured": 0,
+   "moveLimit": 23,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.6
+  },
+  "freeze-ray": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "poison-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "summon-knight": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "rabies-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "smoke": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+convert": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.5
+  },
+  "bishop-squire+decoy": {
+   "winPct": 50,
+   "trials": 10,
+   "wins": 5,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 7.4
+  },
+  "convert+sacrifice": {
+   "winPct": 20,
+   "trials": 10,
+   "wins": 2,
+   "captured": 0,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.7
+  },
+  "decoy+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "convert+decoy": {
+   "winPct": 90,
+   "trials": 10,
+   "wins": 9,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.6
+  },
+  "rewind+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+rewind": {
+   "winPct": 50,
+   "trials": 10,
+   "wins": 5,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.7
+  },
+  "convert+rewind": {
+   "winPct": 90,
+   "trials": 10,
+   "wins": 9,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.9
+  },
+  "bishop-squire+vanguard": {
+   "winPct": 40,
+   "trials": 10,
+   "wins": 4,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8
+  },
+  "convert+vanguard": {
+   "winPct": 73,
+   "trials": 30,
+   "wins": 22,
+   "captured": 0,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.1
+  },
+  "convert+duchess": {
+   "winPct": 40,
+   "trials": 10,
+   "wins": 4,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8
+  },
+  "convert+dragon": {
+   "winPct": 50,
+   "trials": 10,
+   "wins": 5,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.5
+  },
+  "convert+freeze-ray": {
+   "winPct": 90,
+   "trials": 10,
+   "wins": 9,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.4
+  },
+  "dragon+duchess": {
+   "winPct": 63,
+   "trials": 30,
+   "wins": 19,
+   "captured": 0,
+   "moveLimit": 11,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 7.2
+  },
+  "duchess+freeze-ray": {
+   "winPct": 50,
+   "trials": 10,
+   "wins": 5,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.5
+  },
+  "dragon+freeze-ray": {
+   "winPct": 57,
+   "trials": 30,
+   "wins": 17,
+   "captured": 0,
+   "moveLimit": 13,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.5
+  },
+  "rabies-dart+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 10
+  },
+  "bishop-squire+rabies-dart": {
+   "winPct": 30,
+   "trials": 10,
+   "wins": 3,
+   "captured": 0,
+   "moveLimit": 7,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.6
+  },
+  "bishop-step+rabies-dart": {
+   "winPct": 80,
+   "trials": 30,
+   "wins": 24,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 5,
+   "avgMoves": 4.7
+  },
+  "bishop-step+vanguard": {
+   "winPct": 40,
+   "trials": 10,
+   "wins": 4,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 1,
+   "avgMoves": 8
+  },
+  "bishop-squire+bishop-step": {
+   "winPct": 33,
+   "trials": 30,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 20,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.5
+  }
+ },
+ "thresholds": {
+  "noneMax": 8,
+  "singleMax": 8,
+  "pairMin": 60,
+  "pairMax": 80,
+  "screenTrials": 10,
+  "pairTrials": 10,
+  "confirmTrials": 30,
+  "tier": "T5",
+  "realistic": true
+ },
+ "pool": {
+  "abilities": [
+   "freeze-ray",
+   "knight-hop",
+   "bishop-step",
+   "queen-pulse",
+   "aegis",
+   "convert",
+   "poison-dart",
+   "decoy",
+   "rabies-dart",
+   "become-king",
+   "boulder",
+   "smoke",
+   "rewind",
+   "magnet",
+   "summon-knight",
+   "bishop-squire",
+   "page",
+   "twin",
+   "duchess",
+   "dragon",
+   "vanguard",
+   "swap",
+   "sacrifice"
+  ],
+  "excluded": []
+ },
+ "puzzle": {
+  "level": 8,
+  "rookieStart": {
+   "file": 4,
+   "rank": 1
+  },
+  "pieces": [
+   {
+    "type": "king",
+    "color": "black",
+    "file": 5,
+    "rank": 8
+   },
+   {
+    "type": "pawn",
+    "color": "black",
+    "file": 3,
+    "rank": 6
+   },
+   {
+    "type": "bishop",
+    "color": "black",
+    "file": 2,
+    "rank": 3
+   },
+   {
+    "type": "bishop",
+    "color": "black",
+    "file": 6,
+    "rank": 3
+   }
+  ],
+  "hazards": [
+   {
+    "file": 1,
+    "rank": 4
+   },
+   {
+    "file": 2,
+    "rank": 4
+   },
+   {
+    "file": 4,
+    "rank": 4
+   },
+   {
+    "file": 5,
+    "rank": 4
+   },
+   {
+    "file": 6,
+    "rank": 4
+   },
+   {
+    "file": 7,
+    "rank": 4
+   },
+   {
+    "file": 8,
+    "rank": 4
+   },
+   {
+    "file": 3,
+    "rank": 3
+   },
+   {
+    "file": 3,
+    "rank": 5
+   },
+   {
+    "file": 7,
+    "rank": 8
+   },
+   {
+    "file": 6,
+    "rank": 6
+   },
+   {
+    "file": 7,
+    "rank": 7
+   },
+   {
+    "file": 4,
+    "rank": 6
+   },
+   {
+    "file": 3,
+    "rank": 7
+   }
+  ],
+  "moveLimit": 10,
+  "winCondition": "king",
+  "kingBehavior": "flee",
+  "kingPen": [
+   "e7",
+   "f7",
+   "e8",
+   "f8"
+  ]
+ },
+ "snippet": "    // L8 — THE MOAT. One gate, plugged. Crossing on foot costs everything.\n    make(\n      8,\n      [\n        king(5, 8), pawn(3, 6), bishop(2, 3), bishop(6, 3),\n      ],\n      {\n        ...FLEE,\n        moveLimit: 10,\n        hazards: [X(1, 4), X(2, 4), X(4, 4), X(5, 4), X(6, 4), X(7, 4), X(8, 4), X(3, 3), X(3, 5), X(7, 8), X(6, 6), X(7, 7), X(4, 6), X(3, 7)],\n        kingPen: ['e7', 'f7', 'e8', 'f8'],\n      },\n    ),"
+}
