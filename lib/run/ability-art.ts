@@ -30,7 +30,6 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   chequer: 'boulder-1.webp',
   castle: 'become-king-2.webp',
   catapult: 'boulder-1.webp',
-  mirror: 'twin-1.webp',
   ricochet: 'magnet-1.webp',
   avalanche: 'boulder-1.webp',
 };
@@ -42,5 +41,6 @@ export function artFile(id: AbilityId): string {
   if (id === 'rabies-dart') return 'rabies-dart-2.webp';
   if (id === 'freeze-ray') return 'freeze-ray-2.webp';
   if (id === 'become-king') return 'become-king-2.webp';
+  if (id === 'mirror') return 'mirror-2.webp';
   return `${id}-1.webp`;
 }
