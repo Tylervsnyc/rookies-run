@@ -1473,6 +1473,30 @@
       "stage": "testing",
       "created": "2026-09-19",
       "notes": "Avalanche + Boulder (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-63",
+      "kind": "run",
+      "name": "The Reflecting Pool",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Mirror + Boulder: you place the broken symmetry (2026-09-19 Mirror batch, stub)"
+    },
+    {
+      "id": "revenge-64",
+      "kind": "run",
+      "name": "The Hall of Mirrors",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Mirror + Sacrifice: the reflection is a bomb (2026-09-19 Mirror batch, stub)"
+    },
+    {
+      "id": "revenge-65",
+      "kind": "run",
+      "name": "The Kaleidoscope",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Mirror + Convert: two bodies and a stolen third (2026-09-19 Mirror batch, stub)"
     }
   ]
 }

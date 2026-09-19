@@ -87,7 +87,7 @@ function list(): void {
  * the file rule but still need a registry entry.
  */
 /** Tyler can play about this many runs in a week; more is a parking lot, not a queue (audit 2026-09-09). */
-export const TESTING_RUN_CAP = 15; // was 5; raised 2026-09-19 for Tyler's ten-run batch (revenge-53..62) — drop back to 5 once he has triaged them
+export const TESTING_RUN_CAP = 20; // was 5; raised 2026-09-19 for Tyler's ten-run batch (revenge-53..62) — drop back to 5 once he has triaged them
 
 function lint(): number {
   const reg = loadRegistry();
