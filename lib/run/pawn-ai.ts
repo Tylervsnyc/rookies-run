@@ -1512,6 +1512,9 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
       // The per-turn glass count survives the glass-turn itself and resets
       // after the enemy phase that follows a real action.
       hourglassCastsThisTurn: glass ? s.hourglassCastsThisTurn : 0,
+      // Chain is armed "until the end of this turn": an unspent arm is gone
+      // when her turn comes back (a glass-turn is still her turn — it holds).
+      ...(s.chainArmed && !glass ? { chainArmed: false } : {}),
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,

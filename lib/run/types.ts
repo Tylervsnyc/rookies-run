@@ -121,7 +121,10 @@ export interface AllyPiece {
     | 'twin'
     | 'duchess'
     | 'dragon'
-    | 'vanguard';
+    | 'vanguard'
+    // Raise (2026-09-19): the last piece she captured, stood back up on her
+    // side. CONTROLLED like a converted piece; keeps the type it died with.
+    | 'raise';
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
    * end of each enemy turn; the ally dissolves when it hits 0. Absent =
@@ -255,6 +258,17 @@ export interface BoardState {
      * line: the player chooses the pull DISTANCE.
      */
     magnetFrom?: Coord;
+    /**
+     * Puppet only — the enemy picked on the first tap. While set (step
+     * 'pick-square') the second tap picks which of ITS moves it makes.
+     */
+    puppetFrom?: Coord;
+    /**
+     * Eruption only — the lava square picked on the first tap. While set
+     * (step 'pick-square') the flood squares are tinted and the second tap
+     * commits (T1-T2: the one square tapped; T3+: all of them).
+     */
+    eruptionFrom?: Coord;
   } | null;
   /** Current level number (1-based) — drives pawn promotion options. */
   level: number;
@@ -533,6 +547,20 @@ export interface BoardState {
    * enemy phase that follows a REAL Rookie action.
    */
   hourglassCastsThisTurn?: number;
+  /**
+   * Chain (2026-09-19) — true from the cast until the end of this Rookie
+   * turn. The next capturing MOVE by Rookie or a controlled summon spreads
+   * through same-type neighbours (see `chainVictims` in abilities.ts) and
+   * clears the flag. Cleared unspent when the enemy phase ends (a glass-turn
+   * holds it). Part of the Rewind snapshot like every other field.
+   */
+  chainArmed?: boolean;
+  /**
+   * Raise (2026-09-19) — the grave is READ from `captures`: the last entry at
+   * or after this index is the piece Raise stands up. A cast moves the floor
+   * to `captures.length`, so a second Raise needs a fresh capture. Absent = 0.
+   */
+  graveFloor?: number;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {

@@ -16,9 +16,11 @@ import {
 } from './movement';
 import {
   breakSmokeOnCapture,
+  chainLinksFor,
   clearStatusOnSquare,
   isControlledAlly,
   offerIsExhausted,
+  resolveChain,
   rollOffer,
   stepAllyTurn,
   stepDroneTurn,
@@ -55,7 +57,12 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
     (p) => !(p.file === target.file && p.rank === target.rank),
   );
 
-  const tempoGain = captured ? TEMPO_REWARD[captured.type] ?? 0 : 0;
+  // Chain (armed this turn): the capture runs down the line — every linked
+  // guard dies with the victim and pays tempo with it. Empty unless armed.
+  const chained = captured && captured.type !== 'king' ? chainLinksFor(state, target) : [];
+  const tempoGain =
+    (captured ? TEMPO_REWARD[captured.type] ?? 0 : 0) +
+    chained.reduce((sum, p) => sum + (TEMPO_REWARD[p.type] ?? 0), 0);
   const tempoMax = tempoMaxFor(state);
   const rawTempo = state.tempo + tempoGain;
   // Only captures can trigger an offer — prevents spurious offers on plain
@@ -109,7 +116,7 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
   // status markers along with the piece itself.
   const statusOverlay = captured ? clearStatusOnSquare(state, targetSq) : null;
 
-  const afterMove: BoardState = {
+  const movedState: BoardState = {
     ...state,
     ...(statusOverlay ?? {}),
     rookie: { ...target },
@@ -129,6 +136,8 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
     // Smoke: a capture by Rookie herself blows her cover (T5 keeps it).
     ...(captured ? breakSmokeOnCapture(state) : {}),
   };
+  // The arm is spent by the capture whether or not anything was linked.
+  const afterMove = state.chainArmed && captured ? resolveChain(movedState, chained) : movedState;
 
   // When the meter fills, roll an offer — unless every ability is maxed, in
   // which case we just keep the tempo (as a small "blessing") and skip the modal.

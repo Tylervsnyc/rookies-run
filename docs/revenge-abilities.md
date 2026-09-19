@@ -127,3 +127,50 @@ one tap, one visible consequence, paying off inside one turn.
 | 19 | **Coup** (`coup`) | Swap the king with one of his own guards; 1/1/2/2/2 uses. T1 a pawn beside him, T2 any guard beside him, T3-T4 any guard in his room or within 2, T5 any enemy. T4+ the swap stuns him a turn. Markers ride with the pieces; his pen gains the post square. King-win levels only. | The biggest "oh" in the set: his own sentry sits on the throne and he is standing in the doorway — and doorsteps have lines to them. The second beat is a line he cannot step off, a stone, a snare, or a body's cover. | The Alley L6: 0% → 75%. The Millstone L7: none 0 / duchess 0 / coup 0 / coup+duchess 100% (the pair is the point). |
 | 20 | **Hourglass** (`hourglass`) | Instant: the enemies take a full turn NOW, her move still in hand; `moveCount` does not tick. **REWORKED 2026-09-06.** One rule: a glass-turn is a turn taken OUT OF ROOKIE'S CLOCK — nothing of hers expires during it (freeze/snare holds, the king's stun, smoke, the straw, decoy, rabies, king-form, summon clocks, a convert daze, the once-per-turn summon move all stand). The ONE counter that still burns is **poison**, because a fuse is a bomb going off, not a protection running out. The king REACTS on a glass-turn exactly as on any enemy turn, at every tier. Tiers are pure quantity: **1/2/3/4/6 uses**, **1/1/1/2/3 casts per turn** (finite on purpose — the cast does not end the turn, so uses are the only bound). Rewind can undo a glass-turn (a free peek). | The only card that lets you WAIT without spending a body-move. **A glass is worth exactly one Rookie move plus the durations that move would have burned** — so it pays only beside a partner whose payoff lands on an ENEMY PHASE (a poison death, a decoy friendly-fire kill), never beside one whose payoff lands on Rookie's own move (snare, scarecrow, freeze-ray: measured neutral-to-negative). Never a solvent: 0% alone on every finale of every run tested, at every tier. Its honest kit role is the perfect TRAP filler. | The Candle (revenge-29) L9: poison-dart alone **13%** -> pair **72-81%** at every glass tier — the one measured cell where the glass is the difference. Same run, decoy alone 47/44/69/31 -> **56/56/91/69** paired. The Hearth (revenge-31): snare 75/63/69/72/44 alone -> 69/63/78/53/38 paired (redundant, not anti). Two runs were built to gate on it and neither did; the template that would is L9's — build the FUSE weak, not the trap. |
 | 21 | **Scarecrow** (`scarecrow`) | A straw Rookie on an empty square for 1/2/2/2/3 enemy turns; 1/1/2/2/2 uses. The court and the king plan against a view where the straw IS Rookie (rook-form; a queen from T4) and the real Rookie is an uncapturable blocker. Striking it destroys it and wastes the action (no credit, no stun); T5 the striker dies. One straw at a time; it blocks her and her summons like a body. Outranks a Decoy mark. | His flee is deterministic — farthest safe square from the threat — so a false Rookie is a steering wheel: straw on the line to his square, Rookie on the line to the square he will run to. Hunters charge the straw for a turn. The heaviest mental model of the five (two line sets). | The Glasshouse L3/L4/L5: 17/0/50% → 100/33/100%. The Slash L5: 8% → 92%; L7: none 0 / knight-hop 0 / scarecrow 0 / scarecrow+knight-hop 100%. The Vault L5: 33% → 100%. |
+
+## The ability-first five of 2026-09-19 (testing)
+
+Design doc: `docs/new-abilities-2026-09-19.md`. All five are free actions,
+none ever touches the king, and every consequence is tinted on the board
+before the tap that commits it (`consequenceTint` in `lib/run/abilities.ts`).
+Two terrain rules exist ONLY through these cards: **R1** lava burns what is
+forced into it (Puppet), **R2** lava can spread (Eruption).
+
+| # | Ability | Numbers | Why it catches kings | Proof (T5 bot, `five-smoke.ts`, 8 trials) |
+|---|---------|---------|----------------------|----------------|
+| A1 | **Promote** (`promote`) | Tap a controlled summon: it climbs pawn, knight, bishop, rook, queen. One rung at T1-T2, two at T3-T4, straight to queen at T5; 1/1/2/2/2 uses. Only the type changes — clock, daze and source stand. A queen (Duchess, Dragon) is not a target. | The body is already in his court; change what it attacks and take him this turn. | none 0% → 100%, cast 100% |
+| A2 | **Puppet** (`puppet`) | Two taps: a guard, then one of ITS OWN non-capturing moves. T1-T3 the first piece on her current form's lines (Magnet's lines, distance 1 allowed); T4 also any guard within 3; T5 any guard. R1: the first lava square along a move is a destination and kills it (capture, stun, tempo). T3+: it may take its own side. 1/1/2/2/2 uses. Markers ride with it; a snare it lands on springs. | Pull the guard off his line, walk the defender off the key, burn the sentry beside the moat. | none 0% → 100%, cast 100% |
+| A3 | **Raise** (`raise`) | Tap a free square beside her: the LAST piece credited to her side stands there — source `raise`, controlled, dazed this turn, 6/9/9/level/level enemy turns; 1/1/2/2/2 uses. T1-T2 lift a pawn, knight or bishop; T3+ a queen too. The rack's status line shows the grave. | The level decides the summon: eat the bishop, get a bishop. | none 0% → 100%, cast 100% |
+| A4 | **Eruption** (`eruption`) | Two taps: lava within 2/2/3/3/any of her, then a tinted neighbour. T1-T2 flood the ONE square tapped; T3+ all four orthogonal neighbours at once. Open ground becomes lava; a pawn (T2+ knight/bishop, T4+ any guard) burns = capture, stun. Never the king's, hers, a summon's, a snare's square, never a flood that strands her. 1/2/2/3/3 uses. | The boulder trick in lava: delete his flee square or burn the key guard, only where the level has lava. | none 0% → 100%, cast 100% |
+| A5 | **Chain** (`chain`) | Instant: armed until the end of this turn. The next capturing MOVE by Rookie or a controlled summon also kills every guard of the victim's family in its 8-neighbourhood, and theirs, 2/3/4/any/any links deep. T3+ pawn = knight; T5 any guard. Never the king. 1/1/2/2/2 uses. Only castable when a chain is on offer. | The defended pawn chain becomes a fuse: kill the head, the tail on his line goes with it, he is stunned. | none 0% → 100%, cast 100% |
+
+**Decisions where the spec was open (2026-09-19 build):**
+
+- *Promote / Puppet T2* change nothing but the card (the spec gives T1 and T2
+  the same rule and the same single use). The upgrade note says so honestly.
+- *Puppet lines* are Magnet's: rook / bishop / queen form, anything else falls
+  back to her rook lines — but a guard touching her IS a target. A guard with
+  no legal destination is not a target. A pawn is never walked onto rank 1 (no
+  promotion by puppet). It never captures Rookie or anything of hers.
+- *Raise is a targeted card* (the spec says "instant" and "tap the spawn
+  square"; the tap wins). The grave is READ from `captures` (last entry at or
+  after `graveFloor`), so every credited kill counts — her own capture, a
+  summon's, a crush, a burn, a poison death — and a cast moves the floor, so
+  a second Raise needs a fresh capture. If the last capture is too big for the
+  tier, the card is dead until the next one. Several raised bodies may coexist.
+- *Eruption is two taps at every tier* so the flood is tinted before it is
+  committed; at T3+ any tinted square confirms the whole flood. A guard too
+  big to burn keeps its square dry. T3+ is all-or-nothing: a flood that would
+  strand her refuses the vent.
+- *Chain fires on capturing MOVES only* (Rookie's, or a controlled summon's).
+  Card kills (Boulder crush, a Puppet burn, a Sacrifice blast) neither spend
+  nor spread the arm. The arm is spent by the next capture even when nothing
+  was linked. It holds through a glass-turn and is cleared when the enemy
+  phase ends. It cannot be un-tapped.
+- *Rewind*: the snapshot is the whole state, so `graveFloor`, a raised body
+  and a promoted type ride in it like a Converted piece does. A Chain armed
+  THIS turn is carried forward (her own live effect); a stale arm inside a
+  snapshot is never restored.
+- *No new VFX kinds*: Promote / Raise reuse the summon bloom, Puppet the Magnet
+  streak, Eruption the Boulder thud, Chain the Convert swirl. Art is borrowed
+  (`PLACEHOLDER_ART`).
