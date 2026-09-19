@@ -6,6 +6,7 @@
  */
 
 const RUNS: { n: number; name: string; pair: [string, string]; filler: string; idea: string; show?: number }[] = [
+  { n: 65, name: 'The Kaleidoscope (NEW)', pair: ['mirror', 'convert'], filler: 'swap', idea: 'Your reflection takes a guard, the king is stunned, your stolen pawn strikes.', show: 9 },
   { n: 64, name: 'The Hall of Mirrors (NEW)', pair: ['mirror', 'sacrifice'], filler: 'hourglass', idea: 'Steer your reflection into a sealed cell, then blow it up through the wall.', show: 8 },
   { n: 61, name: 'The Baffle', pair: ['ricochet', 'boulder'], filler: 'magnet', idea: 'Bank shots off stone. Boulder is your pool rail.', show: 9 },
   { n: 62, name: 'The Scree', pair: ['avalanche', 'boulder'], filler: 'aegis', idea: 'Every loose stone slides at once. Which way?', show: 9 },
