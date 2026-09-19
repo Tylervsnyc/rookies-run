@@ -31,6 +31,16 @@ import { RUN_REVENGE_48 } from './runs/revenge-48';
 import { RUN_REVENGE_50 } from './runs/revenge-50';
 import { RUN_REVENGE_51 } from './runs/revenge-51';
 import { RUN_REVENGE_52 } from './runs/revenge-52';
+import { RUN_REVENGE_53 } from './runs/revenge-53';
+import { RUN_REVENGE_54 } from './runs/revenge-54';
+import { RUN_REVENGE_55 } from './runs/revenge-55';
+import { RUN_REVENGE_56 } from './runs/revenge-56';
+import { RUN_REVENGE_57 } from './runs/revenge-57';
+import { RUN_REVENGE_58 } from './runs/revenge-58';
+import { RUN_REVENGE_59 } from './runs/revenge-59';
+import { RUN_REVENGE_60 } from './runs/revenge-60';
+import { RUN_REVENGE_61 } from './runs/revenge-61';
+import { RUN_REVENGE_62 } from './runs/revenge-62';
 
 
 export const EXTRA_REVENGE_RUNS: ReadonlyArray<RunDef> = [
@@ -48,4 +58,14 @@ export const EXTRA_REVENGE_RUNS: ReadonlyArray<RunDef> = [
   RUN_REVENGE_50,
   RUN_REVENGE_51,
   RUN_REVENGE_52,
+  RUN_REVENGE_53,
+  RUN_REVENGE_54,
+  RUN_REVENGE_55,
+  RUN_REVENGE_56,
+  RUN_REVENGE_57,
+  RUN_REVENGE_58,
+  RUN_REVENGE_59,
+  RUN_REVENGE_60,
+  RUN_REVENGE_61,
+  RUN_REVENGE_62,
 ];

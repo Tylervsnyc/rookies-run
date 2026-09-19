@@ -1393,6 +1393,86 @@
       "stage": "testing",
       "created": "2026-09-19",
       "notes": "Every loose stone on the board slides one square the way you point. Pawns under them are crushed."
+    },
+    {
+      "id": "revenge-53",
+      "kind": "run",
+      "name": "The Pawnshop",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Convert + Promote (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-54",
+      "kind": "run",
+      "name": "The Caldera",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Puppet + Dragon, lava ring (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-55",
+      "kind": "run",
+      "name": "The Crypt",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Raise + Sacrifice (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-56",
+      "kind": "run",
+      "name": "The Vent",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Eruption + Boulder, lava veins (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-57",
+      "kind": "run",
+      "name": "The Daisy Chain",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Chain + Magnet (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-58",
+      "kind": "run",
+      "name": "The Atoll",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Castle + Dragon, lava island (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-59",
+      "kind": "run",
+      "name": "The Gorge",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Catapult + Convert, lava river (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-60",
+      "kind": "run",
+      "name": "The Looking Glass",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Mirror + Swap (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-61",
+      "kind": "run",
+      "name": "The Baffle",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Ricochet + Boulder (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-62",
+      "kind": "run",
+      "name": "The Scree",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Avalanche + Boulder (2026-09-19 batch, stub)"
     }
   ]
 }
