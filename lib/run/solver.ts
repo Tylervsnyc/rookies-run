@@ -257,6 +257,8 @@ export function isUnwinnable(state: BoardState): boolean {
   // An armed Snare or a standing Scarecrow changes where the king can be held
   // or steered — neither is modelled, so never call such a board dead.
   if ((state.snares?.length ?? 0) > 0 || state.scarecrow) return false;
+  // An armed Ricochet gives her banked lines the search does not model.
+  if ((state.ricochetBanks ?? 0) > 0) return false;
   if (state.activeAbility || state.pendingOffer) return false;
   if (state.abilities.some((a) => a.id === 'squad')) return false;
   // A raised shield changes what the king does (he swings and freezes on it)

@@ -121,7 +121,10 @@ export interface AllyPiece {
     | 'twin'
     | 'duchess'
     | 'dragon'
-    | 'vanguard';
+    | 'vanguard'
+    // Mirror (2026-09-19): the echo rook. A summon for Swap / Sacrifice /
+    // Promote, but the player never taps it — it copies HER moves, flipped.
+    | 'mirror';
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
    * end of each enemy turn; the ally dissolves when it hits 0. Absent =
@@ -143,6 +146,12 @@ export interface AllyPiece {
    * Swap may target it). Cleared when the enemy turn ends.
    */
   dazed?: boolean;
+  /**
+   * Mirror only: how many more of ROOKIE'S moves the echo copies before it
+   * fades. Counted in her moves, not enemy turns (so `turnsLeft` stays absent
+   * and the enemy-phase clock never touches it). Absent = the whole level.
+   */
+  echoMovesLeft?: number;
 }
 
 export type Turn = 'rookie' | 'allies' | 'drones' | 'enemy';
@@ -255,6 +264,12 @@ export interface BoardState {
      * line: the player chooses the pull DISTANCE.
      */
     magnetFrom?: Coord;
+    /**
+     * Catapult / Avalanche — the stone (or summon) picked on the first tap.
+     * While set, the second tap picks where it lands (Catapult) or which way
+     * every loose stone slides (Avalanche: tap the square beside the stone).
+     */
+    pickFrom?: Coord;
   } | null;
   /** Current level number (1-based) — drives pawn promotion options. */
   level: number;
@@ -375,7 +390,13 @@ export interface BoardState {
       | 'scarecrow'
       | 'gauntlet'
       | 'panic'
-      | 'chequer';
+      | 'chequer'
+      // The level-first five of 2026-09-19 (docs/new-abilities-2026-09-19.md).
+      | 'castle'
+      | 'catapult'
+      | 'mirror'
+      | 'ricochet'
+      | 'avalanche';
     from: string;
     to: string;
     id: number;
@@ -533,6 +554,21 @@ export interface BoardState {
    * enemy phase that follows a REAL Rookie action.
    */
   hourglassCastsThisTurn?: number;
+  /**
+   * Ricochet (2026-09-19) — how many times her NEXT rook move may bank off a
+   * stone (1, or 2 from T3). Read by `rookieLegalMoves` on her own turn only,
+   * so the king never sees a banked line coming. Spent by her next move in
+   * rook form, banked or not. Absent/0 = not armed.
+   */
+  ricochetBanks?: number;
+  /**
+   * Castle (2026-09-19) — set by a Castle and cleared at the end of the enemy
+   * phase that follows. While set the king does not swing at a Rookie who is
+   * touching him (he has just been dropped there and is finding his feet): he
+   * flees if he can, and stands if he cannot. The ONE exception to "touching
+   * the king means he takes a swing", and it lasts exactly one enemy phase.
+   */
+  kingCastled?: boolean;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {

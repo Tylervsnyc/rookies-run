@@ -8,11 +8,11 @@
  * the permanent / unlimited payoff.
  */
 
-import { isWinningMove, rookieLegalMoves } from './movement';
+import { isWinningMove, ricochetPaths, rookieLegalMoves } from './movement';
 import { getRunById, type RunDef } from './runs';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
-import { fromSquare, toSquare } from './types';
+import { coordEq, fromSquare, toSquare } from './types';
 import { enforceKingInvariant } from './king-invariant';
 import type {
   AllyPiece,
@@ -84,7 +84,16 @@ export type AbilityId =
   // four squares it leaves him are all the opposite colour to his own, which
   // is the whole reason it has a partner (a light-squared body covers exactly
   // those four, and can never touch a king who stands on dark).
-  | 'chequer';
+  | 'chequer'
+  // The LEVEL-FIRST five of 2026-09-19 (testing) — each was invented to solve
+  // a crazy level (an island, a gorge, a looking glass, a baffle, a scree).
+  // See docs/new-abilities-2026-09-19.md. Terrain rules R3 (stone sinks, lava
+  // cools) and R4 (stone is a mirror) exist only through these cards.
+  | 'castle'
+  | 'catapult'
+  | 'mirror'
+  | 'ricochet'
+  | 'avalanche';
 
 export type AbilityTier = 1 | 2 | 3 | 4 | 5;
 
@@ -366,6 +375,41 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     typeLine: 'Instant · Royal',
     description: 'Chequer the floor. Until your next turn the king cannot set foot on his own colour — he moves like a rook, or not at all.',
   },
+  castle: {
+    id: 'castle',
+    name: 'Castle',
+    activation: 'targeted',
+    typeLine: 'Targeted · Royal',
+    description: 'She is a rook. He is a king. Same row, anything between: he jumps two toward her, she hops to his far side. Rules are rules.',
+  },
+  catapult: {
+    id: 'catapult',
+    name: 'Catapult',
+    activation: 'targeted',
+    typeLine: 'Targeted · Terrain',
+    description: 'Fling the stone or summon beside you in a straight line, over everything, to a square you choose.',
+  },
+  mirror: {
+    id: 'mirror',
+    name: 'Mirror',
+    activation: 'targeted',
+    typeLine: 'Targeted · Summon',
+    description: 'A mirror Rookie appears across the board and copies every move she makes, flipped.',
+  },
+  ricochet: {
+    id: 'ricochet',
+    name: 'Ricochet',
+    activation: 'instant',
+    typeLine: 'Instant · Movement',
+    description: 'Her next move bounces: slide to a stone, turn, keep sliding. Stone is a mirror. Lava is not.',
+  },
+  avalanche: {
+    id: 'avalanche',
+    name: 'Avalanche',
+    activation: 'targeted',
+    typeLine: 'Targeted · Terrain',
+    description: 'Every loose stone on the board slides one square the way you point. Pawns under them are crushed.',
+  },
 };
 
 export const ALL_ABILITY_IDS: AbilityId[] = Object.keys(
@@ -556,6 +600,24 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier <= 2) return 1;
       if (tier <= 4) return 2;
       return 3;
+    case 'castle':
+    case 'avalanche':
+      // 1/1/2/2/2 — the spec's ladder (docs/new-abilities-2026-09-19.md).
+      if (tier <= 2) return 1;
+      return 2;
+    case 'catapult':
+      // 1/2/2/3/3.
+      if (tier === 1) return 1;
+      if (tier <= 3) return 2;
+      return 3;
+    case 'mirror':
+      // One looking glass a level (T4+: two — a second echo after the first fades).
+      return tier >= 4 ? 2 : 1;
+    case 'ricochet':
+      // 1/1/2/2/3.
+      if (tier <= 2) return 1;
+      if (tier <= 4) return 2;
+      return 3;
   }
 }
 
@@ -643,6 +705,11 @@ const HOW: Record<AbilityId, string> = {
   gauntlet: 'Tap card. He steps out of his room toward you, once a turn. He will not walk onto a line he can see.',
   panic: 'Tap card. On their turn he must step off his square. He picks the safest one left — take the safe ones away first.',
   chequer: 'Tap card. Until your next turn he cannot step diagonally — only the four squares of the other colour. Cover those and he has nowhere.',
+  castle: 'Tap card, then tap either glowing square. He lands on one, you on the other. It is your move for the turn.',
+  catapult: 'Tap card, tap a loose stone or a summon right beside you, then tap where it lands. It flies straight away from you, over anything.',
+  mirror: 'Tap card, then tap the glowing square across the board. The echo copies your moves, flipped. You never tap it.',
+  ricochet: 'Tap card. Your next rook move may bank off a stone. The bent lines are drawn on the board before you move.',
+  avalanche: 'Tap card, tap a loose stone, then tap the square beside it. Every loose stone slides that way. The arrows show where each one lands.',
 };
 
 function limitText(id: AbilityId, tier: AbilityTier): string {
@@ -863,6 +930,25 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'He cannot step onto his own colour. Three times a level.';
       if (tier >= 3) return 'He cannot step onto his own colour. Twice a level.';
       return 'Until your next turn he cannot step onto his own colour: no diagonals, only the four squares of the other colour.';
+    case 'castle':
+      if (tier >= 4) return 'Castle on his row or column, through anything. He lands stunned for a turn.';
+      if (tier >= 2) return 'Castle on his row or column, through anything. He jumps two toward you; you land on his far side.';
+      return 'Share a row with the king, anything between: he jumps two toward you, you land on his far side. Rules are rules.';
+    case 'catapult':
+      if (tier === 5) return 'Fling a stone or summon beside you any distance, over anything. A stone crushes a pawn; in lava it makes a ford.';
+      if (tier >= 3) return 'Fling a stone or summon beside you 2 to 5 squares, over anything. A stone crushes a pawn; in lava it makes a ford.';
+      if (tier === 2) return 'Fling a stone or summon beside you 2 to 4 squares, over anything. A stone crushes a pawn; in lava it makes a ford.';
+      return 'Fling a stone or summon beside you 2 to 4 squares, over anything. A stone that lands in lava makes a ford.';
+    case 'mirror':
+      if (tier === 5) return 'A mirror rook appears across the board and copies your every move, flipped, all level.';
+      return `A mirror rook appears across the board and copies your next ${mirrorMoves(tier)} moves, flipped. It takes what it lands on.`;
+    case 'ricochet':
+      if (tier >= 3) return 'Your next rook move may bank off stone twice. Lava and pieces never bank.';
+      return 'Your next rook move may bank once: slide to a stone, turn, keep sliding. Lava and pieces never bank.';
+    case 'avalanche':
+      if (tier >= 4) return 'Every loose stone slides two squares the way you point. Pawns and minor pieces under them are crushed.';
+      if (tier === 3) return 'Every loose stone slides one square the way you point. Pawns and minor pieces under them are crushed.';
+      return 'Every loose stone slides one square the way you point. Pawns under them are crushed. Into lava, both are gone.';
   }
 }
 
@@ -1073,6 +1159,30 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 5) return 'No diagonal steps for him. 3/level.';
       if (tier >= 3) return 'No diagonal steps for him. 2/level.';
       return 'No diagonal steps for him. 1/level.';
+    case 'castle':
+      if (tier >= 4) return 'Castle, any line. He lands stunned. 2/level.';
+      if (tier === 3) return 'Castle on his row or column. 2/level.';
+      if (tier === 2) return 'Castle on his row or column. 1/level.';
+      return 'Castle along his row. 1/level.';
+    case 'catapult':
+      if (tier === 5) return 'Fling it any distance. 3/level.';
+      if (tier === 4) return 'Fling it 2-5 squares. 3/level.';
+      if (tier === 3) return 'Fling it 2-5 squares. 2/level.';
+      if (tier === 2) return 'Fling it 2-4; stone crushes pawns. 2/level.';
+      return 'Fling it 2-4 squares. 1/level.';
+    case 'mirror':
+      if (tier === 5) return 'Echo rook all level. 2/level.';
+      if (tier === 4) return 'Echo rook copies 6 moves. 2/level.';
+      return `Echo rook copies ${mirrorMoves(tier)} moves. 1/level.`;
+    case 'ricochet':
+      if (tier === 5) return 'Bank off stone twice. 3/level.';
+      if (tier === 4) return 'Bank off stone twice. 2/level.';
+      if (tier === 3) return 'Bank off stone twice. 2/level.';
+      return 'Next move banks off stone. 1/level.';
+    case 'avalanche':
+      if (tier >= 4) return 'All loose stones slide 2. 2/level.';
+      if (tier === 3) return 'Stones slide 1; crush minors. 2/level.';
+      return 'All loose stones slide 1. 1/level.';
   }
 }
 
@@ -1300,6 +1410,36 @@ export const UPGRADE_NOTES: Record<
     4: '',
     5: '',
   },
+  castle: {
+    2: 'Castle along his column too',
+    3: '',
+    4: 'He lands stunned for a turn',
+    5: '',
+  },
+  catapult: {
+    2: 'A flung stone crushes a pawn it lands on',
+    3: 'Flies up to 5 squares',
+    4: '',
+    5: 'Flies any distance',
+  },
+  mirror: {
+    2: 'The echo copies 4 moves',
+    3: 'The echo copies 5 moves',
+    4: 'The echo copies 6 moves',
+    5: 'The echo stays all level',
+  },
+  ricochet: {
+    2: '',
+    3: 'The line may bank twice',
+    4: '',
+    5: '',
+  },
+  avalanche: {
+    2: '',
+    3: 'Stones crush minor pieces too',
+    4: 'Every stone slides two squares',
+    5: '',
+  },
 };
 
 /**
@@ -1401,6 +1541,9 @@ function targetMakersFor(id: AbilityId): ReadonlyArray<AbilityId> {
   if (id === 'sacrifice') return controlledMakers;
   if (id === 'swap') return [...controlledMakers, 'squad'];
   if (id === 'shove') return ['boulder'];
+  // A Boulder stone is ammunition, a rail and scree; any summon is a payload.
+  if (id === 'catapult') return ['boulder', ...controlledMakers];
+  if (id === 'ricochet' || id === 'avalanche') return ['boulder'];
   return [];
 }
 
@@ -1513,6 +1656,19 @@ export function canEverCastInLevel(
     // The king's own court: his guards move, so try the king everywhere.
     case 'coup':
       return anySquare(kingStandpoints(hypo), coupTargets);
+
+    // The level-first five (2026-09-19). Castle and Mirror only need room;
+    // the terrain cards need a stone they are allowed to touch.
+    case 'castle':
+      return hypo.winCondition === 'king';
+    case 'mirror':
+      return true;
+    case 'catapult':
+      return hypo.hazards.some(isLooseStone) || controlledAllies(hypo).length > 0;
+    case 'avalanche':
+      return hypo.hazards.some(isLooseStone);
+    case 'ricochet':
+      return hypo.hazards.some((h) => h.kind !== 'lava');
 
     // Summon-dependent cards with no maker in the kit (rule 2 already ran):
     // live only if a controlled summon is on the board right now.
@@ -1829,6 +1985,17 @@ export function abilityLegalMoves(
   if (abilityId === 'snare') return snareTargets(state);
   if (abilityId === 'shove') return shoveTargets(state).map((t) => t.stone);
   if (abilityId === 'scarecrow') return scarecrowTargets(state);
+  if (abilityId === 'castle') return castleTargets(state);
+  if (abilityId === 'mirror') return mirrorTargets(state);
+  // Catapult / Avalanche are two taps: the thing to move, then where / which way.
+  if (abilityId === 'catapult') {
+    const from = state.activeAbility?.id === 'catapult' ? state.activeAbility.pickFrom : undefined;
+    return from ? catapultThrowsFrom(state, from).map((t) => t.to) : catapultSources(state);
+  }
+  if (abilityId === 'avalanche') {
+    const stone = state.activeAbility?.id === 'avalanche' ? state.activeAbility.pickFrom : undefined;
+    return stone ? avalancheDirSquares(state, stone).map((d) => d.square) : avalancheStones(state);
+  }
   return [];
 }
 
@@ -1933,6 +2100,9 @@ function applyAbilityActivateImpl(
   if (abilityId === 'chequer') {
     return applyChequer(state);
   }
+  if (abilityId === 'ricochet') {
+    return applyRicochet(state);
+  }
 
   // Targeted abilities pick an enemy as their second tap — except Boulder
   // and the controllable-summon family, which pick a SQUARE (empty square to
@@ -1945,7 +2115,11 @@ function applyAbilityActivateImpl(
     abilityId === 'sacrifice' ||
     abilityId === 'snare' ||
     abilityId === 'shove' ||
-    abilityId === 'scarecrow';
+    abilityId === 'scarecrow' ||
+    abilityId === 'castle' ||
+    abilityId === 'catapult' ||
+    abilityId === 'mirror' ||
+    abilityId === 'avalanche';
   let step: 'pick-square' | 'pick-enemy' = 'pick-square';
   if (def.activation === 'targeted' && !picksSquare) step = 'pick-enemy';
   if (picksSquare && abilityLegalMoves(state, abilityId).length === 0) return state;
@@ -2337,6 +2511,18 @@ function applyAbilityTargetedImpl(
   }
   if (abilityId === 'scarecrow') {
     return applyScarecrow(state, target);
+  }
+  if (abilityId === 'castle') {
+    return applyCastle(state, target);
+  }
+  if (abilityId === 'catapult') {
+    return applyCatapult(state, target);
+  }
+  if (abilityId === 'mirror') {
+    return applyMirror(state, target);
+  }
+  if (abilityId === 'avalanche') {
+    return applyAvalanche(state, target);
   }
 
   if (abilityId === 'magnet') {
@@ -3318,6 +3504,9 @@ function applyRewind(state: BoardState): BoardState {
       frozenTurnsLeft[sq] = Math.max(frozenTurnsLeft[sq] ?? 0, 1);
     }
   }
+  const echoNow = mirrorEchoOf(state);
+  const carriedEcho =
+    echoNow && !mirrorEchoOf(snap) && squareIsFreeForSummon(snap, echoNow.file, echoNow.rank) ? echoNow : null;
   return {
     ...snap,
     // Enemy-only: Rookie's side is untouched — she hasn't moved since the
@@ -3339,6 +3528,12 @@ function applyRewind(state: BoardState): BoardState {
     shieldUp: state.shieldUp,
     bonusMovesLeft: state.bonusMovesLeft,
     smokeTurnsLeft: state.smokeTurnsLeft,
+    // Ricochet armed since the snapshot stays armed (same reason as above).
+    ricochetBanks: state.ricochetBanks,
+    // A Mirror cast since the snapshot keeps its echo, if its square is still
+    // free on the rewound board. (Hazards, the pen and an older echo are IN the
+    // snapshot already — it is a whole-board copy.)
+    ...(carriedEcho ? { allies: [...snap.allies, carriedEcho] } : {}),
     tempo: state.tempo,
     captures: state.captures,
     pendingOffer: state.pendingOffer,
@@ -3682,6 +3877,9 @@ export const CONTROLLED_SOURCES: ReadonlySet<AllyPiece['source']> = new Set([
   'duchess',
   'dragon',
   'vanguard',
+  // The Mirror echo: a summon for Swap / Sacrifice / Promote, never tap-moved
+  // (canMoveAllyAt refuses it; it copies her moves — see applyMirrorEcho).
+  'mirror',
 ] as AllyPiece['source'][]);
 
 export function isControlledAlly(a: AllyPiece): boolean {
@@ -3721,6 +3919,7 @@ const ABILITY_FOR_SOURCE: Partial<Record<AllyPiece['source'], AbilityId>> = {
   duchess: 'duchess',
   dragon: 'dragon',
   vanguard: 'vanguard',
+  mirror: 'mirror',
 };
 
 function ownedAbilityForSource(
@@ -3905,6 +4104,7 @@ export function canMoveAllyAt(state: BoardState, ally: AllyPiece): boolean {
   if (state.status !== 'playing' || state.turn !== 'rookie') return false;
   if (state.pendingOffer || state.activeAbility) return false;
   if (!isControlledAlly(ally)) return false;
+  if (ally.source === 'mirror') return false; // the echo only ever copies her
   if (ally.dazed) return false; // freshly converted, or summon-sick in Endless
   if (allyHasFreeMove(state, ally)) {
     if (ally.movedThisTurn) return false;
@@ -3929,6 +4129,8 @@ function pageSprintSteps(state: BoardState, ally: AllyPiece): number {
  */
 export function controlledAllyLegalMoves(state: BoardState, ally: AllyPiece): Coord[] {
   const out: Coord[] = [];
+  // The Mirror echo has no moves of its own — it goes where her move sends it.
+  if (ally.source === 'mirror') return out;
   const tryStep = (f: number, r: number): boolean => {
     // Returns true if the slide may continue past (f, r).
     if (!allyInBounds(f, r)) return false;
@@ -4098,6 +4300,11 @@ export function controlledThreatensSquare(state: BoardState, c: Coord): boolean 
     if (controlledAllyLegalMoves(state, a).some((m) => m.file === c.file && m.rank === c.rank)) {
       return true;
     }
+  }
+  // The Mirror echo takes him only through one of HER moves: he fears exactly
+  // the squares it could land on after a move she can make right now.
+  if (mirrorEchoOf(state) && mirrorEchoReach(state).some((m) => m.file === c.file && m.rank === c.rank)) {
+    return true;
   }
   return false;
 }
@@ -4331,6 +4538,739 @@ function applySacrifice(state: BoardState, target: Coord): BoardState {
       id: Date.now() + Math.random(),
     },
   };
+}
+
+// ---------------------------------------------------------------------------
+// THE LEVEL-FIRST FIVE (2026-09-19, testing) — Castle, Catapult, Mirror,
+// Ricochet, Avalanche. Each was invented to solve a crazy level; the design
+// and the two terrain rules they bring are in docs/new-abilities-2026-09-19.md:
+//
+//   R3  STONE SINKS, LAVA COOLS. A stone that slides or lands INTO lava: both
+//       vanish and the square is open ground — a ford. (Catapult, Avalanche.)
+//   R4  STONE IS A MIRROR. A ricocheting rook turns 90 degrees at a stone.
+//       Lava is not a mirror. (Ricochet — the path logic is in movement.ts.)
+//
+// Both rules exist ONLY through these cards, so no graded run changes.
+// ---------------------------------------------------------------------------
+
+/** A stone a card may move: not lava, not an authored `fixed` wall stone. */
+function isLooseStone(h: Hazard): boolean {
+  return h.kind !== 'lava' && !h.fixed;
+}
+
+/** Carry a frozen marker along with the piece that owns it. */
+function moveFrozenMarker(
+  state: BoardState,
+  fromSq: string,
+  toSq: string,
+): Pick<BoardState, 'frozenSquares' | 'frozenTurnsLeft'> {
+  if (!state.frozenSquares.includes(fromSq)) {
+    return { frozenSquares: state.frozenSquares, frozenTurnsLeft: state.frozenTurnsLeft };
+  }
+  const turns = state.frozenTurnsLeft[fromSq];
+  const frozenTurnsLeft = { ...state.frozenTurnsLeft };
+  delete frozenTurnsLeft[fromSq];
+  frozenTurnsLeft[toSq] = turns;
+  return {
+    frozenSquares: [...state.frozenSquares.filter((x) => x !== fromSq), toSq],
+    frozenTurnsLeft,
+  };
+}
+
+/**
+ * The bookkeeping every stone-crush shares (Boulder's rule): the piece is a
+ * Rookie capture — tempo, the captures list, its markers cleared, the king
+ * stunned. `crushed` may be empty.
+ */
+function creditCrushes(state: BoardState, crushed: ReadonlyArray<EnemyPiece>): Partial<BoardState> {
+  if (crushed.length === 0) return {};
+  let working = state;
+  for (const p of crushed) {
+    const sq = toSquare(p);
+    working = { ...working, ...clearStatusOnSquare(working, sq) };
+    if (working.decoyTarget === sq) working = { ...working, decoyTarget: null, decoyTurnsLeft: 0 };
+  }
+  const gain = crushed.reduce((n, p) => n + (TEMPO_REWARD[p.type] ?? 0), 0);
+  return {
+    poisonedSquares: working.poisonedSquares,
+    poisonedTurnsLeft: working.poisonedTurnsLeft,
+    rabidSquares: working.rabidSquares,
+    rabidTurnsLeft: working.rabidTurnsLeft,
+    frozenSquares: working.frozenSquares,
+    frozenTurnsLeft: working.frozenTurnsLeft,
+    decoyTarget: working.decoyTarget,
+    decoyTurnsLeft: working.decoyTurnsLeft,
+    pieces: state.pieces.filter((p) => !crushed.includes(p)),
+    captures: [...state.captures, ...crushed.map((p) => p.type)],
+    tempo: Math.min(tempoMaxFor(state), state.tempo + gain),
+    ...stunKingAfterCapture(state),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Castle — she is a rook, he is a king, so castling is simply legal.
+// Castable when she shares a rank (T2+: or a file) with the king, ANYTHING
+// between. Exactly the chess move: he jumps two squares toward her and she
+// lands on the square he crossed, so she ends up beside him on his far side
+// from where she stood. Both landing squares must be empty ground. It is her
+// BODY-MOVE: the turn ends. Rook form only (that is the joke).
+//
+// His pen: if his landing square is inside his room, the room is unchanged
+// (he never left it). If it is outside, his pen BECOMES the landing square
+// plus its open neighbours — he cannot go back through the wall.
+//
+// The one king-rule exception, stated on the card: a castled king does not
+// swing at her on the enemy phase that follows (`kingCastled`, pawn-ai.ts).
+// He runs if he has a safe square and stands if he has none — which is why
+// the card wants a partner already watching those squares.
+// ---------------------------------------------------------------------------
+
+/** T2+: along his file as well as his rank. */
+export function castleAlongFiles(tier: AbilityTier): boolean {
+  return tier >= 2;
+}
+
+/** T4+: he arrives stunned for a turn. */
+export function castleStuns(tier: AbilityTier): boolean {
+  return tier >= 4;
+}
+
+export interface CastleLanding {
+  kingFrom: Coord;
+  /** Where he lands: two squares toward her. */
+  king: Coord;
+  /** Where she lands: the square he crossed. */
+  rookie: Coord;
+}
+
+/** The one castle open to her right now, or null. */
+export function castleLanding(state: BoardState): CastleLanding | null {
+  const owned = state.abilities.find((a) => a.id === 'castle');
+  if (!owned || state.winCondition !== 'king' || state.form !== 'rook') return null;
+  const king = state.pieces.find((p) => p.type === 'king');
+  if (!king) return null;
+  const sameRank = king.rank === state.rookie.rank;
+  const sameFile = king.file === state.rookie.file;
+  if (!sameRank && !(sameFile && castleAlongFiles(owned.tier))) return null;
+  const df = Math.sign(state.rookie.file - king.file);
+  const dr = Math.sign(state.rookie.rank - king.rank);
+  const dist = Math.abs(state.rookie.file - king.file) + Math.abs(state.rookie.rank - king.rank);
+  // Two squares toward her must both exist short of her own square.
+  if (dist < 3) return null;
+  const rookieTo = { file: king.file + df, rank: king.rank + dr };
+  const kingTo = { file: king.file + 2 * df, rank: king.rank + 2 * dr };
+  if (!squareIsFreeForSummon(state, rookieTo.file, rookieTo.rank)) return null;
+  if (!squareIsFreeForSummon(state, kingTo.file, kingTo.rank)) return null;
+  return { kingFrom: { file: king.file, rank: king.rank }, king: kingTo, rookie: rookieTo };
+}
+
+/** Tap targets: BOTH landing squares glow; tapping either one castles. */
+export function castleTargets(state: BoardState): Coord[] {
+  const c = castleLanding(state);
+  return c ? [c.king, c.rookie] : [];
+}
+
+/** His pen after a castle (see the section note). Absent pen stays absent. */
+export function castlePenAfter(state: BoardState, kingTo: Coord): string[] | undefined {
+  const pen = state.kingPen;
+  if (!pen) return pen;
+  const toSq = toSquare(kingTo);
+  if (pen.includes(toSq)) return pen;
+  const out = [toSq];
+  for (const [df, dr] of ALLY_QUEEN_DIRS) {
+    const f = kingTo.file + df;
+    const r = kingTo.rank + dr;
+    if (!allyInBounds(f, r) || allyIsHazard(state, f, r)) continue;
+    out.push(toSquare({ file: f, rank: r }));
+  }
+  return out;
+}
+
+function applyCastle(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'castle');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  const c = castleLanding(state);
+  if (!c) return state;
+  if (!coordEq(target, c.king) && !coordEq(target, c.rookie)) return state;
+  const king = state.pieces.find((p) => p.type === 'king')!;
+  const fromSq = toSquare(c.kingFrom);
+  const toSq = toSquare(c.king);
+  const nextMoveCount = state.moveCount + 1;
+  const hasBonus = state.bonusMovesLeft > 0;
+  const moved: BoardState = {
+    ...state,
+    ...moveFrozenMarker(state, fromSq, toSq),
+    rookie: { ...c.rookie },
+    pieces: state.pieces.map((p) => (p === king ? { ...p, file: c.king.file, rank: c.king.rank } : p)),
+    kingPen: castlePenAfter(state, c.king),
+    kingCastled: true,
+    abilities: decrementUse(state.abilities, 'castle'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    // It IS her move for the turn: it ticks the budget and hands off exactly
+    // like a Rookie move (a Surge bonus move keeps the turn with her).
+    moveCount: nextMoveCount,
+    bonusMovesLeft: hasBonus ? state.bonusMovesLeft - 1 : state.bonusMovesLeft,
+    turn: hasBonus ? 'rookie' : 'enemy',
+    ...(castleStuns(owned.tier) ? stunKingAfterCapture(state, 1) : {}),
+    lastAbilityFx: {
+      kind: 'castle',
+      from: fromSq,
+      to: toSq,
+      id: Date.now() + Math.random(),
+    },
+  };
+  // Snare: a king castled onto a trap springs it.
+  const sprung = springSnaresAt(moved, [toSq]);
+  if (sprung.moveLimit !== null && nextMoveCount >= sprung.moveLimit) {
+    return { ...sprung, status: 'lost', turn: 'rookie' };
+  }
+  if (!hasBonus && sprung.allies.some((a) => !isControlledAlly(a))) {
+    return { ...sprung, turn: 'allies', allyTurnIndex: 0, enemyMovedSquares: [], enemyVacatedSquares: [] };
+  }
+  return { ...sprung, enemyMovedSquares: [], enemyVacatedSquares: [] };
+}
+
+// ---------------------------------------------------------------------------
+// Catapult — bodies and blocks cross terrain she cannot. Tap a LOOSE stone or
+// one of her summons orthogonally beside her, then a landing square straight
+// away from her along that line, over anything. A stone lands as stone; on a
+// pawn (T2+) it crushes (a Rookie capture); in lava it makes a ford (R3).
+// A summon lands exactly as it was (ready if it was ready). Never onto the
+// king, never a throw that leaves her with no move. A free action.
+// ---------------------------------------------------------------------------
+
+/** How far the throw flies, measured from the square the projectile sat on. */
+export function catapultRange(tier: AbilityTier): { min: number; max: number } {
+  if (tier >= 5) return { min: 2, max: 7 };
+  if (tier >= 3) return { min: 2, max: 5 };
+  return { min: 2, max: 4 };
+}
+
+/** T2+: a flung stone crushes an enemy PAWN it lands on. */
+export function catapultCrushes(tier: AbilityTier): boolean {
+  return tier >= 2;
+}
+
+export interface CatapultThrow {
+  from: Coord;
+  to: Coord;
+  projectile: 'stone' | 'summon';
+  /** Stone only: the pawn it lands on. */
+  crushed: EnemyPiece | null;
+  /** Stone only: it landed in lava — both vanish (R3). */
+  ford: boolean;
+}
+
+/** Every legal throw of the projectile on `from` (empty if it is not one). */
+export function catapultThrowsFrom(state: BoardState, from: Coord): CatapultThrow[] {
+  const owned = state.abilities.find((a) => a.id === 'catapult');
+  if (!owned) return [];
+  const df = from.file - state.rookie.file;
+  const dr = from.rank - state.rookie.rank;
+  if (Math.abs(df) + Math.abs(dr) !== 1) return [];
+  const stone = state.hazards.find((h) => h.file === from.file && h.rank === from.rank);
+  const summon = controlledAllyAt(state, from);
+  if (stone ? !isLooseStone(stone) : !summon) return [];
+  const { min, max } = catapultRange(owned.tier);
+  const armed = new Set((state.snares ?? []).map((sn) => sn.square));
+  const out: CatapultThrow[] = [];
+  for (let d = min; d <= max; d++) {
+    const to = { file: from.file + df * d, rank: from.rank + dr * d };
+    if (!allyInBounds(to.file, to.rank)) break;
+    if (summon) {
+      if (squareIsFreeForSummon(state, to.file, to.rank)) {
+        out.push({ from, to, projectile: 'summon', crushed: null, ford: false });
+      }
+      continue;
+    }
+    const landHz = state.hazards.find((h) => h.file === to.file && h.rank === to.rank);
+    if (landHz && landHz.kind !== 'lava') continue; // stone never stacks on stone
+    if (armed.has(toSquare(to))) continue;
+    if (state.scarecrow?.square === toSquare(to)) continue;
+    if ((state.allies ?? []).some((a) => a.file === to.file && a.rank === to.rank)) continue;
+    if ((state.drones ?? []).some((x) => x.alive && x.file === to.file && x.rank === to.rank)) continue;
+    const enemy = state.pieces.find((p) => p.file === to.file && p.rank === to.rank);
+    if (enemy && !(catapultCrushes(owned.tier) && enemy.type === 'pawn')) continue;
+    const ford = !!landHz;
+    const hazards = state.hazards.filter((h) => h !== stone && h !== landHz);
+    const after: BoardState = {
+      ...state,
+      pieces: enemy ? state.pieces.filter((p) => p !== enemy) : state.pieces,
+      hazards: ford ? hazards : [...hazards, { file: to.file, rank: to.rank, kind: 'stone' }],
+    };
+    if (rookieLegalMoves(after).length === 0) continue; // the Boulder self-lock check
+    out.push({ from, to, projectile: 'stone', crushed: enemy ?? null, ford });
+  }
+  return out;
+}
+
+/** First tap: the loose stones / summons beside her that have a legal throw. */
+export function catapultSources(state: BoardState): Coord[] {
+  const out: Coord[] = [];
+  for (const [df, dr] of ALLY_ROOK_DIRS) {
+    const from = { file: state.rookie.file + df, rank: state.rookie.rank + dr };
+    if (catapultThrowsFrom(state, from).length > 0) out.push(from);
+  }
+  return out;
+}
+
+function applyCatapult(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'catapult');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  const from = state.activeAbility?.pickFrom;
+  if (!from) {
+    // First tap: load the catapult. The charge is only spent when it fires.
+    if (!catapultSources(state).some((c) => coordEq(c, target))) return state;
+    return { ...state, activeAbility: { id: 'catapult', step: 'pick-square', pickFrom: { ...target } } };
+  }
+  const shot = catapultThrowsFrom(state, from).find((t) => coordEq(t.to, target));
+  if (!shot) return state;
+  const base: BoardState = {
+    ...state,
+    abilities: decrementUse(state.abilities, 'catapult'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'catapult',
+      from: toSquare(shot.from),
+      to: toSquare(shot.to),
+      id: Date.now() + Math.random(),
+    },
+  };
+  if (shot.projectile === 'summon') {
+    return {
+      ...base,
+      allies: state.allies.map((a) =>
+        a.file === from.file && a.rank === from.rank ? { ...a, file: shot.to.file, rank: shot.to.rank } : a,
+      ),
+    };
+  }
+  const kept = state.hazards.filter(
+    (h) =>
+      !(h.file === from.file && h.rank === from.rank) &&
+      !(shot.ford && h.file === shot.to.file && h.rank === shot.to.rank),
+  );
+  return {
+    ...base,
+    ...creditCrushes(state, shot.crushed ? [shot.crushed] : []),
+    // R3: in lava both vanish (a ford). Otherwise it lands as loose stone.
+    hazards: shot.ford ? kept : [...kept, { file: shot.to.file, rank: shot.to.rank, kind: 'stone' }],
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Mirror — one input, two bodies. A rainbow rook appears on her mirror square
+// (file 9 - f, same rank; it must be empty ground). Each time SHE moves, the
+// echo makes the same move flipped left-right, for free: a line move slides as
+// far as it legally can toward the mirrored square (it stops at a block and
+// captures the first enemy in its way, the king included); a knight-form hop is
+// copied as a hop if the mirrored square is free or holds an enemy. A banked
+// Ricochet move and a Castle are not copied (they are not a slide or a hop).
+// The player never taps it. It IS a summon: Swap, Sacrifice and Promote may
+// target it, and its captures stun the king like any summon's.
+// The king reads it as what it is: he will not step onto its rook lines, and
+// he flees a square the echo could land on after one of her legal moves.
+// ---------------------------------------------------------------------------
+
+/** How many of HER moves the echo copies. undefined = the whole level (T5). */
+export function mirrorMoves(tier: AbilityTier): number | undefined {
+  if (tier >= 5) return undefined;
+  return tier + 2; // 3/4/5/6
+}
+
+/** The echo on the board, if any. */
+export function mirrorEchoOf(state: BoardState): AllyPiece | null {
+  return (state.allies ?? []).find((a) => a.source === 'mirror') ?? null;
+}
+
+/** The one square a Mirror may be cast onto (empty, or [] when blocked / one is up). */
+export function mirrorTargets(state: BoardState): Coord[] {
+  const owned = state.abilities.find((a) => a.id === 'mirror');
+  if (!owned || mirrorEchoOf(state)) return [];
+  const sq = { file: 9 - state.rookie.file, rank: state.rookie.rank };
+  return squareIsFreeForSummon(state, sq.file, sq.rank) ? [sq] : [];
+}
+
+function applyMirror(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'mirror');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  if (!mirrorTargets(state).some((c) => coordEq(c, target))) return state;
+  const moves = mirrorMoves(owned.tier);
+  const echo: AllyPiece = {
+    id: Date.now() + Math.random(),
+    type: 'rook',
+    file: target.file,
+    rank: target.rank,
+    source: 'mirror',
+    ...(moves !== undefined ? { echoMovesLeft: moves } : {}),
+  };
+  return {
+    ...state,
+    allies: [...state.allies, echo],
+    abilities: decrementUse(state.abilities, 'mirror'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'mirror',
+      from: toSquare(state.rookie),
+      to: toSquare(target),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/**
+ * Where the echo ends up if Rookie goes from `from` to `to` — evaluated on
+ * `board`, which must already have Rookie standing on `to` (she moves first,
+ * and what she captured is gone). null = the echo does not move.
+ */
+function echoLandingOn(board: BoardState, echo: AllyPiece, from: Coord, to: Coord): Coord | null {
+  const df = -(to.file - from.file);
+  const dr = to.rank - from.rank;
+  const blocked = (f: number, r: number): boolean =>
+    !allyInBounds(f, r) || allyIsHazard(board, f, r) || allyOccupied(board, f, r, echo) ||
+    (board.drones ?? []).some((d) => d.alive && d.file === f && d.rank === r);
+  const adf = Math.abs(df);
+  const adr = Math.abs(dr);
+  if ((adf === 1 && adr === 2) || (adf === 2 && adr === 1)) {
+    const f = echo.file + df;
+    const r = echo.rank + dr;
+    return blocked(f, r) ? null : { file: f, rank: r };
+  }
+  if (!(df === 0 || dr === 0 || adf === adr)) return null; // a banked line is not copied
+  const steps = Math.max(adf, adr);
+  let cur: Coord | null = null;
+  for (let i = 1; i <= steps; i++) {
+    const f = echo.file + Math.sign(df) * i;
+    const r = echo.rank + Math.sign(dr) * i;
+    if (blocked(f, r)) break;
+    cur = { file: f, rank: r };
+    if (board.pieces.some((p) => p.file === f && p.rank === r)) break; // it captures and stops
+  }
+  return cur;
+}
+
+/** Preview: where the echo would land if Rookie moved to `target` now. */
+export function mirrorEchoLanding(state: BoardState, target: Coord): Coord | null {
+  const echo = mirrorEchoOf(state);
+  if (!echo) return null;
+  const board: BoardState = {
+    ...state,
+    rookie: { ...target },
+    pieces: state.pieces.filter((p) => !(p.file === target.file && p.rank === target.rank)),
+  };
+  return echoLandingOn(board, echo, state.rookie, target);
+}
+
+/** Every square the echo could land on after one of her legal moves right now. */
+export function mirrorEchoReach(state: BoardState): Coord[] {
+  if (!mirrorEchoOf(state)) return [];
+  const seen = new Set<string>();
+  const out: Coord[] = [];
+  for (const m of rookieLegalMoves(state)) {
+    const land = mirrorEchoLanding(state, m);
+    if (!land || seen.has(toSquare(land))) continue;
+    seen.add(toSquare(land));
+    out.push(land);
+  }
+  return out;
+}
+
+/**
+ * Called by applyRookieMove AFTER her own move has resolved (`after` has her
+ * on the new square; `before` is the state she moved from). Moves the echo,
+ * credits its capture, ticks its clock. No echo = returns `after` untouched.
+ */
+export function applyMirrorEcho(before: BoardState, after: BoardState): BoardState {
+  const echo = mirrorEchoOf(after);
+  if (!echo) return after;
+  const land = echoLandingOn(after, echo, before.rookie, after.rookie);
+  const captured = land ? after.pieces.find((p) => p.file === land.file && p.rank === land.rank) : undefined;
+  const left = echo.echoMovesLeft === undefined ? undefined : echo.echoMovesLeft - 1;
+  const fades = left !== undefined && left <= 0;
+  const allies = after.allies
+    .map((a) =>
+      a === echo
+        ? { ...a, ...(land ? { file: land.file, rank: land.rank } : {}), ...(left !== undefined ? { echoMovesLeft: left } : {}) }
+        : a,
+    )
+    .filter((a) => !(fades && a.source === 'mirror'));
+  const next: BoardState = {
+    ...after,
+    ...(captured ? creditCrushes(after, [captured]) : {}),
+    allies,
+  };
+  if (captured?.type === 'king' && after.winCondition === 'king') {
+    return { ...next, status: 'won', turn: 'rookie' };
+  }
+  return next;
+}
+
+// ---------------------------------------------------------------------------
+// Ricochet — arm it and her NEXT rook move may bank off a stone (rule R4; the
+// line logic is `ricochetPaths` in movement.ts, read by rookieLegalMoves, so
+// the banked squares are ordinary legal moves for the UI, the bots and the
+// win check). Only castable when a banked line actually exists right now, so
+// a charge is never armed into thin air. Rook form only.
+// ---------------------------------------------------------------------------
+
+/** How many times the line may bank: once, twice from T3. */
+export function ricochetBanksForTier(tier: AbilityTier): number {
+  return tier >= 3 ? 2 : 1;
+}
+
+/** True when arming Ricochet right now would open at least one banked line. */
+export function canRicochet(state: BoardState): boolean {
+  const owned = state.abilities.find((a) => a.id === 'ricochet');
+  if (!owned || owned.usesLeftThisLevel === 0) return false;
+  if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+  if (state.activeAbility || state.pendingOffer) return false;
+  if ((state.ricochetBanks ?? 0) > 0 || state.form !== 'rook') return false;
+  return ricochetPaths({ ...state, ricochetBanks: ricochetBanksForTier(owned.tier) }).length > 0;
+}
+
+function applyRicochet(state: BoardState): BoardState {
+  if (!canRicochet(state)) return state;
+  const owned = state.abilities.find((a) => a.id === 'ricochet')!;
+  const sq = toSquare(state.rookie);
+  return {
+    ...state,
+    ricochetBanks: ricochetBanksForTier(owned.tier),
+    abilities: decrementUse(state.abilities, 'ricochet'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: { kind: 'ricochet', from: sq, to: sq, id: Date.now() + Math.random() },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Avalanche — a board-wide Shove that needs no adjacency. Pick a direction
+// (N/S/E/W): every LOOSE stone (not `fixed`, not lava) slides one square that
+// way, far side first, if the square beyond is free. A pawn in the way is
+// crushed (T3+: minors too), a Rookie capture. A stone never moves onto the
+// king, Rookie, a summon, a drone, the straw or a snare, and never into
+// another stone that did not move. R3: into lava, both vanish — a ford.
+// T4+: the whole slide happens twice. A direction that moves nothing, or that
+// would leave her with no legal move, is not offered.
+//
+// Two taps: a loose stone, then the square beside it — that names the
+// direction, and the board draws where EVERY stone lands for it first.
+// ---------------------------------------------------------------------------
+
+export type AvalancheDir = 'N' | 'S' | 'E' | 'W';
+
+const AVALANCHE_DIRS: ReadonlyArray<[AvalancheDir, number, number]> = [
+  ['N', 0, 1],
+  ['E', 1, 0],
+  ['S', 0, -1],
+  ['W', -1, 0],
+];
+
+/** T3+: knights and bishops are crushed too. Never a queen, never the king. */
+export function avalancheCrushes(tier: AbilityTier, type: PieceType): boolean {
+  if (type === 'pawn') return true;
+  return tier >= 3 && (type === 'knight' || type === 'bishop');
+}
+
+/** T4+: every stone slides two squares. */
+export function avalancheSteps(tier: AbilityTier): number {
+  return tier >= 4 ? 2 : 1;
+}
+
+export interface AvalancheSlide {
+  from: Coord;
+  to: Coord;
+  /** It slid into lava: the stone and the lava are both gone (R3). */
+  ford: boolean;
+}
+
+export interface AvalancheOutcome {
+  dir: AvalancheDir;
+  slides: AvalancheSlide[];
+  crushed: EnemyPiece[];
+  hazards: Hazard[];
+}
+
+/** What an Avalanche pointed `dir` does right now, or null if it is not legal. */
+export function avalancheOutcome(state: BoardState, dir: AvalancheDir): AvalancheOutcome | null {
+  const owned = state.abilities.find((a) => a.id === 'avalanche');
+  if (!owned) return null;
+  const [, df, dr] = AVALANCHE_DIRS.find((d) => d[0] === dir)!;
+  const armed = new Set((state.snares ?? []).map((sn) => sn.square));
+  // Each live stone remembers where it started, so a two-square slide still
+  // previews as ONE arrow from its origin to where it comes to rest.
+  let stones: { origin: Coord; at: Coord; h: Hazard; sunk: boolean }[] = state.hazards
+    .filter(isLooseStone)
+    .map((h) => ({ origin: { file: h.file, rank: h.rank }, at: { file: h.file, rank: h.rank }, h, sunk: false }));
+  let others: Hazard[] = state.hazards.filter((h) => !isLooseStone(h));
+  let pieces = state.pieces;
+  const crushed: EnemyPiece[] = [];
+  for (let step = 0; step < avalancheSteps(owned.tier); step++) {
+    // Far side first, so a row of stones shifts as one.
+    const order = stones.filter((s) => !s.sunk).sort((a, b) => (b.at.file - a.at.file) * df + (b.at.rank - a.at.rank) * dr);
+    for (const s of order) {
+      const f = s.at.file + df;
+      const r = s.at.rank + dr;
+      if (!allyInBounds(f, r)) continue;
+      if (state.rookie.file === f && state.rookie.rank === r) continue;
+      if ((state.allies ?? []).some((a) => a.file === f && a.rank === r)) continue;
+      if ((state.drones ?? []).some((d) => d.alive && d.file === f && d.rank === r)) continue;
+      const sq = toSquare({ file: f, rank: r });
+      if (armed.has(sq) || state.scarecrow?.square === sq) continue;
+      if (stones.some((o) => o !== s && !o.sunk && o.at.file === f && o.at.rank === r)) continue;
+      const terrain = others.find((h) => h.file === f && h.rank === r);
+      if (terrain && terrain.kind !== 'lava') continue; // a fixed wall stone
+      const enemy = pieces.find((p) => p.file === f && p.rank === r);
+      if (enemy && !avalancheCrushes(owned.tier, enemy.type)) continue;
+      if (enemy) {
+        crushed.push(enemy);
+        pieces = pieces.filter((p) => p !== enemy);
+      }
+      s.at = { file: f, rank: r };
+      if (terrain) {
+        s.sunk = true;
+        others = others.filter((h) => h !== terrain);
+      }
+    }
+  }
+  const slides = stones
+    .filter((s) => s.sunk || s.at.file !== s.origin.file || s.at.rank !== s.origin.rank)
+    .map((s) => ({ from: s.origin, to: s.at, ford: s.sunk }));
+  if (slides.length === 0) return null;
+  stones = stones.filter((s) => !s.sunk);
+  const hazards: Hazard[] = [
+    ...others,
+    // A stone that did not move keeps its own object (and its flags); a stone
+    // that moved is loose by definition.
+    ...stones.map((s) =>
+      s.at.file === s.origin.file && s.at.rank === s.origin.rank
+        ? s.h
+        : ({ file: s.at.file, rank: s.at.rank, kind: 'stone' } as Hazard),
+    ),
+  ];
+  if (rookieLegalMoves({ ...state, pieces, hazards }).length === 0) return null; // never strands her
+  return { dir, slides, crushed, hazards };
+}
+
+/** Every direction an Avalanche may be pointed right now, with its outcome. */
+export function avalancheOutcomes(state: BoardState): AvalancheOutcome[] {
+  const out: AvalancheOutcome[] = [];
+  for (const [dir] of AVALANCHE_DIRS) {
+    const o = avalancheOutcome(state, dir);
+    if (o) out.push(o);
+  }
+  return out;
+}
+
+/** First tap: the loose stones that move in at least one legal direction. */
+export function avalancheStones(state: BoardState): Coord[] {
+  const seen = new Set<string>();
+  const out: Coord[] = [];
+  for (const o of avalancheOutcomes(state)) {
+    for (const s of o.slides) {
+      const key = toSquare(s.from);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(s.from);
+    }
+  }
+  return out;
+}
+
+/** Second tap: the squares beside the picked stone that name a legal direction. */
+export function avalancheDirSquares(state: BoardState, stone: Coord): { square: Coord; outcome: AvalancheOutcome }[] {
+  const out: { square: Coord; outcome: AvalancheOutcome }[] = [];
+  for (const o of avalancheOutcomes(state)) {
+    if (!o.slides.some((s) => coordEq(s.from, stone))) continue;
+    const [, df, dr] = AVALANCHE_DIRS.find((d) => d[0] === o.dir)!;
+    out.push({ square: { file: stone.file + df, rank: stone.rank + dr }, outcome: o });
+  }
+  return out;
+}
+
+function applyAvalanche(state: BoardState, target: Coord): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'avalanche');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  const stone = state.activeAbility?.pickFrom;
+  if (!stone) {
+    if (!avalancheStones(state).some((c) => coordEq(c, target))) return state;
+    return { ...state, activeAbility: { id: 'avalanche', step: 'pick-square', pickFrom: { ...target } } };
+  }
+  const pick = avalancheDirSquares(state, stone).find((d) => coordEq(d.square, target));
+  if (!pick) return state;
+  const o = pick.outcome;
+  const lead = o.slides.find((s) => coordEq(s.from, stone)) ?? o.slides[0];
+  return {
+    ...state,
+    ...creditCrushes(state, o.crushed),
+    hazards: o.hazards,
+    abilities: decrementUse(state.abilities, 'avalanche'),
+    activeAbility: null,
+    cancellableActivation: undefined,
+    lastAbilityFx: {
+      kind: 'avalanche',
+      from: toSquare(lead.from),
+      to: toSquare(lead.to),
+      id: Date.now() + Math.random(),
+    },
+  };
+}
+
+/**
+ * What the board should DRAW for the five cards above, so every consequence
+ * is on screen before the tap that commits it:
+ *   - `marks`: tinted squares (castle landings, the mirror square, a catapult
+ *     crush / ford, the squares the echo can reach).
+ *   - `arrows`: straight moves (castle's two hops, each avalanche slide — one
+ *     colour per direction).
+ *   - `paths`: bent lines (every banked Ricochet line, ending on its square).
+ * The same helpers the engine resolves with, so the preview can never lie.
+ */
+export interface AbilityPreview {
+  marks: { square: Coord; tone: 'land' | 'crush' | 'ford' | 'echo' }[];
+  arrows: { from: Coord; to: Coord; tone: AvalancheDir | 'king' | 'rookie' }[];
+  paths: { squares: Coord[]; capture: boolean }[];
+}
+
+export function abilityPreviewFor(state: BoardState): AbilityPreview | null {
+  const out: AbilityPreview = { marks: [], arrows: [], paths: [] };
+  if (state.status !== 'playing' || state.turn !== 'rookie') return null;
+  const active = state.activeAbility;
+  if (active?.id === 'castle') {
+    const c = castleLanding(state);
+    if (c) {
+      out.marks.push({ square: c.king, tone: 'land' }, { square: c.rookie, tone: 'land' });
+      out.arrows.push({ from: c.kingFrom, to: c.king, tone: 'king' }, { from: state.rookie, to: c.rookie, tone: 'rookie' });
+    }
+  } else if (active?.id === 'mirror') {
+    for (const sq of mirrorTargets(state)) out.marks.push({ square: sq, tone: 'echo' });
+  } else if (active?.id === 'catapult' && active.pickFrom) {
+    for (const t of catapultThrowsFrom(state, active.pickFrom)) {
+      if (t.ford) out.marks.push({ square: t.to, tone: 'ford' });
+      else if (t.crushed) out.marks.push({ square: t.to, tone: 'crush' });
+    }
+  } else if (active?.id === 'avalanche') {
+    const outcomes = active.pickFrom
+      ? avalancheDirSquares(state, active.pickFrom).map((d) => d.outcome)
+      : avalancheOutcomes(state);
+    for (const o of outcomes) {
+      for (const s of o.slides) out.arrows.push({ from: s.from, to: s.to, tone: o.dir });
+      for (const s of o.slides) if (s.ford) out.marks.push({ square: s.to, tone: 'ford' });
+      for (const p of o.crushed) out.marks.push({ square: { file: p.file, rank: p.rank }, tone: 'crush' });
+    }
+  } else if (!active) {
+    // Ricochet armed: every banked line, drawn before she commits.
+    for (const p of ricochetPaths(state)) {
+      out.paths.push({
+        squares: [{ ...state.rookie }, ...p.path],
+        capture: state.pieces.some((e) => e.file === p.dest.file && e.rank === p.dest.rank),
+      });
+    }
+    // Mirror up: the squares the echo can land on after one of her moves.
+    for (const sq of mirrorEchoReach(state)) out.marks.push({ square: sq, tone: 'echo' });
+  }
+  return out.marks.length + out.arrows.length + out.paths.length > 0 ? out : null;
 }
 
 /**

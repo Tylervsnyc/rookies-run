@@ -139,6 +139,76 @@ function kingMoves(state: BoardState): Coord[] {
   return moves;
 }
 
+// ---------------------------------------------------------------------------
+// Ricochet (2026-09-19) — rule R4: STONE IS A MIRROR, LAVA IS NOT.
+// While armed (`state.ricochetBanks`), a rook slide that reaches the square
+// BEFORE a stone may turn 90 degrees, left or right, and keep sliding; she may
+// capture at the end of the banked line, the king included. Only a stone
+// banks her: lava, a piece, a summon and the board edge all just stop her.
+// Each leg must actually slide (at least one square) before it banks.
+// Design: docs/new-abilities-2026-09-19.md §9.
+// ---------------------------------------------------------------------------
+
+export interface RicochetPath {
+  /** Where she ends up. */
+  dest: Coord;
+  /** Every square she passes through, corner squares included, ending on `dest`. */
+  path: Coord[];
+  /** How many times the line banked (1, or 2 from T3). */
+  banks: number;
+}
+
+/**
+ * Every BANKED line open to her right now (straight lines are not listed —
+ * those are ordinary rook moves). One path per destination: the one with the
+ * fewest banks, first found in a fixed direction order, so the drawn path is
+ * always the path she takes.
+ */
+export function ricochetPaths(state: BoardState): RicochetPath[] {
+  const maxBanks = state.ricochetBanks ?? 0;
+  if (maxBanks <= 0 || state.form !== 'rook') return [];
+  const { rookie, pieces, hazards } = state;
+  const straight = new Set(slideMoves(state, ROOK_DIRS).map((m) => toSquare(m)));
+  const found = new Map<string, RicochetPath>();
+  const walk = (
+    from: Coord,
+    dir: readonly [number, number],
+    banksUsed: number,
+    trail: Coord[],
+  ): void => {
+    let cur = from;
+    const leg: Coord[] = [];
+    for (;;) {
+      const next = { file: cur.file + dir[0], rank: cur.rank + dir[1] };
+      if (next.file < 1 || next.file > 8 || next.rank < 1 || next.rank > 8) return;
+      const hz = hazards.find((h) => h.file === next.file && h.rank === next.rank);
+      if (hz) {
+        // Only STONE banks her, and only after a real slide on this leg.
+        if (hz.kind !== 'lava' && banksUsed < maxBanks && leg.length > 0) {
+          const perps: ReadonlyArray<[number, number]> =
+            dir[0] === 0 ? [[-1, 0], [1, 0]] : [[0, 1], [0, -1]];
+          for (const perp of perps) walk(cur, perp, banksUsed + 1, [...trail, ...leg]);
+        }
+        return;
+      }
+      if (isAlly(state, next)) return;
+      if (coordEq(next, rookie)) return; // never back through her own square
+      leg.push(next);
+      if (banksUsed > 0) {
+        const key = toSquare(next);
+        const prev = found.get(key);
+        if (!straight.has(key) && (!prev || prev.banks > banksUsed)) {
+          found.set(key, { dest: next, path: [...trail, ...leg], banks: banksUsed });
+        }
+      }
+      if (enemyAt(pieces, next)) return; // a capture ends the line
+      cur = next;
+    }
+  };
+  for (const dir of ROOK_DIRS) walk(rookie, dir, 0, []);
+  return [...found.values()];
+}
+
 /** Returns the list of squares Rookie can legally move to from her current position. */
 export function rookieLegalMoves(state: BoardState): Coord[] {
   switch (state.form) {
@@ -154,6 +224,12 @@ export function rookieLegalMoves(state: BoardState): Coord[] {
       return pawnMoves(state);
     case 'rook':
     default:
+      // Ricochet adds her banked lines — on HER turn only. The court and the
+      // king plan against her straight lines (their views are read during the
+      // enemy phase), which is the card: a line he does not see coming.
+      if ((state.ricochetBanks ?? 0) > 0 && state.turn === 'rookie') {
+        return [...slideMoves(state, ROOK_DIRS), ...ricochetPaths(state).map((p) => p.dest)];
+      }
       return slideMoves(state, ROOK_DIRS);
   }
 }
