@@ -40,7 +40,7 @@ export function artFile(id: AbilityId): string {
   if (id === 'rabies-dart') return 'rabies-dart-2.webp';
   if (id === 'freeze-ray') return 'freeze-ray-2.webp';
   if (id === 'become-king') return 'become-king-2.webp';
-  if (id === 'puppet') return 'puppet-6.webp';
+  if (id === 'puppet') return 'puppet-11.webp';
   if (id === 'mirror') return 'mirror-9.webp';
   return `${id}-1.webp`;
 }

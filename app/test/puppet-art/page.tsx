@@ -4,10 +4,12 @@
  * chess-learning-tree scripts/_gen-puppet-art.ts). Pinned in lib/run/ability-art.ts.
  */
 const OPTIONS = [
+  { n: 11, note: 'Edit of 8: knight hanging off the plinth, warm light, cheeky grin. PINNED for now.' },
+  { n: 12, note: 'Edit of 8: mid-swing and startled. Funnier, but it went cartoony.' },
   { n: 10, note: 'Two crowns: a knight and a pawn dangling off the stage, cords crossed and tangled.' },
   { n: 8, note: 'Two crowns: matching crowns, amethyst left, ruby right, braided cords to the knight.' },
   { n: 9, note: 'Two crowns: a king crown and a queen coronet, cords wrapped around the knight.' },
-  { n: 6, note: 'Edit of 1: bold braided gold cords, glassy rubies, violet amethyst. PINNED for now.' },
+  { n: 6, note: 'Edit of 1: bold braided gold cords, glassy rubies, violet amethyst.' },
   { n: 7, note: 'Edit of 1: same, thinner cords with a bridle on the knight.' },
   { n: 5, note: 'First edit pass: shinier jewels, strings still thin, gem went sapphire.' },
   { n: 1, note: 'Jeweled crossbar, a black knight dangling at a tilt, lifted off its plinth. The original.' },
@@ -20,7 +22,7 @@ export default function PuppetArtPage() {
     <div className="h-full overflow-auto bg-[#0f1b2d] text-white">
       <div className="mx-auto max-w-5xl px-4 py-6">
         <h1 className="text-2xl font-bold">Puppet card art</h1>
-        <p className="mt-1 text-sm text-white/70">Tell Claude the number you want. Option 6 is on the card right now.</p>
+        <p className="mt-1 text-sm text-white/70">Tell Claude the number you want. Option 11 is on the card right now.</p>
         <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
           {OPTIONS.map((o) => (
             <div key={o.n} className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10">
