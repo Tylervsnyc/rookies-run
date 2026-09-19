@@ -37,9 +37,10 @@ import {
   coupTargets,
   // The ability-first five of 2026-09-19.
   canArmChain,
-  eruptionFloodsAll,
+  eruptionFloodAll,
   eruptionFloodSquares,
   eruptionVents,
+  promoteOptions,
   promoteTargets,
   puppetDestinations,
   puppetTargets,
@@ -62,6 +63,7 @@ import {
 import { rookieLegalMoves, enemyAt } from '../../../lib/run/movement';
 import { TEMPO_REWARD, tempoMaxFor } from '../../../lib/run/scoring';
 import type {
+  AllyPiece,
   BoardState,
   Coord,
   EnemyPiece,
@@ -377,6 +379,8 @@ export interface ActionCandidate {
   from?: Coord;
   /** Second tap of a two-step card (Puppet, Eruption, Catapult, Avalanche) — see `candidateToAction` in mcts.ts. */
   target2?: Coord;
+  /** Promote T3+ only: the rung chosen for the summon (absent = the one rung on offer). */
+  promoteTo?: AllyPiece['type'];
 }
 
 /** True when Rookie's rook lines reach the king's square right now. */
@@ -671,9 +675,18 @@ function candidatesForAbility(
       return out;
     }
     case 'promote': {
-      // One candidate per summon that can still climb (a handful at most).
+      // One candidate per (summon, rung in reach): T1-T2 have one rung, T3+
+      // one or two, T5 up to four — highest first. A handful at most.
       for (const c of promoteTargets(state)) {
-        out.push({ kind: 'ability-target', abilityId: 'promote', target: c });
+        const body = controlledAllies(state).find((a) => a.file === c.file && a.rank === c.rank);
+        const rungs = body ? promoteOptions(body.type, owned.tier) : [];
+        if (rungs.length <= 1) {
+          out.push({ kind: 'ability-target', abilityId: 'promote', target: c });
+          continue;
+        }
+        for (const to of [...rungs].reverse()) {
+          out.push({ kind: 'ability-target', abilityId: 'promote', target: c, promoteTo: to });
+        }
       }
       return out;
     }
@@ -706,17 +719,21 @@ function candidatesForAbility(
       return out;
     }
     case 'eruption': {
-      // T3+: one candidate per vent (the whole flood). T1-T2: one per (vent,
-      // square), kept to squares that burn a guard or touch the king's flight
-      // set — lava anywhere else is a wasted charge. Cap 16.
+      // One candidate per (vent, square), kept to squares that burn a guard or
+      // touch the king's flight set — lava anywhere else is a wasted charge.
+      // T3+ adds the flood-all option per vent (target2 = the vent itself,
+      // the same second tap the player makes). Cap 16.
       const king = state.pieces.find((p) => p.type === 'king');
       const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
       let n = 0;
       for (const v of eruptionVents(state)) {
         const flood = eruptionFloodSquares(state, v);
-        const matters = flood.filter((fl) => fl.burns || (king ? cheb(fl.square, king) <= 1 : false));
-        if (matters.length === 0) continue;
-        for (const fl of eruptionFloodsAll(owned.tier) ? matters.slice(0, 1) : matters) {
+        const counts = (fl: { square: Coord; burns: unknown }) => !!fl.burns || (king ? cheb(fl.square, king) <= 1 : false);
+        if (eruptionFloodAll(state, v).some(counts)) {
+          out.push({ kind: 'ability-target', abilityId: 'eruption', target: v, target2: v });
+          if (++n >= 16) return out;
+        }
+        for (const fl of flood.filter(counts)) {
           out.push({ kind: 'ability-target', abilityId: 'eruption', target: v, target2: fl.square });
           if (++n >= 16) return out;
         }

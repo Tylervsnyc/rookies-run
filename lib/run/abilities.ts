@@ -758,10 +758,10 @@ const HOW: Record<AbilityId, string> = {
   gauntlet: 'Tap card. He steps out of his room toward you, once a turn. He will not walk onto a line he can see.',
   panic: 'Tap card. On their turn he must step off his square. He picks the safest one left — take the safe ones away first.',
   chequer: 'Tap card. Until your next turn he cannot step diagonally — only the four squares of the other colour. Cover those and he has nowhere.',
-  promote: 'Tap card, then tap one of your summons. It changes on the spot; its clock and its daze do not.',
+  promote: 'Tap card, then tap one of your summons. From tier 3 you choose the rung. It changes on the spot; its clock and its daze do not.',
   puppet: 'Tap card, tap a guard on your line, then tap the square it moves to. A red square is lava: it dies there.',
   raise: 'Tap card, then tap a free square beside you. The last piece you captured stands there. It acts from your next turn.',
-  eruption: 'Tap card, tap lava near you, then tap a tinted square. Tinted squares become lava; a ringed guard burns.',
+  eruption: 'Tap card, tap lava near you, then tap a tinted square to flood it; a ringed guard burns. From tier 3, tap the lava again to flood them all.',
   chain: 'Tap card, then capture this turn. The tinted pieces die with the one you take.',
   castle: 'Tap card, then tap either glowing square. He lands on one, you on the other. It is your move for the turn.',
   catapult: 'Tap card, tap a loose stone or a summon right beside you, then tap where it lands. It flies straight away from you, over anything.',
@@ -989,8 +989,8 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 3) return 'He cannot step onto his own colour. Twice a level.';
       return 'Until your next turn he cannot step onto his own colour: no diagonals, only the four squares of the other colour.';
     case 'promote':
-      if (tier === 5) return 'Your summon becomes a queen, whatever it was.';
-      if (tier >= 3) return 'Your summon steps up TWO rungs: pawn, knight, bishop, rook, queen.';
+      if (tier === 5) return 'Your summon becomes any rung above it, up to a queen. You choose.';
+      if (tier >= 3) return 'Your summon steps up one rung or two, you choose: pawn, knight, bishop, rook, queen.';
       return 'Your summon steps up one rung: pawn, knight, bishop, rook, queen.';
     case 'puppet':
       if (tier === 5) return 'ANY guard takes one move you choose. It may take its own side, or walk into lava.';
@@ -1003,9 +1003,9 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'The last pawn, knight or bishop you captured stands up beside you for 9 turns.';
       return 'The last pawn, knight or bishop you captured stands up beside you for 6 turns.';
     case 'eruption':
-      if (tier === 5) return 'Any lava floods all four squares beside it. Any guard there burns.';
-      if (tier === 4) return 'Lava within 3 floods all four squares beside it. Any guard there burns.';
-      if (tier === 3) return 'Lava within 3 floods all four squares beside it. Pawns, knights and bishops burn.';
+      if (tier === 5) return 'Any lava floods one square beside it, or all four. Any guard there burns.';
+      if (tier === 4) return 'Lava within 3 floods one square beside it, or all four. Any guard there burns.';
+      if (tier === 3) return 'Lava within 3 floods one square beside it, or all four. Pawns, knights and bishops burn.';
       if (tier === 2) return 'Lava within 2 floods ONE square beside it. A pawn, knight or bishop there burns.';
       return 'Lava within 2 floods ONE square beside it. A pawn there burns.';
     case 'chain':
@@ -1244,8 +1244,8 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier >= 3) return 'No diagonal steps for him. 2/level.';
       return 'No diagonal steps for him. 1/level.';
     case 'promote':
-      if (tier === 5) return 'Your summon becomes a queen. 2/level.';
-      if (tier >= 3) return 'Your summon steps up 2 rungs. 2/level.';
+      if (tier === 5) return 'Your summon climbs to any rung, up to queen. 2/level.';
+      if (tier >= 3) return 'Your summon steps up 1 or 2 rungs. 2/level.';
       return 'Your summon steps up a rung. 1/level.';
     case 'puppet':
       if (tier === 5) return 'Move any guard; it may take its own. 2/level.';
@@ -1258,9 +1258,9 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Your last pawn or minor, 9 turns. 1/level.';
       return 'Your last pawn or minor, 6 turns. 1/level.';
     case 'eruption':
-      if (tier === 5) return 'Any lava floods 4 squares; guards burn. 3/level.';
-      if (tier === 4) return 'Lava within 3 floods 4; guards burn. 3/level.';
-      if (tier === 3) return 'Lava within 3 floods 4; minors burn. 2/level.';
+      if (tier === 5) return 'Any lava floods 1 or all 4; guards burn. 3/level.';
+      if (tier === 4) return 'Lava within 3 floods 1 or all 4; guards burn. 3/level.';
+      if (tier === 3) return 'Lava within 3 floods 1 or all 4; minors burn. 2/level.';
       if (tier === 2) return 'Lava within 2 floods 1; minors burn. 2/level.';
       return 'Lava within 2 floods 1; pawns burn. 1/level.';
     case 'chain':
@@ -1522,9 +1522,9 @@ export const UPGRADE_NOTES: Record<
   },
   promote: {
     2: '',
-    3: 'Two rungs a tap, not one',
+    3: 'One rung or two, you choose',
     4: '',
-    5: 'Straight to queen, whatever it was',
+    5: 'Any rung, up to queen',
   },
   puppet: {
     2: '',
@@ -1540,7 +1540,7 @@ export const UPGRADE_NOTES: Record<
   },
   eruption: {
     2: 'Knights and bishops burn too',
-    3: 'Reach 2 → 3. All four squares flood at once',
+    3: 'Reach 2 → 3. Flood one square, or all four',
     4: 'Any guard burns',
     5: 'Any lava on the board',
   },
@@ -2157,7 +2157,11 @@ export function abilityLegalMoves(
   if (abilityId === 'eruption') {
     const active = state.activeAbility;
     if (active?.id === 'eruption' && active.eruptionFrom) {
-      return eruptionFloodSquares(state, active.eruptionFrom).map((f) => f.square);
+      return [
+        ...eruptionFloodSquares(state, active.eruptionFrom).map((f) => f.square),
+        // T3+: the vent itself is a tap too — it floods them all.
+        ...(eruptionFloodAll(state, active.eruptionFrom).length > 0 ? [active.eruptionFrom] : []),
+      ];
     }
     return eruptionVents(state);
   }
@@ -6296,13 +6300,25 @@ function squareIsOpenGround(state: BoardState, f: number, r: number): boolean {
 /** The ladder a summon climbs. A queen (the Duchess, the Dragon) is the top. */
 export const PROMOTE_LADDER: ReadonlyArray<AllyPiece['type']> = ['pawn', 'knight', 'bishop', 'rook', 'queen'];
 
-/** Rungs per use: 1/1/2/2, and T5 goes straight to queen. */
+/** Rungs per use, UP TO: 1/1/2/2, and T5 reaches any rung up to queen. */
 export function promoteSteps(tier: AbilityTier): number {
   if (tier >= 5) return PROMOTE_LADDER.length;
   return tier >= 3 ? 2 : 1;
 }
 
-/** What `type` becomes at this tier, or null when it is already a queen. */
+/**
+ * Every rung `type` may climb to at this tier, lowest first: one rung at
+ * T1-T2, one OR two at T3-T4, any rung up to queen at T5. An upgrade never
+ * removes the smaller step — the knight is a card of its own. Empty when it
+ * is already a queen.
+ */
+export function promoteOptions(type: AllyPiece['type'], tier: AbilityTier): AllyPiece['type'][] {
+  const at = PROMOTE_LADDER.indexOf(type);
+  if (at < 0) return [];
+  return PROMOTE_LADDER.slice(at + 1, at + 1 + promoteSteps(tier));
+}
+
+/** The HIGHEST rung `type` can reach at this tier, or null when it is already a queen. */
 export function promotedType(type: AllyPiece['type'], tier: AbilityTier): AllyPiece['type'] | null {
   const at = PROMOTE_LADDER.indexOf(type);
   if (at < 0 || at === PROMOTE_LADDER.length - 1) return null;
@@ -6318,13 +6334,45 @@ export function promoteTargets(state: BoardState): Coord[] {
     .map((a) => ({ file: a.file, rank: a.rank }));
 }
 
+/** The rungs on offer for the summon Promote is holding (empty = none held). */
+export function promoteChoices(state: BoardState): AllyPiece['type'][] {
+  const owned = state.abilities.find((a) => a.id === 'promote');
+  const from = state.activeAbility?.id === 'promote' ? state.activeAbility.promoteFrom : undefined;
+  const ally = from ? controlledAllyAt(state, from) : undefined;
+  return owned && ally ? promoteOptions(ally.type, owned.tier) : [];
+}
+
 function applyPromote(state: BoardState, target: Coord): BoardState {
   const owned = state.abilities.find((a) => a.id === 'promote');
   if (!owned || owned.usesLeftThisLevel === 0) return state;
   if (!promoteTargets(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
   const ally = controlledAllyAt(state, target);
-  const next = ally ? promotedType(ally.type, owned.tier) : null;
-  if (!ally || !next) return state;
+  if (!ally) return state;
+  const options = promoteOptions(ally.type, owned.tier);
+  if (options.length === 0) return state;
+  // More than one rung in reach (T3+): hold the summon and let her choose.
+  // Nothing is spent until a rung is picked; tapping another summon re-aims.
+  if (options.length > 1) {
+    return { ...state, activeAbility: { id: 'promote', step: 'pick-square', promoteFrom: { ...target } } };
+  }
+  return commitPromote(state, ally, options[0]);
+}
+
+/**
+ * The second step at T3+: pick the rung for the held summon. A rung out of
+ * reach (or no summon held) is a no-op.
+ */
+export function applyPromoteChoice(state: BoardState, to: AllyPiece['type']): BoardState {
+  const owned = state.abilities.find((a) => a.id === 'promote');
+  if (!owned || owned.usesLeftThisLevel === 0) return state;
+  const from = state.activeAbility?.id === 'promote' ? state.activeAbility.promoteFrom : undefined;
+  const ally = from ? controlledAllyAt(state, from) : undefined;
+  if (!ally || !promoteOptions(ally.type, owned.tier).includes(to)) return state;
+  return commitPromote(state, ally, to);
+}
+
+function commitPromote(state: BoardState, ally: AllyPiece, next: AllyPiece['type']): BoardState {
+  const target: Coord = { file: ally.file, rank: ally.rank };
   return {
     ...state,
     // Only the type changes: its clock, its daze and its source all stand, so
@@ -6542,7 +6590,12 @@ export function raiseCanLift(tier: AbilityTier, type: PieceType): boolean {
   return tier >= 3 || type !== 'queen';
 }
 
-/** Free squares beside her the grave's piece may stand on (empty = not castable). */
+/**
+ * Free squares beside her the grave's piece may stand on (empty = not
+ * castable). Never a square whose dazed body would leave her with no legal
+ * move — the Boulder self-lock check: in a one-wide dead end the body would
+ * plug her only exit, and a stuck player is not a loss, just stuck.
+ */
 export function raiseSpawnSquares(state: BoardState): Coord[] {
   const owned = state.abilities.find((a) => a.id === 'raise');
   const grave = graveOf(state);
@@ -6551,7 +6604,11 @@ export function raiseSpawnSquares(state: BoardState): Coord[] {
   for (const [df, dr] of ALLY_QUEEN_DIRS) {
     const f = state.rookie.file + df;
     const r = state.rookie.rank + dr;
-    if (squareIsFreeForSummon(state, f, r)) out.push({ file: f, rank: r });
+    if (!squareIsFreeForSummon(state, f, r)) continue;
+    const body: AllyPiece = { id: -1, type: grave, file: f, rank: r, source: 'raise', dazed: true };
+    const after: BoardState = { ...state, allies: [...state.allies, body] };
+    if (rookieLegalMoves(after).length === 0) continue; // the Boulder self-lock check
+    out.push({ file: f, rank: r });
   }
   return out;
 }
@@ -6598,8 +6655,8 @@ export function eruptionReach(tier: AbilityTier): number {
   return 99;
 }
 
-/** T3+: all four neighbours flood at once. T1-T2: the one square she taps. */
-export function eruptionFloodsAll(tier: AbilityTier): boolean {
+/** T3+ MAY flood all four neighbours at once (tap the vent again). Every tier may flood the one square she taps. */
+export function eruptionMayFloodAll(tier: AbilityTier): boolean {
   return tier >= 3;
 }
 
@@ -6652,9 +6709,10 @@ function eruptionStrandsHer(state: BoardState, floods: ReadonlyArray<EruptionFlo
 }
 
 /**
- * The flood a vent would make at the owned tier — exactly what the board
- * tints once the vent is picked. T3+: the whole set or nothing (a flood that
- * would strand her refuses the vent). T1-T2: each square stands alone.
+ * The squares a vent may flood at the owned tier — exactly what the board
+ * tints once the vent is picked. Each square stands alone at every tier (one
+ * that would strand her is not offered); T3+ adds the whole set at once, see
+ * `eruptionFloodAll`.
  */
 export function eruptionFloodSquares(state: BoardState, vent: Coord): EruptionFlood[] {
   const owned = state.abilities.find((a) => a.id === 'eruption');
@@ -6662,8 +6720,22 @@ export function eruptionFloodSquares(state: BoardState, vent: Coord): EruptionFl
   const hazard = state.hazards.find((h) => h.file === vent.file && h.rank === vent.rank);
   if (!hazard || hazard.kind !== 'lava') return [];
   const all = eruptionNeighbours(state, vent, owned.tier);
-  if (eruptionFloodsAll(owned.tier)) return eruptionStrandsHer(state, all) ? [] : all;
   return all.filter((fl) => !eruptionStrandsHer(state, [fl]));
+}
+
+/**
+ * T3+: the whole flood, committed by tapping the vent a second time. Empty
+ * below T3, when there is only one square to flood anyway, or when flooding
+ * them all would strand her (the single squares may still be on offer).
+ */
+export function eruptionFloodAll(state: BoardState, vent: Coord): EruptionFlood[] {
+  const owned = state.abilities.find((a) => a.id === 'eruption');
+  if (!owned || !eruptionMayFloodAll(owned.tier)) return [];
+  const hazard = state.hazards.find((h) => h.file === vent.file && h.rank === vent.rank);
+  if (!hazard || hazard.kind !== 'lava') return [];
+  const all = eruptionNeighbours(state, vent, owned.tier);
+  if (all.length < 2 || eruptionStrandsHer(state, all)) return [];
+  return all;
 }
 
 /** Lava squares she may tap: in reach, with at least one square to flood. */
@@ -6675,7 +6747,7 @@ export function eruptionVents(state: BoardState): Coord[] {
     .filter((h) => h.kind === 'lava')
     .filter((h) => Math.max(Math.abs(h.file - state.rookie.file), Math.abs(h.rank - state.rookie.rank)) <= reach)
     .map((h) => ({ file: h.file, rank: h.rank }))
-    .filter((c) => eruptionFloodSquares(state, c).length > 0);
+    .filter((c) => eruptionFloodSquares(state, c).length > 0 || eruptionFloodAll(state, c).length > 0);
 }
 
 function applyEruption(state: BoardState, target: Coord): BoardState {
@@ -6689,12 +6761,14 @@ function applyEruption(state: BoardState, target: Coord): BoardState {
   }
   const flood = eruptionFloodSquares(state, vent);
   const tapped = flood.find((fl) => fl.square.file === target.file && fl.square.rank === target.rank);
-  if (!tapped) {
+  // T3+: the vent tapped a second time floods every neighbour at once.
+  const whole = target.file === vent.file && target.rank === vent.rank ? eruptionFloodAll(state, vent) : [];
+  if (!tapped && whole.length === 0) {
     // Tapping a different vent re-aims; anything else is a no-op.
     if (!eruptionVents(state).some((c) => c.file === target.file && c.rank === target.rank)) return state;
     return { ...state, activeAbility: { id: 'eruption', step: 'pick-square', eruptionFrom: { ...target } } };
   }
-  const floods = eruptionFloodsAll(owned.tier) ? flood : [tapped];
+  const floods = tapped ? [tapped] : whole;
   const spent: BoardState = {
     ...state,
     // R2: the new squares are LAVA — terrain, never a block Shove could push.
@@ -6705,7 +6779,7 @@ function applyEruption(state: BoardState, target: Coord): BoardState {
     lastAbilityFx: {
       kind: 'boulder', // terrain lands on a square: the same thud
       from: toSquare(vent),
-      to: toSquare(tapped.square),
+      to: toSquare(floods[0].square),
       id: Date.now() + Math.random(),
     },
   };
@@ -6848,7 +6922,9 @@ export function resolveChain(after: BoardState, links: ReadonlyArray<EnemyPiece>
 export function consequenceTint(state: BoardState): { wash: Coord[]; kills: Coord[] } | null {
   const active = state.activeAbility;
   if (active?.id === 'eruption' && active.eruptionFrom) {
-    const flood = eruptionFloodSquares(state, active.eruptionFrom);
+    // Singles and (T3+) the whole flood tint alike: every square that CAN change.
+    const whole = eruptionFloodAll(state, active.eruptionFrom);
+    const flood = whole.length > 0 ? whole : eruptionFloodSquares(state, active.eruptionFrom);
     return { wash: flood.map((f) => f.square), kills: flood.filter((f) => f.burns).map((f) => f.square) };
   }
   if (active?.id === 'puppet' && active.puppetFrom) {
@@ -6869,15 +6945,16 @@ export function consequenceTint(state: BoardState): { wash: Coord[]; kills: Coor
 export function targetingHintFor(state: BoardState): string | null {
   const active = state.activeAbility;
   if (!active) return null;
-  if (active.id === 'promote') return 'tap the summon to promote';
+  if (active.id === 'promote') return active.promoteFrom ? 'choose what it becomes' : 'tap the summon to promote';
   if (active.id === 'raise') return 'tap a free square beside you';
   if (active.id === 'puppet') {
     return active.puppetFrom ? 'tap the square it moves to — red is lava, it dies there' : 'tap a guard on your line';
   }
   if (active.id === 'eruption') {
     if (!active.eruptionFrom) return 'tap lava near you';
-    const tier = state.abilities.find((a) => a.id === 'eruption')?.tier ?? 1;
-    return eruptionFloodsAll(tier) ? 'tap a tinted square — they all become lava' : 'tap the tinted square to flood';
+    return eruptionFloodAll(state, active.eruptionFrom).length > 0
+      ? 'tap one tinted square to flood it — or tap the lava again to flood them all'
+      : 'tap the tinted square to flood';
   }
   return null;
 }

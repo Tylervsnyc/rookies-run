@@ -7,6 +7,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  abilityLegalMoves,
   applyAbilityActivate,
   applyAbilityTargeted,
   applyControlledAllyMove,
@@ -14,11 +15,15 @@ import {
   chainPreview,
   chainVictims,
   consequenceTint,
+  eruptionFloodAll,
   eruptionFloodSquares,
   eruptionVents,
   graveOf,
   maxUsesForTier,
   promotedType,
+  promoteChoices,
+  promoteOptions,
+  applyPromoteChoice,
   promoteTargets,
   puppetDestinations,
   puppetTargets,
@@ -78,7 +83,7 @@ function cast(state: BoardState, id: AbilityId, ...taps: string[]): BoardState {
 
 // --- Promote ----------------------------------------------------------------
 
-test('promote: the ladder is pawn, knight, bishop, rook, queen — one rung at T1, two at T3, queen at T5', () => {
+test('promote: the ladder is pawn, knight, bishop, rook, queen — up to one rung at T1, two at T3, queen at T5', () => {
   assert.equal(promotedType('pawn', 1), 'knight');
   assert.equal(promotedType('knight', 1), 'bishop');
   assert.equal(promotedType('bishop', 2), 'rook');
@@ -102,6 +107,40 @@ test('promote: changes the type only — clock, daze and source stand; a queen i
   assert.equal(after.abilities[0].usesLeftThisLevel, 0);
   // The Duchess is already the top rung: the tap does nothing.
   assert.equal(cast(s, 'promote', 'd4').abilities[0].usesLeftThisLevel, 1);
+});
+
+test('promote: an upgrade never removes the smaller step — T3+ offers every rung in reach', () => {
+  assert.deepEqual(promoteOptions('pawn', 1), ['knight']);
+  assert.deepEqual(promoteOptions('pawn', 2), ['knight']);
+  assert.deepEqual(promoteOptions('pawn', 3), ['knight', 'bishop']);
+  assert.deepEqual(promoteOptions('rook', 4), ['queen']);
+  assert.deepEqual(promoteOptions('pawn', 5), ['knight', 'bishop', 'rook', 'queen']);
+  assert.deepEqual(promoteOptions('queen', 5), []);
+});
+
+test('promote T3: the first tap holds the summon, the choice commits — the knight is still on offer', () => {
+  const s = board('promote', 3, 'a1', [E('h8', 'king')], {
+    allies: [A(1, 'c3', 'pawn', 'convert'), A(2, 'e2', 'rook', 'squire', { turnsLeft: 5 })],
+  });
+  const held = cast(s, 'promote', 'c3');
+  assert.deepEqual(held.activeAbility?.promoteFrom, fromSquare('c3'));
+  assert.deepEqual(promoteChoices(held), ['knight', 'bishop']);
+  assert.equal(held.abilities[0].usesLeftThisLevel, 2, 'nothing is spent until the rung is picked');
+  assert.equal(held.allies.find((a) => a.id === 1)!.type, 'pawn');
+  // A rung out of reach is a no-op.
+  assert.equal(applyPromoteChoice(held, 'rook'), held);
+  const knight = applyPromoteChoice(held, 'knight');
+  assert.equal(knight.allies.find((a) => a.id === 1)!.type, 'knight');
+  assert.equal(knight.abilities[0].usesLeftThisLevel, 1);
+  assert.equal(knight.activeAbility, null);
+  assert.equal(applyPromoteChoice(held, 'bishop').allies.find((a) => a.id === 1)!.type, 'bishop');
+  // Only one rung in reach (rook, queen): no choice to make, it commits on the tap.
+  const queen = cast(s, 'promote', 'e2');
+  assert.equal(queen.allies.find((a) => a.id === 2)!.type, 'queen');
+  assert.equal(queen.activeAbility, null);
+  // Tapping another summon while holding re-aims.
+  const reaimed = applyAbilityTargeted(held, 'promote', fromSquare('e2'));
+  assert.equal(reaimed.allies.find((a) => a.id === 2)!.type, 'queen');
 });
 
 // --- Puppet -----------------------------------------------------------------
@@ -183,6 +222,22 @@ test('raise: T1-T2 lift a pawn or a minor only; T3 lifts a queen', () => {
   assert.ok(raiseSpawnSquares(withQueen(3)).length > 0);
 });
 
+test('raise: never offers a square whose body would leave her with no legal move', () => {
+  // Rookie h6 in a one-wide dead end: stone on g5, g6, g7 and h7, so h5 is her
+  // only exit. A dazed body on h5 would plug it — no move, no loss, stuck.
+  const s = {
+    ...board('raise', 1, 'h6', [E('a8', 'king')], { hazards: [STONE('g5'), STONE('g6'), STONE('g7'), STONE('h7')] }),
+    captures: ['pawn' as const],
+  };
+  assert.equal(graveOf(s), 'pawn');
+  assert.deepEqual(raiseSpawnSquares(s), []);
+  assert.equal(cast(s, 'raise', 'h5').allies.length, 0);
+  // Open g5 and h5 is still her only MOVE (a rook does not step diagonally),
+  // so g5 is offered and h5 is not.
+  const wider = { ...s, hazards: s.hazards.filter((h) => toSquare(h) !== 'g5') };
+  assert.deepEqual(squares(raiseSpawnSquares(wider)), ['g5']);
+});
+
 // --- Eruption ---------------------------------------------------------------
 
 test('eruption R2: T1 floods ONE tapped neighbour with lava and burns a pawn there (capture + stun)', () => {
@@ -209,9 +264,33 @@ test('eruption: never the king, her square or a summon; T3 floods all four; out 
   // b2's neighbours: a2 (open), c2 (her), b1 (summon), b3 (king) — only a2.
   assert.deepEqual(squares(eruptionFloodSquares(s, fromSquare('b2')).map((f) => f.square)), ['a2']);
   assert.deepEqual(squares(eruptionVents(s)), ['b2'], 'h5 is 5 away: reach is 3 at T3');
-  const open = board('eruption', 3, 'a1', [E('h8', 'king')], { hazards: [LAVA('c3')] });
-  const after = cast(open, 'eruption', 'c3', 'c4');
-  assert.deepEqual(squares(after.hazards), ['b3', 'c2', 'c3', 'c4', 'd3']);
+});
+
+test('eruption T3: one tinted square floods that square only; the vent again floods all four', () => {
+  const open = board('eruption', 3, 'a1', [E('d3', 'pawn'), E('h8', 'king')], { hazards: [LAVA('c3')] });
+  const aimed = cast(open, 'eruption', 'c3');
+  assert.deepEqual(squares(abilityLegalMoves(aimed, 'eruption')), ['b3', 'c2', 'c3', 'c4', 'd3']);
+  const one = cast(open, 'eruption', 'c3', 'c4');
+  assert.deepEqual(squares(one.hazards), ['c3', 'c4']);
+  assert.deepEqual(one.captures, []);
+  assert.equal(one.abilities[0].usesLeftThisLevel, 1);
+  const all = cast(open, 'eruption', 'c3', 'c3');
+  assert.deepEqual(squares(all.hazards), ['b3', 'c2', 'c3', 'c4', 'd3']);
+  assert.deepEqual(all.captures, ['pawn']);
+  assert.equal(all.abilities[0].usesLeftThisLevel, 1);
+  // T1: the vent again is just a re-aim, never a flood.
+  const t1 = cast(board('eruption', 1, 'a1', [E('h8', 'king')], { hazards: [LAVA('c3')] }), 'eruption', 'c3', 'c3');
+  assert.deepEqual(squares(t1.hazards), ['c3']);
+  assert.deepEqual(eruptionFloodAll(t1, fromSquare('c3')), []);
+});
+
+test('eruption T3: a flood-all that would strand her is refused, the safe single squares are not', () => {
+  // Rook a1, stone b1: a2 is her only move. The a3 vent's flood-all takes a2.
+  const s = board('eruption', 3, 'a1', [E('h8', 'king')], { hazards: [STONE('b1'), LAVA('a3')] });
+  assert.deepEqual(eruptionFloodAll(s, fromSquare('a3')), []);
+  assert.deepEqual(squares(eruptionFloodSquares(s, fromSquare('a3')).map((f) => f.square)), ['a4', 'b3']);
+  assert.deepEqual(squares(eruptionVents(s)), ['a3']);
+  assert.deepEqual(squares(cast(s, 'eruption', 'a3', 'a3').hazards), ['a3', 'b1'], 'the vent again does nothing here');
 });
 
 test('eruption: refuses a flood that would leave her with no move', () => {

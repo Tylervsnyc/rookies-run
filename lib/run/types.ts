@@ -273,9 +273,14 @@ export interface BoardState {
      */
     puppetFrom?: Coord;
     /**
+     * Promote only, T3+ — the summon picked on the first tap. While set, the
+     * red panel offers the rungs in reach and the pick commits.
+     */
+    promoteFrom?: Coord;
+    /**
      * Eruption only — the lava square picked on the first tap. While set
      * (step 'pick-square') the flood squares are tinted and the second tap
-     * commits (T1-T2: the one square tapped; T3+: all of them).
+     * commits: the one square tapped, or (T3+) the vent again for all of them.
      */
     eruptionFrom?: Coord;
     /**

@@ -138,10 +138,10 @@ forced into it (Puppet), **R2** lava can spread (Eruption).
 
 | # | Ability | Numbers | Why it catches kings | Proof (T5 bot, `five-smoke.ts`, 8 trials) |
 |---|---------|---------|----------------------|----------------|
-| A1 | **Promote** (`promote`) | Tap a controlled summon: it climbs pawn, knight, bishop, rook, queen. One rung at T1-T2, two at T3-T4, straight to queen at T5; 1/1/2/2/2 uses. Only the type changes — clock, daze and source stand. A queen (Duchess, Dragon) is not a target. | The body is already in his court; change what it attacks and take him this turn. | none 0% → 100%, cast 100% |
+| A1 | **Promote** (`promote`) | Tap a controlled summon: it climbs pawn, knight, bishop, rook, queen. One rung at T1-T2; UP TO two at T3-T4 and any rung up to queen at T5 — the player chooses (tap the summon, then pick the rung in the red panel; nothing is spent until the pick). 1/1/2/2/2 uses. Only the type changes — clock, daze and source stand. A queen (Duchess, Dragon) is not a target. | The body is already in his court; change what it attacks and take him this turn. | none 0% → 100%, cast 100% |
 | A2 | **Puppet** (`puppet`) | Two taps: a guard, then one of ITS OWN non-capturing moves. T1-T3 the first piece on her current form's lines (Magnet's lines, distance 1 allowed); T4 also any guard within 3; T5 any guard. R1: the first lava square along a move is a destination and kills it (capture, stun, tempo). T3+: it may take its own side. 1/1/2/2/2 uses. Markers ride with it; a snare it lands on springs. | Pull the guard off his line, walk the defender off the key, burn the sentry beside the moat. | none 0% → 100%, cast 100% |
-| A3 | **Raise** (`raise`) | Tap a free square beside her: the LAST piece credited to her side stands there — source `raise`, controlled, dazed this turn, 6/9/9/level/level enemy turns; 1/1/2/2/2 uses. T1-T2 lift a pawn, knight or bishop; T3+ a queen too. The rack's status line shows the grave. | The level decides the summon: eat the bishop, get a bishop. | none 0% → 100%, cast 100% |
-| A4 | **Eruption** (`eruption`) | Two taps: lava within 2/2/3/3/any of her, then a tinted neighbour. T1-T2 flood the ONE square tapped; T3+ all four orthogonal neighbours at once. Open ground becomes lava; a pawn (T2+ knight/bishop, T4+ any guard) burns = capture, stun. Never the king's, hers, a summon's, a snare's square, never a flood that strands her. 1/2/2/3/3 uses. | The boulder trick in lava: delete his flee square or burn the key guard, only where the level has lava. | none 0% → 100%, cast 100% |
+| A3 | **Raise** (`raise`) | Tap a free square beside her (never one whose body would leave her with no legal move): the LAST piece credited to her side stands there — source `raise`, controlled, dazed this turn, 6/9/9/level/level enemy turns; 1/1/2/2/2 uses. T1-T2 lift a pawn, knight or bishop; T3+ a queen too. The rack's status line shows the grave. | The level decides the summon: eat the bishop, get a bishop. | none 0% → 100%, cast 100% |
+| A4 | **Eruption** (`eruption`) | Two taps: lava within 2/2/3/3/any of her, then a tinted neighbour. Every tier floods the ONE square tapped; T3+ may instead tap the vent again to flood all four orthogonal neighbours at once. Open ground becomes lava; a pawn (T2+ knight/bishop, T4+ any guard) burns = capture, stun. Never the king's, hers, a summon's, a snare's square, never a flood that strands her. 1/2/2/3/3 uses. | The boulder trick in lava: delete his flee square or burn the key guard, only where the level has lava. | none 0% → 100%, cast 100% |
 | A5 | **Chain** (`chain`) | Instant: armed until the end of this turn. The next capturing MOVE by Rookie or a controlled summon also kills every guard of the victim's family in its 8-neighbourhood, and theirs, 2/3/4/any/any links deep. T3+ pawn = knight; T5 any guard. Never the king. 1/1/2/2/2 uses. Only castable when a chain is on offer. | The defended pawn chain becomes a fuse: kill the head, the tail on his line goes with it, he is stunned. | none 0% → 100%, cast 100% |
 
 **Decisions where the spec was open (2026-09-19 build):**
@@ -159,9 +159,20 @@ forced into it (Puppet), **R2** lava can spread (Eruption).
   a second Raise needs a fresh capture. If the last capture is too big for the
   tier, the card is dead until the next one. Several raised bodies may coexist.
 - *Eruption is two taps at every tier* so the flood is tinted before it is
-  committed; at T3+ any tinted square confirms the whole flood. A guard too
-  big to burn keeps its square dry. T3+ is all-or-nothing: a flood that would
-  strand her refuses the vent.
+  committed. A guard too big to burn keeps its square dry. A tinted square
+  floods that square alone at EVERY tier; at T3+ the picked vent stays ringed
+  and tapping it again floods them all. A flood-all that would strand her is
+  not offered; the safe single squares still are.
+- *An upgrade never removes the function (fix, 2026-09-19).* Promote T3+ used
+  to FORCE two rungs (pawn to bishop, skipping the knight — and on revenge-53
+  the knight is the card: `convert:1+promote:3` read 0/0/0/0 on L7-L10).
+  Eruption T3+ used to be all-or-nothing. Both are now "up to": the T1 play is
+  always still there. Bots enumerate every rung / every single square plus the
+  flood-all.
+- *Raise strand check (fix, 2026-09-19).* `raiseSpawnSquares` runs the Boulder
+  self-lock check: in a one-wide dead end (Rookie h6, h5 her only exit) the
+  dazed body on h5 left her zero legal moves and no loss. That square is no
+  longer offered.
 - *Chain fires on capturing MOVES only* (Rookie's, or a controlled summon's).
   Card kills (Boulder crush, a Puppet burn, a Sacrifice blast) neither spend
   nor spread the arm. The arm is spent by the next capture even when nothing

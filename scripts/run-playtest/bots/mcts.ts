@@ -575,6 +575,9 @@ function candidateToAction(c: ActionCandidate): BotAction {
   // Two-tap cards carry their second tap. (Magnet deliberately does NOT: its
   // candidates have always resolved to the farthest landing here, and every
   // stored measurement was taken that way.)
+  if (c.promoteTo) {
+    return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, promoteTo: c.promoteTo };
+  }
   if (c.target2 && c.abilityId !== 'magnet') {
     return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, target2: c.target2 };
   }

@@ -22,8 +22,10 @@ import {
   applyAbilityMove,
   applyAbilityTargeted,
   applyControlledAllyMove,
+  applyPromoteChoice,
   applySquireMove,
   boulderTargets,
+  promoteChoices,
   stepDroneTurn,
 } from '../../../lib/run/abilities';
 import { applyRookieMove } from '../../../lib/run/engine';
@@ -92,6 +94,14 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
         ) {
           const second = action.target2 ?? abilityLegalMoves(next, action.abilityId)[0];
           next = second ? applyAbilityTargeted(next, action.abilityId, second) : applyAbilityCancel(next);
+          if (next.activeAbility) next = applyAbilityCancel(next);
+        }
+        // Promote T3+ holds the summon and asks for the rung. Resolve it from
+        // promoteTo; without one take the highest rung in reach.
+        if (action.abilityId === 'promote' && next.activeAbility?.id === 'promote') {
+          const rungs = promoteChoices(next);
+          const to = action.promoteTo ?? rungs[rungs.length - 1];
+          next = to ? applyPromoteChoice(next, to) : applyAbilityCancel(next);
           if (next.activeAbility) next = applyAbilityCancel(next);
         }
         // Catapult / Avalanche are two taps as well (the thing, then where /

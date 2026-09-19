@@ -73,7 +73,10 @@ import {
   coupTargets,
   // The ability-first five of 2026-09-19 (promote / puppet / raise / eruption / chain).
   cardStatusFor,
+  applyPromoteChoice,
   consequenceTint,
+  promoteChoices,
+  eruptionFloodAll,
   eruptionVents,
   fiveWithNoTarget,
   puppetDestinations,
@@ -1259,6 +1262,11 @@ export default function RookiesRunPage() {
     // invisible: Eruption's vents and a Puppet's lava destinations ring instead.
     if (state.activeAbility?.id === 'eruption' && !state.activeAbility.eruptionFrom)
       return eruptionVents(state);
+    // T3+: the picked vent stays ringed while tapping it again floods them all.
+    if (state.activeAbility?.id === 'eruption' && state.activeAbility.eruptionFrom)
+      return eruptionFloodAll(state, state.activeAbility.eruptionFrom).length > 0
+        ? [state.activeAbility.eruptionFrom]
+        : undefined;
     if (state.activeAbility?.id === 'puppet' && state.activeAbility.puppetFrom)
       return puppetDestinations(state, state.activeAbility.puppetFrom)
         .filter((d) => d.kills === 'lava')
@@ -2415,6 +2423,34 @@ export default function RookiesRunPage() {
                       ? 'tap an empty square'
                       : 'tap a highlighted square')}
             </span>
+            {/* Promote T3+: the rungs in reach, named before the tap that commits. */}
+            {state.activeAbility.id === 'promote' && promoteChoices(state).map((to) => (
+              <button
+                key={to}
+                type="button"
+                data-testid={`promote-to-${to}`}
+                onClick={withClick(() => {
+                  const next = applyPromoteChoice(state, to);
+                  if (next === state) return;
+                  recordEvent({
+                    kind: 'ability-target',
+                    level: state.level,
+                    ability: 'promote',
+                    target: toSquare(state.activeAbility!.promoteFrom!),
+                    enemyCount: state.pieces.length,
+                    allyCount: state.allies.length,
+                  });
+                  setState(next);
+                  playCardPlaySound();
+                  haptic('heavy');
+                  trackEvent('run_ability_used', { iso: meta.iso, level: levelIndex + 1, ability: 'promote' });
+                })}
+                className="px-3 min-h-[44px] rounded text-white text-[11px] font-black capitalize active:scale-95 shrink-0"
+                style={{ background: '#E53935' }}
+              >
+                {to}
+              </button>
+            ))}
             <button
               type="button"
               onClick={withClick(() => setState((s) => applyAbilityCancel(s)))}

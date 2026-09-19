@@ -66,8 +66,8 @@ Swap, Sacrifice and Promote may target it.
 
 **1. Promote (`promote`)** — targeted, one of your controlled summons (Page,
 Squire, Bishop Squire, a Converted or Raised piece, Mirror). It becomes the next
-type up: pawn → knight → bishop → rook → queen. Tiers: 1/1/2/2/2 uses; T3+ two
-steps per use; T5 any summon straight to queen. Its clock and daze are
+type up: pawn → knight → bishop → rook → queen. Tiers: 1/1/2/2/2 uses; T3+ UP TO two
+steps per use, T5 any rung up to queen — the player picks the rung. Its clock and daze are
 unchanged. Why it catches kings: the body is already in his court — change what
 it attacks and take him this turn (a promote-then-capture gives him no
 reaction, like Knight Hop). Pairs: Convert, Page, Raise.
@@ -90,7 +90,7 @@ the summon — eat the bishop, get a bishop. Pairs: Swap, Sacrifice (blast shape
 = the piece), Promote.
 
 **4. Eruption (`eruption`)** — targeted: a lava square within 2/2/3/3/any of
-her. T1-T2: then tap ONE orthogonally adjacent square; T3+: all four flood.
+her. Then tap ONE orthogonally adjacent square; T3+: or tap the lava again and all four flood.
 Empty → lava. Pawn (T2+: minor, T4+: any guard) → burns, capture-stun, square
 becomes lava. Never the king's square, never her square, never a summon's,
 never a square that would leave her with no move. 1/2/2/3/3 uses. Why: the
