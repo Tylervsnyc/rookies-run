@@ -19,7 +19,6 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   coup: 'swap-1.webp',
   // The ability-first five of 2026-09-19 borrow art until theirs is painted.
   promote: 'page-1.webp',
-  puppet: 'magnet-1.webp',
   raise: 'convert-1.webp',
   eruption: 'boulder-1.webp',
   chain: 'drones-1.webp',
@@ -41,6 +40,7 @@ export function artFile(id: AbilityId): string {
   if (id === 'rabies-dart') return 'rabies-dart-2.webp';
   if (id === 'freeze-ray') return 'freeze-ray-2.webp';
   if (id === 'become-king') return 'become-king-2.webp';
+  if (id === 'puppet') return 'puppet-1.webp';
   if (id === 'mirror') return 'mirror-9.webp';
   return `${id}-1.webp`;
 }
