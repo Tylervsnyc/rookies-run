@@ -4,6 +4,7 @@
  * chess-learning-tree scripts/_gen-puppet-art.ts). Pinned in lib/run/ability-art.ts.
  */
 const OPTIONS = [
+  { n: 10, note: 'Two crowns: a knight and a pawn dangling off the stage, cords crossed and tangled.' },
   { n: 8, note: 'Two crowns: matching crowns, amethyst left, ruby right, braided cords to the knight.' },
   { n: 9, note: 'Two crowns: a king crown and a queen coronet, cords wrapped around the knight.' },
   { n: 6, note: 'Edit of 1: bold braided gold cords, glassy rubies, violet amethyst. PINNED for now.' },
