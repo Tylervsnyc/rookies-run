@@ -1677,12 +1677,15 @@ function targetMakersFor(id: AbilityId): ReadonlyArray<AbilityId> {
   // Anything that puts a rainbow piece you control on the board. Squad's
   // allies are NOT controlled, so they only count for the cards that read
   // every ally at T4+ (Swap) — never for Sacrifice.
-  const controlledMakers: AbilityId[] = ['convert', 'summon-knight', 'raise', ...SUMMON_ABILITIES];
+  // A Mirror echo is a controlled body too (it is in CONTROLLED_SOURCES): Swap
+  // trades places with it and Sacrifice detonates it, so Mirror makes targets
+  // for both — without it a Mirror-only kit read Swap / Sacrifice as dead cards.
+  const controlledMakers: AbilityId[] = ['convert', 'summon-knight', 'raise', 'mirror', ...SUMMON_ABILITIES];
   if (id === 'sacrifice') return controlledMakers;
   if (id === 'swap') return [...controlledMakers, 'squad'];
   if (id === 'shove') return ['boulder'];
   // Promote works on any controlled body — a Raised one and a Mirror echo included.
-  if (id === 'promote') return [...controlledMakers, 'mirror'];
+  if (id === 'promote') return controlledMakers;
   // A Boulder stone is ammunition, a rail and scree; any summon is a payload.
   if (id === 'catapult') return ['boulder', ...controlledMakers];
   if (id === 'ricochet' || id === 'avalanche') return ['boulder'];
