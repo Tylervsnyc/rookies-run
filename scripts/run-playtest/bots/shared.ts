@@ -17,6 +17,13 @@
 import type { AbilityId, OwnedAbility } from '../../../lib/run/abilities';
 import {
   abilityLegalMoves,
+  avalancheDirSquares,
+  avalancheOutcomes,
+  canRicochet,
+  castleLanding,
+  catapultSources,
+  catapultThrowsFrom,
+  mirrorTargets,
   bodyguardSpawnSquare,
   boulderTargets,
   canMoveAllyAt,
@@ -33,6 +40,7 @@ import {
   latestRewindSnapshot,
   magnetLandingSquares,
   magnetTargets,
+  mirrorEchoReach,
   sacrificeTargets,
   scarecrowTargets,
   shoveTargets,
@@ -358,6 +366,49 @@ export interface ActionCandidate {
   target?: Coord;
   /** squire-move only: WHICH controlled summon moves (several can coexist). */
   from?: Coord;
+  /** Two-tap cards (Catapult, Avalanche): the second tap. */
+  target2?: Coord;
+}
+
+/** True when Rookie's rook lines reach the king's square right now. */
+function hasRookLine(state: BoardState, king: Coord): boolean {
+  return rookieLegalMoves({ ...state, form: 'rook', ricochetBanks: 0 }).some(
+    (m) => m.file === king.file && m.rank === king.rank,
+  );
+}
+
+/**
+ * Rollout bonus for the level-first five: what the cast paid for THIS TURN —
+ * a capture, a ford, a line to the king, a body that can take him. Keeps the
+ * MCTS rollouts casting them when they pay and ignoring them when they do not.
+ */
+export function levelFirstCastBonus(before: BoardState, after: BoardState, id: AbilityId): number {
+  if (id !== 'castle' && id !== 'catapult' && id !== 'mirror' && id !== 'ricochet' && id !== 'avalanche') return 0;
+  let bonus = (before.pieces.length - after.pieces.length) * 6;
+  const lavaGone =
+    before.hazards.filter((h) => h.kind === 'lava').length - after.hazards.filter((h) => h.kind === 'lava').length;
+  bonus += lavaGone * 6;
+  const king = after.pieces.find((p) => p.type === 'king');
+  if (king) {
+    const kingBefore = before.pieces.find((p) => p.type === 'king');
+    if (kingBefore && !hasRookLine(before, kingBefore) && hasRookLine(after, king)) bonus += 20;
+    // Ricochet armed onto him / an echo that can land on him: a kill next tap.
+    if (rookieLegalMoves(after).some((m) => m.file === king.file && m.rank === king.rank)) bonus += 40;
+    if (mirrorEchoReach(after).some((m) => m.file === king.file && m.rank === king.rank)) bonus += 40;
+  }
+  return bonus;
+}
+
+/**
+ * Rollout bonus for a plain MOVE that sets a Castle up. The rollout policy
+ * ranks moves by distance to the king, and a castle wants the opposite — three
+ * or more squares off, on his row — so without this no rollout ever finds the
+ * square to cast from. Zero unless Castle is owned with a charge left.
+ */
+export function levelFirstSetupBonus(after: BoardState): number {
+  const castle = after.abilities.find((a) => a.id === 'castle');
+  if (!castle || castle.usesLeftThisLevel === 0) return 0;
+  return castleLanding(after) ? 14 : 0;
 }
 
 export function legalCandidates(
@@ -634,6 +685,59 @@ function candidatesForAbility(
       // colour and scores the position that makes.
       if (canChequer(state)) out.push({ kind: 'activate-ability', abilityId: 'chequer' });
       return out;
+    // The level-first five (2026-09-19). Placement cards on an empty board
+    // are unmeasurable, so each enumerates only the casts that PAY THIS TURN.
+    case 'castle': {
+      // One legal castle at most — the geometry is the whole filter.
+      const c = castleLanding(state);
+      if (c) out.push({ kind: 'ability-target', abilityId: 'castle', target: c.king });
+      return out;
+    }
+    case 'mirror': {
+      for (const t of mirrorTargets(state)) out.push({ kind: 'ability-target', abilityId: 'mirror', target: t });
+      return out;
+    }
+    case 'ricochet':
+      // Arming adds the banked squares to her ordinary moves (rookieLegalMoves),
+      // so the banked captures — the king included — are plain 'move' candidates
+      // on the next decision. Arm only when a banked line reaches an enemy.
+      if (
+        canRicochet(state) &&
+        rookieLegalMoves({ ...state, ricochetBanks: owned.tier >= 3 ? 2 : 1 }).some(
+          (m) => !!enemyAt(state.pieces, m) && !rookieLegalMoves(state).some((x) => x.file === m.file && x.rank === m.rank),
+        )
+      ) {
+        out.push({ kind: 'activate-ability', abilityId: 'ricochet' });
+      }
+      return out;
+    case 'catapult': {
+      const king = state.pieces.find((p) => p.type === 'king');
+      for (const from of catapultSources(state)) {
+        for (const t of catapultThrowsFrom(state, from)) {
+          const nearKing = !!king && Math.max(Math.abs(t.to.file - king.file), Math.abs(t.to.rank - king.rank)) <= (t.projectile === 'summon' ? 2 : 1);
+          // A stone: crush, ford, a flee square removed, or her line to him opened
+          // by lifting the stone out of the way. A summon: into his court.
+          const opens = t.projectile === 'stone' && !!king && !hasRookLine(state, king) &&
+            hasRookLine({ ...state, hazards: state.hazards.filter((h) => !(h.file === from.file && h.rank === from.rank)) }, king);
+          if (t.crushed || t.ford || nearKing || opens) {
+            out.push({ kind: 'ability-target', abilityId: 'catapult', target: from, target2: t.to });
+          }
+        }
+      }
+      return out;
+    }
+    case 'avalanche': {
+      const king = state.pieces.find((p) => p.type === 'king');
+      for (const o of avalancheOutcomes(state)) {
+        const nearKing = !!king && o.slides.some((s) => !s.ford && Math.max(Math.abs(s.to.file - king.file), Math.abs(s.to.rank - king.rank)) <= 1);
+        const opens = !!king && !hasRookLine(state, king) && hasRookLine({ ...state, hazards: o.hazards, pieces: state.pieces.filter((p) => !o.crushed.includes(p)) }, king);
+        if (!(o.crushed.length > 0 || o.slides.some((s) => s.ford) || nearKing || opens)) continue;
+        const lead = o.slides[0];
+        const dirSq = avalancheDirSquares(state, lead.from).find((d) => d.outcome.dir === o.dir);
+        if (dirSq) out.push({ kind: 'ability-target', abilityId: 'avalanche', target: lead.from, target2: dirSq.square });
+      }
+      return out;
+    }
     case 'scarecrow': {
       // Empty squares with an OPEN rook line to the king (at most 14) plus
       // empty squares within 2 of Rookie, capped at 16. The fooled flee is

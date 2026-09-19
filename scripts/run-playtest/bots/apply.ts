@@ -83,6 +83,17 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
             : applyAbilityCancel(next);
           if (next.activeAbility) next = applyAbilityCancel(next);
         }
+        // Catapult / Avalanche are two taps as well (the thing, then where /
+        // which way). No target2 = nothing sensible to guess: cancel.
+        if (
+          (action.abilityId === 'catapult' || action.abilityId === 'avalanche') &&
+          next.activeAbility?.id === action.abilityId
+        ) {
+          next = action.target2
+            ? applyAbilityTargeted(next, action.abilityId, action.target2)
+            : applyAbilityCancel(next);
+          if (next.activeAbility) next = applyAbilityCancel(next);
+        }
         // Boulder T4 owes a FREE second placement (each use drops 2). Resolve
         // it greedily here — nearest legal square to the king (else to
         // Rookie) — so the bot's action stays atomic and no bot ever sees an

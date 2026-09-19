@@ -1313,6 +1313,46 @@
       "stage": "testing",
       "created": "2026-09-09",
       "notes": "CONCEPT (A): the unbuilt harness-proven pair QUEEN PULSE + VANGUARD (queen-pulse+vanguard gates moat-L7-v5-s250 at 97% with a unique answer; the only unbuilt gating pair whose level survives both bishop-step and knight-hop). Kit = queen-pulse / vanguard / aegis / decoy, all LIVE. VERB: get close enough to throw — the only run in the catalogue about a RADIUS rather than a line; Rookie never touches the king on any of the ten levels. SIGNATURE, the comb: rank 6 solid stone but for one square (the parting), the square above it stone (the tooth), two diagonal ladders of unreachable islands leading up to it from feet at a2 and h3, and a pocket past the spine whose every rank, file and diagonal neighbour is stone so only a knight's geometry touches the king — with exactly one of his knight-squares free (the peg), never within drop range of her floor. The pulse is the only thing that crosses the spine; the drop is the only thing that reaches the peg; neither is ever a weapon. FOUR FINALE LINES: L7 the two windows (either exit wins, mirror lines); L8 the wrong window (the east ladder lands her ON the only peg — the natural exit is fatal); L9 the corked parting (a pinned pawn ends the ride, so the pulse becomes her one capture and the peg moves to f7); L10 the watchmen (two knights on the floor contest the feet, and his second room c8 punishes any tempo lost on the climb). SERIAL NUMBERS, 32 trials, jobs=1, normal: L7-L10 none 0/0/0/0, queen-pulse 0/0/0/0, vanguard 0/0/0/0, aegis 0/0/0/0, decoy 0/0/0/0, PAIR 81/84/69/56 (mean 72.5, four different numbers — the spread Tyler asked for). Mid-run L3-L6 bare 0% with pulse/vanguard/aegis/vanguard as keys; L3 is soft (50% for its own key) and L5 has decoy as a co-answer. FULL RUNS 40x: 0% random picks, 5% with the pair pool — both below the 10-25% target, and the cause is L5 being gated on aegis four levels before a finale gated on the other two cards, not the finale itself. TIER CAVEAT: abilityTierCaps { vanguard: 1 } — the drop RADIUS is the break (T2 range 3 reads 97% alone on L7, T3 range 4 reads 100/88/100/100), while Queen Pulse needs no cap at any tier because no line on any finale touches the king's square."
+    },
+    {
+      "id": "castle",
+      "kind": "ability",
+      "name": "Castle",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Rook and king on one line, anything between: he jumps two toward her, she hops to his far side. Rules are rules."
+    },
+    {
+      "id": "catapult",
+      "kind": "ability",
+      "name": "Catapult",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Fling the stone or summon beside her in a straight line, over everything, to a square you choose."
+    },
+    {
+      "id": "mirror",
+      "kind": "ability",
+      "name": "Mirror",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "A mirror Rookie appears across the board and copies every move she makes, flipped."
+    },
+    {
+      "id": "ricochet",
+      "kind": "ability",
+      "name": "Ricochet",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Her next move bounces: slide to a stone, turn 90 degrees, keep sliding."
+    },
+    {
+      "id": "avalanche",
+      "kind": "ability",
+      "name": "Avalanche",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Every loose stone on the board slides one square the way you point. Pawns under them are crushed."
     }
   ]
 }

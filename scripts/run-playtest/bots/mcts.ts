@@ -23,7 +23,7 @@ import { mulberry32 } from '../../../lib/run/seed';
 import type { BoardState } from '../../../lib/run/types';
 import { toSquare } from '../../../lib/run/types';
 import { applyBotAction } from './apply';
-import { type ActionCandidate, legalCandidates } from './shared';
+import { type ActionCandidate, legalCandidates, levelFirstCastBonus, levelFirstSetupBonus } from './shared';
 import { settleEnemyTurns } from './t3';
 import { describeAction } from '../utils/reason';
 import { hashString } from '../utils/rng';
@@ -300,6 +300,7 @@ function pickRolloutAction(
     let s = fastScore(after);
     const isAbilityCast =
       c.kind === 'activate-ability' || c.kind === 'ability-target';
+    if (c.kind === 'move') s += levelFirstSetupBonus(after);
     // Encourage occasional ability casts so rollouts explore ability use.
     if (isAbilityCast) {
       s += rng() * 3; // jitter — keeps abilities competitive on ties
@@ -310,6 +311,8 @@ function pickRolloutAction(
       // at 40% of those verified cast points. A flat bump (not jitter) when
       // the board is thick makes rollouts actually explore the cast lines.
       if (TYLER_PRIORS && state.pieces.length >= 6) s += 3;
+      // The level-first five (2026-09-19): what the cast paid for this turn.
+      s += levelFirstCastBonus(state, after, c.abilityId!);
       // A transform that gives the new form an advancing move when the rook
       // had none is the key out of the trap — make rollouts take it.
       if (
@@ -522,6 +525,12 @@ function candidateToAction(c: ActionCandidate): BotAction {
   if (c.kind === 'squire-move') return { kind: 'squire-move', target: c.target!, ...(c.from ? { from: c.from } : {}) };
   if (c.kind === 'activate-ability')
     return { kind: 'activate-ability', abilityId: c.abilityId! };
+  // Two-tap cards carry their second tap. (Magnet deliberately does NOT: its
+  // candidates have always resolved to the farthest landing here, and every
+  // stored measurement was taken that way.)
+  if (c.target2 && c.abilityId !== 'magnet') {
+    return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, target2: c.target2 };
+  }
   return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target! };
 }
 
