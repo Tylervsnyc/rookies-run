@@ -83,6 +83,17 @@ export function applyBotAction(state: BoardState, action: BotAction): BoardState
             : applyAbilityCancel(next);
           if (next.activeAbility) next = applyAbilityCancel(next);
         }
+        // Puppet and Eruption are two-step too (guard then its move; vent then
+        // the flood square). Resolve the second tap from target2; without one
+        // take the first legal second tap so no bot ever sees an armed card.
+        if (
+          (action.abilityId === 'puppet' || action.abilityId === 'eruption') &&
+          next.activeAbility?.id === action.abilityId
+        ) {
+          const second = action.target2 ?? abilityLegalMoves(next, action.abilityId)[0];
+          next = second ? applyAbilityTargeted(next, action.abilityId, second) : applyAbilityCancel(next);
+          if (next.activeAbility) next = applyAbilityCancel(next);
+        }
         // Boulder T4 owes a FREE second placement (each use drops 2). Resolve
         // it greedily here — nearest legal square to the king (else to
         // Rookie) — so the bot's action stays atomic and no bot ever sees an

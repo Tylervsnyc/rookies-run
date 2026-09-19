@@ -28,6 +28,15 @@ import {
   controlledAllyLegalMoves,
   convertTargets,
   coupTargets,
+  // The ability-first five of 2026-09-19.
+  canArmChain,
+  eruptionFloodsAll,
+  eruptionFloodSquares,
+  eruptionVents,
+  promoteTargets,
+  puppetDestinations,
+  puppetTargets,
+  raiseSpawnSquares,
   canRewind,
   isSmoked,
   latestRewindSnapshot,
@@ -358,6 +367,11 @@ export interface ActionCandidate {
   target?: Coord;
   /** squire-move only: WHICH controlled summon moves (several can coexist). */
   from?: Coord;
+  /**
+   * Second tap of a two-step card. Carried through to the BotAction for
+   * Puppet and Eruption only (see `candidateToAction` in mcts.ts).
+   */
+  target2?: Coord;
 }
 
 export function legalCandidates(
@@ -610,6 +624,64 @@ function candidatesForAbility(
       }
       return out;
     }
+    case 'promote': {
+      // One candidate per summon that can still climb (a handful at most).
+      for (const c of promoteTargets(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'promote', target: c });
+      }
+      return out;
+    }
+    case 'raise': {
+      // Free squares beside her (at most 8); empty when the grave is.
+      for (const c of raiseSpawnSquares(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'raise', target: c });
+      }
+      return out;
+    }
+    case 'puppet': {
+      // One candidate per (guard, destination). A queen alone has 20+ moves,
+      // so keep the ones that MATTER: every destination that kills (lava, or
+      // its own man at T3+), plus per guard the 3 quiet moves that carry it
+      // farthest from the king (the "pull the defender off" read). Cap 16.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      let n = 0;
+      for (const g of puppetTargets(state)) {
+        const dests = puppetDestinations(state, g);
+        const quiet = dests
+          .filter((d) => !d.kills)
+          .sort((a, b) => (king ? cheb(b.to, king) - cheb(a.to, king) : 0) || a.to.file - b.to.file || a.to.rank - b.to.rank)
+          .slice(0, 3);
+        for (const d of [...dests.filter((x) => x.kills), ...quiet]) {
+          out.push({ kind: 'ability-target', abilityId: 'puppet', target: g, target2: d.to });
+          if (++n >= 16) return out;
+        }
+      }
+      return out;
+    }
+    case 'eruption': {
+      // T3+: one candidate per vent (the whole flood). T1-T2: one per (vent,
+      // square), kept to squares that burn a guard or touch the king's flight
+      // set — lava anywhere else is a wasted charge. Cap 16.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      let n = 0;
+      for (const v of eruptionVents(state)) {
+        const flood = eruptionFloodSquares(state, v);
+        const matters = flood.filter((fl) => fl.burns || (king ? cheb(fl.square, king) <= 1 : false));
+        if (matters.length === 0) continue;
+        for (const fl of eruptionFloodsAll(owned.tier) ? matters.slice(0, 1) : matters) {
+          out.push({ kind: 'ability-target', abilityId: 'eruption', target: v, target2: fl.square });
+          if (++n >= 16) return out;
+        }
+      }
+      return out;
+    }
+    case 'chain':
+      // One candidate, and only when a capture on offer right now would
+      // chain (canArmChain) — the arm is wasted otherwise.
+      if (canArmChain(state)) out.push({ kind: 'activate-ability', abilityId: 'chain' });
+      return out;
     case 'hourglass':
       // One candidate. The rollouts run the real pawn-ai inside the
       // glass-turn — the first card that lets the bot wait without a move.
