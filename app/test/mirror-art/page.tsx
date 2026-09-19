@@ -4,8 +4,11 @@
  * scripts/_gen-mirror-art.ts). The pinned one lives in lib/run/ability-art.ts.
  */
 const OPTIONS = [
+  { n: 4, note: 'Round 2. Gem split by a seam of light: gold rook, rainbow twin. PINNED for now.' },
+  { n: 5, note: 'Round 2. Hall of mirrors inside a crystal: one rook, dozens of reflections.' },
+  { n: 6, note: 'Round 2. Half sapphire, half mirror. One rook straddles the seam.' },
   { n: 1, note: 'Standing looking-glass. Ivory rook in front, opal rook in the glass.' },
-  { n: 2, note: 'Two rooks across a pane. Reads the rule at a glance. PINNED for now.' },
+  { n: 2, note: 'Two rooks across a pane. Round 1.' },
   { n: 3, note: 'Compass mirror, cracked glass, a tower rising out of silver water.' },
 ];
 
@@ -14,7 +17,7 @@ export default function MirrorArtPage() {
     <div className="h-full overflow-auto bg-[#0f1b2d] text-white">
       <div className="mx-auto max-w-5xl px-4 py-6">
         <h1 className="text-2xl font-bold">Mirror card art</h1>
-        <p className="mt-1 text-sm text-white/70">Tell Claude the number you want. Option 2 is on the card right now.</p>
+        <p className="mt-1 text-sm text-white/70">Tell Claude the number you want. Option 4 is on the card right now.</p>
         <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
           {OPTIONS.map((o) => (
             <div key={o.n} className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10">

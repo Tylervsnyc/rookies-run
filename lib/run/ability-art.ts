@@ -41,6 +41,6 @@ export function artFile(id: AbilityId): string {
   if (id === 'rabies-dart') return 'rabies-dart-2.webp';
   if (id === 'freeze-ray') return 'freeze-ray-2.webp';
   if (id === 'become-king') return 'become-king-2.webp';
-  if (id === 'mirror') return 'mirror-2.webp';
+  if (id === 'mirror') return 'mirror-4.webp';
   return `${id}-1.webp`;
 }
