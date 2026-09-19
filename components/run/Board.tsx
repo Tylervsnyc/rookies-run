@@ -7,9 +7,9 @@ import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
-import { SACRIFICE_BLAST_TINTS, abilityPreviewFor, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
+import { SACRIFICE_BLAST_TINTS, abilityPreviewFor, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves, mirrorEchoMoves, mirrorRefusal } from '@/lib/run/abilities';
 import { decoyCapturer, isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
-import type { AbilityPreview, AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
+import type { AbilityPreview, AbilityTier, MirrorEchoMove, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
@@ -539,6 +539,23 @@ export function RunBoard({
   // every banked Ricochet line — all drawn BEFORE the tap that commits them.
   // Computed by the engine's own helpers, so the preview can never lie.
   const abilityPreview = useMemo(() => abilityPreviewFor(state), [state]);
+
+  // Mirror teaching layer. With an echo up and Rookie selected, every one of
+  // her legal moves knows where the echo lands and what it takes — read from
+  // the engine (`mirrorEchoMoves`, the geometry `applyMirrorEcho` resolves
+  // with). Capturing moves carry an always-on marker on HER destination (touch
+  // has no hover); hovering a destination draws the echo's slide and ghost.
+  const echoMoves = useMemo(
+    () => (selectedSquare === toSquare(state.rookie) && !state.activeAbility ? mirrorEchoMoves(state) : []),
+    [state, selectedSquare],
+  );
+  const mirrorBlocked = useMemo(() => mirrorRefusal(state)?.square ?? null, [state]);
+  const [hoverSquare, setHoverSquare] = useState<string | null>(null);
+  const boardBoxRef = useRef<HTMLDivElement | null>(null);
+  const trackHover = echoMoves.length > 0;
+  useEffect(() => {
+    if (!trackHover) setHoverSquare(null);
+  }, [trackHover]);
 
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};
@@ -1320,7 +1337,20 @@ export function RunBoard({
         // which would brake her into each corner. Linear, for her legs only.
         <style>{`[data-piece="${rookieSprite}"] { transition-timing-function: linear !important; }`}</style>
       )}
-      <div style={{ position: 'relative' }}>
+      <div
+        ref={boardBoxRef}
+        style={{ position: 'relative' }}
+        onPointerMove={trackHover ? (e) => {
+          if (e.pointerType !== 'mouse') return;
+          const box = boardBoxRef.current?.getBoundingClientRect();
+          if (!box || box.width === 0) return;
+          const file = Math.floor(((e.clientX - box.left) / box.width) * 8) + 1;
+          const rank = 8 - Math.floor(((e.clientY - box.top) / box.height) * 8);
+          const sq = file >= 1 && file <= 8 && rank >= 1 && rank <= 8 ? toSquare({ file, rank }) : null;
+          setHoverSquare((prev) => (prev === sq ? prev : sq));
+        } : undefined}
+        onPointerLeave={trackHover ? () => setHoverSquare(null) : undefined}
+      >
         <ChessPathBoard
           options={{
             id: 'rookies-run-board',
@@ -1455,6 +1485,14 @@ export function RunBoard({
         )}
         {decoyArrow && <DecoyArrow from={decoyArrow.from} to={decoyArrow.to} />}
         {abilityPreview && <AbilityPreviewOverlay preview={abilityPreview} />}
+        {(echoMoves.length > 0 || mirrorBlocked || state.activeAbility?.id === 'mirror') && state.status === 'playing' && (
+          <MirrorTeachOverlay
+            moves={echoMoves}
+            hoverSquare={hoverSquare}
+            showAxis={state.activeAbility?.id === 'mirror'}
+            blocked={mirrorBlocked}
+          />
+        )}
         {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (
           <SquareChip
             square={toSquare(state.rookie)}
@@ -2555,6 +2593,169 @@ function AbilityPreviewOverlay({ preview }: { preview: AbilityPreview }) {
         );
       })}
     </svg>
+  );
+}
+
+const RR_RAINBOW = 'conic-gradient(from 0deg, #f87171, #fbbf24, #4ade80, #38bdf8, #a78bfa, #f472b6, #f87171)';
+
+/**
+ * Mirror teaching overlay — never interactive, and it holds no geometry of its
+ * own: every square here comes from the engine (`mirrorEchoMoves` /
+ * `mirrorRefusal`).
+ *   - always on (Rookie selected, echo up): a rainbow pip on each of HER
+ *     destinations that makes the reflection take a piece; a gold crown badge
+ *     and ring when what it takes is the king.
+ *   - the hovered destination (and any king-taking one, so touch sees it too):
+ *     the echo's slide as a thin line, a ghost rook on its landing square, a
+ *     ring on the victim.
+ *   - Mirror card armed: a faint axis between the d and e files.
+ *   - Mirror refused: a faint crossed ring on the square that has no room.
+ */
+function MirrorTeachOverlay({
+  moves,
+  hoverSquare,
+  showAxis,
+  blocked,
+}: {
+  moves: MirrorEchoMove[];
+  hoverSquare: string | null;
+  showAxis: boolean;
+  blocked: Coord | null;
+}) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [cellPx, setCellPx] = useState(0);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const measure = () => setCellPx(el.getBoundingClientRect().width / 8);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const cx = (c: Coord) => c.file - 0.5;
+  const cy = (c: Coord) => 8 - c.rank + 0.5;
+  const cell = (c: Coord): React.CSSProperties => ({
+    position: 'absolute',
+    left: `${(c.file - 1) * 12.5}%`,
+    top: `${(8 - c.rank) * 12.5}%`,
+    width: '12.5%',
+    height: '12.5%',
+  });
+  const capturing = moves.filter((m) => m.victim);
+  // Drawn in full: the hovered move, plus every king-taking move.
+  const drawn = moves.filter((m) => m.land && (m.victim === 'king' || toSquare(m.dest) === hoverSquare));
+  const hovered = moves.find((m) => toSquare(m.dest) === hoverSquare);
+  return (
+    <div ref={rootRef} aria-hidden data-testid="mirror-teach" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+      <style>{`
+        @keyframes rrEchoKingPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+        @media (prefers-reduced-motion: reduce) { .rr-echo-king { animation: none !important; } }
+      `}</style>
+      <svg viewBox="0 0 8 8" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        {showAxis && (
+          <line data-testid="mirror-axis" x1={4} y1={0} x2={4} y2={8} stroke="rgba(221,214,254,0.95)" strokeWidth={0.06} strokeDasharray="0.18 0.14" />
+        )}
+        {blocked && (
+          <g data-testid="mirror-blocked" opacity={0.8}>
+            <circle cx={cx(blocked)} cy={cy(blocked)} r={0.3} fill="none" stroke="rgba(196,181,253,0.95)" strokeWidth={0.06} strokeDasharray="0.12 0.08" />
+            <line x1={cx(blocked) - 0.21} y1={cy(blocked) + 0.21} x2={cx(blocked) + 0.21} y2={cy(blocked) - 0.21} stroke="rgba(196,181,253,0.95)" strokeWidth={0.06} />
+          </g>
+        )}
+        {drawn.map((m) => (
+          <line
+            key={`l${toSquare(m.dest)}`}
+            x1={cx(m.from)}
+            y1={cy(m.from)}
+            x2={cx(m.land!)}
+            y2={cy(m.land!)}
+            stroke={m.victim === 'king' ? 'rgba(251,191,36,0.95)' : 'rgba(196,181,253,0.95)'}
+            strokeWidth={0.07}
+            strokeLinecap="round"
+            strokeDasharray="0.2 0.12"
+          />
+        ))}
+      </svg>
+      {drawn.map((m) => (
+        <div
+          key={`g${toSquare(m.dest)}`}
+          data-testid="mirror-ghost"
+          data-square={toSquare(m.land!)}
+          data-victim={m.victim ?? ''}
+          style={{
+            ...cell(m.land!),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            borderRadius: 6,
+            boxShadow: m.victim === 'king'
+              ? 'inset 0 0 0 4px rgba(251,191,36,1), inset 0 0 0 6px rgba(220,38,38,0.95), inset 0 0 18px rgba(251,191,36,0.8)'
+              : m.victim
+                ? 'inset 0 0 0 4px rgba(220,38,38,0.95)'
+                : 'inset 0 0 0 3px rgba(196,181,253,0.95)',
+          }}
+        >
+          {cellPx > 0 && (
+            <div style={{ opacity: m.victim ? 0.5 : 0.6 }}>
+              <PieceBlocks piece={ALLY_BLOCK.rook} blockSize={3} fit={Math.floor(cellPx * ALLY_CELL_FIT)} />
+            </div>
+          )}
+        </div>
+      ))}
+      {drawn.filter((m) => m.victim === 'king').map((m) => (
+        <SquareChip
+          key={`k${toSquare(m.dest)}`}
+          square={toSquare(m.land!)}
+          label="Takes the king"
+          palette={{ color: '#5b3a00', background: 'rgba(253,230,138,0.97)', border: 'rgba(161,98,7,0.9)' }}
+        />
+      ))}
+      {hovered && !hovered.land && (
+        <SquareChip
+          square={toSquare(hovered.from)}
+          label="Stays put"
+          palette={{ color: '#4c1d95', background: 'rgba(233,213,255,0.95)', border: 'rgba(168,85,247,0.9)' }}
+        />
+      )}
+      {capturing.map((m) => {
+        const king = m.victim === 'king';
+        return (
+          <div key={`m${toSquare(m.dest)}`} style={cell(m.dest)}>
+            {king && (
+              <div style={{ position: 'absolute', inset: 0, borderRadius: 6, boxShadow: 'inset 0 0 0 3px rgba(251,191,36,1), inset 0 0 14px rgba(251,191,36,0.7)' }} />
+            )}
+            <div
+              className={king ? 'rr-echo-king' : undefined}
+              data-testid="mirror-capture-marker"
+              data-square={toSquare(m.dest)}
+              data-victim={m.victim ?? ''}
+              style={{
+                position: 'absolute',
+                top: '5%',
+                right: '5%',
+                width: king ? '46%' : '30%',
+                height: king ? '46%' : '30%',
+                borderRadius: '50%',
+                background: RR_RAINBOW,
+                border: king ? '2px solid #fde68a' : '1.5px solid #fff',
+                boxShadow: king ? '0 0 10px rgba(251,191,36,0.95)' : '0 1px 3px rgba(0,0,0,0.45)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                animation: king ? 'rrEchoKingPulse 1s ease-in-out infinite' : undefined,
+              }}
+            >
+              {king && (
+                <svg viewBox="0 0 24 24" width="72%" height="72%" aria-hidden>
+                  <path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8z" fill="#fff" stroke="#5b3a00" strokeWidth="1.6" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

@@ -205,6 +205,23 @@ ford); **R4** stone is a mirror for Ricochet, lava is not.
 | 25 | **Ricochet** (`ricochet`) | Instant: her NEXT rook move may bank once (T3+: twice) — slide to the square before a stone, turn left or right, keep sliding; capture at the end, the king included. Every banked line is drawn on the board while armed. Lava, pieces, summons and the board edge never bank. Each leg must slide at least one square. Rook form only; spent by her next rook-form move, banked or not. Refused when no banked line exists (a charge is never armed into thin air). 1/1/2/2/3 uses. | He only fears her straight lines (the banked squares exist on HER turn only), so a banked line is a line he does not see coming. Boulder places the rail. | The Baffle: none 0/8, ricochet:1 8/8 |
 | 26 | **Avalanche** (`avalanche`) | Two taps: a loose stone, then the square beside it — that names N/S/E/W, and arrows show where EVERY stone lands for each direction first. Every LOOSE stone (not `fixed`, not lava) slides one square that way, far side first. Pawns in the way are crushed (T3+: knights and bishops too; never a queen or the king). Never onto the king, Rookie, a summon, a drone, the straw or a snare. Into lava: a ford (R3). T4+: the whole slide runs twice. A direction that moves nothing or strands her is not offered. 1/1/2/2/2 uses. Free action. | A board-wide Shove that needs no adjacency — lids drop on his flee squares, doors open in walls, fords appear, all in one motion. Authors control it with `fixed`. | The Scree: none 0/8, avalanche:1 8/8 |
 
+**Mirror is taught on the board (2026-09-19, after Tyler's playtest: "i don't
+get it" -> "omg that's sooo cool").** Rules unchanged; all of it reads the
+engine (`mirrorEchoMoves` / `mirrorRefusal`, built on `mirrorEchoLanding`, the
+geometry `applyMirrorEcho` resolves with), never its own geometry:
+- Echo up + Rookie selected: a rainbow pip on each of HER destinations that
+  makes the reflection capture; a pulsing gold crown badge + gold ring when it
+  takes the king, and that move's slide line, ghost rook and "Takes the king"
+  chip are drawn without hover (touch). Hover any destination (mouse) to see
+  the ghost echo, its slide and its victim; "Stays put" when it cannot move.
+- Card refused because the mirror square is not empty ground: the rack status
+  line says "No room for a reflection there." and the square gets a faint
+  crossed ring. Echo up: the status line reads "Reflection · N moves".
+- Card armed: the mirror square is ringed violet and a dashed axis runs
+  between the d and e files.
+- Copy leads with the rule: "A reflection appears across the board. Every move
+  you make, it makes flipped."
+
 **Where the two fives meet (merge, 2026-09-19):** Promote may tap a Mirror
 echo (it stays an echo — only its type, so its Sacrifice blast, changes) and a
 Raised piece. An armed Chain that her own move did not spend fires on the

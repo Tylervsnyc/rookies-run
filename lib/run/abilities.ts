@@ -439,7 +439,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Mirror',
     activation: 'targeted',
     typeLine: 'Targeted · Summon',
-    description: 'A mirror Rookie appears across the board and copies every move she makes, flipped.',
+    description: 'A reflection appears across the board. Every move you make, it makes flipped.',
   },
   ricochet: {
     id: 'ricochet',
@@ -765,7 +765,7 @@ const HOW: Record<AbilityId, string> = {
   chain: 'Tap card, then capture this turn. The tinted pieces die with the one you take.',
   castle: 'Tap card, then tap either glowing square. He lands on one, you on the other. It is your move for the turn.',
   catapult: 'Tap card, tap a loose stone or a summon right beside you, then tap where it lands. It flies straight away from you, over anything.',
-  mirror: 'Tap card, then tap the glowing square across the board. The echo copies your moves, flipped. You never tap it.',
+  mirror: 'A reflection appears across the board. Every move you make, it makes flipped. Tap card, then the glowing square. You never tap it. It takes what it lands on, the king included.',
   ricochet: 'Tap card. Your next rook move may bank off a stone. The bent lines are drawn on the board before you move.',
   avalanche: 'Tap card, tap a loose stone, then tap the square beside it. Every loose stone slides that way. The arrows show where each one lands.',
 };
@@ -1024,8 +1024,8 @@ function whatForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Fling a stone or summon beside you 2 to 4 squares, over anything. A stone crushes a pawn; in lava it makes a ford.';
       return 'Fling a stone or summon beside you 2 to 4 squares, over anything. A stone that lands in lava makes a ford.';
     case 'mirror':
-      if (tier === 5) return 'A mirror rook appears across the board and copies your every move, flipped, all level.';
-      return `A mirror rook appears across the board and copies your next ${mirrorMoves(tier)} moves, flipped. It takes what it lands on.`;
+      if (tier === 5) return 'A reflection appears across the board. Every move you make, it makes flipped, all level. It takes what it lands on.';
+      return `A reflection appears across the board. Every move you make, it makes flipped, for ${mirrorMoves(tier)} moves. It takes what it lands on.`;
     case 'ricochet':
       if (tier >= 3) return 'Your next rook move may bank off stone twice. Lava and pieces never bank.';
       return 'Your next rook move may bank once: slide to a stone, turn, keep sliding. Lava and pieces never bank.';
@@ -5192,6 +5192,51 @@ export function mirrorEchoLanding(state: BoardState, target: Coord): Coord | nul
   return echoLandingOn(board, echo, state.rookie, target);
 }
 
+/** One of her legal moves, and what the echo does because of it. */
+export interface MirrorEchoMove {
+  /** HER destination square. */
+  dest: Coord;
+  /** Where the echo stands now. */
+  from: Coord;
+  /** Where the echo ends up (null = it cannot move: blocked, or a banked line). */
+  land: Coord | null;
+  /** What the echo captures by landing there. */
+  victim: 'king' | 'piece' | null;
+}
+
+/**
+ * The teaching preview: for EVERY legal move she has right now, where the echo
+ * lands and what it takes. Built on `mirrorEchoLanding` — the same geometry
+ * `applyMirrorEcho` resolves with — so the board can never promise a capture
+ * the engine will not make. [] when no echo is up or it is not her turn.
+ */
+export function mirrorEchoMoves(state: BoardState): MirrorEchoMove[] {
+  const echo = mirrorEchoOf(state);
+  if (!echo || state.status !== 'playing' || state.turn !== 'rookie') return [];
+  const from = { file: echo.file, rank: echo.rank };
+  return rookieLegalMoves(state).map((dest) => {
+    const land = mirrorEchoLanding(state, dest);
+    // Her own capture on `dest` is resolved first, so that piece is not the echo's.
+    const hit = land && !coordEq(land, dest)
+      ? state.pieces.find((p) => p.file === land.file && p.rank === land.rank)
+      : undefined;
+    return { dest, from, land, victim: hit ? (hit.type === 'king' ? 'king' : 'piece') : null };
+  });
+}
+
+/**
+ * Why the Mirror card is refused right now, in words (null = it is castable,
+ * not owned, spent, or an echo is already up). Mirror only fires when her
+ * mirror square is empty ground.
+ */
+export function mirrorRefusal(state: BoardState): { square: Coord; text: string } | null {
+  const owned = state.abilities.find((a) => a.id === 'mirror');
+  if (!owned || owned.usesLeftThisLevel === 0 || mirrorEchoOf(state)) return null;
+  if (state.status !== 'playing' || state.turn !== 'rookie' || state.activeAbility) return null;
+  if (mirrorTargets(state).length > 0) return null;
+  return { square: { file: 9 - state.rookie.file, rank: state.rookie.rank }, text: 'No room for a reflection there.' };
+}
+
 /** Every square the echo could land on after one of her legal moves right now. */
 export function mirrorEchoReach(state: BoardState): Coord[] {
   if (!mirrorEchoOf(state)) return [];
@@ -6966,6 +7011,18 @@ export function cardStatusFor(state: BoardState): { label: string; text: string 
   if (state.status !== 'playing') return null;
   if (state.chainArmed) {
     return { label: 'Chain armed', text: 'Your next capture this turn takes the tinted pieces with it.' };
+  }
+  // Mirror refused: say why (its mirror square is not empty ground).
+  const refused = mirrorRefusal(state);
+  if (refused) return { label: 'Mirror', text: refused.text };
+  // Echo up: say the rule, and how long it lasts.
+  const echo = mirrorEchoOf(state);
+  if (echo) {
+    const n = echo.echoMovesLeft;
+    return {
+      label: n === undefined ? 'Reflection' : `Reflection · ${n} ${n === 1 ? 'move' : 'moves'}`,
+      text: 'Every move you make, it makes flipped.',
+    };
   }
   const owned = state.abilities.find((a) => a.id === 'raise');
   const grave = graveOf(state);

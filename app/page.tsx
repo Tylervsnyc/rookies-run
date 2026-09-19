@@ -2413,7 +2413,7 @@ export default function RookiesRunPage() {
                   : state.activeAbility.id === 'castle'
                   ? 'tap either glowing square. He lands on one, you on the other'
                   : state.activeAbility.id === 'mirror'
-                  ? 'tap the glowing square to place the echo'
+                  ? 'tap the glowing square'
                   : state.activeAbility.id === 'catapult'
                   ? state.activeAbility.pickFrom
                     ? 'tap where it lands'
