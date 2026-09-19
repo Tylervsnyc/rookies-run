@@ -69,7 +69,9 @@ import {
   // The ability-first five of 2026-09-19 (promote / puppet / raise / eruption / chain).
   cardStatusFor,
   consequenceTint,
+  eruptionVents,
   fiveWithNoTarget,
+  puppetDestinations,
   puppetTargets,
   targetingHintFor,
   magnetTargets as computeMagnetTargets,
@@ -1243,6 +1245,14 @@ export default function RookiesRunPage() {
     if (state.activeAbility?.id === 'coup') return coupTargets(state);
     if (state.activeAbility?.id === 'puppet' && state.activeAbility.step === 'pick-enemy')
       return puppetTargets(state);
+    // Lava is painted OVER the square styles, so a dot or a wash on it is
+    // invisible: Eruption's vents and a Puppet's lava destinations ring instead.
+    if (state.activeAbility?.id === 'eruption' && !state.activeAbility.eruptionFrom)
+      return eruptionVents(state);
+    if (state.activeAbility?.id === 'puppet' && state.activeAbility.puppetFrom)
+      return puppetDestinations(state, state.activeAbility.puppetFrom)
+        .filter((d) => d.kills === 'lava')
+        .map((d) => d.to);
     return undefined;
   }, [state]);
 
