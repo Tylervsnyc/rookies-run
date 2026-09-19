@@ -29,8 +29,6 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   chequer: 'boulder-1.webp',
   castle: 'become-king-2.webp',
   catapult: 'boulder-1.webp',
-  ricochet: 'magnet-1.webp',
-  avalanche: 'boulder-1.webp',
 };
 
 export function artFile(id: AbilityId): string {
