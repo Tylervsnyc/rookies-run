@@ -66,6 +66,10 @@ interface BoardProps {
    *  tinted in that summon's own color so the player sees exactly what
    *  explodes (and whose blast it is) BEFORE tapping. */
   blastPreview?: SacrificeBlastGroup[];
+  /** Puppet / Eruption / armed Chain: squares that are about to change get a
+   *  lava-red wash, guards that are about to die get a capture ring — the
+   *  consequence is on the board before the tap (see consequenceTint). */
+  abilityTint?: { wash: Coord[]; kills: Coord[] };
   /** Transient Sacrifice detonation VFX — burst on the summon square plus a
    *  hit flash on every square the blast captured. */
   sacrificeFx?: { summonSq: string; capturedSqs: string[]; id: number } | null;
@@ -210,6 +214,7 @@ export function RunBoard({
   abilityTier,
   convertTargets,
   blastPreview,
+  abilityTint,
   sacrificeFx = null,
   allyPoofFx = null,
   onSquareClick,
@@ -665,6 +670,30 @@ export function RunBoard({
       }
     }
 
+    // Consequence tint (Puppet / Eruption / armed Chain): a lava-red wash on
+    // every square about to change, a red ring on every guard about to die.
+    if (abilityTint) {
+      for (const c of abilityTint.wash) {
+        const sq = toSquare(c);
+        const prev = styles[sq] ?? {};
+        const glow = 'inset 0 0 0 3px rgba(234,88,12,0.85)';
+        styles[sq] = {
+          ...prev,
+          backgroundColor: 'rgba(239, 68, 68, 0.42)',
+          boxShadow: prev.boxShadow ? `${prev.boxShadow}, ${glow}` : glow,
+        };
+      }
+      for (const c of abilityTint.kills) {
+        const sq = toSquare(c);
+        const prev = styles[sq] ?? {};
+        const ring = 'radial-gradient(circle, transparent 60%, rgba(185,28,28,0.95) 60%)';
+        styles[sq] = {
+          ...prev,
+          backgroundImage: prev.backgroundImage ? `${ring}, ${prev.backgroundImage}` : ring,
+        };
+      }
+    }
+
     // Dart-style abilities (freeze ray, poison dart, rabies dart) — no
     // target-circle highlights; the cursor + piece tap is enough.
 
@@ -768,7 +797,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, abilityTint, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Decoy: the piece that WILL take the mark, so the lure is plannable.
   const decoyArrow = useMemo(

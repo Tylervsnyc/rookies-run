@@ -66,6 +66,12 @@ import {
   canRewind,
   convertTargets as computeConvertTargets,
   coupTargets,
+  // The ability-first five of 2026-09-19 (promote / puppet / raise / eruption / chain).
+  cardStatusFor,
+  consequenceTint,
+  fiveWithNoTarget,
+  puppetTargets,
+  targetingHintFor,
   magnetTargets as computeMagnetTargets,
   maxUsesForTier,
   refreshAbilityUses,
@@ -1235,8 +1241,15 @@ export default function RookiesRunPage() {
     if (state.activeAbility?.id === 'magnet' && state.activeAbility.step === 'pick-enemy')
       return computeMagnetTargets(state);
     if (state.activeAbility?.id === 'coup') return coupTargets(state);
+    if (state.activeAbility?.id === 'puppet' && state.activeAbility.step === 'pick-enemy')
+      return puppetTargets(state);
     return undefined;
   }, [state]);
+
+  // Puppet / Eruption / an armed Chain: the squares that change and the guards
+  // that die are tinted BEFORE the tap that commits them. Same functions the
+  // engine resolves with — the preview can never lie.
+  const abilityTint = useMemo(() => consequenceTint(state) ?? undefined, [state]);
 
   // Sacrifice armed: every summon that could detonate, with its piece-shaped
   // blast, so the player sees what explodes (and whose blast it is) before
@@ -1257,6 +1270,8 @@ export default function RookiesRunPage() {
       if (a.id === 'sacrifice' && sacrificeTargets(state).length === 0) out.push('sacrifice');
       if (a.id === 'rewind' && a.usesLeftThisLevel !== 0 && !canRewind(state)) out.push('rewind');
     }
+    // The five of 2026-09-19 gray out the same way when they have no target.
+    out.push(...fiveWithNoTarget(state));
     return out;
   }, [state]);
 
@@ -2297,6 +2312,7 @@ export default function RookiesRunPage() {
             abilityTier={activeAbilityTier}
             convertTargets={convertTargets}
             blastPreview={sacrificeBlast}
+            abilityTint={abilityTint}
             sacrificeFx={sacrificeFx}
             allyPoofFx={allyPoofFx}
             onSquareClick={onSquareClick}
@@ -2315,7 +2331,7 @@ export default function RookiesRunPage() {
           onActivate={onActivateAbility}
           infoId={infoAbilityId}
           onToggleInfo={toggleInfoAbility}
-          status={smokeStatus}
+          status={smokeStatus ?? cardStatusFor(state)}
           hint={state.status === 'playing' && !state.activeAbility ? 'Tap Rookie to see her moves.' : null}
         />
         </div>
@@ -2342,7 +2358,7 @@ export default function RookiesRunPage() {
                 {blurbDetailForTier(state.activeAbility.id, activeAbilityTier ?? 1).what}
               </span>
               {ABILITY_DEFS[state.activeAbility.id].name}:{' '}
-              {state.activeAbility.step === 'pick-enemy'
+              {targetingHintFor(state) ?? (state.activeAbility.step === 'pick-enemy'
                 ? state.activeAbility.id === 'magnet'
                   ? 'tap an enemy on your line'
                   : state.activeAbility.id === 'coup'
@@ -2358,7 +2374,7 @@ export default function RookiesRunPage() {
                     ? 'tap the summon to detonate — its tinted squares are the blast'
                     : ABILITY_DEFS[state.activeAbility.id].activation === 'targeted'
                       ? 'tap an empty square'
-                      : 'tap a highlighted square'}
+                      : 'tap a highlighted square')}
             </span>
             <button
               type="button"
