@@ -4935,6 +4935,12 @@ const LAB_ABILITIES: ReadonlyArray<string> = [
   'vanguard',
   'swap',
   'sacrifice',
+  // The ability-first five of 2026-09-19 (testing). L4 below is their room.
+  'promote',
+  'puppet',
+  'raise',
+  'eruption',
+  'chain',
   // two finishers so a slate can't brick the run
   'surge',
   'knight-hop',
@@ -4985,6 +4991,20 @@ const RUN_ABILITY_LAB: RunDef = {
         moveLimit: 10,
         hazards: [X(2, 8), X(6, 8), X(2, 7), X(6, 7), X(3, 7), X(5, 7)],
         kingPen: ['c8', 'd8', 'e8', 'd7'],
+      },
+    ),
+    // L4 — CALDERA (2026-09-19). The room for promote / puppet / raise /
+    // eruption / chain. Two lava vents (d7, f7) sit under his flee squares:
+    // Eruption floods d8 / f8; the g5 knight's jump to f7 is a Puppet burn.
+    // c5-d4-e5 is a pawn chain for Chain; anything she eats is a Raise, and
+    // whatever stands up is a body Promote can climb.
+    make(
+      4,
+      [pawn(3, 5), pawn(4, 4), pawn(5, 5), knight(7, 5), bishop(2, 6), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 8), X(7, 8), LAVA(4, 7), LAVA(6, 7)],
+        kingPen: ['d8', 'e8', 'f8', 'e7'],
       },
     ),
   ],
