@@ -6,9 +6,9 @@ import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
-import { SACRIFICE_BLAST_TINTS, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
+import { SACRIFICE_BLAST_TINTS, abilityPreviewFor, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
 import { decoyCapturer, isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
-import type { AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
+import type { AbilityPreview, AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
@@ -508,6 +508,12 @@ export function RunBoard({
     return () => clearTimeout(t);
   }, [stunCause]);
 
+  // The level-first five (2026-09-19): castle landings, the mirror square and
+  // the echo's reach, catapult crush / ford squares, every avalanche slide and
+  // every banked Ricochet line — all drawn BEFORE the tap that commits them.
+  // Computed by the engine's own helpers, so the preview can never lie.
+  const abilityPreview = useMemo(() => abilityPreviewFor(state), [state]);
+
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};
 
@@ -665,6 +671,21 @@ export function RunBoard({
       }
     }
 
+    // Ability preview marks — a quiet wash per consequence: gold = a landing
+    // square, red = something is crushed there, blue = a ford opens there,
+    // violet = the Mirror square / a square the echo can reach.
+    if (abilityPreview) {
+      for (const m of abilityPreview.marks) {
+        const sq = toSquare(m.square);
+        const prev = styles[sq] ?? {};
+        const ring = PREVIEW_MARK_RING[m.tone];
+        styles[sq] = {
+          ...prev,
+          boxShadow: prev.boxShadow ? `${prev.boxShadow}, ${ring}` : ring,
+        };
+      }
+    }
+
     // Dart-style abilities (freeze ray, poison dart, rabies dart) — no
     // target-circle highlights; the cursor + piece tap is enough.
 
@@ -768,7 +789,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, abilityPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Decoy: the piece that WILL take the mark, so the lure is plannable.
   const decoyArrow = useMemo(
@@ -1375,6 +1396,7 @@ export function RunBoard({
           </div>
         )}
         {decoyArrow && <DecoyArrow from={decoyArrow.from} to={decoyArrow.to} />}
+        {abilityPreview && <AbilityPreviewOverlay preview={abilityPreview} />}
         {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (
           <SquareChip
             square={toSquare(state.rookie)}
@@ -1848,7 +1870,7 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
-  if (fx.kind === 'shove') {
+  if (fx.kind === 'shove' || fx.kind === 'catapult' || fx.kind === 'avalanche') {
     // A stone rolls one square from where it stood to where it lands, with a
     // dust ring at the landing. (The lava under it re-renders at once; this
     // is the beat that says "it MOVED, it did not disappear".)
@@ -2008,7 +2030,13 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
-  if (fx.kind === 'bodyguard' || fx.kind === 'summon-knight') {
+  if (
+    fx.kind === 'bodyguard' ||
+    fx.kind === 'summon-knight' ||
+    fx.kind === 'mirror' ||
+    fx.kind === 'castle' ||
+    fx.kind === 'ricochet'
+  ) {
     // Rainbow ring blooms on the spawn square.
     const k = Math.floor(fx.id);
     return (
@@ -2385,6 +2413,93 @@ function DizzyIcon() {
  * piece to the mark. Pure overlay (never takes taps). Board coordinates: file
  * a..h left to right, rank 8 at the top (same as SquareChip).
  */
+/** Inset rings for the ability-preview marks (see abilityPreviewFor). */
+const PREVIEW_MARK_RING: Record<AbilityPreview['marks'][number]['tone'], string> = {
+  land: 'inset 0 0 0 4px rgba(251,191,36,0.95), inset 0 0 16px rgba(251,191,36,0.6)',
+  crush: 'inset 0 0 0 4px rgba(239,68,68,0.95), inset 0 0 16px rgba(239,68,68,0.55)',
+  ford: 'inset 0 0 0 4px rgba(56,189,248,0.95), inset 0 0 16px rgba(56,189,248,0.6)',
+  echo: 'inset 0 0 0 3px rgba(167,139,250,0.85)',
+};
+
+/** One colour per avalanche direction; gold for the king's hop, white for hers. */
+const PREVIEW_ARROW_COLOR: Record<AbilityPreview['arrows'][number]['tone'], string> = {
+  N: 'rgba(56,189,248,1)',
+  E: 'rgba(251,191,36,1)',
+  S: 'rgba(244,114,182,1)',
+  W: 'rgba(74,222,128,1)',
+  king: 'rgba(251,191,36,1)',
+  rookie: 'rgba(255,255,255,1)',
+};
+
+/**
+ * Arrows (castle hops, avalanche slides) and bent lines (banked Ricochet
+ * paths) for the armed card. Pure SVG over the board, never interactive.
+ */
+function AbilityPreviewOverlay({ preview }: { preview: AbilityPreview }) {
+  const cx = (c: Coord) => c.file - 0.5;
+  const cy = (c: Coord) => 8 - c.rank + 0.5;
+  const tones = [...new Set(preview.arrows.map((a) => a.tone))];
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 8 8"
+      preserveAspectRatio="none"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}
+    >
+      <defs>
+        {tones.map((t) => (
+          <marker key={t} id={`rr-preview-head-${t}`} viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill={PREVIEW_ARROW_COLOR[t]} />
+          </marker>
+        ))}
+      </defs>
+      {preview.arrows.map((a, i) => {
+        const x1 = cx(a.from);
+        const y1 = cy(a.from);
+        const x2 = cx(a.to);
+        const y2 = cy(a.to);
+        const len = Math.hypot(x2 - x1, y2 - y1) || 1;
+        // Several directions can leave one stone: nudge each arrow sideways a
+        // touch so they never draw on top of one another.
+        const off = a.tone === 'N' || a.tone === 'E' ? 0.12 : a.tone === 'S' || a.tone === 'W' ? -0.12 : 0;
+        const nx = (-(y2 - y1) / len) * off;
+        const ny = ((x2 - x1) / len) * off;
+        return (
+          <line
+            key={i}
+            x1={x1 + nx}
+            y1={y1 + ny}
+            x2={x2 + nx - ((x2 - x1) / len) * 0.2}
+            y2={y2 + ny - ((y2 - y1) / len) * 0.2}
+            stroke={PREVIEW_ARROW_COLOR[a.tone]}
+            strokeWidth={0.1}
+            strokeLinecap="round"
+            markerEnd={`url(#rr-preview-head-${a.tone})`}
+          />
+        );
+      })}
+      {preview.paths.map((p, i) => {
+        const end = p.squares[p.squares.length - 1];
+        const color = p.capture ? 'rgba(239,68,68,0.95)' : 'rgba(125,211,252,0.95)';
+        return (
+          <g key={`p${i}`}>
+            <polyline
+              points={p.squares.map((c) => `${cx(c)},${cy(c)}`).join(' ')}
+              fill="none"
+              stroke={color}
+              strokeWidth={0.07}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeDasharray="0.22 0.12"
+            />
+            <circle cx={cx(end)} cy={cy(end)} r={0.16} fill={color} stroke="#fff" strokeWidth={0.04} />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 function DecoyArrow({ from, to }: { from: Coord; to: Coord }) {
   const cx = (c: Coord) => c.file - 0.5;
   const cy = (c: Coord) => 8 - c.rank + 0.5;

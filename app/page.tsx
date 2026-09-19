@@ -64,6 +64,11 @@ import {
   sacrificeBlastPreview,
   swapTargets,
   canRewind,
+  canRicochet,
+  castleTargets,
+  mirrorTargets,
+  catapultSources,
+  avalancheStones,
   convertTargets as computeConvertTargets,
   coupTargets,
   magnetTargets as computeMagnetTargets,
@@ -623,6 +628,11 @@ export default function RookiesRunPage() {
       scarecrow: 600,
       gauntlet: 800,
       chequer: 700,
+      castle: 600,
+      catapult: 600,
+      mirror: 600,
+      ricochet: 600,
+      avalanche: 600,
     };
     const t = setTimeout(() => setAbilityFx(null), durations[abilityFx.kind]);
     return () => clearTimeout(t);
@@ -1256,6 +1266,13 @@ export default function RookiesRunPage() {
       if (a.id === 'swap' && swapTargets(state).length === 0) out.push('swap');
       if (a.id === 'sacrifice' && sacrificeTargets(state).length === 0) out.push('sacrifice');
       if (a.id === 'rewind' && a.usesLeftThisLevel !== 0 && !canRewind(state)) out.push('rewind');
+      // The level-first five: same reason — gray a card with nothing to act on.
+      if (a.usesLeftThisLevel === 0 || state.activeAbility) continue;
+      if (a.id === 'castle' && castleTargets(state).length === 0) out.push('castle');
+      if (a.id === 'mirror' && mirrorTargets(state).length === 0) out.push('mirror');
+      if (a.id === 'catapult' && catapultSources(state).length === 0) out.push('catapult');
+      if (a.id === 'avalanche' && avalancheStones(state).length === 0) out.push('avalanche');
+      if (a.id === 'ricochet' && !canRicochet(state)) out.push('ricochet');
     }
     return out;
   }, [state]);
@@ -2352,6 +2369,18 @@ export default function RookiesRunPage() {
                   ? 'tap the square it lands on'
                   : state.activeAbility.id === 'shove'
                   ? 'tap a stone beside you'
+                  : state.activeAbility.id === 'castle'
+                  ? 'tap either glowing square. He lands on one, you on the other'
+                  : state.activeAbility.id === 'mirror'
+                  ? 'tap the glowing square to place the echo'
+                  : state.activeAbility.id === 'catapult'
+                  ? state.activeAbility.pickFrom
+                    ? 'tap where it lands'
+                    : 'tap a loose stone or a summon right beside you'
+                  : state.activeAbility.id === 'avalanche'
+                  ? state.activeAbility.pickFrom
+                    ? 'tap the square beside it. Every loose stone slides that way'
+                    : 'tap a loose stone. The arrows show every slide'
                   : state.activeAbility.id === 'swap'
                   ? 'tap the summon to swap with'
                   : state.activeAbility.id === 'sacrifice'
