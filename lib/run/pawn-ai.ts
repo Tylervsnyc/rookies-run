@@ -1571,7 +1571,13 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
       },
     };
     // Mark this attacker as having "acted" so it isn't re-picked this turn.
-    const nextMoved = [...state.enemyMovedSquares, attackerSquare];
+    // coordKey, NOT the algebraic attackerSquare above: the exclude set is
+    // keyed "file,rank", so "d6" never matched and one bounced queen was
+    // re-picked for the whole enemy phase (Tyler's endless run, 2026-09-18).
+    const nextMoved = [
+      ...state.enemyMovedSquares,
+      coordKey({ file: action.mover.file, rank: action.mover.rank }),
+    ];
     if (nextMoved.length >= budget) return endTurn(withFx);
     return { ...withFx, turn: 'enemy', enemyMovedSquares: nextMoved };
   }
