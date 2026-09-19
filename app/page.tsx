@@ -94,6 +94,7 @@ import {
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
 import { isUnwinnable } from '@/lib/run/solver';
+import { useRicochetTravel } from '@/components/run/useRicochetTravel';
 import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_FX_MS, ENEMY_TICK_MS, PIECE_SLIDE_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
@@ -476,6 +477,10 @@ export default function RookiesRunPage() {
     [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.ladderDifficulty, meta.loadout, meta.testkit, meta.endless],
   );
   const [state, setState] = useState<BoardState>(initial.state);
+  // A banked Ricochet move is walked leg by leg on the board. Until she lands,
+  // nothing downstream of the move may show: no enemy / ally / drone tick, no
+  // capture sound, no win, no input.
+  const ricochetTravelling = useRicochetTravel(state).travelling;
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
   // Ability charges as they stood when the CURRENT level began. A retry
   // restores this snapshot (see abilitiesForRetry): a one-charge finisher
@@ -932,30 +937,30 @@ export default function RookiesRunPage() {
   // count; keying on the count alone left the phase hanging forever, and a
   // hung enemy phase means Rookie can't move and no ability can activate.
   useEffect(() => {
-    if (state.turn !== 'enemy' || state.status !== 'playing') return;
+    if (state.turn !== 'enemy' || state.status !== 'playing' || ricochetTravelling) return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'enemy' && s.status === 'playing' ? stepEnemyTurn(s) : s));
     }, ENEMY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state]);
+  }, [state, ricochetTravelling]);
 
   // Ally phase — tick one ally at a time so each move animates.
   useEffect(() => {
-    if (state.turn !== 'allies' || state.status !== 'playing') return;
+    if (state.turn !== 'allies' || state.status !== 'playing' || ricochetTravelling) return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'allies' && s.status === 'playing' ? stepAllyTurn(s) : s));
     }, ALLY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state.turn, state.status, state.allyTurnIndex]);
+  }, [state.turn, state.status, state.allyTurnIndex, ricochetTravelling]);
 
   // Drone phase — tick all live drones in parallel until the swarm finishes.
   useEffect(() => {
-    if (state.turn !== 'drones' || state.status !== 'playing') return;
+    if (state.turn !== 'drones' || state.status !== 'playing' || ricochetTravelling) return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'drones' && s.status === 'playing' ? stepDroneTurn(s) : s));
     }, DRONE_TICK_MS);
     return () => clearTimeout(t);
-  }, [state.turn, state.status, state.drones]);
+  }, [state.turn, state.status, state.drones, ricochetTravelling]);
 
   // Unwinnable fail-safe — once control is back with Rookie (enemy / ally /
   // drone phases fully resolved), ask the solver whether the king can still
@@ -965,7 +970,7 @@ export default function RookiesRunPage() {
   // loss, so retries / Deja Vu bookkeeping are untouched.
   const unwinnableKeyRef = useRef<string>('');
   useEffect(() => {
-    if (state.status !== 'playing' || state.turn !== 'rookie') return;
+    if (state.status !== 'playing' || state.turn !== 'rookie' || ricochetTravelling) return;
     if (state.moveCount === 0 || state.activeAbility || state.pendingOffer) return;
     const key = `${state.level}|${state.moveCount}|${state.captures.length}|${toSquare(state.rookie)}`;
     if (key === unwinnableKeyRef.current) return;
@@ -979,7 +984,7 @@ export default function RookiesRunPage() {
       setState((s) => (s === snapshot ? { ...s, status: 'lost', turn: 'rookie' } : s));
     }, ENEMY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state]);
+  }, [state, ricochetTravelling]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recorder watchers — dedupe-aware ticks for ally / drone / enemy phases.
@@ -1084,6 +1089,8 @@ export default function RookiesRunPage() {
   useEffect(() => {
     if (state.moveCount > lastRookieMoveRef.current) {
       const wasCapture = state.captures.length > lastRookieCapCountRef.current;
+      // A banked capture lands at the END of the line — the crunch waits for it.
+      if (wasCapture && ricochetTravelling) return;
       if (wasCapture) {
         void playCaptureSound();
         haptic('medium');
@@ -1094,7 +1101,7 @@ export default function RookiesRunPage() {
       lastRookieMoveRef.current = state.moveCount;
       lastRookieCapCountRef.current = state.captures.length;
     }
-  }, [state.moveCount, state.captures.length, state.status]);
+  }, [state.moveCount, state.captures.length, state.status, ricochetTravelling]);
 
   useEffect(() => {
     lastRookieMoveRef.current = 0;
@@ -1111,11 +1118,11 @@ export default function RookiesRunPage() {
   }, [state.enemyMovedSquares.length, state.status]);
 
   useEffect(() => {
-    if (state.status !== 'won') return;
+    if (state.status !== 'won' || ricochetTravelling) return;
     // Chess Path's puzzle two-tone, climbing one chromatic step per level (Tyler 2026-09-03).
     playCorrectSound(levelIndex, 0);
     hapticSuccess();
-  }, [state.status, levelIndex]);
+  }, [state.status, levelIndex, ricochetTravelling]);
 
   // Offer-arrival sfx (reuse card-draw chime).
   const prevPendingOfferRef = useRef<BoardState['pendingOffer']>(null);
@@ -1128,7 +1135,7 @@ export default function RookiesRunPage() {
   }, [state.pendingOffer]);
 
   useEffect(() => {
-    if (state.status !== 'won' || showLevelCleared || runComplete) return;
+    if (state.status !== 'won' || showLevelCleared || runComplete || ricochetTravelling) return;
 
     // Per-level split for the timed score (testing) — active-play ms spent on
     // this level, retries included.
@@ -1201,7 +1208,7 @@ export default function RookiesRunPage() {
       setShowLevelCleared(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels, endless]);
+  }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels, endless, ricochetTravelling]);
 
   const trackedLossRef = useRef(false);
   useEffect(() => {
@@ -1371,7 +1378,7 @@ export default function RookiesRunPage() {
     (square: string) => {
       ensureAudioWarm();
       setInfoAbilityId(null);
-      if (state.status !== 'playing' || state.turn !== 'rookie') return;
+      if (state.status !== 'playing' || state.turn !== 'rookie' || ricochetTravelling) return;
 
       // Ability resolution mode.
       if (state.activeAbility) {
@@ -1483,14 +1490,14 @@ export default function RookiesRunPage() {
       }
       setSelectedSquare(null);
     },
-    [state, selectedSquare, meta.iso, levelIndex, ensureAudioWarm, recordEvent],
+    [state, selectedSquare, meta.iso, levelIndex, ensureAudioWarm, recordEvent, ricochetTravelling],
   );
 
   const onPieceDrop = useCallback(
     (_sourceSquare: string, targetSquare: string) => {
       ensureAudioWarm();
       setInfoAbilityId(null);
-      if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+      if (state.status !== 'playing' || state.turn !== 'rookie' || ricochetTravelling) return false;
       if (state.activeAbility) return false;
       const target = fromSquare(targetSquare);
       const next = applyRookieMove(state, target);
@@ -1511,7 +1518,7 @@ export default function RookiesRunPage() {
       setSelectedSquare(null);
       return true;
     },
-    [state, ensureAudioWarm, recordEvent],
+    [state, ensureAudioWarm, recordEvent, ricochetTravelling],
   );
 
   const onOfferPick = useCallback(
@@ -2463,7 +2470,7 @@ export default function RookiesRunPage() {
 
       </div>
 
-      {!isStc && state.pendingOffer && state.status === 'playing' && (
+      {!isStc && state.pendingOffer && state.status === 'playing' && !ricochetTravelling && (
         <AbilityOfferModal
           offer={state.pendingOffer}
           onPick={onOfferPick}
@@ -2482,7 +2489,7 @@ export default function RookiesRunPage() {
         onDone={progress.shiftAchievement}
       />
       {/* Ability reveals wait until no offer/level modal is up so they never stack. */}
-      {!state.pendingOffer && !showLevelCleared && (
+      {!state.pendingOffer && !showLevelCleared && !ricochetTravelling && (
         <AbilityUnlockModal
           abilityId={progress.queue.unlocks[0]}
           onClose={progress.shiftUnlock}

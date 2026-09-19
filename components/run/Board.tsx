@@ -1,5 +1,6 @@
 'use client';
 import { PIECE_SLIDE_MS } from './timing';
+import { RICOCHET_IDLE, useRicochetTravel } from './useRicochetTravel';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
@@ -403,6 +404,15 @@ export function RunBoard({
   // captures, pendingOffer) would teleport the moving piece — visible as a
   // "blink" on enemy moves right after a Rookie capture.
   const positionRef = useRef<Record<string, { pieceType: string }>>({});
+  // A DRAGGED banked move is already standing on its landing square when she
+  // lets go (react-chessboard never animates a manual drop) — don't yank her
+  // back to the corner to replay it.
+  const ricochetClock = useRicochetTravel(state);
+  const [droppedMove, setDroppedMove] = useState(false);
+  useEffect(() => {
+    if (droppedMove && !ricochetClock.travelling) setDroppedMove(false);
+  }, [droppedMove, ricochetClock.travelling]);
+  const ricochet = droppedMove ? RICOCHET_IDLE : ricochetClock;
   const position = useMemo(() => {
     const map: Record<string, { pieceType: string }> = {};
     const rabidSet = new Set(state.rabidSquares);
@@ -423,6 +433,17 @@ export function RunBoard({
     }
     if (state.status !== 'lost' && introFile === null) {
       map[rookieSq] = { pieceType: rookieSprite };
+    }
+    // Banked Ricochet: the diff animation is one straight slide, so a banked
+    // move would cut the diagonal. Stand her on each corner in turn instead —
+    // every leg is then an ordinary native slide. Until the last leg starts,
+    // the landing square keeps whatever stood on it (the piece she is about to
+    // take, the king included), so the capture resolves when she ARRIVES.
+    if (ricochet.beforeLanding && ricochet.square && map[rookieSq]?.pieceType === rookieSprite) {
+      const victim = positionRef.current[rookieSq];
+      if (victim && victim.pieceType !== rookieSprite) map[rookieSq] = victim;
+      else delete map[rookieSq];
+      map[ricochet.square] = { pieceType: rookieSprite };
     }
     // Poisoned piece that moved and died in one engine step: stand it on
     // its destination for one slide so react-chessboard's diff animates the
@@ -448,7 +469,7 @@ export function RunBoard({
     }
     positionRef.current = map;
     return map;
-  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile, poisonSliding, poisonSlideDeaths]);
+  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile, poisonSliding, poisonSlideDeaths, ricochet.beforeLanding, ricochet.square]);
 
   const wiggleSquares = useMemo(() => {
     if (state.status !== 'playing' || state.turn !== 'rookie') return [];
@@ -1294,6 +1315,11 @@ export function RunBoard({
           }
         `}</style>
       )}
+      {ricochet.travelling && (
+        // Constant speed along the bent line: the library eases every slide,
+        // which would brake her into each corner. Linear, for her legs only.
+        <style>{`[data-piece="${rookieSprite}"] { transition-timing-function: linear !important; }`}</style>
+      )}
       <div style={{ position: 'relative' }}>
         <ChessPathBoard
           options={{
@@ -1310,10 +1336,13 @@ export function RunBoard({
               piece?.pieceType === rookieSprite &&
               state.turn === 'rookie' &&
               state.status === 'playing',
-            onPieceDrop: ({ sourceSquare, targetSquare }) =>
-              targetSquare ? onPieceDrop(sourceSquare, targetSquare) : false,
+            onPieceDrop: ({ sourceSquare, targetSquare }) => {
+              const moved = targetSquare ? onPieceDrop(sourceSquare, targetSquare) : false;
+              if (moved) setDroppedMove(true);
+              return moved;
+            },
             onSquareClick: ({ square }) => onSquareClick(square),
-            animationDurationInMs: slideMs ?? PIECE_SLIDE_MS,
+            animationDurationInMs: ricochet.legMs ?? slideMs ?? PIECE_SLIDE_MS,
           }}
         />
         {lavaSquares.length > 0 && (

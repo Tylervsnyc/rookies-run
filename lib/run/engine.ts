@@ -12,6 +12,7 @@
 import {
   isLegalRookieMove,
   isWinningMove,
+  ricochetPaths,
   rookieLegalMoves,
 } from './movement';
 import {
@@ -31,7 +32,7 @@ import { stepEnemyTurn } from './pawn-ai';
 import { enforceKingInvariant } from './king-invariant';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
-import { toSquare } from './types';
+import { coordEq, toSquare } from './types';
 import type { BoardState, Coord, RookieForm } from './types';
 
 function offerRngFor(state: BoardState): () => number {
@@ -42,6 +43,21 @@ function offerRngFor(state: BoardState): () => number {
   return mulberry32(seed);
 }
 
+/** The squares where a banked line turns, then its landing square. */
+function ricochetMoveFx(from: Coord, path: Coord[]): NonNullable<BoardState['lastRicochetMove']> {
+  const pts = [from, ...path];
+  const waypoints: string[] = [];
+  for (let i = 1; i < pts.length; i++) {
+    const last = i === pts.length - 1;
+    const turns =
+      !last &&
+      (pts[i].file - pts[i - 1].file !== pts[i + 1].file - pts[i].file ||
+        pts[i].rank - pts[i - 1].rank !== pts[i + 1].rank - pts[i].rank);
+    if (last || turns) waypoints.push(toSquare(pts[i]));
+  }
+  return { from: toSquare(from), waypoints, id: Date.now() + Math.random() };
+}
+
 export function applyRookieMove(state: BoardState, target: Coord): BoardState {
   return enforceKingInvariant(state, applyRookieMoveImpl(state, target), 'applyRookieMove');
 }
@@ -49,6 +65,9 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
 function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
   if (state.status !== 'playing' || state.turn !== 'rookie') return state;
   if (!isLegalRookieMove(state, target)) return state;
+
+  // A banked Ricochet line (never a straight one — those are plain rook moves).
+  const banked = ricochetPaths(state).find((p) => coordEq(p.dest, target));
 
   // Capture handling.
   const captured = state.pieces.find(
@@ -137,7 +156,8 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
     // Smoke: a capture by Rookie herself blows her cover (T5 keeps it).
     ...(captured ? breakSmokeOnCapture(state) : {}),
     // Ricochet: armed for her NEXT rook move — spent by it, banked or not.
-    ...((state.ricochetBanks ?? 0) > 0 && state.form === 'rook' ? { ricochetBanks: 0 } : {}),
+    ...((state.ricochetBanks ?? 0) > 0 && state.form === 'rook' ? { ricochetBanks: 0 } : {}),    // ...and if it DID bank, the corners ride along so the board can show it.
+    ...(banked ? { lastRicochetMove: ricochetMoveFx(state.rookie, banked.path) } : {}),
   };
   // The arm is spent by the capture whether or not anything was linked.
   const afterMove = state.chainArmed && captured ? resolveChain(movedState, chained) : movedState;

@@ -278,6 +278,14 @@ test('ricochet: lava and pieces never bank; two banks only from T3; not castable
     );
   assert.ok(!rookieLegalMoves(dogleg(1)).some((m) => toSquare(m) === 'd7'));
   assert.ok(rookieLegalMoves(dogleg(3)).some((m) => toSquare(m) === 'd7'));
+  // The move carries its corners so the board walks the line instead of cutting the diagonal.
+  const won = applyRookieMove(dogleg(3), fromSquare('d7'));
+  assert.deepEqual(
+    { from: won.lastRicochetMove?.from, waypoints: won.lastRicochetMove?.waypoints },
+    { from: 'a1', waypoints: ['a4', 'd4', 'd7'] },
+  );
+  // A straight move while armed carries none.
+  assert.equal(applyRookieMove(dogleg(3), fromSquare('a2')).lastRicochetMove, undefined);
 });
 
 // ---------------------------------------------------------------------------

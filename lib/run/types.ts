@@ -421,6 +421,14 @@ export interface BoardState {
     id: number;
   };
   /**
+   * Transient signal: set by her move when it BANKED (Ricochet). `waypoints`
+   * are the squares where the line turns, in order, ending on the landing
+   * square — the exact path `ricochetPaths` drew. The UI watches `id` and
+   * walks her sprite leg by leg instead of one diagonal slide. Never read by
+   * the rules.
+   */
+  lastRicochetMove?: { from: string; waypoints: string[]; id: number };
+  /**
    * Transient signal: set on the state returned from an enemy turn when one
    * or more poisoned pieces' counters tick to 0 and they die. UI watches `id`
    * for changes to fire the green-bubble drowning VFX on each death square.
