@@ -174,3 +174,34 @@ forced into it (Puppet), **R2** lava can spread (Eruption).
 - *No new VFX kinds*: Promote / Raise reuse the summon bloom, Puppet the Magnet
   streak, Eruption the Boulder thud, Chain the Convert swirl. Art is borrowed
   (`PLACEHOLDER_ART`).
+
+## The level-first five of 2026-09-19 (testing) — each invented for a crazy level
+
+Design doc: `docs/new-abilities-2026-09-19.md`. Code: the "LEVEL-FIRST FIVE"
+block in `lib/run/abilities.ts` (Ricochet's line logic is `ricochetPaths` in
+`lib/run/movement.ts`). Tests: `lib/run/__tests__/level-first-five.test.ts`.
+Bot smoke: `npx tsx scripts/run-playtest/level-first-smoke.ts`.
+
+Two terrain rules arrive with them and exist ONLY through these cards:
+**R3** a stone that slides or lands into lava — both vanish, open ground (a
+ford); **R4** stone is a mirror for Ricochet, lava is not.
+
+| # | Ability | Numbers | Why it catches kings | Smoke (T5 bot, 8 trials, hand-built miniature) |
+|---|---------|---------|----------------------|----------------|
+| 22 | **Castle** (`castle`) | She shares his rank (T2+: or file), ANYTHING between, 3+ squares apart: he jumps two toward her (his landing must be open ground; anything may lie between). She lands on the square he crossed IF it is open ground (the chess move); OTHERWISE she pulls up short, onto the square directly beside his landing on HER side of the line (open ground, or the square she already stands on at distance 3); neither = the cast is refused. Both landings glow before commit. **Her body-move — the turn ends.** Rook form only. 1/1/2/2/2 uses; T4+ he lands stunned a turn. Pen: unchanged if he lands inside it, otherwise it BECOMES his landing square plus its open neighbours. | She is a rook, he is a king: rules are rules. It crosses any wall, moat or guard line in one move and drops her beside him. **A castled king does not swing at her on the enemy phase that follows** (`kingCastled`, the one exception to "touching the king means he takes a swing", one phase only) — he runs if he has a safe square, which is why the card wants a partner watching those squares. | The Atoll: none 0/8, castle:1 0/8 (never cast — alone it is a trap), castle:4 8/8. The Islet (1-square island, 1-thick ring — the short landing): none 0/8, castle:4 8/8 |
+| 23 | **Catapult** (`catapult`) | Two taps: a LOOSE stone or a controlled summon orthogonally beside her, then a landing square straight away from her, over anything, 2-4 / 2-4 / 2-5 / 2-5 / any squares from where it sat. 1/2/2/3/3 uses. Stone: lands as stone; T2+ crushes a pawn (Rookie capture); in lava it makes a ford (R3). Summon: lands exactly as it was (dazed stays dazed). Never the king, never `fixed` stone, never lava, never a throw that strands her. Free action. | Bodies and blocks cross terrain she cannot: ford the river, drop a lid on his flee square, fling a Converted pawn into his court and Sacrifice it. | The Gorge: none 0/8, catapult:1 8/8 |
+| 24 | **Mirror** (`mirror`) | Tap the card, then the one glowing square (file 9 - f, same rank, must be empty ground). A rainbow rook appears there and copies each of HER moves flipped left-right, free: a line move slides as far as it legally can (stops at a block, captures the first enemy it meets, the king included); a knight-form hop is copied as a hop; a banked Ricochet move and a Castle are not copied. Lasts 3/4/5/6/level of her moves; 1 use (T4+: 2). Never tap-moved. It is a controlled summon for Swap / Sacrifice / Promote; enemies may capture it. | One input, two bodies — the asymmetry in the level is the puzzle. The king will not step onto its rook lines and flees a square it could land on after one of her legal moves. Swap teleports her across the axis. | The Looking Glass: none 0/8, mirror:1 8/8 |
+| 25 | **Ricochet** (`ricochet`) | Instant: her NEXT rook move may bank once (T3+: twice) — slide to the square before a stone, turn left or right, keep sliding; capture at the end, the king included. Every banked line is drawn on the board while armed. Lava, pieces, summons and the board edge never bank. Each leg must slide at least one square. Rook form only; spent by her next rook-form move, banked or not. Refused when no banked line exists (a charge is never armed into thin air). 1/1/2/2/3 uses. | He only fears her straight lines (the banked squares exist on HER turn only), so a banked line is a line he does not see coming. Boulder places the rail. | The Baffle: none 0/8, ricochet:1 8/8 |
+| 26 | **Avalanche** (`avalanche`) | Two taps: a loose stone, then the square beside it — that names N/S/E/W, and arrows show where EVERY stone lands for each direction first. Every LOOSE stone (not `fixed`, not lava) slides one square that way, far side first. Pawns in the way are crushed (T3+: knights and bishops too; never a queen or the king). Never onto the king, Rookie, a summon, a drone, the straw or a snare. Into lava: a ford (R3). T4+: the whole slide runs twice. A direction that moves nothing or strands her is not offered. 1/1/2/2/2 uses. Free action. | A board-wide Shove that needs no adjacency — lids drop on his flee squares, doors open in walls, fords appear, all in one motion. Authors control it with `fixed`. | The Scree: none 0/8, avalanche:1 8/8 |
+
+**Where the two fives meet (merge, 2026-09-19):** Promote may tap a Mirror
+echo (it stays an echo — only its type, so its Sacrifice blast, changes) and a
+Raised piece. An armed Chain that her own move did not spend fires on the
+echo's capture (tinted by `chainPreview`). Catapult flings a Raised piece like
+any controlled summon. Tests: `lib/run/__tests__/ten-cross-cards.test.ts`.
+The Ability Lab has a room for each five: L4 Caldera (ability-first), L5
+Quarry (level-first).
+
+Rewind: the enemy-phase snapshot is a whole-board copy, so the echo, moved
+stones and a castled pen are all in it. A Ricochet armed (or a Mirror cast)
+AFTER the snapshot is carried forward from the live state, like a transform.

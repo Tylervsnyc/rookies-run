@@ -26,7 +26,7 @@ import { mulberry32 } from '../../../lib/run/seed';
 import type { BoardState } from '../../../lib/run/types';
 import { toSquare } from '../../../lib/run/types';
 import { applyBotAction } from './apply';
-import { type ActionCandidate, legalCandidates } from './shared';
+import { type ActionCandidate, legalCandidates, levelFirstCastBonus, levelFirstSetupBonus } from './shared';
 import { settleEnemyTurns } from './t3';
 import { describeAction } from '../utils/reason';
 import { hashString } from '../utils/rng';
@@ -303,6 +303,7 @@ function pickRolloutAction(
     let s = fastScore(after);
     const isAbilityCast =
       c.kind === 'activate-ability' || c.kind === 'ability-target';
+    if (c.kind === 'move') s += levelFirstSetupBonus(after);
     // Encourage occasional ability casts so rollouts explore ability use.
     if (isAbilityCast) {
       s += rng() * 3; // jitter — keeps abilities competitive on ties
@@ -314,6 +315,8 @@ function pickRolloutAction(
       // the board is thick makes rollouts actually explore the cast lines.
       if (TYLER_PRIORS && state.pieces.length >= 6) s += 3;
       s += castPayoff(state, after, c);
+      // The level-first five (2026-09-19): what the cast paid for this turn.
+      s += levelFirstCastBonus(state, after, c.abilityId!);
       // A transform that gives the new form an advancing move when the rook
       // had none is the key out of the trap — make rollouts take it.
       if (
@@ -569,13 +572,13 @@ function candidateToAction(c: ActionCandidate): BotAction {
   if (c.kind === 'squire-move') return { kind: 'squire-move', target: c.target!, ...(c.from ? { from: c.from } : {}) };
   if (c.kind === 'activate-ability')
     return { kind: 'activate-ability', abilityId: c.abilityId! };
-  // target2 rides along for the two-step cards of 2026-09-19 ONLY. Magnet's
-  // candidates carry one as well but it has never reached the action (the
-  // bot always takes the farthest landing); forwarding it would move every
-  // Magnet measurement on record, so that stays as it was.
-  const second =
-    (c.abilityId === 'puppet' || c.abilityId === 'eruption') && c.target2 ? { target2: c.target2 } : {};
-  return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, ...second };
+  // Two-tap cards carry their second tap. (Magnet deliberately does NOT: its
+  // candidates have always resolved to the farthest landing here, and every
+  // stored measurement was taken that way.)
+  if (c.target2 && c.abilityId !== 'magnet') {
+    return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, target2: c.target2 };
+  }
+  return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target! };
 }
 
 // Silence unused-import linting in case rookieLegalMoves isn't referenced

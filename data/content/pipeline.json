@@ -1353,6 +1353,46 @@
       "stage": "testing",
       "created": "2026-09-19",
       "notes": "Arm it, then capture: every same-type enemy touching the victim dies too, down the line."
+    },
+    {
+      "id": "castle",
+      "kind": "ability",
+      "name": "Castle",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Rook and king on one line, anything between: he jumps two toward her, she lands on the square he crossed, or beside him on her side if that is blocked. Rules are rules."
+    },
+    {
+      "id": "catapult",
+      "kind": "ability",
+      "name": "Catapult",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Fling the stone or summon beside her in a straight line, over everything, to a square you choose."
+    },
+    {
+      "id": "mirror",
+      "kind": "ability",
+      "name": "Mirror",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "A mirror Rookie appears across the board and copies every move she makes, flipped."
+    },
+    {
+      "id": "ricochet",
+      "kind": "ability",
+      "name": "Ricochet",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Her next move bounces: slide to a stone, turn 90 degrees, keep sliding."
+    },
+    {
+      "id": "avalanche",
+      "kind": "ability",
+      "name": "Avalanche",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Every loose stone on the board slides one square the way you point. Pawns under them are crushed."
     }
   ]
 }
