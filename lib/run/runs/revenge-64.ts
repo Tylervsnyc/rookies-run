@@ -1,13 +1,7 @@
 /**
  * revenge-64 — THE HALL OF MIRRORS. Built 2026-09-19 (the Mirror batch) for the
- * signature pair MIRROR + SACRIFICE. Kit = mirror / sacrifice / rewind
+ * signature pair MIRROR + SACRIFICE. Kit = mirror / sacrifice / hourglass
  * (3 cards, all always offered). NO `abilityTierCaps`.
- * FILLER SWAP 2026-09-20: hourglass (still `testing`, so `sanitize()` would
- * strip it on the ladder — ladder.ts rule 3) -> REWIND (`live`). Measured the
- * live candidates on L7-L10 first: magnet leaks (L8 47%, L9 41-50%, L10 19%),
- * aegis is a master key (L8-L10 47-100% alone), freeze-ray leaks and scales
- * with tier (L9 41->78%, L10 9->56%). Rewind is the only clean 0. No level
- * geometry changed.
  *
  * THE VERB: STEER A BOMB. The reflection is a body she drives with her own
  * safe moves into a place she can never stand, and Sacrifice detonates it.
@@ -48,9 +42,7 @@
  *   L6  PAIR       THROUGH THE LID, taught. e5, cast (echo d5 under the lid d6),
  *                  detonate: he is stunned through the stone. Step beside him.
  *   L7-L10 PAIR    below. SACRIFICE alone is inert (no other body in the kit);
- *   REWIND is a trap everywhere (0% alone at T1/T3/T5 and with either half):
-   undoing his turn never opens a door she cannot reach, and the T3 king stun
-   is worthless while the defended door pawn still stands.
+ *   HOURGLASS is a trap everywhere (0% alone and with mirror, every tier).
  *
  * ── THE FOUR FINALE LINES (each a different way of aiming) ─────────────────
  *   L7  UP THROUGH THE FLOOR. Door e5 (def. f6, pinned on stone e4), king f5.
@@ -71,28 +63,25 @@
  *       SACRIFICE (f7 through f6, g5+h5), d6-d7, d7xg7.
  *       DECISION: overshoot — the lid holds the bomb under the door.
  *
- * ── MEASURED — 2026-09-20 (rewind kit), difficulty=normal, T5 bot,
- *    `revenge.ts matrix`, 32 trials, --jobs=4 ───────────────────────────────
- *   L   none mirror sacr. rewind rew:3 rew:5 mir+rew sac+rew | mirror+sacrifice
- *   7     0%    0%    0%     0%    0%    0%     0%      0%   |      66%
- *   8     0%    0%    0%     0%    0%    0%     0%      0%   |      78%
- *   9     0%    0%    0%     0%    0%    0%     0%      0%   |      72%
- *  10     0%    0%    0%     0%    0%    0%     0%      0%   |      78%
- *   The pair column is unchanged from the hourglass read (same levels, same
- *   seeds). Earlier tier sweep (2026-09-19) still stands: mirror T2/T3/T5 and
- *   sacrifice T3/T5 = 0%; pair at T5+T5 (16 trials) 94/100/94/81 — it gets
- *   easier as it upgrades, never solo. No caps.
- *   MID-RUN, 16 trials:   none  mirror  sacr.  rewind  rew:5  mir+rew  sac+rew  pair
- *     L1/L2               100    100     100     100    100     100      100    100
- *     L3                    0    100       0       0      0     100        0    100
- *     L4                    0    100       0       0      0     100        0      0  (see below)
- *     L5                    0     88       0       0      0     100        0     94
- *     L6                    0      0       0       0      0       0        0     94
- *   Rewind is never a free key on a teaching level.
- *   FULL RUNS, 40, random picks: 3/40 (was 1/20 with hourglass — same rate
- *   within noise). Deaths: L3/L4 without mirror, L6 without both halves.
- *   Pick-dependent by design.
-   HONEST NOTES: (1) L4 reads 0% when the bot ALSO holds sacrifice — a bot
+ * ── MEASURED — 2026-09-19, difficulty=normal, T5 bot, `revenge.ts matrix`,
+ *    32 trials, --jobs=4 ──────────────────────────────────────────────────
+ *   L    none  mirror  sacrifice  hourglass | mirror+sacrifice
+ *   7      0%     0%       0%        0%     |      66%
+ *   8      0%     0%       0%        0%     |      78%
+ *   9      0%     0%       0%        0%     |      72%
+ *  10      0%     0%       0%        0%     |      78%
+ *   TIER SWEEP, same read: mirror T2/T3/T5, sacrifice T3/T5, hourglass T5 and
+ *   mirror+hourglass: 0% in all 28 cells. Pair at T5+T5 (16 trials):
+ *   94/100/94/81 — it gets easier as it upgrades, never solo. No caps.
+ *   MID-RUN, 16 trials:   none  mirror  sacrifice  hourglass  pair
+ *     L1/L2               100    100      100        100      100
+ *     L3                    0    100        0          0      100
+ *     L4                    0    100        0          0        0  (see below)
+ *     L5                    0     88        0          0       94
+ *     L6                    0      0        0          0       94
+ *   FULL RUNS, 20, random picks: 1/20. Deaths: L3/L4 without mirror, L6
+ *   without both halves. Pick-dependent by design.
+ *   HONEST NOTES: (1) L4 reads 0% when the bot ALSO holds sacrifice — a bot
  *   artifact (rollouts add jitter to casts, so they detonate the echo before
  *   the wind-up); the line is three moves for a person. (2) On L7/L8 the
  *   steering is soft: cast-and-detonate from the corner rung also works, so
@@ -146,7 +135,7 @@ export const RUN_REVENGE_64: RunDef = {
   name: 'The Hall of Mirrors',
   blurb:
     'Solid stone, one walk carved for you, and across the board a sealed cell exactly where your reflection would stand. It cannot get out. It does not need to. Walk it under his door, and let it go.',
-  allowedAbilities: ['mirror', 'sacrifice', 'rewind'],
+  allowedAbilities: ['mirror', 'sacrifice', 'hourglass'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,
