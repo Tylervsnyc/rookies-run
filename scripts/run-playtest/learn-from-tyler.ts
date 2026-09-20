@@ -332,7 +332,7 @@ function replayLevel(runId: string, iso: string, seg: LevelSegment, carry: Carry
       }
       continue;
     }
-    if (kind === 'enemy-tick' || kind === 'ally-tick' || kind === 'drone-tick' || kind === 'retry' || kind === 'level-start') continue; // informational
+    if (kind === 'enemy-tick' || kind === 'ally-tick' || kind === 'drone-tick' || kind === 'retry' || kind === 'level-start' || kind === 'tap') continue; // informational
 
     if (kind === 'offer-pick' || kind === 'offer-skip') {
       // Applied even while desynced: the ability ledger must stay truthful

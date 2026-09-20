@@ -1378,10 +1378,26 @@ export default function RookiesRunPage() {
     (square: string) => {
       ensureAudioWarm();
       setInfoAbilityId(null);
-      if (state.status !== 'playing' || state.turn !== 'rookie' || ricochetTravelling) return;
+      // TAP LOG — every board tap and what this handler decided, not just the
+      // moves that succeed. A tap that does nothing used to leave no trace at
+      // all (Tyler's endless run 2026-09-18: a movable knight ignored his taps
+      // and the log could not say whether they arrived). Two entries a few ms
+      // apart = the tap fired twice.
+      const tapLog = (outcome: string) =>
+        recordEvent({ kind: 'tap', level: state.level, square, outcome, selected: selectedSquare });
+      if (state.status !== 'playing' || state.turn !== 'rookie') {
+        tapLog(`ignored:${state.status !== 'playing' ? state.status : `turn-${state.turn}`}`);
+        return;
+      }
+      // A banked Ricochet move is still running along its path: input is locked.
+      if (ricochetTravelling) {
+        tapLog('ignored:ricochet-travelling');
+        return;
+      }
 
       // Ability resolution mode.
       if (state.activeAbility) {
+        tapLog(`ability:${state.activeAbility.id}`);
         const coord = fromSquare(square);
         const def = ABILITY_DEFS[state.activeAbility.id];
 
@@ -1437,6 +1453,7 @@ export default function RookiesRunPage() {
 
       const rookieSquare = toSquare(state.rookie);
       if (square === rookieSquare) {
+        tapLog('rookie-toggle');
         setSelectedSquare((cur) => (cur === square ? null : square));
         return;
       }
@@ -1445,14 +1462,20 @@ export default function RookiesRunPage() {
       // turn; T5 Squire/Bishop Squire/Twin get a free move).
       const tappedAlly = controlledAllyAt(state, fromSquare(square));
       if (tappedAlly && canMoveAllyAt(state, tappedAlly)) {
+        tapLog('ally-toggle');
         setSelectedSquare((cur) => (cur === square ? null : square));
         return;
       }
-      if (!selectedSquare) return;
+      if (tappedAlly) tapLog(`ally-blocked:${tappedAlly.dazed ? 'dazed' : state.pendingOffer ? 'offer' : 'moved'}`);
+      if (!selectedSquare) {
+        if (!tappedAlly) tapLog('nothing-selected');
+        return;
+      }
       const selectedAlly = controlledAllyAt(state, fromSquare(selectedSquare));
       if (selectedAlly) {
         const target = fromSquare(square);
         const next = applyControlledAllyMove(state, fromSquare(selectedSquare), target);
+        if (next === state) tapLog('ally-move-rejected');
         if (next !== state) {
           const grew = next.captures.length > state.captures.length;
           recordEvent({
@@ -1473,6 +1496,7 @@ export default function RookiesRunPage() {
 
       const target = fromSquare(square);
       const next = applyRookieMove(state, target);
+      if (next === state) tapLog('rookie-move-rejected');
       if (next !== state) {
         const grew = next.captures.length > state.captures.length;
         recordEvent({
