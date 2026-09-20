@@ -5121,7 +5121,18 @@ export function mirrorTargets(state: BoardState): Coord[] {
   const owned = state.abilities.find((a) => a.id === 'mirror');
   if (!owned || mirrorEchoOf(state)) return [];
   const sq = { file: 9 - state.rookie.file, rank: state.rookie.rank };
-  return squareIsFreeForSummon(state, sq.file, sq.rank) ? [sq] : [];
+  if (!squareIsFreeForSummon(state, sq.file, sq.rank)) return [];
+  return mirrorStrandsHer(state, sq) ? [] : [sq];
+}
+
+/**
+ * The Boulder self-lock check, for Mirror: an echo is a body she cannot pass
+ * or take, so one born on her last open neighbour would leave her with no
+ * legal move (no pass, no loss — stuck). Such a cast is refused.
+ */
+function mirrorStrandsHer(state: BoardState, sq: Coord): boolean {
+  const echo: AllyPiece = { id: -1, type: 'rook', file: sq.file, rank: sq.rank, source: 'mirror' };
+  return rookieLegalMoves({ ...state, allies: [...(state.allies ?? []), echo] }).length === 0;
 }
 
 function applyMirror(state: BoardState, target: Coord): BoardState {
@@ -5237,7 +5248,11 @@ export function mirrorRefusal(state: BoardState): { square: Coord; text: string 
   if (!owned || owned.usesLeftThisLevel === 0 || mirrorEchoOf(state)) return null;
   if (state.status !== 'playing' || state.turn !== 'rookie' || state.activeAbility) return null;
   if (mirrorTargets(state).length > 0) return null;
-  return { square: { file: 9 - state.rookie.file, rank: state.rookie.rank }, text: 'No room for a reflection there.' };
+  const square = { file: 9 - state.rookie.file, rank: state.rookie.rank };
+  if (squareIsFreeForSummon(state, square.file, square.rank)) {
+    return { square, text: 'A reflection there would box you in.' };
+  }
+  return { square, text: 'No room for a reflection there.' };
 }
 
 /** Every square the echo could land on after one of her legal moves right now. */

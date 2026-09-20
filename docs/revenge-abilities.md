@@ -217,6 +217,10 @@ geometry `applyMirrorEcho` resolves with), never its own geometry:
 - Card refused because the mirror square is not empty ground: the rack status
   line says "No room for a reflection there." and the square gets a faint
   crossed ring. Echo up: the status line reads "Reflection · N moves".
+- Self-lock (2026-09-20): like Boulder / Raise / Eruption / Catapult, a cast
+  whose echo would leave HER with no legal move is refused (`mirrorTargets` is
+  empty); the status line says "A reflection there would box you in." and the
+  square gets the same crossed ring.
 - Card armed: the mirror square is ringed violet and a dashed axis runs
   between the d and e files.
 - Copy leads with the rule: "A reflection appears across the board. Every move

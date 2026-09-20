@@ -6,7 +6,7 @@
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cardStatusFor, mirrorEchoMoves, mirrorEchoOf, mirrorRefusal } from '../abilities';
+import { applyAbilityActivate, applyAbilityTargeted, cardStatusFor, mirrorEchoMoves, mirrorEchoOf, mirrorRefusal, mirrorTargets } from '../abilities';
 import { applyRookieMove } from '../engine';
 import { puzzleToBoardState } from '../seed';
 import { fromSquare, toSquare } from '../types';
@@ -94,4 +94,28 @@ test('mirrorEchoMoves: empty with no echo; mirrorRefusal speaks only when the mi
   assert.equal(mirrorRefusal(spent), null);
   const echoUp = { ...open, allies: [ECHO('b3', 2)] };
   assert.equal(cardStatusFor(echoUp)?.label, 'Reflection · 2 moves');
+});
+
+test('Mirror self-lock: a cast whose echo would leave her no legal move is refused, with its own reason', () => {
+  // The Reflecting Pool repro: her on d1, stone on d2, a Boulder on c1. The
+  // echo would be born on e1 — her last open neighbour.
+  const locked = board({
+    rookie: 'd1',
+    enemies: [E('h8', 'king')],
+    hazards: [STONE('d2'), { ...fromSquare('c1'), kind: 'stone' }],
+    kit: [['mirror', 1]],
+  });
+  assert.deepEqual(mirrorTargets(locked), []);
+  assert.equal(mirrorRefusal(locked)!.text, 'A reflection there would box you in.');
+  assert.equal(toSquare(mirrorRefusal(locked)!.square), 'e1');
+  assert.equal(cardStatusFor(locked)!.text, 'A reflection there would box you in.');
+  // Forcing the cast is a no-op: no echo, the charge is kept.
+  assert.equal(applyAbilityActivate(locked, 'mirror').activeAbility, null);
+  const forced = applyAbilityTargeted(locked, 'mirror', fromSquare('e1'));
+  assert.equal(mirrorEchoOf(forced), null);
+  assert.equal(forced.abilities[0].usesLeftThisLevel, 1);
+  // Without the Boulder she keeps c1, so the same cast is allowed.
+  const free = board({ rookie: 'd1', enemies: [E('h8', 'king')], hazards: [STONE('d2')], kit: [['mirror', 1]] });
+  assert.deepEqual(mirrorTargets(free).map(toSquare), ['e1']);
+  assert.equal(mirrorRefusal(free), null);
 });
