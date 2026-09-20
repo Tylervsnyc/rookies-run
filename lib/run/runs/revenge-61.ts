@@ -1,154 +1,214 @@
 /**
- * revenge-61 — THE BAFFLE. Built 2026-09-19 for the signature pair
- * RICOCHET + BOULDER. Kit = ricochet / boulder / magnet / hourglass
- * (`allowedAbilities` IS the kit). Ricochet is a TESTING card.
+ * revenge-61 — THE BAFFLE, v2. Built 2026-09-19 for the signature pair
+ * RICOCHET + BOULDER; repopulated the same day after Tyler's playtest.
+ * Kit = ricochet / boulder / magnet — exactly three cards, so the daily kit
+ * (drawn FROM `allowedAbilities`) always offers all three. NO tier caps.
+ * Ricochet is a TESTING card.
  *
- * LEVEL-FIRST. The crazy level came before the card: a king in a cell whose
- * only mouth faces SIDEWAYS, down a dog-leg no straight line enters. The one
- * square that sees him is the corner of the dog-leg, and it touches him — and
- * a king always swings at a rook that touches him. So she may pass THROUGH the
- * corner but never stop on it. Ricochet was invented for exactly that: her
- * rook move banks 90 degrees at a stone (rule R4 — stone is a mirror; lava,
- * pieces and the board edge are not). He only fears her straight lines, so a
- * banked line is one he never reacts to.
+ * LEVEL-FIRST. A king in a cell whose only mouth faces SIDEWAYS, down a
+ * dog-leg no straight line enters. The one square that sees him is the corner
+ * of the dog-leg, and it touches him — and a king always swings at a rook that
+ * touches him. So she may pass THROUGH the corner but never stop on it.
+ * Ricochet banks her rook move 90 degrees at a stone (rule R4 — stone is a
+ * mirror; lava, pieces and the board edge are not). He only fears her straight
+ * lines, so a banked line is one he never reacts to.
  *
  * THE PAIR. A bank needs a stone directly beyond the corner. On the finale the
  * level never offers one — the square beyond the corner (THE CAP) is open
  * ground, a guard, or lava — so BOULDER places the rail and RICOCHET plays the
- * bank shot off it. Boulder had never gated a level as a BLOCK; here it is
- * never a block. It is a cushion.
+ * bank shot off it. Boulder is never a block here. It is a cushion.
  *
- * ── CONSTANT SIGNATURE — THE BAFFLE ────────────────────────────────────────
- * Every level is solid stone with one corridor bored through it (the boards
- * are DRAWN in the source, see `draw`). The same four things every time:
- *   1. THE CELL    his room, sealed in stone, one mouth.
- *   2. THE CORNER  the square outside the mouth, where the corridor turns.
- *   3. THE LANE    the leg of the corridor that runs into the corner at right
- *                  angles to the mouth. She fires from the lane.
- *   4. THE CAP     the square past the corner, in line with the lane. What
- *                  the cap is made of is the whole level:
- *                    '#' stone  = a LIVE rail, the bank is on
- *                    '~' lava   = a DEAD rail: stops her, refuses the bank,
- *                                 and refuses a Boulder too — dead for good
- *                    '.' ground = no rail yet: bring your own
- *                    'p' a guard = no rail, and no room for one
- *
- * ── TERRAIN EXPERIMENT — stone is a rail, lava is a dead rail ───────────────
- * Lava is never a moat here. It is used in ones and twos, exactly where a
- * rail would have been: a lava cap on a lane (L5, L8, L10), a lava stud in
- * the wall behind his back room so the bank that would follow him in does not
- * exist (L4 — measured: with stone there Ricochet solos the level 100%, with
- * lava 0%), a lava gutter down the side of the lane that looks like the way
- * in and is not (L8). Which angles exist on a level is decided by which wall
- * squares are stone and which are lava — the player reads the rails before
- * she reads the pieces. No authored stone on L7-L10 caps a lane: ricochet
- * alone reads 0% on all four at T1, T2, T3 and T5 (T3+ banks twice).
- * Every authored stone is plain stone; nothing in this kit moves stone, so
- * `fixed` would be a distinction the player could never see.
+ * ── CONSTANT SIGNATURE ─────────────────────────────────────────────────────
+ * Every level is solid stone with corridors bored through it (the boards are
+ * DRAWN in the source, see `draw`). The same things every time:
+ *   1. THE CELL    one square, sealed in stone, one mouth (L10: two).
+ *   2. THE CORNER  the square outside the mouth. It is drawn GOLD (it is in
+ *                  `kingPen`): his doorstep. Guards never step into the pen,
+ *                  so no hunter ever corks the corner, and she never stops
+ *                  on it.
+ *   3. THE LANE    the corridor that runs into the corner at right angles to
+ *                  the mouth. Its first square touches him diagonally and is
+ *                  as deadly as the corner; she fires from the second or
+ *                  further back.
+ *   4. THE CAP     the square past the corner, in line with the lane:
+ *                    '#' stone  = a LIVE rail, the bank is on        (L3 L5 L6)
+ *                    '~' lava   = a DEAD rail: refuses the bank AND the
+ *                                 Boulder — dead for good         (L5, L10)
+ *                    '.' ground = no rail yet: bring your own    (L7 L8 L10)
+ *                    a guard    = no rail and no room for one         (L9)
+ *   5. THE BODIES (new in v2). Pieces live IN the stone: knights in one-square
+ *      niches that jump out onto the corridors, bishops standing in one-wide
+ *      corridors (a bishop there cannot move — it is a plug she must eat),
+ *      pawns pinned by the stone in front of them, watching one corridor
+ *      square each, and on L10 a queen at the head of the dead lane.
  *
  * ── PER-CARD KEY / TRAP MAP ────────────────────────────────────────────────
  *   L1  none       the hall runs straight into him (king stands still).
  *   L2  none       a throat two squares long: stand on the far one.
- *   L3  RICOCHET   the throat is one square: the corner touches him. The cap
- *                  is stone. Bank.
+ *   L3  RICOCHET   the corner touches him, the cap is stone. Bank. A pinned
+ *                  pawn watches the middle of the lane: fire from either end.
  *   L4  BOULDER    he has a back room and ducks into it. Stone it first.
  *                  (Both rails that would let a bank follow him are lava.)
- *   L5  RICOCHET   two lanes. The near one is capped in lava. Read the rails.
- *   L6  RICOCHET   he stands in plain sight at the end of a long hall and
- *                  ducks the moment she steps onto it. Bank onto the hall and
- *                  he never sees it. (BOULDER is a second human answer — two
- *                  stones, two back rooms — that the bot does not find: 0%.)
- *   L7-L10 the pair. MAGNET and HOURGLASS are traps on every level of the
- *   run: magnet needs a guard on her line worth moving and there never is
- *   one; a glass-turn buys nothing from a king who is not reacting to her.
+ *   L5  RICOCHET   two lanes. The near one is capped in lava and plugged.
+ *   L6  RICOCHET   a bishop stands in the lane. Eat it — that lands her on
+ *                  the firing square — then bank.
+ *   L7-L10 the pair. MAGNET is the trap: it moves guards, and no guard is
+ *   what stands between her and him. (It has honest small uses — L8's plug
+ *   on d1 is only ever takeable after a Magnet pull.)
  *
  * ── THE FOUR FINALE LINES ──────────────────────────────────────────────────
- *   L7  THE RAIL. K e5, mouth d5, lane d3-d4, cap d6 open. A knight on c1
- *       watches the firing square d3. Rxc1 (or outrun it), e1-e3, e3-d3,
+ *   L7  THE RAIL. K e5, corner d5, lane d4-d3, cap d6 open. Two knights on
+ *       the floor (e1, g1) watch d3, f3 and g2 between them; a pinned pawn on
+ *       h4 watches g3, the other way up. f1xg1, g1xe1, e1-f1, f1-f3, f3-d3,
  *       Boulder d6, Ricochet, d3 up the lane, banks at d5 off d6, x e5.
- *       DECISION: where does the rail go? (and: watchman first, or race?)
- *   L8  THE WRONG LANE. K b7, throat c7-d7-e7. The open e-file runs straight
- *       from her floor to the corner e7 — and its cap e8 is LAVA, its corner
- *       is covered by a walled pawn on f8, and its side is a lava gutter. The
- *       live lane is the short one round the dog-leg: e1-e4, e4-c4 (a knight
- *       on d4 is in the way), Boulder c8, Ricochet, c4 up the lane, banks at
- *       c7 off c8, x b7. DECISION: which lane is alive — the natural one is
- *       dead, and no stone will ever revive it.
- *   L9  THE CHIMNEY. K g6, mouth g5, and a pawn STANDS ON THE CAP (h5, walled
- *       in, it can never march). No stone fits there. So: Rxe3 (knight in the
- *       lane), e3-e5, Rxh5 — the capture stuns him, which is the only reason
- *       she survives standing on h5 — then Boulder f5 BEHIND the corner, in
- *       the corridor she came down, Ricochet, h5-g5 banks off f5, x g6.
- *       DECISION: take the cap, then put the rail behind you. Capture first,
- *       bank second, and the shot is fired backwards.
- *  L10  THE LONG HALL. K g6 in plain sight at the end of the hall c6-f6, with
- *       a 2x3 suite behind him (five back rooms — two stones cannot close
- *       it). Touch his rank and he ducks for good. The near lane (e) is capped
- *       in lava. a1-a5, a5-c5 (a knight on e4 watches c5), Boulder c7,
- *       Ricochet, c5-c6 banks off c7 and runs the hall d6-e6-f6 x g6.
- *       DECISION: never step on the line you are about to use.
- *   Different use each time: rail ABOVE the mouth / WHICH rail / capture then
- *   rail BEHIND her / a long bank onto an exposed king who must not be warned.
+ *       THE WARDEN: a knight walled in on e7 watches the corner and can never
+ *       leave (its only square is the pen). It is why a crush-stun does not
+ *       let her walk in. It can be had: g3xg6 (bishop), g6-g7, g7xe7.
+ *       DECISION: where does the rail go? (and: clear the watchmen first.)
+ *   L8  THE FAR SIDE. K e3, corner d3, and the d-file runs straight through
+ *       the corner. The near foot d1 holds a bishop defended by a second
+ *       bishop on c2 (which also watches the corner): taking it is death.
+ *       So go round: xg2 (knight), g2xg3 (bishop), g3-g5, g5-d5, Boulder d2 —
+ *       the rail goes IN THE LANE SHE WANTED — Ricochet, d5-d4-d3 banks off
+ *       d2, x e3. Two knights in the roof (c7, f7) jump down onto the gallery;
+ *       two enemies act per turn.
+ *       DECISION: which side do I fire from — and the rail goes on the other.
+ *   L9  THE CHIMNEY. K g6, corner g5, and a bishop STANDS ON THE CAP (h5,
+ *       walled in, it can never move). No stone fits there. c1xc3 (knight in
+ *       the corridor), c3-c5, c5xh5 THROUGH the corner — the capture stuns
+ *       him, which is the only reason she survives standing on h5 — then
+ *       Boulder f5 BEHIND the corner, Ricochet, h5-g5 banks off f5, x g6.
+ *       A roof knight (d7) watches c5 and e5 and has to be drawn out or
+ *       eaten; the warden is the bishop on h4 (takeable from h5).
+ *       DECISION: take the cap, then put the rail behind you; fire backwards.
+ *  L10  THE TWO MOUTHS. K d6 with a corner on each side. The west lane is
+ *       open, straight and inviting — and its cap c7 is LAVA, with a queen
+ *       standing at its head (c5) who comes down it at her. The east lane is
+ *       plugged by a bishop on e4, and its cap e7 is open ground. b2/g2-e2,
+ *       e2xe4 (the capture IS the firing square), Boulder e7, Ricochet,
+ *       e4-e5-e6 banks off e7, x d6. Knights in b3 and g4 drop onto the
+ *       corridor (b3 watches d2, g4 watches e3 and f2); two act per turn.
+ *       DECISION: which mouth can ever hold a rail — read the lava first.
+ *   Different use each time: rail ABOVE the mouth / rail on the side she did
+ *   NOT come from / capture-stun then rail BEHIND her / choose the live mouth.
  *
  * ── MEASURED — 2026-09-19, difficulty=normal, T5 bot, `revenge.ts matrix`,
- *    32 trials, --jobs=2 (nine other authors on the machine) ────────────────
+ *    32 trials, --jobs=6. NO `abilityTierCaps`. ─────────────────────────────
  *
- *   L    none  ricochet  boulder  magnet  hourglass | ricochet+boulder
- *   7      0%     0%        0%      0%       0%     |       72%
- *   8      0%     0%        0%      0%       0%     |       81%
- *   9      0%     0%        0%      0%       0%     |       72%
- *  10      0%     0%        0%      0%       0%     |       69%
+ *   L    none  ricochet  boulder  magnet | ricochet+boulder   enemies  clock
+ *   7      0%     0%        0%      0%   |       81%             5       8
+ *   8      0%     0%        0%      0%   |       75%             6       6 (2/turn)
+ *   9      0%     0%        0%      0%   |       69%             6       8
+ *  10      0%     0%        0%      0%   |       75%             5       6 (2/turn)
+ *   16 cells of zero; the pair means 75%. L7 is one point over the band,
+ *   inside the ~8pp noise (it reads 59% at clock 7 and 81% at 8 — there is
+ *   no clock between them).
  *
- * The gate is met: 20 cells of zero, the pair means 73.5%. L8 sits one point
- * over the band (inside the ~8pp noise).
- *
- * TIER LADDER, L7-L10, 32 trials:
+ * TIER SWEEP, L7/L8/L9/L10, 32 trials, every single card at every tier:
  *   ricochet   T1 0/0/0/0   T2 0/0/0/0   T3 0/0/0/0   T5 0/0/0/0
- *   boulder    T1 0/0/0/0   T2 0/100/91/0   T3 0/100/84/0
- *              T4 0/100/81/22   T5 0/100/81/0
- *   magnet T5 0/0/0/0       hourglass T5 0/0/0/0
- * `abilityTierCaps: { boulder: 1 }`. The break is the T2 CRUSH, not a second
- * use: a stone dropped on the walled pawn (f8 on L8, h5 on L9) is a capture,
- * the capture stuns him, and a stunned king does not swing — so she walks
- * onto the corner and takes him with no bank at all. (T4's 22% on L10 is the
- * double drop finally closing the suite.) Ricochet needs no cap: no authored
- * stone caps a finale lane, so a second bank or a second charge buys nothing.
+ *   boulder    T1 0/0/0/0   T2 0/0/0/0   T3 0/0/0/0   T4 0/0/0/0   T5 0/0/0/0
+ *   magnet     T1 0/0/0/0   T3 0/0/0/0   T5 0/0/0/0
+ *   the pair   T1+T1 81/75/69/75    T2+T2 97/50/63/81    T3+T3 100/91/66/84
+ *              R3+B4 100/69/78/63   T5+T5 100/81/69/59
+ * The gate is cap-free at every tier. How the geometry does it:
+ *   - RICOCHET never breaks it: no authored stone caps a finale lane, so a
+ *     second bank (T3) or a third charge (T5) has nothing to bank off.
+ *   - BOULDER T2+ (v1's break: crush a pawn = a free stun, walk onto the
+ *     corner, take him): L8 and L10 carry NO pawns, so there is nothing to
+ *     crush. L7 and L9 do carry one, and there THE WARDEN answers it — a
+ *     knight (L7 e7) / bishop (L9 h4) walled in so that its only move is the
+ *     corner, which is pen, so it never moves and always bites. A stunned king
+ *     does not swing; the warden still does. Killing the warden first and
+ *     then crushing costs 9+ moves (L7) or needs two more stuns than L9 has
+ *     pawns for.
+ *   - MAGNET T3+ pulls on DIAGONALS and T5 yanks the KING one square. The
+ *     first v2 build of L7 lost 78% to magnet:5 alone: from c3 she yanked him
+ *     e5-d4 down the diagonal through the lane's first square, into the open.
+ *     Rule now held on all four: the square two steps from him on any open
+ *     diagonal is stone (L7 c3, L8 c5 and c1, L9 e4, L10 b4, f4 and f8). And no
+ *     piece can ever stand in line beyond a corner except L9's cap bishop,
+ *     where the warden makes the Magnet cork (pull it onto the corner, eat it,
+ *     he is stunned) fatal.
  *
- * MID-RUN, 16 trials:
- *   L    none  ricochet  boulder  magnet  hourglass
- *   1    100%    100%     100%     100%     100%
- *   2    100%    100%     100%     100%     100%
- *   3      0%    100%       0%       0%       0%
- *   4      0%      0%     100%       0%       0%
- *   5      0%    100%       0%       0%       0%
- *   6      0%    100%       0%       0%       0%
+ * MID-RUN, 16 trials (non-king enemies in brackets):
+ *   L    none  ricochet  boulder  magnet
+ *   1 [3] 100%   100%     100%     100%
+ *   2 [4] 100%   100%     100%     100%
+ *   3 [4]   0%   100%       0%       0%
+ *   4 [4]   0%     0%      81%       0%
+ *   5 [4]   0%   100%       0%       0%
+ *   6 [4]   0%    81%       0%       0%
  *
- * FULL RUNS, 40 runs, T5:
- *   random picks from the kit      5/40 = 13%  (L3 50%, L4 35%, then ~100%)
- *   `--pool=ricochet,boulder`     23/40 = 58%  (L4 63% — no boulder yet)
- * In the Moat's 10-25% random band. The run is decided at L3/L4, where each
- * half of the pair is the only key; a player who holds both walks the finale
- * (offers upgrade Ricochet to two charges, which makes L7-L10 forgiving).
+ * FULL RUNS, T5, offers on L1/L2/L3/L6/L9 (v1 had no L2 offer: with three
+ * cards and L3/L4 each needing a different one, random picks read 2/40 = 5%;
+ * one more early offer put it in band):
+ *   random picks from the kit     4/40 = 10%  (L3 70%, L4 54%, L7 73%, L9 71%)
+ *   `--pool=ricochet,boulder`    21/80 = 26%  (L3 84, L4 84, L9 73, L10 72)
+ * The pool read is a product of ten honest levels now, not a walk after L4:
+ * v1 read 58% here because its finale was ~100% for anyone holding the pair.
  *
- * ── DEAD ENDS ──────────────────────────────────────────────────────────────
- * 1. A GUARD IN THE MOUTH ("bank onto the cork, the stun takes the king")
- *    cannot be built. Whatever covers the corner so she cannot simply stand
- *    there and take the cork straight is itself next to the cap, and the cap
- *    must be open ground for the Boulder — so she stands on the cap and eats
- *    the coverer, then the cork, then him. Every capture re-stuns him; a
- *    chain of king-defended captures is always free.
- * 2. THE RANK-1 PLATEAU (The Comb's dead end 1, again). L10 read 17-25% with
- *    a four-square floor: `fastScore` pulls her along rank 1 toward his file
- *    and she shuffles c1-d1 for the whole clock. One start square (a1) at the
- *    foot of the road: 92%, nothing else changed. L7 and L9 put the foot of
- *    the lane on the floor square nearest his file for the same reason.
- * 3. THE CLOCK DOES NOT BITE, WATCHMEN DO. L7 read 97% at 5 AND at 4 moves;
- *    L9 84% at 6 and at 5 with one knight. A knight covering the firing square (L7 c1, L10 e4)
- *    or a second one standing in the lane (L9 e3) brought each into the band.
- * 4. THE BANK FOLLOWS HIM INTO THE BACK ROOM. L4's first build was meant to
- *    be Boulder-only and Ricochet read 100%: she let him duck, then banked
- *    off the wall behind his old square into the room. Two lava studs fixed
- *    it — and that line is now the intended second answer on L6.
+ * ── v2 — WHAT CHANGED AND WHY ──────────────────────────────────────────────
+ * Tyler, 2026-09-19: "i love the ricochet and boulder one! needs to be harder
+ * more pieces!" — and L10 was hard to read with the filler in hand.
+ *   - MORE PIECES. Non-king enemies per level, v1 -> v2:
+ *       L1 0->3  L2 1->4  L3 0->4  L4 0->4  L5 1->4
+ *       L6 0->4  L7 1->5  L8 2->6  L9 3->6  L10 1->5
+ *     They are put IN the stone (niches, plugs, pinned pawns), so the finale
+ *     is still 13-19 empty squares and Boulder stays measurable.
+ *   - KIT 4 -> 3: hourglass dropped (standing decision 2026-09-15).
+ *   - NO TIER CAPS ("if an upgrade trivializes a level, fix the board, never
+ *     cap the card"). v1 capped boulder at 1; see the sweep above for what
+ *     replaced the cap.
+ *   - L8-L10 each add a wrinkle L7 does not cover ("once you solved it you
+ *     kind of figured it out"): the rail on the side she did not come from /
+ *     the capture-stun and the shot fired backwards / two mouths, one of them
+ *     dead for good. v1's L10 (THE LONG HALL, an exposed king who ducks) is
+ *     gone: any ducking king is a Boulder solo once she has enough stones to
+ *     close his back rooms (v1 read boulder:4 22%), and T5 has no limit.
+ *   - NOT BUILT: a double-bank level. With one bank at T1 the kill shot always
+ *     banks AT the corner, so a level that needs two banks hard-locks a T1
+ *     holder, and as an optional line it never came up shorter than the
+ *     single bank on these boards. Magnet as a brief key: not built either —
+ *     the pair is measured alone, so a level that needs a third card reads 0.
+ *
+ * ── HONEST NOTES ───────────────────────────────────────────────────────────
+ * 1. L10 is where "more pieces" hit the bot's ceiling. The shipped board
+ *    (queen, plug, three knights) reads 75% at the floor clock of 6; with the
+ *    west knight on b4 instead of b3 it read 59%, but b4 is on his diagonal
+ *    (a T5 Magnet yank square once the queen leaves c5), so b4 is stone. A fourth knight on a3 made a real
+ *    fortress (it reaches c3 under the queen and watches e2 for ever: 47%,
+ *    all move-limit); a second plug read 0% because the bot spends both stones
+ *    walling off the queen and has no rail left — a human with two stones has
+ *    exactly one to spare; corner bishops read 38% / 6%. The queen is binary:
+ *    c5 88-91% alone, c4 100% (free food), c3 0% (rank 2 is dead).
+ * 2. With bodies on the board the bot sometimes arms its ONE Ricochet on a
+ *    banked capture of a knight and has none left. That is also the human
+ *    trap the run wants ("the charge is for him"), but it is part of why the
+ *    pair numbers sit lower than v1's with the same line lengths.
+ * 3. Two pieces are takeable only with help: L8's bishop on d1 (defended by
+ *    c2) only after a Magnet pull, and L8's c2 only from d2, a square beside
+ *    the king, i.e. under a stun. (L9's warden h4 falls from h5, which the
+ *    intended line visits.) They are small, walled, and
+ *    never in her way; flagged because the design doc asks that every enemy
+ *    be capturable on a realistic line.
+ * 4. The knight wardens hold only while their neighbours do: L7's e7 can hop
+ *    to g6 once the g6 bishop is eaten.
+ *
+ * ── DEAD ENDS (v1's four still stand; v2 adds) ─────────────────────────────
+ * 1. A GUARD IN THE MOUTH cannot be built (whatever covers the corner is
+ *    itself beside the cap; a chain of king-defended captures is free).
+ * 2. THE RANK-1 PLATEAU. `fastScore` pulls her toward his file along the
+ *    floor. v2 L8 read 42% with the road up on the h-file (she shuffled
+ *    f1-g1) and 83% with it on g; v2 L7 lost every g1 start to a gallery
+ *    that came off the floor, so the gallery now comes off the lane row.
+ * 3. THE CLOCK DOES NOT BITE, WATCHMEN DO — and a watchman nobody can reach
+ *    bites too hard: a niche knight on f4 watching L7's d3 read 28%, a pinned
+ *    pawn watching L9's only firing square read 0% (seven-move plan, the bot
+ *    shuffles). Watchmen go where they can be eaten or drawn out.
+ * 4. THE BANK FOLLOWS HIM INTO THE BACK ROOM (L4's lava studs).
+ * 5. A PAWN BESIDE A HORIZONTAL LANE MARCHES INTO IT; one beside a vertical
+ *    lane can be pinned. A guard that defends a plug she must eat, with no
+ *    way to reach the guard, is a deadlock, not a puzzle (L9 v2a: 0%).
  */
 
 import { FLEE, LAVA, STILL, X, bishop, king, knight, make, pawn, queen, type RunDef } from '../run-kit';
@@ -209,132 +269,129 @@ export const RUN_REVENGE_61: RunDef = {
   name: 'The Baffle',
   blurb:
     'His cell has one mouth and it faces sideways, down a dog-leg no straight line enters. Stone is a rail: bank off it. Lava is a dead rail: it will not give you the angle. And where the level offers no rail at all, you bring your own.',
-  allowedAbilities: ['ricochet', 'boulder', 'magnet', 'hourglass'],
-  // Boulder T2 crushes the walled pawn on L8/L9 = a stun = she walks onto the
-  // corner: T2 0/100/91/0. Ricochet never breaks the gate (0% at T1-T5).
-  abilityTierCaps: { boulder: 1 },
+  allowedAbilities: ['ricochet', 'boulder', 'magnet'],
   offerEveryLevel: true,
-  offerOnLevels: [1, 3, 6, 9],
+  offerOnLevels: [1, 2, 3, 6, 9],
   offerSize: 3,
   levels: [
     // L1 — THE HALL. DECISION: walk the dog-leg; the hall sees him.
     level(1, [
       '########',
       '#K.....#',
-      '######.#',
+      '##p#p#.#',
       '######.#',
       '###....#',
       '###.####',
       '###.####',
-      '........',
+      '.......n',
     ], { still: true, moveLimit: 12 }),
     // L2 — THE THROAT. DECISION: stand on the far throat square, not the near.
     level(2, [
       '########',
       '####..K#',
-      '####.###',
+      '###p.###',
       '####.###',
       '#....###',
+      '#.##p###',
       '#.######',
-      '#.######',
-      '..n.....',
+      '..n...n.',
     ], { moveLimit: 12 }),
-    // L3 — THE BANK (ricochet KEY). The corner d7 touches him; the cap d8 is
-    // stone. DECISION: pass through the corner, never stop on it.
+    // L3 — THE BANK (ricochet KEY). Corner d7 touches him; cap d8 is stone. The
+    // pawn e5 watches d4. DECISION: pass through the corner, never stop on it.
     level(3, [
       '########',
-      '##K.####',
+      '##K*####',
       '###.####',
+      '###.p###',
       '###.####',
-      '###.####',
-      '###....#',
+      '###...n#',
       '######.#',
-      '........',
+      'n...n...',
     ], { moveLimit: 10 }),
     // L4 — THE BACK ROOM (boulder KEY). He ducks from g6's line into e7. g7 and
-    // d6 are LAVA: no bank follows him. DECISION: stone the back room before knocking.
+    // d6 are LAVA: no bank follows him. DECISION: stone the back room, then knock.
     level(4, [
       '########',
       '####*#~#',
       '###~K..#',
       '######.#',
-      '######.#',
-      '##.....#',
+      '#####p.#',
+      'n#.....#',
       '##.#####',
-      '........',
+      '..n....n',
     ], { moveLimit: 10 }),
-    // L5 — THE DEAD RAIL (ricochet KEY). d-lane: lava cap, corner covered by the
-    // walled pawn c8. f-lane: stone cap. DECISION: which lane has a live rail?
+    // L5 — THE DEAD RAIL (ricochet KEY). d-lane: lava cap, a bishop plug, corner
+    // watched by c8. f-lane: stone cap. DECISION: which lane has a live rail?
     level(5, [
       '##p~####',
-      '###...K#',
+      '###..*K#',
       '###.#.##',
-      '###.#.##',
+      '###b#.##',
       '#.....##',
       '#.######',
       '#.######',
-      '........',
+      '....n..n',
     ], { moveLimit: 10 }),
-    // L6 — THE DUCK (ricochet KEY; boulder x2 a human answer). He is in plain
-    // sight down the hall. DECISION: bank onto his rank, never step onto it.
+    // L6 — THE PLUG (ricochet KEY). A bishop stands in the lane and cannot move.
+    // DECISION: eat the guard — that IS the firing square — then bank.
     level(6, [
       '########',
-      '########',
-      '######*#',
-      '#.....K#',
-      '#.####*#',
-      '#.######',
-      '#.######',
-      '........',
+      '#K*#####',
+      '##.#####',
+      '##.#####',
+      '##b#####',
+      '##.....#',
+      '######.#',
+      'n..n..n.',
     ], { moveLimit: 10 }),
-    // ══ L7 — THE RAIL. Cap d6 is open ground. DECISION: drop the rail on the cap
-    // (and deal with the watchman on c1, who covers the firing square d3).
+    // ══ L7 — THE RAIL. Cap d6 is open ground; knights e1/g1 and pawn h4 watch the
+    // way in; warden e7. DECISION: clear the watchmen, drop the rail on the cap.
     level(7, [
       '########',
-      '########',
-      '###.####',
-      '###.K###',
-      '###.####',
-      '###..###',
-      '####.###',
-      '##n....#',
-    ], { moveLimit: 6 }),
-    // ══ L8 — THE WRONG LANE. The open e-file ends in a lava cap and a lava
-    // gutter; the live lane is c. DECISION: which lane can ever hold a rail?
+      '####n..#',
+      '###.##b#',
+      '###*K#.#',
+      '###.##.p',
+      '###....#',
+      '#####..#',
+      '####n.n.',
+    ], { moveLimit: 8 }),
+    // ══ L8 — THE FAR SIDE. The near foot d1 is a defended plug. DECISION: go
+    // round the top, and put the rail in the lane you wanted (d2).
     level(8, [
-      '##.#~p##',
-      '#K...###',
-      '##.#.~##',
-      '##.#.~##',
-      '##.n.###',
-      '####.###',
-      '####.###',
-      '......##',
-    ], { moveLimit: 6 }),
-    // ══ L9 — THE CHIMNEY. A walled pawn stands ON the cap. DECISION: take the
-    // cap (the stun saves her), rail BEHIND her on f5, bank backwards.
+      '########',
+      '##n##n##',
+      '########',
+      '###....#',
+      '###.##.#',
+      '###*K#b#',
+      '##b.##n#',
+      '###b...#',
+    ], { moveLimit: 6, enemiesPerTurn: 2 }),
+    // ══ L9 — THE CHIMNEY. A walled bishop stands ON the cap. DECISION: take it
+    // through the corner (the stun saves her), rail BEHIND on f5, bank backwards.
     level(9, [
       '########',
-      '########',
+      '###n####',
       '######K#',
-      '####...p',
-      '####.###',
-      '####n###',
-      '####.###',
-      '..n..###',
-    ], { moveLimit: 5 }),
-    // ══ L10 — THE LONG HALL. Exposed king, five back rooms, near lane lava-capped,
-    // one start square. DECISION: never touch the rank you will bank onto.
+      '##....*b',
+      '##.####b',
+      '##np####',
+      '##.#####',
+      '#...n###',
+    ], { moveLimit: 8 }),
+    // ══ L10 — THE TWO MOUTHS. West: open lane, LAVA cap, a queen at its head.
+    // East: plugged, open cap. DECISION: which mouth can ever hold a rail?
     level(10, [
       '########',
-      '##.#~#**',
-      '##....K*',
-      '...#.#**',
-      '.###n###',
-      '.....###',
-      '.#######',
-      '.#######',
-    ], { moveLimit: 8 }),
+      '##~#.###',
+      '##*K*###',
+      '##q#.###',
+      '##.#b#n#',
+      '#n.#.###',
+      '#......#',
+      '#.###n.#',
+    ], { moveLimit: 6, enemiesPerTurn: 2 }),
   ],
 };
 
