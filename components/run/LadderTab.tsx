@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { withClick } from '@/lib/sounds';
 import { REVENGE_RED, REVENGE_RED_DARK } from './RookiesRevengeLogo';
@@ -12,7 +12,16 @@ import {
   isDifficultyLocked,
   type DifficultyId,
 } from '@/lib/run/difficulty';
-import { LADDER_RUNG_IDS, bestClearedDifficulty, rungRun, rungStars, rungState } from '@/lib/run/ladder';
+import {
+  LADDER_RUNG_IDS,
+  bestClearedDifficulty,
+  bonusPreviewActive,
+  bonusRungState,
+  rungRun,
+  rungStars,
+  rungState,
+  visibleBonusRungs,
+} from '@/lib/run/ladder';
 import type { RunStars } from '@/lib/run/scoring';
 
 /**
@@ -23,6 +32,13 @@ import type { RunStars } from '@/lib/run/scoring';
  * chooser (a bottom sheet): the four modes with the stars earned on each,
  * gated exactly like lib/run/difficulty.ts. Picking one calls
  * `onLadderStart(runId, difficulty)`.
+ *
+ * BONUS RUNGS (2026-09-20): when `visibleBonusRungs()` is non-empty the tiles
+ * "11", "12" follow the ten, tagged NEW and always open, and the grid SCROLLS
+ * inside its own box (the home around it never moves): rows keep roughly the
+ * five-row size with a sliver of the next row showing, the bottom edge fades
+ * until you reach the end, and it opens scrolled to the current rung. With no
+ * bonus rungs visible the layout is exactly the old no-scroll 2x5.
  */
 export interface LadderTabProps {
   profile?: PlayerProfile;
@@ -35,6 +51,8 @@ const OUTLINE: CSSProperties = { color: '#fff', textShadow: '0 2px 0 rgba(0,0,0,
 const GOLD_TEXT: CSSProperties = { color: GOLD, textShadow: '0 2px 0 rgba(0,0,0,0.5)' };
 const LOCKED_FACE = '#22305e';
 const LOCKED_SHADOW = '#0a1230';
+/** Bottom-edge fade on the scrolling rung grid: "there is more below". */
+const FADE = 'linear-gradient(to bottom, #000 calc(100% - 30px), transparent 100%)';
 
 /** Face + hard-shadow colour per difficulty (Chess Path flat-face button pattern). */
 const DIFF_COLORS: Record<DifficultyId, { face: string; shadow: string }> = {
@@ -55,8 +73,10 @@ function Stars({ n, size = 11 }: { n: RunStars | number; size?: number }) {
 }
 
 // ── The chooser ──────────────────────────────────────────────────────────────
-function DifficultyChooser({ rungIndex, runId, runName, profile, onPick, onClose }: {
+function DifficultyChooser({ rungIndex, bonus, runId, runName, profile, onPick, onClose }: {
   rungIndex: number;
+  /** A bonus rung opens nothing — don't promise a next rung. */
+  bonus?: boolean;
   runId: string;
   runName: string;
   profile?: PlayerProfile;
@@ -86,7 +106,7 @@ function DifficultyChooser({ rungIndex, runId, runName, profile, onPick, onClose
           </div>
           <button type="button" onClick={withClick(onClose)} className="min-h-[36px] min-w-[44px] text-[11px] font-black px-2.5 rounded-lg shrink-0" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)' }}>Close</button>
         </div>
-        <div className="mt-1 px-1 text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>Pick a difficulty. Stars are per mode — clear it on any mode to open the next rung.</div>
+        <div className="mt-1 px-1 text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.65)' }}>{bonus ? 'Pick a difficulty. Stars are per mode.' : 'Pick a difficulty. Stars are per mode — clear it on any mode to open the next rung.'}</div>
         <div className="mt-2.5 flex flex-col gap-2">
           {DIFFICULTY_ORDER.map((d) => {
             const def = DIFFICULTIES[d];
@@ -138,13 +158,42 @@ function DifficultyChooser({ rungIndex, runId, runName, profile, onPick, onClose
 // ── The tab ──────────────────────────────────────────────────────────────────
 export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
   const [choosing, setChoosing] = useState<number | null>(null);
-  const rungs = LADDER_RUNG_IDS.map((id, i) => {
+  // Dev-only `?bonusPreview=1` is read after mount so server and client markup agree.
+  const [preview, setPreview] = useState(false);
+  useEffect(() => { setPreview(bonusPreviewActive()); }, []);
+  const regular = LADDER_RUNG_IDS.map((id, i) => {
     const run = rungRun(i);
     const state = rungState(profile, i);
-    return { id, run, state, comingSoon: !run, best: bestClearedDifficulty(profile, id) };
+    return { id, num: i + 1, bonus: false, run, state, comingSoon: !run, best: bestClearedDifficulty(profile, id) };
   });
-  const openIdx = rungs.findIndex((r) => r.state === 'open' && !r.comingSoon);
-  const clearedCount = rungs.filter((r) => r.state === 'cleared').length;
+  const bonus = visibleBonusRungs({ preview }).map((b) => ({
+    id: b.id, num: b.rung, bonus: true, run: b.run as typeof regular[number]['run'], state: bonusRungState(profile, b.id) as typeof regular[number]['state'],
+    comingSoon: false, best: bestClearedDifficulty(profile, b.id),
+  }));
+  const rungs = [...regular, ...bonus];
+  const scrolls = bonus.length > 0;
+  // "Current rung" = the open, uncleared REGULAR rung. Bonus rungs never count.
+  const openIdx = regular.findIndex((r) => r.state === 'open' && !r.comingSoon);
+  const clearedCount = regular.filter((r) => r.state === 'cleared').length;
+
+  // Scroll box: open on the current rung; fade the bottom edge until the end.
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const [atEnd, setAtEnd] = useState(false);
+  const syncEnd = () => {
+    const el = boxRef.current;
+    if (el) setAtEnd(el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
+  };
+  useLayoutEffect(() => {
+    const el = boxRef.current;
+    if (!el || !scrolls) return;
+    const tile = el.querySelector<HTMLElement>(`[data-rung="${(openIdx >= 0 ? openIdx : 0) + 1}"]`);
+    if (tile) {
+      // Only scroll THIS box (scrollIntoView would also move the page).
+      const over = tile.offsetTop + tile.offsetHeight + 10 - el.clientHeight;
+      el.scrollTop = Math.max(0, over);
+    }
+    syncEnd();
+  }, [scrolls, openIdx]);
   const chosen = choosing !== null ? rungs[choosing] : null;
 
   return (
@@ -153,6 +202,12 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
         @keyframes ladder-sheet-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
         .ladder-sheet-in { animation: ladder-sheet-in 240ms cubic-bezier(.22,1,.36,1) both; }
         @media (prefers-reduced-motion: reduce) { .ladder-sheet-in { animation: none; } }
+        /* Bonus rungs: the grid scrolls inside its own box. Rows stay near the
+           five-row size (a sliver of row 6 shows), never under a 44px target. */
+        .ladder-scroll { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; scrollbar-width: none; container-type: size; }
+        .ladder-scroll::-webkit-scrollbar { display: none; }
+        .ladder-rows { grid-auto-rows: 48px; }
+        @supports (height: 1cqh) { .ladder-rows { grid-auto-rows: max(44px, calc((100cqh - 28px) / 5.45)); } }
       `}</style>
       <div className="flex items-baseline justify-between px-1">
         <span className="text-[14px] font-black" style={OUTLINE}>The Ladder</span>
@@ -160,8 +215,17 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
           {clearedCount}/10 cleared{openIdx >= 0 ? ` · next: rung ${openIdx + 1}` : ''}
         </span>
       </div>
-      <div className="mt-2 flex-1 min-h-0 grid grid-cols-2 grid-rows-5 gap-x-2 gap-y-[7px] pb-3">
-        {rungs.map((r, i) => {
+      <div
+        ref={boxRef}
+        onScroll={scrolls ? syncEnd : undefined}
+        data-testid="ladder-rungs"
+        data-scrolls={scrolls ? '1' : '0'}
+        className={`mt-2 flex-1 min-h-0 ${scrolls ? 'ladder-scroll' : ''}`}
+        style={scrolls && !atEnd ? { WebkitMaskImage: FADE, maskImage: FADE } : undefined}
+      >
+      <div className={`grid grid-cols-2 gap-x-2 gap-y-[7px] ${scrolls ? 'ladder-rows pt-px pb-2 px-px' : 'h-full grid-rows-5 pb-3'}`}>
+        {rungs.map((r) => {
+          const i = r.num - 1;
           const playable = !r.comingSoon && r.state !== 'locked' && !!onLadderStart;
           const st = r.state === 'cleared' ? 'done' : r.state === 'open' && !r.comingSoon ? 'next' : 'locked';
           const face = st === 'done' ? (r.best ? DIFF_COLORS[r.best].face : '#58CC02') : st === 'next' ? REVENGE_RED : LOCKED_FACE;
@@ -172,14 +236,15 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
             : st === 'done'
               ? (r.best ? DIFFICULTIES[r.best].name : 'Cleared')
               : st === 'next'
-                ? 'Open · pick a mode'
+                ? (r.bonus ? 'Open to all' : 'Open · pick a mode')
                 : `Clear rung ${i}`;
+          const tagNew = r.bonus && st !== 'done';
           return (
             <button
               key={r.id}
               type="button"
               disabled={!playable}
-              onClick={withClick(() => { if (playable) setChoosing(i); })}
+              onClick={withClick(() => { if (playable) setChoosing(rungs.indexOf(r)); })}
               data-rung={i + 1}
               data-run-id={r.id}
               data-best={r.best ?? ''}
@@ -202,6 +267,8 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
                 <span className="text-[11.5px] font-black truncate" style={OUTLINE}>{r.run?.name ?? `Rung ${i + 1}`}</span>
                 <span className="mt-[3px] flex items-center gap-1.5">
                   {st === 'done' && <Stars n={stars} size={10} />}
+                  {/* NEW sits on the meta line so the run name keeps the full tile width. */}
+                  {tagNew && <span data-new-tag className="shrink-0 text-[8px] font-black uppercase tracking-wider px-1.5 py-[2px] rounded-md" style={{ background: 'rgba(0,0,0,0.3)', ...GOLD_TEXT }}>New</span>}
                   <span className="text-[8.5px] font-black uppercase tracking-wider truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>{meta}</span>
                 </span>
               </span>
@@ -209,9 +276,11 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
           );
         })}
       </div>
+      </div>
       {chosen && choosing !== null && (
         <DifficultyChooser
-          rungIndex={choosing}
+          rungIndex={chosen.num - 1}
+          bonus={chosen.bonus}
           runId={chosen.id}
           runName={chosen.run?.name ?? `Rung ${choosing + 1}`}
           profile={profile}
