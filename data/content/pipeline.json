@@ -1497,6 +1497,14 @@
       "stage": "testing",
       "created": "2026-09-19",
       "notes": "Mirror + Convert: two bodies and a stolen third (2026-09-19 Mirror batch, stub)"
+    },
+    {
+      "id": "revenge-66",
+      "kind": "run",
+      "name": "The Funhouse",
+      "stage": "testing",
+      "created": "2026-09-20",
+      "notes": "Mirror masterclass: the human-only Mirror levels the bots could not find, solver-proven (2026-09-20, stub)"
     }
   ]
 }
