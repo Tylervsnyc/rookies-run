@@ -3,8 +3,15 @@ import { REVENGE_RUN_IDS, RUNS, STC_RUN_IDS } from './runs';
 const STC = new Set<string>(STC_RUN_IDS);
 
 const REVENGE = new Set<string>(REVENGE_RUN_IDS);
+// Bonus ladder rungs (11, 12, ...) are player-facing but NOT dailies: the daily
+// is `day % pool.length`, so adding a run to the pool re-deals EVERY date —
+// today's included, for players who already played it. Keep in step with
+// LADDER_BONUS_RUNG_IDS in ladder.ts — a literal here so daily.ts stays free
+// of ladder.ts; ladder-bonus-rungs.test.ts asserts the two lists match.
+export const DAILY_EXCLUDED_RUN_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65'];
+const NOT_DAILY = new Set<string>(DAILY_EXCLUDED_RUN_IDS);
 // Daily rotation = Rookie's Revenge runs only (classic rank-8 runs are picker-only).
-const DAILY_POOL = RUNS.filter((r) => REVENGE.has(r.id) && !STC.has(r.id));
+const DAILY_POOL = RUNS.filter((r) => REVENGE.has(r.id) && !STC.has(r.id) && !NOT_DAILY.has(r.id));
 
 const EPOCH_DATE = '2026-01-01';
 

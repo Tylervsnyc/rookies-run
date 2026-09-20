@@ -97,3 +97,13 @@ test('regular rung states are byte-identical for a profile that cleared 3 rungs'
   const b = new Set<string>(ladderUnlockedAbilities(p, approved));
   for (const id of a) assert.ok(b.has(id));
 });
+
+test('bonus rungs never enter the daily rotation (adding to the pool would re-deal every date)', async () => {
+  const { DAILY_EXCLUDED_RUN_IDS, getRunIdForDate } = await import('../daily');
+  const { LADDER_BONUS_RUNG_IDS } = await import('../ladder');
+  assert.deepEqual([...DAILY_EXCLUDED_RUN_IDS].sort(), [...LADDER_BONUS_RUNG_IDS].sort());
+  for (let d = 1; d <= 28; d++) {
+    const iso = `2026-10-${String(d).padStart(2, '0')}`;
+    assert.ok(!LADDER_BONUS_RUNG_IDS.includes(getRunIdForDate(iso)), iso);
+  }
+});
