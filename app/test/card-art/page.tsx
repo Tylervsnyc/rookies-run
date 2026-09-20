@@ -4,7 +4,7 @@
  * shows in the game right now (lib/run/ability-art.ts).
  */
 const SETS: { id: string; title: string; pinned: number; options: number[] }[] = [
-  { id: 'hourglass', title: 'Wait a Sec (new name for Hourglass)', pinned: 4, options: [4, 5, 6, 1, 2, 3] },
+  { id: 'hourglass', title: 'Wait a Sec (new name for Hourglass)', pinned: 6, options: [6, 4, 5, 1, 2, 3] },
   { id: 'mirror', title: 'Mirror', pinned: 9, options: [9, 8, 7, 6, 5, 4, 3, 2, 1] },
   { id: 'puppet', title: 'Puppet', pinned: 13, options: [13, 14, 15, 11, 12, 10, 8, 9, 6, 7, 5, 1, 2, 3] },
   { id: 'ricochet', title: 'Ricochet', pinned: 1, options: [1, 2, 3] },
