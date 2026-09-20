@@ -352,10 +352,10 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
   },
   hourglass: {
     id: 'hourglass',
-    name: 'Hourglass',
+    name: 'Wait a Sec',
     activation: 'instant',
     typeLine: 'Instant · Time',
-    description: 'Turn the glass. The enemies take a turn now — you have not moved, and nothing of yours runs out.',
+    description: 'Wait a sec. The enemies take a turn now — you have not moved, and nothing of yours runs out.',
   },
   scarecrow: {
     id: 'scarecrow',
@@ -1218,8 +1218,8 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'Swap him with any guard beside him. 1/level.';
       return 'Swap him with a pawn beside him. 1/level.';
     case 'hourglass':
-      if (tier === 5) return 'Three glasses in one turn. 6/level.';
-      if (tier === 4) return 'Two glasses in one turn. 4/level.';
+      if (tier === 5) return 'Three waits in one turn. 6/level.';
+      if (tier === 4) return 'Two waits in one turn. 4/level.';
       if (tier === 3) return 'Enemies take a turn now. 3/level.';
       if (tier === 2) return 'Enemies take a turn now. 2/level.';
       return 'Enemies take a turn now. 1/level.';
@@ -1491,8 +1491,8 @@ export const UPGRADE_NOTES: Record<
     5: 'Any enemy, anywhere',
   },
   hourglass: {
-    2: 'Two glasses a level',
-    3: 'Three glasses a level',
+    2: 'Two waits a level',
+    3: 'Three waits a level',
     4: 'Four a level, and two in one turn',
     5: 'Six a level, and three in one turn',
   },

@@ -1077,7 +1077,7 @@
     {
       "id": "hourglass",
       "kind": "ability",
-      "name": "Hourglass",
+      "name": "Wait a Sec",
       "stage": "testing",
       "created": "2026-09-06",
       "notes": "REWORKED + GRADED 2026-09-06. Turn the glass (free action): the enemies take a full turn now and Rookie's move is still in hand. ONE RULE - a glass-turn is a turn taken out of ROOKIE'S clock: moveCount does not tick and nothing of hers expires during it (freeze/snare holds, the king's stun, smoke, the straw, decoy, rabies, king-form, summon clocks, a convert daze, the once-per-turn summon move). Only POISON still burns - a fuse is a bomb going off, not a protection running out. The king REACTS on a glass-turn at every tier (the old T3 hold-the-king clause is deleted: an upgrade must never remove a card's function). Tiers are pure quantity: 1/2/3/4/6 uses, 1/1/1/2/3 casts a turn. GRADE: never a key, never a solvent - 0% alone on every finale of every run tested at every tier - and NOT half of any gate. A glass is worth exactly one Rookie move plus the durations that move would have burned, which is inside the noise floor of a 32-trial cell. It pays only beside a partner whose payoff lands on an ENEMY phase (Candle L9: poison-dart 13% alone -> 72-81% paired; Candle decoy 47/44/69/31 -> 56/56/91/69) and is neutral-to-negative beside snare, scarecrow and freeze-ray. KEPT as the catalogue's best TRAP filler (the seat it holds in The Hayloft revenge-27 and The Quarry revenge-32). Two runs were built to gate on it and neither did (revenge-29 The Candle, revenge-31 The Hearth, both at stage idea). Full reasoning: docs/revenge-abilities.md, docs/ability-pairs.md, .claude/run-level-design.md."
