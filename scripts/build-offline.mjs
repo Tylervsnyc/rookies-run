@@ -185,6 +185,14 @@ function writeEnv() {
   }
 
   vars.NEXT_PUBLIC_OFFLINE_BUILD = '1';
+  // DEMO bundle (npm run build:offline:demo): every ladder rung open. See
+  // LADDER_ALL_OPEN in lib/run/ladder.ts. Never submit one to the App Store.
+  if (process.env.NEXT_PUBLIC_LADDER_ALL_OPEN === '1') {
+    vars.NEXT_PUBLIC_LADDER_ALL_OPEN = '1';
+    log('DEMO BUNDLE: every ladder rung is OPEN (NEXT_PUBLIC_LADDER_ALL_OPEN=1) — TestFlight only, not for App Store review');
+  } else {
+    delete vars.NEXT_PUBLIC_LADDER_ALL_OPEN;
+  }
   fs.writeFileSync(
     path.join(BUILD, '.env.production'),
     Object.entries(vars).map(([k, v]) => `${k}=${v}`).join('\n') + '\n'

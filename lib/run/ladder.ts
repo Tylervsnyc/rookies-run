@@ -176,10 +176,21 @@ function clearedRung(profile: PlayerProfile | undefined, runId: string | undefin
  * ladder is meant to be finished, and difficulty is the replay axis — stars
  * are recorded per mode (`rungStars`) so Hard still has something to earn.
  */
+/**
+ * DEMO BUILDS ONLY — every regular rung is open (Tyler 2026-09-20: "on the app
+ * have all levels unlocked on ladder", for the TestFlight build he hands to
+ * people). Baked in at build time: `NEXT_PUBLIC_LADDER_ALL_OPEN=1` at build time
+ * (the npm script `build:offline:demo`). The website never sets it, so the
+ * unlock order — and Dragon being saved for the last rung — is unchanged there.
+ * An open rung grants its kit, so a demo build also unlocks every ladder card.
+ * TURN IT OFF (build without the variable) before any App Store submission.
+ */
+export const LADDER_ALL_OPEN: boolean = process.env.NEXT_PUBLIC_LADDER_ALL_OPEN === '1';
+
 export function rungState(profile: PlayerProfile | undefined, index: number): RungState {
   if (index < 0 || index >= LADDER_RUNG_IDS.length) return 'locked';
   if (clearedRung(profile, LADDER_RUNG_IDS[index])) return 'cleared';
-  if (index === 0) return 'open';
+  if (index === 0 || LADDER_ALL_OPEN) return 'open';
   return clearedRung(profile, LADDER_RUNG_IDS[index - 1]) ? 'open' : 'locked';
 }
 

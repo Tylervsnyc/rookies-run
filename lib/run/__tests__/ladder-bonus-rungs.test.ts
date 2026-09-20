@@ -107,3 +107,10 @@ test('bonus rungs never enter the daily rotation (adding to the pool would re-de
     assert.ok(!LADDER_BONUS_RUNG_IDS.includes(getRunIdForDate(iso)), iso);
   }
 });
+
+test('the all-open demo switch is OFF unless the build sets it (the website never does)', async () => {
+  const { LADDER_ALL_OPEN, rungState } = await import('../ladder');
+  assert.equal(LADDER_ALL_OPEN, false);
+  assert.equal(rungState(undefined, 0), 'open');
+  assert.equal(rungState(undefined, 1), 'locked');
+});
