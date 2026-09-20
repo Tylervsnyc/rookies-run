@@ -1,0 +1,2484 @@
+{
+ "schema": 1,
+ "experiment": "ladder-audit",
+ "date": "2026-09-20",
+ "at": "2026-09-20T12:15:58.439Z",
+ "engine": {
+  "sha": "3b66aba",
+  "dirty": false,
+  "libHash": "f011117cf4aa"
+ },
+ "budget": {
+  "trials": 48,
+  "runs": 40,
+  "jobs": 4,
+  "seed": "matrix per (run,level,loadout,trial); runs audit:normal:<runId>; 10 cloud shards"
+ },
+ "conclusion": "PASS 0 · BROKEN 0 · TOO EASY 5 · TOO HARD 3 · BOT-BLIND 0 · FLAT 0 · INCONCLUSIVE 2 (of 10)",
+ "body": {
+  "sick": false,
+  "method": "Normal, T5; GATE/USED at T1 cards, BAND/SHAPE/REPEAT at arrival tiers (pair + kit) (GitHub Actions, one job per rung; human check folded in)",
+  "rows": [
+   {
+    "rung": 1,
+    "runId": "revenge-21",
+    "name": "The Slash",
+    "pair": [
+     "boulder",
+     "knight-hop"
+    ],
+    "kit": [
+     "boulder",
+     "knight-hop",
+     "aegis"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "easy",
+      "trialsNeeded": 49
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 22,
+      "n": 48,
+      "pct": 45.8,
+      "lo": 32.6,
+      "hi": 59.7
+     },
+     {
+      "wins": 29,
+      "n": 48,
+      "pct": 60.4,
+      "lo": 46.3,
+      "hi": 73
+     },
+     {
+      "wins": 20,
+      "n": 48,
+      "pct": 41.7,
+      "lo": 28.8,
+      "hi": 55.7
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 71,
+     "n": 192,
+     "pct": 37,
+     "lo": 30.5,
+     "hi": 44
+    },
+    "run": {
+     "wins": 34,
+     "n": 40,
+     "pct": 85,
+     "lo": 70.9,
+     "hi": 92.9
+    },
+    "avgPieces": 2.7,
+    "early": 2.3333333333333335,
+    "late": 3,
+    "targets": {
+     "band": 80,
+     "run": 65,
+     "scale": 3
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 36,
+     "modal": "aegis+boulder:2+knight-hop:2",
+     "modalShare": 0.19,
+     "tiers": {
+      "boulder": 2,
+      "knight-hop": 2,
+      "aegis": 1
+     },
+     "pairHeldPct": 89,
+     "extra": null,
+     "pairLoadout": "boulder:2+knight-hop:2",
+     "kitLoadout": "boulder:2+knight-hop:2+aegis"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 29,
+      "n": 48,
+      "pct": 60.4,
+      "lo": 46.3,
+      "hi": 73
+     },
+     {
+      "wins": 24,
+      "n": 48,
+      "pct": 50,
+      "lo": 36.4,
+      "hi": 63.6
+     },
+     {
+      "wins": 14,
+      "n": 48,
+      "pct": 29.2,
+      "lo": 18.2,
+      "hi": 43.2
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 67,
+     "n": 192,
+     "pct": 34.9,
+     "lo": 28.5,
+     "hi": 41.9
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 192,
+     "n": 192,
+     "pct": 100,
+     "lo": 98,
+     "hi": 100
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "boulder@pen>knight-hop | cap:rook/orth",
+       "wins": 77,
+       "share": 0.4
+      },
+      "8": null,
+      "9": null,
+      "10": null
+     },
+     "repeats": []
+    },
+    "humanRepeats": [
+     [
+      7,
+      8,
+      "knight-hop>boulder@pen>boulder@near | cap:rook/orth"
+     ]
+    ]
+   },
+   {
+    "rung": 2,
+    "runId": "revenge-18",
+    "name": "The Glasshouse",
+    "pair": [
+     "freeze-ray",
+     "vanguard"
+    ],
+    "kit": [
+     "freeze-ray",
+     "vanguard",
+     "poison-dart"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 96
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 39,
+      "n": 48,
+      "pct": 81.3,
+      "lo": 68.1,
+      "hi": 89.8
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 46,
+      "n": 48,
+      "pct": 95.8,
+      "lo": 86,
+      "hi": 98.8
+     },
+     {
+      "wins": 33,
+      "n": 48,
+      "pct": 68.8,
+      "lo": 54.7,
+      "hi": 80.1
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 163,
+     "n": 192,
+     "pct": 84.9,
+     "lo": 79.1,
+     "hi": 89.3
+    },
+    "run": {
+     "wins": 21,
+     "n": 40,
+     "pct": 52.5,
+     "lo": 37.5,
+     "hi": 67.1
+    },
+    "avgPieces": 2.5,
+    "early": 2,
+    "late": 3.6666666666666665,
+    "targets": {
+     "band": 77,
+     "run": 61.7,
+     "scale": 3.6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 26,
+     "modal": "freeze-ray+poison-dart+vanguard:2",
+     "modalShare": 0.15,
+     "tiers": {
+      "freeze-ray": 1,
+      "vanguard": 2,
+      "poison-dart": 1
+     },
+     "pairHeldPct": 65,
+     "extra": null,
+     "pairLoadout": "freeze-ray+vanguard:2",
+     "kitLoadout": "freeze-ray+vanguard:2+poison-dart"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 47,
+      "n": 48,
+      "pct": 97.9,
+      "lo": 89.1,
+      "hi": 99.6
+     },
+     {
+      "wins": 47,
+      "n": 48,
+      "pct": 97.9,
+      "lo": 89.1,
+      "hi": 99.6
+     },
+     {
+      "wins": 39,
+      "n": 48,
+      "pct": 81.3,
+      "lo": 68.1,
+      "hi": 89.8
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 178,
+     "n": 192,
+     "pct": 92.7,
+     "lo": 88.1,
+     "hi": 95.6
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 39,
+      "n": 48,
+      "pct": 81.3,
+      "lo": 68.1,
+      "hi": 89.8
+     },
+     {
+      "wins": 40,
+      "n": 48,
+      "pct": 83.3,
+      "lo": 70.4,
+      "hi": 91.3
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 175,
+     "n": 192,
+     "pct": 91.1,
+     "lo": 86.3,
+     "hi": 94.4
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": {
+       "signature": "vanguard@near | cap:ally/L",
+       "wins": 95,
+       "share": 0.71
+      },
+      "8": null,
+      "9": null,
+      "10": {
+       "signature": "vanguard@near | cap:ally/L",
+       "wins": 85,
+       "share": 0.64
+      }
+     },
+     "repeats": [
+      [
+       7,
+       10,
+       "vanguard@near | cap:ally/L"
+      ]
+     ]
+    }
+   },
+   {
+    "rung": 3,
+    "runId": "revenge-15",
+    "name": "The Stacks",
+    "pair": [
+     "magnet",
+     "boulder"
+    ],
+    "kit": [
+     "magnet",
+     "boulder",
+     "aegis"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "scale": false,
+     "shape": false,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 0,
+     "n": 192,
+     "pct": 0,
+     "lo": 0,
+     "hi": 2
+    },
+    "run": {
+     "wins": 12,
+     "n": 40,
+     "pct": 30,
+     "lo": 18.1,
+     "hi": 45.4
+    },
+    "avgPieces": 3.9,
+    "early": 3.6666666666666665,
+    "late": 4,
+    "targets": {
+     "band": 74,
+     "run": 58.4,
+     "scale": 4.2
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 24,
+     "modal": "aegis:2+boulder+magnet:2",
+     "modalShare": 0.25,
+     "tiers": {
+      "magnet": 2,
+      "boulder": 1,
+      "aegis": 2
+     },
+     "pairHeldPct": 67,
+     "extra": null,
+     "pairLoadout": "magnet:2+boulder",
+     "kitLoadout": "magnet:2+boulder+aegis:2"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 0,
+     "n": 192,
+     "pct": 0,
+     "lo": 0,
+     "hi": 2
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 43,
+      "n": 48,
+      "pct": 89.6,
+      "lo": 77.8,
+      "hi": 95.5
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 46,
+      "n": 48,
+      "pct": 95.8,
+      "lo": 86,
+      "hi": 98.8
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 181,
+     "n": 192,
+     "pct": 94.3,
+     "lo": 90,
+     "hi": 96.8
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": null,
+      "10": null
+     },
+     "repeats": []
+    },
+    "humanRepeats": [
+     [
+      7,
+      9,
+      "magnet@far>aegis | cap:rook/step"
+     ]
+    ]
+   },
+   {
+    "rung": 4,
+    "runId": "revenge-23",
+    "name": "The Parapet",
+    "pair": [
+     "knight-hop",
+     "twin"
+    ],
+    "kit": [
+     "knight-hop",
+     "twin",
+     "decoy"
+    ],
+    "grade": "TOO HARD",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": false,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "hard"
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 25,
+      "n": 48,
+      "pct": 52.1,
+      "lo": 38.3,
+      "hi": 65.5
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 25,
+     "n": 192,
+     "pct": 13,
+     "lo": 9,
+     "hi": 18.5
+    },
+    "run": {
+     "wins": 8,
+     "n": 40,
+     "pct": 20,
+     "lo": 10.5,
+     "hi": 34.8
+    },
+    "avgPieces": 3.6,
+    "early": 3,
+    "late": 5,
+    "targets": {
+     "band": 71,
+     "run": 55.1,
+     "scale": 4.8
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 21,
+     "modal": "decoy:2+knight-hop+twin:2",
+     "modalShare": 0.19,
+     "tiers": {
+      "knight-hop": 1,
+      "twin": 2,
+      "decoy": 1
+     },
+     "pairHeldPct": 90,
+     "extra": null,
+     "pairLoadout": "knight-hop+twin:2",
+     "kitLoadout": "knight-hop+twin:2+decoy"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     },
+     {
+      "wins": 1,
+      "n": 48,
+      "pct": 2.1,
+      "lo": 0.4,
+      "hi": 10.9
+     },
+     {
+      "wins": 25,
+      "n": 48,
+      "pct": 52.1,
+      "lo": 38.3,
+      "hi": 65.5
+     },
+     {
+      "wins": 0,
+      "n": 48,
+      "pct": 0,
+      "lo": 0,
+      "hi": 7.4
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 26,
+     "n": 192,
+     "pct": 13.5,
+     "lo": 9.4,
+     "hi": 19.1
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 35,
+      "n": 48,
+      "pct": 72.9,
+      "lo": 59,
+      "hi": 83.4
+     },
+     {
+      "wins": 32,
+      "n": 48,
+      "pct": 66.7,
+      "lo": 52.5,
+      "hi": 78.3
+     },
+     {
+      "wins": 22,
+      "n": 48,
+      "pct": 45.8,
+      "lo": 32.6,
+      "hi": 59.7
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 127,
+     "n": 192,
+     "pct": 66.1,
+     "lo": 59.2,
+     "hi": 72.5
+    },
+    "lines": {
+     "ok": false,
+     "byLevel": {
+      "7": {
+       "signature": "decoy@line>knight-hop | cap:rook/step",
+       "wins": 38,
+       "share": 0.76
+      },
+      "8": {
+       "signature": "decoy@line>knight-hop | cap:rook/step",
+       "wins": 36,
+       "share": 0.58
+      },
+      "9": {
+       "signature": "knight-hop>twin@line | cap:ally/orth",
+       "wins": 57,
+       "share": 0.53
+      },
+      "10": {
+       "signature": "decoy@line>knight-hop | cap:rook/step",
+       "wins": 22,
+       "share": 0.55
+      }
+     },
+     "repeats": [
+      [
+       7,
+       8,
+       "decoy@line>knight-hop | cap:rook/step"
+      ],
+      [
+       7,
+       10,
+       "decoy@line>knight-hop | cap:rook/step"
+      ],
+      [
+       8,
+       10,
+       "decoy@line>knight-hop | cap:rook/step"
+      ]
+     ]
+    }
+   },
+   {
+    "rung": 5,
+    "runId": "revenge-12",
+    "name": "The Moat",
+    "pair": [
+     "bishop-squire",
+     "swap"
+    ],
+    "kit": [
+     "swap",
+     "bishop-squire",
+     "knight-hop"
+    ],
+    "grade": "INCONCLUSIVE",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": true,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 122
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "hard",
+      "trialsNeeded": 88
+     },
+     "scale": false,
+     "shape": false,
+     "repeat": true,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 29,
+      "n": 48,
+      "pct": 60.4,
+      "lo": 46.3,
+      "hi": 73
+     },
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 27,
+      "n": 48,
+      "pct": 56.3,
+      "lo": 42.3,
+      "hi": 69.3
+     },
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 128,
+     "n": 192,
+     "pct": 66.7,
+     "lo": 59.7,
+     "hi": 73
+    },
+    "run": {
+     "wins": 14,
+     "n": 40,
+     "pct": 35,
+     "lo": 22.1,
+     "hi": 50.5
+    },
+    "avgPieces": 4.9,
+    "early": 4.666666666666667,
+    "late": 5,
+    "targets": {
+     "band": 68,
+     "run": 51.8,
+     "scale": 5.4
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 19,
+     "modal": "bishop-squire:2+knight-hop:2+swap",
+     "modalShare": 0.11,
+     "tiers": {
+      "swap": 2,
+      "bishop-squire": 2,
+      "knight-hop": 3
+     },
+     "pairHeldPct": 84,
+     "extra": null,
+     "pairLoadout": "bishop-squire:2+swap:2",
+     "kitLoadout": "bishop-squire:2+swap:2+knight-hop:3"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 27,
+      "n": 48,
+      "pct": 56.3,
+      "lo": 42.3,
+      "hi": 69.3
+     },
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 35,
+      "n": 48,
+      "pct": 72.9,
+      "lo": 59,
+      "hi": 83.4
+     },
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 138,
+     "n": 192,
+     "pct": 71.9,
+     "lo": 65.1,
+     "hi": 77.8
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 11,
+      "n": 48,
+      "pct": 22.9,
+      "lo": 13.3,
+      "hi": 36.5
+     },
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 47,
+      "n": 48,
+      "pct": 97.9,
+      "lo": 89.1,
+      "hi": 99.6
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 144,
+     "n": 192,
+     "pct": 75,
+     "lo": 68.4,
+     "hi": 80.6
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": {
+       "signature": "knight-hop>bishop-squire@pen | cap:ally/step",
+       "wins": 76,
+       "share": 0.41
+      },
+      "9": null,
+      "10": {
+       "signature": "bishop-squire@far>swap@pen | cap:rook/step",
+       "wins": 86,
+       "share": 0.42
+      }
+     },
+     "repeats": []
+    }
+   },
+   {
+    "rung": 6,
+    "runId": "revenge-24",
+    "name": "The Lattice",
+    "pair": [
+     "duchess",
+     "decoy"
+    ],
+    "kit": [
+     "duchess",
+     "decoy",
+     "magnet"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 35,
+      "n": 48,
+      "pct": 72.9,
+      "lo": 59,
+      "hi": 83.4
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 173,
+     "n": 192,
+     "pct": 90.1,
+     "lo": 85.1,
+     "hi": 93.6
+    },
+    "run": {
+     "wins": 33,
+     "n": 40,
+     "pct": 82.5,
+     "lo": 68,
+     "hi": 91.3
+    },
+    "avgPieces": 4.9,
+    "early": 3,
+    "late": 6.666666666666667,
+    "targets": {
+     "band": 65,
+     "run": 48.5,
+     "scale": 6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 38,
+     "modal": "decoy+duchess:2+magnet",
+     "modalShare": 0.18,
+     "tiers": {
+      "duchess": 1,
+      "decoy": 1,
+      "magnet": 1
+     },
+     "pairHeldPct": 89,
+     "extra": null,
+     "pairLoadout": "duchess+decoy",
+     "kitLoadout": "duchess+decoy+magnet"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 35,
+      "n": 48,
+      "pct": 72.9,
+      "lo": 59,
+      "hi": 83.4
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 173,
+     "n": 192,
+     "pct": 90.1,
+     "lo": 85.1,
+     "hi": 93.6
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 47,
+      "n": 48,
+      "pct": 97.9,
+      "lo": 89.1,
+      "hi": 99.6
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     },
+     {
+      "wins": 47,
+      "n": 48,
+      "pct": 97.9,
+      "lo": 89.1,
+      "hi": 99.6
+     },
+     {
+      "wins": 37,
+      "n": 48,
+      "pct": 77.1,
+      "lo": 63.5,
+      "hi": 86.7
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 175,
+     "n": 192,
+     "pct": 91.1,
+     "lo": 86.3,
+     "hi": 94.4
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "decoy@adj>duchess@far | cap:ally/diag",
+       "wins": 95,
+       "share": 0.42
+      },
+      "8": {
+       "signature": "decoy@adj>duchess@diag | cap:ally/diag",
+       "wins": 89,
+       "share": 0.42
+      },
+      "9": null,
+      "10": null
+     },
+     "repeats": []
+    },
+    "humanRepeats": [
+     [
+      7,
+      10,
+      "decoy@diag>duchess@far | cap:ally/diag"
+     ]
+    ]
+   },
+   {
+    "rung": 7,
+    "runId": "revenge-25",
+    "name": "The Alcove",
+    "pair": [
+     "become-king",
+     "boulder"
+    ],
+    "kit": [
+     "become-king",
+     "boulder",
+     "magnet"
+    ],
+    "grade": "INCONCLUSIVE",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": false,
+     "band": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "easy",
+      "trialsNeeded": 120
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 96
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 10,
+      "n": 48,
+      "pct": 20.8,
+      "lo": 11.7,
+      "hi": 34.3
+     },
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 32,
+      "n": 48,
+      "pct": 66.7,
+      "lo": 52.5,
+      "hi": 78.3
+     },
+     {
+      "wins": 7,
+      "n": 48,
+      "pct": 14.6,
+      "lo": 7.2,
+      "hi": 27.2
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 87,
+     "n": 192,
+     "pct": 45.3,
+     "lo": 38.4,
+     "hi": 52.4
+    },
+    "run": {
+     "wins": 21,
+     "n": 40,
+     "pct": 52.5,
+     "lo": 37.5,
+     "hi": 67.1
+    },
+    "avgPieces": 3.4,
+    "early": 2.6666666666666665,
+    "late": 4.333333333333333,
+    "targets": {
+     "band": 62,
+     "run": 45.2,
+     "scale": 6.6
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 25,
+     "modal": "become-king:3+boulder+magnet",
+     "modalShare": 0.16,
+     "tiers": {
+      "become-king": 1,
+      "boulder": 2,
+      "magnet": 1
+     },
+     "pairHeldPct": 100,
+     "extra": null,
+     "pairLoadout": "become-king+boulder:2",
+     "kitLoadout": "become-king+boulder:2+magnet"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     },
+     {
+      "wins": 35,
+      "n": 48,
+      "pct": 72.9,
+      "lo": 59,
+      "hi": 83.4
+     },
+     {
+      "wins": 39,
+      "n": 48,
+      "pct": 81.3,
+      "lo": 68.1,
+      "hi": 89.8
+     },
+     {
+      "wins": 31,
+      "n": 48,
+      "pct": 64.6,
+      "lo": 50.4,
+      "hi": 76.6
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 139,
+     "n": 192,
+     "pct": 72.4,
+     "lo": 65.7,
+     "hi": 78.2
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 28,
+      "n": 48,
+      "pct": 58.3,
+      "lo": 44.3,
+      "hi": 71.2
+     },
+     {
+      "wins": 36,
+      "n": 48,
+      "pct": 75,
+      "lo": 61.2,
+      "hi": 85.1
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     },
+     {
+      "wins": 25,
+      "n": 48,
+      "pct": 52.1,
+      "lo": 38.3,
+      "hi": 65.5
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 133,
+     "n": 192,
+     "pct": 69.3,
+     "lo": 62.4,
+     "hi": 75.4
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "boulder@far>become-king | cap:rook/step",
+       "wins": 62,
+       "share": 0.81
+      },
+      "8": {
+       "signature": "boulder@pen>boulder@far>become-king | cap:rook/orth",
+       "wins": 71,
+       "share": 0.58
+      },
+      "9": {
+       "signature": "boulder@pen>become-king | cap:rook/step",
+       "wins": 83,
+       "share": 0.73
+      },
+      "10": {
+       "signature": "boulder@adj>become-king | cap:rook/step",
+       "wins": 56,
+       "share": 0.43
+      }
+     },
+     "repeats": []
+    },
+    "humanRepeats": [
+     [
+      9,
+      10,
+      "boulder@far>boulder@pen>become-king | cap:rook/step"
+     ]
+    ]
+   },
+   {
+    "rung": 8,
+    "runId": "revenge-19",
+    "name": "The Cliff",
+    "pair": [
+     "convert",
+     "summon-knight"
+    ],
+    "kit": [
+     "convert",
+     "summon-knight",
+     "magnet"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 97
+     },
+     "scale": false,
+     "shape": false,
+     "repeat": true,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 37,
+      "n": 48,
+      "pct": 77.1,
+      "lo": 63.5,
+      "hi": 86.7
+     },
+     {
+      "wins": 29,
+      "n": 48,
+      "pct": 60.4,
+      "lo": 46.3,
+      "hi": 73
+     },
+     {
+      "wins": 32,
+      "n": 48,
+      "pct": 66.7,
+      "lo": 52.5,
+      "hi": 78.3
+     },
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "summon-knight",
+      "est": {
+       "wins": 1,
+       "n": 48,
+       "pct": 2.1,
+       "lo": 0.4,
+       "hi": 10.9
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 132,
+     "n": 192,
+     "pct": 68.8,
+     "lo": 61.9,
+     "hi": 74.9
+    },
+    "run": {
+     "wins": 20,
+     "n": 40,
+     "pct": 50,
+     "lo": 35.2,
+     "hi": 64.8
+    },
+    "avgPieces": 4.8,
+    "early": 4,
+    "late": 5.666666666666667,
+    "targets": {
+     "band": 59,
+     "run": 41.900000000000006,
+     "scale": 7.2
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 29,
+     "modal": "convert:2+magnet+summon-knight",
+     "modalShare": 0.1,
+     "tiers": {
+      "convert": 2,
+      "summon-knight": 1,
+      "magnet": 1
+     },
+     "pairHeldPct": 76,
+     "extra": null,
+     "pairLoadout": "convert:2+summon-knight",
+     "kitLoadout": "convert:2+summon-knight+magnet"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 30,
+      "n": 48,
+      "pct": 62.5,
+      "lo": 48.4,
+      "hi": 74.8
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     },
+     {
+      "wins": 43,
+      "n": 48,
+      "pct": 89.6,
+      "lo": 77.8,
+      "hi": 95.5
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 155,
+     "n": 192,
+     "pct": 80.7,
+     "lo": 74.6,
+     "hi": 85.7
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     },
+     {
+      "wins": 42,
+      "n": 48,
+      "pct": 87.5,
+      "lo": 75.3,
+      "hi": 94.1
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 162,
+     "n": 192,
+     "pct": 84.4,
+     "lo": 78.6,
+     "hi": 88.8
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": {
+       "signature": "summon-knight@far>convert@adj | cap:ally/L",
+       "wins": 68,
+       "share": 0.56
+      },
+      "8": {
+       "signature": "summon-knight@far>convert@line | cap:ally/L",
+       "wins": 96,
+       "share": 0.43
+      },
+      "9": null,
+      "10": null
+     },
+     "repeats": []
+    }
+   },
+   {
+    "rung": 9,
+    "runId": "revenge-22",
+    "name": "The Millstone",
+    "pair": [
+     "dragon",
+     "duchess"
+    ],
+    "kit": [
+     "dragon",
+     "duchess",
+     "magnet"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "PASS",
+      "direction": "ok"
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 88
+     },
+     "scale": false,
+     "shape": true,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 37,
+      "n": 48,
+      "pct": 77.1,
+      "lo": 63.5,
+      "hi": 86.7
+     },
+     {
+      "wins": 41,
+      "n": 48,
+      "pct": 85.4,
+      "lo": 72.8,
+      "hi": 92.8
+     },
+     {
+      "wins": 46,
+      "n": 48,
+      "pct": 95.8,
+      "lo": 86,
+      "hi": 98.8
+     },
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 158,
+     "n": 192,
+     "pct": 82.3,
+     "lo": 76.3,
+     "hi": 87
+    },
+    "run": {
+     "wins": 14,
+     "n": 40,
+     "pct": 35,
+     "lo": 22.1,
+     "hi": 50.5
+    },
+    "avgPieces": 4,
+    "early": 3.6666666666666665,
+    "late": 5,
+    "targets": {
+     "band": 56,
+     "run": 38.6,
+     "scale": 7.8
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 23,
+     "modal": "dragon+duchess+magnet",
+     "modalShare": 0.22,
+     "tiers": {
+      "dragon": 1,
+      "duchess": 1,
+      "magnet": 1
+     },
+     "pairHeldPct": 78,
+     "extra": null,
+     "pairLoadout": "dragon+duchess",
+     "kitLoadout": "dragon+duchess+magnet"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 37,
+      "n": 48,
+      "pct": 77.1,
+      "lo": 63.5,
+      "hi": 86.7
+     },
+     {
+      "wins": 41,
+      "n": 48,
+      "pct": 85.4,
+      "lo": 72.8,
+      "hi": 92.8
+     },
+     {
+      "wins": 46,
+      "n": 48,
+      "pct": 95.8,
+      "lo": 86,
+      "hi": 98.8
+     },
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 158,
+     "n": 192,
+     "pct": 82.3,
+     "lo": 76.3,
+     "hi": 87
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 34,
+      "n": 48,
+      "pct": 70.8,
+      "lo": 56.8,
+      "hi": 81.8
+     },
+     {
+      "wins": 37,
+      "n": 48,
+      "pct": 77.1,
+      "lo": 63.5,
+      "hi": 86.7
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 31,
+      "n": 48,
+      "pct": 64.6,
+      "lo": 50.4,
+      "hi": 76.6
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 147,
+     "n": 192,
+     "pct": 76.6,
+     "lo": 70.1,
+     "hi": 82
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": null,
+      "10": {
+       "signature": "dragon@far>duchess@far | cap:ally/step",
+       "wins": 65,
+       "share": 0.57
+      }
+     },
+     "repeats": []
+    },
+    "humanRepeats": [
+     [
+      7,
+      8,
+      "duchess@far>dragon@far | cap:ally/step"
+     ],
+     [
+      7,
+      9,
+      "duchess@far>dragon@far | cap:ally/step"
+     ],
+     [
+      7,
+      10,
+      "duchess@far>dragon@far | cap:ally/step"
+     ],
+     [
+      8,
+      9,
+      "duchess@far>dragon@far | cap:ally/step"
+     ],
+     [
+      8,
+      10,
+      "duchess@far>dragon@far | cap:ally/step"
+     ],
+     [
+      9,
+      10,
+      "duchess@far>dragon@far | cap:ally/step"
+     ]
+    ]
+   },
+   {
+    "rung": 10,
+    "runId": "revenge-17",
+    "name": "The Briar",
+    "pair": [
+     "dragon",
+     "sacrifice"
+    ],
+    "kit": [
+     "dragon",
+     "sacrifice",
+     "poison-dart"
+    ],
+    "grade": "TOO EASY",
+    "checks": {
+     "gate": {
+      "verdict": "INCONCLUSIVE",
+      "direction": "ok",
+      "trialsNeeded": 38
+     },
+     "used": true,
+     "band": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "run": {
+      "verdict": "FAIL",
+      "direction": "easy"
+     },
+     "scale": true,
+     "shape": false,
+     "repeat": false,
+     "botBlind": []
+    },
+    "pairByLevel": [
+     {
+      "wins": 42,
+      "n": 48,
+      "pct": 87.5,
+      "lo": 75.3,
+      "hi": 94.1
+     },
+     {
+      "wins": 45,
+      "n": 48,
+      "pct": 93.8,
+      "lo": 83.2,
+      "hi": 97.9
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     }
+    ],
+    "worstSingleByLevel": [
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "poison-dart",
+      "est": {
+       "wins": 2,
+       "n": 48,
+       "pct": 4.2,
+       "lo": 1.2,
+       "hi": 14
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     },
+     {
+      "loadout": "none",
+      "est": {
+       "wins": 0,
+       "n": 48,
+       "pct": 0,
+       "lo": 0,
+       "hi": 7.4
+      }
+     }
+    ],
+    "pairMean": {
+     "wins": 175,
+     "n": 192,
+     "pct": 91.1,
+     "lo": 86.3,
+     "hi": 94.4
+    },
+    "run": {
+     "wins": 33,
+     "n": 40,
+     "pct": 82.5,
+     "lo": 68,
+     "hi": 91.3
+    },
+    "avgPieces": 17.5,
+    "early": 12.333333333333334,
+    "late": 24.666666666666668,
+    "targets": {
+     "band": 53,
+     "run": 35.3,
+     "scale": 8.399999999999999
+    },
+    "arrival": {
+     "level": 7,
+     "reached": 34,
+     "modal": "dragon:2+poison-dart+sacrifice",
+     "modalShare": 0.26,
+     "tiers": {
+      "dragon": 2,
+      "sacrifice": 1,
+      "poison-dart": 1
+     },
+     "pairHeldPct": 82,
+     "extra": null,
+     "pairLoadout": "dragon:2+sacrifice",
+     "kitLoadout": "dragon:2+sacrifice+poison-dart"
+    },
+    "pairArrivalByLevel": [
+     {
+      "wins": 38,
+      "n": 48,
+      "pct": 79.2,
+      "lo": 65.7,
+      "hi": 88.3
+     },
+     {
+      "wins": 47,
+      "n": 48,
+      "pct": 97.9,
+      "lo": 89.1,
+      "hi": 99.6
+     },
+     {
+      "wins": 48,
+      "n": 48,
+      "pct": 100,
+      "lo": 92.6,
+      "hi": 100
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     }
+    ],
+    "pairArrivalMean": {
+     "wins": 177,
+     "n": 192,
+     "pct": 92.2,
+     "lo": 87.5,
+     "hi": 95.2
+    },
+    "kitArrivalByLevel": [
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     },
+     {
+      "wins": 46,
+      "n": 48,
+      "pct": 95.8,
+      "lo": 86,
+      "hi": 98.8
+     },
+     {
+      "wins": 46,
+      "n": 48,
+      "pct": 95.8,
+      "lo": 86,
+      "hi": 98.8
+     },
+     {
+      "wins": 44,
+      "n": 48,
+      "pct": 91.7,
+      "lo": 80.4,
+      "hi": 96.7
+     }
+    ],
+    "kitArrivalMean": {
+     "wins": 180,
+     "n": 192,
+     "pct": 93.8,
+     "lo": 89.4,
+     "hi": 96.4
+    },
+    "lines": {
+     "ok": true,
+     "byLevel": {
+      "7": null,
+      "8": null,
+      "9": {
+       "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+       "wins": 94,
+       "share": 0.52
+      },
+      "10": null
+     },
+     "repeats": []
+    },
+    "humanRepeats": [
+     [
+      7,
+      10,
+      "dragon@far>sacrifice@far | cap:rook/step"
+     ],
+     [
+      7,
+      10,
+      "dragon@far>sacrifice@far | cap:rook/step"
+     ],
+     [
+      8,
+      9,
+      "dragon@far>sacrifice@far | cap:rook/orth"
+     ],
+     [
+      7,
+      10,
+      "dragon@far>sacrifice@far | cap:rook/step"
+     ]
+    ]
+   }
+  ]
+ }
+}
