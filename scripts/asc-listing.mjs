@@ -20,7 +20,9 @@ const KEY_FILE = path.join(process.env.HOME, 'Downloads/AuthKey_767R5DY9P3.p8');
 const BUNDLE_ID = 'com.learnthroughstories.rookiesrun';
 const VERSION_STRING = process.env.VERSION || '1.0';
 const BUILD_NO = process.env.BUILD || null; // default: newest VALID build
-const SHOT_DIR = path.resolve('data/appstore/screenshots');
+const SHOT_DIR = path.resolve(process.env.SHOT_DIR || 'data/appstore/screenshots');
+// APP_IPHONE_67 (default) or APP_IPAD_PRO_3GEN_129 for the 12.9" iPad set.
+const SHOT_TYPE = process.env.SHOT_TYPE || 'APP_IPHONE_67';
 
 const args = new Set(process.argv.slice(2));
 
@@ -40,24 +42,27 @@ const COPY = {
 Rookie's Revenge is a daily chess roguelike. You are one rook. Across the board, behind walls and bodyguards, hides the enemy king. Cross 10 escalating levels, break through his defenses, and take him down - in a run that changes every single day.
 
 HOW IT WORKS
-- Move like a rook. Capture like a rook. Every capture charges your tempo.
+- Move like a rook. Capture like a rook. Every capture stuns the defense and buys you tempo.
 - Each level is a puzzle-battlefield: pawn shells, sightline queens, stone walls with one door, lava between you and him.
 - Reach the king before your moves run out. Then do it nine more levels in a row.
 
 POWERS THAT BREAK CHESS
-Pick ability cards as you climb: hop like a knight, freeze a defender, summon a piece you control, drop a boulder to seal a file, or become the king himself. Every ability refills at the top of every level, so spend them where they hurt.
+Pick ability cards as you climb: hop like a knight, freeze a defender, summon a knight you control like a second piece, drop a boulder to seal a file, or become the king himself. 26 abilities to unlock, each with five upgrade tiers. Every offer is a build decision - and every power refills at the top of every level, so spend them where they hurt.
 
 A NEW RUN EVERY DAY
-The daily rotates through hand-tuned runs - each with its own personality and lesson. Miss a day, and that board is gone.
+The daily rotates through 10 hand-built runs - 100 levels in all - and each run is built around a pair of powers that only cracks its finale together. Miss a day, and that board is gone.
+
+CLIMB THE LADDER
+The same 10 runs stack into a ladder, from powers that bend the rules at the bottom to the ones that rewrite the board at the top. Clear a rung and the next one opens, with the powers it needs already in your hand.
 
 EARN YOUR ARSENAL
-Trophies track everything from your first king to a flawless run, and unlock new abilities permanently. Four difficulties, from Rookie (training wheels, some judgment) to Nightmare (he sees everything).
+54 trophies track everything from your first king to a flawless run. Nineteen of them unlock new abilities permanently. Four difficulties, from Rookie (training wheels, some judgment) to Nightmare (he sees everything).
 
 ACTUALLY LEARN CHESS
 Every mechanic is real chess underneath: forks, skewers, overloaded defenders, zugzwang. You will start seeing sightlines and weak squares everywhere - including in your regular games.
 
 From the makers of The Chess Path (chesspath.app), the friendly way to learn chess from zero.`,
-  reviewNotes: `Rookie's Revenge is a daily chess roguelike: the player controls a single rook and crosses the board in 10 escalating levels to capture the enemy king, earning abilities between levels. A new board rotates in every day.
+  reviewNotes: `Rookie's Revenge is a daily chess roguelike: the player controls a single rook and crosses the board in 10 escalating levels to capture the enemy king, earning abilities between levels. A new board rotates in every day, and a 10-run ladder (100 levels) plus two bonus runs is always open.
 
 No account is required and there is no sign-in anywhere in the app. Progress (abilities, trophies, difficulty unlocks) is stored on device. There are no purchases, no ads, and no user generated content beyond an optional leaderboard handle (a random "Rook-1234" name the player may rename).
 
@@ -196,8 +201,8 @@ async function main() {
     if (!files.length) throw new Error('no PNGs in ' + SHOT_DIR);
     const vl = (await api('GET', `/appStoreVersions/${version.id}/appStoreVersionLocalizations`)).data.find((l) => l.attributes.locale === 'en-US');
     const sets = (await api('GET', `/appStoreVersionLocalizations/${vl.id}/appScreenshotSets`)).data;
-    let set = sets.find((s) => s.attributes.screenshotDisplayType === 'APP_IPHONE_67');
-    if (!set) set = (await api('POST', '/appScreenshotSets', { data: { type: 'appScreenshotSets', attributes: { screenshotDisplayType: 'APP_IPHONE_67' }, relationships: { appStoreVersionLocalization: rel('appStoreVersionLocalizations', vl.id) } } })).data;
+    let set = sets.find((s) => s.attributes.screenshotDisplayType === SHOT_TYPE);
+    if (!set) set = (await api('POST', '/appScreenshotSets', { data: { type: 'appScreenshotSets', attributes: { screenshotDisplayType: SHOT_TYPE }, relationships: { appStoreVersionLocalization: rel('appStoreVersionLocalizations', vl.id) } } })).data;
     const old = (await api('GET', `/appScreenshotSets/${set.id}/appScreenshots`)).data;
     for (const o of old) await api('DELETE', `/appScreenshots/${o.id}`);
     log(`screenshots: cleared ${old.length} old`);

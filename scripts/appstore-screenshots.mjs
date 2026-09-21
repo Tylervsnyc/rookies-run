@@ -1,65 +1,100 @@
 // App Store screenshots for Rookie's Revenge — 6.7" iPhone (1290x2796).
 //
 // Captures against the LIVE site by default so the shots match what ships.
-// Seeds localStorage (onboarding done, a rich profile with every power +
-// a handful of trophies, music off) via addInitScript, then drives a real
-// run with the same click-the-square approach as scripts/verify-revenge.mjs.
+// Seeds localStorage (onboarding done, a profile with every player-facing
+// power + a handful of real trophies + the first four ladder rungs cleared,
+// music off, handle "Rookie") via addInitScript, then drives the real UI.
+//
+// Everything seeded is DERIVED from the repo, not hand-kept, so it can't go
+// stale: powers = approved|live abilities in data/content/pipeline.json, rungs
+// = LADDER_RUNG_IDS / LADDER_BONUS_RUNG_IDS parsed out of lib/run/ladder.ts,
+// trophies = EARNED filtered to ids that exist in lib/run/achievements.ts
+// (profile.ts sanitize drops unknown ids anyway — we fail loudly instead).
+//
+// Nothing here is fabricated: the Ranks line on the home screen comes from the
+// live leaderboard. Shot 2 is a real Endless level-1 slate (3 cards, Take +
+// Preview) with one card flipped to its live Preview demo. No debug/test route
+// is ever visited, and no run is ever finished (so no score is submitted).
 //
 // Usage: node scripts/appstore-screenshots.mjs [baseUrl] [outDir]
 //   baseUrl default https://run.chesspath.app
 //   outDir  default data/appstore/screenshots  (files are overwritten)
 //   playwright resolved from PLAYWRIGHT_DIR (default: ../chess-learning-tree)
+//   DEBUG_SHOTS=<dir> also writes intermediate frames there.
 //
-// Outputs (in order): 1-board-the-hunt, 2-ability-offer, 3-power-arsenal,
+// Outputs: 1-board-the-hunt, 2-ability-offer, 3-power-arsenal,
 // 4-daily-home, 5-trophy-room, 6-difficulty-ladder.
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const pwRoot = process.env.PLAYWRIGHT_DIR ?? join(here, '..', '..', 'chess-learning-tree');
+const root = join(here, '..');
+const pwRoot = process.env.PLAYWRIGHT_DIR ?? join(root, '..', 'chess-learning-tree');
 const { chromium, devices } = createRequire(`${pwRoot}/package.json`)('playwright');
-const sharp = createRequire(join(here, '..', 'package.json'))('sharp');
+const sharp = createRequire(join(root, 'package.json'))('sharp');
 
 const BASE = (process.argv[2] ?? 'https://run.chesspath.app').replace(/\/$/, '');
-const OUT = process.argv[3] ?? join(here, '..', 'data', 'appstore', 'screenshots');
+const OUT = process.argv[3] ?? join(root, 'data', 'appstore', 'screenshots');
 mkdirSync(OUT, { recursive: true });
 
 const FILES = 'abcdefgh';
 const sq = (f, r) => `${FILES[f - 1]}${r}`;
 
-// Every player-facing power (live/approved in data/content/pipeline.json) —
-// so the Codex reads as a full arsenal, like the previous set of shots.
-const ALL_POWERS = [
-  'bishop-step', 'knight-hop', 'queen-pulse', 'become-king', 'freeze-ray', 'poison-dart', 'rabies-dart',
-  'convert', 'aegis', 'decoy', 'boulder', 'smoke', 'rewind', 'magnet', 'summon-knight', 'page', 'twin',
-  'bishop-squire', 'swap', 'sacrifice', 'duchess', 'vanguard', 'dragon',
-];
-const EARNED = [
+// ── Seed data, derived from the repo ─────────────────────────────────────────
+const pipeline = JSON.parse(readFileSync(join(root, 'data', 'content', 'pipeline.json'), 'utf8'));
+const pipelineItems = Array.isArray(pipeline.items)
+  ? pipeline.items
+  : Object.entries(pipeline.items).map(([id, v]) => ({ id, ...v }));
+/** Every player-facing power (approved|live) — the Codex reads as a full arsenal. */
+const ALL_POWERS = pipelineItems
+  .filter((x) => x.kind === 'ability' && (x.stage === 'approved' || x.stage === 'live'))
+  .map((x) => x.id);
+
+const ladderSrc = readFileSync(join(root, 'lib', 'run', 'ladder.ts'), 'utf8');
+const rungBlock = ladderSrc.slice(ladderSrc.indexOf('LADDER_RUNG_IDS'), ladderSrc.indexOf('];', ladderSrc.indexOf('LADDER_RUNG_IDS')));
+const LADDER = [...rungBlock.matchAll(/'(revenge-\d+)',/g)].map((m) => m[1]);
+const bonusLine = ladderSrc.match(/LADDER_BONUS_RUNG_IDS[^=]*=\s*\[([^\]]*)\]/);
+const BONUS = bonusLine ? [...bonusLine[1].matchAll(/'([^']+)'/g)].map((m) => m[1]) : [];
+if (LADDER.length !== 10) throw new Error(`expected 10 ladder rungs in lib/run/ladder.ts, parsed ${LADDER.length}`);
+
+const achSrc = readFileSync(join(root, 'lib', 'run', 'achievements.ts'), 'utf8');
+const ACH_IDS = new Set([...achSrc.matchAll(/^\s{4}id: '([a-z0-9-]+)',/gm)].map((m) => m[1]));
+const EARNED_WANTED = [
   'first-blood', 'regicide', 'closing-time', 'armed', 'foot-traffic', 'pawn-broker', 'horse-whisperer',
   'excommunicated', 'queen-slayer', 'serial-regicide', 'century', 'ten-runs', 'speedrun', 'photo-finish',
-  'cold-shoulder', 'double-tap', 'streak-3',
+  'cold-shoulder', 'bishop-please', 'horse-play', 'sore-winner', 'streak-3',
 ];
+const EARNED = EARNED_WANTED.filter((id) => ACH_IDS.has(id));
+const droppedTrophies = EARNED_WANTED.filter((id) => !ACH_IDS.has(id));
+if (droppedTrophies.length) console.log(`  note: trophy ids no longer in achievements.ts, skipped: ${droppedTrophies.join(', ')}`);
+
+/** First CLEARED rungs of the ladder (rung 5 is then the open "next"). */
+const CLEARED_RUNGS = 4;
 
 function seededProfile() {
   const at = new Date(Date.now() - 3 * 864e5).toISOString();
   const achievements = {};
   for (const id of EARNED) achievements[id] = { unlockedAt: at, seen: true };
+  const ladder = {};
+  const bestStars = { normal: {} };
+  LADDER.slice(0, CLEARED_RUNGS).forEach((id, i) => {
+    const attempt = { cleared: true, bestLevels: 10, score: 4100 - i * 170 };
+    ladder[id] = { ...attempt, byDifficulty: { normal: attempt } };
+    bestStars.normal[id] = i === 1 ? 2 : 3;
+  });
   return {
     v: 1,
     createdAt: new Date(Date.now() - 20 * 864e5).toISOString(),
     difficulty: 'normal',
     unlockedAbilities: ALL_POWERS,
     achievements,
-    counters: { 'cap.total': 212, 'cap.king': 31, 'cap.pawn': 140, sessions: 14, 'runs.complete': 12 },
-    bestByDifficulty: { rookie: { levels: 10, score: 4200 }, normal: { levels: 8, score: 3150 } },
-    // First three rungs cleared so the Ladder shows progress + an open rung.
-    ladder: {
-      'revenge-5': { cleared: true, bestLevels: 10, score: 4020 },
-      'revenge-6': { cleared: true, bestLevels: 10, score: 3880 },
-      'revenge-4': { cleared: true, bestLevels: 10, score: 3710 },
-    },
+    // Keys as TrophyRoom's stat row reads them (lib/run/achievements.ts cnt()).
+    counters: { 'cap.total': 212, 'cap.king': 31, 'cap.pawn': 140, sessions: 14, 'runs.completed': 12, 'ability.used': 96 },
+    bestByDifficulty: { rookie: { levels: 10, score: 4200 }, normal: { levels: 10, score: 4100 } },
+    bestStars,
+    ladder,
   };
 }
 
@@ -109,13 +144,44 @@ const fi = (s) => FILES.indexOf(s[0]) + 1;
 const ri = (s) => Number(s[1]);
 const onBoard = (f, r) => f >= 1 && f <= 8 && r >= 1 && r <= 8;
 
+/**
+ * Terrain (lava, stone) blocks Rookie's lines but has no DOM marker, so it is
+ * read off the pixels: sample each empty square near its corner and flag
+ * anything that is neither the light nor the dark board colour. Refreshed by
+ * readTerrain() before planning; used by rookMoves + attackedSquares.
+ */
+let WALLS = new Set();
+async function readTerrain(page) {
+  const boxes = await page.evaluate(() => [...document.querySelectorAll('[data-square]')].map((el) => {
+    const r = el.getBoundingClientRect();
+    return { sq: el.getAttribute('data-square'), x: r.x, y: r.y, w: r.width, h: r.height, piece: !!el.querySelector('[data-piece]') };
+  }));
+  const buf = await page.screenshot({ scale: 'css' });
+  const { data, info } = await sharp(buf).raw().toBuffer({ resolveWithObject: true });
+  const px = (x, y) => {
+    const i = (Math.round(y) * info.width + Math.round(x)) * info.channels;
+    return [data[i], data[i + 1], data[i + 2]];
+  };
+  const walls = new Set();
+  for (const b of boxes) {
+    if (b.piece || !b.sq) continue;
+    const [r, g, bl] = px(b.x + b.w * 0.2, b.y + b.h * 0.2);
+    const light = r > 215 && g > 215 && bl > 180 && bl < 235; // cream
+    const dark = g > r + 15 && g > bl + 25; // green
+    const tint = r > 200 && g > 190 && bl < 170; // move/last-move highlight
+    if (!light && !dark && !tint) walls.add(b.sq);
+  }
+  WALLS = walls;
+  return walls;
+}
+
 function attackedSquares(pieces) {
   const occ = new Set(pieces.map((p) => p.sq));
   const out = new Set();
   const ray = (f, r, df, dr) => {
     let x = f + df;
     let y = r + dr;
-    while (onBoard(x, y)) {
+    while (onBoard(x, y) && !WALLS.has(sq(x, y))) {
       out.add(sq(x, y));
       if (occ.has(sq(x, y))) break;
       x += df;
@@ -152,7 +218,7 @@ function rookMoves(from, pieces) {
   for (const [df, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
     let f = f0 + df;
     let r = r0 + dr;
-    while (onBoard(f, r)) {
+    while (onBoard(f, r) && !WALLS.has(sq(f, r))) {
       const s = sq(f, r);
       if (bySq.has(s)) { out.push({ to: s, capture: bySq.get(s) }); break; }
       out.push({ to: s, capture: null });
@@ -215,137 +281,136 @@ async function shot(page, name) {
   const path = join(OUT, `${name}.png`);
   await page.screenshot({ path, fullPage: false });
   const m = await sharp(path).metadata();
-  const ok = m.width === 1290 && m.height === 2796;
+  const [W, H] = process.env.IPAD === '1' ? [2048, 2732] : [1290, 2796];
+  const ok = m.width === W && m.height === H;
   console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}.png ${m.width}x${m.height}`);
   if (!ok) throw new Error(`${name}: wrong size ${m.width}x${m.height}`);
 }
 
-async function dismissOffer(page) {
-  // Offer modal (free pick on L1, choice later): take the first card.
-  const cards = page.locator('button.offer-card-enter');
-  if ((await cards.count()) > 0) {
-    await cards.first().click();
-    await page.waitForTimeout(700);
-    return true;
-  }
-  return false;
+/** Endless seed for the offer shot: its 5-card kit (Aegis, Bishop Step,
+ *  Dragon, Decoy, Poison Dart...) varies by seed; the L1 slate is 3 of the kit. */
+const ENDLESS_SEED = Number(process.env.ENDLESS_SEED ?? 21);
+/** Cards whose Preview demo reads well in the small card (the CAPTURE THE
+ *  KING tag stays inside the frame). The L1 slate is random per load, so we
+ *  reload until one of these is on it, then flip the best-ranked one. */
+const PREVIEW_PREFERENCE = ['DRAGON', 'KNIGHT HOP'];
+const OFFER_TRIES = 8;
+
+async function waitGone(page, locator, ms = 8000) {
+  await locator.first().waitFor({ state: 'detached', timeout: ms }).catch(() => {});
 }
 
 async function main() {
   const browser = await chromium.launch();
+  // IPAD=1 -> 12.9" iPad Pro portrait (1024x1366 @2x = 2048x2732), the one
+  // iPad set App Review requires because the app ships for iPad too.
+  const ipad = process.env.IPAD === '1';
   const ctx = await browser.newContext({
-    ...devices['iPhone 14 Pro Max'],
-    viewport: { width: 430, height: 932 },
-    deviceScaleFactor: 3,
+    ...(ipad ? devices['iPad Pro 11'] : devices['iPhone 14 Pro Max']),
+    viewport: ipad ? { width: 1024, height: 1366 } : { width: 430, height: 932 },
+    deviceScaleFactor: ipad ? 2 : 3,
     isMobile: true,
     hasTouch: true,
     colorScheme: 'light',
     locale: 'en-US',
+    reducedMotion: 'no-preference',
   });
   await ctx.addInitScript((profile) => {
+    // Only seed once per tab so the app's own writes during a run survive reloads.
+    if (sessionStorage.getItem('as-seeded')) return;
+    sessionStorage.setItem('as-seeded', '1');
     localStorage.setItem('rookies-run-onboarded', '1');
     localStorage.setItem('rookies-revenge-profile-v1', JSON.stringify(profile));
     localStorage.setItem('rookies-revenge-handle', 'Rookie');
-    localStorage.setItem('rr_music_v1', JSON.stringify({ enabled: false, on: false, track: null }));
+    // lib/music.ts: track null = music off.
+    localStorage.setItem('rr_music_v1', JSON.stringify({ track: null, volume: 0 }));
   }, seededProfile());
   const page = await ctx.newPage();
   page.on('pageerror', (e) => console.log(`  [pageerror] ${String(e).slice(0, 200)}`));
 
-  // ── Home (Revenge tab = daily card) ─────────────────────────────────────
+  // ── 4. Home — the Daily Revenge screen (BEGIN + today's 3-card kit) ─────
   await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('tab', { name: 'Revenge' }).waitFor({ timeout: 20000 });
   await settle(page, 1500);
+  await dbg(page, 'home');
+  await page.getByRole('button', { name: 'Daily Revenge' }).click();
+  await page.getByRole('button', { name: /begin today/i }).waitFor();
+  await settle(page, 1200);
   await shot(page, '4-daily-home');
 
-  // ── Ladder tab ──────────────────────────────────────────────────────────
-  await page.getByRole('tab', { name: /ladder/i }).click();
-  await settle(page, 700);
+  // ── 6. Ladder tab — four rungs cleared, bonus rungs 11/12 in view ───────
+  await page.getByRole('tab', { name: 'Ladder' }).click();
+  await page.getByTestId('ladder-rungs').waitFor();
+  await settle(page, 600);
+  await page.getByTestId('ladder-rungs').evaluate((el) => { el.scrollTop = el.scrollHeight; });
+  await page.waitForTimeout(700);
   await shot(page, '6-difficulty-ladder');
 
-  // ── Codex tab → Trophy Room (trophies, then abilities) ──────────────────
-  await page.getByRole('tab', { name: /codex/i }).click();
+  // ── 5 + 3. Codex tab → Trophy Room (trophies, then abilities) ───────────
+  await page.getByRole('tab', { name: 'Codex' }).click();
   await settle(page, 600);
   await page.getByRole('button', { name: /open the codex/i }).click();
-  await settle(page, 900);
+  await settle(page, 1200);
   await shot(page, '5-trophy-room');
   await page.getByRole('button', { name: /^Abilities/ }).click();
-  await settle(page, 700);
+  await settle(page, 1000);
   await shot(page, '3-power-arsenal');
 
-  // ── Gameplay: revenge-1, clear L1 for the offer, then L2 mid-hunt ───────
-  await page.goto(`${BASE}/?run=revenge-1`, { waitUntil: 'domcontentloaded' });
-  await settle(page, 1500);
-  // The Arena home shows first (its demo board uses the same [data-square]
-  // markup, so don't read the board yet): flip the daily card, then Begin.
-  const go = page.getByRole('button', { name: 'Daily Revenge' });
-  if (await go.isVisible().catch(() => false)) {
-    await go.click();
-    await page.waitForTimeout(600);
+  // ── 2. Offer — Endless level 1: a real 3-card slate, one card previewing ─
+  let names = [];
+  let pick = -1;
+  for (let t = 0; t < OFFER_TRIES && pick < 0; t++) {
+    await page.goto(`${BASE}/?endless=${ENDLESS_SEED}`, { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'START' }).click({ timeout: 20000 });
+    await page.locator('button.offer-card-enter').nth(2).waitFor({ timeout: 15000 });
+    await settle(page, 1200);
+    names = (await page.locator('button.offer-card-enter span.uppercase').allInnerTexts()).map((n) => n.trim());
+    const want = PREVIEW_PREFERENCE.find((n) => names.includes(n));
+    pick = want ? names.indexOf(want) : -1;
   }
-  const begin = page.getByRole('button', { name: /begin today/i });
-  if (await begin.isVisible().catch(() => false)) {
-    await begin.click();
-  }
-  // Live board = the level-1 free offer is up, or the tab bar is gone.
-  await page.locator('button.offer-card-enter').first().waitFor({ timeout: 15000 }).catch(() => {});
-  await settle(page, 1200);
-  await dismissOffer(page);
-  await page.waitForTimeout(800);
+  if (pick < 0) { console.log('  WARNING: no preferred card on the slate; previewing the first'); pick = 0; }
+  console.log(`  offer slate: ${names.join(' | ')} -> previewing ${names[pick]}`);
+  if (names.length !== 3) console.log(`  WARNING: expected a 3-card slate, got ${names.length}`);
+  await page.getByRole('button', { name: 'Preview', exact: true }).nth(pick).click();
+  await page.waitForTimeout(1700); // mid-demo: the piece is showing its moves
+  await shot(page, '2-ability-offer');
 
-  let offerShot = false;
-  let boardShot = false;
-  for (let level = 1; level <= 3 && !(offerShot && boardShot); level++) {
-    let captures = 0;
-    let won = false;
-    for (let i = 0; i < 16 && !won; i++) {
-      const board = await readBoard(page);
-      if (!board.rookie) { console.log(`  L${level}: no rookie on board`); break; }
-      if (level === 3) break; // L3 only exists here for its opening offer
-      // On L2 (the bishop + pawn court) take a piece or two first so the
-      // tempo bar is partly filled, then line up and take the king.
-      const wantCapture = level === 2 && captures < 2;
-      const plan = planMove(board, wantCapture);
-      if (!plan) { console.log(`  L${level}: no plan from ${board.rookie}`); break; }
-      if (!boardShot && level === 2 && captures >= 1 && plan.capture === 'K') {
-        await clickSquare(page, board.rookie); // select: her moves light up
-        await page.waitForTimeout(500);
-        await shot(page, '1-board-the-hunt');
-        boardShot = true;
-        await clickSquare(page, board.rookie);
-        await page.waitForTimeout(250);
-      }
+  // ── 1. Board — the open ladder rung (The Moat: lava + pawn court), L1 ───
+  // Same URL the rung's difficulty sheet launches (onLadderStart).
+  await page.goto(`${BASE}/?run=${LADDER[CLEARED_RUNGS]}&ladder=1&difficulty=normal`, { waitUntil: 'domcontentloaded' });
+  const takeBoth = page.getByRole('button', { name: /^Take (both|it)$/ });
+  await takeBoth.waitFor({ timeout: 20000 });
+  await settle(page, 800);
+  await dbg(page, 'grant');
+  await takeBoth.click();
+  await waitGone(page, page.locator('button.offer-card-enter'));
+  await settle(page, 1500);
+  let board = await readBoard(page);
+  await dbg(page, 'L1-start');
+  // One safe capture first (tempo bar moves, a piece is gone), then select
+  // Rookie so her lines light up with the king in view.
+  for (let i = 0; i < 4; i++) {
+    const walls = await readTerrain(page);
+    if (i === 0) console.log(`  terrain: ${[...walls].sort().join(' ') || 'none'}`);
+    const plan = planMove(board, true); // a safe capture, or a safe square to set one up
+    console.log(`  plan from ${board.rookie}: ${plan ? plan.to + (plan.capture ? ' x' + plan.capture : '') : 'none'}`);
+    if (!plan || plan.capture === 'K') break;
+    await move(page, board.rookie, plan.to);
+    let after = await readBoard(page);
+    if (after.rookie === board.rookie) { // the first tap after a modal can be swallowed
       await move(page, board.rookie, plan.to);
-      // The first tap after a modal can be swallowed — verify she moved.
-      const check = await readBoard(page);
-      if (check.rookie === board.rookie && !(await page.getByText(/cleared/i).first().isVisible().catch(() => false))) {
-        await move(page, board.rookie, plan.to);
-      }
-      await dbg(page, `L${level}-m${i}-${board.rookie}-${plan.to}`);
-      if (plan.capture) captures++;
-      won = await page.getByText(/cleared/i).first().isVisible().catch(() => false);
+      after = await readBoard(page);
     }
-    if (level === 3) break;
-    if (!won) { console.log(`  L${level}: not won; stopping`); break; }
-    const next = page.getByRole('button', { name: /next level|finish/i }).first();
-    if (await next.isVisible().catch(() => false)) await next.click();
-    await settle(page, 1000);
-    await page.locator('button.offer-card-enter').first().waitFor({ timeout: 6000 }).catch(() => {});
-    await settle(page, 800);
-    await dbg(page, `L${level}-after-next`);
-    const offerVisible = (await page.locator('button.offer-card-enter').count()) > 0;
-    if (offerVisible && !offerShot) {
-      await shot(page, '2-ability-offer');
-      offerShot = true;
-    }
-    await dismissOffer(page);
+    await dbg(page, `L1-m${i}-${board.rookie}-${plan.to}`);
+    if (after.rookie === board.rookie) break; // tap swallowed / terrain — stop here
+    board = after;
+    if (plan.capture) break; // one piece taken is enough
     await page.waitForTimeout(800);
   }
-  if (!boardShot) {
-    // Fallback: whatever the board looks like right now.
-    console.log('  board shot fallback: current board');
-    await settle(page, 500);
-    await shot(page, '1-board-the-hunt');
-  }
-  if (!offerShot) console.log('  WARNING: no ability offer captured');
+  await settle(page, 2500); // let any speech bubble finish
+  await clickSquare(page, board.rookie);
+  await page.waitForTimeout(600);
+  await shot(page, '1-board-the-hunt');
 
   await browser.close();
   console.log(`\ndone → ${OUT}`);
