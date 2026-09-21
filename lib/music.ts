@@ -28,6 +28,11 @@ const DEFAULT_PREFS: MusicPrefs = { track: 'dust-on-the-cartridge', volume: 0.35
 let audio: HTMLAudioElement | null = null;
 let prefs: MusicPrefs | null = null;
 let unlocked = false; // a user gesture has happened
+// A story moment owns the soundtrack (the tutorial's sad / king-capture
+// stings). While held, the playlist is paused in place and resumes from the
+// same spot on release — never restarts, never plays under the sting.
+let held = false;
+let fadeTimer: ReturnType<typeof setInterval> | null = null;
 const listeners = new Set<() => void>();
 
 function loadPrefs(): MusicPrefs {
@@ -98,6 +103,11 @@ function apply() {
     el.src = track.src;
     el.load();
   }
+  if (held) {
+    // A fade-out in progress finishes on its own; otherwise stay paused.
+    if (!fadeTimer) el.pause();
+    return;
+  }
   if (unlocked && el.paused) {
     void el.play().catch(() => {
       // Autoplay refused — will retry on the next gesture via startIfEnabled.
@@ -163,6 +173,62 @@ export function autoplayMusicOnHome(): () => void {
   const cleanup = () => events.forEach((e) => document.removeEventListener(e, onGesture, true));
   events.forEach((e) => document.addEventListener(e, onGesture, { capture: true, passive: true }));
   return cleanup;
+}
+
+/** Ramp the element's volume to `to` over `ms`, then run `done`. */
+function fadeVolume(el: HTMLAudioElement, to: number, ms: number, done?: () => void) {
+  if (fadeTimer) clearInterval(fadeTimer);
+  fadeTimer = null;
+  const from = el.volume;
+  const steps = Math.max(1, Math.round(ms / 30));
+  if (ms <= 0 || from === to) {
+    el.volume = to;
+    done?.();
+    return;
+  }
+  let i = 0;
+  fadeTimer = setInterval(() => {
+    i += 1;
+    el.volume = Math.min(1, Math.max(0, from + ((to - from) * i) / steps));
+    if (i >= steps) {
+      if (fadeTimer) clearInterval(fadeTimer);
+      fadeTimer = null;
+      done?.();
+    }
+  }, 30);
+}
+
+/**
+ * Hand the soundtrack to a story moment (`true`) or take it back (`false`).
+ * Held: the playlist fades out and pauses where it is. Released: it fades
+ * back in from the same spot at the player's volume (if music is on and a
+ * gesture has unlocked audio). Idempotent. On iOS the element's volume is
+ * read-only, so there the fade is a clean pause/resume.
+ */
+export function setMusicHeld(hold: boolean, fadeMs = 400) {
+  if (held === hold) return;
+  held = hold;
+  const el = ensureAudio();
+  if (!el) return;
+  const target = loadPrefs().volume;
+  if (hold) {
+    if (el.paused) return;
+    fadeVolume(el, 0, fadeMs, () => {
+      if (held) el.pause();
+      el.volume = target;
+    });
+    return;
+  }
+  if (fadeTimer) clearInterval(fadeTimer);
+  fadeTimer = null;
+  const wasPaused = el.paused;
+  apply(); // resumes if music is on + unlocked
+  if (wasPaused && !el.paused) {
+    el.volume = 0;
+    fadeVolume(el, target, fadeMs);
+  } else {
+    el.volume = target;
+  }
 }
 
 /** Pause without changing the saved preference (e.g. tab hidden). */

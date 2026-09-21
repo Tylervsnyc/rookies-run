@@ -55,6 +55,7 @@ import {
   withClick,
 } from '@/lib/sounds';
 import { haptic, hapticSuccess } from '@/lib/haptics';
+import { autoplayMusicOnHome, setMusicHeld } from '@/lib/music';
 
 /**
  * StoryOnboarding — first-run story tutorial, shown ONCE before the daily
@@ -304,7 +305,7 @@ const FREEZE_ROOKIE_START = 'h5';
 const REVENGE_LINES = [
   'Ah, sweet revenge.',
   'That’s for the white king.',
-  'She took it personally.',
+  'Rookie took it personally.',
   'Personal.',
   'Revenge. Delicious.',
   'I have been waiting the whole game for that.',
@@ -614,6 +615,24 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const kingShortFadeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
+   * Background music (the game's playlist, lib/music.ts) runs under the whole
+   * tutorial. The story stings — the sad bed and the king-capture theme —
+   * are deliberate beats, so while either is playing the playlist steps
+   * aside (fades + pauses in place) and comes back from the same spot after.
+   * Call after every change to sadMusicRef / kingMusicRef.
+   */
+  const syncMusicHold = useCallback(() => {
+    setMusicHeld(sadMusicRef.current !== null || kingMusicRef.current !== null);
+  }, []);
+
+  // Start the playlist now if the webview allows it, else on the FIRST tap
+  // anywhere (iOS needs a gesture) — the same unlock path the home screen
+  // uses, so the track just keeps playing when the tutorial hands off to
+  // home: one <audio> element, no restart, no overlap. Respects the player's
+  // music on/off + volume prefs.
+  useEffect(() => autoplayMusicOnHome(), []);
+
+  /**
    * The king-capture theme. `full` (rook drill) runs until beat 6 fades it;
    * otherwise it's cut after KING_CAPTURE_SHORT_MS. Always stops the previous
    * instance first, so two never overlap.
@@ -625,16 +644,18 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     setSlowCapture(true);
     const handle = startTrack(KING_CAPTURE_MUSIC_URL, KING_CAPTURE_GAIN);
     kingMusicRef.current = handle;
+    syncMusicHold();
     if (!full) {
       kingShortFadeRef.current = setTimeout(() => {
         if (kingMusicRef.current === handle) {
           stopSadMusic(handle, KING_CAPTURE_SHORT_FADE_MS);
           kingMusicRef.current = null;
+          syncMusicHold();
         }
         kingShortFadeRef.current = null;
       }, KING_CAPTURE_SHORT_MS);
     }
-  }, []);
+  }, [syncMusicHold]);
 
   // The music stops with the component (skip, or unmount).
   useEffect(
@@ -642,6 +663,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       stopSadMusic(sadMusicRef.current, 200);
       stopSadMusic(kingMusicRef.current, 200);
       if (kingShortFadeRef.current) clearTimeout(kingShortFadeRef.current);
+      // Hand the playlist back (skip mid-sting included) — home keeps it.
+      setMusicHeld(false);
     },
     [],
   );
@@ -659,9 +682,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     const t = setTimeout(() => {
       stopSadMusic(kingMusicRef.current, 800);
       kingMusicRef.current = null;
+      syncMusicHold();
     }, KING_CAPTURE_FADE_AFTER_MS);
     return () => clearTimeout(t);
-  }, [beat]);
+  }, [beat, syncMusicHold]);
 
   useEffect(() => {
     trackEvent('run_onboarding_seen');
@@ -709,6 +733,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       setPhase(1);
       stopSadMusic(sadMusicRef.current);
       sadMusicRef.current = null;
+      syncMusicHold();
       void playTransformIntoSound();
       haptic('medium');
       setGlitching(true);
@@ -720,7 +745,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       clearTimeout(t2);
       clearTimeout(t3);
     };
-  }, [beat]);
+  }, [beat, syncMusicHold]);
 
   // Beat 5: after the stun beat, the knight hurries back to f3. Too late.
   // That's the enemy turn the capture-stun covered — the stun expires here.
@@ -772,6 +797,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     const t = setTimeout(() => {
       stopSadMusic(sadMusicRef.current, 0);
       sadMusicRef.current = startSadMusic();
+      syncMusicHold();
       setState((s) => ({
         ...moveEnemy(s, FREEZE_BISHOP_SQUARE, FREEZE_BAIT_SQUARE),
         status: 'lost',
@@ -782,7 +808,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       setFreezePhase('captured');
     }, BISHOP_TAKES_AT);
     return () => clearTimeout(t);
-  }, [beat, freezePhase]);
+  }, [beat, freezePhase, syncMusicHold]);
 
   // Beat 8: Rookie took the pawn — the turn passes (nothing black moves) and
   // the Squire shakes off his summoning sickness. Same shape as the drill's
@@ -854,6 +880,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       stopSadMusic(kingMusicRef.current, 300);
       kingMusicRef.current = null;
     }
+    syncMusicHold();
     if (b === 5) {
       setState(drillState());
       setDrill(0);
@@ -878,7 +905,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     }
     if (b === 11) setState(dangerState());
     setBeat(b);
-  }, []);
+  }, [syncMusicHold]);
 
   const next = useCallback(() => {
     // Beat 1 advances its own scene first: arrow → Qxd7 → "fatal error" →
@@ -898,6 +925,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       setPhase(4);
       stopSadMusic(sadMusicRef.current, 0);
       sadMusicRef.current = startSadMusic();
+      syncMusicHold();
       return;
     }
     // Beat 5: Next after the stun beat lets the knight take his turn.
@@ -913,7 +941,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       return;
     }
     if (beat < LAST_BEAT) goTo((beat + 1) as Beat);
-  }, [beat, phase, drill, hopPhase, goTo]);
+  }, [beat, phase, drill, hopPhase, goTo, syncMusicHold]);
 
   // Beat 9: Next after the demo rewinds — Rookie back to h5, the knight back
   // on h1 — and the player is on (Freeze Ray first).
@@ -921,12 +949,13 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     haptic('light');
     stopSadMusic(sadMusicRef.current);
     sadMusicRef.current = null;
+    syncMusicHold();
     setState(lentState(FREEZE_PUZZLE));
     setCast(false);
     setStuck(false);
     setSelected(null);
     setFreezePhase('ready');
-  }, []);
+  }, [syncMusicHold]);
 
   const lent = LENT[beat];
   const won = state.status === 'won';
@@ -1522,17 +1551,17 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       case 3:
         // Hold beat 2's line until she wakes — no redundant "game over" flash.
         if (phase < 1) return 'The game was over for everyone but Rookie.';
-        if (phase === 1) return 'Rookie wanted revenge. And she was transformed.';
+        if (phase === 1) return 'Rookie wanted revenge, and was transformed.';
         return 'No longer a white piece, or a black piece. A living piece.';
       case 4:
-        return 'Rookie is going to finish this game. That means she has to capture the black king.';
+        return 'Rookie is going to finish this game. That means capturing the black king.';
       case 5:
         if (won) return 'Got him. Rooks can capture anything in a straight line.';
         if (drill === 0) return 'Rooks move in straight lines. Help Rookie capture that pawn on a7.';
         if (drill === 1) return 'Every capture stuns the king. Take a piece and he can’t run.';
         if (drill === 2) return 'The knight hurries back. Too late.';
-        if (drill === 3) return 'Up to a8. Then she’s on the 8th rank.';
-        if (drill === 4) return 'She’s on the 8th rank. The king’s rank. He panics.';
+        if (drill === 3) return 'Up to a8. Then Rookie is on the 8th rank.';
+        if (drill === 4) return 'Rookie is on the 8th rank. The king’s rank. He panics.';
         if (drill === 5) return 'He makes a door to escape.';
         return 'Too late.';
       case 6:
@@ -1542,7 +1571,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         if (stuck) return 'Missed him. Reset and land on the king.';
         if (hopPhase === 'line') return 'The rook is looking at the king.';
         if (hopPhase === 'stepped' || hopPhase === 'offer') return 'But the king steps out of the way.';
-        if (hopPhase === 'armed') return 'Knight Hop is in her rack. Tap it.';
+        if (hopPhase === 'armed') return 'Knight Hop is in Rookie’s rack. Tap it.';
         return 'Rookie is a knight now. Have no mercy.';
       case 8:
         if (won) return 'Got him. Rookie never has to hunt alone again.';
@@ -1550,8 +1579,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         if (squirePhase === 'awake') return 'He’s awake. Tap the Squire, and take the king.';
         if (squirePhase === 'waking') return 'The turn passes. The Squire wakes up.';
         if (cast) return 'He needs one turn to wake up. Rookie grabs a pawn while he does.';
-        if (state.activeAbility?.step === 'pick-square') return 'Now tap b2. He appears beside her.';
-        if (nudge) return 'Tap Squire first. Then she gets a knight of her own.';
+        if (state.activeAbility?.step === 'pick-square') return 'Now tap b2. He appears beside Rookie.';
+        if (nudge) return 'Tap Squire first. Then Rookie gets a knight on the team.';
         return 'The next ability: Squire. It gives you a knight you control. Tap Squire.';
       case 9: {
         const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
@@ -1559,13 +1588,13 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         if (stuck) return 'The bishop is still watching h1. Freeze him first.';
         if (freezePhase === 'demo') return 'That knight on h1 is free. Take it, and the king is stunned.';
         if (freezePhase === 'taken') return 'The king is stunned. But the bishop was watching h1…';
-        if (freezePhase === 'captured') return 'The bishop takes Rookie. If you lose her, you lose the game.';
+        if (freezePhase === 'captured') return 'The bishop takes Rookie. No Rookie, no game.';
         if (cast) return baitAlive ? 'The bishop is frozen. Now take the knight on h1.' : 'The king is stunned. Take him.';
         if (state.activeAbility?.step === 'pick-enemy') return 'Now tap the bishop on g2.';
         return 'This is where Freeze Ray comes in handy. Tap Freeze Ray.';
       }
       case 10:
-        if (stuck) return 'Missed her. Reset and land on the queen.';
+        if (stuck) return 'Missed the queen. Reset and try again.';
         if (tempoStep === 0) return 'One more thing. Every capture fills the tempo bar.';
         if (tempoStep === 1) return `A pawn fills it by ${TEMPO_REWARD.pawn}.`;
         if (tempoStep === 2) {
@@ -1574,7 +1603,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         }
         return `A queen fills it by ${TEMPO_REWARD.queen}. Full bar: Rookie picks a new power, or upgrades one.`;
       case 11:
-        return 'When Rookie is attacked, she turns red.';
+        return 'Under attack? Rookie turns red.';
       case 12:
         return 'You’re ready to play';
     }
@@ -1585,21 +1614,21 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (won || stuck) return null;
     if (beat === 7 && hopPhase === 'armed') return 'Rookie can have powers. Tap Knight Hop to transform.';
     if (beat === 7 && hopPhase === 'hop') return 'Two up, one over.';
-    if (beat === 8 && !cast && !state.activeAbility) return 'The king is off her lines. A rook can’t get there — a knight can.';
+    if (beat === 8 && !cast && !state.activeAbility) return 'The king is off Rookie’s lines. A rook can’t get there — a knight can.';
     if (beat === 8 && cast && squirePhase === 'placed') return 'A summon acts from your next turn. Move Rookie first.';
     if (beat === 8 && squirePhase === 'awake') return 'Two over, one up.';
     if (beat === 9 && freezePhase === 'ready' && !cast && !state.activeAbility) {
-      return 'Freeze Ray stops one piece for a turn. A frozen bishop can’t take her.';
+      return 'Freeze Ray stops one piece for a turn. A frozen bishop can’t take Rookie.';
     }
     if (beat === 9 && freezePhase === 'ready' && cast) {
       const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
       return baitAlive
         ? 'Take the knight on h1 first. Then along the rank to the king.'
-        : 'A frozen bishop can’t touch her. Along the rank — take him.';
+        : 'A frozen bishop can’t touch Rookie. Along the rank — take him.';
     }
-    if (tempoNeedsHop) return 'A rook on the queen’s line is in her sights. Tap Knight Hop and take her from the side.';
+    if (tempoNeedsHop) return 'The queen watches her own lines. Tap Knight Hop and take her from the side.';
     if (beat === 10 && tempoStep === TEMPO_HOP_STEP && cast) return 'One up, one over, one up.';
-    if (beat === 11) return 'If you lose her, you lose the game. Move her somewhere safe, or take the attacker.';
+    if (beat === 11) return 'Lose Rookie, lose the game. Move somewhere safe, or take the attacker.';
     return null;
   })();
 
@@ -1614,14 +1643,14 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       case 6:
         return 'Capture the king. Every level.';
       case 7:
-        return won ? null : hopPhase === 'hop' || hopPhase === 'armed' ? 'Powers change how she moves.' : 'Full bar = pick a power.';
+        return won ? null : hopPhase === 'hop' || hopPhase === 'armed' ? 'Powers change how Rookie moves.' : 'Full bar = pick a power.';
       case 8:
       case 9:
         return won ? null : 'Powers live in the rack. Tap to cast.';
       case 10:
         return tempoDone ? 'Capture pieces. Claim powers. Take the king.' : 'Captures charge tempo.';
       case 11:
-        return 'Red = danger. Keep her safe.';
+        return 'Red = danger. Keep Rookie safe.';
       default:
         return null;
     }
@@ -1653,12 +1682,38 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   // Beat 1 hides Next while the queen's arrow lands and during the slow-mo capture.
   const showNext = !(beat === 1 && (phase === 1 || phase === 4));
   const finalScreen = beat === LAST_BEAT;
+  // Power beats (7-11) reserve the explain line's two rows for the whole beat.
+  const explainSlot = beat >= 7 && beat <= 11;
+
+  // ---- Board size = the slot's shorter side (no scroll at any height) -------
+  const boardSlotRef = useRef<HTMLDivElement | null>(null);
+  const [boardSize, setBoardSize] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const slot = boardSlotRef.current;
+    if (!slot) return;
+    const measure = () => {
+      const r = slot.getBoundingClientRect();
+      const size = Math.floor(Math.min(r.width, r.height));
+      setBoardSize((prev) => (size > 0 && size !== prev ? size : prev));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(slot);
+    return () => ro.disconnect();
+  }, [finalScreen]);
 
   return (
+    // ONE SCREEN, NO SCROLL (Tyler 2026-09-21). The root is exactly the
+    // viewport (h-full, overflow hidden); the card is capped at that height;
+    // the board is the ONLY thing that gives — its slot shrinks and the board
+    // is drawn at min(slot width, slot height). Bottom safe-area is ours (the
+    // page wrapper already pads the top inset).
     <div
-      className="relative min-h-full w-full text-white flex items-center justify-center px-3 py-4 overflow-hidden"
+      className="relative h-full w-full text-white flex flex-col items-center justify-center px-3 overflow-hidden"
       style={{
         background: `linear-gradient(180deg, ${NAVY_2} 0%, ${NAVY} 100%)`,
+        paddingTop: 4,
+        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 8px)',
       }}
     >
       <style>{`
@@ -1711,6 +1766,28 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
           animation: rrOnbAskTarget 1.3s ease-out infinite;
         }
         .rr-onb-pulse { animation: rrOnbPulseRing 1.3s ease-out infinite; border-radius: 12px; }
+        .rr-onb-card { gap: 10px; padding: 12px; }
+        .rr-onb-card > * { flex-shrink: 0; }
+        .rr-onb-card > .rr-onb-board-slot { flex: 0 1 auto; min-height: 0; }
+        /* Short phones (SE, small Android): tighter rhythm, smaller type. */
+        @media (max-height: 700px) {
+          .rr-onb-card { gap: 6px; padding: 8px 10px; }
+          .rr-onb-caption { font-size: 14px; line-height: 1.3; }
+          .rr-onb-explain { font-size: 11.5px; line-height: 1.3; }
+        }
+        /* The rack's info slot is 64px of reserved space for the in-game hint
+           and (i) explainer. The tutorial never sets a hint, so it collapses
+           here; an (i) explainer still opens, overlaying downward. */
+        .rr-onb-rack > .flex-col > div:nth-child(2) { height: 0 !important; }
+        /* Rack cards scale with the rack's width — cap it on short screens so
+           three cards never eat the board's height. */
+        .rr-onb-rack { width: 100%; max-width: min(100%, 44dvh); margin: 0 auto; }
+        /* Short phones, rack beats: the ask panel already says what to tap,
+           so the rule chip steps aside and the board keeps that height. */
+        @media (max-height: 700px) {
+          .rr-onb-rack { max-width: min(100%, 40dvh); }
+          .rr-onb-card[data-rack="1"] > .rr-onb-chip { display: none; }
+        }
         .rr-onb-nudge { animation: rrOnbNudge 360ms ease-in-out; }
         ${dissolveCss}
       `}</style>
@@ -1737,7 +1814,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       </div>
 
       <div
-        className="relative w-full max-w-[360px] rounded-2xl p-3 flex flex-col gap-2.5"
+        className="rr-onb-card relative w-full max-w-[360px] max-h-full min-h-0 rounded-2xl flex flex-col"
+        data-rack={!finalScreen && (lent || beat === 10) ? '1' : undefined}
         style={{
           background: `linear-gradient(180deg, ${PANEL} 0%, ${NAVY} 100%)`,
           border: `2px solid ${PANEL_EDGE}`,
@@ -1805,25 +1883,38 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             {/* Caption */}
             <p
               key={caption}
-              className="text-[15px] font-black leading-snug text-white min-h-[42px]"
-              style={{ animation: 'rrOnbCaptionIn 320ms ease-out both' }}
+              className="rr-onb-caption text-[15px] font-black leading-snug text-white"
+              // Two lines reserved so a one-line caption never resizes the board.
+              style={{ animation: 'rrOnbCaptionIn 320ms ease-out both', minHeight: '2.6em' }}
             >
               {caption}
             </p>
-            {explain && (
+            {/* Power beats reserve two lines for the explain line whether or
+                not the current step has one, so the board holds its size for
+                the whole beat. */}
+            {(explain || explainSlot) && (
               <p
-                key={explain}
-                className="-mt-1 text-[12px] font-bold leading-snug text-white/70"
-                style={{ animation: 'rrOnbCaptionIn 320ms ease-out both' }}
+                key={explain ?? 'explain-empty'}
+                className="rr-onb-explain -mt-1 text-[12px] font-bold leading-snug text-white/70"
+                style={{
+                  animation: 'rrOnbCaptionIn 320ms ease-out both',
+                  minHeight: explainSlot ? '2.6em' : undefined,
+                }}
               >
                 {explain}
               </p>
             )}
 
-            {/* Board (beats 1-10) */}
+            {/* Board (beats 1-11) — the slot is square until the card runs out
+                of height, then shrinks; the board is drawn at the slot's
+                shorter side, centered. */}
+            <div ref={boardSlotRef} className="rr-onb-board-slot w-full flex justify-center" style={{ aspectRatio: '1 / 1' }}>
             <div
-              className={`relative w-full${nudge ? ' rr-onb-nudge' : ''}`}
+              className={`relative${nudge ? ' rr-onb-nudge' : ''}`}
               style={{
+                width: boardSize ?? '100%',
+                height: boardSize ?? undefined,
+                visibility: boardSize ? 'visible' : 'hidden',
                 filter: desaturated ? 'grayscale(1) contrast(1.08) brightness(0.96)' : 'none',
                 transition: 'filter 1400ms ease-out',
               }}
@@ -1884,6 +1975,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
                 </div>
               )}
             </div>
+            </div>
 
             {/* Tempo bar — interactive beats only */}
             {showRunBoard && (
@@ -1898,11 +1990,16 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             )}
 
             {/* Ability rack — lent-power beats (pulses until the power is cast) */}
-            {(lent || beat === 10) && !(beat === 7 && hopPhase !== 'hop' && hopPhase !== 'armed') && (
+            {/* Beat 7 keeps the rack's space (hidden) until Knight Hop lands
+                in it, so the board doesn't shrink mid-beat. */}
+            {(lent || beat === 10) && (
               <div
                 ref={rackRef}
-                className={`relative${rackPointId ? ' rr-onb-pulse' : ''}`}
+                className={`rr-onb-rack relative${rackPointId ? ' rr-onb-pulse' : ''}`}
                 data-testid="onboarding-rack"
+                style={{
+                  visibility: beat === 7 && hopPhase !== 'hop' && hopPhase !== 'armed' ? 'hidden' : undefined,
+                }}
               >
                 <AbilityRack
                   abilities={state.abilities}
@@ -1921,7 +2018,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
             )}
 
             {/* Rule chip — fixed-height slot so the card doesn't jump */}
-            <div className="min-h-[28px] flex items-center">
+            <div className="rr-onb-chip min-h-[28px] flex items-center">
               {chip && (
                 <span
                   key={chip}
@@ -1934,7 +2031,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
               )}
             </div>
 
-            {/* CTA */}
+            {/* CTA — one fixed-height slot (the ask panel is the tallest
+                thing that lands here), so the board never resizes when the
+                Next button swaps for an ask. */}
+            <div className="min-h-[60px] flex flex-col justify-center">
             {stuck ? (
               <button type="button" onClick={withClick(resetBeat)} className={CTA_CLASS} style={CTA_STYLE}>
                 Reset
@@ -1951,15 +2051,12 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
                 form={state.form}
                 shake={nudge}
               />
-            ) : waiting ? (
-              <p className="min-h-[60px]" />
-            ) : showNext ? (
+            ) : waiting ? null : showNext ? (
               <button type="button" onClick={withClick(next)} className={CTA_CLASS} style={CTA_STYLE}>
                 Next <span className="opacity-80">&rarr;</span>
               </button>
-            ) : (
-              <p className="min-h-[44px]" />
-            )}
+            ) : null}
+            </div>
           </>
         )}
       </div>
@@ -2053,16 +2150,10 @@ function AskPanel({
 }) {
   const showThen = stage === 'then' && !!ask.thenText;
   const text = showThen ? ask.thenText! : ask.text;
-  // On a short phone the card can run past the fold — the ask is useless
-  // off-screen, so it brings itself into view as it lands.
-  const hostRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!ready) return;
-    hostRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }, [ready]);
+  // The card always fits one screen now (no scroll), so the ask is never
+  // below the fold — the old scrollIntoView() is gone.
   return (
     <div
-      ref={hostRef}
       aria-live="polite"
       className={`flex items-center gap-2.5 rounded-2xl px-3 py-2 min-h-[60px]${shake ? ' rr-onb-nudge' : ''}`}
       style={{
