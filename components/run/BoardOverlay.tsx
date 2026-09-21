@@ -100,12 +100,15 @@ const GO = '#2A3C45';
 const BLOCKED = '#E53935';
 const GHOST = '#7a8a93';
 
+/** Widest a speech bubble may be, as % of the board width. */
+const SPEECH_MAX_W = 64;
+
 export function BoardOverlay({ arrows = [], bursts = [], shakes = [], pointers = [] }: BoardOverlayProps) {
   if (arrows.length === 0 && bursts.length === 0 && shakes.length === 0 && pointers.length === 0) return null;
   return (
     <div
       aria-hidden
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 6 }}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 6, containerType: 'inline-size' }}
     >
       <style>{`
         @keyframes rrOvArrowIn {
@@ -253,12 +256,21 @@ export function BoardOverlay({ arrows = [], bursts = [], shakes = [], pointers =
       })}
       {bursts.map((b) => {
         const c = center(b.square);
+        // A speech line wraps and is kept inside the board: centered on an
+        // edge square, a long one ran off the screen (Tyler 2026-09-21, "I
+        // have been waiting the whole game f..."). The tail still points at
+        // the square: it is shifted back by however far the bubble moved.
+        const x = (c.x / 8) * 100 + (b.speech ? 0 : 5);
+        // Rough rendered width (13px bold ≈ 2.2% of a phone board per char),
+        // so a short line is only nudged as far as it has to be.
+        const half = Math.min(SPEECH_MAX_W, b.text.length * 2.2 + 6) / 2;
+        const bx = b.speech ? Math.min(100 - half, Math.max(half, x)) : x;
         return (
           <div
             key={b.square + b.text}
             style={{
               position: 'absolute',
-              left: `${(c.x / 8) * 100 + (b.speech ? 0 : 5)}%`,
+              left: `${bx}%`,
               top: b.speech ? `${((c.y - 0.5) / 8) * 100 - 1.5}%` : `${(c.y / 8) * 100 - 4}%`,
               transform: 'translate(-50%, -100%)',
               animation: 'rrOvBurstIn 480ms cubic-bezier(0.2, 1.4, 0.4, 1) both, rrOvShake 220ms ease-in-out 480ms 4',
@@ -278,14 +290,17 @@ export function BoardOverlay({ arrows = [], bursts = [], shakes = [], pointers =
                 lineHeight: 1.1,
                 letterSpacing: b.speech ? 0 : '0.04em',
                 boxShadow: '2px 2px 0 #2A3C45',
-                whiteSpace: 'nowrap',
+                whiteSpace: b.speech ? 'normal' : 'nowrap',
+                ...(b.speech
+                  ? { width: 'max-content', maxWidth: `${SPEECH_MAX_W}cqw`, textAlign: 'center' as const, borderRadius: 16 }
+                  : {}),
               }}
             >
               {b.text}
               <span
                 style={{
                   position: 'absolute',
-                  left: b.speech ? 'calc(50% - 5px)' : 8,
+                  left: b.speech ? `calc(50% - 5px + ${x - bx}cqw)` : 8,
                   bottom: -8,
                   width: 0,
                   height: 0,
