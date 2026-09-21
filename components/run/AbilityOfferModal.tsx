@@ -212,29 +212,6 @@ function PreviewFace({
   );
 }
 
-/** Cards this device has already flipped once — per-viewer, best effort. */
-const PREVIEWED_KEY = 'rr-previewed-abilities';
-function previewedIds(): string[] {
-  try {
-    const raw = localStorage.getItem(PREVIEWED_KEY);
-    const ids = raw ? JSON.parse(raw) : [];
-    return Array.isArray(ids) ? ids : [];
-  } catch {
-    return [];
-  }
-}
-function hasPreviewed(id: string): boolean {
-  return previewedIds().includes(id);
-}
-function markPreviewed(id: string): void {
-  try {
-    const ids = previewedIds();
-    if (!ids.includes(id)) localStorage.setItem(PREVIEWED_KEY, JSON.stringify([...ids, id]));
-  } catch {
-    /* private mode etc. — the flip just shows again */
-  }
-}
-
 export function AbilityOfferModal({
   offer,
   onPick,
@@ -258,18 +235,21 @@ export function AbilityOfferModal({
   const [previewIdx, setPreviewIdx] = useState<number | null>(null);
   const preview = previewIdx === null ? null : (offer[previewIdx] ?? null);
 
+  // Tap a card (or its Watch button) to see it fire; Take commits (Tyler
+  // 2026-09-21: "below this there should be 2 buttons... collect and see it
+  // in action").
   const select = (option: AbilityOfferOption, idx: number) => {
     clickSfx();
-    // The flip is for learning a card. Once seen (or already in the rack, as
-    // an upgrade is), one tap takes it (Tyler 2026-09-21: "after you get an
-    // ability, you don't need to see the flip card again").
-    if (!confirmStep || option.kind === 'upgrade' || hasPreviewed(option.id)) {
+    if (!confirmStep) {
       onPick(option);
       return;
     }
-    markPreviewed(option.id);
     setPreviewIdx(idx);
     onPreview?.(option);
+  };
+  const take = (option: AbilityOfferOption) => {
+    clickSfx();
+    onPick(option);
   };
   const back = () => {
     clickSfx();
@@ -348,7 +328,7 @@ export function AbilityOfferModal({
               ))}
             </h2>
             <p className="text-[10px] sm:text-[11px] font-bold text-chess-text-muted mt-0.5">
-              {subtitle ?? (confirmStep ? 'Tap a power to see what it does.' : 'Tap a power to keep it.')}
+              {subtitle ?? (confirmStep ? 'Take one, or watch it work first.' : 'Tap a power to keep it.')}
             </p>
           </div>
 
@@ -361,8 +341,8 @@ export function AbilityOfferModal({
               const pointed = pointAtId === option.id;
               const deltas = upgrade ? upgradeDeltaForTier(option.id, option.tier) : [];
               return (
+                <div key={`${option.id}-${option.tier}-${idx}`} className="flex flex-col gap-1.5">
                 <button
-                  key={`${option.id}-${option.tier}-${idx}`}
                   type="button"
                   disabled={locked}
                   aria-disabled={locked}
@@ -370,7 +350,7 @@ export function AbilityOfferModal({
                     if (locked) return;
                     select(option, idx);
                   }}
-                  className={`offer-card-enter relative flex rounded-xl p-[2px] text-left transition-transform ${
+                  className={`offer-card-enter relative flex flex-1 rounded-xl p-[2px] text-left transition-transform ${
                     locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
                   }`}
                   style={{
@@ -450,6 +430,31 @@ export function AbilityOfferModal({
                     </div>
                   </div>
                 </button>
+                {confirmStep && (
+                  <div className="flex flex-col gap-1">
+                    {!isGrant && (
+                      <button
+                        type="button"
+                        disabled={locked}
+                        onClick={() => !locked && take(option)}
+                        className="min-h-[40px] w-full rounded-lg text-[12px] sm:text-[13px] font-black text-[#3d2806] active:translate-y-px disabled:opacity-35"
+                        style={{ background: GOLD_CHIP, boxShadow: '0 2px 0 rgba(140,101,25,0.9)' }}
+                      >
+                        Take
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      disabled={locked}
+                      onClick={() => !locked && select(option, idx)}
+                      className="min-h-[40px] w-full rounded-lg text-[12px] sm:text-[13px] font-black text-chess-text active:translate-y-px disabled:opacity-35"
+                      style={{ background: 'rgba(58,40,6,0.09)', boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.5)' }}
+                    >
+                      Watch
+                    </button>
+                  </div>
+                )}
+                </div>
               );
             })}
           </div>
