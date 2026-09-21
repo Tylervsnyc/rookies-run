@@ -108,7 +108,7 @@ No objectionable content. Expected rating: 4+.
 Rookie's Revenge is a daily chess roguelike: the player controls a single
 rook and crosses the board in 10 escalating levels to capture the enemy
 king, picking abilities between levels and unlocking new ones for good. A new
-board rotates in every day, and a 10-run ladder (100 levels) plus three bonus runs is always open.
+board rotates in every day, and a 10-run ladder (100 levels) plus two bonus runs is always open.
 
 No account is required and there is no sign-in anywhere in the app. Progress
 (abilities, trophies, difficulty unlocks) is stored on device. There are no

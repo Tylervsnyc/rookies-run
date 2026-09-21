@@ -891,7 +891,7 @@
       "id": "revenge-15",
       "kind": "run",
       "name": "The Stacks",
-      "stage": "live",
+      "stage": "retired",
       "created": "2026-09-05",
       "notes": "Magnet + Boulder reposition-then-seal run. Signature: ranks 3-7 are solid stone with one-wide shafts, so one piece closes a whole route and every level asks which square an enemy stands on. A bishop in a shaft is frozen (a plug only a pull can move); the king's 2x2 corner room can never be held by a lone rook. Finale: boulder a stone into the room, magnet the plug off its defenders, take it free. L7-L10: every single kit card 0%, pair 97-100% (serial). Full runs 35% random / 25% with the pair — the pair pool is LOWER than random because upgraded high-tier Boulder walls Rookie's own shaft.",
       "approved": {
@@ -906,6 +906,10 @@
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
         "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
+      },
+      "retired": {
+        "at": "2026-09-21",
+        "why": "Tyler 2026-09-21 playtest: not fun, levels feel the same, Boulder never used; The Baffle takes rung 3"
       }
     },
     {

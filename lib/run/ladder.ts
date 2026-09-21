@@ -79,7 +79,7 @@ import type { PlayerProfile } from './profile';
 export const LADDER_RUNG_IDS: ReadonlyArray<string> = [
   'revenge-21', // The Slash       — boulder + knight-hop      -> Boulder
   'revenge-18', // The Glasshouse  — freeze-ray + vanguard     -> Vanguard
-  'revenge-15', // The Stacks      — magnet + boulder          -> Decoy
+  'revenge-61', // The Baffle      — ricochet + boulder        -> Ricochet (replaced The Stacks, Tyler 2026-09-21)
   'revenge-23', // The Parapet     — knight-hop + twin         -> Twin
   'revenge-12', // The Moat        — bishop-squire + swap      -> Swap, Bishop Squire
   'revenge-24', // The Lattice     — duchess + decoy           -> Duchess
@@ -110,9 +110,8 @@ export const LADDER_RUNG_IDS: ReadonlyArray<string> = [
  * rungs out of this file by matching `'<id>', // comment` lines.
  *   revenge-64 The Hall of Mirrors (mirror + sacrifice) = "rung 11"
  *   revenge-65 The Kaleidoscope    (mirror + convert)   = "rung 12"
- *   revenge-61 The Baffle          (ricochet + boulder) = "rung 13" (Tyler, 2026-09-21)
  */
-export const LADDER_BONUS_RUNG_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65', 'revenge-61'];
+export const LADDER_BONUS_RUNG_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65'];
 
 const BONUS_PREVIEW_KEY = 'rr-bonus-preview';
 

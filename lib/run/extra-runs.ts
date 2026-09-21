@@ -18,7 +18,6 @@
 
 import type { RunDef } from './run-kit';
 import { RUN_REVENGE_22 } from './runs/revenge-22';
-import { RUN_REVENGE_15 } from './runs/revenge-15';
 import { RUN_REVENGE_17 } from './runs/revenge-17';
 import { RUN_REVENGE_18 } from './runs/revenge-18';
 import { RUN_REVENGE_19 } from './runs/revenge-19';
@@ -48,7 +47,6 @@ import { RUN_REVENGE_66 } from './runs/revenge-66';
 
 
 export const EXTRA_REVENGE_RUNS: ReadonlyArray<RunDef> = [
-  RUN_REVENGE_15,
   RUN_REVENGE_17,
   RUN_REVENGE_18,
   RUN_REVENGE_19,

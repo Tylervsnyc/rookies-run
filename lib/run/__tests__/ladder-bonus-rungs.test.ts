@@ -36,7 +36,7 @@ const regularStates = (p: PlayerProfile) => LADDER_RUNG_IDS.map((_, i) => rungSt
 
 test('bonus rungs are a separate list: the ladder is still exactly ten rungs', () => {
   assert.equal(LADDER_RUNG_IDS.length, 10);
-  assert.deepEqual([...LADDER_BONUS_RUNG_IDS], ['revenge-64', 'revenge-65', 'revenge-61']);
+  assert.deepEqual([...LADDER_BONUS_RUNG_IDS], ['revenge-64', 'revenge-65']);
   for (const id of LADDER_BONUS_RUNG_IDS) assert.ok(!LADDER_RUNG_IDS.includes(id));
 });
 
@@ -47,9 +47,9 @@ test('bonus rungs are hidden while not player-facing: not rendered, not a ladder
   assert.ok(!base.has('mirror' as never));
 });
 
-test('bonus rungs are open on a fresh profile once player-facing, numbered 11, 12 and 13', () => {
+test('bonus rungs are open on a fresh profile once player-facing, numbered 11 and 12', () => {
   const vis = visibleBonusRungs({ facing: approved });
-  assert.deepEqual(vis.map((b) => [b.id, b.rung]), [['revenge-64', 11], ['revenge-65', 12], ['revenge-61', 13]]);
+  assert.deepEqual(vis.map((b) => [b.id, b.rung]), [['revenge-64', 11], ['revenge-65', 12]]);
   const fresh = defaultProfile();
   for (const b of vis) {
     assert.equal(bonusRungState(fresh, b.id), 'open');
