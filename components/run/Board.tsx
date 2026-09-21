@@ -118,6 +118,15 @@ interface BoardProps {
    * alone, so a page full of them can never suppress the real board's intro.
    */
   skipIntro?: boolean;
+  /**
+   * DOM id handed to react-chessboard. The library measures a slide by
+   * `document.querySelector('#<id>-square-<sq>')`, so every board mounted at
+   * the same time needs its OWN id — otherwise a small board (an offer card's
+   * preview demo, over the live game) measures the game board's squares and
+   * slides its pieces 2x too far, then snaps them back. Default is the game's
+   * id, unchanged.
+   */
+  boardId?: string;
 }
 
 // Runs whose win condition is always the king — the rank-8 goal row must
@@ -253,6 +262,7 @@ export function RunBoard({
   hideGoalRank = false,
   slideMs,
   skipIntro = false,
+  boardId = 'rookies-run-board',
 }: BoardProps) {
   const rookieSprite = ROOKIE_SPRITE[state.form];
   // Per-instance scope for this board's injected CSS. Every rule below targets
@@ -1390,7 +1400,7 @@ export function RunBoard({
       >
         <ChessPathBoard
           options={{
-            id: 'rookies-run-board',
+            id: boardId,
             position,
             pieces,
             squareStyles,

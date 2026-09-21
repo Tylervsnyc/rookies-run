@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { RunBoard } from '@/components/run/Board';
 import { ALLY_TICK_MS, ENEMY_TICK_MS, PIECE_SLIDE_MS } from '@/components/run/timing';
 import { artFile } from '@/lib/run/ability-art';
@@ -671,6 +671,13 @@ function ScriptedDemo({ demo, paused, demoId }: { demo: Demo; paused: boolean; d
 
   const [state, setState] = useState<BoardState>(base);
   const [selected, setSelected] = useState<string | null>(null);
+  // Its own board id. react-chessboard sizes a slide by looking up
+  // `#<id>-square-<sq>` in the whole document; sharing the game's id, a demo
+  // on an offer card (live game board behind it) measured the GAME's ~41px
+  // squares instead of its own ~19px ones, so every move flew 2x too far,
+  // off the edge of the card, and snapped back on landing (Tyler 2026-09-21:
+  // "looks sped up, not smooth"). CSS-id-safe: useId() yields «r1»-style ids.
+  const boardId = `rr-demo-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
   // The board's own slide time. It MUST stay under the turn ticks — timing.ts:
   // "Keep PIECE_SLIDE_MS < each tick so a piece lands before the next one
   // starts moving". This was 380ms against a 420ms enemy tick, which left
@@ -806,11 +813,31 @@ function ScriptedDemo({ demo, paused, demoId }: { demo: Demo; paused: boolean; d
   const imperviousFx = useTransient(state.lastImperviousBounce, 800);
   const enemyCaptureFx = useTransient(state.lastEnemyCaptureFx, 700);
 
+  // The transform flicker, exactly as app/page.tsx plays it: 440ms of glitch
+  // on every form change. A one-move transform reverts to rook ON the landing
+  // move, so the sprite type changes with the square and react-chessboard
+  // cannot slide it — in the game this flicker is what that landing looks
+  // like. Without it the demo showed a bare teleport (Knight Hop's hop).
+  // The loop reset back to `base` is not a transform, so it never flickers.
+  const [glitching, setGlitching] = useState(false);
+  const prevFormRef = useRef(state.form);
+  useEffect(() => {
+    if (prevFormRef.current === state.form) return;
+    prevFormRef.current = state.form;
+    if (state !== base) setGlitching(true);
+  }, [state, base]);
+  useEffect(() => {
+    if (!glitching) return;
+    const t = window.setTimeout(() => setGlitching(false), 440);
+    return () => clearTimeout(t);
+  }, [glitching]);
+
   return (
     <div className="relative w-full">
       <RunBoard
         state={state}
         selectedSquare={selected}
+        glitching={glitching}
         abilityFx={abilityFx}
         aegisFx={aegisFx}
         imperviousFx={imperviousFx}
@@ -826,6 +853,7 @@ function ScriptedDemo({ demo, paused, demoId }: { demo: Demo; paused: boolean; d
         onSquareClick={() => {}}
         onPieceDrop={() => false}
         slideMs={slide}
+        boardId={boardId}
       />
       {/* The demo is a picture, not a control — nothing here is tappable. */}
       <div aria-hidden className="absolute inset-0 z-40" style={{ pointerEvents: 'auto' }} />
