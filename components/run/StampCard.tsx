@@ -165,7 +165,7 @@ export function StampCard({ kicker, level, totalLevels, stamp, tone, chips, star
   );
 }
 
-const STAR_PATH = 'M12 2.5l2.95 6.2 6.8.85-5 4.7 1.3 6.75L12 17.7 5.95 21l1.3-6.75-5-4.7 6.8-.85z';
+export const STAR_PATH = 'M12 2.5l2.95 6.2 6.8.85-5 4.7 1.3 6.75L12 17.7 5.95 21l1.3-6.75-5-4.7 6.8-.85z';
 
 function StarGlyph({ fill, stroke, size = 40 }: { fill: string; stroke: string; size?: number }) {
   return (

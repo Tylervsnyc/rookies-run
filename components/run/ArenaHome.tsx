@@ -16,6 +16,7 @@ import { DAILY_KIT_SIZE, todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
 import { FamilyStrip } from './FamilyStrip';
+import { DailyRankRow, RankRowStyles } from './RankRunCard';
 import { autoplayMusicOnHome } from '@/lib/music';
 import { ENDLESS_ENABLED, readEndlessBest, ENDLESS_RUN_ID } from '@/lib/run/endless';
 
@@ -469,33 +470,17 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
  * Endless scores are submitted under runId 'endless' by app/page.tsx, and until
  * 2026-09-07 nothing ever fetched them — the mode kept a board nobody could see.
  * Endless is ranked by DEPTH, so its rows read "n deep". TODAY is ranked by
- * the run's SCORE (points, 2026-09-21) — see DailyPoints.
+ * the run's SCORE (points, 2026-09-21); each TODAY row opens into a run card
+ * (stars, moves vs par, time, captures, retries) — see RankRunCard.tsx.
  */
 type RanksBoard = 'today' | 'endless';
-
-/**
- * One TODAY row's number. The daily board ranks by SCORE — the run's points,
- * the same number the run-summary screen showed (api/run/leaderboard: score
- * desc nulls last, then levels, captures, first-in). So the points lead
- * ("1,240 pts") with levels as the small second line ("7/10"). Rows from
- * builds before 2026-09-21 have no score and show levels only.
- */
-function DailyPoints({ score, levels }: { score: number | null; levels: number }) {
-  if (score == null) {
-    return <>{levels}/10</>;
-  }
-  return (
-    <span className="inline-flex flex-col items-end leading-none">
-      <span>{score.toLocaleString('en-US')}<span className="text-[9px] opacity-80"> pts</span></span>
-      <span className="text-[9px] font-bold opacity-70 mt-0.5">{levels}/10</span>
-    </span>
-  );
-}
 
 function RanksTab({ handle, board, loading, iso }: {
   handle: string; board: LeaderboardResponse | null; loading: boolean; iso: string;
 }) {
   const [which, setWhich] = useState<RanksBoard>('today');
+  // The one open run card on the TODAY board (accordion), keyed by rank+handle.
+  const [openRow, setOpenRow] = useState<string | null>(null);
   const endless = useDailyBoard(iso, ENDLESS_RUN_ID);
   const showEndless = which === 'endless' && ENDLESS_ENABLED;
   const shown = showEndless ? endless.board : board;
@@ -558,26 +543,36 @@ function RanksTab({ handle, board, loading, iso }: {
           </div>
         </div>
       ) : (
-        <ul className="mt-1.5">
-          {rows.slice(0, meBelow ? 4 : 5).map((r) => (
-            <li
-              key={`${r.rank}-${r.handle}`}
-              className={`flex items-center gap-2.5 py-[5px] text-[12px] ${r.me ? 'font-black rounded-lg px-2 -mx-2' : ''}`}
-              style={r.me
-                ? { background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }
-                : { borderBottom: '1px solid rgba(255,255,255,0.07)' }}
-            >
-              <Medal rank={r.rank} />
-              <span className="flex-1 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</span>
-              <span className="tabular-nums font-black" style={GOLD_TEXT}>{showEndless ? <>{r.levels}<span className="text-[9px] opacity-80"> {unit}</span></> : <DailyPoints score={r.score} levels={r.levels} />}</span>
-            </li>
-          ))}
+        <ul className="mt-1.5 px-2 flex-1 min-h-0 overflow-y-auto overscroll-contain" data-rank-scroller>
+          {!showEndless && <RankRowStyles />}
+          {rows.slice(0, meBelow ? 4 : 5).map((r) => {
+            const key = `${r.rank}-${r.handle}`;
+            return showEndless ? (
+              <li
+                key={key}
+                className={`flex items-center gap-2.5 py-[5px] text-[12px] ${r.me ? 'font-black rounded-lg px-2 -mx-2' : ''}`}
+                style={r.me
+                  ? { background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }
+                  : { borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+              >
+                <Medal rank={r.rank} />
+                <span className="flex-1 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</span>
+                <span className="tabular-nums font-black" style={GOLD_TEXT}>{r.levels}<span className="text-[9px] opacity-80"> {unit}</span></span>
+              </li>
+            ) : (
+              <DailyRankRow key={key} row={r} open={openRow === key} onToggle={() => setOpenRow((o) => (o === key ? null : key))} />
+            );
+          })}
           {meBelow ? (
-            <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
-              <Medal rank={meBelow.rank} />
-              <span className="flex-1 truncate">{handle} (you)</span>
-              <span className="tabular-nums" style={GOLD_TEXT}>{showEndless ? <>{meBelow.levels}<span className="text-[9px] opacity-80"> {unit}</span></> : <DailyPoints score={meBelow.score} levels={meBelow.levels} />}</span>
-            </li>
+            showEndless ? (
+              <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
+                <Medal rank={meBelow.rank} />
+                <span className="flex-1 truncate">{handle} (you)</span>
+                <span className="tabular-nums" style={GOLD_TEXT}>{meBelow.levels}<span className="text-[9px] opacity-80"> {unit}</span></span>
+              </li>
+            ) : (
+              <DailyRankRow row={meBelow} handle={handle} className="mt-1" open={openRow === 'me'} onToggle={() => setOpenRow((o) => (o === 'me' ? null : 'me'))} />
+            )
           ) : !me ? (
             <li className="mt-2 text-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.6)' }}>
               {showEndless ? 'No Endless run of yours on the board yet.' : 'You haven\u2019t hunted today. Play the Daily Revenge to take a rank.'}

@@ -1965,7 +1965,13 @@ export default function RookiesRunPage() {
       parMoves: parMovesForRun(meta.runId),
     };
     const stars = starsForRun(starInput);
-    return { classic, timed, stars, starLine: starRuleLine(starInput, stars) };
+    // The run card on the Ranks board sends these same numbers (moves, par,
+    // retries, active time) with the score, so the card matches this summary.
+    return {
+      classic, timed, stars, starLine: starRuleLine(starInput, stars),
+      moves: starInput.movesUsed, parMoves: starInput.parMoves, retries: starInput.retriesUsed,
+      timeMs: Math.round(activeMsRef.current),
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runFinished, runComplete, state.tempo, difficultyDef.scoreMult]);
 
@@ -2060,6 +2066,13 @@ export default function RookiesRunPage() {
         // The final run score, the same memoized number RunSummaryModal shows
         // (`finished` implies `runFinished`, so scorePair is set here).
         score: scorePair?.classic,
+        // The run card (Ranks): stars, moves vs par, time, retries — the same
+        // memo, so they describe exactly the run whose score this is.
+        stars: scorePair?.stars,
+        moves: scorePair?.moves,
+        parMoves: scorePair?.parMoves,
+        timeMs: scorePair?.timeMs,
+        retries: scorePair?.retries,
       });
     }
   }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, meta.endless, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress, scorePair]);
@@ -2618,7 +2631,7 @@ export default function RookiesRunPage() {
           shareCard={shareCard}
           score={scorePair?.classic}
           timedScore={scorePair?.timed}
-          timeMs={Math.round(activeMsRef.current)}
+          timeMs={scorePair?.timeMs ?? Math.round(activeMsRef.current)}
           stars={scorePair?.stars}
           starLine={scorePair?.starLine}
           onReplay={endless ? () => startEndless() : resetRun}

@@ -57,6 +57,16 @@ export interface ScoreSubmission {
    * (app/page.tsx scorePair.classic). Daily board only; omit for Endless.
    */
   score?: number;
+  /**
+   * The run card on the Ranks board (2026-09-21) — the SAME values the run
+   * summary showed for this run (app/page.tsx scorePair). Daily only; the
+   * server stores them only alongside the score they came with.
+   */
+  stars?: number;
+  moves?: number;
+  parMoves?: number;
+  timeMs?: number;
+  retries?: number;
 }
 
 export async function submitScore(s: ScoreSubmission): Promise<boolean> {
