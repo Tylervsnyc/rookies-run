@@ -2182,11 +2182,16 @@ export function applyOfferPick(
   // Level offers (Rookie's Revenge free pick) are a gift — the tempo meter
   // is untouched. Tempo offers spend the full meter.
   const isLevelOffer = state.offerReason === 'level';
+  // A tempo slate held back behind a kit grant (seed.ts) comes up next.
+  if (state.queuedOffer && state.queuedOffer.length > 0) {
+    return { ...state, abilities, pendingOffer: state.queuedOffer, offerReason: 'tempo', queuedOffer: null };
+  }
   return {
     ...state,
     abilities,
     pendingOffer: null,
     offerReason: undefined,
+    queuedOffer: null,
     tempo: isLevelOffer ? state.tempo : 0,
   };
 }

@@ -7,7 +7,6 @@
  */
 
 import {
-  applyOfferPick,
   offerIsExhausted,
   refreshAbilityUses,
   rollOffer,
@@ -255,13 +254,13 @@ export function puzzleToBoardState(
   // A signature-kit GRANT (rollOffer) never waits behind a tempo offer carried
   // over from the last level: a run whose L2 win filled the meter used to reach
   // L3 with that upgrade slate in place of the third-card grant, and never got
-  // the card (The Moat L3: 0/16 in sims, 2026-09-21). The grant is not a choice,
-  // so it lands straight in the rack and the carried slate stays up.
+  // the card (The Moat L3: 0/16 in sims, 2026-09-21). The grant is shown first
+  // — a card that just appears reads as a bug (Tyler's playtest, same day) —
+  // and the carried slate waits in `queuedOffer` until it is taken.
   if (pendingOffer && signaturePairFor(base)) {
     const due = rollOffer({ ...base, pendingOffer: null }, mulberry32(0));
     if (due.length > 0 && due.every((o) => o.grant)) {
-      const granted = applyOfferPick({ ...base, pendingOffer: due, offerReason: 'level' }, due[0]);
-      return { ...granted, pendingOffer: base.pendingOffer, offerReason: base.offerReason };
+      return { ...base, pendingOffer: due, offerReason: 'level', queuedOffer: pendingOffer };
     }
   }
   // Rookie's Revenge: a FREE offer at the start of every level (before the

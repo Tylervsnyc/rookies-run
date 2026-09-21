@@ -528,6 +528,11 @@ export interface BoardState {
    */
   offerReason?: 'tempo' | 'level';
   /**
+   * A tempo slate held back while a signature-kit GRANT is shown first
+   * (seed.ts). `applyOfferPick` puts it up as the next offer.
+   */
+  queuedOffer?: AbilityOffer | null;
+  /**
    * Smoke — enemy turns Rookie stays invisible. While > 0 enemies neither
    * capture nor hunt her (they hold posts / take other targets) and the
    * fleeing king ignores her threats. Ticks down at the end of each enemy

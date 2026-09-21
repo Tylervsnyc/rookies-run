@@ -2492,6 +2492,8 @@ export default function RookiesRunPage() {
 
       {!isStc && state.pendingOffer && state.status === 'playing' && !ricochetTravelling && (
         <AbilityOfferModal
+          // A new slate (e.g. the tempo pick queued behind a kit grant) opens face up.
+          key={state.pendingOffer.map((o) => `${o.kind}:${o.id}:${o.tier}`).join('|')}
           offer={state.pendingOffer}
           onPick={onOfferPick}
           onSkip={onOfferSkip}
