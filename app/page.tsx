@@ -1298,6 +1298,9 @@ export default function RookiesRunPage() {
   // target the card tap silently no-ops in the engine, which reads as "the
   // ability is broken". Gray the card out instead. Rewind (enemy-only) is
   // the same: with nothing on record to undo the tap no-ops, so gray it.
+  // Armed and not yet used: the card stays lit and tappable, and a tap undoes it.
+  const ricochetArmed =
+    (state.ricochetBanks ?? 0) > 0 && state.cancellableActivation?.abilityId === 'ricochet';
   const summonSupportDisabled = useMemo(() => {
     const out: AbilityId[] = [];
     for (const a of state.abilities) {
@@ -1310,12 +1313,12 @@ export default function RookiesRunPage() {
       if (a.id === 'mirror' && mirrorTargets(state).length === 0) out.push('mirror');
       if (a.id === 'catapult' && catapultSources(state).length === 0) out.push('catapult');
       if (a.id === 'avalanche' && avalancheStones(state).length === 0) out.push('avalanche');
-      if (a.id === 'ricochet' && !canRicochet(state)) out.push('ricochet');
+      if (a.id === 'ricochet' && !canRicochet(state) && !ricochetArmed) out.push('ricochet');
     }
     // The five of 2026-09-19 gray out the same way when they have no target.
     out.push(...fiveWithNoTarget(state));
     return out;
-  }, [state]);
+  }, [state, ricochetArmed]);
 
   /** Actually fire (or arm) an ability. */
   const fireAbility = useCallback(
@@ -2392,7 +2395,7 @@ export default function RookiesRunPage() {
         <div className="-mt-1">
         <AbilityRack
           abilities={state.abilities}
-          activeId={state.activeAbility?.id ?? null}
+          activeId={state.activeAbility?.id ?? (ricochetArmed ? 'ricochet' : null)}
           disabledIds={summonSupportDisabled}
           onActivate={onActivateAbility}
           infoId={infoAbilityId}

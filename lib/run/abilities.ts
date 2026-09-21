@@ -2322,6 +2322,8 @@ function applyAbilityActivateImpl(
       abilities: snap.abilities,
       shieldUp: snap.shieldUp,
       shieldTurnsLeft: snap.shieldUp ? state.shieldTurnsLeft : 0,
+      // Ricochet is undone the same way: the charge comes back, the lines go.
+      ...(abilityId === 'ricochet' ? { ricochetBanks: 0 } : {}),
       cancellableActivation: undefined,
       activeAbility: null,
     };
@@ -5418,7 +5420,18 @@ function applyRicochet(state: BoardState): BoardState {
     ricochetBanks: ricochetBanksForTier(owned.tier),
     abilities: decrementUse(state.abilities, 'ricochet'),
     activeAbility: null,
-    cancellableActivation: undefined,
+    // Tap the card again before moving to switch it off and get the charge
+    // back (Tyler 2026-09-21) — the same undo a transform has.
+    cancellableActivation: {
+      abilityId: 'ricochet',
+      snapshot: {
+        form: state.form,
+        formMovesLeft: state.formMovesLeft,
+        bonusMovesLeft: state.bonusMovesLeft,
+        abilities: state.abilities,
+        shieldUp: state.shieldUp,
+      },
+    },
     lastAbilityFx: { kind: 'ricochet', from: sq, to: sq, id: Date.now() + Math.random() },
   };
 }

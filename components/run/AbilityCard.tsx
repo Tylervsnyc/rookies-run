@@ -413,7 +413,8 @@ export function AbilityCardMini({
   const def = ABILITY_DEFS[ability.id];
   const t = TIER[ability.tier];
   const disabled =
-    forceDisabled || (ability.usesLeftThisLevel === 0 && ability.tier !== 5);
+    // An active card with no charge left is an armed instant: the tap undoes it.
+    forceDisabled || (ability.usesLeftThisLevel === 0 && ability.tier !== 5 && !active);
   const max = Math.max(1, maxUsesDisplay(ability));
   const blurb = blurbDetailForTier(ability.id, ability.tier);
 
