@@ -126,10 +126,12 @@ function PreviewFace({
   option,
   onUse,
   onBack,
+  useLabel = 'Use this',
 }: {
   option: AbilityOfferOption;
   onUse: () => void;
   onBack: () => void;
+  useLabel?: string;
 }) {
   const def = ABILITY_DEFS[option.id];
   const upgrade = option.kind !== 'new';
@@ -203,7 +205,7 @@ function PreviewFace({
           className="min-h-[44px] flex-1 rounded-xl text-[14px] font-black text-[#3d2806] active:translate-y-px"
           style={{ background: GOLD_CHIP, boxShadow: '0 3px 0 rgba(140,101,25,0.9), 0 6px 12px rgba(0,0,0,0.25)' }}
         >
-          {option.grant ? 'Take both' : 'Use this'}
+          {useLabel}
         </button>
       </div>
     </div>
@@ -247,6 +249,7 @@ export function AbilityOfferModal({
   confirmStep = true,
 }: AbilityOfferModalProps) {
   const isLevel = reason === 'level';
+  const isGrant = offer.length > 0 && offer.every((o) => o.grant);
   const cols = offer.length >= 3 ? 'grid-cols-3' : 'grid-cols-2';
   // A mixed slate (new + upgrade) labels every card so the two modes read.
   const mixed = offer.some((o) => o.kind === 'upgrade') && offer.some((o) => o.kind === 'new');
@@ -330,6 +333,7 @@ export function AbilityOfferModal({
                 onPick(preview);
               }}
               onBack={back}
+              useLabel={isGrant ? (offer.length > 1 ? 'Take both' : 'Take it') : 'Use this'}
             />
           ) : (
           <>
@@ -449,6 +453,25 @@ export function AbilityOfferModal({
               );
             })}
           </div>
+
+          {/* A grant is not a choice: both cards stay face up, side by side,
+              and one button takes the slate (Tyler 2026-09-21: "we need to be
+              able to see both abilities when we do it"). */}
+          {isGrant && (
+            <div className="flex justify-center mt-2.5 sm:mt-3">
+              <button
+                type="button"
+                onClick={() => {
+                  clickSfx();
+                  onPick(offer[0]);
+                }}
+                className="min-h-[44px] w-full max-w-[320px] rounded-xl text-[14px] font-black text-[#3d2806] active:translate-y-px"
+                style={{ background: GOLD_CHIP, boxShadow: '0 3px 0 rgba(140,101,25,0.9), 0 6px 12px rgba(0,0,0,0.25)' }}
+              >
+                {offer.length > 1 ? 'Take both' : 'Take it'}
+              </button>
+            </div>
+          )}
 
           {owned && owned.length > 0 && (
             <div className="mt-2.5 sm:mt-3 rounded-xl px-2.5 py-2" style={{ background: 'rgba(58,40,6,0.07)', boxShadow: 'inset 0 0 0 1px rgba(184,133,43,0.35)' }}>
