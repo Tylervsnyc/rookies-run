@@ -804,10 +804,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -860,10 +860,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L4 knight-hop only 38% (every finisher must be at least 80%); L5 knight-hop only 56% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -881,10 +881,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L1 bishop-step only 63% (every finisher must be at least 80%); L2 bishop-step only 0% (every finisher must be at least 80%); L3 queen-pulse only 6% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -902,10 +902,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -923,10 +923,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 freeze-ray only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -944,10 +944,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 knight-hop only 75% (every finisher must be at least 80%); L5 knight-hop only 69% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -965,10 +965,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L4 bishop-step only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -986,10 +986,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -1015,10 +1015,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 knight-hop only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -1036,10 +1036,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-20",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-20.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -1494,24 +1494,30 @@
       "id": "revenge-64",
       "kind": "run",
       "name": "The Hall of Mirrors",
-      "stage": "approved",
+      "stage": "live",
       "created": "2026-09-19",
       "notes": "Mirror + Sacrifice: the reflection is a bomb (2026-09-19 Mirror batch, stub)",
       "approved": {
         "at": "2026-09-20",
         "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-21"
       }
     },
     {
       "id": "revenge-65",
       "kind": "run",
       "name": "The Kaleidoscope",
-      "stage": "approved",
+      "stage": "live",
       "created": "2026-09-19",
       "notes": "Mirror + Convert: two bodies and a stolen third (2026-09-19 Mirror batch, stub)",
       "approved": {
         "at": "2026-09-20",
         "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-21"
       }
     },
     {
