@@ -134,10 +134,11 @@ export function AbilityOfferModal({
   const cols = offer.length >= 3 ? 'grid-cols-3' : 'grid-cols-2';
   // A mixed slate (new + upgrade) labels every card so the two modes read.
   const mixed = offer.some((o) => o.kind === 'upgrade') && offer.some((o) => o.kind === 'new');
-  // Which card is flipped over to its live demo, in place — the window never
-  // changes (Tyler 2026-09-21: "the window shouldn't move, it should just
-  // flip... instead of the ability card you see the animation"). Take commits.
-  const [flippedIdx, setFlippedIdx] = useState<number | null>(null);
+  // Which cards are flipped over to their live demo, in place — the window
+  // never changes (Tyler 2026-09-21: "it should just flip... instead of the
+  // ability card you see the animation"). Each card flips on its own, so two
+  // can play side by side ("no simultaneous preview of both" — same day).
+  const [flipped, setFlipped] = useState<ReadonlySet<number>>(() => new Set());
 
   const flip = (option: AbilityOfferOption, idx: number) => {
     clickSfx();
@@ -145,9 +146,11 @@ export function AbilityOfferModal({
       onPick(option);
       return;
     }
-    const next = flippedIdx === idx ? null : idx;
-    setFlippedIdx(next);
-    onPreview?.(next === null ? null : option);
+    const next = new Set(flipped);
+    if (next.has(idx)) next.delete(idx);
+    else next.add(idx);
+    setFlipped(next);
+    onPreview?.(next.has(idx) ? option : null);
   };
   const take = (option: AbilityOfferOption) => {
     clickSfx();
@@ -262,7 +265,7 @@ export function AbilityOfferModal({
 
                     {/* Full square art, edge to edge, thin gold inner rule. */}
                     <div className="relative w-full aspect-square">
-                      {flippedIdx === idx ? (
+                      {flipped.has(idx) ? (
                         <div key="demo" className="offer-flip-in absolute inset-0">
                           <AbilityDemo id={option.id} />
                         </div>
@@ -345,7 +348,7 @@ export function AbilityOfferModal({
                       className="min-h-[40px] flex-1 min-w-0 rounded-lg text-[11px] sm:text-[13px] font-black text-white active:translate-y-px disabled:opacity-35"
                       style={{ background: 'linear-gradient(180deg, #3fa9ec, #1f7fc4)', boxShadow: '0 2px 0 rgba(18,78,125,0.9)' }}
                     >
-                      {flippedIdx === idx ? 'Card' : 'Preview'}
+                      {flipped.has(idx) ? 'Card' : 'Preview'}
                     </button>
                   </div>
                 )}
