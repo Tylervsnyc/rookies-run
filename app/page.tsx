@@ -2502,7 +2502,7 @@ export default function RookiesRunPage() {
           // Signature-pair grant (rollOffer): not a choice — one tap takes the slate.
           {...(state.pendingOffer.every((o) => o.grant)
             ? state.pendingOffer.length > 1
-              ? { title: 'Your two powers for this run.', subtitle: 'Watch either one work. You keep both.' }
+              ? { title: 'Your two powers for this run.', subtitle: 'Preview either one. You keep both.' }
               : { title: 'One more power for this run.', subtitle: 'It joins the two you have. Now you hold all three.' }
             : {})}
         />

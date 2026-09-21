@@ -116,102 +116,6 @@ function plainText(option: AbilityOfferOption): string {
   return plainLine(option.id);
 }
 
-/**
- * Step two of the pick: the card flipped over. Same gold-framed card anatomy
- * (name bar / square art slot / text box) — only the art slot is now a LIVE
- * demo of the power firing on the real board (AbilityDemo), so nobody picks a
- * power blind (Tyler 2026-09-18, playtester). Nothing commits until "Use this".
- */
-function PreviewFace({
-  option,
-  onUse,
-  onBack,
-  useLabel = 'Use this',
-}: {
-  option: AbilityOfferOption;
-  onUse: () => void;
-  onBack: () => void;
-  useLabel?: string;
-}) {
-  const def = ABILITY_DEFS[option.id];
-  const upgrade = option.kind !== 'new';
-  const deltas = upgrade ? upgradeDeltaForTier(option.id, option.tier) : [];
-  return (
-    <div className="offer-flip-in flex flex-col items-center">
-      <div
-        className="w-full rounded-xl p-[2px]"
-        style={{
-          maxWidth: 'min(100%, 320px)',
-          background: GOLD_FRAME,
-          boxShadow: `${GOLD_HALO}, 0 8px 16px rgba(18,34,43,0.25)`,
-        }}
-      >
-        <div className="flex w-full flex-col rounded-[10px] overflow-hidden bg-[#1a2b33]">
-          {/* Name bar — same as the face-up card. */}
-          <div className="flex min-h-[30px] items-center justify-center px-2 py-[4px] bg-[#22343e]">
-            <span className="text-center text-[12px] sm:text-[14px] font-black leading-tight uppercase tracking-[0.05em] text-white">
-              {def.name}
-            </span>
-          </div>
-
-          {/* The demo sits exactly where the square art does — 1:1, uncropped. */}
-          <div className="relative w-full" style={{ maxHeight: '48dvh' }}>
-            <AbilityDemo id={option.id} />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{ boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.65)' }}
-            />
-          </div>
-
-          {upgrade && (
-            <div
-              className="text-center text-[9.5px] sm:text-[11px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
-              style={{ background: GOLD_CHIP, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }}
-            >
-              Upgrade · Tier {option.tier}
-            </div>
-          )}
-
-          {/* Text box — the plain-English line (or the upgrade delta). */}
-          <div className="flex flex-col gap-0.5 px-2.5 py-2">
-            {upgrade ? (
-              deltas.map((line) => (
-                <p key={line} className="text-[11px] sm:text-[12.5px] font-black leading-snug text-amber-200">
-                  {line}
-                </p>
-              ))
-            ) : (
-              <p className="text-[11px] sm:text-[12.5px] font-semibold leading-snug text-white/85">
-                {plainText(option)}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-2.5 flex w-full items-center gap-2" style={{ maxWidth: 'min(100%, 320px)' }}>
-        <button
-          type="button"
-          onClick={onBack}
-          className="min-h-[44px] shrink-0 px-4 rounded-xl text-[13px] font-black text-chess-text active:translate-y-px"
-          style={{ background: 'rgba(58,40,6,0.09)', boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.5)' }}
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          onClick={onUse}
-          className="min-h-[44px] flex-1 rounded-xl text-[14px] font-black text-[#3d2806] active:translate-y-px"
-          style={{ background: GOLD_CHIP, boxShadow: '0 3px 0 rgba(140,101,25,0.9), 0 6px 12px rgba(0,0,0,0.25)' }}
-        >
-          {useLabel}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export function AbilityOfferModal({
   offer,
   onPick,
@@ -230,31 +134,24 @@ export function AbilityOfferModal({
   const cols = offer.length >= 3 ? 'grid-cols-3' : 'grid-cols-2';
   // A mixed slate (new + upgrade) labels every card so the two modes read.
   const mixed = offer.some((o) => o.kind === 'upgrade') && offer.some((o) => o.kind === 'new');
-  // Step one of two: which card is flipped to its preview face. null = the
-  // three face-up cards. Nothing is committed until "Use this".
-  const [previewIdx, setPreviewIdx] = useState<number | null>(null);
-  const preview = previewIdx === null ? null : (offer[previewIdx] ?? null);
+  // Which card is flipped over to its live demo, in place — the window never
+  // changes (Tyler 2026-09-21: "the window shouldn't move, it should just
+  // flip... instead of the ability card you see the animation"). Take commits.
+  const [flippedIdx, setFlippedIdx] = useState<number | null>(null);
 
-  // Tap a card (or its Watch button) to see it fire; Take commits (Tyler
-  // 2026-09-21: "below this there should be 2 buttons... collect and see it
-  // in action").
-  const select = (option: AbilityOfferOption, idx: number) => {
+  const flip = (option: AbilityOfferOption, idx: number) => {
     clickSfx();
     if (!confirmStep) {
       onPick(option);
       return;
     }
-    setPreviewIdx(idx);
-    onPreview?.(option);
+    const next = flippedIdx === idx ? null : idx;
+    setFlippedIdx(next);
+    onPreview?.(next === null ? null : option);
   };
   const take = (option: AbilityOfferOption) => {
     clickSfx();
     onPick(option);
-  };
-  const back = () => {
-    clickSfx();
-    setPreviewIdx(null);
-    onPreview?.(null);
   };
 
   return (
@@ -305,17 +202,6 @@ export function AbilityOfferModal({
               '0 0 0 1.5px rgba(184,133,43,0.5), 0 0 20px rgba(255,191,36,0.25), 0 18px 40px rgba(0,0,0,0.45)',
           }}
         >
-          {preview ? (
-            <PreviewFace
-              option={preview}
-              onUse={() => {
-                clickSfx();
-                onPick(preview);
-              }}
-              onBack={back}
-              useLabel={isGrant ? (offer.length > 1 ? 'Take both' : 'Take it') : 'Use this'}
-            />
-          ) : (
           <>
           <div className="text-center mb-2 sm:mb-3 px-0.5">
             <h2 className="text-[14px] sm:text-[16px] font-black text-chess-text leading-tight">
@@ -328,7 +214,7 @@ export function AbilityOfferModal({
               ))}
             </h2>
             <p className="text-[10px] sm:text-[11px] font-bold text-chess-text-muted mt-0.5">
-              {subtitle ?? (confirmStep ? 'Take one, or watch it work first.' : 'Tap a power to keep it.')}
+              {subtitle ?? (confirmStep ? 'Take one, or preview it first.' : 'Tap a power to keep it.')}
             </p>
           </div>
 
@@ -348,7 +234,7 @@ export function AbilityOfferModal({
                   aria-disabled={locked}
                   onClick={() => {
                     if (locked) return;
-                    select(option, idx);
+                    flip(option, idx);
                   }}
                   className={`offer-card-enter relative flex flex-1 rounded-xl p-[2px] text-left transition-transform ${
                     locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
@@ -376,13 +262,20 @@ export function AbilityOfferModal({
 
                     {/* Full square art, edge to edge, thin gold inner rule. */}
                     <div className="relative w-full aspect-square">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={`/abilities/${artFile(option.id)}`}
-                        alt=""
-                        draggable={false}
-                        className="block w-full h-full"
-                      />
+                      {flippedIdx === idx ? (
+                        <div key="demo" className="offer-flip-in absolute inset-0">
+                          <AbilityDemo id={option.id} />
+                        </div>
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key="art"
+                          src={`/abilities/${artFile(option.id)}`}
+                          alt=""
+                          draggable={false}
+                          className="block w-full h-full"
+                        />
+                      )}
                       <div
                         aria-hidden
                         className="pointer-events-none absolute inset-0"
@@ -446,11 +339,11 @@ export function AbilityOfferModal({
                     <button
                       type="button"
                       disabled={locked}
-                      onClick={() => !locked && select(option, idx)}
+                      onClick={() => !locked && flip(option, idx)}
                       className="min-h-[40px] w-full rounded-lg text-[12px] sm:text-[13px] font-black text-chess-text active:translate-y-px disabled:opacity-35"
                       style={{ background: 'rgba(58,40,6,0.09)', boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.5)' }}
                     >
-                      Watch
+                      {flippedIdx === idx ? 'Card' : 'Preview'}
                     </button>
                   </div>
                 )}
@@ -509,7 +402,6 @@ export function AbilityOfferModal({
             </div>
           )}
           </>
-          )}
 
           {/* One-shot gold glint sweeping across on entrance. */}
           <div

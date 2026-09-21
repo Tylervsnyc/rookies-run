@@ -1974,6 +1974,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
           pointAtId="knight-hop"
           title="Rookie can have powers."
           subtitle="Tap Knight Hop."
+          // "Tap Knight Hop" means take it: one tap, no Take/Preview row.
+          confirmStep={false}
         />
       )}
 
@@ -1984,7 +1986,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
           onSkip={onDemoSkip}
           reason="tempo"
           title="Tempo full. Pick a new power, or upgrade one."
-          subtitle="Tap either to see how it works."
+          subtitle="Preview either one, then take it."
         />
       )}
     </div>
