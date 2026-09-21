@@ -8,7 +8,7 @@ const REVENGE = new Set<string>(REVENGE_RUN_IDS);
 // today's included, for players who already played it. Keep in step with
 // LADDER_BONUS_RUNG_IDS in ladder.ts — a literal here so daily.ts stays free
 // of ladder.ts; ladder-bonus-rungs.test.ts asserts the two lists match.
-export const DAILY_EXCLUDED_RUN_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65'];
+export const DAILY_EXCLUDED_RUN_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65', 'revenge-61'];
 const NOT_DAILY = new Set<string>(DAILY_EXCLUDED_RUN_IDS);
 // Daily rotation = Rookie's Revenge runs only (classic rank-8 runs are picker-only).
 const DAILY_POOL = RUNS.filter((r) => REVENGE.has(r.id) && !STC.has(r.id) && !NOT_DAILY.has(r.id));

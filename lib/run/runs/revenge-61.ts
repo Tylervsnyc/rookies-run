@@ -270,6 +270,7 @@ export const RUN_REVENGE_61: RunDef = {
   blurb:
     'His cell has one mouth and it faces sideways, down a dog-leg no straight line enters. Stone is a rail: bank off it. Lava is a dead rail: it will not give you the angle. And where the level offers no rail at all, you bring your own.',
   allowedAbilities: ['ricochet', 'boulder', 'magnet'],
+  signaturePair: ['ricochet', 'boulder'],
   offerEveryLevel: true,
   offerOnLevels: [1, 2, 3, 6, 9],
   offerSize: 3,

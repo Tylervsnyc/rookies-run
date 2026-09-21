@@ -136,6 +136,7 @@ export const RUN_REVENGE_64: RunDef = {
   blurb:
     'Solid stone, one walk carved for you, and across the board a sealed cell exactly where your reflection would stand. It cannot get out. It does not need to. Walk it under his door, and let it go.',
   allowedAbilities: ['mirror', 'sacrifice', 'hourglass'],
+  signaturePair: ['mirror', 'sacrifice'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

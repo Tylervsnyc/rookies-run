@@ -155,6 +155,7 @@ export const RUN_REVENGE_65: RunDef = {
   blurb:
     'Every room is the same room twice, left and right, with one thing out of place. He sits on a throne no rook line reaches. But a stolen pawn strikes upward, a reflection moves for free — and whatever your side captures holds him still for exactly one turn.',
   allowedAbilities: ['mirror', 'convert', 'swap'],
+  signaturePair: ['mirror', 'convert'],
   offerEveryLevel: true,
   offerOnLevels: [1, 3, 6, 9],
   offerSize: 3,

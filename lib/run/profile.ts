@@ -19,7 +19,7 @@ import {
   type RunEvent,
 } from './achievements';
 import { DEFAULT_DIFFICULTY, isDifficultyId, type DifficultyId } from './difficulty';
-import { LADDER_RUNG_IDS, ladderUnlockedAbilities, rungKit } from './ladder';
+import { LADDER_RUNG_IDS, ladderUnlockedAbilities, rungKit, visibleBonusRungs } from './ladder';
 
 export const PROFILE_KEY = 'rookies-revenge-profile-v1';
 
@@ -518,6 +518,10 @@ export function unlockableAbilityIds(): AbilityId[] {
   }
   for (let i = 0; i < LADDER_RUNG_IDS.length; i++) {
     for (const id of rungKit(i)) set.add(id);
+  }
+  // Bonus rungs grant their kits too (ladderUnlockedAbilities).
+  for (const b of visibleBonusRungs()) {
+    for (const id of b.run.allowedAbilities ?? []) if (isPlayerFacing(id)) set.add(id as AbilityId);
   }
   return [...set];
 }

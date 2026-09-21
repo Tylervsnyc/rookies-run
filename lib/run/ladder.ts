@@ -110,8 +110,9 @@ export const LADDER_RUNG_IDS: ReadonlyArray<string> = [
  * rungs out of this file by matching `'<id>', // comment` lines.
  *   revenge-64 The Hall of Mirrors (mirror + sacrifice) = "rung 11"
  *   revenge-65 The Kaleidoscope    (mirror + convert)   = "rung 12"
+ *   revenge-61 The Baffle          (ricochet + boulder) = "rung 13" (Tyler, 2026-09-21)
  */
-export const LADDER_BONUS_RUNG_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65'];
+export const LADDER_BONUS_RUNG_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65', 'revenge-61'];
 
 const BONUS_PREVIEW_KEY = 'rr-bonus-preview';
 

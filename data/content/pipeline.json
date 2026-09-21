@@ -1390,9 +1390,13 @@
       "id": "ricochet",
       "kind": "ability",
       "name": "Ricochet",
-      "stage": "testing",
+      "stage": "approved",
       "created": "2026-09-19",
-      "notes": "Her next move bounces: slide to a stone, turn 90 degrees, keep sliding."
+      "notes": "Her next move bounces: slide to a stone, turn 90 degrees, keep sliding.",
+      "approved": {
+        "at": "2026-09-21",
+        "by": "Tyler"
+      }
     },
     {
       "id": "avalanche",
@@ -1470,9 +1474,16 @@
       "id": "revenge-61",
       "kind": "run",
       "name": "The Baffle",
-      "stage": "testing",
+      "stage": "live",
       "created": "2026-09-19",
-      "notes": "Ricochet + Boulder (2026-09-19 batch, stub)"
+      "notes": "Ricochet + Boulder (2026-09-19 batch, stub)",
+      "approved": {
+        "at": "2026-09-21",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-21"
+      }
     },
     {
       "id": "revenge-62",
