@@ -210,6 +210,29 @@ function PreviewFace({
   );
 }
 
+/** Cards this device has already flipped once — per-viewer, best effort. */
+const PREVIEWED_KEY = 'rr-previewed-abilities';
+function previewedIds(): string[] {
+  try {
+    const raw = localStorage.getItem(PREVIEWED_KEY);
+    const ids = raw ? JSON.parse(raw) : [];
+    return Array.isArray(ids) ? ids : [];
+  } catch {
+    return [];
+  }
+}
+function hasPreviewed(id: string): boolean {
+  return previewedIds().includes(id);
+}
+function markPreviewed(id: string): void {
+  try {
+    const ids = previewedIds();
+    if (!ids.includes(id)) localStorage.setItem(PREVIEWED_KEY, JSON.stringify([...ids, id]));
+  } catch {
+    /* private mode etc. — the flip just shows again */
+  }
+}
+
 export function AbilityOfferModal({
   offer,
   onPick,
@@ -234,10 +257,14 @@ export function AbilityOfferModal({
 
   const select = (option: AbilityOfferOption, idx: number) => {
     clickSfx();
-    if (!confirmStep) {
+    // The flip is for learning a card. Once seen (or already in the rack, as
+    // an upgrade is), one tap takes it (Tyler 2026-09-21: "after you get an
+    // ability, you don't need to see the flip card again").
+    if (!confirmStep || option.kind === 'upgrade' || hasPreviewed(option.id)) {
       onPick(option);
       return;
     }
+    markPreviewed(option.id);
     setPreviewIdx(idx);
     onPreview?.(option);
   };
