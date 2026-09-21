@@ -1935,6 +1935,40 @@ export default function RookiesRunPage() {
     }).catch(() => {});
   }, [runComplete, state, meta.runId, meta.iso, totalLevels, recordEvent]);
 
+  // Both scores for the summary screen. "Score" = the classic formula
+  // (lib/run/scoring computeScore); "Timed score" = the TESTING per-level
+  // par-time formula. The classic score is ALSO the daily leaderboard's score
+  // (submitted in the record-run effect below, 2026-09-21) — declared above
+  // that effect so it submits the exact number this summary shows.
+  const runFinished = runComplete || (state.status === 'lost' && deathSettled);
+  const scorePair = useMemo(() => {
+    if (!runFinished) return null;
+    const splits = splitsRef.current;
+    const classicBase = computeScore({
+      moves: splits.reduce((n, s) => n + s.moves, 0),
+      captures: splits.flatMap((s) => s.captures),
+      elapsedMs: activeMsRef.current,
+      levelsCleared: splits.length,
+      tempoRemaining: state.tempo,
+    }).total;
+    // Difficulty pays (DifficultyDef.scoreMult): the Ranks board sorts by this
+    // number, so a Hard clear must outscore the same clear on Rookie (Tyler
+    // 2026-09-21, "real score"). It was defined but never applied.
+    const classic = Math.round(classicBase * difficultyDef.scoreMult);
+    const timed = computeTimedScore(splits).total;
+    // Stars: movesUsed = the clearing attempt's moves per level (same as the
+    // classic score); retriesUsed = every level retry taken this run.
+    const starInput = {
+      completed: runComplete,
+      retriesUsed: Object.values(retriesUsedRef.current).reduce((n, v) => n + v, 0),
+      movesUsed: splits.reduce((n, s) => n + s.moves, 0),
+      parMoves: parMovesForRun(meta.runId),
+    };
+    const stars = starsForRun(starInput);
+    return { classic, timed, stars, starLine: starRuleLine(starInput, stars) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runFinished, runComplete, state.tempo, difficultyDef.scoreMult]);
+
   // Record the finished run once, then read history for stats.
   const runRecordedRef = useRef(false);
   const [historyVersion, setHistoryVersion] = useState(0);
@@ -2023,39 +2057,14 @@ export default function RookiesRunPage() {
         totalLevels,
         captures: state.captures.length,
         completed: runComplete,
+        // The final run score, the same memoized number RunSummaryModal shows
+        // (`finished` implies `runFinished`, so scorePair is set here).
+        score: scorePair?.classic,
       });
     }
-  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, meta.endless, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress]);
+  }, [runComplete, state.status, deathSettled, canRetry, meta.iso, meta.runId, meta.ladder, meta.levelJump, meta.refreshAll, meta.testkit, meta.endless, levelReached, totalLevels, isStc, state.difficulty, state.captures.length, progress, scorePair]);
 
   const stats = useMemo(() => computeStats(readHistory()), [historyVersion]);
-
-  // Both scores for the summary screen. "Score" = the classic formula
-  // (lib/run/scoring computeScore); "Timed score" = the TESTING per-level
-  // par-time formula. Neither touches leaderboard submission.
-  const runFinished = runComplete || (state.status === 'lost' && deathSettled);
-  const scorePair = useMemo(() => {
-    if (!runFinished) return null;
-    const splits = splitsRef.current;
-    const classic = computeScore({
-      moves: splits.reduce((n, s) => n + s.moves, 0),
-      captures: splits.flatMap((s) => s.captures),
-      elapsedMs: activeMsRef.current,
-      levelsCleared: splits.length,
-      tempoRemaining: state.tempo,
-    }).total;
-    const timed = computeTimedScore(splits).total;
-    // Stars: movesUsed = the clearing attempt's moves per level (same as the
-    // classic score); retriesUsed = every level retry taken this run.
-    const starInput = {
-      completed: runComplete,
-      retriesUsed: Object.values(retriesUsedRef.current).reduce((n, v) => n + v, 0),
-      movesUsed: splits.reduce((n, s) => n + s.moves, 0),
-      parMoves: parMovesForRun(meta.runId),
-    };
-    const stars = starsForRun(starInput);
-    return { classic, timed, stars, starLine: starRuleLine(starInput, stars) };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runFinished, runComplete, state.tempo]);
 
   const shareString = buildShareString({
     iso: meta.iso,

@@ -52,6 +52,11 @@ export interface ScoreSubmission {
   totalLevels: number;
   captures: number;
   completed: boolean;
+  /**
+   * The run's final points — the number the run-summary screen showed
+   * (app/page.tsx scorePair.classic). Daily board only; omit for Endless.
+   */
+  score?: number;
 }
 
 export async function submitScore(s: ScoreSubmission): Promise<boolean> {

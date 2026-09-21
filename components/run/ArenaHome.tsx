@@ -468,9 +468,29 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
  * Ranks. Two boards behind one switch: TODAY (the daily run) and ENDLESS.
  * Endless scores are submitted under runId 'endless' by app/page.tsx, and until
  * 2026-09-07 nothing ever fetched them — the mode kept a board nobody could see.
- * Endless is ranked by DEPTH, so its rows read "n deep", not captures.
+ * Endless is ranked by DEPTH, so its rows read "n deep". TODAY is ranked by
+ * the run's SCORE (points, 2026-09-21) — see DailyPoints.
  */
 type RanksBoard = 'today' | 'endless';
+
+/**
+ * One TODAY row's number. The daily board ranks by SCORE — the run's points,
+ * the same number the run-summary screen showed (api/run/leaderboard: score
+ * desc nulls last, then levels, captures, first-in). So the points lead
+ * ("1,240 pts") with levels as the small second line ("7/10"). Rows from
+ * builds before 2026-09-21 have no score and show levels only.
+ */
+function DailyPoints({ score, levels }: { score: number | null; levels: number }) {
+  if (score == null) {
+    return <>{levels}/10</>;
+  }
+  return (
+    <span className="inline-flex flex-col items-end leading-none">
+      <span>{score.toLocaleString('en-US')}<span className="text-[9px] opacity-80"> pts</span></span>
+      <span className="text-[9px] font-bold opacity-70 mt-0.5">{levels}/10</span>
+    </span>
+  );
+}
 
 function RanksTab({ handle, board, loading, iso }: {
   handle: string; board: LeaderboardResponse | null; loading: boolean; iso: string;
@@ -483,7 +503,7 @@ function RanksTab({ handle, board, loading, iso }: {
   const live = shown?.available ? shown : null;
   const rows = live?.rows ?? [];
   const me = live?.me ?? null;
-  const unit = showEndless ? 'deep' : 'caps';
+  const unit = 'deep';
   // The top rows already carry `me` when you're in them — don't print you twice.
   const meBelow = me && !rows.some((r) => r.me) ? me : null;
 
@@ -549,14 +569,14 @@ function RanksTab({ handle, board, loading, iso }: {
             >
               <Medal rank={r.rank} />
               <span className="flex-1 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</span>
-              <span className="tabular-nums font-black" style={GOLD_TEXT}>{showEndless ? r.levels : r.captures}<span className="text-[9px] opacity-80"> {unit}</span></span>
+              <span className="tabular-nums font-black" style={GOLD_TEXT}>{showEndless ? <>{r.levels}<span className="text-[9px] opacity-80"> {unit}</span></> : <DailyPoints score={r.score} levels={r.levels} />}</span>
             </li>
           ))}
           {meBelow ? (
             <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
               <Medal rank={meBelow.rank} />
               <span className="flex-1 truncate">{handle} (you)</span>
-              <span className="tabular-nums" style={GOLD_TEXT}>{showEndless ? meBelow.levels : meBelow.captures}<span className="text-[9px] opacity-80"> {unit}</span></span>
+              <span className="tabular-nums" style={GOLD_TEXT}>{showEndless ? <>{meBelow.levels}<span className="text-[9px] opacity-80"> {unit}</span></> : <DailyPoints score={meBelow.score} levels={meBelow.levels} />}</span>
             </li>
           ) : !me ? (
             <li className="mt-2 text-center text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.6)' }}>
