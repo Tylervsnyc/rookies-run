@@ -511,7 +511,7 @@ export function playSacrificeArmSound(): void {
 }
 
 /**
- * Sacrifice DETONATED — the recorded explosion (public/sounds/sacrifice.mp3,
+ * Sacrifice DETONATED — the recorded cartoon boom (public/sounds/sacrifice.mp3,
  * Tyler's pick 2026-09-21: the synth boom wasn't big enough). The synth blast
  * below stays as the fallback when the file hasn't loaded.
  */
