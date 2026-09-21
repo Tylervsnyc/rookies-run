@@ -324,13 +324,15 @@ export function AbilityOfferModal({
                   </div>
                 </button>
                 {confirmStep && (
-                  <div className="flex flex-col gap-1">
+                  // One row, side by side (Tyler 2026-09-21); Preview wears a
+                  // cool blue so it never reads as a second Take.
+                  <div className="flex gap-1">
                     {!isGrant && (
                       <button
                         type="button"
                         disabled={locked}
                         onClick={() => !locked && take(option)}
-                        className="min-h-[40px] w-full rounded-lg text-[12px] sm:text-[13px] font-black text-[#3d2806] active:translate-y-px disabled:opacity-35"
+                        className="min-h-[40px] flex-1 min-w-0 rounded-lg text-[11px] sm:text-[13px] font-black text-[#3d2806] active:translate-y-px disabled:opacity-35"
                         style={{ background: GOLD_CHIP, boxShadow: '0 2px 0 rgba(140,101,25,0.9)' }}
                       >
                         Take
@@ -340,8 +342,8 @@ export function AbilityOfferModal({
                       type="button"
                       disabled={locked}
                       onClick={() => !locked && flip(option, idx)}
-                      className="min-h-[40px] w-full rounded-lg text-[12px] sm:text-[13px] font-black text-chess-text active:translate-y-px disabled:opacity-35"
-                      style={{ background: 'rgba(58,40,6,0.09)', boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.5)' }}
+                      className="min-h-[40px] flex-1 min-w-0 rounded-lg text-[11px] sm:text-[13px] font-black text-white active:translate-y-px disabled:opacity-35"
+                      style={{ background: 'linear-gradient(180deg, #3fa9ec, #1f7fc4)', boxShadow: '0 2px 0 rgba(18,78,125,0.9)' }}
                     >
                       {flippedIdx === idx ? 'Card' : 'Preview'}
                     </button>
