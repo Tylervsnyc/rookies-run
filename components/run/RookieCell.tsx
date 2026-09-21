@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { BreathingRook } from '@/components/ui/BreathingRook';
 import { GOLDEN_KING_PALETTE, PieceBlocks } from './PieceBlocks';
 import type { RookieForm } from '@/lib/run/types';
@@ -65,6 +66,9 @@ function Sprite({ form, animate, alarm }: { form: RookieForm; animate: boolean; 
   return <PieceBlocks piece={piece} blockSize={3} animate={animate} />;
 }
 
+/** The square width the fixed-size sprite was drawn for; smaller squares scale her down. */
+const SPRITE_CELL_PX = 40;
+
 export function RookieCell({
   form = 'rook',
   dying = false,
@@ -72,9 +76,26 @@ export function RookieCell({
   alarm = null,
 }: RookieCellProps) {
   const showGlitch = glitching && !dying;
+  // The sprite is drawn at a fixed pixel size, which is right for a game-size
+  // square (~40px+). On a tiny board — an offer card's preview demo — she
+  // filled 2x2 squares (Tyler 2026-09-21), so shrink her with the cell there.
+  const cellRef = useRef<HTMLDivElement | null>(null);
+  const [cellPx, setCellPx] = useState(0);
+  useEffect(() => {
+    const el = cellRef.current;
+    if (!el) return;
+    // offsetWidth, not getBoundingClientRect: a flipping card is mid-transform.
+    const measure = () => setCellPx(el.offsetWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const fitScale = cellPx > 0 ? Math.min(1, cellPx / SPRITE_CELL_PX) : 1;
 
   return (
     <div
+      ref={cellRef}
       style={{
         position: 'relative',
         width: '100%',
@@ -125,7 +146,7 @@ export function RookieCell({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transform: 'scale(0.88)',
+            transform: `scale(${0.88 * fitScale})`,
             animation: showGlitch
               ? 'rookieGlitchBase 440ms steps(8)'
               : undefined,

@@ -2664,7 +2664,7 @@ function MirrorTeachOverlay({
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
-    const measure = () => setCellPx(el.getBoundingClientRect().width / 8);
+    const measure = () => setCellPx(el.offsetWidth / 8); // layout width: immune to a flipping card's transform
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
@@ -3043,7 +3043,7 @@ function AllyOverlay({ allies }: { allies: ReadonlyArray<AllyPiece> }) {
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
-    const measure = () => setCellPx(el.getBoundingClientRect().width / 8);
+    const measure = () => setCellPx(el.offsetWidth / 8); // layout width: immune to a flipping card's transform
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
