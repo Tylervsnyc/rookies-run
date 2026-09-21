@@ -49,6 +49,7 @@ let captureBuffer: AudioBuffer | null = null;
 let transformBackBuffer: AudioBuffer | null = null;
 let transformIntoBuffer: AudioBuffer | null = null;
 let freezeBuffer: AudioBuffer | null = null;
+let sacrificeBuffer: AudioBuffer | null = null;
 let surgeBuffer: AudioBuffer | null = null;
 let tabSwitchBuffer: AudioBuffer | null = null;
 let buffersLoading = false;
@@ -96,7 +97,7 @@ async function preloadSounds(): Promise<void> {
   if (buffersLoaded || buffersLoading) return;
   buffersLoading = true;
 
-  const [move, capture, transformBack, transformInto, freeze, surge, tabSwitch] = await Promise.all([
+  const [move, capture, transformBack, transformInto, freeze, surge, tabSwitch, sacrifice] = await Promise.all([
     loadBuffer('/sounds/move.mp3'),
     loadBuffer('/sounds/capture.mp3'),
     loadBuffer('/sounds/transform-back.mp3'),
@@ -104,8 +105,10 @@ async function preloadSounds(): Promise<void> {
     loadBuffer('/sounds/freeze.mp3'),
     loadBuffer('/sounds/surge.mp3'),
     loadBuffer('/sounds/tab-switch.mp3'),
+    loadBuffer('/sounds/sacrifice.mp3'),
   ]);
   tabSwitchBuffer = tabSwitch;
+  sacrificeBuffer = sacrifice;
   freezeBuffer = freeze;
   surgeBuffer = surge;
 
@@ -507,12 +510,21 @@ export function playSacrificeArmSound(): void {
   })();
 }
 
-/** Sacrifice DETONATED — a noise blast over a deep falling thump. */
+/**
+ * Sacrifice DETONATED — the recorded explosion (public/sounds/sacrifice.mp3,
+ * Tyler's pick 2026-09-21: the synth boom wasn't big enough). The synth blast
+ * below stays as the fallback when the file hasn't loaded.
+ */
 export function playSacrificeBoomSound(): void {
   if (typeof window === 'undefined') return;
   void (async () => {
     const ctx = await ensureAudioReady();
     if (!ctx) return;
+    if (!buffersLoaded) await preloadSounds();
+    if (sacrificeBuffer) {
+      await playBuffer(() => sacrificeBuffer);
+      return;
+    }
     const t = ctx.currentTime;
     // Low thump.
     const osc = ctx.createOscillator();
