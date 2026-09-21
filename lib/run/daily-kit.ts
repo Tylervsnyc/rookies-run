@@ -3,7 +3,7 @@ import { unlockableAbilityIds } from './profile';
 import { getRunById, isKnownRunId } from './runs';
 import { getDailyOverride } from './daily';
 
-/** How many powers a daily run offers. Tyler (2026-09-02): four, so it fits the home screen. */
+/** How many powers a daily run offers. Three (was four, Tyler 2026-09-02) — the home grid follows this. */
 export const DAILY_KIT_SIZE = 3;
 
 /**

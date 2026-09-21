@@ -11,6 +11,8 @@ import {
 import { artFile } from './AbilityCard';
 import { clickSfx, withClick } from '@/lib/sounds';
 import { PointerArrow } from './BoardOverlay';
+import { AbilityDemo } from './AbilityDemo';
+import { useState } from 'react';
 
 interface AbilityOfferModalProps {
   offer: AbilityOffer;
@@ -39,6 +41,18 @@ interface AbilityOfferModalProps {
    * 2026-09-03: "I kind of forget a lot of the time").
    */
   owned?: OwnedAbility[];
+  /**
+   * Fired when the player SELECTS a card (step one of two — the preview face
+   * opens) and again with null when they back out. Nothing is committed here;
+   * `onPick` is still the only commit. Optional so callers that don't care
+   * (including the tutorial) need no changes.
+   */
+  onPreview?: (option: AbilityOfferOption | null) => void;
+  /**
+   * Two-step picking: tap a card to preview it firing, then confirm. Default
+   * true. Set false to go straight back to one-tap commit.
+   */
+  confirmStep?: boolean;
 }
 
 /**
@@ -93,8 +107,107 @@ function RookieWord() {
   );
 }
 
+/** The one plain-English line for a power (falls back to its own blurb). */
+export function plainLine(id: AbilityId): string {
+  return PLAIN[id] ?? ABILITY_DEFS[id].description;
+}
+
 function plainText(option: AbilityOfferOption): string {
-  return PLAIN[option.id] ?? ABILITY_DEFS[option.id].description;
+  return plainLine(option.id);
+}
+
+/**
+ * Step two of the pick: the card flipped over. Same gold-framed card anatomy
+ * (name bar / square art slot / text box) — only the art slot is now a LIVE
+ * demo of the power firing on the real board (AbilityDemo), so nobody picks a
+ * power blind (Tyler 2026-09-18, playtester). Nothing commits until "Use this".
+ */
+function PreviewFace({
+  option,
+  onUse,
+  onBack,
+}: {
+  option: AbilityOfferOption;
+  onUse: () => void;
+  onBack: () => void;
+}) {
+  const def = ABILITY_DEFS[option.id];
+  const upgrade = option.kind !== 'new';
+  const deltas = upgrade ? upgradeDeltaForTier(option.id, option.tier) : [];
+  return (
+    <div className="offer-flip-in flex flex-col items-center">
+      <div
+        className="w-full rounded-xl p-[2px]"
+        style={{
+          maxWidth: 'min(100%, 320px)',
+          background: GOLD_FRAME,
+          boxShadow: `${GOLD_HALO}, 0 8px 16px rgba(18,34,43,0.25)`,
+        }}
+      >
+        <div className="flex w-full flex-col rounded-[10px] overflow-hidden bg-[#1a2b33]">
+          {/* Name bar — same as the face-up card. */}
+          <div className="flex min-h-[30px] items-center justify-center px-2 py-[4px] bg-[#22343e]">
+            <span className="text-center text-[12px] sm:text-[14px] font-black leading-tight uppercase tracking-[0.05em] text-white">
+              {def.name}
+            </span>
+          </div>
+
+          {/* The demo sits exactly where the square art does — 1:1, uncropped. */}
+          <div className="relative w-full" style={{ maxHeight: '48dvh' }}>
+            <AbilityDemo id={option.id} />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{ boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.65)' }}
+            />
+          </div>
+
+          {upgrade && (
+            <div
+              className="text-center text-[9.5px] sm:text-[11px] font-black uppercase tracking-[0.1em] py-[3px] text-[#3d2806]"
+              style={{ background: GOLD_CHIP, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)' }}
+            >
+              Upgrade · Tier {option.tier}
+            </div>
+          )}
+
+          {/* Text box — the plain-English line (or the upgrade delta). */}
+          <div className="flex flex-col gap-0.5 px-2.5 py-2">
+            {upgrade ? (
+              deltas.map((line) => (
+                <p key={line} className="text-[11px] sm:text-[12.5px] font-black leading-snug text-amber-200">
+                  {line}
+                </p>
+              ))
+            ) : (
+              <p className="text-[11px] sm:text-[12.5px] font-semibold leading-snug text-white/85">
+                {plainText(option)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-2.5 flex w-full items-center gap-2" style={{ maxWidth: 'min(100%, 320px)' }}>
+        <button
+          type="button"
+          onClick={onBack}
+          className="min-h-[44px] shrink-0 px-4 rounded-xl text-[13px] font-black text-chess-text active:translate-y-px"
+          style={{ background: 'rgba(58,40,6,0.09)', boxShadow: 'inset 0 0 0 1.5px rgba(184,133,43,0.5)' }}
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          onClick={onUse}
+          className="min-h-[44px] flex-1 rounded-xl text-[14px] font-black text-[#3d2806] active:translate-y-px"
+          style={{ background: GOLD_CHIP, boxShadow: '0 3px 0 rgba(140,101,25,0.9), 0 6px 12px rgba(0,0,0,0.25)' }}
+        >
+          {option.grant ? 'Take both' : 'Use this'}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export function AbilityOfferModal({
@@ -107,11 +220,33 @@ export function AbilityOfferModal({
   title,
   subtitle,
   owned,
+  onPreview,
+  confirmStep = true,
 }: AbilityOfferModalProps) {
   const isLevel = reason === 'level';
   const cols = offer.length >= 3 ? 'grid-cols-3' : 'grid-cols-2';
   // A mixed slate (new + upgrade) labels every card so the two modes read.
   const mixed = offer.some((o) => o.kind === 'upgrade') && offer.some((o) => o.kind === 'new');
+  // Step one of two: which card is flipped to its preview face. null = the
+  // three face-up cards. Nothing is committed until "Use this".
+  const [previewIdx, setPreviewIdx] = useState<number | null>(null);
+  const preview = previewIdx === null ? null : (offer[previewIdx] ?? null);
+
+  const select = (option: AbilityOfferOption, idx: number) => {
+    clickSfx();
+    if (!confirmStep) {
+      onPick(option);
+      return;
+    }
+    setPreviewIdx(idx);
+    onPreview?.(option);
+  };
+  const back = () => {
+    clickSfx();
+    setPreviewIdx(null);
+    onPreview?.(null);
+  };
+
   return (
     <>
       <style>{`
@@ -126,6 +261,12 @@ export function AbilityOfferModal({
           100% { opacity: 1; transform: scale(1); }
         }
         .offer-frame-enter { animation: offerFrameEnter 400ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes offerFlipIn {
+          0%   { opacity: 0; transform: perspective(900px) rotateY(-72deg); }
+          100% { opacity: 1; transform: perspective(900px) rotateY(0deg); }
+        }
+        .offer-flip-in { animation: offerFlipIn 340ms cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: 50% 50%; }
+        @media (prefers-reduced-motion: reduce) { .offer-flip-in { animation: none; } }
         @keyframes offerGlowSweep {
           0%   { transform: translateX(-130%) skewX(-14deg); opacity: 0; }
           20%  { opacity: 0.65; }
@@ -154,6 +295,17 @@ export function AbilityOfferModal({
               '0 0 0 1.5px rgba(184,133,43,0.5), 0 0 20px rgba(255,191,36,0.25), 0 18px 40px rgba(0,0,0,0.45)',
           }}
         >
+          {preview ? (
+            <PreviewFace
+              option={preview}
+              onUse={() => {
+                clickSfx();
+                onPick(preview);
+              }}
+              onBack={back}
+            />
+          ) : (
+          <>
           <div className="text-center mb-2 sm:mb-3 px-0.5">
             <h2 className="text-[14px] sm:text-[16px] font-black text-chess-text leading-tight">
               {title ?? (isLevel ? (
@@ -165,7 +317,7 @@ export function AbilityOfferModal({
               ))}
             </h2>
             <p className="text-[10px] sm:text-[11px] font-bold text-chess-text-muted mt-0.5">
-              {subtitle ?? 'Tap a power to keep it.'}
+              {subtitle ?? (confirmStep ? 'Tap a power to see what it does.' : 'Tap a power to keep it.')}
             </p>
           </div>
 
@@ -185,8 +337,7 @@ export function AbilityOfferModal({
                   aria-disabled={locked}
                   onClick={() => {
                     if (locked) return;
-                    clickSfx();
-                    onPick(option);
+                    select(option, idx);
                   }}
                   className={`offer-card-enter relative flex rounded-xl p-[2px] text-left transition-transform ${
                     locked ? 'opacity-35 grayscale cursor-not-allowed' : 'active:scale-[0.97]'
@@ -301,6 +452,8 @@ export function AbilityOfferModal({
                 Skip (½ tempo back)
               </button>
             </div>
+          )}
+          </>
           )}
 
           {/* One-shot gold glint sweeping across on entrance. */}

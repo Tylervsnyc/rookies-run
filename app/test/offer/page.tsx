@@ -12,7 +12,8 @@ import { AbilityOfferModal } from '@/components/run/AbilityOfferModal';
 import { TempoBar } from '@/components/run/TempoBar';
 import { KingStunCauseLabel } from '@/components/run/Board';
 import { LevelClearedModal } from '@/components/run/LevelClearedModal';
-import { blurbDetailForTier, type AbilityOffer } from '@/lib/run/abilities';
+import { blurbDetailForTier, ABILITY_DEFS, type AbilityOffer } from '@/lib/run/abilities';
+import { AbilityDemo, DEMO_ABILITY_IDS } from '@/components/run/AbilityDemo';
 
 const OFFER: AbilityOffer = [
   {
@@ -39,9 +40,27 @@ export default function TestOfferPage() {
   const [mode, setMode] = useState('');
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    setMode(q.has('intro') ? 'intro' : q.has('hud') ? 'hud' : '');
+    setMode(q.has('intro') ? 'intro' : q.has('hud') ? 'hud' : q.has('demos') ? 'demos' : '');
   }, []);
   const intro = mode === 'intro';
+  if (mode === 'demos') {
+    // ?demos — every scripted ability demo (the preview face's live mini
+    // board) side by side, so a new script can be eyeballed in one pass.
+    return (
+      <div className="h-full overflow-auto bg-chess-page p-3">
+        <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {DEMO_ABILITY_IDS.map((id) => (
+            <div key={id} className="rounded-xl overflow-hidden bg-[#1a2b33]">
+              <div className="py-1 text-center text-[11px] font-black uppercase tracking-[0.05em] text-white">
+                {ABILITY_DEFS[id].name}
+              </div>
+              <AbilityDemo id={id} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
   if (mode === 'hud') {
     // ?hud — infinity-glyph paths (KING form at T5 = 999-turn sentinel) and
     // the transient king-stun cause label, without grinding a real run.

@@ -24,7 +24,7 @@
  */
 import { IS_OFFLINE_APP } from '@/lib/config/offline';
 import { createClient } from '@/lib/supabase/client';
-import { isQueueableWrite, isCacheableRead } from './api-policy';
+import { isQueueableWrite, isCacheableRead, isUndelivered } from './api-policy';
 import { readCache, writeCache } from './read-cache';
 import { enqueue, peekAll, remove, recordFailure } from './outbox';
 
@@ -33,6 +33,25 @@ const API_BASE = 'https://run.chesspath.app';
 
 let installed = false;
 let draining = false;
+
+/**
+ * The real, unpatched fetch. The drain MUST use this, not `window.fetch`: the
+ * queued URLs are absolute run.chesspath.app/api/... addresses, which the
+ * patched fetch recognises as queueable — so a replay that failed would be
+ * re-enqueued as a brand-new entry (attempts reset to 0) and handed back as a
+ * fake 202, which the drain then counted as "sent" and removed. The attempt
+ * cap could never trigger and the entry cycled to the back of the queue.
+ */
+let nativeFetch: typeof fetch | null = null;
+
+/**
+ * After a drain that ended in a failure, wait this long before the next one.
+ * Drains are event-driven (launch, reconnect, returning to the app), so there
+ * is no loop to run hot — this just stops a player flicking the app in and
+ * out during a server outage from burning an entry's 5 attempts in seconds.
+ */
+const RETRY_AFTER_FAILURE_MS = 30_000;
+let lastFailureAt = 0;
 
 function rawUrl(input: RequestInfo | URL): string {
   return typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
@@ -78,9 +97,14 @@ async function authHeader(): Promise<Record<string, string>> {
  * writes assume the earlier ones landed, so draining out of order would
  * reintroduce exactly the inconsistency the queue exists to prevent.
  */
-export async function drainOutbox(): Promise<{ sent: number; dropped: number }> {
+export async function drainOutbox(opts: { force?: boolean } = {}): Promise<{ sent: number; dropped: number }> {
+  // One drain at a time: `draining` is set synchronously, before the first
+  // await, so overlapping triggers (online + visibilitychange on the same
+  // resume) can't both get past this line and send an entry twice.
   if (draining || !navigator.onLine) return { sent: 0, dropped: 0 };
+  if (!opts.force && Date.now() - lastFailureAt < RETRY_AFTER_FAILURE_MS) return { sent: 0, dropped: 0 };
   draining = true;
+  const send = nativeFetch ?? fetch;
 
   let sent = 0;
   let dropped = 0;
@@ -88,7 +112,7 @@ export async function drainOutbox(): Promise<{ sent: number; dropped: number }> 
     const auth = await authHeader();
     for (const entry of await peekAll()) {
       try {
-        const res = await fetch(entry.url, {
+        const res = await send(entry.url, {
           method: entry.method,
           headers: { ...entry.headers, ...auth },
           body: entry.body,
@@ -100,6 +124,12 @@ export async function drainOutbox(): Promise<{ sent: number; dropped: number }> 
         // player finished. Keep it, stop, and let the next sign-in drain it.
         if (res.status === 401 || res.status === 403) break;
 
+        // 5xx, or a captive portal's HTML login page dressed up as a 200:
+        // the write did not land. Count an attempt and stop, like a throw.
+        if (isUndelivered(res.status, res.headers.get('Content-Type'))) {
+          throw new Error(`undelivered (status ${res.status})`);
+        }
+
         // Any other 4xx means the server understood and refused — replaying
         // won't help, so drop it rather than wedging everything behind it.
         if (res.ok || (res.status >= 400 && res.status < 500)) {
@@ -110,8 +140,9 @@ export async function drainOutbox(): Promise<{ sent: number; dropped: number }> 
         }
         throw new Error(`status ${res.status}`);
       } catch {
+        lastFailureAt = Date.now();
         if (await recordFailure(entry)) dropped++;
-        break; // preserve order; try again on the next reconnect
+        break; // preserve order; try again on the next reconnect / resume
       }
     }
   } finally {
@@ -125,11 +156,12 @@ export function installOfflineFetch(): void {
   if (!IS_OFFLINE_APP || installed || typeof window === 'undefined') return;
   installed = true;
 
-  const nativeFetch = window.fetch.bind(window);
+  const realFetch = window.fetch.bind(window);
+  nativeFetch = realFetch;
 
   window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const pathname = apiPathname(input);
-    if (!pathname) return nativeFetch(input, init);
+    if (!pathname) return realFetch(input, init);
 
     const method = (init?.method || (typeof input !== 'string' && !(input instanceof URL) ? input.method : 'GET') || 'GET').toUpperCase();
 
@@ -155,8 +187,33 @@ export function installOfflineFetch(): void {
     // must never answer for another's.
     const cacheKey = pathname + new URL(rawUrl(input), window.location.origin).search;
 
+    const queueWrite = async (): Promise<Response> => {
+      await enqueue({
+        url: rawUrl(target),
+        method,
+        body: replayBody || null,
+        headers: { 'Content-Type': headers.get('Content-Type') || 'application/json' },
+        queuedAt: Date.now(),
+      });
+      // Tell the caller it worked: it did — the write is durable and will
+      // land. Failing here would roll back UI the user has already earned.
+      return new Response(JSON.stringify({ queued: true }), {
+        status: 202,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
+
     try {
-      const response = await nativeFetch(target, { ...init, headers });
+      const response = await realFetch(target, { ...init, headers });
+
+      // Reached *a* server, but the write didn't land (5xx / captive portal).
+      // Same outcome for the player as no signal at all, so the same answer.
+      if (
+        isQueueableWrite(pathname, method) &&
+        isUndelivered(response.status, response.headers.get('Content-Type'))
+      ) {
+        return await queueWrite();
+      }
 
       if (response.ok && isCacheableRead(pathname, method)) {
         writeCache(cacheKey, await response.clone().json().catch(() => null));
@@ -164,21 +221,7 @@ export function installOfflineFetch(): void {
       return response;
     } catch (networkError) {
       // Genuinely offline (or the server is unreachable).
-      if (isQueueableWrite(pathname, method)) {
-        await enqueue({
-          url: rawUrl(target),
-          method,
-          body: replayBody || null,
-          headers: { 'Content-Type': headers.get('Content-Type') || 'application/json' },
-          queuedAt: Date.now(),
-        });
-        // Tell the caller it worked: it did — the write is durable and will
-        // land. Failing here would roll back UI the user has already earned.
-        return new Response(JSON.stringify({ queued: true }), {
-          status: 202,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
+      if (isQueueableWrite(pathname, method)) return await queueWrite();
 
       if (isCacheableRead(pathname, method)) {
         const cached = readCache(cacheKey);
@@ -204,6 +247,17 @@ export function installOfflineFetch(): void {
     }
   };
 
-  window.addEventListener('online', () => { void drainOutbox(); });
-  void drainOutbox();
+  // When to drain. A cold start and the 'online' event aren't enough on iOS:
+  // Capacitor keeps the WebView alive in the background, so a run finished on
+  // the subway and an app reopened on wifi is neither a cold start nor (the
+  // radio came back while we were suspended) an 'online' event we saw. Coming
+  // back to the foreground fires visibilitychange in WKWebView, so that
+  // covers the resume. (@capacitor/app's appStateChange would be the native
+  // equivalent; it isn't a dependency of this app, and visibilitychange is
+  // what the WebView reliably delivers anyway.)
+  window.addEventListener('online', () => { void drainOutbox({ force: true }); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void drainOutbox();
+  });
+  void drainOutbox({ force: true });
 }

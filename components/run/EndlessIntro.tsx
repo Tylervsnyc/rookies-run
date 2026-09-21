@@ -57,8 +57,9 @@ export function EndlessIntro({ kit, best, onStart }: { kit: AbilityId[]; best: n
           <span style={{ color: '#FF6B66' }}>No finish line.</span>
         </div>
         <div className="mt-2.5 text-[13px] font-bold leading-snug" style={{ color: 'rgba(255,255,255,0.78)' }}>
-          These five are your whole kit for the session. Levels come from every map and get harder every
-          time — one life, no retries. Your score is how deep you get.
+          These five are your whole kit for the session. The boards come from the archive — runs you
+          will not find on the ladder — and get harder every time. One life, no retries. Your score is
+          how deep you get.
         </div>
 
         <div className="mt-5 text-[11px] font-black uppercase tracking-[0.18em]" style={{ color: GOLD }}>

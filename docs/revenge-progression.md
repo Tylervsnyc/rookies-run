@@ -29,7 +29,7 @@ run-completed, session-start). The engine is untouched and stays pure.
 
 ## Achievements — `ACHIEVEMENTS`
 
-57 trophies in 7 groups (Firsts · Body Count · Style · Powers · Learning Experiences ·
+54 trophies in 7 groups (Firsts · Body Count · Style · Powers · Learning Experiences ·
 Habits · Difficulty). Each has Rookie's line (`blurb`), a locked-card `hint`, optional
 `progress(counters)`, and optional `unlocks: AbilityId`. Secret ones hide the hint.
 
@@ -43,7 +43,6 @@ Habits · Difficulty). Each has Rookie's line (`blurb`), a locked-card `hint`, o
 | Comeback Kid | finish a run after losing 3+ levels | Sacrifice |
 | Pawn Broker | 25 pawns | Poison Dart |
 | Closing Time | first full run | Bishop Step |
-| Drone Strike | 3 drone captures in one salvo | Convert (dead — drones retired) |
 | Cold Shoulder | freeze the king 3× | Aegis |
 | Untouchable | run with 0 level losses | Queen Pulse |
 | Horse Whisperer | 10 knights | Decoy |
@@ -54,8 +53,10 @@ Habits · Difficulty). Each has Rookie's line (`blurb`), a locked-card `hint`, o
 | Army of One (Plus Some) | 20 ally captures | Boulder |
 | Deja Vu | lose the same level 3× in a run | Rewind |
 | Queen Slayer | 5 queens | Rabies Dart |
-| Serial Regicide | 10 kings | Squad |
+| Serial Regicide | 10 kings | (none — Squad retired) |
 | Sore Winner | Hard clear | Become King (also opens Nightmare) |
+
+Convert has no trophy: the ladder grants it with rung 8's kit (The Cliff).
 | Her Majesty | king captured in queen form | Duchess |
 | Revenge Served | Nightmare clear | Dragon |
 

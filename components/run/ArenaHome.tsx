@@ -12,7 +12,7 @@ import { isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { LadderTab } from './LadderTab';
 import { getRunById, isKnownRunId } from '@/lib/run/runs';
 import { HANDLE_RE, fetchBoard, getHandle, setHandle, type LeaderboardResponse } from '@/lib/run/leaderboard-client';
-import { todaysAbilities } from '@/lib/run/daily-kit';
+import { DAILY_KIT_SIZE, todaysAbilities } from '@/lib/run/daily-kit';
 import { getDailyOverride } from '@/lib/run/daily';
 import { useNavyShell } from './useNavyShell';
 import { FamilyStrip } from './FamilyStrip';
@@ -23,8 +23,8 @@ import { ENDLESS_ENABLED, readEndlessBest, ENDLESS_RUN_ID } from '@/lib/run/endl
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
  * ONE screen, no scroll. The live board (DemoBoard: the real RunBoard running
  * a scripted loop) is the fixed anchor; four tabs swap what sits under it:
- *   Revenge — DAILY REVENGE button + today's abilities (the SAME four the run
- *             offers — lib/run/daily-kit.ts). Tapping the button flips the
+ *   Revenge — DAILY REVENGE button + today's abilities (the SAME kit the run
+ *             offers — DAILY_KIT_SIZE in lib/run/daily-kit.ts). Tapping the button flips the
  *             board to today's map card and the button itself becomes BEGIN
  *             (Tyler 2026-09-03: no dead button, no second PLAY on the card).
  *   Ladder  — the 10 rungs (real profile state), tap an open rung to play it.
@@ -445,7 +445,7 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
         mode screen."
 
         So: UNFLIPPED is the picker — two modes, nothing else. FLIPPED is the
-        daily's own screen, and today's four cards live there, next to BEGIN.
+        daily's own screen, and today's kit cards live there, next to BEGIN.
       */}
       {flipped ? (
         <>
@@ -453,7 +453,7 @@ function RevengeTab({ flipped, onGo, onBegin, countdown, runName, abilities, boa
             <span className="text-[14px] font-black" style={OUTLINE}>Today&rsquo;s abilities</span>
             <span className="text-[11px] font-bold truncate ml-3" style={{ color: 'rgba(255,255,255,0.7)' }}>Map: {runName}</span>
           </div>
-          <div className="mt-2 grid grid-cols-4 gap-2">
+          <div className="mt-2 grid gap-2 mx-auto w-full max-w-[260px]" style={{ gridTemplateColumns: `repeat(${DAILY_KIT_SIZE}, minmax(0, 1fr))` }}>
             {abilities.map((id) => <AbilityTile key={id} id={id} />)}
           </div>
         </>

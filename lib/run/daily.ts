@@ -28,7 +28,7 @@ export interface DailyOverride {
   runId: string;
   /** Forces the daily's difficulty (still subject to the player's unlock). */
   difficulty?: 'rookie' | 'normal' | 'hard' | 'nightmare';
-  /** Alternate seed for the 4-ability kit (default = the ISO date). */
+  /** Alternate seed for the daily kit (DAILY_KIT_SIZE cards; default = the ISO date). */
   kitSeed?: string;
 }
 const DAILY_OVERRIDES: Readonly<Record<string, DailyOverride>> = {

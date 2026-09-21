@@ -293,7 +293,6 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     blurb: 'Ten kings. At some point it stops being revenge and starts being a hobby.',
     hint: 'Capture 10 kings.',
     group: 'volume',
-    unlocks: 'squad',
     ...count('cap.king', 10),
   },
   {
@@ -425,16 +424,6 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
 
   // ---- Abilities ----------------------------------------------------------
   {
-    id: 'drone-strike',
-    name: 'Drone Strike',
-    blurb: 'Three in one salvo. My little ones make me proud.',
-    hint: 'Drones capture 3 pieces in a single salvo.',
-    group: 'abilities',
-    unlocks: 'convert',
-    progress: (c) => [Math.min(cnt(c, 'best.droneSalvo'), 3), 3],
-    test: (c) => cnt(c, 'best.droneSalvo') >= 3,
-  },
-  {
     id: 'brainwash',
     name: 'Brainwash',
     blurb: 'A queen. On my side. She seems happier.',
@@ -450,14 +439,6 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     group: 'abilities',
     unlocks: 'aegis',
     ...count('ability.onKing.freeze-ray', 3),
-  },
-  {
-    id: 'double-tap',
-    name: 'Double Tap',
-    blurb: 'Two moves. He never got his turn. Neither did I, once. Now we are even.',
-    hint: 'Capture the king during a Surge.',
-    group: 'abilities',
-    ...count('cap.king.surge', 1),
   },
   {
     id: 'ice-cold',
@@ -500,14 +481,6 @@ export const ACHIEVEMENTS: ReadonlyArray<AchievementDef> = [
     hint: 'A poison, decoy, or shield kill takes a piece during the enemy turn 10 times.',
     group: 'abilities',
     ...count('cap.via.enemy-phase', 10),
-  },
-  {
-    id: 'swarm',
-    name: 'Swarm',
-    blurb: 'Fifty drone captures. They learned from the best. Me. I mean me.',
-    hint: 'Drones capture 50 pieces.',
-    group: 'abilities',
-    ...count('cap.via.drones', 50),
   },
   {
     id: 'army-of-one',

@@ -627,6 +627,73 @@ export function isRookieThreatened(state: BoardState): boolean {
   );
 }
 
+/** Every enemy that could capture Rookie on its next move (her attackers). */
+export function rookieAttackers(state: BoardState): EnemyPiece[] {
+  if (state.status !== 'playing') return [];
+  if (state.shieldUp) return [];
+  if ((state.smokeTurnsLeft ?? 0) > 0) return [];
+  const kingStunned = (state.kingStunTurns ?? 0) > 0;
+  return state.pieces.filter(
+    (piece) =>
+      !state.frozenSquares.includes(toSquare(piece)) &&
+      !(piece.type === 'king' && kingStunned) &&
+      canCapture(piece, state),
+  );
+}
+
+/**
+ * True when at least one of Rookie's legal MOVES lands her on a square where
+ * nothing can take her next turn (capturing the attacker counts — the enemy
+ * is removed from the view state). Abilities are not considered: this answers
+ * "can she run?", which is what the trapped alarm claims.
+ */
+function rookieCanEscape(state: BoardState): boolean {
+  const moves = rookieLegalMoves(state);
+  for (const m of moves) {
+    const view: BoardState = {
+      ...state,
+      rookie: { file: m.file, rank: m.rank },
+      // A move onto an enemy captures it — it can't threaten her from there.
+      pieces: state.pieces.filter((p) => !(p.file === m.file && p.rank === m.rank)),
+    };
+    if (!isRookieThreatened(view)) return true;
+  }
+  return false;
+}
+
+/**
+ * Rookie's danger states — one per distinct situation the engine can actually
+ * tell apart, so a returning player can READ the alarm instead of watching a
+ * random one play (Tyler, 2026-09-18: "reserve different animations for
+ * different danger states rather than randomizing").
+ *
+ * Ordered most dire first; `rookieDangerState` returns the first that matches.
+ */
+export type RookieDangerState =
+  | 'cornered'   // threatened and no move gets her to a safe square
+  | 'lastMove'   // threatened with her final move of the move limit left
+  | 'swarmed'    // three or more enemies can take her
+  | 'crossfire'  // exactly two enemies can take her
+  | 'kingOnHer'  // one attacker, and it's the king himself
+  | 'hunted';    // one ordinary attacker, and she has somewhere to run
+
+/**
+ * Which danger Rookie is in right now, or null when nothing can take her.
+ * Pure read of board state — safe to call in a memo on every state change.
+ */
+export function rookieDangerState(state: BoardState): RookieDangerState | null {
+  const attackers = rookieAttackers(state);
+  if (attackers.length === 0) return null;
+  if (!rookieCanEscape(state)) return 'cornered';
+  const movesLeft =
+    state.moveLimit === null ? Infinity : state.moveLimit - state.moveCount;
+  if (movesLeft <= 1) return 'lastMove';
+  if (attackers.length >= 3) return 'swarmed';
+  if (attackers.length === 2) return 'crossfire';
+  if (attackers[0].type === 'king') return 'kingOnHer';
+  return 'hunted';
+}
+
 function chebyshev(a: Coord, b: Coord): number {
   return Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
 }

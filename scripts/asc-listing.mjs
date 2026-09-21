@@ -41,7 +41,7 @@ Rookie's Revenge is a daily chess roguelike. You are one rook. Across the board,
 
 HOW IT WORKS
 - Move like a rook. Capture like a rook. Every capture charges your tempo.
-- Each level is a puzzle-battlefield: pawn shells, sightline queens, walls with one door, keys that unlock his file.
+- Each level is a puzzle-battlefield: pawn shells, sightline queens, stone walls with one door, lava between you and him.
 - Reach the king before your moves run out. Then do it nine more levels in a row.
 
 POWERS THAT BREAK CHESS
@@ -61,9 +61,9 @@ From the makers of The Chess Path (chesspath.app), the friendly way to learn che
 
 No account is required and there is no sign-in anywhere in the app. Progress (abilities, trophies, difficulty unlocks) is stored on device. There are no purchases, no ads, and no user generated content beyond an optional leaderboard handle (a random "Rook-1234" name the player may rename).
 
-Native features: haptic feedback on moves, captures, ability plays, level clears and defeats; native splash and status bar theming; portrait lock; branded offline screen.
+Native features: haptic feedback on moves, captures, ability plays, level clears and defeats; native splash and status bar theming; portrait lock; the game is bundled on device and plays in full with no signal.
 
-To reach gameplay immediately: launch the app, tap GO GET HIM on the daily card and play. The tutorial (5 short beats) runs on first launch only. Tap Rookie (the colorful rook) to see her legal moves, then tap a square.
+To reach gameplay immediately: launch the app, tap DAILY REVENGE, then BEGIN. A short interactive tutorial runs on first launch only and can be skipped. Tap Rookie (the colorful rook) to see her legal moves, then tap a square.
 
 --- Guideline 2.1 info ---
 TESTED ON: iPhone 15 Pro (iOS 26.6) via TestFlight since Aug 17, 2026.

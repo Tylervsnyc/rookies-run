@@ -260,7 +260,6 @@ export function RunSummaryModal({
           <>
             {score !== undefined && <StampChip gold>{score} pts</StampChip>}
             {clock && <StampChip>{clock}</StampChip>}
-            {timedScore !== undefined && <StampChip>Timed {timedScore} (testing)</StampChip>}
           </>
         )
       }

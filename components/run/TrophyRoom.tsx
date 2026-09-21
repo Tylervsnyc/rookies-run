@@ -9,7 +9,7 @@ import {
   cnt,
   type AchievementDef,
 } from '@/lib/run/achievements';
-import { unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
+import { STARTER_ABILITIES, unlockableAbilityIds, type PlayerProfile } from '@/lib/run/profile';
 import { DIFFICULTIES, DIFFICULTY_ORDER } from '@/lib/run/difficulty';
 import { artFile } from './AbilityCard';
 import { TrophyGlyph } from './AchievementToast';
@@ -129,8 +129,8 @@ export function TrophyRoom({ profile, onClose, onReplayTutorial }: Props) {
           ) : (
             <>
               <p className="text-[12px] text-chess-text-muted leading-snug px-0.5">
-                You start with three. Every other power is behind a trophy — earn it and the card
-                shows up in your next offer.
+                Every power you have ever held. Some came from the ladder, some from a trophy. I
+                remember every one of them. So does he.
               </p>
               <ul className="grid grid-cols-3 gap-2.5">
                 {abilityIds.map((id) => (
@@ -391,7 +391,7 @@ function AbilityTile({ id, unlocked }: { id: AbilityId; unlocked: boolean }) {
         <div className="px-0.5 pb-0.5">
           <div className="text-[11px] font-black leading-tight">{def.name}</div>
           <div className="text-[9.5px] leading-snug opacity-80 mt-0.5 line-clamp-2">
-            {unlocked ? def.typeLine : via ? `Trophy: ${via.name}` : 'Starter'}
+            {unlocked ? def.typeLine : via ? `Trophy: ${via.name}` : STARTER_ABILITIES.includes(id) ? 'Starter' : 'The Ladder'}
           </div>
         </div>
       </div>

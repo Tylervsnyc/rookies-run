@@ -38,6 +38,29 @@ export function isQueueableWrite(pathname: string, method: string): boolean {
   return QUEUEABLE_WRITES.some((re) => re.test(pathname));
 }
 
+/**
+ * Did a queueable write's response prove the server actually took it?
+ *
+ * Only a thrown fetch used to count as "not delivered", which lost a finished
+ * run to two ordinary failures:
+ *   - a 5xx (a function timeout, a Supabase blip, /api/run/complete's own 500
+ *     on a failed upsert) — the write never landed, but it wasn't queued;
+ *   - a captive portal (hotel / airport wifi) answering the POST with its own
+ *     HTML login page and a 200. Both routes only ever answer JSON, so a
+ *     non-JSON success is somebody else's server.
+ *
+ * Replaying either is safe because both queueable routes are idempotent
+ * upserts (see QUEUEABLE_WRITES). A 4xx is NOT undelivered: the server read
+ * the request and refused it, and replaying won't change its mind.
+ */
+export function isUndelivered(status: number, contentType: string | null): boolean {
+  if (status >= 500) return true;
+  if (status >= 200 && status < 300) {
+    return !(contentType ?? '').toLowerCase().includes('application/json');
+  }
+  return false;
+}
+
 export function isCacheableRead(pathname: string, method: string): boolean {
   if (method !== 'GET') return false;
   return CACHEABLE_READS.some((re) => re.test(pathname));

@@ -2339,13 +2339,6 @@ export default function RookiesRunPage() {
         />
         </div>
 
-        {state.abilities.some((a) => a.id === 'squad') && (
-          <div className="flex items-center justify-center gap-1.5 text-[10px] font-black tracking-wide uppercase text-amber-700 dark:text-amber-300">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            Passive: Squad
-          </div>
-        )}
-
         {/*
           THE RED PANEL — the one place the game states, in words, what a power
           is about to do. It leads with the tier-exact effect line
@@ -2398,6 +2391,12 @@ export default function RookiesRunPage() {
           onSkip={onOfferSkip}
           reason={state.offerReason ?? 'tempo'}
           owned={state.abilities}
+          // Signature-pair grant (rollOffer): not a choice — one tap takes the slate.
+          {...(state.pendingOffer.every((o) => o.grant)
+            ? state.pendingOffer.length > 1
+              ? { title: 'Your two powers for this run.', subtitle: 'Tap either to see what it does. You keep both.' }
+              : { title: 'One more power for this run.', subtitle: 'Tap it to see what it does.' }
+            : {})}
         />
       )}
 

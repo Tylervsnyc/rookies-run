@@ -92,9 +92,25 @@ export function AbilityRack({
           100% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
         }
         .ability-card-flash { animation: abilityCardFlash 700ms ease-out; }
+        /* Armed = alive. Same rhythm as Rookie's breathing rook
+           (rookColorBreathe: 5s ease-in-out, brightness 0.9 -> 1.5), so an
+           armed card reads as the same creature breathing rather than a
+           notification blinking. Glow only — the lift stays put so the rack
+           never jitters or shifts layout while a power is held. */
+        @keyframes abilityCardBreathe {
+          0%, 100% { filter: drop-shadow(0 0 4px rgba(251,191,36,0.5)) brightness(0.96); }
+          50%      { filter: drop-shadow(0 0 13px rgba(251,191,36,1)) brightness(1.14); }
+        }
         .ability-card-active {
           transform: translateY(-3px) scale(1.04);
           filter: drop-shadow(0 0 6px rgba(251,191,36,0.85));
+        }
+        /* The tier-up flash owns the element for its 700ms; don't fight it. */
+        .ability-card-active:not(.ability-card-flash) {
+          animation: abilityCardBreathe 5s ease-in-out infinite;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ability-card-active:not(.ability-card-flash) { animation: none; }
         }
         @keyframes rackInfoIn {
           from { opacity: 0; transform: translateY(-4px); }

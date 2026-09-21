@@ -7,6 +7,9 @@ import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RunBoard } from '@/components/run/Board';
 import { RookieCell } from '@/components/run/RookieCell';
+import { PieceBlocks } from '@/components/run/PieceBlocks';
+import { BreathingRook } from '@/components/ui/BreathingRook';
+import { artFile } from '@/lib/run/ability-art';
 import {
   REVENGE_RED,
   REVENGE_RED_DARK,
@@ -32,20 +35,22 @@ import {
   applyAbilityActivate,
   applyAbilityCancel,
   applyAbilityTargeted,
+  applyControlledAllyMove,
   blurbDetailForTier,
   maxUsesForTier,
+  squireOf,
   type AbilityId,
   type AbilityOffer,
   type AbilityOfferOption,
 } from '@/lib/run/abilities';
 import { fromSquare, toSquare } from '@/lib/run/types';
-import type { BoardState, RunPuzzle } from '@/lib/run/types';
+import type { BoardState, RookieForm, RunPuzzle } from '@/lib/run/types';
 import {
   getSharedAudioContext,
   playCaptureSound,
+  playCardPlaySound,
   playFreezeSound,
   playMoveSound,
-  playSurgeSound,
   playTransformIntoSound,
   withClick,
 } from '@/lib/sounds';
@@ -74,8 +79,11 @@ import { haptic, hapticSuccess } from '@/lib/haptics';
  *           with ONLY Knight Hop selectable; it lands in the rack (alone);
  *           the player TAPS it to transform (shimmer); an L-shaped arrow onto
  *           the king; take him; she STAYS a knight until Next.
- * Beat 8  — Surge (interactive): blue arrow at the Surge card, then arrows
- *           a1→e1→e4; the king's "I don't get a move" bubble; Rookie's line.
+ * Beat 8  — Squire (interactive): the king on d3 is off every rook line;
+ *           blue arrow at the Squire card, pointer at b2; the rainbow knight
+ *           appears DAZED (summoning sickness — the Endless rule, taught as
+ *           the rule); Rookie takes the pawn on e1 while he wakes (scripted
+ *           turn); tap the Squire, L-arrow onto the king; his capture wins.
  * Beat 9  — Freeze Ray (interactive): the knight on h1 is free, the player
  *           takes it (the king is stunned) — and the bishop on g2 takes HER.
  *           Next rewinds; blue arrow at the card, pointer at the bishop;
@@ -136,12 +144,17 @@ const DOOR_TOO_LATE_AT = 900;
 const SIDESTEP_AT = 1500;
 // Beat 9 demo: the bishop takes her after she grabs the knight on h1.
 const BISHOP_TAKES_AT = 900;
+// Beat 8: after Rookie's move the turn passes (scripted) and the Squire wakes.
+const SQUIRE_WAKE_AT = 1000;
 // Beat 10: tempo bar glow after each capture; the offer once it's full.
 const TEMPO_GLOW_MS = 1100;
 const TEMPO_OFFER_AT = 1400;
 
-/** The three starter powers every new player sees, in the order they're taught. */
-const STARTERS: AbilityId[] = ['knight-hop', 'surge', 'freeze-ray'];
+/**
+ * The three starter powers every new player sees, in the order they're
+ * taught. Mirrors STARTER_KIT_CATALOG (lib/run/profile.ts) — Surge is retired.
+ */
+const STARTERS: AbilityId[] = ['knight-hop', 'summon-knight', 'freeze-ray'];
 
 type Pos = Record<string, { pieceType: string }>;
 
@@ -238,16 +251,25 @@ const HOP_PUZZLE: RunPuzzle = {
 const HOP_KING_FROM = 'a3';
 const HOP_KING_TO = 'b3';
 
-// Beat 8: Rookie a1, king e4 — two rook moves away (e1, then e4).
-const SURGE_PUZZLE: RunPuzzle = {
+// Beat 8: Rookie a1, king d3 — off every rook line, and exactly one knight
+// jump from b2 (a spawn square beside her). The Squire appears on b2 dazed;
+// Rookie takes the pawn on e1 while he wakes (e1 keeps her off his lines,
+// and mid-board so her revenge bubble isn't clipped at the a-file edge);
+// then the Squire takes him: b2→d3. Nothing black ever moves.
+const SQUIRE_PUZZLE: RunPuzzle = {
   level: 1,
   rookieStart: { file: 1, rank: 1 },
-  pieces: [{ type: 'king', color: 'black', file: 5, rank: 4 }],
+  pieces: [
+    { type: 'king', color: 'black', file: 4, rank: 3 },
+    { type: 'pawn', color: 'black', file: 5, rank: 1 },
+  ],
   enemiesPerTurn: 0,
   winCondition: 'king',
   kingBehavior: 'still',
 };
-const SURGE_KING_SQUARE = 'e4';
+const SQUIRE_KING_SQUARE = 'd3';
+const SQUIRE_SPAWN_SQUARE = 'b2';
+const SQUIRE_PAWN_SQUARE = 'e1';
 
 // Beat 9: Rookie h5, king e1. His knight on h1 is free to take — but the
 // bishop on g2 is watching h1. Pawns f4/f5 close the rank routes, so h1 is
@@ -273,8 +295,28 @@ const FREEZE_BAIT_SQUARE = 'h1';
 const FREEZE_BISHOP_SQUARE = 'g2';
 const FREEZE_ROOKIE_START = 'h5';
 
-/** Beat 8: Rookie's line after she takes him (one is picked per win). */
-const REVENGE_LINES = ['That’s for the white king.', 'She took it personally.', 'Personal.'];
+/**
+ * Rookie's line the moment she takes the black king — one per capture, never
+ * the same one twice in a tutorial (Tyler 2026-09-18: "something funny like
+ * 'ah sweet revenge'"). She is not gloating at the player; she is settling a
+ * score with the king who took the white king in the intro.
+ */
+const REVENGE_LINES = [
+  'Ah, sweet revenge.',
+  'That’s for the white king.',
+  'She took it personally.',
+  'Personal.',
+  'Revenge. Delicious.',
+  'I have been waiting the whole game for that.',
+  'Worth it. So worth it.',
+];
+
+/** Picks a revenge line, never repeating one already used this tutorial. */
+function pickRevengeLine(used: string[]): string {
+  const fresh = REVENGE_LINES.filter((l) => !used.includes(l));
+  const pool = fresh.length > 0 ? fresh : REVENGE_LINES;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
 
 // Beat 10: three PLAYER captures on the real board — a4 (pawn), d4 (knight)
 // as a rook, then Knight Hop d4→e6 (queen): TEMPO_REWARD 1 + 2 + 4 = 7, from
@@ -320,6 +362,9 @@ function baseState(puzzle: RunPuzzle): BoardState {
   const s = puzzleToBoardState(puzzle, {
     runId: 'onboarding',
     unlockedAbilities: STARTERS,
+    // Summoning sickness ON: beat 8 teaches the stricter (Endless) rule — a
+    // summon acts from your NEXT turn. On the ladder he simply moves sooner.
+    summonSickness: true,
   });
   // The seed randomizes Rookie's start file — the tutorial is scripted.
   return { ...s, rookie: { ...puzzle.rookieStart }, pendingOffer: null };
@@ -333,7 +378,7 @@ function drillState(): BoardState {
 
 /**
  * Beats 7-9: full bar. Beat 7 (the first power) racks ONLY Knight Hop;
- * beats 8-9 rack all three starters (only one is live).
+ * beats 8-9 rack all three starters (only the beat's own card is live).
  */
 function lentState(puzzle: RunPuzzle, ids: AbilityId[] = STARTERS): BoardState {
   const s = baseState(puzzle);
@@ -374,6 +419,11 @@ function dangerState(): BoardState {
  * the dissolve, and fades out (~600ms) when colour returns.
  */
 const SAD_FADE_MS = 600;
+// Music gain, tutorial-only (shared defaults live in lib/music.ts and are not
+// touched here). Both tracks play under capture SFX and Rookie's lines, so
+// they sit well below them.
+const SAD_MUSIC_GAIN = 0.38;
+const KING_CAPTURE_GAIN = 0.5;
 // Every tutorial king capture: Rookie takes him in slow motion under a
 // somber, celestial (funny) track — the theme. The rook drill (beat 5) plays
 // it in full (fading ~800ms after beat 6's caption); the power beats start
@@ -393,7 +443,8 @@ function loadSadMusic(ctx: AudioContext): Promise<AudioBuffer | null> {
   return loadTrack(ctx, SAD_MUSIC_URL);
 }
 function startSadMusic(): SadMusicHandle | null {
-  return startTrack(SAD_MUSIC_URL, 0.7);
+  // A bed UNDER Rookie's capture SFX, never over them (Tyler, 2026-09-17).
+  return startTrack(SAD_MUSIC_URL, SAD_MUSIC_GAIN);
 }
 function stopSadMusic(handle: SadMusicHandle | null, fadeMs = SAD_FADE_MS): void {
   stopTrack(handle, fadeMs);
@@ -413,7 +464,7 @@ function moveEnemy(s: BoardState, from: string, to: string): BoardState {
 
 const LENT: Partial<Record<Beat, { puzzle: RunPuzzle; id: AbilityId; key: string }>> = {
   7: { puzzle: HOP_PUZZLE, id: 'knight-hop', key: 'onboarding-hop' },
-  8: { puzzle: SURGE_PUZZLE, id: 'surge', key: 'onboarding-surge' },
+  8: { puzzle: SQUIRE_PUZZLE, id: 'summon-knight', key: 'onboarding-squire' },
   9: { puzzle: FREEZE_PUZZLE, id: 'freeze-ray', key: 'onboarding-freeze' },
 };
 
@@ -451,6 +502,68 @@ type HopPhase = 'line' | 'stepped' | 'offer' | 'armed' | 'hop';
 // king is stunned), the bishop takes her ('captured'), Next rewinds and the
 // player is on ('ready').
 type FreezePhase = 'demo' | 'taken' | 'captured' | 'ready';
+// Beat 8 phases: the Squire is on the board dazed and Rookie takes the pawn
+// ('placed'), the turn passes and he wakes (scripted, 'waking'), the player
+// moves HIM onto the king ('awake').
+type SquirePhase = 'placed' | 'waking' | 'awake';
+
+/**
+ * THE ASK — the one instruction a step is waiting on, and the only taps that
+ * do anything while it's up (Russell's playtest, 2026-09-17: the prompt was
+ * too small, arrived with everything else, and wrong taps were possible).
+ *
+ * `squares` is the whitelist for the board; `ability` the one rack card that
+ * is live. Everything not listed is inert and answers with a shake.
+ */
+interface Ask {
+  /** Identity — the settle timer restarts when this changes. */
+  key: string;
+  /** The ask, big and bold. Stage 1 when a Rookie tap comes first. */
+  text: string;
+  /** Stage 2, shown once Rookie is selected. */
+  thenText?: string;
+  /** What they're being told to tap. */
+  icon: 'rookie' | 'bishop' | 'squire' | AbilityId | null;
+  /** Board squares that respond to a tap. */
+  squares: string[];
+  /** The one rack card that responds to a tap. */
+  ability: AbilityId | null;
+}
+
+/** "Tap Rookie." → "Now tap <where>." — both taps whitelisted. */
+function rookieAsk(key: string, rookieSq: string, target: string, label: string): Ask {
+  return {
+    key,
+    text: 'Tap Rookie.',
+    thenText: `Now tap ${label}.`,
+    icon: 'rookie',
+    squares: [rookieSq, target],
+    ability: null,
+  };
+}
+
+/** "Tap the Squire." → "Now tap <where>." — the player's OTHER body. */
+function squireAsk(key: string, squireSq: string, target: string, label: string): Ask {
+  return {
+    key,
+    text: 'Tap the Squire.',
+    thenText: `Now tap ${label}.`,
+    icon: 'squire',
+    squares: [squireSq, target],
+    ability: null,
+  };
+}
+
+/** "Tap the <power> card." — the board is inert, one card is live. */
+function cardAsk(key: string, id: AbilityId, text: string): Ask {
+  return { key, text, icon: id, squares: [], ability: id };
+}
+
+/**
+ * How long the rest of the step gets to settle (slide + arrow + caption)
+ * before the ask lands. Nothing is tappable until it does.
+ */
+const ASK_SETTLE_MS = 650;
 
 export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   // Dev hook: `?onboardingBeat=11` (with `?onboarding=1`) opens on that beat.
@@ -471,6 +584,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const [nudge, setNudge] = useState(false); // tried to move before casting
   const [glitching, setGlitching] = useState(false); // transform VFX
   const [freezePhase, setFreezePhase] = useState<FreezePhase>('demo');
+  const [squirePhase, setSquirePhase] = useState<SquirePhase>('placed');
   // Beat 10: number of player captures landed so far (0..3), the bar glow
   // after each one, and the demo popup.
   const [tempoStep, setTempoStep] = useState(0);
@@ -478,6 +592,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const [tempoOffer, setTempoOffer] = useState(false);
   // Beat 8: Rookie's one-liner after she takes him (picked once per win).
   const [revengeLine, setRevengeLine] = useState<string | null>(null);
+  const usedRevengeLines = useRef<string[]>([]);
   // Board state for the opening beat — the `?onboardingBeat=` dev hook lands
   // on the right board too (it used to open every beat on the rook drill).
   const [state, setState] = useState<BoardState>(() => {
@@ -490,6 +605,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     return drillState();
   });
   const [selected, setSelected] = useState<string | null>(null);
+  // The step's instruction has settled in and taps are now accepted.
+  const [askReady, setAskReady] = useState(false);
   const sadMusicRef = useRef<SadMusicHandle | null>(null);
   const kingMusicRef = useRef<SadMusicHandle | null>(null);
   // The winning king capture slides in slow motion (every tutorial capture).
@@ -506,7 +623,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     kingShortFadeRef.current = null;
     stopSadMusic(kingMusicRef.current, 0);
     setSlowCapture(true);
-    const handle = startTrack(KING_CAPTURE_MUSIC_URL, 0.8);
+    const handle = startTrack(KING_CAPTURE_MUSIC_URL, KING_CAPTURE_GAIN);
     kingMusicRef.current = handle;
     if (!full) {
       kingShortFadeRef.current = setTimeout(() => {
@@ -667,6 +784,25 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     return () => clearTimeout(t);
   }, [beat, freezePhase]);
 
+  // Beat 8: Rookie took the pawn — the turn passes (nothing black moves) and
+  // the Squire shakes off his summoning sickness. Same shape as the drill's
+  // scripted enemy turn: the stun expires, control comes straight back.
+  useEffect(() => {
+    if (beat !== 8 || squirePhase !== 'waking') return;
+    const t = setTimeout(() => {
+      setState((s) => ({
+        ...s,
+        turn: 'rookie',
+        kingStunTurns: 0,
+        allies: s.allies.map((a) => (a.dazed ? { ...a, dazed: false } : a)),
+      }));
+      void playTransformIntoSound();
+      haptic('light');
+      setSquirePhase('awake');
+    }, SQUIRE_WAKE_AT);
+    return () => clearTimeout(t);
+  }, [beat, squirePhase]);
+
   // Beat 10: the bar glows after each capture.
   useEffect(() => {
     if (!tempoGlow) return;
@@ -728,7 +864,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       setCast(false);
       setStuck(false);
       if (b === 7) setHopPhase('line');
-      if (b === 8) setRevengeLine(null);
+      setRevengeLine(null);
+      if (b === 8) setSquirePhase('placed');
       if (b === 9) setFreezePhase('demo');
     }
     if (b === 10) {
@@ -793,8 +930,12 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
 
   const lent = LENT[beat];
   const won = state.status === 'won';
+  const rookieSq = toSquare(state.rookie);
   const freezeDemo = beat === 9 && freezePhase === 'demo';
   const freezeWaiting = beat === 9 && (freezePhase === 'taken' || freezePhase === 'captured');
+  const squireWaiting = beat === 8 && squirePhase === 'waking';
+  const squirePiece = beat === 8 ? squireOf(state) : null;
+  const squireSq = squirePiece ? toSquare(squirePiece) : null;
   const tempoDone = beat === 10 && tempoStep >= TEMPO_PATH.length;
   // Beat 10: the queen step needs Knight Hop first.
   const tempoNeedsHop = beat === 10 && tempoStep === TEMPO_HOP_STEP && !cast;
@@ -806,13 +947,94 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         : beat === 10
           ? !tempoDone && !stuck
           : lent
-            ? !won && !stuck && !freezeWaiting
+            ? !won && !stuck && !freezeWaiting && !squireWaiting
             : false;
+
+  // ---- THE ASK — one explicit instruction per interactive step ---------------
+  // Russell's playtest (2026-09-17): the tap prompt was small, buried, and
+  // arrived at the same time as everything else, so he tapped the wrong
+  // things. The ask is now a single object per step: the words, the icon of
+  // the thing to tap, and — crucially — the ONLY taps that do anything while
+  // it's up. Everything else on the board and in the rack is inert.
+  const ask: Ask | null = (() => {
+    if (won || stuck) return null;
+    switch (beat) {
+      case 5:
+        if (drill === 0) return rookieAsk('drill-a7', rookieSq, 'a7', 'the pawn on a7');
+        if (drill === 3) return rookieAsk('drill-a8', rookieSq, 'a8', 'a8');
+        if (drill === 6) return rookieAsk('drill-king', rookieSq, KING_SQUARE, 'the king on g8');
+        return null;
+      case 7:
+        if (hopPhase === 'armed') return cardAsk('hop-card', 'knight-hop', 'Tap the Knight Hop card.');
+        if (hopPhase === 'hop') return rookieAsk('hop-move', rookieSq, HOP_KING_TO, 'the king on b3');
+        return null;
+      case 8: {
+        if (state.activeAbility?.step === 'pick-square') {
+          return {
+            key: 'squire-place',
+            text: 'Now tap b2.',
+            icon: 'summon-knight',
+            squares: [SQUIRE_SPAWN_SQUARE],
+            ability: null,
+          };
+        }
+        if (!cast || !squireSq) return cardAsk('squire-card', 'summon-knight', 'Tap the Squire card.');
+        if (squirePhase === 'placed') {
+          return rookieAsk('squire-pawn', rookieSq, SQUIRE_PAWN_SQUARE, 'the pawn on e1');
+        }
+        if (squirePhase !== 'awake') return null;
+        return squireAsk('squire-king', squireSq, SQUIRE_KING_SQUARE, 'the king on d3');
+      }
+      case 9: {
+        if (freezePhase === 'demo') {
+          return rookieAsk('freeze-demo', rookieSq, FREEZE_BAIT_SQUARE, 'the knight on h1');
+        }
+        if (freezePhase !== 'ready') return null;
+        if (state.activeAbility?.step === 'pick-enemy') {
+          return {
+            key: 'freeze-pick',
+            text: 'Tap the bishop on g2.',
+            icon: 'bishop',
+            squares: [FREEZE_BISHOP_SQUARE],
+            ability: null,
+          };
+        }
+        if (!cast) return cardAsk('freeze-card', 'freeze-ray', 'Tap the Freeze Ray card.');
+        const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
+        return baitAlive
+          ? rookieAsk('freeze-bait', rookieSq, FREEZE_BAIT_SQUARE, 'the knight on h1')
+          : rookieAsk('freeze-king', rookieSq, FREEZE_KING_SQUARE, 'the king on e1');
+      }
+      case 10:
+        if (tempoDone) return null;
+        if (tempoNeedsHop) return cardAsk('tempo-hop', 'knight-hop', 'Tap the Knight Hop card.');
+        return rookieAsk(`tempo-${tempoStep}`, rookieSq, TEMPO_PATH[tempoStep], TEMPO_PATH[tempoStep]);
+      default:
+        return null;
+    }
+  })();
+
+  // The ask lands LAST: the board move, the arrow and the caption settle
+  // first, then the instruction appears — and only then does anything on
+  // screen respond to a tap.
+  const askKey = ask?.key ?? null;
+  useEffect(() => {
+    setAskReady(false);
+    if (!askKey) return;
+    const t = setTimeout(() => setAskReady(true), ASK_SETTLE_MS);
+    return () => clearTimeout(t);
+  }, [askKey]);
+  const askLive = ask !== null && askReady;
+  /** Wrong tap: nothing moves, the ask shakes. */
+  const refuse = useCallback(() => {
+    setNudge(true);
+    haptic('medium');
+  }, []);
 
   // ---- Board interaction (beats 5, 7, 8, 9) ---------------------------------
   const tryMove = useCallback(
     (targetSq: string): boolean => {
-      if (!interactive) return false;
+      if (!interactive || !askLive || !ask || !ask.squares.includes(targetSq)) return false;
       const target = fromSquare(targetSq);
 
       const wasCapture = state.pieces.some(
@@ -833,6 +1055,14 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         }
       };
 
+      // Every king capture in the tutorial gets a line — she is settling a
+      // score, and it should land every time, not once.
+      const sayRevenge = () => {
+        const line = pickRevengeLine(usedRevengeLines.current);
+        usedRevengeLines.current = [...usedRevengeLines.current, line];
+        setRevengeLine(line);
+      };
+
       if (beat === 5) {
         // Enemies never get a free turn — hand control straight back. The
         // engine rolls an offer when the bar fills; beat 10 shows the real one.
@@ -844,6 +1074,7 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         land({ ...nextState, turn: 'rookie', pendingOffer: null });
         if (nextState.status === 'won') {
           trackEvent('run_onboarding_backrank_win');
+          sayRevenge();
         } else if (drill === 0 && wasCapture) {
           setDrill(1);
         } else if (drill === 3 && toSquare(nextState.rookie) === 'a8') {
@@ -871,7 +1102,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         }
         if (nextState.status === 'won') playKingCaptureTheme(false);
         land({ ...nextState, turn: 'rookie', pendingOffer: null });
-        if (nextState.status === 'won') trackEvent('run_onboarding_freeze_win');
+        if (nextState.status === 'won') {
+          trackEvent('run_onboarding_freeze_win');
+          sayRevenge();
+        }
         return true;
       }
 
@@ -883,7 +1117,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         // beat 8 remounts the board with a fresh rook.
         if (nextState.status === 'won') playKingCaptureTheme(false);
         land({ ...nextState, turn: 'rookie', pendingOffer: null, form: 'knight', formMovesLeft: 0 });
-        if (nextState.status === 'won') trackEvent('run_onboarding_hop_win');
+        if (nextState.status === 'won') {
+          trackEvent('run_onboarding_hop_win');
+          sayRevenge();
+        }
         else setStuck(true);
         return true;
       }
@@ -909,29 +1146,91 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         return true;
       }
 
-      // Beat 8 — a plain rook move can't reach him and ends the turn;
-      // that's the lesson.
-      if (nextState.status === 'won') playKingCaptureTheme(false);
-      land(nextState);
-      if (nextState.status === 'won') {
-        trackEvent('run_onboarding_surge_win');
-        setRevengeLine(REVENGE_LINES[Math.floor(Math.random() * REVENGE_LINES.length)]);
-      } else if (nextState.turn !== 'rookie') {
-        setStuck(true);
+      // Beat 8 — Rookie's only move here is the pawn on e1, while the Squire
+      // wakes. Her turn ends; the scripted wake (effect above) hands it back.
+      if (beat === 8) {
+        if (squirePhase !== 'placed' || !wasCapture) return false;
+        land({ ...nextState, pendingOffer: null });
+        setSquirePhase('waking');
+        return true;
       }
+      return false;
+    },
+    [ask, askLive, beat, cast, drill, freezeDemo, interactive, playKingCaptureTheme, squirePhase, state, tempoStep],
+  );
+
+  // Beat 8: the Squire's move — the player's OTHER body. Onto the king wins.
+  const trySquireMove = useCallback(
+    (targetSq: string): boolean => {
+      if (beat !== 8 || squirePhase !== 'awake' || !squireSq) return false;
+      if (!interactive || !askLive || !ask || !ask.squares.includes(targetSq)) return false;
+      const nextState = applyControlledAllyMove(state, fromSquare(squireSq), fromSquare(targetSq));
+      if (nextState === state) return false;
+      setSelected(null);
+      if (nextState.status === 'won') {
+        playKingCaptureTheme(false);
+        setState({ ...nextState, turn: 'rookie', pendingOffer: null });
+        void playCaptureSound();
+        hapticSuccess();
+        trackEvent('run_onboarding_squire_win');
+        const line = pickRevengeLine(usedRevengeLines.current);
+        usedRevengeLines.current = [...usedRevengeLines.current, line];
+        setRevengeLine(line);
+        return true;
+      }
+      // Only the king is whitelisted, so this is unreachable — a miss resets.
+      setState({ ...nextState, turn: 'rookie', pendingOffer: null });
+      void playMoveSound();
+      setStuck(true);
       return true;
     },
-    [beat, cast, drill, freezeDemo, interactive, playKingCaptureTheme, state, tempoStep],
+    [ask, askLive, beat, interactive, playKingCaptureTheme, squirePhase, squireSq, state],
   );
 
   const onSquareClick = useCallback(
     (square: string) => {
       if (!interactive) return;
+      // The step's whitelist. Anything else — and anything at all before the
+      // ask has landed — shakes and changes nothing.
+      if (!askLive || !ask) return;
+      if (!ask.squares.includes(square)) {
+        refuse();
+        return;
+      }
+      // Beat 8: second tap of Squire places him (b2 is the one live square).
+      if (state.activeAbility?.step === 'pick-square') {
+        if (beat !== 8 || square !== SQUIRE_SPAWN_SQUARE) {
+          refuse();
+          return;
+        }
+        const nextState = applyAbilityTargeted(state, state.activeAbility.id, fromSquare(square));
+        if (nextState !== state) {
+          haptic('heavy');
+          playCardPlaySound();
+          setState(nextState);
+          setCast(true);
+          setSquirePhase('placed');
+          trackEvent('run_onboarding_squire_cast');
+        }
+        return;
+      }
+      // Beat 8: the Squire is awake — tap him, then the king.
+      if (beat === 8 && squirePhase === 'awake' && squireSq) {
+        if (square === squireSq) {
+          setSelected((s) => (s === squireSq ? null : squireSq));
+          return;
+        }
+        if (selected === squireSq) {
+          if (!trySquireMove(square)) setSelected(null);
+          return;
+        }
+        refuse();
+        return;
+      }
       // Beat 9: second tap of Freeze Ray picks the target (the bishop).
       if (state.activeAbility?.step === 'pick-enemy') {
         if (beat === 9 && square !== FREEZE_BISHOP_SQUARE) {
-          setNudge(true);
-          haptic('medium');
+          refuse();
           return;
         }
         const nextState = applyAbilityTargeted(state, state.activeAbility.id, fromSquare(square));
@@ -944,26 +1243,25 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         }
         return;
       }
-      const rookieSq = toSquare(state.rookie);
-      if (square === rookieSq) {
+      const here = toSquare(state.rookie);
+      if (square === here) {
         if ((beat === 8 && !cast) || tempoNeedsHop) {
-          setNudge(true);
-          haptic('medium');
+          refuse();
           return;
         }
-        setSelected((s) => (s === rookieSq ? null : rookieSq));
+        setSelected((s) => (s === here ? null : here));
         return;
       }
       if (selected) {
         if (!tryMove(square)) setSelected(null);
       }
     },
-    [beat, cast, interactive, selected, state, tempoNeedsHop, tryMove],
+    [ask, askLive, beat, cast, interactive, refuse, selected, squirePhase, squireSq, state, tempoNeedsHop, tryMove, trySquireMove],
   );
 
   const onPieceDrop = useCallback(
-    (_from: string, to: string) => tryMove(to),
-    [tryMove],
+    (from: string, to: string) => (from === squireSq ? trySquireMove(to) : tryMove(to)),
+    [squireSq, tryMove, trySquireMove],
   );
 
   // ---- Beat 7: pick Knight Hop (only) -----------------------------------------
@@ -997,6 +1295,8 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const onActivateAbility = useCallback(
     (id: AbilityId) => {
       if (lent && id !== lent.id) return; // grayed in the rack; belt and braces
+      // Only the card the ask names is live, and only once it has landed.
+      if (!askLive || ask?.ability !== id) return;
       if (beat === 7) {
         // The first power: tapping Knight Hop in the rack IS the transform.
         if (hopPhase !== 'armed') return;
@@ -1033,13 +1333,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       haptic('medium');
       setNudge(false);
       setState(nextState);
-      if (id === 'surge') {
-        setCast(nextState.bonusMovesLeft > 0);
-        if (nextState.bonusMovesLeft > 0) void playSurgeSound();
-      }
-      // freeze-ray: cast flips when the king is actually tapped (onSquareClick).
+      // summon-knight / freeze-ray: both arm here; `cast` flips on the second
+      // tap (the spawn square / the bishop) in onSquareClick.
     },
-    [beat, glitch, hopPhase, interactive, lent, state, tempoNeedsHop],
+    [ask, askLive, beat, glitch, hopPhase, interactive, lent, state, tempoNeedsHop],
   );
 
   const resetBeat = useCallback(() => goTo(beat), [beat, goTo]);
@@ -1109,7 +1406,6 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const gameOver = beat === 1 && phase >= 5;
 
   // ---- Overlays (arrows + comic bursts) --------------------------------------
-  const rookieSq = toSquare(state.rookie);
   const arrows: OverlayArrow[] = (() => {
     if (beat === 1 && (phase === 1 || phase === 2)) return [{ from: QUEEN_FROM, to: QUEEN_TO }];
     // "Fatal error": a yellow foreshadow from the black knight to the white king.
@@ -1127,9 +1423,9 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       return [];
     }
     if (beat === 8 && !won && cast && !stuck) {
-      return rookieSq === 'a1'
-        ? [{ from: 'a1', to: 'e1' }]
-        : [{ from: rookieSq, to: SURGE_KING_SQUARE }];
+      if (squirePhase === 'placed') return [{ from: rookieSq, to: SQUIRE_PAWN_SQUARE }];
+      if (squirePhase === 'awake' && squireSq) return [{ from: squireSq, to: SQUIRE_KING_SQUARE, path: 'L' }];
+      return [];
     }
     if (beat === 9 && !won) {
       if (freezePhase === 'demo') return [{ from: FREEZE_ROOKIE_START, to: FREEZE_BAIT_SQUARE }];
@@ -1152,10 +1448,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
   const bursts: OverlayBurst[] = (() => {
     if (beat === 5 && !won && drill >= 4) return [{ square: KING_SQUARE, text: '!!' }];
     if (beat === 7 && !won && hopPhase === 'stepped') return [{ square: HOP_KING_TO, text: 'ha!' }];
+    if (won && revengeLine) return [{ square: rookieSq, text: revengeLine, speech: true }];
     if (beat === 8) {
-      if (won && revengeLine) return [{ square: rookieSq, text: revengeLine, speech: true }];
-      if (!won && cast && !stuck && rookieSq !== 'a1') {
-        return [{ square: SURGE_KING_SQUARE, text: 'Oh no. I don’t get a move.', speech: true }];
+      if (!won && cast && !stuck && squirePhase === 'awake') {
+        return [{ square: SQUIRE_KING_SQUARE, text: 'Two of them?!', speech: true }];
       }
       return [];
     }
@@ -1165,15 +1461,20 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     return [];
   })();
   const shakes: string[] = beat === 5 && !won && drill >= 4 ? [KING_SQUARE] : [];
-  // Blue pointer on the board: the bishop to freeze.
+  // Blue pointer on the board: the square the Squire appears on; the bishop
+  // to freeze.
   const pointers: string[] =
-    beat === 9 && !won && state.activeAbility?.step === 'pick-enemy' ? [FREEZE_BISHOP_SQUARE] : [];
+    askLive && beat === 8 && !won && state.activeAbility?.step === 'pick-square'
+      ? [SQUIRE_SPAWN_SQUARE]
+      : askLive && beat === 9 && !won && state.activeAbility?.step === 'pick-enemy'
+        ? [FREEZE_BISHOP_SQUARE]
+        : [];
 
   // Blue pointer over an ability card in the rack (power beats, before cast).
   const rackPointId: AbilityId | null = (() => {
-    if (won || stuck) return null;
+    if (won || stuck || !askLive) return null;
     if (beat === 7 && hopPhase === 'armed') return 'knight-hop';
-    if (beat === 8 && !cast) return 'surge';
+    if (beat === 8 && !cast && !state.activeAbility) return 'summon-knight';
     if (beat === 9 && freezePhase === 'ready' && !cast && !state.activeAbility) return 'freeze-ray';
     if (tempoNeedsHop) return 'knight-hop';
     return null;
@@ -1191,8 +1492,10 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
       const host = rackRef.current;
       if (!host) return;
       const idx = state.abilities.findIndex((a) => a.id === rackPointId);
-      const cards = host.querySelectorAll('button');
-      const card = cards[idx];
+      // The nth CELL of the rack grid, not the nth button — each card carries
+      // a second (i) button, so counting buttons pointed at the wrong card.
+      const cells = host.querySelector('.grid')?.children;
+      const card = cells?.[idx]?.querySelector('button');
       if (!card) {
         setRackPoint(null);
         return;
@@ -1240,13 +1543,16 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         if (hopPhase === 'line') return 'The rook is looking at the king.';
         if (hopPhase === 'stepped' || hopPhase === 'offer') return 'But the king steps out of the way.';
         if (hopPhase === 'armed') return 'Knight Hop is in her rack. Tap it.';
-        return 'Rookie transforms into a knight. Have no mercy. Move in an L-shape and capture the king.';
+        return 'Rookie is a knight now. Have no mercy.';
       case 8:
-        if (won) return 'Two moves, one turn. He never saw it.';
-        if (stuck) return 'One move, then it’s his turn. Surge first — then move twice.';
-        if (cast) return 'Two moves. Get on his line, then take him.';
-        if (nudge) return 'Tap Surge first. Then she moves twice.';
-        return 'The next ability: Surge. It moves you twice in a row. Tap Surge.';
+        if (won) return 'Got him. Rookie never has to hunt alone again.';
+        if (stuck) return 'Missed him. Reset and land the Squire on the king.';
+        if (squirePhase === 'awake') return 'He’s awake. Tap the Squire, and take the king.';
+        if (squirePhase === 'waking') return 'The turn passes. The Squire wakes up.';
+        if (cast) return 'He needs one turn to wake up. Rookie grabs a pawn while he does.';
+        if (state.activeAbility?.step === 'pick-square') return 'Now tap b2. He appears beside her.';
+        if (nudge) return 'Tap Squire first. Then she gets a knight of her own.';
+        return 'The next ability: Squire. It gives you a knight you control. Tap Squire.';
       case 9: {
         const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
         if (won) return 'Frozen. Got him. Revenge is a dish best served cold.';
@@ -1279,7 +1585,9 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     if (won || stuck) return null;
     if (beat === 7 && hopPhase === 'armed') return 'Rookie can have powers. Tap Knight Hop to transform.';
     if (beat === 7 && hopPhase === 'hop') return 'Two up, one over.';
-    if (beat === 8 && !cast) return 'Surge moves twice in a row.';
+    if (beat === 8 && !cast && !state.activeAbility) return 'The king is off her lines. A rook can’t get there — a knight can.';
+    if (beat === 8 && cast && squirePhase === 'placed') return 'A summon acts from your next turn. Move Rookie first.';
+    if (beat === 8 && squirePhase === 'awake') return 'Two over, one up.';
     if (beat === 9 && freezePhase === 'ready' && !cast && !state.activeAbility) {
       return 'Freeze Ray stops one piece for a turn. A frozen bishop can’t take her.';
     }
@@ -1319,45 +1627,17 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
     }
   })();
 
-  const hint = (() => {
-    switch (beat) {
-      case 5:
-        if (won) return null;
-        if (drill === 1) return null; // Next button takes over (stun beat)
-        if (drill === 2 || drill === 4 || drill === 5) return ' ';
-        if (drill === 0) return 'Tap Rookie, then the pawn on a7.';
-        if (drill === 3) return 'Tap Rookie, then a8.';
-        return 'Tap Rookie, then the king on g8.';
-      case 7:
-        if (won) return null;
-        if (hopPhase === 'hop') return 'Tap Rookie, then the king on b3.';
-        if (hopPhase === 'armed') return 'Tap the Knight Hop card.';
-        if (hopPhase === 'line') return ' ';
-        return null; // Next button takes over
-      case 8:
-        return cast ? 'Tap Rookie, then e1. Then the king.' : 'Tap the Surge card.';
-      case 9: {
-        if (freezePhase === 'captured') return null; // Next button takes over
-        if (freezePhase === 'demo') return 'Tap Rookie, then the knight on h1.';
-        if (freezePhase === 'taken') return ' ';
-        if (cast) {
-          const baitAlive = state.pieces.some((p) => toSquare(p) === FREEZE_BAIT_SQUARE);
-          return baitAlive ? 'Tap Rookie, then h1.' : 'Tap Rookie, then the king on e1.';
-        }
-        return state.activeAbility?.step === 'pick-enemy'
-          ? 'Tap the bishop on g2.'
-          : 'Tap the Freeze Ray card.';
-      }
-      case 10:
-        if (tempoDone) return null;
-        if (tempoNeedsHop) return 'Tap the Knight Hop card.';
-        return `Tap Rookie, then ${TEMPO_PATH[tempoStep]}.`;
-      case 11:
-        return null; // Next button takes over
-      default:
-        return null;
-    }
-  })();
+  /**
+   * Steps where a scripted beat is playing out (a knight hurrying back, the
+   * king stepping aside): no ask, and no Next button either — the tutorial is
+   * talking, the player just watches. A spacer holds the slot so the card
+   * never jumps.
+   */
+  const waiting =
+    (beat === 5 && (drill === 2 || drill === 4 || drill === 5)) ||
+    (beat === 7 && hopPhase === 'line') ||
+    (beat === 8 && squirePhase === 'waking') ||
+    (beat === 9 && freezePhase === 'taken');
 
   const showOffer = beat === 7 && hopPhase === 'offer';
   const showRunBoard = beat === 5 || beat === 6 || beat === 10 || beat === 11 || lent !== undefined;
@@ -1412,6 +1692,23 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
         @keyframes rrOnbFinalIn {
           from { opacity: 0; transform: scale(0.9); }
           to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes rrOnbAskIn {
+          from { opacity: 0; transform: translateY(10px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes rrOnbAskTarget {
+          0%   { box-shadow: 0 0 0 0 rgba(229,57,53,0.75); }
+          70%  { box-shadow: 0 0 0 11px rgba(229,57,53,0); }
+          100% { box-shadow: 0 0 0 0 rgba(229,57,53,0); }
+        }
+        .rr-onb-ask-target {
+          display: block;
+          width: 20px;
+          height: 20px;
+          border-radius: 999px;
+          border: 3px solid ${REVENGE_RED};
+          animation: rrOnbAskTarget 1.3s ease-out infinite;
         }
         .rr-onb-pulse { animation: rrOnbPulseRing 1.3s ease-out infinite; border-radius: 12px; }
         .rr-onb-nudge { animation: rrOnbNudge 360ms ease-in-out; }
@@ -1610,7 +1907,9 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
                 <AbilityRack
                   abilities={state.abilities}
                   activeId={state.activeAbility?.id ?? null}
-                  disabledIds={lent ? STARTERS.filter((id) => id !== lent.id) : []}
+                  disabledIds={state.abilities
+                    .map((a) => a.id)
+                    .filter((id) => !(askLive && ask?.ability === id))}
                   onActivate={onActivateAbility}
                 />
                 {rackPoint && (
@@ -1644,12 +1943,16 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
               <button type="button" onClick={withClick(goToFreezeReady)} className={CTA_CLASS} style={CTA_STYLE}>
                 Next <span className="opacity-80">&rarr;</span>
               </button>
-            ) : hint && !won ? (
-              <p className="text-center text-[11px] text-white/60 italic min-h-[44px] flex items-center justify-center">
-                {hint}
-              </p>
-            ) : beat === 10 && !tempoDone ? (
-              <p className="min-h-[44px]" />
+            ) : ask ? (
+              <AskPanel
+                ask={ask}
+                ready={askReady}
+                stage={selected ? 'then' : 'first'}
+                form={state.form}
+                shake={nudge}
+              />
+            ) : waiting ? (
+              <p className="min-h-[60px]" />
             ) : showNext ? (
               <button type="button" onClick={withClick(next)} className={CTA_CLASS} style={CTA_STYLE}>
                 Next <span className="opacity-80">&rarr;</span>
@@ -1684,6 +1987,100 @@ export function StoryOnboarding({ onDone }: StoryOnboardingProps) {
           subtitle="Tap either to see how it works."
         />
       )}
+    </div>
+  );
+}
+
+/** Enemy palette for the one ask that points at a black piece (the bishop). */
+const ENEMY_BLOCK_PALETTE = [
+  '#9AA6C6', '#7F8CB0', '#68759A', '#545F82', '#434C6B', '#343C55', '#262C40', '#1A1F2E',
+];
+
+/** The thing the ask is pointing at, drawn with the game's own sprites. */
+function AskIcon({ ask, form, showTarget }: { ask: Ask; form: RookieForm; showTarget: boolean }) {
+  if (showTarget) {
+    return <span className="rr-onb-ask-target" aria-hidden />;
+  }
+  if (ask.icon === 'rookie') {
+    return form === 'rook' ? (
+      <BreathingRook size="xs" animate />
+    ) : (
+      <PieceBlocks piece={form === 'knight' ? 'N' : form === 'bishop' ? 'B' : 'Q'} fit={34} />
+    );
+  }
+  if (ask.icon === 'bishop') {
+    return <PieceBlocks piece="B" fit={30} palette={ENEMY_BLOCK_PALETTE} animate={false} />;
+  }
+  if (ask.icon === 'squire') {
+    // The rainbow knight — the same block-art the board draws him with.
+    return <PieceBlocks piece="N" fit={34} />;
+  }
+  if (ask.icon) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`/abilities/${artFile(ask.icon)}`}
+        alt=""
+        width={38}
+        height={38}
+        className="block rounded-[6px] object-contain"
+        draggable={false}
+      />
+    );
+  }
+  return null;
+}
+
+/**
+ * THE ASK — the last thing to appear on an interactive step, and the biggest
+ * text on the card. Rookie's own mark (or the card art) sits beside the words
+ * so there's no doubt WHAT to tap. Until it lands, nothing is tappable.
+ */
+function AskPanel({
+  ask,
+  ready,
+  stage,
+  form,
+  shake,
+}: {
+  ask: Ask;
+  ready: boolean;
+  stage: 'first' | 'then';
+  form: RookieForm;
+  shake: boolean;
+}) {
+  const showThen = stage === 'then' && !!ask.thenText;
+  const text = showThen ? ask.thenText! : ask.text;
+  // On a short phone the card can run past the fold — the ask is useless
+  // off-screen, so it brings itself into view as it lands.
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!ready) return;
+    hostRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [ready]);
+  return (
+    <div
+      ref={hostRef}
+      aria-live="polite"
+      className={`flex items-center gap-2.5 rounded-2xl px-3 py-2 min-h-[60px]${shake ? ' rr-onb-nudge' : ''}`}
+      style={{
+        visibility: ready ? 'visible' : 'hidden',
+        background: 'linear-gradient(180deg, #17265c 0%, #0a1230 100%)',
+        border: `2px solid ${REVENGE_RED}`,
+        boxShadow: `0 4px 0 ${REVENGE_RED_DARK}, 0 8px 20px rgba(0,0,0,0.45)`,
+        animation: ready ? 'rrOnbAskIn 420ms ease-out both' : undefined,
+      }}
+    >
+      <span
+        key={showThen ? 'then' : 'first'}
+        className="shrink-0 flex items-center justify-center"
+        style={{ width: 40, height: 40 }}
+      >
+        <AskIcon ask={ask} form={form} showTarget={showThen} />
+      </span>
+      <p key={text} className="text-[16px] font-black leading-tight text-white">
+        {text}
+      </p>
     </div>
   );
 }

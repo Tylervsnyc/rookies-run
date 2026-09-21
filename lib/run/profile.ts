@@ -10,6 +10,7 @@
 import { ALL_ABILITY_IDS, type AbilityId } from './abilities';
 import { isPlayerFacing, stageOf } from '../content/pipeline';
 import {
+  ACHIEVEMENT_BY_ID,
   ACHIEVEMENTS,
   bumpCounters,
   evaluateAchievements,
@@ -18,19 +19,18 @@ import {
   type RunEvent,
 } from './achievements';
 import { DEFAULT_DIFFICULTY, isDifficultyId, type DifficultyId } from './difficulty';
-import { ladderUnlockedAbilities } from './ladder';
+import { LADDER_RUNG_IDS, ladderUnlockedAbilities, rungKit } from './ladder';
 
 export const PROFILE_KEY = 'rookies-revenge-profile-v1';
 
 /**
  * What a brand-new player holds. Knight Hop first — the tutorial teaches it:
  * a rook alone usually can't reach the king, so she borrows the knight's legs.
- * Surge + Freeze Ray are the other two ways to close the gap. (Drones was cut —
- * a swarm doesn't fit a king-hunt.)
+ * Freeze Ray is the other way to close the gap. (Surge is retired; Drones was
+ * cut — a swarm doesn't fit a king-hunt.)
  */
 export const STARTER_KIT_CATALOG: ReadonlyArray<AbilityId> = [
   'knight-hop',
-  'surge',
   'freeze-ray',
   // Squire — a knight you control. In the kit once approved in the registry.
   'summon-knight',
@@ -145,7 +145,9 @@ function sanitize(raw: unknown): PlayerProfile {
   }
   if (r.achievements && typeof r.achievements === 'object') {
     for (const [id, e] of Object.entries(r.achievements)) {
-      if (e && typeof e === 'object' && typeof (e as EarnedAchievement).unlockedAt === 'string') {
+      // Unknown ids are dropped: a trophy cut from the catalog (its ability
+      // retired) must not count toward X/N or linger in a cloud merge.
+      if (ACHIEVEMENT_BY_ID[id] && e && typeof e === 'object' && typeof (e as EarnedAchievement).unlockedAt === 'string') {
         p.achievements[id] = { unlockedAt: (e as EarnedAchievement).unlockedAt, seen: !!(e as EarnedAchievement).seen };
       }
     }
@@ -199,7 +201,7 @@ function sanitize(raw: unknown): PlayerProfile {
   // Achievements already earned always grant their ability (handles catalog
   // edits + abilities that shipped after the achievement was earned).
   for (const a of ACHIEVEMENTS) {
-    if (a.unlocks && p.achievements[a.id] && KNOWN_ABILITIES.has(a.unlocks)) {
+    if (a.unlocks && p.achievements[a.id] && KNOWN_ABILITIES.has(a.unlocks) && isPlayerFacing(a.unlocks)) {
       if (!p.unlockedAbilities.includes(a.unlocks as AbilityId)) {
         p.unlockedAbilities.push(a.unlocks as AbilityId);
       }
@@ -503,11 +505,19 @@ export function recordLadderResult(
   });
 }
 
-/** Abilities that exist in the game AND some achievement can unlock (or are starters). */
+/**
+ * Every ability a player can actually hold: starters, trophy unlocks, and the
+ * ladder's rung kits (Convert is ladder-only). Player-facing only: a retired
+ * or in-testing ability would sit locked forever in the Powers X/N count and
+ * the Trophy Room grid.
+ */
 export function unlockableAbilityIds(): AbilityId[] {
   const set = new Set<AbilityId>(STARTER_ABILITIES);
   for (const a of ACHIEVEMENTS) {
-    if (a.unlocks && KNOWN_ABILITIES.has(a.unlocks)) set.add(a.unlocks as AbilityId);
+    if (a.unlocks && KNOWN_ABILITIES.has(a.unlocks) && isPlayerFacing(a.unlocks)) set.add(a.unlocks as AbilityId);
+  }
+  for (let i = 0; i < LADDER_RUNG_IDS.length; i++) {
+    for (const id of rungKit(i)) set.add(id);
   }
   return [...set];
 }

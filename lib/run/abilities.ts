@@ -14,6 +14,7 @@ import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
 import { fromSquare, toSquare } from './types';
 import { enforceKingInvariant } from './king-invariant';
+import { isPlayerFacing } from '../content/pipeline';
 import type {
   AllyPiece,
   BoardState,
@@ -1537,6 +1538,12 @@ export interface AbilityOfferOption {
   id: AbilityId;
   tier: AbilityTier;
   description: AbilityBlurb;
+  /**
+   * Signature-pair grant (see `signaturePairFor`). A slate of grant options is
+   * not a choice: `applyOfferPick` hands the player EVERY grant option on the
+   * slate, whichever one was tapped.
+   */
+  grant?: true;
 }
 
 export type AbilityOffer = AbilityOfferOption[];
@@ -1580,10 +1587,83 @@ export function abilityTierCapFor(runId: string | undefined, id: string): Abilit
   return Math.max(1, Math.min(5, Math.floor(c))) as AbilityTier;
 }
 
+/**
+ * Through this level a signature-pair run offers nothing but the pair. From
+ * the L9 refill (offerOnLevels [1,3,6,9]) slates are chosen normally again.
+ */
+export const SIGNATURE_PAIR_LOCK_BEFORE_LEVEL = 9;
+
+/**
+ * From this level a signature-pair run also GRANTS the rest of its kit. Some
+ * mid-run levels were built around the third card: pair-only, The Stacks
+ * L5/L7/L8 measured 0% even on Rookie and The Moat L3 needs knight-hop's line
+ * (audit 2026-09-21), so holding only the pair until L9 walled rung 3 and with
+ * it every rung after. The L3 refill hands it over; no choice, like the pair.
+ */
+export const SIGNATURE_KIT_GRANT_FROM_LEVEL = 3;
+
+/**
+ * The run's signature pair (RunDef.signaturePair) when it governs offers, else
+ * null. L7-L10 of a combo run cannot be won without BOTH cards, and a player
+ * who took the upgrade at every refill used to arrive at L7 holding one — a
+ * dead run (Tyler 2026-09-21: the most unsatisfying thing in the game). This
+ * is the single reading of the pair; `rollOffer` is the single place it acts.
+ *
+ * A kit (`state.testkit`) IS the offer pool and still wins: the pair governs
+ * only when the kit holds both cards. That keeps the DAILY run on the rule
+ * (its kit is drawn from the run's own `allowedAbilities` — page.tsx
+ * freshRun) while a ?testkit= playtest of other cards is untouched. Endless
+ * borrows ladder levels under its own rolled kit and is never governed.
+ */
+export function signaturePairFor(state: BoardState): readonly [AbilityId, AbilityId] | null {
+  if (state.endless) return null;
+  const pair = runDefFor(state.runId)?.signaturePair as readonly [AbilityId, AbilityId] | undefined;
+  if (!pair) return null;
+  const kit = state.testkit && state.testkit.length > 0 ? state.testkit : null;
+  if (kit && !pair.every((id) => kit.includes(id))) return null;
+  return pair;
+}
+
 export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
   const owned = new Map(state.abilities.map((a) => [a.id, a]));
   const ownedCount = owned.size;
   const atCap = ownedCount >= MAX_OWNED_ABILITIES;
+
+  // SIGNATURE PAIR (RunDef.signaturePair). Rules, all enforced here only:
+  //  1. A pair card the player does not hold is GRANTED — the slate is the
+  //     missing pair card(s), T1, flagged `grant` so one tap takes them all.
+  //     At L1 that is both cards ("your two powers for this run"); on a run
+  //     saved before this rule it heals the loadout at the next offer. The
+  //     grant ignores the unlocked set and the castability filter on purpose:
+  //     if the run is playable, its pair is held.
+  //  2. From L3 the rest of the kit is granted the same way (see
+  //     SIGNATURE_KIT_GRANT_FROM_LEVEL), so every card a level can need is
+  //     held before the levels that need it.
+  //  3. Before L9 every other slate (level refill OR tempo) is upgrades of the
+  //     pair only — no new card from outside the kit. Applied below by
+  //     narrowing the pools, so tier caps, the castability filter and the
+  //     never-shrink top-up all behave exactly as they do for any other slate.
+  const pair = signaturePairFor(state);
+  if (pair) {
+    const kit = (state.testkit && state.testkit.length > 0
+      ? state.testkit
+      : (runDefFor(state.runId)?.allowedAbilities ?? [])) as readonly AbilityId[];
+    const pairMissing = pair.filter((id) => !owned.has(id));
+    const missing =
+      pairMissing.length > 0 || state.level < SIGNATURE_KIT_GRANT_FROM_LEVEL
+        ? pairMissing
+        : kit.filter((id) => !owned.has(id) && isPlayerFacing(id));
+    if (missing.length > 0 && ownedCount + missing.length <= MAX_OWNED_ABILITIES) {
+      return missing.map((id) => ({
+        kind: 'new',
+        id,
+        tier: 1,
+        description: blurbDetailForTier(id, 1),
+        grant: true,
+      }));
+    }
+  }
+  const pairLocked = !!pair && state.level < SIGNATURE_PAIR_LOCK_BEFORE_LEVEL;
 
   // Per-run allowlist (e.g. abilities-v2 test run). When set, restrict both
   // new offers AND upgrade offers to listed ids.
@@ -1614,7 +1694,7 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
   const coreMin = core ? Math.min(size, runDef?.offerCoreMin ?? 0) : 0;
 
   const newPool: AbilityOfferOption[] = ALL_ABILITY_IDS.filter(
-    (id) => !owned.has(id) && (!runAllowed || runAllowed.has(id)),
+    (id) => !pairLocked && !owned.has(id) && (!runAllowed || runAllowed.has(id)),
   ).map((id) => ({
     kind: 'new',
     id,
@@ -1634,6 +1714,7 @@ export function rollOffer(state: BoardState, rng: () => number): AbilityOffer {
 
   const upgradePool: AbilityOfferOption[] = [...owned.values()]
     .filter((a) => a.tier < 5 && a.tier < capFor(a.id) && (!runAllowed || runAllowed.has(a.id)))
+    .filter((a) => !pairLocked || (pair as readonly string[]).includes(a.id))
     .map((a) => {
       const next = (a.tier + 1) as AbilityTier;
       return {
@@ -1750,16 +1831,18 @@ export function applyOfferPick(
   if (!state.pendingOffer) return state;
   let abilities = state.abilities;
   if (option.kind === 'new') {
-    if (abilities.some((a) => a.id === option.id)) return state;
-    if (abilities.length >= MAX_OWNED_ABILITIES) return state;
+    // A signature-pair grant hands over the whole slate, not the tapped card.
+    const taken = option.grant ? state.pendingOffer.filter((o) => o.grant) : [option];
+    if (taken.some((o) => abilities.some((a) => a.id === o.id))) return state;
+    if (abilities.length + taken.length > MAX_OWNED_ABILITIES) return state;
     abilities = [
       ...abilities,
-      {
-        id: option.id,
-        tier: 1,
+      ...taken.map((o) => ({
+        id: o.id,
+        tier: 1 as AbilityTier,
         mutations: [],
-        usesLeftThisLevel: maxUsesForTier(option.id, 1),
-      },
+        usesLeftThisLevel: maxUsesForTier(o.id, 1),
+      })),
     ];
   } else {
     abilities = abilities.map((a) => {

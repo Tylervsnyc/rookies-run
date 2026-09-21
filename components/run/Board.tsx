@@ -1,13 +1,14 @@
 'use client';
 import { PIECE_SLIDE_MS } from './timing';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
 import { SACRIFICE_BLAST_TINTS, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
-import { decoyCapturer, isRookieThreatened, nextEnemyMovers } from '@/lib/run/pawn-ai';
+import { decoyCapturer, nextEnemyMovers, rookieDangerState } from '@/lib/run/pawn-ai';
+import type { RookieDangerState } from '@/lib/run/pawn-ai';
 import type { AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
@@ -16,8 +17,26 @@ import { BreathingRook } from '@/components/ui/BreathingRook';
 import { PieceBlocks } from './PieceBlocks';
 import { LAVA_CSS, LAVA_SRC, LavaBubbles, hazardSquareStyle, lavaReducedMotionCss, splitHazards } from './LavaHazards';
 
-/** Red alarms Rookie cycles through, one per time she lands in check. */
-const ROOKIE_ALARM_CYCLE: RookieAlarm[] = ['siren', 'heartbeat', 'sos', 'shiver', 'ringPulse', 'flickerOut'];
+/**
+ * One alarm per danger state — NOT a rotation. The animation is information:
+ * a returning player learns to read how bad it is from which alarm fires
+ * (Tyler, 2026-09-18). States come from `rookieDangerState`, which only
+ * reports situations the engine can genuinely tell apart.
+ */
+const ALARM_FOR_DANGER: Record<RookieDangerState, RookieAlarm> = {
+  // Nowhere to run — the distress call.
+  cornered: 'sos',
+  // Threatened on her final move of the limit: the lights are going out.
+  lastMove: 'flickerOut',
+  // Three or more attackers — full alarm.
+  swarmed: 'siren',
+  // Caught between two — the nervous jitter.
+  crossfire: 'shiver',
+  // The king himself has her in range: one deliberate radar ping.
+  kingOnHer: 'ringPulse',
+  // One ordinary attacker and a way out — the calm one, just a raised pulse.
+  hunted: 'heartbeat',
+};
 
 /** One summon's piece-shaped Sacrifice blast, for the armed-card preview. */
 export interface SacrificeBlastGroup {
@@ -84,6 +103,16 @@ interface BoardProps {
   hideGoalRank?: boolean;
   /** Piece slide duration override (ms) — e.g. a slow-motion tutorial capture. */
   slideMs?: number;
+  /**
+   * Skip the level-start intro (Rookie's strobe sweep + the pieces' emerge
+   * wave): the board opens with everything already standing on its square.
+   * For boards that are not a level start — the ability-demo tiles, where the
+   * demo's own beats are the only motion that should read. Default false, so
+   * the game and the tutorial keep the entrance exactly as it was. An
+   * intro-skipping board also leaves the module-level RR_LAST_INTRO marker
+   * alone, so a page full of them can never suppress the real board's intro.
+   */
+  skipIntro?: boolean;
 }
 
 // Runs whose win condition is always the king — the rank-8 goal row must
@@ -217,8 +246,17 @@ export function RunBoard({
   vanillaPieces = false,
   hideGoalRank = false,
   slideMs,
+  skipIntro = false,
 }: BoardProps) {
   const rookieSprite = ROOKIE_SPRITE[state.form];
+  // Per-instance scope for this board's injected CSS. Every rule below targets
+  // squares by coordinate ([data-square="d6"]), which is a DOCUMENT-WIDE
+  // selector: with more than one board mounted (the ability-demo grid) one
+  // board's Aegis ripple / frozen shimmer / surge badge painted the same
+  // square on every other board. Prefixing each selector with this id keeps a
+  // board's effects inside its own wrapper. Sanitised because useId() returns
+  // characters («r1») that read badly inside a selector.
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
 
   // Level-start intro — bump introId whenever the level changes so the
   // emerge animation replays. Pieces rise from below the square in a
@@ -226,15 +264,24 @@ export function RunBoard({
   // Start with a deterministic value so SSR and first client render produce
   // matching keyframe names — the effect below bumps it to Date.now() on mount.
   const [introId, setIntroId] = useState(0);
-  const [introPlaying, setIntroPlaying] = useState(true);
+  const [introPlaying, setIntroPlaying] = useState(!skipIntro);
   // Rookie's strobe-sweep entrance — overlay-driven so we can animate her
   // across files. `introFile` is the file (1..8) the overlay currently shows;
   // null means the sweep is done and real Rookie takes over.
   const [introFile, setIntroFile] = useState<number | null>(
-    () => state.rookie.file,
+    () => (skipIntro ? null : state.rookie.file),
   );
   const [introScale, setIntroScale] = useState(1);
   useEffect(() => {
+    // Opt-out (demo tiles): no sweep, no emerge wave, and — deliberately — no
+    // write to RR_LAST_INTRO, so these boards never stand in for the real
+    // board's "already played this level" marker.
+    if (skipIntro) {
+      setIntroFile(null);
+      setIntroScale(1);
+      setIntroPlaying(false);
+      return;
+    }
     // Guard against React StrictMode double-invoke in dev. Refs reset on
     // remount, so we use a module-scoped marker (RR_LAST_INTRO_LEVEL just
     // below the component) plus a timestamp window — if the same level
@@ -300,7 +347,7 @@ export function RunBoard({
       for (const t of timers) clearTimeout(t);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.level]);
+  }, [state.level, skipIntro]);
 
   const rookieSq = toSquare(state.rookie);
 
@@ -898,23 +945,12 @@ export function RunBoard({
     return toSquare(state.rookie);
   }, [state.shieldUp, state.rookie, state.status]);
 
-  // Rookie "in check": when an enemy can capture her, she panics. Each new
-  // threat episode picks the NEXT red alarm in the cycle (Tyler 2026-09-03:
-  // "use those in a cycle, each time Rookie is in check call a different one").
-  const threatened = useMemo(() => isRookieThreatened(state), [state]);
-  const alarmIdxRef = useRef(-1);
-  const [alarm, setAlarm] = useState<RookieAlarm | null>(null);
-  useEffect(() => {
-    if (!threatened) {
-      setAlarm(null);
-      return;
-    }
-    setAlarm((cur) => {
-      if (cur) return cur; // still the same episode — keep this alarm
-      alarmIdxRef.current = (alarmIdxRef.current + 1) % ROOKIE_ALARM_CYCLE.length;
-      return ROOKIE_ALARM_CYCLE[alarmIdxRef.current];
-    });
-  }, [threatened]);
+  // Rookie "in check": when an enemy can capture her, she panics — and WHICH
+  // alarm plays says how bad it is. Derived straight from the board, so the
+  // alarm escalates live as the danger changes (a second attacker arriving
+  // swaps heartbeat → shiver on the same square).
+  const danger = useMemo<RookieDangerState | null>(() => rookieDangerState(state), [state]);
+  const alarm: RookieAlarm | null = danger ? ALARM_FOR_DANGER[danger] : null;
 
   const pieces = useMemo(
     () => vanillaPieces ? { ...defaultPieces, ...STATUS_PIECES } : ({
@@ -1046,34 +1082,34 @@ export function RunBoard({
         }
         ${state.status === 'won'
           ? rankGoal
-            ? `[data-square$="8"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
-            : `[data-square="${toSquare(state.rookie)}"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
+            ? `[data-rrb="${uid}"] [data-square$="8"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
+            : `[data-rrb="${uid}"] [data-square="${toSquare(state.rookie)}"] { animation: rookiesRunGoalGlow 1.2s ease-in-out infinite; }`
           : ''}
         ${state.frozenSquares
           .map(
-            (sq) => `[data-square="${sq}"] > div > img,
-                     [data-square="${sq}"] > div > svg {
+            (sq) => `[data-rrb="${uid}"] [data-square="${sq}"] > div > img,
+                     [data-rrb="${uid}"] [data-square="${sq}"] > div > svg {
                filter: drop-shadow(0 0 6px rgba(56,189,248,0.9)) saturate(0.6) brightness(1.05);
              }`,
           )
           .join('\n')}
         ${(state.smokeTurnsLeft ?? 0) > 0 && state.status === 'playing'
-          ? `[data-square="${toSquare(state.rookie)}"] > div {
+          ? `[data-rrb="${uid}"] [data-square="${toSquare(state.rookie)}"] > div {
                opacity: 0.55;
                filter: grayscale(0.6) blur(0.4px) drop-shadow(0 0 6px rgba(148,163,184,0.9));
              }`
           : ''}
         ${rookieShieldSquare
-          ? `[data-square="${rookieShieldSquare}"] > div > img,
-             [data-square="${rookieShieldSquare}"] > div > svg {
+          ? `[data-rrb="${uid}"] [data-square="${rookieShieldSquare}"] > div > img,
+             [data-rrb="${uid}"] [data-square="${rookieShieldSquare}"] > div > svg {
                animation: rookiesRunAegisShieldPulse 1.8s ease-in-out infinite;
              }`
           : ''}
         ${surgeFilter
-          ? `[data-square="${toSquare(state.rookie)}"] > div {
+          ? `[data-rrb="${uid}"] [data-square="${toSquare(state.rookie)}"] > div {
                filter: ${surgeFilter};
              }
-             [data-square="${toSquare(state.rookie)}"]::before {
+             [data-rrb="${uid}"] [data-square="${toSquare(state.rookie)}"]::before {
                content: '+${state.bonusMovesLeft}';
                position: absolute;
                top: 2%;
@@ -1090,7 +1126,7 @@ export function RunBoard({
                line-height: 1;
                animation: rookiesRunSurgePulse 1s ease-in-out infinite;
              }
-             [data-square="${toSquare(state.rookie)}"] {
+             [data-rrb="${uid}"] [data-square="${toSquare(state.rookie)}"] {
                position: relative;
              }`
           : ''}
@@ -1117,8 +1153,8 @@ export function RunBoard({
         }
         ${wiggleSquares
           .map(
-            (sq) => `[data-square="${sq}"] > div > img,
-                     [data-square="${sq}"] > div > svg {
+            (sq) => `[data-rrb="${uid}"] [data-square="${sq}"] > div > img,
+                     [data-rrb="${uid}"] [data-square="${sq}"] > div > svg {
                animation: rookiesRunWiggle 1.4s ease-in-out infinite;
                transform-origin: 50% 80%;
              }`,
@@ -1137,9 +1173,9 @@ export function RunBoard({
               // Target every level of nesting where react-chessboard might
               // render the piece sprite — img, svg, OR a wrapper div. Using
               // descendant (no '>') so we match regardless of depth.
-              return `[data-square="${sq}"] img,
-                      [data-square="${sq}"] svg,
-                      [data-square="${sq}"] [data-piece] {
+              return `[data-rrb="${uid}"] [data-square="${sq}"] img,
+                      [data-rrb="${uid}"] [data-square="${sq}"] svg,
+                      [data-rrb="${uid}"] [data-square="${sq}"] [data-piece] {
                 animation: rookiesRunEmerge-${introId} 650ms cubic-bezier(0.2, 0.7, 0.2, 1) ${delay}ms both;
                 transform-origin: 50% 70%;
               }`;
@@ -1160,12 +1196,12 @@ export function RunBoard({
             25%  { box-shadow: inset 0 0 0 6px rgba(125, 211, 252, 1),  inset 0 0 30px rgba(56, 189, 248, 0.95); background-color: rgba(125, 211, 252, 0.55); }
             100% { box-shadow: inset 0 0 0 0 rgba(125, 211, 252, 0),    inset 0 0 0 rgba(56, 189, 248, 0); background-color: rgba(125, 211, 252, 0); }
           }
-          [data-square="${aegisLunge.attackerSquare}"] > div > img,
-          [data-square="${aegisLunge.attackerSquare}"] > div > svg {
+          [data-rrb="${uid}"] [data-square="${aegisLunge.attackerSquare}"] > div > img,
+          [data-rrb="${uid}"] [data-square="${aegisLunge.attackerSquare}"] > div > svg {
             animation: rookiesRunAegisLunge-${Math.floor(aegisLunge.id)} 700ms cubic-bezier(0.5, -0.2, 0.4, 1.4) both;
             z-index: 4;
           }
-          [data-square="${aegisLunge.rookieSquare}"] {
+          [data-rrb="${uid}"] [data-square="${aegisLunge.rookieSquare}"] {
             position: relative;
             animation: rookiesRunAegisRipple-${Math.floor(aegisLunge.id)} 700ms ease-out both;
           }
@@ -1191,17 +1227,17 @@ export function RunBoard({
             40%  { box-shadow: inset 0 0 0 4px rgba(255, 170, 0, 0.95), inset 0 0 18px rgba(255, 211, 58, 0.85); background-color: rgba(255, 211, 58, 0.45); }
             100% { box-shadow: inset 0 0 0 0 rgba(255, 211, 58, 0); background-color: rgba(255, 211, 58, 0); }
           }
-          [data-square="${imperviousLunge.attackerSquare}"] > div > img,
-          [data-square="${imperviousLunge.attackerSquare}"] > div > svg {
+          [data-rrb="${uid}"] [data-square="${imperviousLunge.attackerSquare}"] > div > img,
+          [data-rrb="${uid}"] [data-square="${imperviousLunge.attackerSquare}"] > div > svg {
             animation: rookiesRunImperviousLunge-${Math.floor(imperviousLunge.id)} 650ms cubic-bezier(0.5, -0.2, 0.4, 1.4) both;
             z-index: 4;
             filter: drop-shadow(0 0 6px rgba(255, 170, 0, 0.85));
           }
-          [data-square="${imperviousLunge.attackerSquare}"] {
+          [data-rrb="${uid}"] [data-square="${imperviousLunge.attackerSquare}"] {
             position: relative;
             animation: rookiesRunRoyalFlash-${Math.floor(imperviousLunge.id)} 650ms ease-out both;
           }
-          [data-square="${imperviousLunge.rookieSquare}"] {
+          [data-rrb="${uid}"] [data-square="${imperviousLunge.rookieSquare}"] {
             position: relative;
             animation: rookiesRunRoyalAura-${Math.floor(imperviousLunge.id)} 700ms ease-out both;
           }
@@ -1209,18 +1245,18 @@ export function RunBoard({
       )}
       {telekinesisSquare && (
         <style>{`
-          [data-square="${telekinesisSquare}"] {
+          [data-rrb="${uid}"] [data-square="${telekinesisSquare}"] {
             position: relative;
             animation: rookiesRunTkPulse 1.1s ease-in-out infinite;
             border-radius: 4px;
           }
-          [data-square="${telekinesisSquare}"] > div > img,
-          [data-square="${telekinesisSquare}"] > div > svg {
+          [data-rrb="${uid}"] [data-square="${telekinesisSquare}"] > div > img,
+          [data-rrb="${uid}"] [data-square="${telekinesisSquare}"] > div > svg {
             animation: rookiesRunTkFloat 1.4s ease-in-out infinite;
             transform-origin: 50% 80%;
             filter: drop-shadow(0 0 8px rgba(217, 70, 239, 0.95)) drop-shadow(0 0 14px rgba(168, 85, 247, 0.75));
           }
-          [data-square="${telekinesisSquare}"]::before {
+          [data-rrb="${uid}"] [data-square="${telekinesisSquare}"]::before {
             content: '✨';
             position: absolute;
             top: 4%;
@@ -1231,7 +1267,7 @@ export function RunBoard({
             animation: rookiesRunTkSparkle 1.6s ease-in-out infinite;
             filter: drop-shadow(0 0 4px rgba(255, 220, 130, 0.9));
           }
-          [data-square="${telekinesisSquare}"]::after {
+          [data-rrb="${uid}"] [data-square="${telekinesisSquare}"]::after {
             content: '✨';
             position: absolute;
             bottom: 6%;
@@ -1244,7 +1280,7 @@ export function RunBoard({
           }
         `}</style>
       )}
-      <div style={{ position: 'relative' }}>
+      <div data-rrb={uid} style={{ position: 'relative' }}>
         <ChessPathBoard
           options={{
             id: 'rookies-run-board',

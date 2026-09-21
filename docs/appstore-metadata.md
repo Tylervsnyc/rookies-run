@@ -46,25 +46,30 @@ every single day.
 HOW IT WORKS
 - Move like a rook. Capture like a rook. Every capture stuns the defense and
   buys you tempo.
-- Each level is a puzzle-battlefield: pawn shells, sightline queens, walls
-  with one door, keys that unlock his file.
+- Each level is a puzzle-battlefield: pawn shells, sightline queens, stone
+  walls with one door, lava between you and him.
 - Reach the king before your moves run out. Then do it nine more levels in a
   row.
 
 POWERS THAT BREAK CHESS
 Pick ability cards as you climb: hop like a knight, freeze a defender, summon
 a knight you control like a second piece, drop a boulder to seal a file, or
-become the king himself. 18 abilities to unlock, each with five upgrade
-tiers. Every offer is a build decision - and finishers are one charge per
-run, so spend them where they hurt.
+become the king himself. 23 abilities to unlock, each with five upgrade
+tiers. Every offer is a build decision - and every power refills at the top
+of every level, so spend them where they hurt.
 
 A NEW RUN EVERY DAY
-The daily rotates through hand-tuned runs - Pawn Storm, The Royal Guard, The
-Fortress, Stonework, Two Keys - each with its own personality and lesson.
+The daily rotates through 10 hand-built runs - 100 levels in all - and each
+run is built around a pair of powers that only cracks its finale together.
 Miss a day, and that board is gone.
 
+CLIMB THE LADDER
+The same 10 runs stack into a ladder, from powers that bend the rules at the
+bottom to the ones that rewrite the board at the top. Clear a rung and the
+next one opens, with the powers it needs already in your hand.
+
 EARN YOUR ARSENAL
-54 trophies track everything from your first king to a flawless run. Fifteen
+54 trophies track everything from your first king to a flawless run. Nineteen
 of them unlock new abilities permanently. Four difficulties, from Rookie
 (training wheels, some judgment) to Nightmare (he sees everything).
 
@@ -82,13 +87,16 @@ chess from zero.
 ```
 chess,roguelike,daily,puzzle,strategy,board,tactics,rook,king,deckbuilder,run,levels
 ```
-(95 chars.)
+(84 chars.)
 
 ## URLs
 
-- Support URL: `https://chesspath.app/` (or a /support page if one exists)
+- Support URL: `https://run.chesspath.app/support` (`app/support/page.tsx`)
 - Marketing URL: `https://run.chesspath.app/`
-- Privacy Policy URL: `https://run.chesspath.app/privacy` (verified 200)
+- Privacy Policy URL: `https://run.chesspath.app/privacy` (`app/privacy/page.tsx`)
+
+A 200 proves nothing here: before 2026-09-21 neither page existed and both
+URLs returned 200 with the game's soft 404. Check the `<title>` instead.
 
 ## Age rating
 
@@ -99,19 +107,24 @@ No objectionable content. Expected rating: 4+.
 ```
 Rookie's Revenge is a daily chess roguelike: the player controls a single
 rook and crosses the board in 10 escalating levels to capture the enemy
-king, earning permanent abilities between runs. A new board rotates in every
-day.
+king, picking abilities between levels and unlocking new ones for good. A new
+board rotates in every day, and a 10-run ladder (100 levels) is always open.
 
-No account is required to play. Progress (abilities, trophies, difficulty
-unlocks) is stored on device. There are no purchases, no ads, and no user
-generated content.
+No account is required and there is no sign-in anywhere in the app. Progress
+(abilities, trophies, difficulty unlocks) is stored on device. There are no
+purchases, no ads, and no user generated content beyond an optional
+leaderboard handle (a random "Rook-1234" name the player may rename; letters,
+digits, . _ - only, 2-16 chars).
+
+The game is bundled on the device and plays in full with no signal. With
+signal it syncs the daily leaderboard and streak.
 
 Native features: haptic feedback on moves, captures, ability plays, level
 clears and defeats; native splash and status bar theming; portrait lock;
-branded offline screen.
+full offline play.
 
-To reach gameplay immediately: launch the app, tap the daily run card and
-play. The tutorial (5 short beats) runs on first launch only.
+To reach gameplay immediately: launch the app, tap DAILY REVENGE, then BEGIN.
+A short interactive tutorial runs on first launch only and can be skipped.
 ```
 
 ## Screenshots
@@ -121,9 +134,17 @@ every smaller size). Regenerate from the live site with
 `node scripts/appstore-screenshots.mjs`, then push to ASC with
 `node scripts/asc-listing.mjs --shots`. Files upload in filename order.
 
-## Status (2026-09-03) — listing is FILLED, one click from submit
+## Status (2026-09-03, facts re-checked 2026-09-21) — listing is FILLED
 
-Everything above is already applied to the ASC record (app id 6802359470) by
+> 2026-09-21: the copy above was corrected against the shipped game (23
+> abilities, 54 trophies, the 10-run ladder, powers refill every level, offline
+> bundle). `COPY` in `scripts/asc-listing.mjs` is the text ASC actually has and
+> it has drifted from this file - port these edits into `COPY` before the next
+> `node scripts/asc-listing.mjs`. "Build 4 attached" below is history: the
+> repo's newest build is **7** (2026-09-18, first on-device bundle). Run
+> `--status` to see which build ASC has attached today.
+
+Everything above was applied to the ASC record (app id 6802359470) by
 `scripts/asc-listing.mjs`: name "Rookie's Revenge", subtitle "A Chess Roguelike", categories (Games > Board/Strategy,
 secondary Education), age rating 4+, content rights (original), description,
 keywords, promo text, URLs, copyright, review contact + notes, free price
@@ -140,13 +161,27 @@ node scripts/asc-listing.mjs --submit   # attach newest VALID build + submit for
 
 **App Privacy label** — Apple has no API for it. Sign in at
 https://appstoreconnect.apple.com/apps/6802359470/distribution/privacy and
-declare (matches what the webview actually does — PostHog + Supabase leaderboard):
+declare exactly this. It must match `app/privacy/page.tsx` and
+`ios/App/App/PrivacyInfo.xcprivacy` (re-checked against the code 2026-09-21):
 
-- Data Types: **Identifiers → Device ID** (the random player id used for the
-  leaderboard) and **Usage Data → Product Interaction** (PostHog).
-- Both: Purpose = Analytics (+ App Functionality for Device ID), **not linked to
-  identity**, **not used for tracking**.
-- Do NOT declare email / name / contacts — there is no sign-in.
+| Data type | Linked to user | Tracking | Purposes |
+|---|---|---|---|
+| Identifiers → Device ID | Yes | No | App Functionality, Analytics |
+| User Content → Gameplay Content | Yes | No | App Functionality, Analytics |
+| User Content → Other User Content | Yes | No | App Functionality |
+| Usage Data → Product Interaction | Yes | No | Analytics |
+| Location → Coarse Location | Yes | No | Analytics |
+| Diagnostics → Other Diagnostic Data | Yes | No | Analytics |
+
+Why each: Device ID = the random leaderboard player id + the install id on run
+traces. Gameplay Content = leaderboard scores + move-by-move run traces.
+Other User Content = the player-chosen public leaderboard name. Product
+Interaction = PostHog autocapture/events/session replay. Coarse Location =
+PostHog GeoIP from the IP (project has anonymize_ips OFF). Diagnostics = console
+logs captured in session recordings (capture_console_log_opt_in ON). Linked =
+Yes because everything is keyed to a persistent random id / PostHog person
+profile. Tracking = No: no ads, no IDFA, nothing combined with third-party data.
+Do NOT declare email / name / contacts — there is no sign-in.
 
 Review will 409 until that label is published. After it is:
 `node scripts/asc-listing.mjs --submit`.

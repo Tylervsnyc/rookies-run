@@ -18,6 +18,13 @@ const DB_NAME = 'revenge-offline';
 const STORE = 'outbox';
 const DB_VERSION = 1;
 const MAX_ATTEMPTS = 5;
+/**
+ * Hard ceiling on queued writes. A run end queues at most two (score +
+ * complete), so 50 is ~25 runs finished with no signal — far past any real
+ * trip. Past it the OLDEST entries go: they are the stalest scores, and a
+ * queue that can only grow is a leak, not durability.
+ */
+export const MAX_ENTRIES = 50;
 
 export interface OutboxEntry {
   id?: number;
@@ -54,9 +61,16 @@ function tx<T>(mode: IDBTransactionMode, run: (store: IDBObjectStore) => IDBRequ
   );
 }
 
+/** Ids to evict, oldest first, so that `entries` fits in `max`. Pure — tested. */
+export function overflowIds(entries: Pick<OutboxEntry, 'id'>[], max = MAX_ENTRIES): number[] {
+  const ids = entries.map((e) => e.id).filter((id): id is number => id != null).sort((a, b) => a - b);
+  return ids.slice(0, Math.max(0, ids.length - max));
+}
+
 export async function enqueue(entry: Omit<OutboxEntry, 'id' | 'attempts'>): Promise<void> {
   try {
     await tx('readwrite', (s) => s.add({ ...entry, attempts: 0 }));
+    for (const id of overflowIds(await peekAll())) await remove(id);
   } catch {
     // A full or unavailable IndexedDB must not take the app down mid-lesson.
   }

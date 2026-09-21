@@ -4,19 +4,28 @@ Replaces Chess Path's `ios-setup.md`, which is stale — it tells you to install
 CocoaPods and open `App.xcworkspace`. Capacitor 8 uses **Swift Package Manager**:
 there is no `Podfile`, no `Pods/`, and `cap open ios` opens `App.xcodeproj`.
 
-## How the app actually works
+## How the app actually works (updated 2026-09-21)
 
-The iOS app **does not bundle the web app**. `capacitor.config.ts` sets
-`server.url: 'https://run.chesspath.app'` and the native app is a WKWebView on
-the live site. `capacitor-shell/index.html` is only the offline fallback.
+**Since build 7 (2026-09-18, commits a186f54 + 81cc6d2) the iOS app ships an
+ON-DEVICE BUNDLE.** `capacitor.config.ts` has `webDir: 'capacitor-bundle'` and
+**no `server.url`**. `npm run build:offline` (`scripts/build-offline.mjs`)
+makes a static export of the game into `capacitor-bundle/` (gitignored), and
+Capacitor serves it from the device. The game opens and plays with no signal.
 
-**So shipping web code to iOS is a `git push`.** You need a native rebuild only
-when you change:
+It is a hybrid only for DATA, never for code: when there is signal the bundle
+calls `https://run.chesspath.app/api/*` (`lib/net/offline-fetch.ts`) for run
+saves, streak and the leaderboard; with no signal, saves queue
+(`lib/net/outbox.ts`) and drain on reconnect.
 
-- the app icon or splash (`npm run ios:assets`)
-- `Info.plist`
-- `capacitor.config.ts`
-- Capacitor plugins
+**So a `git push` does NOT update the iOS app.** Pushing updates the website
+and the server API only. Every change to levels, abilities, copy, art or UI
+reaches iPhones only through: `build:offline` -> `ios:sync` -> `fastlane beta`
+-> `fastlane upload` -> App Store review. "Bundle synced" is not "app updated".
+
+Builds 1-6 were the old design: a WKWebView on `server.url:
+'https://run.chesspath.app'`, where a push was enough. That is gone.
+`capacitor-shell/index.html` (the old offline fallback screen) is no longer
+referenced by the config.
 
 ## One-time setup (Mac)
 
@@ -37,9 +46,13 @@ when you change:
 ## Build and ship
 
 ```bash
-npm install          # REQUIRED FIRST — see below
-npm run ios:assets   # regenerate icon + splash (only if art changed)
-npm run ios:sync     # npx cap sync ios
+npm install            # REQUIRED FIRST — see below
+npm run ios:assets     # regenerate icon + splash (only if art changed)
+npm run build:offline  # static export -> capacitor-bundle/. ONE at a time, to
+                       # completion, not sandboxed (see scripts/build-offline.mjs)
+npm run ios:sync       # cap sync ios; refuses to run without a built bundle
+# verify your change is in the synced bundle, e.g.
+#   grep -rl "<string from your change>" ios/App/App/public/_next/static/chunks/
 cd ios/App
 fastlane beta        # cert, profile, bump build number, archive, sign
 fastlane upload      # -> TestFlight
@@ -94,28 +107,27 @@ plus a timed workout). What's shipping in our favour:
 - **Status bar theming** (`components/run/StatusBarSync.tsx`).
 - **Portrait-only**, so there's no orientation a reviewer can rotate into and
   find broken.
-- **A branded offline screen** rather than a generic error.
+- **Full offline play** — the game is on the device (build 7+).
 
 Write the review notes concretely — "a daily chess roguelike: cross the board
 in 10 escalating levels, earning permanent abilities; new board every day" —
 and don't claim anything that isn't shipping.
 
-If 4.2 comes back anyway, the escalation is a **service worker** on
-run.chesspath.app precaching the shell, the 17 ability webp files and the
-font (~1.5 MB), which makes the game genuinely playable in airplane mode. The
-game is pure client-side computation over `lib/run/runs.ts`, so this is real,
-not a trick. Do that before App Store review rather than before TestFlight.
-
-Do **not** solve it by bundling the app into `webDir` — that forfeits the
-"web deploys ship to iOS with a git push" property, which is the best thing
-about this setup.
+**2026-09-21: the 4.2 escalation has been taken.** Build 7 bundles the whole
+game into `webDir`, so it is fully playable in airplane mode — the strongest
+4.2 argument we have; say so in the review notes. The earlier advice here
+("do NOT bundle into `webDir`", use a service worker instead) was reversed on
+2026-09-18. The price, accepted knowingly: web deploys no longer reach iOS
+with a git push (see the top of this file).
 
 ## Local device testing against a dev server
 
-Temporarily point `server.url` at your Mac's LAN IP and allow cleartext:
+Temporarily ADD a `server` block (the release config has none) pointing at
+your Mac's LAN IP, with cleartext allowed:
 
 ```ts
 server: { url: 'http://192.168.x.x:3000', cleartext: true },
 ```
 
-Then `npm run ios:sync` and run from Xcode. Revert before building a release.
+Then `npm run ios:sync` and run from Xcode. **Remove the block before building
+a release** — a release with `server.url` set is the old live-URL app.

@@ -5,7 +5,9 @@ export default [
   ...nextConfig,
 
   {
-    ignores: ["ios/**", "capacitor-shell/**", "data/**"],
+    // .offline-build/ (scratch copy + its .next output) and capacitor-bundle/
+    // (the exported static app) are build artifacts from scripts/build-offline.mjs.
+    ignores: ["ios/**", "capacitor-shell/**", "data/**", ".offline-build/**", "capacitor-bundle/**"],
   },
 
   // Project-wide rule overrides — carried over from Chess Path so the extracted

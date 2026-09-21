@@ -14,6 +14,7 @@ import type { DifficultyId } from '../../lib/run/difficulty';
 import { BAND_TOL, RUN_TOL, fmtEstimate, fmtGrade } from './spec';
 import type { LadderSection } from './revenge-nightly';
 import { DIFFICULTIES } from '../../lib/run/difficulty';
+import { STARTER_ABILITIES } from '../../lib/run/profile';
 import { FINISHERS, winPct, type Cell, type RunsReport, type SolveResult } from './revenge-core';
 import type { RevengeFeatures } from './revenge-features';
 import { shortReason, type ContentItem, type PipelineSummary } from '../../lib/content/pipeline';
@@ -65,7 +66,8 @@ export interface RunReport {
   budget: { trials: number; modeTrials: number; runs: number; playerRuns: number };
 }
 
-const STARTERS_LABEL = 'knight-hop, surge, freeze-ray';
+// The REAL starter kit (lib/run/profile.ts) — the same list revenge-nightly.ts sims with.
+const STARTERS_LABEL = STARTER_ABILITIES.join(', ');
 
 /** "Rookie unlimited, Normal 1, Hard 1, Nightmare 0" — always from difficulty.ts, never typed by hand. */
 function retriesLabel(): string {
