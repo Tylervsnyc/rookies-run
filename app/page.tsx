@@ -73,6 +73,7 @@ import {
   coupTargets,
   // The ability-first five of 2026-09-19 (promote / puppet / raise / eruption / chain).
   cardStatusFor,
+  formCardFor,
   applyPromoteChoice,
   consequenceTint,
   promoteChoices,
@@ -806,6 +807,9 @@ export default function RookiesRunPage() {
   const [showLevelCleared, setShowLevelCleared] = useState(false);
   const [runComplete, setRunComplete] = useState(false);
   const [glitching, setGlitching] = useState(false);
+  /** `level:moveCount` of a turn-back (transform card tapped again) — the
+   *  "Back to a rook." line shows until her next move. */
+  const [revertedAt, setRevertedAt] = useState<string | null>(null);
   const prevFormRef = useRef(state.form);
 
   const audioWarmedRef = useRef(false);
@@ -1301,6 +1305,9 @@ export default function RookiesRunPage() {
   // Armed and not yet used: the card stays lit and tappable, and a tap undoes it.
   const ricochetArmed =
     (state.ricochetBanks ?? 0) > 0 && state.cancellableActivation?.abilityId === 'ricochet';
+  // Transformed by a card: that card stays lit and tappable (even at 0
+  // charges) — tapping it again turns her back into a rook.
+  const formCard = formCardFor(state);
   const summonSupportDisabled = useMemo(() => {
     const out: AbilityId[] = [];
     for (const a of state.abilities) {
@@ -1337,6 +1344,11 @@ export default function RookiesRunPage() {
         });
         setSelectedSquare(null);
         setState(next);
+        // Turned back after moving in the form (not the undo of a fresh cast).
+        // The form-change effect plays the transform-back sound + glitch.
+        if (formCardFor(state) === id && state.cancellableActivation?.abilityId !== id) {
+          setRevertedAt(`${state.level}:${state.moveCount}`);
+        }
         if (id === 'surge') void playSurgeSound();
         // Sacrifice armed: the charge-up beat — finger on the big red button.
         if (id === 'sacrifice' && next.activeAbility?.id === 'sacrifice') {
@@ -2176,6 +2188,11 @@ export default function RookiesRunPage() {
         }
       : null;
 
+  const revertStatus =
+    state.status === 'playing' && state.form === 'rook' && revertedAt === `${state.level}:${state.moveCount}`
+      ? { label: 'Turned back', text: 'Back to a rook. Rows and columns again.' }
+      : null;
+
   return (
     <div className="h-full overflow-auto bg-chess-page" style={isStc ? undefined : { background: 'linear-gradient(180deg, #182a5c 0%, #0f1c3f 60%)' }}>
       <style>{`
@@ -2395,12 +2412,12 @@ export default function RookiesRunPage() {
         <div className="-mt-1">
         <AbilityRack
           abilities={state.abilities}
-          activeId={state.activeAbility?.id ?? (ricochetArmed ? 'ricochet' : null)}
+          activeId={state.activeAbility?.id ?? (ricochetArmed ? 'ricochet' : formCard)}
           disabledIds={summonSupportDisabled}
           onActivate={onActivateAbility}
           infoId={infoAbilityId}
           onToggleInfo={toggleInfoAbility}
-          status={smokeStatus ?? cardStatusFor(state)}
+          status={smokeStatus ?? revertStatus ?? cardStatusFor(state)}
           hint={state.status === 'playing' && !state.activeAbility ? 'Tap Rookie to see her moves.' : null}
         />
         </div>

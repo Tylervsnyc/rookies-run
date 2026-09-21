@@ -684,6 +684,21 @@ export function formForAbility(id: AbilityId): RookieForm | null {
   return null;
 }
 
+/**
+ * The transform card whose form Rookie is in right now, if she can turn back
+ * with it: she owns that card (charges or not) and the form is on a clock
+ * (formMovesLeft > 0; the ∞ tier's 999 counts). A LOCKED form
+ * (formMovesLeft < 0, set by the level itself, not a card) has no card to
+ * tap and is never revertible. Tapping this card again = back to a rook (see
+ * applyAbilityActivateImpl). Tyler, 2026-09-21: "after Knight Hop, there's
+ * no way to revert to normal piece."
+ */
+export function formCardFor(state: BoardState): AbilityId | null {
+  if (state.form === 'rook' || state.formMovesLeft <= 0) return null;
+  const owned = state.abilities.find((a) => formForAbility(a.id) === state.form);
+  return owned ? owned.id : null;
+}
+
 /** Duration (in Rookie moves) for a transform ability at a given tier. */
 export function transformDurationForTier(
   id: AbilityId,
@@ -724,10 +739,10 @@ export interface AbilityBlurb {
 }
 
 const HOW: Record<AbilityId, string> = {
-  'bishop-step': 'Tap card, then tap a diagonal square.',
-  'knight-hop': 'Tap card, then tap a knight square.',
-  'queen-pulse': 'Tap card, then tap any square.',
-  'become-king': 'Tap card, then tap a king-move square.',
+  'bishop-step': 'Tap card, then tap a diagonal square. Tap it again to turn back.',
+  'knight-hop': 'Tap card, then tap a knight square. Tap it again to turn back.',
+  'queen-pulse': 'Tap card, then tap any square. Tap it again to turn back.',
+  'become-king': 'Tap card, then tap a king-move square. Tap it again to turn back.',
   'freeze-ray': 'Tap card, then tap an enemy you can see.',
   'poison-dart': 'Tap card, then tap an enemy you can see.',
   'rabies-dart': 'Tap card, then tap an enemy you can see.',
@@ -2334,6 +2349,14 @@ function applyAbilityActivateImpl(
     };
   }
 
+  // Turn back: she has already moved in this card's form (so the undo above
+  // no longer applies) — tapping the card again makes her a rook on the spot.
+  // Free (her move is still in hand), no refund, works at 0 charges. Every
+  // king-form protection (bounce, royal aura, the king's no-swing rule) reads
+  // `form === 'king'`, so they all end here with it. Surge bonus moves are
+  // hers and stay. It needs a non-rook form, so it cannot fire twice in a row.
+  if (formCardFor(state) === abilityId) return applyRevertForm(state);
+
   const owned = state.abilities.find((a) => a.id === abilityId);
   if (!owned) return state;
   if (owned.usesLeftThisLevel === 0) return state;
@@ -2452,6 +2475,22 @@ function applyTransform(state: BoardState, abilityId: AbilityId): BoardState {
         shieldUp: state.shieldUp,
       },
     },
+  };
+}
+
+/** Transform card tapped again after moving in its form: back to a rook. */
+function applyRevertForm(state: BoardState): BoardState {
+  const pending = state.cancellableActivation;
+  return {
+    ...state,
+    form: 'rook',
+    formMovesLeft: 0,
+    activeAbility: null,
+    // Another card's undo (e.g. Surge cast after the hop) stays available,
+    // but its snapshot must not hand the old form back: she is a rook now.
+    cancellableActivation: pending
+      ? { ...pending, snapshot: { ...pending.snapshot, form: 'rook', formMovesLeft: 0 } }
+      : undefined,
   };
 }
 
@@ -7141,6 +7180,21 @@ export function cardStatusFor(state: BoardState): { label: string; text: string 
     return {
       label: n === undefined ? 'Reflection' : `Reflection · ${n} ${n === 1 ? 'move' : 'moves'}`,
       text: 'Every move you make, it makes flipped.',
+    };
+  }
+  // Transformed by a card: say what's left and how to turn back.
+  const formCard = formCardFor(state);
+  if (formCard) {
+    const n = state.formMovesLeft;
+    const unit = state.form === 'king' ? 'turn' : 'move';
+    const formName = state.form.charAt(0).toUpperCase() + state.form.slice(1);
+    const cardName = ABILITY_DEFS[formCard].name;
+    return {
+      label: n >= 999 ? formName : `${formName} · ${n} ${n === 1 ? unit : `${unit}s`}`,
+      text:
+        state.cancellableActivation?.abilityId === formCard
+          ? `Tap ${cardName} again to take it back.`
+          : `Tap ${cardName} again to turn back into a rook.`,
     };
   }
   const owned = state.abilities.find((a) => a.id === 'raise');

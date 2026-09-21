@@ -9,7 +9,8 @@
  *   remaining transform / surge charges · bonus moves · movesLeft ·
  *   king stun / freeze · which non-king enemies are still on the board.
  *
- * Rookie (MAX) tries every legal move and every modelled ability cast;
+ * Rookie (MAX) tries every legal move, every modelled ability cast and
+ * turning back from a transform (tap its card again);
  * the king (MIN) picks any safe escape square under the exact rules of
  * `kingFleeMove` in lib/run/pawn-ai.ts. Non-king enemies are frozen
  * obstacles that Rookie may capture (a capture stuns the king for a turn,
@@ -65,6 +66,8 @@ interface Ctx {
   pen: Set<string> | null;
   kingFlees: boolean;
   transforms: OwnedAbility[];
+  /** Forms she can turn back from by tapping their card (owned, any charges). */
+  revertible: Set<RookieForm>;
   surge: OwnedAbility | null;
   memo: Map<string, boolean>;
   nodes: number;
@@ -175,6 +178,13 @@ function rookieTurn(ctx: Ctx, n: Node): boolean {
       break;
     }
   }
+  // Turn back: tapping the card of her current form makes her a rook, free.
+  // Modelled because the contract is one-sided — a win that needs the rook
+  // back must never read as dead. No loop: getting out of rook form again
+  // takes a cast, and transform charges are always finite (never -1).
+  if (!win && n.form !== 'rook' && n.formMovesLeft > 0 && ctx.revertible.has(n.form)) {
+    if (rookieTurn(ctx, { ...n, form: 'rook', formMovesLeft: 0 })) win = true;
+  }
   if (!win && ctx.surge) {
     const left = n.charges.surge ?? 0;
     if (left !== 0) {
@@ -270,6 +280,11 @@ export function isUnwinnable(state: BoardState): boolean {
   if (anyGuardCanMove(state)) return false;
 
   const transforms: OwnedAbility[] = [];
+  const revertible = new Set<RookieForm>();
+  for (const a of state.abilities) {
+    const f = formForAbility(a.id);
+    if (f) revertible.add(f);
+  }
   let surge: OwnedAbility | null = null;
   const charges: Record<string, number> = {};
   for (const a of state.abilities) {
@@ -299,6 +314,7 @@ export function isUnwinnable(state: BoardState): boolean {
     pen: state.kingPen ? new Set(state.kingPen) : null,
     kingFlees: state.kingBehavior === 'flee',
     transforms,
+    revertible,
     surge,
     memo: new Map(),
     nodes: 0,
