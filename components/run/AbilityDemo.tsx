@@ -20,6 +20,7 @@ import {
   convertTargets as computeConvertTargets,
   magnetTargets as computeMagnetTargets,
   coupTargets,
+  sacrificeBlastPreview,
   maxUsesForTier,
   type AbilityId,
   type OwnedAbility,
@@ -514,6 +515,74 @@ export const DEMOS: Partial<Record<AbilityId, Demo>> = {
     ],
     hold: 1900,
   },
+
+  // ---- The level-first cards and the rest of the late game. ----
+  mirror: {
+    // PROBLEM: he is on the f-file and she is on the c-file, with a guard
+    // between them on rank 8. The reflection appears on f3 (her square,
+    // flipped across the middle) and copies her move: she runs up the c-file,
+    // it runs up the f-file — and it is the echo that takes him.
+    puzzle: scene('c3', [enemy('king', 'f8'), ...pawns('e8', 'g8', 'g7')], {
+      pen: ['e8', 'f8', 'g8'],
+      still: true,
+    }),
+    rookie: 'c3',
+    kit: ['mirror'],
+    script: [...cast('mirror', 'f3'), ...walk('c3', 'c8', 1100, 1100)],
+    hold: 1900,
+  },
+  sacrifice: {
+    // PROBLEM: three guards wall off his file. Her knight goes in beside
+    // them — then blows up in its own move shape, taking every guard on a
+    // knight square, and the file is open.
+    puzzle: scene('d4', [enemy('king', 'd8'), enemy('bishop', 'd7'), enemy('knight', 'g6'), ...pawns('c6', 'c8', 'e8')], {
+      pen: ['c8', 'd8', 'e8'],
+      still: true,
+    }),
+    rookie: 'd4',
+    kit: ['summon-knight', 'sacrifice'],
+    script: [...cast('summon-knight', 'e5', 900, 800), ...cast('sacrifice', 'e5', 1000, 1000), ...walk('d4', 'd8', 1200, 800)],
+    hold: 1900,
+  },
+  dragon: {
+    // PROBLEM: he is walled in on every line a queen could use. The dragon
+    // lands beside her and takes him with the one move a queen does not have:
+    // the knight's jump.
+    puzzle: scene('d4', [enemy('king', 'f7'), ...pawns('d6', 'e6', 'e7', 'g6', 'f6')], {
+      pen: ['e8', 'f8', 'g8', 'f7', 'g7'],
+      still: true,
+    }),
+    rookie: 'd4',
+    kit: ['dragon'],
+    script: [...cast('dragon', 'e5'), { wait: 900, tap: 'e5' }, { wait: 800, tap: 'f7' }],
+    hold: 1900,
+  },
+  ricochet: {
+    // PROBLEM: he is on neither of her lines. Armed, her next rook slide
+    // banks off the stone: up the b-file, a 90-degree turn at the block,
+    // and along rank 6 onto him.
+    puzzle: scene('b2', [enemy('king', 'f6'), ...pawns('e7', 'f7', 'g7')], {
+      hazards: ['b7'],
+      pen: ['e6', 'f6', 'g6'],
+      still: true,
+    }),
+    rookie: 'b2',
+    kit: ['ricochet'],
+    script: [{ wait: 1000, card: 'ricochet' }, ...walk('b2', 'f6', 800, 1000)],
+    hold: 1900,
+  },
+  hourglass: {
+    // PROBLEM: his own pawn stands between them on rank 6. Turn the glass and
+    // they play a turn NOW, with her move still in hand — the pawn marches
+    // off her line, he has nowhere to run, and she takes him.
+    puzzle: scene('a6', [enemy('king', 'h6'), ...pawns('e6')], {
+      hazards: ['g7', 'h7', 'g5', 'h5'],
+    }),
+    rookie: 'a6',
+    kit: ['hourglass'],
+    script: [{ wait: 1000, card: 'hourglass' }, { wait: 1600, hold: true }, ...walk('a6', 'h6', 400, 800)],
+    hold: 1900,
+  },
 };
 
 /** True when this ability has a scripted demo (vs. the static-art fallback). */
@@ -723,6 +792,14 @@ function ScriptedDemo({ demo, paused, demoId }: { demo: Demo; paused: boolean; d
     return undefined;
   }, [state]);
 
+  // Sacrifice armed: each summon's piece-shaped blast, tinted — the same
+  // preview app/page.tsx passes the board.
+  const blastPreview = useMemo(() => {
+    if (state.activeAbility?.id !== 'sacrifice' || state.activeAbility.step !== 'pick-square') return undefined;
+    return sacrificeBlastPreview(state);
+  }, [state]);
+  const sacrificeFx = useSacrificeFx(state);
+
   const abilityFx = useTransient(state.lastAbilityFx, 900);
   const poisonDeathFx = useTransient(state.lastPoisonDeath, 1400);
   const aegisFx = useTransient(state.lastAegisIntercept, 800);
@@ -742,6 +819,8 @@ function ScriptedDemo({ demo, paused, demoId }: { demo: Demo; paused: boolean; d
         legalAbilityMoves={legalAbilityMoves}
         abilityTier={abilityTier}
         convertTargets={convertTargets}
+        blastPreview={blastPreview}
+        sacrificeFx={sacrificeFx}
         hideGoalRank
         skipIntro
         onSquareClick={() => {}}
@@ -771,6 +850,36 @@ function useTransient<T extends { id: number }>(sig: T | undefined, ms: number):
     const t = window.setTimeout(() => setFx(null), ms);
     return () => clearTimeout(t);
   }, [fx, ms]);
+  return fx;
+}
+
+/**
+ * The Sacrifice detonation burst, found by diffing consecutive states exactly
+ * as app/page.tsx does (a Sacrifice charge spent + a summon gone the same
+ * step): the summon's square and every enemy square that emptied.
+ */
+function useSacrificeFx(state: BoardState): { summonSq: string; capturedSqs: string[]; id: number } | null {
+  const [fx, setFx] = useState<{ summonSq: string; capturedSqs: string[]; id: number } | null>(null);
+  const prevRef = useRef<BoardState | null>(null);
+  useEffect(() => {
+    const prev = prevRef.current;
+    prevRef.current = state;
+    if (!prev) return;
+    const prevUses = prev.abilities.find((a) => a.id === 'sacrifice')?.usesLeftThisLevel;
+    const nextUses = state.abilities.find((a) => a.id === 'sacrifice')?.usesLeftThisLevel;
+    if (prevUses == null || nextUses == null || nextUses >= prevUses) return;
+    const gone = prev.allies.find((a) => !state.allies.some((b) => b.id === a.id));
+    if (!gone) return;
+    const capturedSqs = prev.pieces
+      .filter((p) => !state.pieces.some((q) => q.file === p.file && q.rank === p.rank && q.type === p.type))
+      .map((p) => toSquare({ file: p.file, rank: p.rank }));
+    setFx({ summonSq: toSquare({ file: gone.file, rank: gone.rank }), capturedSqs, id: Date.now() });
+  }, [state]);
+  useEffect(() => {
+    if (!fx) return;
+    const t = window.setTimeout(() => setFx(null), 700);
+    return () => clearTimeout(t);
+  }, [fx]);
   return fx;
 }
 
