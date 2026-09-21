@@ -136,6 +136,18 @@ never turns a FAIL on GATE into anything else, and it never makes a rung PASS.
 
 ---
 
+## Bonus rungs (Tyler, 2026-09-20)
+
+`LADDER_BONUS_RUNG_IDS` in `lib/run/ladder.ts` — today `revenge-64` The Hall of Mirrors ("rung 11") and `revenge-65` The Kaleidoscope ("rung 12"). They are a SEPARATE list, not rungs 11-12 of `LADDER_RUNG_IDS`: this spec, the nightly's one job per rung, `ladder-audit`, the daily pool and the power curve still mean exactly the ten.
+
+- **Always open.** No regular rung gates them and clearing them opens nothing. Shown after rung 10 with a NEW tag until cleared; the Ladder tab scrolls inside its own box to fit them (and only when they are visible).
+- **Invisible until approved.** A bonus rung whose run is not player-facing (`approved`/`live`) is not rendered, is not a ladder launch and grants nothing — and never fails the build. `pipeline.ts approve` is the only switch; note the kit's cards must be approved too, or `rungKit`'s filter drops them (Mirror, for these two).
+- **Kit granted** by the same derivation as an open regular rung (`ladderUnlockedAbilities`), so a fresh profile can be offered the kit on level 1.
+- **Results recorded** in `profile.ladder[runId]` + stars like any rung; `rungState` only ever reads the ten regular ids, so a bonus clear cannot open a regular rung.
+- **Dev preview:** `?bonusPreview=1` (sticky per tab, `?bonusPreview=0` clears; dead in production builds) shows and launches them before approval. Display only — it grants no kit.
+- Keep the list on ONE line: `pipeline.ts lint` reads regular rungs from `'<id>', // ...` lines in ladder.ts.
+- Tests: `lib/run/__tests__/ladder-bonus-rungs.test.ts`.
+
 ## Card rule (Tyler, 2026-09-15)
 
 Every rung offers exactly 3 cards, and every card upgrades on its normal path to T5. No `abilityTierCaps` on ladder runs; `pipeline.ts lint` fails the build if one appears. If an upgrade trivializes a level, change the board.

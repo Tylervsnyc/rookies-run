@@ -89,6 +89,79 @@ export const LADDER_RUNG_IDS: ReadonlyArray<string> = [
   'revenge-17', // The Briar       — dragon + sacrifice        -> Sacrifice
 ];
 
+/**
+ * ── BONUS RUNGS ("11" and "12") ─────────────────────────────────────────────
+ * Tyler, 2026-09-20: two extra runs shown AFTER the ten rungs, tagged NEW, and
+ * ALWAYS OPEN to everyone from first launch. They are deliberately a SEPARATE
+ * list, not appended to LADDER_RUNG_IDS: the ten-rung spec, the nightly's one
+ * job per rung, ladder-audit, the daily pool (REVENGE_RUN_IDS) and the power
+ * curve all read LADDER_RUNG_IDS and must not see these.
+ *
+ *   - never gated by, and never gate, a regular rung;
+ *   - a bonus rung that is NOT player-facing (pipeline stage below `approved`)
+ *     simply does not exist for players: not rendered, not launchable as a
+ *     ladder run, grants nothing. It never fails the build — it appears on its
+ *     own the moment `pipeline.ts approve` makes it player-facing;
+ *   - a visible bonus rung grants its kit exactly like an open regular rung
+ *     (`ladderUnlockedAbilities`), and records results in `profile.ladder`
+ *     under its run id like any rung.
+ *
+ * Kept on ONE line on purpose: `scripts/pipeline.ts lint` reads the regular
+ * rungs out of this file by matching `'<id>', // comment` lines.
+ *   revenge-64 The Hall of Mirrors (mirror + sacrifice) = "rung 11"
+ *   revenge-65 The Kaleidoscope    (mirror + convert)   = "rung 12"
+ */
+export const LADDER_BONUS_RUNG_IDS: ReadonlyArray<string> = ['revenge-64', 'revenge-65'];
+
+const BONUS_PREVIEW_KEY = 'rr-bonus-preview';
+
+/**
+ * DEV-ONLY display override: `?bonusPreview=1` shows the bonus rungs even
+ * while they are still `testing`, so the UI can be checked before approval.
+ * Sticky for the tab (sessionStorage) so it survives the launch navigation;
+ * `?bonusPreview=0` clears it. Always false in a production build and on the
+ * server. It only affects visibility/launch — it never grants a kit.
+ */
+export function bonusPreviewActive(): boolean {
+  if (process.env.NODE_ENV === 'production' || typeof window === 'undefined') return false;
+  try {
+    const q = new URLSearchParams(window.location.search).get('bonusPreview');
+    if (q === '1') window.sessionStorage.setItem(BONUS_PREVIEW_KEY, '1');
+    else if (q === '0') window.sessionStorage.removeItem(BONUS_PREVIEW_KEY);
+    return window.sessionStorage.getItem(BONUS_PREVIEW_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export interface BonusRung {
+  id: string;
+  /** Display number: 11, 12, ... (its slot after the regular rungs — stable even if an earlier bonus rung is hidden). */
+  rung: number;
+  run: RunDef;
+}
+
+/**
+ * The bonus rungs a player can see right now: player-facing AND resolvable.
+ * `facing` is injectable for tests; `preview` is the dev-only display override.
+ */
+export function visibleBonusRungs(
+  opts: { preview?: boolean; facing?: (id: string) => boolean } = {},
+): BonusRung[] {
+  const facing = opts.facing ?? isPlayerFacing;
+  const out: BonusRung[] = [];
+  LADDER_BONUS_RUNG_IDS.forEach((id, i) => {
+    if (!(opts.preview || facing(id)) || !isKnownRunId(id)) return;
+    out.push({ id, rung: LADDER_RUNG_IDS.length + i + 1, run: getRunById(id) });
+  });
+  return out;
+}
+
+/** A visible bonus rung is `open` until cleared — never `locked`. */
+export function bonusRungState(profile: PlayerProfile | undefined, runId: string): Exclude<RungState, 'locked'> {
+  return clearedRung(profile, runId) ? 'cleared' : 'open';
+}
+
 export type RungState = 'locked' | 'open' | 'cleared';
 
 function clearedRung(profile: PlayerProfile | undefined, runId: string | undefined): boolean {
@@ -103,10 +176,21 @@ function clearedRung(profile: PlayerProfile | undefined, runId: string | undefin
  * ladder is meant to be finished, and difficulty is the replay axis — stars
  * are recorded per mode (`rungStars`) so Hard still has something to earn.
  */
+/**
+ * DEMO BUILDS ONLY — every regular rung is open (Tyler 2026-09-20: "on the app
+ * have all levels unlocked on ladder", for the TestFlight build he hands to
+ * people). Baked in at build time: `NEXT_PUBLIC_LADDER_ALL_OPEN=1` at build time
+ * (the npm script `build:offline:demo`). The website never sets it, so the
+ * unlock order — and Dragon being saved for the last rung — is unchanged there.
+ * An open rung grants its kit, so a demo build also unlocks every ladder card.
+ * TURN IT OFF (build without the variable) before any App Store submission.
+ */
+export const LADDER_ALL_OPEN: boolean = process.env.NEXT_PUBLIC_LADDER_ALL_OPEN === '1';
+
 export function rungState(profile: PlayerProfile | undefined, index: number): RungState {
   if (index < 0 || index >= LADDER_RUNG_IDS.length) return 'locked';
   if (clearedRung(profile, LADDER_RUNG_IDS[index])) return 'cleared';
-  if (index === 0) return 'open';
+  if (index === 0 || LADDER_ALL_OPEN) return 'open';
   return clearedRung(profile, LADDER_RUNG_IDS[index - 1]) ? 'open' : 'locked';
 }
 
@@ -117,9 +201,10 @@ export function rungRun(index: number): RunDef | null {
   return getRunById(id);
 }
 
-/** True when `runId` is one of the ladder's rungs. */
-export function isLadderRunId(runId: string): boolean {
-  return LADDER_RUNG_IDS.includes(runId);
+/** True when `runId` is one of the ladder's rungs — a regular rung, or a bonus rung the player can currently see. */
+export function isLadderRunId(runId: string, facing: (id: string) => boolean = isPlayerFacing): boolean {
+  if (LADDER_RUNG_IDS.includes(runId)) return true;
+  return visibleBonusRungs({ preview: bonusPreviewActive(), facing }).some((b) => b.id === runId);
 }
 
 /** Index of `runId` on the ladder, or -1. */
@@ -136,9 +221,12 @@ export function ladderRungIndex(runId: string): number {
  * real player may hold. An empty kit (a run with no allowlist) grants nothing.
  */
 export function rungKit(index: number): AbilityId[] {
-  const run = rungRun(index);
+  return kitOf(rungRun(index), isPlayerFacing);
+}
+
+function kitOf(run: RunDef | null, facing: (id: string) => boolean): AbilityId[] {
   if (!run?.allowedAbilities) return [];
-  return (run.allowedAbilities as ReadonlyArray<string>).filter((id) => isPlayerFacing(id)) as AbilityId[];
+  return (run.allowedAbilities as ReadonlyArray<string>).filter((id) => facing(id)) as AbilityId[];
 }
 
 /**
@@ -150,12 +238,20 @@ export function rungKit(index: number): AbilityId[] {
  * drift out of sync, and a profile saved before this shipped picks its grants
  * up on the next load (profile.ts folds this in `sanitize`).
  */
-export function ladderUnlockedAbilities(profile: PlayerProfile | undefined): AbilityId[] {
+export function ladderUnlockedAbilities(
+  profile: PlayerProfile | undefined,
+  facing: (id: string) => boolean = isPlayerFacing,
+): AbilityId[] {
   const out = new Set<AbilityId>();
   for (let i = 0; i < LADDER_RUNG_IDS.length; i++) {
     const st = rungState(profile, i);
     if (st === 'locked') continue;
-    for (const id of rungKit(i)) out.add(id);
+    for (const id of kitOf(rungRun(i), facing)) out.add(id);
+  }
+  // Bonus rungs are always open once player-facing, so their kits are always
+  // granted — same derivation, same filter. (Never via the dev preview.)
+  for (const b of visibleBonusRungs({ facing })) {
+    for (const id of kitOf(b.run, facing)) out.add(id);
   }
   return [...out];
 }

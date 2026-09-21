@@ -121,7 +121,13 @@ export interface AllyPiece {
     | 'twin'
     | 'duchess'
     | 'dragon'
-    | 'vanguard';
+    | 'vanguard'
+    // Raise (2026-09-19): the last piece she captured, stood back up on her
+    // side. CONTROLLED like a converted piece; keeps the type it died with.
+    | 'raise'
+    // Mirror (2026-09-19): the echo rook. A summon for Swap / Sacrifice /
+    // Promote, but the player never taps it — it copies HER moves, flipped.
+    | 'mirror';
   /**
    * Bodyguard: enemy turns this ally stays on the board. Decremented at the
    * end of each enemy turn; the ally dissolves when it hits 0. Absent =
@@ -143,6 +149,12 @@ export interface AllyPiece {
    * Swap may target it). Cleared when the enemy turn ends.
    */
   dazed?: boolean;
+  /**
+   * Mirror only: how many more of ROOKIE'S moves the echo copies before it
+   * fades. Counted in her moves, not enemy turns (so `turnsLeft` stays absent
+   * and the enemy-phase clock never touches it). Absent = the whole level.
+   */
+  echoMovesLeft?: number;
 }
 
 export type Turn = 'rookie' | 'allies' | 'drones' | 'enemy';
@@ -255,6 +267,28 @@ export interface BoardState {
      * line: the player chooses the pull DISTANCE.
      */
     magnetFrom?: Coord;
+    /**
+     * Puppet only — the enemy picked on the first tap. While set (step
+     * 'pick-square') the second tap picks which of ITS moves it makes.
+     */
+    puppetFrom?: Coord;
+    /**
+     * Promote only, T3+ — the summon picked on the first tap. While set, the
+     * red panel offers the rungs in reach and the pick commits.
+     */
+    promoteFrom?: Coord;
+    /**
+     * Eruption only — the lava square picked on the first tap. While set
+     * (step 'pick-square') the flood squares are tinted and the second tap
+     * commits: the one square tapped, or (T3+) the vent again for all of them.
+     */
+    eruptionFrom?: Coord;
+    /**
+     * Catapult / Avalanche — the stone (or summon) picked on the first tap.
+     * While set, the second tap picks where it lands (Catapult) or which way
+     * every loose stone slides (Avalanche: tap the square beside the stone).
+     */
+    pickFrom?: Coord;
   } | null;
   /** Current level number (1-based) — drives pawn promotion options. */
   level: number;
@@ -375,11 +409,25 @@ export interface BoardState {
       | 'scarecrow'
       | 'gauntlet'
       | 'panic'
-      | 'chequer';
+      | 'chequer'
+      // The level-first five of 2026-09-19 (docs/new-abilities-2026-09-19.md).
+      | 'castle'
+      | 'catapult'
+      | 'mirror'
+      | 'ricochet'
+      | 'avalanche';
     from: string;
     to: string;
     id: number;
   };
+  /**
+   * Transient signal: set by her move when it BANKED (Ricochet). `waypoints`
+   * are the squares where the line turns, in order, ending on the landing
+   * square — the exact path `ricochetPaths` drew. The UI watches `id` and
+   * walks her sprite leg by leg instead of one diagonal slide. Never read by
+   * the rules.
+   */
+  lastRicochetMove?: { from: string; waypoints: string[]; id: number };
   /**
    * Transient signal: set on the state returned from an enemy turn when one
    * or more poisoned pieces' counters tick to 0 and they die. UI watches `id`
@@ -533,6 +581,35 @@ export interface BoardState {
    * enemy phase that follows a REAL Rookie action.
    */
   hourglassCastsThisTurn?: number;
+  /**
+   * Chain (2026-09-19) — true from the cast until the end of this Rookie
+   * turn. The next capturing MOVE by Rookie or a controlled summon spreads
+   * through same-type neighbours (see `chainVictims` in abilities.ts) and
+   * clears the flag. Cleared unspent when the enemy phase ends (a glass-turn
+   * holds it). Part of the Rewind snapshot like every other field.
+   */
+  chainArmed?: boolean;
+  /**
+   * Raise (2026-09-19) — the grave is READ from `captures`: the last entry at
+   * or after this index is the piece Raise stands up. A cast moves the floor
+   * to `captures.length`, so a second Raise needs a fresh capture. Absent = 0.
+   */
+  graveFloor?: number;
+  /**
+   * Ricochet (2026-09-19) — how many times her NEXT rook move may bank off a
+   * stone (1, or 2 from T3). Read by `rookieLegalMoves` on her own turn only,
+   * so the king never sees a banked line coming. Spent by her next move in
+   * rook form, banked or not. Absent/0 = not armed.
+   */
+  ricochetBanks?: number;
+  /**
+   * Castle (2026-09-19) — set by a Castle and cleared at the end of the enemy
+   * phase that follows. While set the king does not swing at a Rookie who is
+   * touching him (he has just been dropped there and is finding his feet): he
+   * flees if he can, and stands if he cannot. The ONE exception to "touching
+   * the king means he takes a swing", and it lasts exactly one enemy phase.
+   */
+  kingCastled?: boolean;
   cancellableActivation?: {
     abilityId: AbilityId;
     snapshot: {

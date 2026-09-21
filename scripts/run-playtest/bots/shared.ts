@@ -17,6 +17,13 @@
 import type { AbilityId, OwnedAbility } from '../../../lib/run/abilities';
 import {
   abilityLegalMoves,
+  avalancheDirSquares,
+  avalancheOutcomes,
+  canRicochet,
+  castleLanding,
+  catapultSources,
+  catapultThrowsFrom,
+  mirrorTargets,
   bodyguardSpawnSquare,
   boulderTargets,
   canMoveAllyAt,
@@ -28,11 +35,22 @@ import {
   controlledAllyLegalMoves,
   convertTargets,
   coupTargets,
+  // The ability-first five of 2026-09-19.
+  canArmChain,
+  eruptionFloodAll,
+  eruptionFloodSquares,
+  eruptionVents,
+  promoteOptions,
+  promoteTargets,
+  puppetDestinations,
+  puppetTargets,
+  raiseSpawnSquares,
   canRewind,
   isSmoked,
   latestRewindSnapshot,
   magnetLandingSquares,
   magnetTargets,
+  mirrorEchoReach,
   sacrificeTargets,
   scarecrowTargets,
   shoveTargets,
@@ -45,6 +63,7 @@ import {
 import { rookieLegalMoves, enemyAt } from '../../../lib/run/movement';
 import { TEMPO_REWARD, tempoMaxFor } from '../../../lib/run/scoring';
 import type {
+  AllyPiece,
   BoardState,
   Coord,
   EnemyPiece,
@@ -358,6 +377,51 @@ export interface ActionCandidate {
   target?: Coord;
   /** squire-move only: WHICH controlled summon moves (several can coexist). */
   from?: Coord;
+  /** Second tap of a two-step card (Puppet, Eruption, Catapult, Avalanche) — see `candidateToAction` in mcts.ts. */
+  target2?: Coord;
+  /** Promote T3+ only: the rung chosen for the summon (absent = the one rung on offer). */
+  promoteTo?: AllyPiece['type'];
+}
+
+/** True when Rookie's rook lines reach the king's square right now. */
+function hasRookLine(state: BoardState, king: Coord): boolean {
+  return rookieLegalMoves({ ...state, form: 'rook', ricochetBanks: 0 }).some(
+    (m) => m.file === king.file && m.rank === king.rank,
+  );
+}
+
+/**
+ * Rollout bonus for the level-first five: what the cast paid for THIS TURN —
+ * a capture, a ford, a line to the king, a body that can take him. Keeps the
+ * MCTS rollouts casting them when they pay and ignoring them when they do not.
+ */
+export function levelFirstCastBonus(before: BoardState, after: BoardState, id: AbilityId): number {
+  if (id !== 'castle' && id !== 'catapult' && id !== 'mirror' && id !== 'ricochet' && id !== 'avalanche') return 0;
+  let bonus = (before.pieces.length - after.pieces.length) * 6;
+  const lavaGone =
+    before.hazards.filter((h) => h.kind === 'lava').length - after.hazards.filter((h) => h.kind === 'lava').length;
+  bonus += lavaGone * 6;
+  const king = after.pieces.find((p) => p.type === 'king');
+  if (king) {
+    const kingBefore = before.pieces.find((p) => p.type === 'king');
+    if (kingBefore && !hasRookLine(before, kingBefore) && hasRookLine(after, king)) bonus += 20;
+    // Ricochet armed onto him / an echo that can land on him: a kill next tap.
+    if (rookieLegalMoves(after).some((m) => m.file === king.file && m.rank === king.rank)) bonus += 40;
+    if (mirrorEchoReach(after).some((m) => m.file === king.file && m.rank === king.rank)) bonus += 40;
+  }
+  return bonus;
+}
+
+/**
+ * Rollout bonus for a plain MOVE that sets a Castle up. The rollout policy
+ * ranks moves by distance to the king, and a castle wants the opposite — three
+ * or more squares off, on his row — so without this no rollout ever finds the
+ * square to cast from. Zero unless Castle is owned with a charge left.
+ */
+export function levelFirstSetupBonus(after: BoardState): number {
+  const castle = after.abilities.find((a) => a.id === 'castle');
+  if (!castle || castle.usesLeftThisLevel === 0) return 0;
+  return castleLanding(after) ? 14 : 0;
 }
 
 export function legalCandidates(
@@ -610,6 +674,77 @@ function candidatesForAbility(
       }
       return out;
     }
+    case 'promote': {
+      // One candidate per (summon, rung in reach): T1-T2 have one rung, T3+
+      // one or two, T5 up to four — highest first. A handful at most.
+      for (const c of promoteTargets(state)) {
+        const body = controlledAllies(state).find((a) => a.file === c.file && a.rank === c.rank);
+        const rungs = body ? promoteOptions(body.type, owned.tier) : [];
+        if (rungs.length <= 1) {
+          out.push({ kind: 'ability-target', abilityId: 'promote', target: c });
+          continue;
+        }
+        for (const to of [...rungs].reverse()) {
+          out.push({ kind: 'ability-target', abilityId: 'promote', target: c, promoteTo: to });
+        }
+      }
+      return out;
+    }
+    case 'raise': {
+      // Free squares beside her (at most 8); empty when the grave is.
+      for (const c of raiseSpawnSquares(state)) {
+        out.push({ kind: 'ability-target', abilityId: 'raise', target: c });
+      }
+      return out;
+    }
+    case 'puppet': {
+      // One candidate per (guard, destination). A queen alone has 20+ moves,
+      // so keep the ones that MATTER: every destination that kills (lava, or
+      // its own man at T3+), plus per guard the 3 quiet moves that carry it
+      // farthest from the king (the "pull the defender off" read). Cap 16.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      let n = 0;
+      for (const g of puppetTargets(state)) {
+        const dests = puppetDestinations(state, g);
+        const quiet = dests
+          .filter((d) => !d.kills)
+          .sort((a, b) => (king ? cheb(b.to, king) - cheb(a.to, king) : 0) || a.to.file - b.to.file || a.to.rank - b.to.rank)
+          .slice(0, 3);
+        for (const d of [...dests.filter((x) => x.kills), ...quiet]) {
+          out.push({ kind: 'ability-target', abilityId: 'puppet', target: g, target2: d.to });
+          if (++n >= 16) return out;
+        }
+      }
+      return out;
+    }
+    case 'eruption': {
+      // One candidate per (vent, square), kept to squares that burn a guard or
+      // touch the king's flight set — lava anywhere else is a wasted charge.
+      // T3+ adds the flood-all option per vent (target2 = the vent itself,
+      // the same second tap the player makes). Cap 16.
+      const king = state.pieces.find((p) => p.type === 'king');
+      const cheb = (a: Coord, b: Coord) => Math.max(Math.abs(a.file - b.file), Math.abs(a.rank - b.rank));
+      let n = 0;
+      for (const v of eruptionVents(state)) {
+        const flood = eruptionFloodSquares(state, v);
+        const counts = (fl: { square: Coord; burns: unknown }) => !!fl.burns || (king ? cheb(fl.square, king) <= 1 : false);
+        if (eruptionFloodAll(state, v).some(counts)) {
+          out.push({ kind: 'ability-target', abilityId: 'eruption', target: v, target2: v });
+          if (++n >= 16) return out;
+        }
+        for (const fl of flood.filter(counts)) {
+          out.push({ kind: 'ability-target', abilityId: 'eruption', target: v, target2: fl.square });
+          if (++n >= 16) return out;
+        }
+      }
+      return out;
+    }
+    case 'chain':
+      // One candidate, and only when a capture on offer right now would
+      // chain (canArmChain) — the arm is wasted otherwise.
+      if (canArmChain(state)) out.push({ kind: 'activate-ability', abilityId: 'chain' });
+      return out;
     case 'hourglass':
       // One candidate. The rollouts run the real pawn-ai inside the
       // glass-turn — the first card that lets the bot wait without a move.
@@ -634,6 +769,59 @@ function candidatesForAbility(
       // colour and scores the position that makes.
       if (canChequer(state)) out.push({ kind: 'activate-ability', abilityId: 'chequer' });
       return out;
+    // The level-first five (2026-09-19). Placement cards on an empty board
+    // are unmeasurable, so each enumerates only the casts that PAY THIS TURN.
+    case 'castle': {
+      // One legal castle at most — the geometry is the whole filter.
+      const c = castleLanding(state);
+      if (c) out.push({ kind: 'ability-target', abilityId: 'castle', target: c.king });
+      return out;
+    }
+    case 'mirror': {
+      for (const t of mirrorTargets(state)) out.push({ kind: 'ability-target', abilityId: 'mirror', target: t });
+      return out;
+    }
+    case 'ricochet':
+      // Arming adds the banked squares to her ordinary moves (rookieLegalMoves),
+      // so the banked captures — the king included — are plain 'move' candidates
+      // on the next decision. Arm only when a banked line reaches an enemy.
+      if (
+        canRicochet(state) &&
+        rookieLegalMoves({ ...state, ricochetBanks: owned.tier >= 3 ? 2 : 1 }).some(
+          (m) => !!enemyAt(state.pieces, m) && !rookieLegalMoves(state).some((x) => x.file === m.file && x.rank === m.rank),
+        )
+      ) {
+        out.push({ kind: 'activate-ability', abilityId: 'ricochet' });
+      }
+      return out;
+    case 'catapult': {
+      const king = state.pieces.find((p) => p.type === 'king');
+      for (const from of catapultSources(state)) {
+        for (const t of catapultThrowsFrom(state, from)) {
+          const nearKing = !!king && Math.max(Math.abs(t.to.file - king.file), Math.abs(t.to.rank - king.rank)) <= (t.projectile === 'summon' ? 2 : 1);
+          // A stone: crush, ford, a flee square removed, or her line to him opened
+          // by lifting the stone out of the way. A summon: into his court.
+          const opens = t.projectile === 'stone' && !!king && !hasRookLine(state, king) &&
+            hasRookLine({ ...state, hazards: state.hazards.filter((h) => !(h.file === from.file && h.rank === from.rank)) }, king);
+          if (t.crushed || t.ford || nearKing || opens) {
+            out.push({ kind: 'ability-target', abilityId: 'catapult', target: from, target2: t.to });
+          }
+        }
+      }
+      return out;
+    }
+    case 'avalanche': {
+      const king = state.pieces.find((p) => p.type === 'king');
+      for (const o of avalancheOutcomes(state)) {
+        const nearKing = !!king && o.slides.some((s) => !s.ford && Math.max(Math.abs(s.to.file - king.file), Math.abs(s.to.rank - king.rank)) <= 1);
+        const opens = !!king && !hasRookLine(state, king) && hasRookLine({ ...state, hazards: o.hazards, pieces: state.pieces.filter((p) => !o.crushed.includes(p)) }, king);
+        if (!(o.crushed.length > 0 || o.slides.some((s) => s.ford) || nearKing || opens)) continue;
+        const lead = o.slides[0];
+        const dirSq = avalancheDirSquares(state, lead.from).find((d) => d.outcome.dir === o.dir);
+        if (dirSq) out.push({ kind: 'ability-target', abilityId: 'avalanche', target: lead.from, target2: dirSq.square });
+      }
+      return out;
+    }
     case 'scarecrow': {
       // Empty squares with an OPEN rook line to the king (at most 14) plus
       // empty squares within 2 of Rookie, capped at 16. The fooled flee is

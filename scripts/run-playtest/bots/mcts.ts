@@ -14,6 +14,9 @@
 import {
   applyDismissOffer,
   applyOfferPick,
+  chainPreview,
+  controlledAllies,
+  controlledAllyLegalMoves,
   formForAbility,
   isOneChargePerRun,
 } from '../../../lib/run/abilities';
@@ -23,7 +26,7 @@ import { mulberry32 } from '../../../lib/run/seed';
 import type { BoardState } from '../../../lib/run/types';
 import { toSquare } from '../../../lib/run/types';
 import { applyBotAction } from './apply';
-import { type ActionCandidate, legalCandidates } from './shared';
+import { type ActionCandidate, legalCandidates, levelFirstCastBonus, levelFirstSetupBonus } from './shared';
 import { settleEnemyTurns } from './t3';
 import { describeAction } from '../utils/reason';
 import { hashString } from '../utils/rng';
@@ -300,6 +303,7 @@ function pickRolloutAction(
     let s = fastScore(after);
     const isAbilityCast =
       c.kind === 'activate-ability' || c.kind === 'ability-target';
+    if (c.kind === 'move') s += levelFirstSetupBonus(after);
     // Encourage occasional ability casts so rollouts explore ability use.
     if (isAbilityCast) {
       s += rng() * 3; // jitter — keeps abilities competitive on ties
@@ -310,6 +314,9 @@ function pickRolloutAction(
       // at 40% of those verified cast points. A flat bump (not jitter) when
       // the board is thick makes rollouts actually explore the cast lines.
       if (TYLER_PRIORS && state.pieces.length >= 6) s += 3;
+      s += castPayoff(state, after, c);
+      // The level-first five (2026-09-19): what the cast paid for this turn.
+      s += levelFirstCastBonus(state, after, c.abilityId!);
       // A transform that gives the new form an advancing move when the rook
       // had none is the key out of the trap — make rollouts take it.
       if (
@@ -320,6 +327,10 @@ function pickRolloutAction(
       ) {
         s += 80;
       }
+    }
+    // Chain is armed: the capture that runs down the line is the payoff.
+    if (!isAbilityCast && state.chainArmed) {
+      s += Math.max(0, after.captures.length - state.captures.length - 1) * CAST_KILL_BONUS;
     }
     scored.push({ c, s });
   }
@@ -338,6 +349,45 @@ function pickRolloutAction(
     if (r <= 0) return top[i].c;
   }
   return top[top.length - 1].c;
+}
+
+/** Rollout bonus per guard a cast removes THIS turn (a plain capture is ~0.8). */
+const CAST_KILL_BONUS = 6;
+
+/**
+ * "Does this cast pay off right now?" — the ability-eval for the five of
+ * 2026-09-19, whose value fastScore cannot see (it counts material and the
+ * king's distance, not a new body or a flee square that just became lava):
+ *   - any cast that kills (Puppet into lava / friendly fire, Eruption burn)
+ *   - Chain: the longest chain on offer, so the arm is worth exploring
+ *   - Promote / Raise: a body that attacks the king's square once awake
+ *   - Eruption: each square of the king's flight set it turns to lava
+ */
+function castPayoff(state: BoardState, after: BoardState, c: ActionCandidate): number {
+  const id = c.abilityId;
+  if (id !== 'promote' && id !== 'puppet' && id !== 'raise' && id !== 'eruption' && id !== 'chain') return 0;
+  let s = (after.captures.length - state.captures.length) * CAST_KILL_BONUS;
+  const king = after.pieces.find((p) => p.type === 'king');
+  if (id === 'chain') {
+    const longest = chainPreview(after).reduce((m, ch) => Math.max(m, ch.links.length), 0);
+    s += longest * CAST_KILL_BONUS;
+  }
+  if ((id === 'promote' || id === 'raise') && king && c.target) {
+    const body = controlledAllies(after).find((a) => a.file === c.target!.file && a.rank === c.target!.rank);
+    if (body && controlledAllyLegalMoves(after, body).some((m) => m.file === king.file && m.rank === king.rank)) {
+      s += body.dazed ? 8 : 60;
+    } else if (id === 'raise') {
+      s += 3; // a second body is worth a little anywhere
+    }
+  }
+  if (id === 'eruption' && king) {
+    const newLava = after.hazards.length - state.hazards.length;
+    const nearKing = after.hazards
+      .slice(state.hazards.length)
+      .filter((h) => Math.max(Math.abs(h.file - king.file), Math.abs(h.rank - king.rank)) <= 1).length;
+    s += nearKing * 5 - (newLava - nearKing) * 0.5;
+  }
+  return s;
 }
 
 /** Highest rank Rookie can reach in one move with her current form. */
@@ -522,6 +572,15 @@ function candidateToAction(c: ActionCandidate): BotAction {
   if (c.kind === 'squire-move') return { kind: 'squire-move', target: c.target!, ...(c.from ? { from: c.from } : {}) };
   if (c.kind === 'activate-ability')
     return { kind: 'activate-ability', abilityId: c.abilityId! };
+  // Two-tap cards carry their second tap. (Magnet deliberately does NOT: its
+  // candidates have always resolved to the farthest landing here, and every
+  // stored measurement was taken that way.)
+  if (c.promoteTo) {
+    return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, promoteTo: c.promoteTo };
+  }
+  if (c.target2 && c.abilityId !== 'magnet') {
+    return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target!, target2: c.target2 };
+  }
   return { kind: 'ability-target', abilityId: c.abilityId!, target: c.target! };
 }
 

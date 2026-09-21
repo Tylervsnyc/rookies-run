@@ -64,8 +64,24 @@ import {
   sacrificeBlastPreview,
   swapTargets,
   canRewind,
+  canRicochet,
+  castleTargets,
+  mirrorTargets,
+  catapultSources,
+  avalancheStones,
   convertTargets as computeConvertTargets,
   coupTargets,
+  // The ability-first five of 2026-09-19 (promote / puppet / raise / eruption / chain).
+  cardStatusFor,
+  applyPromoteChoice,
+  consequenceTint,
+  promoteChoices,
+  eruptionFloodAll,
+  eruptionVents,
+  fiveWithNoTarget,
+  puppetDestinations,
+  puppetTargets,
+  targetingHintFor,
   magnetTargets as computeMagnetTargets,
   maxUsesForTier,
   refreshAbilityUses,
@@ -78,6 +94,7 @@ import {
 import { applyRookieMove, stepDroneTurn, stepEnemyTurn } from '@/lib/run/engine';
 import { stepAllyTurnReactive as stepAllyTurn } from '@/lib/run/pawn-ai';
 import { isUnwinnable } from '@/lib/run/solver';
+import { useRicochetTravel } from '@/components/run/useRicochetTravel';
 import { ALLY_TICK_MS, DRONE_TICK_MS, ENEMY_CAPTURE_FX_MS, ENEMY_TICK_MS, PIECE_SLIDE_MS } from '@/components/run/timing';
 import {
   REVENGE_RUN_IDS,
@@ -460,6 +477,10 @@ export default function RookiesRunPage() {
     [meta.iso, meta.runId, meta.startLevelIndex, meta.parity, meta.ladder, meta.ladderDifficulty, meta.loadout, meta.testkit, meta.endless],
   );
   const [state, setState] = useState<BoardState>(initial.state);
+  // A banked Ricochet move is walked leg by leg on the board. Until she lands,
+  // nothing downstream of the move may show: no enemy / ally / drone tick, no
+  // capture sound, no win, no input.
+  const ricochetTravelling = useRicochetTravel(state).travelling;
   const [puzzle, setPuzzle] = useState<RunPuzzle>(initial.puzzle);
   // Ability charges as they stood when the CURRENT level began. A retry
   // restores this snapshot (see abilitiesForRetry): a one-charge finisher
@@ -623,6 +644,11 @@ export default function RookiesRunPage() {
       scarecrow: 600,
       gauntlet: 800,
       chequer: 700,
+      castle: 600,
+      catapult: 600,
+      mirror: 600,
+      ricochet: 600,
+      avalanche: 600,
     };
     const t = setTimeout(() => setAbilityFx(null), durations[abilityFx.kind]);
     return () => clearTimeout(t);
@@ -911,30 +937,30 @@ export default function RookiesRunPage() {
   // count; keying on the count alone left the phase hanging forever, and a
   // hung enemy phase means Rookie can't move and no ability can activate.
   useEffect(() => {
-    if (state.turn !== 'enemy' || state.status !== 'playing') return;
+    if (state.turn !== 'enemy' || state.status !== 'playing' || ricochetTravelling) return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'enemy' && s.status === 'playing' ? stepEnemyTurn(s) : s));
     }, ENEMY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state]);
+  }, [state, ricochetTravelling]);
 
   // Ally phase — tick one ally at a time so each move animates.
   useEffect(() => {
-    if (state.turn !== 'allies' || state.status !== 'playing') return;
+    if (state.turn !== 'allies' || state.status !== 'playing' || ricochetTravelling) return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'allies' && s.status === 'playing' ? stepAllyTurn(s) : s));
     }, ALLY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state.turn, state.status, state.allyTurnIndex]);
+  }, [state.turn, state.status, state.allyTurnIndex, ricochetTravelling]);
 
   // Drone phase — tick all live drones in parallel until the swarm finishes.
   useEffect(() => {
-    if (state.turn !== 'drones' || state.status !== 'playing') return;
+    if (state.turn !== 'drones' || state.status !== 'playing' || ricochetTravelling) return;
     const t = setTimeout(() => {
       setState((s) => (s.turn === 'drones' && s.status === 'playing' ? stepDroneTurn(s) : s));
     }, DRONE_TICK_MS);
     return () => clearTimeout(t);
-  }, [state.turn, state.status, state.drones]);
+  }, [state.turn, state.status, state.drones, ricochetTravelling]);
 
   // Unwinnable fail-safe — once control is back with Rookie (enemy / ally /
   // drone phases fully resolved), ask the solver whether the king can still
@@ -944,7 +970,7 @@ export default function RookiesRunPage() {
   // loss, so retries / Deja Vu bookkeeping are untouched.
   const unwinnableKeyRef = useRef<string>('');
   useEffect(() => {
-    if (state.status !== 'playing' || state.turn !== 'rookie') return;
+    if (state.status !== 'playing' || state.turn !== 'rookie' || ricochetTravelling) return;
     if (state.moveCount === 0 || state.activeAbility || state.pendingOffer) return;
     const key = `${state.level}|${state.moveCount}|${state.captures.length}|${toSquare(state.rookie)}`;
     if (key === unwinnableKeyRef.current) return;
@@ -958,7 +984,7 @@ export default function RookiesRunPage() {
       setState((s) => (s === snapshot ? { ...s, status: 'lost', turn: 'rookie' } : s));
     }, ENEMY_TICK_MS);
     return () => clearTimeout(t);
-  }, [state]);
+  }, [state, ricochetTravelling]);
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recorder watchers — dedupe-aware ticks for ally / drone / enemy phases.
@@ -1063,6 +1089,8 @@ export default function RookiesRunPage() {
   useEffect(() => {
     if (state.moveCount > lastRookieMoveRef.current) {
       const wasCapture = state.captures.length > lastRookieCapCountRef.current;
+      // A banked capture lands at the END of the line — the crunch waits for it.
+      if (wasCapture && ricochetTravelling) return;
       if (wasCapture) {
         void playCaptureSound();
         haptic('medium');
@@ -1073,7 +1101,7 @@ export default function RookiesRunPage() {
       lastRookieMoveRef.current = state.moveCount;
       lastRookieCapCountRef.current = state.captures.length;
     }
-  }, [state.moveCount, state.captures.length, state.status]);
+  }, [state.moveCount, state.captures.length, state.status, ricochetTravelling]);
 
   useEffect(() => {
     lastRookieMoveRef.current = 0;
@@ -1090,11 +1118,11 @@ export default function RookiesRunPage() {
   }, [state.enemyMovedSquares.length, state.status]);
 
   useEffect(() => {
-    if (state.status !== 'won') return;
+    if (state.status !== 'won' || ricochetTravelling) return;
     // Chess Path's puzzle two-tone, climbing one chromatic step per level (Tyler 2026-09-03).
     playCorrectSound(levelIndex, 0);
     hapticSuccess();
-  }, [state.status, levelIndex]);
+  }, [state.status, levelIndex, ricochetTravelling]);
 
   // Offer-arrival sfx (reuse card-draw chime).
   const prevPendingOfferRef = useRef<BoardState['pendingOffer']>(null);
@@ -1107,7 +1135,7 @@ export default function RookiesRunPage() {
   }, [state.pendingOffer]);
 
   useEffect(() => {
-    if (state.status !== 'won' || showLevelCleared || runComplete) return;
+    if (state.status !== 'won' || showLevelCleared || runComplete || ricochetTravelling) return;
 
     // Per-level split for the timed score (testing) — active-play ms spent on
     // this level, retries included.
@@ -1180,7 +1208,7 @@ export default function RookiesRunPage() {
       setShowLevelCleared(true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels, endless]);
+  }, [state.status, state.moveCount, state.captures, state.tempo, levelIndex, showLevelCleared, runComplete, meta.iso, meta.runId, totalLevels, endless, ricochetTravelling]);
 
   const trackedLossRef = useRef(false);
   useEffect(() => {
@@ -1235,8 +1263,28 @@ export default function RookiesRunPage() {
     if (state.activeAbility?.id === 'magnet' && state.activeAbility.step === 'pick-enemy')
       return computeMagnetTargets(state);
     if (state.activeAbility?.id === 'coup') return coupTargets(state);
+    if (state.activeAbility?.id === 'puppet' && state.activeAbility.step === 'pick-enemy')
+      return puppetTargets(state);
+    // Lava is painted OVER the square styles, so a dot or a wash on it is
+    // invisible: Eruption's vents and a Puppet's lava destinations ring instead.
+    if (state.activeAbility?.id === 'eruption' && !state.activeAbility.eruptionFrom)
+      return eruptionVents(state);
+    // T3+: the picked vent stays ringed while tapping it again floods them all.
+    if (state.activeAbility?.id === 'eruption' && state.activeAbility.eruptionFrom)
+      return eruptionFloodAll(state, state.activeAbility.eruptionFrom).length > 0
+        ? [state.activeAbility.eruptionFrom]
+        : undefined;
+    if (state.activeAbility?.id === 'puppet' && state.activeAbility.puppetFrom)
+      return puppetDestinations(state, state.activeAbility.puppetFrom)
+        .filter((d) => d.kills === 'lava')
+        .map((d) => d.to);
     return undefined;
   }, [state]);
+
+  // Puppet / Eruption / an armed Chain: the squares that change and the guards
+  // that die are tinted BEFORE the tap that commits them. Same functions the
+  // engine resolves with — the preview can never lie.
+  const abilityTint = useMemo(() => consequenceTint(state) ?? undefined, [state]);
 
   // Sacrifice armed: every summon that could detonate, with its piece-shaped
   // blast, so the player sees what explodes (and whose blast it is) before
@@ -1256,7 +1304,16 @@ export default function RookiesRunPage() {
       if (a.id === 'swap' && swapTargets(state).length === 0) out.push('swap');
       if (a.id === 'sacrifice' && sacrificeTargets(state).length === 0) out.push('sacrifice');
       if (a.id === 'rewind' && a.usesLeftThisLevel !== 0 && !canRewind(state)) out.push('rewind');
+      // The level-first five: same reason — gray a card with nothing to act on.
+      if (a.usesLeftThisLevel === 0 || state.activeAbility) continue;
+      if (a.id === 'castle' && castleTargets(state).length === 0) out.push('castle');
+      if (a.id === 'mirror' && mirrorTargets(state).length === 0) out.push('mirror');
+      if (a.id === 'catapult' && catapultSources(state).length === 0) out.push('catapult');
+      if (a.id === 'avalanche' && avalancheStones(state).length === 0) out.push('avalanche');
+      if (a.id === 'ricochet' && !canRicochet(state)) out.push('ricochet');
     }
+    // The five of 2026-09-19 gray out the same way when they have no target.
+    out.push(...fiveWithNoTarget(state));
     return out;
   }, [state]);
 
@@ -1330,6 +1387,11 @@ export default function RookiesRunPage() {
         recordEvent({ kind: 'tap', level: state.level, square, outcome, selected: selectedSquare });
       if (state.status !== 'playing' || state.turn !== 'rookie') {
         tapLog(`ignored:${state.status !== 'playing' ? state.status : `turn-${state.turn}`}`);
+        return;
+      }
+      // A banked Ricochet move is still running along its path: input is locked.
+      if (ricochetTravelling) {
+        tapLog('ignored:ricochet-travelling');
         return;
       }
 
@@ -1452,14 +1514,14 @@ export default function RookiesRunPage() {
       }
       setSelectedSquare(null);
     },
-    [state, selectedSquare, meta.iso, levelIndex, ensureAudioWarm, recordEvent],
+    [state, selectedSquare, meta.iso, levelIndex, ensureAudioWarm, recordEvent, ricochetTravelling],
   );
 
   const onPieceDrop = useCallback(
     (_sourceSquare: string, targetSquare: string) => {
       ensureAudioWarm();
       setInfoAbilityId(null);
-      if (state.status !== 'playing' || state.turn !== 'rookie') return false;
+      if (state.status !== 'playing' || state.turn !== 'rookie' || ricochetTravelling) return false;
       if (state.activeAbility) return false;
       const target = fromSquare(targetSquare);
       const next = applyRookieMove(state, target);
@@ -1480,7 +1542,7 @@ export default function RookiesRunPage() {
       setSelectedSquare(null);
       return true;
     },
-    [state, ensureAudioWarm, recordEvent],
+    [state, ensureAudioWarm, recordEvent, ricochetTravelling],
   );
 
   const onOfferPick = useCallback(
@@ -2316,6 +2378,7 @@ export default function RookiesRunPage() {
             abilityTier={activeAbilityTier}
             convertTargets={convertTargets}
             blastPreview={sacrificeBlast}
+            abilityTint={abilityTint}
             sacrificeFx={sacrificeFx}
             allyPoofFx={allyPoofFx}
             onSquareClick={onSquareClick}
@@ -2334,7 +2397,7 @@ export default function RookiesRunPage() {
           onActivate={onActivateAbility}
           infoId={infoAbilityId}
           onToggleInfo={toggleInfoAbility}
-          status={smokeStatus}
+          status={smokeStatus ?? cardStatusFor(state)}
           hint={state.status === 'playing' && !state.activeAbility ? 'Tap Rookie to see her moves.' : null}
         />
         </div>
@@ -2354,7 +2417,7 @@ export default function RookiesRunPage() {
                 {blurbDetailForTier(state.activeAbility.id, activeAbilityTier ?? 1).what}
               </span>
               {ABILITY_DEFS[state.activeAbility.id].name}:{' '}
-              {state.activeAbility.step === 'pick-enemy'
+              {targetingHintFor(state) ?? (state.activeAbility.step === 'pick-enemy'
                 ? state.activeAbility.id === 'magnet'
                   ? 'tap an enemy on your line'
                   : state.activeAbility.id === 'coup'
@@ -2364,14 +2427,54 @@ export default function RookiesRunPage() {
                   ? 'tap the square it lands on'
                   : state.activeAbility.id === 'shove'
                   ? 'tap a stone beside you'
+                  : state.activeAbility.id === 'castle'
+                  ? 'tap either glowing square. He lands on one, you on the other'
+                  : state.activeAbility.id === 'mirror'
+                  ? 'tap the glowing square'
+                  : state.activeAbility.id === 'catapult'
+                  ? state.activeAbility.pickFrom
+                    ? 'tap where it lands'
+                    : 'tap a loose stone or a summon right beside you'
+                  : state.activeAbility.id === 'avalanche'
+                  ? state.activeAbility.pickFrom
+                    ? 'tap the square beside it. Every loose stone slides that way'
+                    : 'tap a loose stone. The arrows show every slide'
                   : state.activeAbility.id === 'swap'
                   ? 'tap the summon to swap with'
                   : state.activeAbility.id === 'sacrifice'
                     ? 'tap the summon to detonate — its tinted squares are the blast'
                     : ABILITY_DEFS[state.activeAbility.id].activation === 'targeted'
                       ? 'tap an empty square'
-                      : 'tap a highlighted square'}
+                      : 'tap a highlighted square')}
             </span>
+            {/* Promote T3+: the rungs in reach, named before the tap that commits. */}
+            {state.activeAbility.id === 'promote' && promoteChoices(state).map((to) => (
+              <button
+                key={to}
+                type="button"
+                data-testid={`promote-to-${to}`}
+                onClick={withClick(() => {
+                  const next = applyPromoteChoice(state, to);
+                  if (next === state) return;
+                  recordEvent({
+                    kind: 'ability-target',
+                    level: state.level,
+                    ability: 'promote',
+                    target: toSquare(state.activeAbility!.promoteFrom!),
+                    enemyCount: state.pieces.length,
+                    allyCount: state.allies.length,
+                  });
+                  setState(next);
+                  playCardPlaySound();
+                  haptic('heavy');
+                  trackEvent('run_ability_used', { iso: meta.iso, level: levelIndex + 1, ability: 'promote' });
+                })}
+                className="px-3 min-h-[44px] rounded text-white text-[11px] font-black capitalize active:scale-95 shrink-0"
+                style={{ background: '#E53935' }}
+              >
+                {to}
+              </button>
+            ))}
             <button
               type="button"
               onClick={withClick(() => setState((s) => applyAbilityCancel(s)))}
@@ -2384,7 +2487,7 @@ export default function RookiesRunPage() {
 
       </div>
 
-      {!isStc && state.pendingOffer && state.status === 'playing' && (
+      {!isStc && state.pendingOffer && state.status === 'playing' && !ricochetTravelling && (
         <AbilityOfferModal
           offer={state.pendingOffer}
           onPick={onOfferPick}
@@ -2409,7 +2512,7 @@ export default function RookiesRunPage() {
         onDone={progress.shiftAchievement}
       />
       {/* Ability reveals wait until no offer/level modal is up so they never stack. */}
-      {!state.pendingOffer && !showLevelCleared && (
+      {!state.pendingOffer && !showLevelCleared && !ricochetTravelling && (
         <AbilityUnlockModal
           abilityId={progress.queue.unlocks[0]}
           onClose={progress.shiftUnlock}

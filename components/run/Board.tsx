@@ -1,15 +1,16 @@
 'use client';
 import { PIECE_SLIDE_MS } from './timing';
+import { RICOCHET_IDLE, useRicochetTravel } from './useRicochetTravel';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { defaultPieces } from 'react-chessboard';
 import { ChessPathBoard } from '@/components/board/ChessPathBoard';
 import { RookieCell, type RookieAlarm } from './RookieCell';
 import { rookieLegalMoves } from '@/lib/run/movement';
-import { SACRIFICE_BLAST_TINTS, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves } from '@/lib/run/abilities';
+import { SACRIFICE_BLAST_TINTS, abilityPreviewFor, canMoveAllyAt, controlledAllies, controlledAllyAt, controlledAllyLegalMoves, mirrorEchoMoves, mirrorRefusal } from '@/lib/run/abilities';
 import { decoyCapturer, nextEnemyMovers, rookieDangerState } from '@/lib/run/pawn-ai';
 import type { RookieDangerState } from '@/lib/run/pawn-ai';
-import type { AbilityTier, SacrificeBlastKind } from '@/lib/run/abilities';
+import type { AbilityPreview, AbilityTier, MirrorEchoMove, SacrificeBlastKind } from '@/lib/run/abilities';
 import type { AllyPiece, AllyPieceType, BoardState, Coord, Drone, PieceType, RookieForm } from '@/lib/run/types';
 import { fromSquare, toSquare } from '@/lib/run/types';
 import { REVENGE_RUN_IDS } from '@/lib/run/runs';
@@ -85,6 +86,10 @@ interface BoardProps {
    *  tinted in that summon's own color so the player sees exactly what
    *  explodes (and whose blast it is) BEFORE tapping. */
   blastPreview?: SacrificeBlastGroup[];
+  /** Puppet / Eruption / armed Chain: squares that are about to change get a
+   *  lava-red wash, guards that are about to die get a capture ring — the
+   *  consequence is on the board before the tap (see consequenceTint). */
+  abilityTint?: { wash: Coord[]; kills: Coord[] };
   /** Transient Sacrifice detonation VFX — burst on the summon square plus a
    *  hit flash on every square the blast captured. */
   sacrificeFx?: { summonSq: string; capturedSqs: string[]; id: number } | null;
@@ -239,6 +244,7 @@ export function RunBoard({
   abilityTier,
   convertTargets,
   blastPreview,
+  abilityTint,
   sacrificeFx = null,
   allyPoofFx = null,
   onSquareClick,
@@ -445,6 +451,15 @@ export function RunBoard({
   // captures, pendingOffer) would teleport the moving piece — visible as a
   // "blink" on enemy moves right after a Rookie capture.
   const positionRef = useRef<Record<string, { pieceType: string }>>({});
+  // A DRAGGED banked move is already standing on its landing square when she
+  // lets go (react-chessboard never animates a manual drop) — don't yank her
+  // back to the corner to replay it.
+  const ricochetClock = useRicochetTravel(state);
+  const [droppedMove, setDroppedMove] = useState(false);
+  useEffect(() => {
+    if (droppedMove && !ricochetClock.travelling) setDroppedMove(false);
+  }, [droppedMove, ricochetClock.travelling]);
+  const ricochet = droppedMove ? RICOCHET_IDLE : ricochetClock;
   const position = useMemo(() => {
     const map: Record<string, { pieceType: string }> = {};
     const rabidSet = new Set(state.rabidSquares);
@@ -465,6 +480,17 @@ export function RunBoard({
     }
     if (state.status !== 'lost' && introFile === null) {
       map[rookieSq] = { pieceType: rookieSprite };
+    }
+    // Banked Ricochet: the diff animation is one straight slide, so a banked
+    // move would cut the diagonal. Stand her on each corner in turn instead —
+    // every leg is then an ordinary native slide. Until the last leg starts,
+    // the landing square keeps whatever stood on it (the piece she is about to
+    // take, the king included), so the capture resolves when she ARRIVES.
+    if (ricochet.beforeLanding && ricochet.square && map[rookieSq]?.pieceType === rookieSprite) {
+      const victim = positionRef.current[rookieSq];
+      if (victim && victim.pieceType !== rookieSprite) map[rookieSq] = victim;
+      else delete map[rookieSq];
+      map[ricochet.square] = { pieceType: rookieSprite };
     }
     // Poisoned piece that moved and died in one engine step: stand it on
     // its destination for one slide so react-chessboard's diff animates the
@@ -490,7 +516,7 @@ export function RunBoard({
     }
     positionRef.current = map;
     return map;
-  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile, poisonSliding, poisonSlideDeaths]);
+  }, [state.pieces, state.rabidSquares, state.decoyTarget, rookieSprite, state.status, rookieSq, introFile, poisonSliding, poisonSlideDeaths, ricochet.beforeLanding, ricochet.square]);
 
   const wiggleSquares = useMemo(() => {
     if (state.status !== 'playing' || state.turn !== 'rookie') return [];
@@ -554,6 +580,29 @@ export function RunBoard({
     const t = setTimeout(() => setStunCause(null), 1600);
     return () => clearTimeout(t);
   }, [stunCause]);
+
+  // The level-first five (2026-09-19): castle landings, the mirror square and
+  // the echo's reach, catapult crush / ford squares, every avalanche slide and
+  // every banked Ricochet line — all drawn BEFORE the tap that commits them.
+  // Computed by the engine's own helpers, so the preview can never lie.
+  const abilityPreview = useMemo(() => abilityPreviewFor(state), [state]);
+
+  // Mirror teaching layer. With an echo up and Rookie selected, every one of
+  // her legal moves knows where the echo lands and what it takes — read from
+  // the engine (`mirrorEchoMoves`, the geometry `applyMirrorEcho` resolves
+  // with). Capturing moves carry an always-on marker on HER destination (touch
+  // has no hover); hovering a destination draws the echo's slide and ghost.
+  const echoMoves = useMemo(
+    () => (selectedSquare === toSquare(state.rookie) && !state.activeAbility ? mirrorEchoMoves(state) : []),
+    [state, selectedSquare],
+  );
+  const mirrorBlocked = useMemo(() => mirrorRefusal(state)?.square ?? null, [state]);
+  const [hoverSquare, setHoverSquare] = useState<string | null>(null);
+  const boardBoxRef = useRef<HTMLDivElement | null>(null);
+  const trackHover = echoMoves.length > 0;
+  useEffect(() => {
+    if (!trackHover) setHoverSquare(null);
+  }, [trackHover]);
 
   const squareStyles = useMemo(() => {
     const styles: Record<string, React.CSSProperties> = {};
@@ -712,6 +761,45 @@ export function RunBoard({
       }
     }
 
+    // Consequence tint (Puppet / Eruption / armed Chain): a lava-red wash on
+    // every square about to change, a red ring on every guard about to die.
+    if (abilityTint) {
+      for (const c of abilityTint.wash) {
+        const sq = toSquare(c);
+        const prev = styles[sq] ?? {};
+        const glow = 'inset 0 0 0 3px rgba(234,88,12,0.85)';
+        styles[sq] = {
+          ...prev,
+          backgroundColor: 'rgba(239, 68, 68, 0.42)',
+          boxShadow: prev.boxShadow ? `${prev.boxShadow}, ${glow}` : glow,
+        };
+      }
+      for (const c of abilityTint.kills) {
+        const sq = toSquare(c);
+        const prev = styles[sq] ?? {};
+        const ring = 'radial-gradient(circle, transparent 60%, rgba(185,28,28,0.95) 60%)';
+        styles[sq] = {
+          ...prev,
+          backgroundImage: prev.backgroundImage ? `${ring}, ${prev.backgroundImage}` : ring,
+        };
+      }
+    }
+
+    // Ability preview marks — a quiet wash per consequence: gold = a landing
+    // square, red = something is crushed there, blue = a ford opens there,
+    // violet = the Mirror square / a square the echo can reach.
+    if (abilityPreview) {
+      for (const m of abilityPreview.marks) {
+        const sq = toSquare(m.square);
+        const prev = styles[sq] ?? {};
+        const ring = PREVIEW_MARK_RING[m.tone];
+        styles[sq] = {
+          ...prev,
+          boxShadow: prev.boxShadow ? `${prev.boxShadow}, ${ring}` : ring,
+        };
+      }
+    }
+
     // Dart-style abilities (freeze ray, poison dart, rabies dart) — no
     // target-circle highlights; the cursor + piece tap is enough.
 
@@ -815,7 +903,7 @@ export function RunBoard({
     }
 
     return styles;
-  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
+  }, [state, selectedSquare, legalAbilityMoves, abilityTier, blastPreview, abilityTint, abilityPreview, rankGoal, kingSquare, poisonSliding, poisonSlideDeaths]);
 
   // Decoy: the piece that WILL take the mark, so the lure is plannable.
   const decoyArrow = useMemo(
@@ -1280,7 +1368,26 @@ export function RunBoard({
           }
         `}</style>
       )}
-      <div data-rrb={uid} style={{ position: 'relative' }}>
+      {ricochet.travelling && (
+        // Constant speed along the bent line: the library eases every slide,
+        // which would brake her into each corner. Linear, for her legs only.
+        <style>{`[data-piece="${rookieSprite}"] { transition-timing-function: linear !important; }`}</style>
+      )}
+      <div
+        data-rrb={uid}
+        ref={boardBoxRef}
+        style={{ position: 'relative' }}
+        onPointerMove={trackHover ? (e) => {
+          if (e.pointerType !== 'mouse') return;
+          const box = boardBoxRef.current?.getBoundingClientRect();
+          if (!box || box.width === 0) return;
+          const file = Math.floor(((e.clientX - box.left) / box.width) * 8) + 1;
+          const rank = 8 - Math.floor(((e.clientY - box.top) / box.height) * 8);
+          const sq = file >= 1 && file <= 8 && rank >= 1 && rank <= 8 ? toSquare({ file, rank }) : null;
+          setHoverSquare((prev) => (prev === sq ? prev : sq));
+        } : undefined}
+        onPointerLeave={trackHover ? () => setHoverSquare(null) : undefined}
+      >
         <ChessPathBoard
           options={{
             id: 'rookies-run-board',
@@ -1296,10 +1403,13 @@ export function RunBoard({
               piece?.pieceType === rookieSprite &&
               state.turn === 'rookie' &&
               state.status === 'playing',
-            onPieceDrop: ({ sourceSquare, targetSquare }) =>
-              targetSquare ? onPieceDrop(sourceSquare, targetSquare) : false,
+            onPieceDrop: ({ sourceSquare, targetSquare }) => {
+              const moved = targetSquare ? onPieceDrop(sourceSquare, targetSquare) : false;
+              if (moved) setDroppedMove(true);
+              return moved;
+            },
             onSquareClick: ({ square }) => onSquareClick(square),
-            animationDurationInMs: slideMs ?? PIECE_SLIDE_MS,
+            animationDurationInMs: ricochet.legMs ?? slideMs ?? PIECE_SLIDE_MS,
           }}
         />
         {lavaSquares.length > 0 && (
@@ -1411,6 +1521,15 @@ export function RunBoard({
           </div>
         )}
         {decoyArrow && <DecoyArrow from={decoyArrow.from} to={decoyArrow.to} />}
+        {abilityPreview && <AbilityPreviewOverlay preview={abilityPreview} />}
+        {(echoMoves.length > 0 || mirrorBlocked || state.activeAbility?.id === 'mirror') && state.status === 'playing' && (
+          <MirrorTeachOverlay
+            moves={echoMoves}
+            hoverSquare={hoverSquare}
+            showAxis={state.activeAbility?.id === 'mirror'}
+            blocked={mirrorBlocked}
+          />
+        )}
         {state.status === 'playing' && (state.smokeTurnsLeft ?? 0) > 0 && (
           <SquareChip
             square={toSquare(state.rookie)}
@@ -1884,7 +2003,7 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
-  if (fx.kind === 'shove') {
+  if (fx.kind === 'shove' || fx.kind === 'catapult' || fx.kind === 'avalanche') {
     // A stone rolls one square from where it stood to where it lands, with a
     // dust ring at the landing. (The lava under it re-renders at once; this
     // is the beat that says "it MOVED, it did not disappear".)
@@ -2044,7 +2163,13 @@ function AbilityFxLayer({ fx, geom }: AbilityFxLayerProps) {
     );
   }
 
-  if (fx.kind === 'bodyguard' || fx.kind === 'summon-knight') {
+  if (
+    fx.kind === 'bodyguard' ||
+    fx.kind === 'summon-knight' ||
+    fx.kind === 'mirror' ||
+    fx.kind === 'castle' ||
+    fx.kind === 'ricochet'
+  ) {
     // Rainbow ring blooms on the spawn square.
     const k = Math.floor(fx.id);
     return (
@@ -2421,6 +2546,256 @@ function DizzyIcon() {
  * piece to the mark. Pure overlay (never takes taps). Board coordinates: file
  * a..h left to right, rank 8 at the top (same as SquareChip).
  */
+/** Inset rings for the ability-preview marks (see abilityPreviewFor). */
+const PREVIEW_MARK_RING: Record<AbilityPreview['marks'][number]['tone'], string> = {
+  land: 'inset 0 0 0 4px rgba(251,191,36,0.95), inset 0 0 16px rgba(251,191,36,0.6)',
+  crush: 'inset 0 0 0 4px rgba(239,68,68,0.95), inset 0 0 16px rgba(239,68,68,0.55)',
+  ford: 'inset 0 0 0 4px rgba(56,189,248,0.95), inset 0 0 16px rgba(56,189,248,0.6)',
+  echo: 'inset 0 0 0 3px rgba(167,139,250,0.85)',
+};
+
+/** One colour per avalanche direction; gold for the king's hop, white for hers. */
+const PREVIEW_ARROW_COLOR: Record<AbilityPreview['arrows'][number]['tone'], string> = {
+  N: 'rgba(56,189,248,1)',
+  E: 'rgba(251,191,36,1)',
+  S: 'rgba(244,114,182,1)',
+  W: 'rgba(74,222,128,1)',
+  king: 'rgba(251,191,36,1)',
+  rookie: 'rgba(255,255,255,1)',
+};
+
+/**
+ * Arrows (castle hops, avalanche slides) and bent lines (banked Ricochet
+ * paths) for the armed card. Pure SVG over the board, never interactive.
+ */
+function AbilityPreviewOverlay({ preview }: { preview: AbilityPreview }) {
+  const cx = (c: Coord) => c.file - 0.5;
+  const cy = (c: Coord) => 8 - c.rank + 0.5;
+  const tones = [...new Set(preview.arrows.map((a) => a.tone))];
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 8 8"
+      preserveAspectRatio="none"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 3 }}
+    >
+      <defs>
+        {tones.map((t) => (
+          <marker key={t} id={`rr-preview-head-${t}`} viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill={PREVIEW_ARROW_COLOR[t]} />
+          </marker>
+        ))}
+      </defs>
+      {preview.arrows.map((a, i) => {
+        const x1 = cx(a.from);
+        const y1 = cy(a.from);
+        const x2 = cx(a.to);
+        const y2 = cy(a.to);
+        const len = Math.hypot(x2 - x1, y2 - y1) || 1;
+        // Several directions can leave one stone: nudge each arrow sideways a
+        // touch so they never draw on top of one another.
+        const off = a.tone === 'N' || a.tone === 'E' ? 0.12 : a.tone === 'S' || a.tone === 'W' ? -0.12 : 0;
+        const nx = (-(y2 - y1) / len) * off;
+        const ny = ((x2 - x1) / len) * off;
+        return (
+          <line
+            key={i}
+            x1={x1 + nx}
+            y1={y1 + ny}
+            x2={x2 + nx - ((x2 - x1) / len) * 0.2}
+            y2={y2 + ny - ((y2 - y1) / len) * 0.2}
+            stroke={PREVIEW_ARROW_COLOR[a.tone]}
+            strokeWidth={0.1}
+            strokeLinecap="round"
+            markerEnd={`url(#rr-preview-head-${a.tone})`}
+          />
+        );
+      })}
+      {preview.paths.map((p, i) => {
+        const end = p.squares[p.squares.length - 1];
+        const color = p.capture ? 'rgba(239,68,68,0.95)' : 'rgba(125,211,252,0.95)';
+        return (
+          <g key={`p${i}`}>
+            <polyline
+              points={p.squares.map((c) => `${cx(c)},${cy(c)}`).join(' ')}
+              fill="none"
+              stroke={color}
+              strokeWidth={0.07}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeDasharray="0.22 0.12"
+            />
+            <circle cx={cx(end)} cy={cy(end)} r={0.16} fill={color} stroke="#fff" strokeWidth={0.04} />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+const RR_RAINBOW = 'conic-gradient(from 0deg, #f87171, #fbbf24, #4ade80, #38bdf8, #a78bfa, #f472b6, #f87171)';
+
+/**
+ * Mirror teaching overlay — never interactive, and it holds no geometry of its
+ * own: every square here comes from the engine (`mirrorEchoMoves` /
+ * `mirrorRefusal`).
+ *   - always on (Rookie selected, echo up): a rainbow pip on each of HER
+ *     destinations that makes the reflection take a piece; a gold crown badge
+ *     and ring when what it takes is the king.
+ *   - the hovered destination (and any king-taking one, so touch sees it too):
+ *     the echo's slide as a thin line, a ghost rook on its landing square, a
+ *     ring on the victim.
+ *   - Mirror card armed: a faint axis between the d and e files.
+ *   - Mirror refused: a faint crossed ring on the square that has no room.
+ */
+function MirrorTeachOverlay({
+  moves,
+  hoverSquare,
+  showAxis,
+  blocked,
+}: {
+  moves: MirrorEchoMove[];
+  hoverSquare: string | null;
+  showAxis: boolean;
+  blocked: Coord | null;
+}) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [cellPx, setCellPx] = useState(0);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const measure = () => setCellPx(el.getBoundingClientRect().width / 8);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const cx = (c: Coord) => c.file - 0.5;
+  const cy = (c: Coord) => 8 - c.rank + 0.5;
+  const cell = (c: Coord): React.CSSProperties => ({
+    position: 'absolute',
+    left: `${(c.file - 1) * 12.5}%`,
+    top: `${(8 - c.rank) * 12.5}%`,
+    width: '12.5%',
+    height: '12.5%',
+  });
+  const capturing = moves.filter((m) => m.victim);
+  // Drawn in full: the hovered move, plus every king-taking move.
+  const drawn = moves.filter((m) => m.land && (m.victim === 'king' || toSquare(m.dest) === hoverSquare));
+  const hovered = moves.find((m) => toSquare(m.dest) === hoverSquare);
+  return (
+    <div ref={rootRef} aria-hidden data-testid="mirror-teach" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 4 }}>
+      <style>{`
+        @keyframes rrEchoKingPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+        @media (prefers-reduced-motion: reduce) { .rr-echo-king { animation: none !important; } }
+      `}</style>
+      <svg viewBox="0 0 8 8" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        {showAxis && (
+          <line data-testid="mirror-axis" x1={4} y1={0} x2={4} y2={8} stroke="rgba(221,214,254,0.95)" strokeWidth={0.06} strokeDasharray="0.18 0.14" />
+        )}
+        {blocked && (
+          <g data-testid="mirror-blocked" opacity={0.8}>
+            <circle cx={cx(blocked)} cy={cy(blocked)} r={0.3} fill="none" stroke="rgba(196,181,253,0.95)" strokeWidth={0.06} strokeDasharray="0.12 0.08" />
+            <line x1={cx(blocked) - 0.21} y1={cy(blocked) + 0.21} x2={cx(blocked) + 0.21} y2={cy(blocked) - 0.21} stroke="rgba(196,181,253,0.95)" strokeWidth={0.06} />
+          </g>
+        )}
+        {drawn.map((m) => (
+          <line
+            key={`l${toSquare(m.dest)}`}
+            x1={cx(m.from)}
+            y1={cy(m.from)}
+            x2={cx(m.land!)}
+            y2={cy(m.land!)}
+            stroke={m.victim === 'king' ? 'rgba(251,191,36,0.95)' : 'rgba(196,181,253,0.95)'}
+            strokeWidth={0.07}
+            strokeLinecap="round"
+            strokeDasharray="0.2 0.12"
+          />
+        ))}
+      </svg>
+      {drawn.map((m) => (
+        <div
+          key={`g${toSquare(m.dest)}`}
+          data-testid="mirror-ghost"
+          data-square={toSquare(m.land!)}
+          data-victim={m.victim ?? ''}
+          style={{
+            ...cell(m.land!),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            borderRadius: 6,
+            boxShadow: m.victim === 'king'
+              ? 'inset 0 0 0 4px rgba(251,191,36,1), inset 0 0 0 6px rgba(220,38,38,0.95), inset 0 0 18px rgba(251,191,36,0.8)'
+              : m.victim
+                ? 'inset 0 0 0 4px rgba(220,38,38,0.95)'
+                : 'inset 0 0 0 3px rgba(196,181,253,0.95)',
+          }}
+        >
+          {cellPx > 0 && (
+            <div style={{ opacity: m.victim ? 0.5 : 0.6 }}>
+              <PieceBlocks piece={ALLY_BLOCK.rook} blockSize={3} fit={Math.floor(cellPx * ALLY_CELL_FIT)} />
+            </div>
+          )}
+        </div>
+      ))}
+      {drawn.filter((m) => m.victim === 'king').map((m) => (
+        <SquareChip
+          key={`k${toSquare(m.dest)}`}
+          square={toSquare(m.land!)}
+          label="Takes the king"
+          palette={{ color: '#5b3a00', background: 'rgba(253,230,138,0.97)', border: 'rgba(161,98,7,0.9)' }}
+        />
+      ))}
+      {hovered && !hovered.land && (
+        <SquareChip
+          square={toSquare(hovered.from)}
+          label="Stays put"
+          palette={{ color: '#4c1d95', background: 'rgba(233,213,255,0.95)', border: 'rgba(168,85,247,0.9)' }}
+        />
+      )}
+      {capturing.map((m) => {
+        const king = m.victim === 'king';
+        return (
+          <div key={`m${toSquare(m.dest)}`} style={cell(m.dest)}>
+            {king && (
+              <div style={{ position: 'absolute', inset: 0, borderRadius: 6, boxShadow: 'inset 0 0 0 3px rgba(251,191,36,1), inset 0 0 14px rgba(251,191,36,0.7)' }} />
+            )}
+            <div
+              className={king ? 'rr-echo-king' : undefined}
+              data-testid="mirror-capture-marker"
+              data-square={toSquare(m.dest)}
+              data-victim={m.victim ?? ''}
+              style={{
+                position: 'absolute',
+                top: '5%',
+                right: '5%',
+                width: king ? '46%' : '30%',
+                height: king ? '46%' : '30%',
+                borderRadius: '50%',
+                background: RR_RAINBOW,
+                border: king ? '2px solid #fde68a' : '1.5px solid #fff',
+                boxShadow: king ? '0 0 10px rgba(251,191,36,0.95)' : '0 1px 3px rgba(0,0,0,0.45)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                animation: king ? 'rrEchoKingPulse 1s ease-in-out infinite' : undefined,
+              }}
+            >
+              {king && (
+                <svg viewBox="0 0 24 24" width="72%" height="72%" aria-hidden>
+                  <path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8z" fill="#fff" stroke="#5b3a00" strokeWidth="1.6" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function DecoyArrow({ from, to }: { from: Coord; to: Coord }) {
   const cx = (c: Coord) => c.file - 0.5;
   const cy = (c: Coord) => 8 - c.rank + 0.5;

@@ -17,11 +17,17 @@ const PLACEHOLDER_ART: Partial<Record<AbilityId, string>> = {
   snare: 'decoy-1.webp',
   shove: 'boulder-1.webp',
   coup: 'swap-1.webp',
-  hourglass: 'rewind-1.webp',
+  // The ability-first five of 2026-09-19 borrow art until theirs is painted.
+  promote: 'page-1.webp',
+  raise: 'convert-1.webp',
+  eruption: 'boulder-1.webp',
+  chain: 'drones-1.webp',
   scarecrow: 'smoke-1.webp',
   gauntlet: 'become-king-2.webp',
   panic: 'freeze-ray-2.webp',
   chequer: 'boulder-1.webp',
+  castle: 'become-king-2.webp',
+  catapult: 'boulder-1.webp',
 };
 
 export function artFile(id: AbilityId): string {
@@ -31,5 +37,8 @@ export function artFile(id: AbilityId): string {
   if (id === 'rabies-dart') return 'rabies-dart-2.webp';
   if (id === 'freeze-ray') return 'freeze-ray-2.webp';
   if (id === 'become-king') return 'become-king-2.webp';
+  if (id === 'hourglass') return 'hourglass-6.webp';
+  if (id === 'puppet') return 'puppet-13.webp';
+  if (id === 'mirror') return 'mirror-9.webp';
   return `${id}-1.webp`;
 }

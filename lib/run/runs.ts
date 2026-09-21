@@ -4915,7 +4915,7 @@ const RUN_REVENGE_5: RunDef = {
 // ─────────────────────────────────────────────────────────────────────────────
 // ABILITY LAB (2026-08-31) — hidden sandbox for playtesting the newest support
 // abilities (Boulder / Smoke / Rewind / Magnet / Bodyguard / Squire) with the
-// gameplay music. Reach via /?run=ability-lab. 3 short flee levels, a free
+// gameplay music. Reach via /?run=ability-lab. 4 short flee levels, a free
 // 3-card offer before EVERY level, unlock gating OFF. NOT tuned by the harness —
 // it's a toy box, not a run. Delete or promote once the abilities are signed off.
 
@@ -4935,6 +4935,19 @@ const LAB_ABILITIES: ReadonlyArray<string> = [
   'vanguard',
   'swap',
   'sacrifice',
+  // The ability-first five of 2026-09-19 (testing). L4 below is their room.
+  'promote',
+  'puppet',
+  'raise',
+  'eruption',
+  'chain',
+  // The level-first five (2026-09-19, testing). L5 below is their quarry: the
+  // offer filter drops a terrain card on a level with no stone it may touch.
+  'castle',
+  'catapult',
+  'mirror',
+  'ricochet',
+  'avalanche',
   // two finishers so a slate can't brick the run
   'surge',
   'knight-hop',
@@ -4985,6 +4998,36 @@ const RUN_ABILITY_LAB: RunDef = {
         moveLimit: 10,
         hazards: [X(2, 8), X(6, 8), X(2, 7), X(6, 7), X(3, 7), X(5, 7)],
         kingPen: ['c8', 'd8', 'e8', 'd7'],
+      },
+    ),
+    // L4 — CALDERA (2026-09-19). The room for promote / puppet / raise /
+    // eruption / chain. Two lava vents (d7, f7) sit under his flee squares:
+    // Eruption floods d8 / f8; the g5 knight's jump to f7 is a Puppet burn.
+    // c5-d4-e5 is a pawn chain for Chain; anything she eats is a Raise, and
+    // whatever stands up is a body Promote can climb.
+    make(
+      4,
+      [pawn(3, 5), pawn(4, 4), pawn(5, 5), knight(7, 5), bishop(2, 6), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [X(3, 8), X(7, 8), LAVA(4, 7), LAVA(6, 7)],
+        kingPen: ['d8', 'e8', 'f8', 'e7'],
+      },
+    ),
+    // L5 — QUARRY (2026-09-19). A lava river with no ford, loose stone on her
+    // bank and two blocks hanging over the gutter. Catapult a stone into the
+    // river or Avalanche north for a ford; the stones are Ricochet rails; a
+    // Mirror echo or a Castle does the rest once she is across.
+    make(
+      5,
+      [pawn(4, 7), knight(2, 7), king(5, 8)],
+      {
+        ...FLEE,
+        hazards: [
+          ...[1, 2, 3, 4, 5, 6, 7, 8].map((f) => LAVA(f, 5)),
+          X(3, 4), X(6, 4), X(2, 2), X(4, 2), X(7, 2),
+        ],
+        kingPen: ['d8', 'e8', 'f8', 'e7', 'f7'],
       },
     ),
   ],

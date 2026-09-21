@@ -535,8 +535,12 @@ function kingReaction(state: BoardState): BoardState | null {
   // old "keep running from a shield" exception made his behavior depend on a
   // card state the player could not see him read. The permanent T5 shield
   // that once parked him forever is gone — T5 is a 3-turn clock now.)
+  //
+  // Castle (2026-09-19): a king who was just castled does not swing this
+  // phase — he runs if he can (see `kingCastled` in types.ts).
   if (
     !isSmoked(state) &&
+    !state.kingCastled &&
     (state.kingStunTurns ?? 0) <= 0 &&
     state.form !== 'king' &&
     chebyshev({ file: king.file, rank: king.rank }, state.rookie) <= 1
@@ -618,7 +622,7 @@ export function isRookieThreatened(state: BoardState): boolean {
   // A frozen piece skips its next action — it can't take her. Nor can a
   // stunned king, who is now a capturer like anyone else: without this the
   // alarm sprite would call check on a king who cannot move.
-  const kingStunned = (state.kingStunTurns ?? 0) > 0;
+  const kingStunned = (state.kingStunTurns ?? 0) > 0 || state.kingCastled === true;
   return state.pieces.some(
     (piece) =>
       !state.frozenSquares.includes(toSquare(piece)) &&
@@ -981,7 +985,8 @@ function chooseEnemyActionAgainst(
   const smoked = isSmoked(state); // Smoke: nobody can see Rookie
   // A stunned king is out of the fight entirely — he cannot take her either,
   // and neither can one who already took his reaction step this phase.
-  const kingSpent = (state.kingStunTurns ?? 0) > 0 || state.kingMovedThisPhase === true;
+  const kingSpent =
+    (state.kingStunTurns ?? 0) > 0 || state.kingMovedThisPhase === true || state.kingCastled === true;
   for (const p of state.pieces) {
     if (!isNormallyEligible(p)) continue;
     if (p.type === 'king' && kingSpent) continue;
@@ -1574,11 +1579,16 @@ function stepEnemyTurnImpl(rawState: BoardState): BoardState {
       ...panicPatch,
       ...chequerPatch,
       ...scarecrowPatch,
+      // Castle: the no-swing grace covers exactly the phase after the castle.
+      ...(s.kingCastled ? { kingCastled: undefined } : {}),
       squireMovedThisTurn: glass ? s.squireMovedThisTurn : false,
       glassTurn: undefined,
       // The per-turn glass count survives the glass-turn itself and resets
       // after the enemy phase that follows a real action.
       hourglassCastsThisTurn: glass ? s.hourglassCastsThisTurn : 0,
+      // Chain is armed "until the end of this turn": an unspent arm is gone
+      // when her turn comes back (a glass-turn is still her turn — it holds).
+      ...(s.chainArmed && !glass ? { chainArmed: false } : {}),
       turn: 'rookie',
       form: nextForm,
       formMovesLeft: nextFormMovesLeft,

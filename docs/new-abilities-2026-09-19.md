@@ -40,7 +40,7 @@ LF = level-first (it was invented to solve a crazy level).
 | 3 | **Raise** | The last piece she captured stands up beside her, on your side. The level decides your summon. | PICK (AF) |
 | 4 | **Eruption** | Tap lava: it floods the squares next to it. Guards burn, his flee squares vanish. | PICK (AF) |
 | 5 | **Chain** | Arm it, then capture: every same-type enemy touching the victim dies too, and so on down the line. | PICK (AF) |
-| 6 | **Castle** | Rook and king on one rank or file, anything between: he jumps two toward her, she hops to his far side. Rules are rules. | PICK (LF) |
+| 6 | **Castle** | Rook and king on one rank or file, anything between: he jumps two toward her, she lands on the square he crossed — or beside him on her own side if that square is blocked. Rules are rules. | PICK (LF) |
 | 7 | **Catapult** | Fling the stone or summon beside her in a straight line, over everything, to a square you choose. | PICK (LF) |
 | 8 | **Mirror** | A mirror Rookie appears across the board and copies every move she makes, flipped. | PICK (LF) |
 | 9 | **Ricochet** | Her next move bounces: slide to a stone, turn 90 degrees, keep sliding. | PICK (LF) |
@@ -66,8 +66,8 @@ Swap, Sacrifice and Promote may target it.
 
 **1. Promote (`promote`)** — targeted, one of your controlled summons (Page,
 Squire, Bishop Squire, a Converted or Raised piece, Mirror). It becomes the next
-type up: pawn → knight → bishop → rook → queen. Tiers: 1/1/2/2/2 uses; T3+ two
-steps per use; T5 any summon straight to queen. Its clock and daze are
+type up: pawn → knight → bishop → rook → queen. Tiers: 1/1/2/2/2 uses; T3+ UP TO two
+steps per use, T5 any rung up to queen — the player picks the rung. Its clock and daze are
 unchanged. Why it catches kings: the body is already in his court — change what
 it attacks and take him this turn (a promote-then-capture gives him no
 reaction, like Knight Hop). Pairs: Convert, Page, Raise.
@@ -90,7 +90,7 @@ the summon — eat the bishop, get a bishop. Pairs: Swap, Sacrifice (blast shape
 = the piece), Promote.
 
 **4. Eruption (`eruption`)** — targeted: a lava square within 2/2/3/3/any of
-her. T1-T2: then tap ONE orthogonally adjacent square; T3+: all four flood.
+her. Then tap ONE orthogonally adjacent square; T3+: or tap the lava again and all four flood.
 Empty → lava. Pawn (T2+: minor, T4+: any guard) → burns, capture-stun, square
 becomes lava. Never the king's square, never her square, never a summon's,
 never a square that would leave her with no move. 1/2/2/3/3 uses. Why: the
@@ -111,10 +111,16 @@ or an odd piece; Magnet, Puppet or Convert closes the gap.
 
 **6. Castle (`castle`)** — level: **The Atoll**, a king alone on an island
 ringed by lava, no guards, no door. Nothing crosses; so HE comes out. Castable
-when she shares a rank or file with the king, ANYTHING between. Exactly the chess move: he jumps two squares toward her, and she lands on the
-square he crossed — so she ends up beside him, on his far side from where she
-stood. Both landing squares must be empty ground (the squares between may hold
-anything). **It is her body-move — the turn ends.** His pen becomes his landing
+when she shares a rank or file with the king, ANYTHING between. He jumps two
+squares toward her: his landing square must be open ground, anything may lie
+between. She lands on the square he crossed IF it is open ground — exactly the
+chess move, beside him on his far side from where she stood. OTHERWISE she
+pulls up short: she lands on the square directly beside his landing square on
+HER side of the line (open ground, or the square she already stands on if she
+is that close); if neither square exists the cast is refused. (On the Atoll's
+1-thick ring the square he crosses IS lava, so the short landing is what
+brings him out.) Both landing squares glow before she commits. **It is her
+body-move — the turn ends.** His pen becomes his landing
 square plus its open neighbours (he cannot go back through a wall). Tiers:
 1/1/2/2/2 uses; T1 rank only, T2+ rank or file; T4+ he arrives stunned one
 turn. Why it needs a partner: he lands, the turn ends, he runs. A body already

@@ -804,10 +804,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -860,10 +860,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L4 knight-hop only 38% (every finisher must be at least 80%); L5 knight-hop only 56% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -881,10 +881,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L1 bishop-step only 63% (every finisher must be at least 80%); L2 bishop-step only 0% (every finisher must be at least 80%); L3 queen-pulse only 6% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -902,10 +902,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -923,10 +923,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 freeze-ray only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -944,10 +944,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 knight-hop only 75% (every finisher must be at least 80%); L5 knight-hop only 69% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 freeze-ray only 0% (every finisher must be at least 80%); L8 freeze-ray only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 freeze-ray only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -965,10 +965,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L4 bishop-step only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -986,10 +986,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L4 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 bishop-step only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -1015,10 +1015,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 knight-hop only 0% (every finisher must be at least 80%); L4 bishop-step only 0% (every finisher must be at least 80%); L5 freeze-ray only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -1036,10 +1036,10 @@
         "at": "2026-09-09"
       },
       "testing": {
-        "lastRun": "2026-09-19",
+        "lastRun": "2026-09-21",
         "verdict": "HOLD",
         "summary": "L3 bishop-step only 0% (every finisher must be at least 80%); L5 bishop-step only 0% (every finisher must be at least 80%); L6 freeze-ray only 0% (every finisher must be at least 80%); L7 bishop-step only 0% (every finisher must be at least 80%); L8 bishop-step only 0% (every finisher must be at least 80%); L9 bishop-step only 0% (every finisher must be at least 80%); L10 bishop-step only 0% (every finisher must be at least 80%)",
-        "digestPath": "data/run-playtest/revenge/digests/2026-09-19.md"
+        "digestPath": "data/run-playtest/revenge/digests/2026-09-21.md"
       }
     },
     {
@@ -1077,10 +1077,14 @@
     {
       "id": "hourglass",
       "kind": "ability",
-      "name": "Hourglass",
-      "stage": "testing",
+      "name": "Wait a Sec",
+      "stage": "approved",
       "created": "2026-09-06",
-      "notes": "REWORKED + GRADED 2026-09-06. Turn the glass (free action): the enemies take a full turn now and Rookie's move is still in hand. ONE RULE - a glass-turn is a turn taken out of ROOKIE'S clock: moveCount does not tick and nothing of hers expires during it (freeze/snare holds, the king's stun, smoke, the straw, decoy, rabies, king-form, summon clocks, a convert daze, the once-per-turn summon move). Only POISON still burns - a fuse is a bomb going off, not a protection running out. The king REACTS on a glass-turn at every tier (the old T3 hold-the-king clause is deleted: an upgrade must never remove a card's function). Tiers are pure quantity: 1/2/3/4/6 uses, 1/1/1/2/3 casts a turn. GRADE: never a key, never a solvent - 0% alone on every finale of every run tested at every tier - and NOT half of any gate. A glass is worth exactly one Rookie move plus the durations that move would have burned, which is inside the noise floor of a 32-trial cell. It pays only beside a partner whose payoff lands on an ENEMY phase (Candle L9: poison-dart 13% alone -> 72-81% paired; Candle decoy 47/44/69/31 -> 56/56/91/69) and is neutral-to-negative beside snare, scarecrow and freeze-ray. KEPT as the catalogue's best TRAP filler (the seat it holds in The Hayloft revenge-27 and The Quarry revenge-32). Two runs were built to gate on it and neither did (revenge-29 The Candle, revenge-31 The Hearth, both at stage idea). Full reasoning: docs/revenge-abilities.md, docs/ability-pairs.md, .claude/run-level-design.md."
+      "notes": "REWORKED + GRADED 2026-09-06. Turn the glass (free action): the enemies take a full turn now and Rookie's move is still in hand. ONE RULE - a glass-turn is a turn taken out of ROOKIE'S clock: moveCount does not tick and nothing of hers expires during it (freeze/snare holds, the king's stun, smoke, the straw, decoy, rabies, king-form, summon clocks, a convert daze, the once-per-turn summon move). Only POISON still burns - a fuse is a bomb going off, not a protection running out. The king REACTS on a glass-turn at every tier (the old T3 hold-the-king clause is deleted: an upgrade must never remove a card's function). Tiers are pure quantity: 1/2/3/4/6 uses, 1/1/1/2/3 casts a turn. GRADE: never a key, never a solvent - 0% alone on every finale of every run tested at every tier - and NOT half of any gate. A glass is worth exactly one Rookie move plus the durations that move would have burned, which is inside the noise floor of a 32-trial cell. It pays only beside a partner whose payoff lands on an ENEMY phase (Candle L9: poison-dart 13% alone -> 72-81% paired; Candle decoy 47/44/69/31 -> 56/56/91/69) and is neutral-to-negative beside snare, scarecrow and freeze-ray. KEPT as the catalogue's best TRAP filler (the seat it holds in The Hayloft revenge-27 and The Quarry revenge-32). Two runs were built to gate on it and neither did (revenge-29 The Candle, revenge-31 The Hearth, both at stage idea). Full reasoning: docs/revenge-abilities.md, docs/ability-pairs.md, .claude/run-level-design.md.",
+      "approved": {
+        "at": "2026-09-20",
+        "by": "Tyler"
+      }
     },
     {
       "id": "scarecrow",
@@ -1313,6 +1317,216 @@
       "stage": "testing",
       "created": "2026-09-09",
       "notes": "CONCEPT (A): the unbuilt harness-proven pair QUEEN PULSE + VANGUARD (queen-pulse+vanguard gates moat-L7-v5-s250 at 97% with a unique answer; the only unbuilt gating pair whose level survives both bishop-step and knight-hop). Kit = queen-pulse / vanguard / aegis / decoy, all LIVE. VERB: get close enough to throw — the only run in the catalogue about a RADIUS rather than a line; Rookie never touches the king on any of the ten levels. SIGNATURE, the comb: rank 6 solid stone but for one square (the parting), the square above it stone (the tooth), two diagonal ladders of unreachable islands leading up to it from feet at a2 and h3, and a pocket past the spine whose every rank, file and diagonal neighbour is stone so only a knight's geometry touches the king — with exactly one of his knight-squares free (the peg), never within drop range of her floor. The pulse is the only thing that crosses the spine; the drop is the only thing that reaches the peg; neither is ever a weapon. FOUR FINALE LINES: L7 the two windows (either exit wins, mirror lines); L8 the wrong window (the east ladder lands her ON the only peg — the natural exit is fatal); L9 the corked parting (a pinned pawn ends the ride, so the pulse becomes her one capture and the peg moves to f7); L10 the watchmen (two knights on the floor contest the feet, and his second room c8 punishes any tempo lost on the climb). SERIAL NUMBERS, 32 trials, jobs=1, normal: L7-L10 none 0/0/0/0, queen-pulse 0/0/0/0, vanguard 0/0/0/0, aegis 0/0/0/0, decoy 0/0/0/0, PAIR 81/84/69/56 (mean 72.5, four different numbers — the spread Tyler asked for). Mid-run L3-L6 bare 0% with pulse/vanguard/aegis/vanguard as keys; L3 is soft (50% for its own key) and L5 has decoy as a co-answer. FULL RUNS 40x: 0% random picks, 5% with the pair pool — both below the 10-25% target, and the cause is L5 being gated on aegis four levels before a finale gated on the other two cards, not the finale itself. TIER CAVEAT: abilityTierCaps { vanguard: 1 } — the drop RADIUS is the break (T2 range 3 reads 97% alone on L7, T3 range 4 reads 100/88/100/100), while Queen Pulse needs no cap at any tier because no line on any finale touches the king's square."
+    },
+    {
+      "id": "promote",
+      "kind": "ability",
+      "name": "Promote",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Tap your summon: it steps up the ladder pawn, knight, bishop, rook, queen."
+    },
+    {
+      "id": "puppet",
+      "kind": "ability",
+      "name": "Puppet",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "One enemy guard takes one legal move of its own, and you choose it. Into lava if you like."
+    },
+    {
+      "id": "raise",
+      "kind": "ability",
+      "name": "Raise",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "The last piece she captured stands up beside her, on your side."
+    },
+    {
+      "id": "eruption",
+      "kind": "ability",
+      "name": "Eruption",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Tap lava: it floods the squares next to it. Guards burn, his flee squares vanish."
+    },
+    {
+      "id": "chain",
+      "kind": "ability",
+      "name": "Chain",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Arm it, then capture: every same-type enemy touching the victim dies too, down the line."
+    },
+    {
+      "id": "castle",
+      "kind": "ability",
+      "name": "Castle",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Rook and king on one line, anything between: he jumps two toward her, she lands on the square he crossed, or beside him on her side if that is blocked. Rules are rules."
+    },
+    {
+      "id": "catapult",
+      "kind": "ability",
+      "name": "Catapult",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Fling the stone or summon beside her in a straight line, over everything, to a square you choose."
+    },
+    {
+      "id": "mirror",
+      "kind": "ability",
+      "name": "Mirror",
+      "stage": "approved",
+      "created": "2026-09-19",
+      "notes": "A mirror Rookie appears across the board and copies every move she makes, flipped.",
+      "approved": {
+        "at": "2026-09-20",
+        "by": "Tyler"
+      }
+    },
+    {
+      "id": "ricochet",
+      "kind": "ability",
+      "name": "Ricochet",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Her next move bounces: slide to a stone, turn 90 degrees, keep sliding."
+    },
+    {
+      "id": "avalanche",
+      "kind": "ability",
+      "name": "Avalanche",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Every loose stone on the board slides one square the way you point. Pawns under them are crushed."
+    },
+    {
+      "id": "revenge-53",
+      "kind": "run",
+      "name": "The Pawnshop",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Convert + Promote (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-54",
+      "kind": "run",
+      "name": "The Caldera",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Puppet + Dragon, lava ring (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-55",
+      "kind": "run",
+      "name": "The Crypt",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Raise + Sacrifice (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-56",
+      "kind": "run",
+      "name": "The Vent",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Eruption + Boulder, lava veins (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-57",
+      "kind": "run",
+      "name": "The Daisy Chain",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Chain + Magnet (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-58",
+      "kind": "run",
+      "name": "The Atoll",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Castle + Dragon, lava island (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-59",
+      "kind": "run",
+      "name": "The Gorge",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Catapult + Convert, lava river (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-60",
+      "kind": "run",
+      "name": "The Looking Glass",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Mirror + Swap (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-61",
+      "kind": "run",
+      "name": "The Baffle",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Ricochet + Boulder (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-62",
+      "kind": "run",
+      "name": "The Scree",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Avalanche + Boulder (2026-09-19 batch, stub)"
+    },
+    {
+      "id": "revenge-63",
+      "kind": "run",
+      "name": "The Reflecting Pool",
+      "stage": "testing",
+      "created": "2026-09-19",
+      "notes": "Mirror + Boulder: you place the broken symmetry (2026-09-19 Mirror batch, stub)"
+    },
+    {
+      "id": "revenge-64",
+      "kind": "run",
+      "name": "The Hall of Mirrors",
+      "stage": "live",
+      "created": "2026-09-19",
+      "notes": "Mirror + Sacrifice: the reflection is a bomb (2026-09-19 Mirror batch, stub)",
+      "approved": {
+        "at": "2026-09-20",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-21"
+      }
+    },
+    {
+      "id": "revenge-65",
+      "kind": "run",
+      "name": "The Kaleidoscope",
+      "stage": "live",
+      "created": "2026-09-19",
+      "notes": "Mirror + Convert: two bodies and a stolen third (2026-09-19 Mirror batch, stub)",
+      "approved": {
+        "at": "2026-09-20",
+        "by": "Tyler"
+      },
+      "live": {
+        "at": "2026-09-21"
+      }
+    },
+    {
+      "id": "revenge-66",
+      "kind": "run",
+      "name": "The Funhouse",
+      "stage": "testing",
+      "created": "2026-09-20",
+      "notes": "Mirror masterclass: the human-only Mirror levels the bots could not find, solver-proven (2026-09-20, stub)"
     }
   ]
 }

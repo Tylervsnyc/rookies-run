@@ -4,6 +4,7 @@
 
 import type { AbilityId } from '../../lib/run/abilities';
 import type {
+  AllyPiece,
   BoardState,
   Coord,
   GameStatus,
@@ -32,7 +33,7 @@ export type BotAction =
    * is the enemy grabbed, `target2` the CHOSEN landing square = pull
    * distance). Absent = single-tap resolve (legacy / other abilities).
    */
-  | { kind: 'ability-target'; abilityId: AbilityId; target: Coord; target2?: Coord };
+  | { kind: 'ability-target'; abilityId: AbilityId; target: Coord; target2?: Coord; promoteTo?: AllyPiece['type'] };
 
 /** Constraints passed to bots — used by ablation / forced-take to bias choices. */
 export interface BotContext {

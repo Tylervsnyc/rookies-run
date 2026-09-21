@@ -12,13 +12,17 @@
 import {
   isLegalRookieMove,
   isWinningMove,
+  ricochetPaths,
   rookieLegalMoves,
 } from './movement';
 import {
+  applyMirrorEcho,
   breakSmokeOnCapture,
+  chainLinksFor,
   clearStatusOnSquare,
   isControlledAlly,
   offerIsExhausted,
+  resolveChain,
   rollOffer,
   stepAllyTurn,
   stepDroneTurn,
@@ -28,7 +32,7 @@ import { stepEnemyTurn } from './pawn-ai';
 import { enforceKingInvariant } from './king-invariant';
 import { mulberry32 } from './seed';
 import { TEMPO_REWARD, tempoMaxFor } from './scoring';
-import { toSquare } from './types';
+import { coordEq, toSquare } from './types';
 import type { BoardState, Coord, RookieForm } from './types';
 
 function offerRngFor(state: BoardState): () => number {
@@ -39,6 +43,21 @@ function offerRngFor(state: BoardState): () => number {
   return mulberry32(seed);
 }
 
+/** The squares where a banked line turns, then its landing square. */
+function ricochetMoveFx(from: Coord, path: Coord[]): NonNullable<BoardState['lastRicochetMove']> {
+  const pts = [from, ...path];
+  const waypoints: string[] = [];
+  for (let i = 1; i < pts.length; i++) {
+    const last = i === pts.length - 1;
+    const turns =
+      !last &&
+      (pts[i].file - pts[i - 1].file !== pts[i + 1].file - pts[i].file ||
+        pts[i].rank - pts[i - 1].rank !== pts[i + 1].rank - pts[i].rank);
+    if (last || turns) waypoints.push(toSquare(pts[i]));
+  }
+  return { from: toSquare(from), waypoints, id: Date.now() + Math.random() };
+}
+
 export function applyRookieMove(state: BoardState, target: Coord): BoardState {
   return enforceKingInvariant(state, applyRookieMoveImpl(state, target), 'applyRookieMove');
 }
@@ -46,6 +65,9 @@ export function applyRookieMove(state: BoardState, target: Coord): BoardState {
 function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
   if (state.status !== 'playing' || state.turn !== 'rookie') return state;
   if (!isLegalRookieMove(state, target)) return state;
+
+  // A banked Ricochet line (never a straight one — those are plain rook moves).
+  const banked = ricochetPaths(state).find((p) => coordEq(p.dest, target));
 
   // Capture handling.
   const captured = state.pieces.find(
@@ -55,7 +77,12 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
     (p) => !(p.file === target.file && p.rank === target.rank),
   );
 
-  const tempoGain = captured ? TEMPO_REWARD[captured.type] ?? 0 : 0;
+  // Chain (armed this turn): the capture runs down the line — every linked
+  // guard dies with the victim and pays tempo with it. Empty unless armed.
+  const chained = captured && captured.type !== 'king' ? chainLinksFor(state, target) : [];
+  const tempoGain =
+    (captured ? TEMPO_REWARD[captured.type] ?? 0 : 0) +
+    chained.reduce((sum, p) => sum + (TEMPO_REWARD[p.type] ?? 0), 0);
   const tempoMax = tempoMaxFor(state);
   const rawTempo = state.tempo + tempoGain;
   // Only captures can trigger an offer — prevents spurious offers on plain
@@ -109,7 +136,7 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
   // status markers along with the piece itself.
   const statusOverlay = captured ? clearStatusOnSquare(state, targetSq) : null;
 
-  const afterMove: BoardState = {
+  const movedState: BoardState = {
     ...state,
     ...(statusOverlay ?? {}),
     rookie: { ...target },
@@ -128,7 +155,12 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
     ...(captured ? stunKingAfterCapture(state) : {}),
     // Smoke: a capture by Rookie herself blows her cover (T5 keeps it).
     ...(captured ? breakSmokeOnCapture(state) : {}),
+    // Ricochet: armed for her NEXT rook move — spent by it, banked or not.
+    ...((state.ricochetBanks ?? 0) > 0 && state.form === 'rook' ? { ricochetBanks: 0 } : {}),    // ...and if it DID bank, the corners ride along so the board can show it.
+    ...(banked ? { lastRicochetMove: ricochetMoveFx(state.rookie, banked.path) } : {}),
   };
+  // The arm is spent by the capture whether or not anything was linked.
+  const afterMove = state.chainArmed && captured ? resolveChain(movedState, chained) : movedState;
 
   // When the meter fills, roll an offer — unless every ability is maxed, in
   // which case we just keep the tempo (as a small "blessing") and skip the modal.
@@ -145,7 +177,7 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
       if (rolled.length === 0) postOfferTempo = tempoMax;
     }
   }
-  const withOffer: BoardState = {
+  const movedOnly: BoardState = {
     ...afterMove,
     tempo: postOfferTempo,
     pendingOffer: nextPendingOffer,
@@ -155,8 +187,14 @@ function applyRookieMoveImpl(state: BoardState, target: Coord): BoardState {
   // condition) wins the level. Evaluated against the pre-move state so the
   // king is still on the target square.
   if (isWinningMove(state, target)) {
-    return resolveWin({ state, afterMove, withOffer, nextTempo, filled, nextPendingOffer });
+    return resolveWin({ state, afterMove, withOffer: movedOnly, nextTempo, filled, nextPendingOffer });
   }
+
+  // Mirror: the echo rook copies the move she just made, flipped left-right,
+  // for free. It may take the king — that wins the level like any summon's
+  // capture. No echo on the board = `withOffer` IS `movedOnly` (byte-identical).
+  const withOffer = applyMirrorEcho(state, movedOnly);
+  if (withOffer.status === 'won') return withOffer;
 
   // Move-limit loss check — over budget = run ends.
   if (afterMove.moveLimit !== null && nextMoveCount >= afterMove.moveLimit) {
