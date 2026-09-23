@@ -188,7 +188,7 @@ export const ABILITY_DEFS: Record<AbilityId, AbilityDef> = {
     name: 'Rabies Dart',
     activation: 'targeted',
     typeLine: 'Targeted · Bow',
-    description: 'Drive an enemy mad. It attacks the nearest piece.',
+    description: 'Drive an enemy mad. It bites its own side first, Rookie last.',
   },
   convert: {
     id: 'convert',

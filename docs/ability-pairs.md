@@ -80,9 +80,9 @@ capture), Decoy is the friendly-fire version.
 combos: enemies cannot see Rookie **and the king does not flee while she is
 smoked**. Also, a summon's captures do not break her cover — only her own do.
 So Smoke plus any slow body (Duchess, Page, Twin) buys the body a quiet window.
-The sharpest version is **Smoke + Rabies**: a rabid piece attacks whatever is
-nearest, and Smoke removes Rookie from its target list entirely, so the madness
-can only land on its own side.
+The sharpest version is **Smoke + Rabies**: a rabid piece bites its own side
+first, then your allies, and Rookie only as a last resort (2026-09-23). Smoke
+removes Rookie from its target list entirely, so even that last resort is gone.
 
 **New lines for line-tools.** Magnet's pull lines are Rookie's *current form's*
 lines. Bishop Step gives it diagonals; Queen Pulse gives it all eight

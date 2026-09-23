@@ -901,9 +901,9 @@ function chooseEnemyActionAgainst(
   const isExcluded = (p: EnemyPiece) =>
     excludeSquares.has(coordKey(p)) || frozen.has(coordKey(p));
 
-  // 0) Rabid pieces act on berserker logic first. They attack the nearest
-  // reachable entity (Rookie counts; ties → biggest piece wins). If no
-  // capture is reachable they approach the top-priority target instead.
+  // 0) Rabid pieces act on berserker logic first. They bite their own side
+  // first, then Rookie's allies, and Rookie only as a last resort (see
+  // rabidAction). If no bite is reachable they approach instead.
   const rabid = new Set(
     state.rabidSquares.map((sq) => {
       const file = sq.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
@@ -920,6 +920,7 @@ function chooseEnemyActionAgainst(
       target: Coord;
       isCapture: boolean;
       isRabidCapture?: boolean;
+      group: RabidBiteGroup;
       victimValue: number;
     }> = [];
     const approaches: Array<{
@@ -932,11 +933,14 @@ function chooseEnemyActionAgainst(
       const a = rabidAction(p, state);
       if (!a) continue;
       if (a.kind === 'capture') {
+        // An ally bite is a plain enemy move onto the ally's square —
+        // applyAction's ally-capture path removes it (not a loss).
         captures.push({
           mover: p,
           target: a.target,
           isCapture: a.isRookie,
-          isRabidCapture: !a.isRookie,
+          isRabidCapture: !a.isRookie && !a.isAlly,
+          group: a.group,
           victimValue: a.victimValue,
         });
       } else {
@@ -949,8 +953,10 @@ function chooseEnemyActionAgainst(
       }
     }
     if (captures.length > 0) {
-      const bestVal = Math.max(...captures.map((c) => c.victimValue));
-      const tied = captures.filter((c) => c.victimValue === bestVal);
+      const bestGroup = Math.min(...captures.map((c) => c.group));
+      const inGroup = captures.filter((c) => c.group === bestGroup);
+      const bestVal = Math.max(...inGroup.map((c) => c.victimValue));
+      const tied = inGroup.filter((c) => c.victimValue === bestVal);
       const pick = pickRandom(tied, rng);
       return {
         mover: pick.mover,
@@ -1084,8 +1090,10 @@ function chooseEnemyActionAgainst(
 /**
  * Squares this rabid piece can land on AS A CAPTURE this turn. Unlike normal
  * pieceLegalMoves, friendly pieces ARE legal capture targets here (rabies
- * doesn't care about teamwork). Rookie's square is also a capture target.
- * Bishops/queens still stop at the first thing on their ray.
+ * doesn't care about teamwork). Rookie's allies and Rookie's square are also
+ * capture targets. Bishops/queens stop at the first thing on their ray — an
+ * ally included (a mad queen once bit Rookie THROUGH the dragon standing
+ * between them, 2026-09-23).
  */
 function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
   const vacated = vacatedSet(state);
@@ -1099,7 +1107,7 @@ function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
         if (isVacated(vacated, c)) continue;
         const isRookie = state.rookie.file === c.file && state.rookie.rank === c.rank;
         const friendly = enemyAt(state.pieces, c);
-        if (isRookie || (friendly && friendly !== piece)) out.push(c);
+        if (isRookie || isAllyAt(state, c) || (friendly && friendly !== piece)) out.push(c);
       }
       return out;
     }
@@ -1111,7 +1119,7 @@ function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
         if (isVacated(vacated, c)) continue;
         const isRookie = state.rookie.file === c.file && state.rookie.rank === c.rank;
         const friendly = enemyAt(state.pieces, c);
-        if (isRookie || (friendly && friendly !== piece)) out.push(c);
+        if (isRookie || isAllyAt(state, c) || (friendly && friendly !== piece)) out.push(c);
       }
       return out;
     }
@@ -1127,7 +1135,7 @@ function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
           if (isVacated(vacated, c)) break;
           const isRookie = state.rookie.file === f && state.rookie.rank === r;
           const friendly = enemyAt(state.pieces, c);
-          if (isRookie || (friendly && friendly !== piece)) {
+          if (isRookie || isAllyAt(state, c) || (friendly && friendly !== piece)) {
             out.push(c);
             break;
           }
@@ -1165,35 +1173,56 @@ function rabidCaptureSquares(piece: EnemyPiece, state: BoardState): Coord[] {
 /**
  * Pick a rabid piece's action for this turn.
  *
+ * BITE ORDER (Tyler, 2026-09-23: "a rabies piece should only bite Rookie as a
+ * last resort"): its OWN side first, then Rookie's allies, and Rookie only
+ * when there is nothing else it can bite.
+ *
  * Algorithm:
- *   1) Build a target list = Rookie + every other enemy. Rookie counts as the
- *      biggest piece (queen-tier 4).
- *   2) Sort by (Chebyshev distance asc, value desc) — closest pieces first,
- *      biggest piece on distance ties.
- *   3) If any sorted target is in `rabidCaptureSquares`, that's the kill.
+ *   1) Build a target list = every other enemy (not the king) + every ally +
+ *      Rookie (unless smoked).
+ *   2) Sort by (bite group, Chebyshev distance asc, value desc).
+ *   3) The first sorted target in `rabidCaptureSquares` is the kill.
  *   4) Otherwise the rabid piece approaches the top-priority target with a
  *      normal (non-capture) move that strictly reduces Chebyshev distance.
  */
+/** 0 = its own side, 1 = Rookie's allies, 2 = Rookie (last resort). */
+type RabidBiteGroup = 0 | 1 | 2;
+
 type RabidAction =
-  | { kind: 'capture'; target: Coord; isRookie: boolean; victimValue: number }
+  | {
+      kind: 'capture';
+      target: Coord;
+      isRookie: boolean;
+      isAlly: boolean;
+      group: RabidBiteGroup;
+      victimValue: number;
+    }
   | { kind: 'approach'; target: Coord; approachDist: number };
 
 function rabidAction(piece: EnemyPiece, state: BoardState): RabidAction | null {
   const piecePos: Coord = { file: piece.file, rank: piece.rank };
-  const targets: Array<{ at: Coord; value: number; isRookie: boolean }> = isSmoked(state)
+  const targets: Array<{ at: Coord; value: number; group: RabidBiteGroup }> = isSmoked(state)
     ? [] // Smoke: even a rabid piece can't see her
-    : [{ at: { ...state.rookie }, value: PIECE_THREAT.queen, isRookie: true }];
+    : [{ at: { ...state.rookie }, value: PIECE_THREAT.queen, group: 2 }];
   for (const p of state.pieces) {
     if (p === piece) continue;
     if (p.type === 'king') continue; // only Rookie may take the king
     targets.push({
       at: { file: p.file, rank: p.rank },
       value: PIECE_THREAT[p.type] ?? 0,
-      isRookie: false,
+      group: 0,
+    });
+  }
+  for (const a of state.allies ?? []) {
+    targets.push({
+      at: { file: a.file, rank: a.rank },
+      value: a.type === 'rook' ? 3 : (PIECE_THREAT[a.type] ?? 0),
+      group: 1,
     });
   }
   if (targets.length === 0) return null;
   targets.sort((a, b) => {
+    if (a.group !== b.group) return a.group - b.group;
     const da = chebyshev(piecePos, a.at);
     const db = chebyshev(piecePos, b.at);
     if (da !== db) return da - db;
@@ -1209,7 +1238,9 @@ function rabidAction(piece: EnemyPiece, state: BoardState): RabidAction | null {
       return {
         kind: 'capture',
         target: t.at,
-        isRookie: t.isRookie,
+        isRookie: t.group === 2,
+        isAlly: t.group === 1,
+        group: t.group,
         victimValue: t.value,
       };
     }
@@ -1217,7 +1248,9 @@ function rabidAction(piece: EnemyPiece, state: BoardState): RabidAction | null {
   // No capture — approach the nearest target with a non-capture move.
   const focus = targets[0];
   const moves = pieceLegalMoves(piece, state).filter(
-    (m) => !(m.file === state.rookie.file && m.rank === state.rookie.rank),
+    (m) =>
+      !(m.file === state.rookie.file && m.rank === state.rookie.rank) &&
+      !isAllyAt(state, m),
   );
   if (moves.length === 0) return null;
   const cur = chebyshev(piecePos, focus.at);
