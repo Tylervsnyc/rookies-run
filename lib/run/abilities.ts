@@ -494,7 +494,9 @@ export function maxUsesForTier(id: AbilityId, tier: AbilityTier): number {
       if (tier === 4) return 3;
       return 3;
     case 'freeze-ray':
-      if (tier === 3 || tier === 4) return 2;
+      // 1/1/2/2/2 — the permanent T5 freeze keeps the 2 shots of T3/T4 (Tyler,
+      // 2026-09-23: "it's the ultimate").
+      if (tier >= 3) return 2;
       return 1;
     case 'poison-dart':
       if (tier === 1) return 1;
@@ -1079,7 +1081,7 @@ export function blurbForTier(id: AbilityId, tier: AbilityTier): string {
       if (tier === 2) return 'King for 2 turns. 1/level.';
       return 'King for 1 turn. 1/level.';
     case 'freeze-ray':
-      if (tier === 5) return 'Permanent freeze. 1/level.';
+      if (tier === 5) return 'Permanent freeze. 2/level.';
       if (tier === 4) return 'Freeze 3 turns. 2/level.';
       if (tier === 3) return 'Freeze 2 turns. 2/level.';
       if (tier === 2) return 'Freeze 2 turns. 1/level.';

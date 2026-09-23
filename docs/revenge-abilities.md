@@ -80,7 +80,7 @@ mental model. Bot win % is the T6 MCTS bot at **T1**, worst level in L3–L10
 | # | Ability | Numbers | Why it catches kings | Worst T1 win % |
 |---|---------|---------|----------------------|----------------|
 | 1 | **Surge** | +1 / +1 / +2 / +2 / +3 extra moves this turn; 1/2/1/2/2 uses | Two moves in a row: get on his line, take him — he never gets his reaction. Works from any square with a one-move line to him, safe or not. | 100% |
-| 2 | **Freeze Ray** | Freeze 1 / 2 / 2 / 3 / ∞ turns (+1 on the KING); 1/1/2/2/1 uses | The only dart that may target the king. Frozen = can't flee: freeze, get on his line (safely), take him. T1 = 2 turns on the king. | 73% (L10; 80% L8, 100% elsewhere) |
+| 2 | **Freeze Ray** | Freeze 1 / 2 / 2 / 3 / ∞ turns (+1 on the KING); 1/1/2/2/2 uses | The only dart that may target the king. Frozen = can't flee: freeze, get on his line (safely), take him. T1 = 2 turns on the king. | 73% (L10; 80% L8, 100% elsewhere) |
 | 3 | **Knight Hop** | Knight for 1 / 2 / 3 / 3 / rest of level moves; 1/1/1/2/1 uses | He only fears your *current* form. Stand a knight's jump from him (he ignores you), cast, hop onto him. Also jumps the pen wall. | 87% (L10; 100% elsewhere) |
 | 4 | **Bishop Step** | Bishop for 1 / 2 / 3 / 3 / rest; 1/1/1/2/1 uses | Stand on his diagonal (a rook doesn't threaten it), cast, take him. Attacks the diagonal squares he flees to. | 93% |
 | 5 | **Queen Pulse** | Queen for 1 / 2 / 2 / 3 / rest; 1/1/2/2/1 uses | Bishop Step + rook lines at once — from a diagonal or a line, cast and take him; his safe squares collapse. | 90% |
