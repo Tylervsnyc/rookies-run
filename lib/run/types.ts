@@ -237,10 +237,10 @@ export interface BoardState {
   /** Remaining enemy turns until each poisoned square's piece dies. */
   poisonedTurnsLeft: Record<string, number>;
   /**
-   * Rabid-piece squares (algebraic). A rabid piece, on its turn, tries to
-   * capture the nearest living thing (Rookie or any enemy). On Chebyshev
-   * ties, picks the biggest piece. If nothing is reachable to capture this
-   * turn, it approaches the nearest target instead. Rabies ticks down each
+   * Rabid-piece squares (algebraic). A rabid piece, on its turn, bites its
+   * own side first, then Rookie's allies, and Rookie only as a last resort.
+   * Within a group: nearest first, biggest on ties. If nothing is reachable
+   * to capture this turn, it approaches the top-priority target instead. Rabies ticks down each
    * enemy turn; on 0 the piece reverts to normal AI.
    */
   rabidSquares: string[];
