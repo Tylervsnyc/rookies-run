@@ -13,133 +13,123 @@
  * queen-tier bodies on the board the knight ate the Duchess and the Dragon
  * finished. Neither is "two summons cover the king together".
  *
- * THE MECHANISM THIS RUN IS BUILT ON — THE DOUBLE DOOR. Read out of
- * lib/run/pawn-ai.ts: the ONLY thing a controlled summon does that Rookie
- * cannot is take a square she has no line to, and the only thing that
- * stops a body finishing alone is being taken the turn it arrives. So: the
- * king's wheel is two squares. He stands on one; his own PAWN stands in the
- * other (his door), jammed by the stone under it. Nothing attacks his square
- * except a body standing in that door. A body takes the door pawn — he is
- * boxed, it is beside him — and the pawn on the top rank behind the door
- * steps down and takes the body, and the door is plugged again. ONE body
- * opens the door exactly once. The SECOND body takes the pawn that
- * re-plugged it, and this time nothing answers: it takes him. The second
- * summon is worth a card precisely because the first one dies doing the
- * same job. The Dragon and the Duchess are interchangeable here (both come
- * down the same diagonal as queens; the knight jumps that would let a Dragon
- * reach the watcher pawn or the door from a jump square are bricked, the
- * Vault lesson). Two summons are not useless; they are one summon that
- * gets to try twice.
+ * ── 2026-09-23 REWORK — Tyler: "same pattern 4 levels in a row" ────────────
+ * Played live as the daily: "it wasn't that fun b/c it's the same thing for
+ * like 4 levels in a row. same pattern that can't happen it kills the
+ * creativity and fun. levels need to change patterns so it's not the same move
+ * over and over." Confirmed: L7-L10 were all THE DOUBLE DOOR (Duchess takes
+ * the door pawn, the watcher recaptures, Dragon takes the re-plug, takes the
+ * king — line signature `duchess@far>dragon@far | cap:ally/step` on every
+ * finale level; L8 and L10 were the same WEST_LOCK board, L7 its mirror), and
+ * L3/L4 shared the e7 door + defended plug, with L4's key (Aegis) no longer
+ * in the kit. L1, L2, L3, L5, L6, the kit and the offers are untouched; L4 and
+ * L7-L10 are new, each built around a DIFFERENT move, and no finale level has
+ * two enemy pieces guarding one square any more — that is the shape that
+ * turns into a trade chain (the double door) whatever the board looks like.
  *
- * THE NET THAT DID NOT SHIP. The first finale was the pure two-body cover
- * (a whole four-square wheel; one queen on the ring covers the two squares
- * beside her and he steps to the fourth, two queens leave him nothing).
- * It is real — hand-played it wins in 4 moves, the brute-force cover
- * analysis shows no single-body lock on the whole wheel — but the MCTS bot
- * read the pair at 0/16 on every build: the payoff needs TWO ally moves
- * with no Rookie progress between them, and the rollout policy (top-3 by a
- * Rookie-centric fastScore) never puts an ally slide in the top 3 while a
- * Rookie step toward the king exists. Any line that reaches a ring square
- * in one move from a spawn square is also a one-move kill for a single body
- * (spawn is free; the summon moves the same turn), so the net cannot be
- * shortened. Provable-but-unfindable is not shippable (rubric); the double
- * door is the same "second body" idea reduced to captures the bot likes.
+ * CONSTANT SIGNATURE — THE MILLSTONE. Every level the king lives on a wheel of
+ * ring squares around one stone pillar, with the corners of that 3x3 bricked
+ * (or, on L4, filled with his own men) and the orthogonal approaches walled,
+ * so a rook line almost never reaches him. Boards L4 and L7-L10 are DRAWN in
+ * the source (`drawn`): '#' stone, ',' his pen, letters his pieces.
  *
- * CONSTANT SIGNATURE — THE MILLSTONE. Every level the king lives on a
- * DIAMOND of four squares around one stone pillar (his millstone), with the
- * four corners of that 3x3 bricked and the orthogonal approaches walled, so
- * no rook line ever enters the ring. Not a band (Moat), not columns
- * (Colonnade), not a sealed box (Vault), not offset bars (Switchback), not a
- * hedge (Briar), not a glass box (Glasshouse), not stacks (Stacks): a wheel
- * he lives on. L1-L3 the wheel has a door and he stands still: walk in. L4
- * the door is guarded by something she cannot take. L5 the last window is a
- * long diagonal only a body can look down. L6 he RUNS on a broken wheel and
- * one Dragon jumped onto its middle pins him. L7-L10 the wheel is two
- * squares, his own pawn is his door, and a second pawn re-plugs it.
+ * KIT = dragon / duchess / magnet (`allowedAbilities` IS the kit; all three
+ * are always offered). NO abilityTierCaps.
  *
- * KIT = dragon / duchess / magnet / aegis (`allowedAbilities` IS the kit).
- *   dragon    KEY on L5 (any body down the window line), the ONLY key on L6
- *             (only a knight jump reaches the middle of the broken wheel),
- *             half the double door on L7-L10. TRAP on L1-L3; on L4 a body can
- *             trade itself for the warden (secondary).
- *   duchess   KEY on L5, half the double door on L7-L10. TRAP on L6 (every
- *             window bricked; she cannot jump) and on L1-L3.
- *   aegis     KEY on L4: the door pawn is defended by a bishop pocketed in
- *             the wheel's own corner (f8) that no line reaches — take the
- *             pawn anyway and eat the reply. TRAP on the finale: nothing
- *             there captures Rookie; a shield does not open a door. (T5 Aegis
- *             kills its attacker but never stuns the king.)
- *   magnet    KEY nowhere. On L4 the pull is legal (come along rank 7 and
- *             drag the plug off its defended square) but the bot never plays
- *             it — 0% — and on the finale the plug is never on her line.
- * No universal solvents; no rabies-dart; no freeze/smoke/rewind/poison/
- * boulder/decoy/convert/twin/page/sacrifice/swap (each either stops the king
- * for free or is a third body — a second answer).
+ * ── ONE MOVE PER LEVEL (L3-L10), and its line signature ────────────────────
+ *   L3  CAPTURE ORDER (no card) — take the bishop, then the plug, then him.
+ *       `no-cast | cap:rook/step`
+ *   L4  THE CORK (magnet) — core d7, STILL king d6. A knight corks his door
+ *       d5, defended by two knights sealed in the stone (b6, f6) and the pawn
+ *       tooth c6 (itself covered by b7). Taking it is death. Stand on the
+ *       d-file (c1/d1/e1 start), PULL it down to d3/d4 where nothing sees it,
+ *       take it, take him. Three defenders, so two summons cannot trade their
+ *       way through. `magnet@adj | cap:rook/orth`
+ *   L5  THE LINE (a body) — summon beside you on the long diagonal, one slide.
+ *       `duchess@diag | cap:ally/diag`
+ *   L6  THE THIRD SQUARE (dragon) — jump onto the middle of a broken wheel.
+ *       `dragon@near | cap:ally/L`
+ *   L7  THE CORKED WINDOW (magnet + a summon) — king g6 (pen g6/f7), the only
+ *       line in is the diagonal b1-g6, corked by a knight on d3 that TWO
+ *       sealed knights (e5, f4) defend, so a summon that takes it is eaten
+ *       and a second body is eaten too. From b3 (or a3/d-file), Magnet yanks
+ *       the cork one square off the diagonal to c3; drop a queen on c2 (or on
+ *       b1 earlier) and she slides c2-d3-e4-f5 onto him, the same turn. A
+ *       threat that does not kill sends him to f7, which nothing reaches.
+ *       Pawn a4 marches into the lane, knight b5 hunts a3/c3; two act a turn.
+ *       `duchess@diag>magnet@diag | cap:ally/diag`
+ *   L8  THE LONG SHOT (dragon + duchess, either order) — west wheel, king c7,
+ *       flight square b6. The only line into c7 is the long diagonal
+ *       g3-f4-e5-d6, and the only square beside it Rookie can stand on is f2,
+ *       which the pinned pawn e3 watches. Body one goes to f2 and is eaten
+ *       (or eats e3); Rookie takes whatever stands on f2; body two drops on g3
+ *       and shoots the whole diagonal. Knight squares of c7 are all stone —
+ *       the Dragon's jump is worth nothing here. Two knights hunt the west.
+ *       `dragon@far>duchess@diag | cap:ally/diag`
+ *   L9  THE LEAP (duchess clears, dragon jumps) — king g6, flight square f7
+ *       (the corner knight h6 eats anything that stands there). Stone on
+ *       every line into g6: only a knight jump from f4 reaches him, and f4 is
+ *       a spawn square only from the post f3. The bishop on h1 watches f3
+ *       down h1-g2-f3. Spend the Duchess on the bishop (take it, stand in its
+ *       line, or let it take her off its line), step onto f3, drop the Dragon
+ *       on f4, jump. The Duchess cannot jump: alone she is a trap.
+ *       `duchess@far>dragon@near | cap:ally/L`
+ *  L10  THE FLUSH (dragon scares, duchess shoots) — west wheel, king b6, pen
+ *       b6/c7/c5. Nothing ever attacks b6 except a knight on c4 (or a4); the
+ *       only line anywhere near him runs g3-f4-e5-d6 onto c7. So: walk
+ *       h1-h3-f3, drop the Dragon on e3 and jump to c4 — he runs from b6 to
+ *       c7 (c5 is covered by the Dragon) — then drop the Duchess on g3 and
+ *       shoot c7. The first body never attacks the square it wins on; it
+ *       DRIVES him onto the second body's line. c5 is the anti-cheese: a body
+ *       that just parks on c7 sends him to c5 and he is gone. A knight in the
+ *       h5 pocket jumps at the route; two enemies act a turn.
+ *       `dragon@diag>duchess@far | cap:ally/diag`
+ *   Eight different signatures, and different to a human: capture order /
+ *   pull / one slide / one jump / pull-then-slide / feed-the-sniper-then-
+ *   long-slide / clear-then-jump / scare-into-the-line.
+ *   MAGNET is L4's key and half of L7; on L8-L10 it has nothing on her line
+ *   worth pulling (0% alone and 0% with either summon).
  *
- * 2026-09-15 (Tyler: "L1-2 same thing"; "L7-L10: the exact same move every
- * level"): L2 now has no summon in it (take the pawn in the door, the capture
- * stuns him), and L9 is a different line (the Dragon jumps the watcher from
- * h6, then the Duchess takes the door and him). L7, L8, L10 still use the
- * double door below.
- * L7-L10 intended lines (all the same line, rising pressure):
- *   L7  THE DOUBLE DOOR — east wheel: king g6, door f7 (pawn), watcher e8,
- *       line a2-g8 through the window e6. Rookie to e4 (the unique closest
- *       square), Duchess on d5, xf7; e8xf7; Dragon on d5, xf7; xg6. Eight
- *       moves, nothing hunting.
- *   L8  THE WEST DOOR — the mirror (king b6, door c7, watcher d8, line h2-b8
- *       through d6, staging d4) with a knight on the floor.
- *   L9  THE HUB — the wheel in the middle (king e6, door f7, watcher g8),
- *       the line is the far end of the anti-diagonal h5-g6, staging g4; two
- *       enemies a turn, a bishop and a knight.
- *   L10 THE MILLSTONE — the west door, two a turn, two knights from opposite
- *       corners, twelve moves.
+ * ── MEASURED — 2026-09-23, Normal, T5 bot, `revenge.ts matrix`, 32 trials,
+ *    --jobs=2, cards at T1 (L7 re-read after its last tune) ──────────────────
+ *   L    none  dragon  duchess  magnet | dra+duch  mag+duch  mag+dra
+ *   4      0%     0%      0%     100%  |     0%      100%      100%
+ *   7      0%     0%      0%       0%  |     0%      100%      100%
+ *   8      0%     0%      0%       0%  |    78%        0%        0%
+ *   9      0%     0%      0%       0%  |    72%        0%        0%
+ *  10      0%     0%      0%       0%  |    84%        0%        0%
+ *   Signatures (most common winning line, intended loadout, 16-32 trials):
+ *   L3 no-cast|rook/step  L4 magnet@adj|rook/orth  L5 duchess@diag|ally/diag
+ *   L6 dragon@near|ally/L  L7 duchess@diag>magnet@diag|ally/diag
+ *   L8 dragon@far>duchess@diag|ally/diag  L9 duchess@far>dragon@near|ally/L
+ *   L10 dragon@diag>duchess@far|ally/diag — no two equal.
+ *   T5 SINGLES, 32 trials:  L7 0/0/0   L8 dragon 97% duchess 97% magnet 0%
+ *                           L9 dragon 59% duchess 0% magnet 0%   L10 0/0/0
  *
- * ── 2026-09-06 RE-MEASURED AFTER THE CROSS-TALK FIX (commit 94482af) ──
- * Everything under MEASURED below was taken with a harness whose result depended
- * on the SHAPE of the command: the MCTS bot carried a process-lifetime decision
- * counter into its rollout RNG seed, so a cell read one number alone and another
- * as a later column of a multi-column run (repeating ONE cell four times in one
- * process gave 24/16/21/23 of 32). Rookie's start file was unseeded too. Both are
- * fixed; a cell now depends only on (run, level, loadout, trial, tier) and is
- * reproducible across invocation shapes — guarded by
- * scripts/run-playtest/matrix-determinism-check.ts.
+ * ── HONEST NOTES ───────────────────────────────────────────────────────────
+ *   - L7 reads 100% for its pair at every clock from 2 to 7 and with every
+ *     hunter tried; the bot finds pull+drop+slide instantly once it is the
+ *     only line. It is above the 55-85 band — the teaching finale. Hunters
+ *     that stopped it (a5, c5 knights) either confused the bot's route or
+ *     created a decoy line for the wrong pair; they were taken out.
+ *   - T5 LEAKS (not capped, per the v2 rule; not fixed): L8 at T5 either
+ *     summon has two charges, so charge one is fed to the e3 pawn and charge
+ *     two shoots — the pair line with one card. L9 at T4+ the Dragon's
+ *     captures stun two turns, so it takes the bishop and walks f3-f4-g6
+ *     while he is frozen. Both are "sequential" lines (body one is spent
+ *     before body two is needed). L10 (the Dragon must still be on c4 when
+ *     the Duchess shoots) and L7 are simultaneous and hold at T5.
+ *   - Piece counts are under the v2 targets on L9 (2) and L10 (1): every
+ *     hunter added there either became a second key, blocked the only spawn
+ *     squares, or lured the bot off the one post (it is drawn to whichever
+ *     reachable square is nearest the king). L4 5, L7 5, L8 3.
+ *   - L2 and L3 (unchanged) share the signature `no-cast | cap:rook/step`.
+ *   - Every enemy is capturable on some line EXCEPT the sealed defenders on
+ *     L4 (b6/f6 knights, b7 pawn), L7 (e5/f4 knights) and L9's h6 knight:
+ *     they are the wheel's teeth, and a tooth you can take is a skeleton key.
  *
- * FINALE, numbers of record. `revenge.ts matrix --run=revenge-22 --levels=7,8,9,10
- * --loadouts=<none + kit + pair> --trials=32 --jobs=8`, T1 cards, Normal:
- *    L     none    aegis   dragon  duchess   magnet  |  dragon+duchess
- *    7       0%       0%       0%       0%       0%  |  78%
- *    8       0%       0%       0%       0%       0%  |  81%
- *    9       0%       0%       0%       0%       0%  |  84%
- *   10       0%       0%       0%       0%       0%  |  72%
- * GATE HOLDS: no card in the kit clears a finale level alone (worst single cell 0%); the pair reads 78/81/84/72.
- * The header below reads 81/88/84/72 for the pair and is CONFIRMED (max drift 7 points,
- * inside 32-trial binomial noise) — but it was taken with the flawed method, so these
- * are the numbers of record.
- * ──
- * MEASURED (Normal, T5 bot, abilities at T1 as the harness deals them,
- * --jobs=1 SERIAL; finale 32 trials/cell, L1-L6 16; 2026-09-05):
- *   L      none  dragon  duchess  magnet  aegis  |  dragon+duchess
- *   1-3    100%   100%    100%     100%   100%   |   100%   (teaching)
- *   4        0%    69%     38%       0%   100%   |    94%   (aegis key)
- *   5        0%   100%    100%       0%     0%   |   100%   (a body's key)
- *   6        0%   100%      0%       0%     0%   |   100%   (dragon key)
- *   7        0%     0%      0%       0%     0%   |    81%
- *   8        0%     0%      0%       0%     0%   |    88%
- *   9        0%     0%      0%       0%     0%   |    84%
- *   10       0%     0%      0%       0%     0%   |    72%
- * FULL RUNS (40 each, Normal, serial): 7/40 = 18% clear with RANDOM offer
- * picks (the L4 warden and the L10 clock are where random kits die), 18/40 =
- * 45% with the pool pinned to dragon+duchess. Random is BELOW the pair pool
- * here (unlike the Vault/Glasshouse) because a 4-card kit with offers on
- * L1/L3/L6/L9 still leaves a random picker holding only one summon by L7
- * about half the time. TIER CAVEAT (upgraded summons change behaviour): at
- * 2 charges (Dragon T5, Duchess T4+) one card can trade twice by itself and
- * the finale gate falls; at T1-T3 every summon has one body per level and
- * the gate holds. The runs mode above already includes upgrades and reads
- * 45% with the pair pool, so the caveat is real but not dominant.
- * BOT NOTE: the bot handles two bodies badly in exactly one way — it will
- * never play an ally move whose payoff is another ally move; it plays ally
- * captures and ally moves whose next move wins. Design for that.
+ * Test a level in the app: /?run=revenge-22&level=N&go=1&testkit=dragon,duchess,magnet
+ * (offer pool only) or &loadout=magnet:1,duchess:1 to start holding cards.
  */
 
 import {
@@ -205,27 +195,43 @@ function RING(f: number, r: number, minus: string[] = []): string[] {
 
 
 /**
- * The finale wheels — THE DOUBLE DOOR. Every ring square but two is stone;
- * the king stands on one, his own pawn stands in the other (his door), and a
- * second pawn on the top rank, jammed and pocketed, watches the door square.
- * Every window and jump onto the KING's square is stone, so the only way to
- * attack him is to stand in his door — and the only way into the door is to
- * take the pawn in it, which the pawn behind it answers by stepping in.
- *   EAST (core g7): king g6, door f7, watcher e8, line a2-g8 through e6.
- *   WEST (core b7): the mirror — king b6, door c7, watcher d8, line h2-b8
- *   through d6.
- *   HUB (core e7): king e6, door f7, watcher g8, line h5-g6 (the far end of
- *   the anti-diagonal; e8/d7 stone).
+ * A board DRAWN in the source (the 2026-09-23 rework levels), rank 8 first:
+ *   '#' stone   '.' open   ',' his pen (open)   'K' the king (pen)
+ *   'p' 'n' 'b' 'q' his pieces.
  */
-const EAST_LOCK: ReadonlyArray<Coord> = MILL(7, 7, {
-  plus: [X(8, 7), X(7, 8), X(6, 5), X(8, 5), X(5, 5), X(6, 4), X(8, 4), X(7, 4), X(4, 7), X(4, 8), X(4, 6), X(3, 7)],
-});
-const WEST_LOCK: ReadonlyArray<Coord> = MILL(2, 7, {
-  plus: [X(1, 7), X(2, 8), X(3, 5), X(1, 5), X(4, 5), X(3, 4), X(1, 4), X(2, 4), X(5, 7), X(5, 8), X(5, 6), X(6, 7)],
-});
-const HUB_LOCK: ReadonlyArray<Coord> = MILL(5, 7, {
-  plus: [X(4, 7), X(5, 8), X(4, 5), X(6, 5), X(3, 5), X(4, 4), X(6, 4), X(7, 5), X(8, 8), X(8, 6), X(8, 7), X(3, 4), X(5, 4), X(3, 8)],
-});
+function drawn(
+  level: number,
+  rows: string[],
+  opts: { moveLimit: number; flee: boolean; enemiesPerTurn?: number },
+) {
+  if (rows.length !== 8) throw new Error(`revenge-22 L${level}: 8 rows`);
+  const pieces: ReturnType<typeof pawn>[] = [];
+  const hazards: Coord[] = [];
+  const pen: string[] = [];
+  rows.forEach((row, i) => {
+    const cells = row.replace(/ /g, '');
+    if (cells.length !== 8) throw new Error(`revenge-22 L${level}: row ${8 - i} is not 8 wide`);
+    const r = 8 - i;
+    [...cells].forEach((ch, j) => {
+      const f = j + 1;
+      if (ch === '#') hazards.push(X(f, r));
+      else if (ch === ',') pen.push(nameOf(f, r));
+      else if (ch === 'K') { pen.push(nameOf(f, r)); pieces.push(king(f, r)); }
+      else if (ch === 'p') pieces.push(pawn(f, r));
+      else if (ch === 'n') pieces.push(knight(f, r));
+      else if (ch === 'b') pieces.push(bishop(f, r));
+      else if (ch === 'q') pieces.push(queen(f, r));
+      else if (ch !== '.') throw new Error(`revenge-22 L${level}: bad cell '${ch}'`);
+    });
+  });
+  return make(level, pieces, {
+    ...(opts.flee ? FLEE : STILL),
+    moveLimit: opts.moveLimit,
+    ...(opts.enemiesPerTurn ? { enemiesPerTurn: opts.enemiesPerTurn } : {}),
+    hazards,
+    kingPen: pen,
+  });
+}
 
 /** The FINISHERS every Revenge offer slate carries (mirrors runs.ts). */
 const REVENGE_CORE_22: ReadonlyArray<string> = [
@@ -292,27 +298,20 @@ const RUN_REVENGE_22: RunDef = {
         kingPen: RING(7, 7),
       },
     ),
-    // L4 — THE WARDEN (aegis KEY, magnet KEY). The same door, the same
-    // pinned pawn — and this time the defender is a bishop standing IN the
-    // wheel's own corner, f8, pocketed by the pawn and the core. Rank 8 is
-    // bricked at e8 and the f-file ends at the king, so no line on the board
-    // reaches it. Every window and jump square of the ring is bricked too,
-    // so no body slips in beside him. Two answers, both fillers: come along
-    // rank 7 and PULL the plug off its defended square (magnet), or take the
-    // pawn anyway and eat the bishop's reply (aegis). The summons are traps.
-    make(
-      4,
-      [bishop(6, 8), pawn(5, 7), knight(2, 4), king(6, 7)],
-      {
-        ...STILL,
-        moveLimit: 8,
-        hazards: MILL(7, 7, {
-          doors: ['e7', 'f8'],
-          plus: [X(5, 6), X(5, 8), X(4, 6), X(4, 8), X(5, 5), X(6, 4), X(8, 4), X(6, 5), X(8, 5)],
-        }),
-        kingPen: RING(7, 7),
-      },
-    ),
+    // L4 — THE CORK (magnet KEY). NEW 2026-09-23. DECISION: move the plug,
+    // don't take it. Knight d5 corks his door; b6/f6 knights and the c6 tooth
+    // defend it (b7 covers the tooth). Pull it down the d-file, take it where
+    // nothing sees it, walk in. Summons alone: 0% (three defenders).
+    drawn(4, [
+      '# # # , # # # #',
+      '# p , # , # # #',
+      '# n p K # n # #',
+      '# # # n # # # #',
+      '# # # . # # # #',
+      '# # # . # # # #',
+      '# # # . # # # #',
+      '# # . . . # # #',
+    ], { moveLimit: 4, flee: false }),
     // L5 — THE LINE (a body's KEY). Still king on h7, the DEEP square of
     // the east wheel: no jump lands on it and no rook line touches it. Both
     // doors are shut. What is open is one window, f5, and through it the
@@ -348,70 +347,58 @@ const RUN_REVENGE_22: RunDef = {
         kingPen: RING(7, 7, ['h7']),
       },
     ),
-    // L7 — THE DOUBLE DOOR (finale, teaching). King g6, his wheel is two
-    // squares (f7 and g6; h7 and g8 bricked) and his own PAWN stands in f7,
-    // jammed by the stone under it. Nothing attacks g6 except a body ON f7.
-    // Take the pawn — the body is now beside him and he has nowhere to step
-    // — and the pawn on e8 steps down and takes the body, and his door is
-    // plugged again. One body opens the door once. The second body takes
-    // the pawn that re-plugged it, and this time nothing answers: take him.
-    // Both bodies come down the a2-g8 diagonal through the window e6 (e.g.
-    // summoned on d5 beside Rookie on e4). Eight moves, nothing hunting.
-    make(
-      7,
-      [pawn(6, 7), pawn(5, 8), pawn(2, 3), king(7, 6)],
-      {
-        ...FLEE,
-        moveLimit: 8,
-        hazards: [...EAST_LOCK],
-        kingPen: ['g6', 'f7'],
-      },
-    ),
-    // L8 — THE WEST DOOR. The mirror: king b6, door c7, watcher d8, line
-    // h2-b8 through the window d6. A knight hunts the floor: the two turns
-    // the trade costs are two turns you have to survive beside the line.
-    make(
-      8,
-      [pawn(3, 7), pawn(4, 8), knight(6, 3), pawn(8, 5), king(2, 6)],
-      {
-        ...FLEE,
-        moveLimit: 8,
-        hazards: [...WEST_LOCK],
-        kingPen: ['b6', 'c7'],
-      },
-    ),
-    // L9 — THE WATCHER FIRST (reworked 2026-09-15). The wheel in the middle
-    // (core e7): king e6, door f7, watcher g8, and the only line into the
-    // door is the anti-diagonal from h5 through g6. This time nobody has to be
-    // sacrificed: h6 is open, and from h6 the Dragon JUMPS onto the watcher.
-    // With g8 gone the door has no guard — the Duchess comes down h5-g6, takes
-    // f7 and then him. Two enemies a turn, a bishop and a knight on the floor.
-    make(
-      9,
-      [pawn(6, 7), pawn(7, 8), bishop(2, 2), knight(2, 5), king(5, 6)],
-      {
-        ...FLEE,
-        enemiesPerTurn: 2,
-        moveLimit: 11,
-        hazards: HUB_LOCK.filter((c) => !(c.file === 8 && c.rank === 6)),
-        kingPen: ['e6', 'f7'],
-      },
-    ),
-    // L10 — THE MILLSTONE. The west door again — king b6, door c7, watcher
-    // d8, line h2-b8 through d6 — with two enemies a turn and two knights
-    // closing from opposite corners. Twelve moves to reach the line, open
-    // his door twice and walk in.
-    make(
-      10,
-      [pawn(3, 7), pawn(4, 8), knight(7, 1), knight(8, 8), king(2, 6)],
-      {
-        ...FLEE,
-        enemiesPerTurn: 2,
-        moveLimit: 12,
-        hazards: [...WEST_LOCK],
-        kingPen: ['b6', 'c7'],
-      },
-    ),
+    // L7 — THE CORKED WINDOW (magnet + a summon). NEW 2026-09-23. DECISION:
+    // yank the cork off the diagonal and shoot through the gap it leaves.
+    // From b3: Magnet d3->c3, queen on c2, c2-d3-e4-f5 x g6 — one turn.
+    drawn(7, [
+      '# # # # # # # #',
+      '# # # # # , # #',
+      '# # # # # # K #',
+      '# n # # n . # #',
+      'p # # # . n # #',
+      '. . . n # # # #',
+      '. # . # # # # #',
+      '. # # # # # # #',
+    ], { moveLimit: 4, flee: true, enemiesPerTurn: 2 }),
+    // L8 — THE LONG SHOT (dragon + duchess). NEW 2026-09-23. DECISION: feed
+    // the sniper, then take the far diagonal. e3 watches f2, the only square
+    // beside g3; one body goes to f2, Rookie takes f2, g3-f4-e5-d6 x c7.
+    drawn(8, [
+      '# # # # # # # #',
+      '# # K # # # # #',
+      '# , # . # # # #',
+      '# # # # . # # #',
+      '# # # # # . # #',
+      'n n # # p # . #',
+      '. . . # # . # #',
+      '. . . . . . . .',
+    ], { moveLimit: 6, flee: true }),
+    // L9 — THE LEAP (duchess clears, dragon jumps). NEW 2026-09-23.
+    // DECISION: spend the queen on the bishop, keep the dragon for the jump.
+    // Bishop h1 watches f3; neutralise it, step to f3, Dragon f4, x g6.
+    drawn(9, [
+      '# # # # # # # #',
+      '# # # # # , # #',
+      '# # # # # # K n',
+      '# # # # # # # #',
+      '# # # # # . # #',
+      '# # # # # . # #',
+      '# # # # # . . #',
+      '. . . . . . # b',
+    ], { moveLimit: 6, flee: true }),
+    // L10 — THE FLUSH (dragon scares, duchess shoots). NEW 2026-09-23.
+    // DECISION: don't attack him — drive him onto the line. h1-h3-f3,
+    // Dragon e3-c4 (he runs b6->c7), Duchess g3, g3-f4-e5-d6 x c7.
+    drawn(10, [
+      '# # # # # # # #',
+      '# # , # # # # #',
+      '# K # . # # # #',
+      '# # , # . # # n',
+      '# # . # # . # #',
+      '# # # # . . . .',
+      '# # # # # # # .',
+      '# # # # # # # .',
+    ], { moveLimit: 7, flee: true, enemiesPerTurn: 2 }),
   ],
 };
 
