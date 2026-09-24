@@ -34,7 +34,7 @@ const COPY = {
   supportUrl: 'https://run.chesspath.app/support',
   marketingUrl: 'https://run.chesspath.app/',
   copyright: '2026 Learn Through Stories LLC',
-  keywords: 'chess,roguelike,daily,puzzle,strategy,board,tactics,rook,king,deckbuilder,run,levels',
+  keywords: 'chess,roguelike,daily,strategy,board,rook,king,deckbuilder,run,levels,capture,cards',
   promotionalText:
     'New board every day. Cross 10 escalating levels, corner the king, and unlock powers that break the rules of chess. Rookie lost the game. She took that personally.',
   description: `The game ended. And Rookie took that personally.
@@ -59,9 +59,7 @@ EARN YOUR ARSENAL
 54 trophies track everything from your first king to a flawless run. Nineteen of them unlock new abilities permanently. Four difficulties, from Rookie (training wheels, some judgment) to Nightmare (he sees everything).
 
 ACTUALLY LEARN CHESS
-Every mechanic is real chess underneath: forks, skewers, overloaded defenders, zugzwang. You will start seeing sightlines and weak squares everywhere - including in your regular games.
-
-From the makers of The Chess Path (chesspath.app), the friendly way to learn chess from zero.`,
+Every mechanic is real chess underneath: forks, skewers, overloaded defenders, zugzwang. You will start seeing sightlines and weak squares everywhere - including in your regular games.`,
   reviewNotes: `Rookie's Revenge is a daily chess roguelike: the player controls a single rook and crosses the board in 10 escalating levels to capture the enemy king, earning abilities between levels. A new board rotates in every day, and a 10-run ladder (100 levels) plus two bonus runs is always open.
 
 No account is required and there is no sign-in anywhere in the app. Progress (abilities, trophies, difficulty unlocks) is stored on device. There are no purchases, no ads, and no user generated content beyond an optional leaderboard handle (a random "Rook-1234" name the player may rename).
@@ -75,7 +73,10 @@ TESTED ON: iPhone 15 Pro (iOS 26.6) via TestFlight since Aug 17, 2026.
 AUDIENCE/VALUE: chess beginners and puzzle-game players; a daily roguelike that teaches real chess ideas (sightlines, forks, overloaded defenders). Free, no ads, no in-app purchases.
 EXTERNAL SERVICES: PostHog (first-party product analytics, no cross-app tracking, no ATT) and Supabase (stores daily leaderboard scores keyed by a random device id). No payment processor, no login.
 REGIONS: functions identically in all regions (English).
-REGULATED/THIRD-PARTY: not a regulated industry; all content is original.`,
+REGULATED/THIRD-PARTY: not a regulated industry; all content is original.
+
+--- How this differs from our other apps (Guideline 4.3) ---
+This is a roguelike game, not a repackage. The Chess Path (com.learnthroughstories.chesspath) is a chess-learning app: lessons, a tactics-puzzle database, full games vs an AI, accounts and a subscription. Chess Boxing (com.learnthroughstories.chessboxing) is a fitness app: timed puzzle rounds alternating with boxing rounds. Rookie's Revenge has none of those: no lessons, no puzzle database, no chess games, no boxing, no accounts. One rook, custom enemy behaviors, 26 rule-breaking abilities, daily permadeath runs, a 100-level ladder. The engine, level data and ability system were written for this game and exist in none of our other apps; only the Rookie mascot and developer are shared.`,
   contact: { first: 'Tyler', last: 'Schwartz', phone: '18479515080', email: 'tyler@tylervsnyc.com' },
 };
 
