@@ -1,0 +1,2739 @@
+{
+ "schema": 1,
+ "experiment": "human-check",
+ "date": "2026-09-26",
+ "at": "2026-09-26T13:20:02.548Z",
+ "engine": {
+  "sha": "b924e63",
+  "dirty": false,
+  "libHash": "c8c4042bf96a"
+ },
+ "budget": {
+  "trials": 16,
+  "jobs": 4,
+  "seed": "matrix per (run,level,human loadout,trial)"
+ },
+ "conclusion": "15 human ladder runs (6 won); 25 first-try clears vs bot at 16 trials; BOT-BLIND none; human REPEAT revenge-17 L7=L10,L8=L9; revenge-17 L7=L10; revenge-21 L7=L8; revenge-25 L7=L10",
+ "body": {
+  "date": "2026-09-26",
+  "since": "2026-09-19",
+  "handle": null,
+  "trials": 16,
+  "runs": [
+   {
+    "traceId": "d93a2ab2",
+    "createdAt": "2026-09-19T14:07:14.052882+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 4,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 88,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 6,
+       "tylerActions": 6,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "dragon+sacrifice",
+      "signature": null,
+      "replay": {
+       "level": 4,
+       "verified": 1,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "f598fcc0",
+    "createdAt": "2026-09-19T14:10:35.81021+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 6,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 66,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/step",
+      "replay": {
+       "level": 1,
+       "verified": 6,
+       "tylerActions": 6,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 5,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice",
+      "signature": "poison-dart@adj | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 3,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "dragon+poison-dart+sacrifice:2",
+      "signature": null,
+      "replay": {
+       "level": 6,
+       "verified": 0,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "27f9a36b",
+    "createdAt": "2026-09-19T14:40:27.145629+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 47,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "dragon@far | cap:ally/orth",
+      "replay": {
+       "level": 3,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "dragon@line>sacrifice@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 2,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+sacrifice",
+      "signature": "dragon@line>sacrifice@line | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 2,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:3+sacrifice",
+      "signature": "dragon@near | cap:ally/L",
+      "replay": {
+       "level": 6,
+       "verified": 1,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 1,
+      "cleared": true,
+      "firstTry": false,
+      "arrival": "dragon:3+sacrifice",
+      "signature": "dragon@far>sacrifice@far | cap:rook/step",
+      "replay": {
+       "level": 7,
+       "verified": 3,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:4+sacrifice",
+      "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+      "replay": {
+       "level": 8,
+       "verified": 1,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:4+sacrifice",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "dragon@diag>sacrifice@diag | cap:rook/orth": 8,
+        "dragon@far>sacrifice@far | cap:rook/orth": 8
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:5+sacrifice:2",
+      "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+      "replay": {
+       "level": 9,
+       "verified": 2,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:5+sacrifice:2",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "dragon@far>sacrifice@far | cap:rook/orth": 7,
+        "dragon@far>dragon@diag>sacrifice@diag | cap:rook/orth": 2,
+        "dragon@far | cap:ally/L": 1,
+        "dragon@diag>sacrifice@diag | cap:rook/orth": 3,
+        "dragon@far>dragon@diag | cap:ally/L": 1,
+        "dragon@far | cap:rook/orth": 2
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:5+sacrifice:3",
+      "signature": "dragon@far>sacrifice@far | cap:rook/step",
+      "replay": {
+       "level": 10,
+       "verified": 3,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:5+sacrifice:3",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "dragon@far>sacrifice@far | cap:rook/orth": 5,
+        "dragon@far>dragon@adj | cap:ally/step": 1,
+        "dragon@far>sacrifice@far | cap:rook/step": 4,
+        "dragon@far>dragon@diag>sacrifice@diag | cap:rook/orth": 2,
+        "dragon@diag>sacrifice@diag | cap:rook/orth": 3,
+        "dragon@far>sacrifice@far>dragon@near | cap:ally/L": 1
+       }
+      }
+     }
+    ],
+    "repeats": [
+     [
+      7,
+      10,
+      "dragon@far>sacrifice@far | cap:rook/step"
+     ],
+     [
+      8,
+      9,
+      "dragon@far>sacrifice@far | cap:rook/orth"
+     ]
+    ]
+   },
+   {
+    "traceId": "ba90a535",
+    "createdAt": "2026-09-19T20:32:37.53042+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 46,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "dragon@far | cap:ally/orth",
+      "replay": {
+       "level": 3,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "dragon@line>sacrifice@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 2,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice:2",
+      "signature": "dragon@line>sacrifice@line | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 2,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice:2",
+      "signature": "dragon@near | cap:ally/L",
+      "replay": {
+       "level": 6,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice:2",
+      "signature": "dragon@far>sacrifice@far | cap:rook/step",
+      "replay": {
+       "level": 7,
+       "verified": 2,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon+poison-dart+sacrifice:2",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "poison-dart@near>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "dragon@far>sacrifice@far | cap:rook/step": 1,
+        "poison-dart@near>dragon@far>sacrifice@far | cap:rook/step": 2,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/orth": 2,
+        "poison-dart@line>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@line>dragon@far>sacrifice@far | cap:rook/step": 3,
+        "poison-dart@near>dragon@line>sacrifice@line | cap:rook/step": 1,
+        "poison-dart@diag>dragon@diag>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@diag>dragon@far>sacrifice@far | cap:rook/step": 1,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/step": 1,
+        "poison-dart@adj>dragon@far>sacrifice@far | cap:rook/step": 1,
+        "poison-dart@adj>dragon@diag>sacrifice@diag | cap:rook/orth": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice:3",
+      "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+      "replay": {
+       "level": 8,
+       "verified": 2,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon+poison-dart+sacrifice:3",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "dragon@far>sacrifice@far | cap:rook/orth": 2,
+        "poison-dart@diag>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@far>dragon@diag>sacrifice@diag | cap:rook/orth": 4,
+        "poison-dart@near>dragon@far | cap:ally/L": 1,
+        "poison-dart@near>dragon@far>sacrifice@far | cap:rook/orth": 3,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/orth": 3,
+        "poison-dart@line>dragon@diag>sacrifice@diag | cap:rook/orth": 2
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+poison-dart:2+sacrifice:3",
+      "signature": "dragon@diag>sacrifice@diag | cap:rook/orth",
+      "replay": {
+       "level": 9,
+       "verified": 2,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:2+poison-dart:2+sacrifice:3",
+       "est": {
+        "wins": 13,
+        "n": 16,
+        "pct": 81.3,
+        "lo": 57,
+        "hi": 93.4
+       },
+       "lines": {
+        "poison-dart@far>dragon@far>poison-dart@line>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/orth": 3,
+        "poison-dart@near>poison-dart@far>dragon@diag>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@far>dragon@diag>poison-dart@line>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@far>dragon@diag>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@near>dragon@far>poison-dart@far | cap:rook/orth": 1,
+        "poison-dart@far>dragon@diag>poison-dart@far>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@near>poison-dart@line>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@near>poison-dart@line>dragon@far | cap:rook/orth": 1,
+        "poison-dart@far>poison-dart@diag>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "dragon@far>sacrifice@far | cap:rook/orth": 1
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 1,
+      "cleared": true,
+      "firstTry": false,
+      "arrival": "dragon:3+poison-dart:2+sacrifice:3",
+      "signature": "dragon@far>sacrifice@far | cap:rook/step",
+      "replay": {
+       "level": 10,
+       "verified": 6,
+       "tylerActions": 13,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": [
+     [
+      7,
+      10,
+      "dragon@far>sacrifice@far | cap:rook/step"
+     ]
+    ]
+   },
+   {
+    "traceId": "13fbeaa3",
+    "createdAt": "2026-09-20T16:33:17.528988+00:00",
+    "runId": "revenge-18",
+    "rung": 2,
+    "name": "The Glasshouse",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 5,
+    "posts": 3,
+    "exactReplay": true,
+    "replayedPct": 59,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray",
+      "signature": "freeze-ray@far | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray",
+      "signature": "freeze-ray@adj | cap:rook/step",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray+poison-dart",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 1,
+       "tylerActions": 1,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 1,
+      "cleared": true,
+      "firstTry": false,
+      "arrival": "freeze-ray+poison-dart",
+      "signature": "freeze-ray@pen | cap:rook/step",
+      "replay": {
+       "level": 4,
+       "verified": 5,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 2,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "freeze-ray+poison-dart+vanguard",
+      "signature": null,
+      "replay": {
+       "level": 5,
+       "verified": 6,
+       "tylerActions": 17,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "9a40f566",
+    "createdAt": "2026-09-21T13:39:40.432058+00:00",
+    "runId": "revenge-19",
+    "rung": 8,
+    "name": "The Cliff",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 6,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 88,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "convert",
+      "signature": "convert@adj | cap:ally/step",
+      "replay": {
+       "level": 1,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "convert",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "convert+magnet",
+      "signature": "summon-knight@near | cap:ally/L",
+      "replay": {
+       "level": 3,
+       "verified": 6,
+       "tylerActions": 6,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "convert+magnet+summon-knight",
+      "signature": "convert@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "convert+magnet+summon-knight",
+      "signature": "convert@near>summon-knight@far | cap:ally/L",
+      "replay": {
+       "level": 5,
+       "verified": 7,
+       "tylerActions": 7,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "convert:2+magnet+summon-knight",
+      "signature": null,
+      "replay": {
+       "level": 6,
+       "verified": 6,
+       "tylerActions": 10,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "c502795d",
+    "createdAt": "2026-09-21T16:50:14.328178+00:00",
+    "runId": "revenge-21",
+    "rung": 1,
+    "name": "The Slash",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 38,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "boulder",
+      "signature": "boulder@adj | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 6,
+       "tylerActions": 6,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "boulder+knight-hop",
+      "signature": "knight-hop | cap:knight/L",
+      "replay": {
+       "level": 2,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:2+knight-hop",
+      "signature": "aegis | cap:rook/step",
+      "replay": {
+       "level": 3,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:2+knight-hop",
+      "signature": "aegis | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:3+knight-hop",
+      "signature": "knight-hop | cap:knight/L",
+      "replay": {
+       "level": 5,
+       "verified": 3,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:4+knight-hop",
+      "signature": "boulder@adj>knight-hop | cap:rook/orth",
+      "replay": {
+       "level": 6,
+       "verified": 1,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:5+knight-hop",
+      "signature": "boulder@pen>boulder@near>knight-hop | cap:rook/orth",
+      "replay": {
+       "level": 7,
+       "verified": 2,
+       "tylerActions": 9,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "aegis+boulder:5+knight-hop",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "boulder@pen>knight-hop | cap:rook/orth": 1,
+        "boulder@far>boulder@pen>aegis>knight-hop | cap:rook/step": 1,
+        "aegis>knight-hop | cap:rook/step": 3,
+        "boulder@far>aegis>boulder@far>knight-hop | cap:rook/step": 4,
+        "boulder@far>aegis>knight-hop | cap:rook/step": 3,
+        "boulder@pen>boulder@far>aegis>boulder@pen>knight-hop | cap:rook/orth": 1,
+        "aegis>boulder@far>knight-hop | cap:rook/step": 2,
+        "boulder@pen>aegis>knight-hop | cap:rook/step": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:5+knight-hop",
+      "signature": "boulder@pen>boulder@near>knight-hop | cap:rook/orth",
+      "replay": {
+       "level": 8,
+       "verified": 1,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "aegis+boulder:5+knight-hop",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "aegis>boulder@pen>knight-hop | cap:rook/orth": 2,
+        "boulder@far>aegis>boulder@pen>boulder@far>knight-hop>boulder@pen | cap:rook/orth": 1,
+        "boulder@far>aegis>boulder@line>boulder@far>boulder@pen>boulder@far>knight-hop | cap:rook/orth": 1,
+        "boulder@far>boulder@diag>boulder@far>aegis>boulder@far>boulder@pen>knight-hop | cap:rook/step": 1,
+        "boulder@far>boulder@pen>boulder@far>boulder@pen>knight-hop | cap:rook/orth": 1,
+        "aegis>knight-hop | cap:rook/step": 3,
+        "boulder@far>aegis>knight-hop | cap:rook/step": 1,
+        "boulder@far>aegis>boulder@far>boulder@diag>boulder@pen>boulder@far>knight-hop | cap:rook/orth": 1,
+        "boulder@far>boulder@diag>boulder@far>aegis>boulder@far>boulder@diag>boulder@far>boulder@pen>boulder@far>knight-hop | cap:rook/step": 1,
+        "boulder@far>knight-hop>aegis | cap:rook/step": 2,
+        "boulder@far>aegis>boulder@diag>boulder@far>knight-hop | cap:rook/step": 1,
+        "boulder@diag>boulder@far>aegis>boulder@far>boulder@diag>boulder@far>knight-hop>boulder@pen | cap:rook/step": 1
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:5+knight-hop:2",
+      "signature": "boulder@adj>boulder@pen>boulder@near>knight-hop | cap:rook/orth",
+      "replay": {
+       "level": 9,
+       "verified": 1,
+       "tylerActions": 10,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "aegis+boulder:5+knight-hop:2",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "knight-hop>aegis | cap:rook/step": 1,
+        "aegis>boulder@pen>knight-hop | cap:rook/orth": 1,
+        "aegis>boulder@far>boulder@adj>boulder@far>boulder@pen>knight-hop>boulder@pen | cap:rook/orth": 1,
+        "aegis>boulder@far>boulder@adj>boulder@far>boulder@line>boulder@diag>boulder@line>boulder@adj>boulder@far>boulder@pen>boulder@far>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@adj>boulder@line>boulder@far>boulder@pen>boulder@far>boulder@pen>boulder@far>knight-hop | cap:rook/orth": 1,
+        "boulder@diag>aegis>boulder@far>boulder@diag>boulder@far>boulder@pen>boulder@far>boulder@line>knight-hop | cap:rook/step": 1,
+        "boulder@pen>boulder@adj>knight-hop | cap:rook/orth": 1,
+        "aegis>boulder@far>knight-hop>boulder@adj | cap:rook/step": 1,
+        "aegis>boulder@far>boulder@pen>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@far>knight-hop | cap:rook/step": 2,
+        "boulder@far>aegis>boulder@far>knight-hop>boulder@far>boulder@adj | cap:rook/step": 1,
+        "knight-hop>boulder@far>aegis | cap:rook/step": 1,
+        "boulder@far>aegis>boulder@far>boulder@pen>boulder@far>boulder@pen>boulder@adj>knight-hop | cap:rook/orth": 1,
+        "aegis>boulder@pen>boulder@far>boulder@pen>boulder@adj>knight-hop | cap:rook/orth": 1,
+        "boulder@pen>boulder@far>aegis>knight-hop | cap:rook/step": 1
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "aegis+boulder:5+knight-hop:2",
+      "signature": "boulder@pen>knight-hop | cap:rook/orth",
+      "replay": {
+       "level": 10,
+       "verified": 0,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "aegis+boulder:5+knight-hop:2",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "boulder@pen>boulder@far>boulder@pen>boulder@far>aegis>boulder@far>boulder@diag>boulder@line>boulder@far>knight-hop | cap:rook/step": 1,
+        "boulder@far>aegis>boulder@far>boulder@pen>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@far>boulder@line>boulder@far>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@far>knight-hop | cap:rook/step": 1,
+        "boulder@line>aegis>boulder@pen>knight-hop | cap:rook/step": 1,
+        "aegis>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@pen>boulder@far>knight-hop | cap:rook/step": 1,
+        "boulder@far>aegis>boulder@pen>knight-hop | cap:rook/step": 1,
+        "boulder@far>aegis>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@pen>boulder@far>boulder@pen>boulder@far>knight-hop | cap:rook/step": 1,
+        "aegis>boulder@pen>knight-hop | cap:rook/step": 3,
+        "aegis>knight-hop>boulder@pen | cap:rook/step": 1,
+        "boulder@pen>boulder@far>boulder@line>knight-hop>aegis | cap:rook/step": 1,
+        "boulder@pen>aegis>boulder@far>boulder@pen>boulder@far>knight-hop | cap:rook/step": 1
+       }
+      }
+     }
+    ],
+    "repeats": [
+     [
+      7,
+      8,
+      "boulder@pen>boulder@near>knight-hop | cap:rook/orth"
+     ]
+    ]
+   },
+   {
+    "traceId": "0a577015",
+    "createdAt": "2026-09-22T12:47:58.145072+00:00",
+    "runId": "revenge-23",
+    "rung": 4,
+    "name": "The Parapet",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 7,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 67,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "knight-hop",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 1,
+       "tylerActions": 1,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "knight-hop+twin",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "decoy@near>knight-hop | cap:knight/L",
+      "replay": {
+       "level": 4,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:3",
+      "signature": "twin@far | cap:ally/orth",
+      "replay": {
+       "level": 5,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:4",
+      "signature": "knight-hop | cap:knight/L",
+      "replay": {
+       "level": 6,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 2,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "decoy+knight-hop+twin:4",
+      "signature": null,
+      "replay": {
+       "level": 7,
+       "verified": 3,
+       "tylerActions": 9,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "c17750db",
+    "createdAt": "2026-09-22T12:52:00.897632+00:00",
+    "runId": "revenge-23",
+    "rung": 4,
+    "name": "The Parapet",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 10,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 63,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "knight-hop",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 2,
+       "tylerActions": 2,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "knight-hop+twin",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "decoy@near>knight-hop | cap:knight/L",
+      "replay": {
+       "level": 4,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop:2+twin:2",
+      "signature": "twin@far | cap:ally/orth",
+      "replay": {
+       "level": 5,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop:2+twin:3",
+      "signature": "knight-hop | cap:knight/L",
+      "replay": {
+       "level": 6,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop:2+twin:3",
+      "signature": "knight-hop>twin@adj | cap:ally/orth",
+      "replay": {
+       "level": 7,
+       "verified": 3,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+knight-hop:2+twin:3",
+       "est": {
+        "wins": 11,
+        "n": 16,
+        "pct": 68.8,
+        "lo": 44.4,
+        "hi": 85.8
+       },
+       "lines": {
+        "decoy@line>knight-hop>twin@pen | cap:ally/step": 3,
+        "decoy@far>knight-hop>twin@adj | cap:ally/orth": 2,
+        "knight-hop>decoy@line>twin@adj | cap:ally/orth": 1,
+        "twin@far>knight-hop>decoy@far>twin@adj | cap:ally/orth": 1,
+        "twin@line>decoy@line>knight-hop>twin@pen | cap:ally/step": 1,
+        "twin@line>decoy@far>knight-hop>twin@adj | cap:ally/orth": 1,
+        "decoy@far>twin@far>knight-hop>twin@adj | cap:ally/orth": 1,
+        "knight-hop>decoy@far>twin@adj | cap:ally/orth": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop:2+twin:4",
+      "signature": "knight-hop>twin@pen | cap:ally/step",
+      "replay": {
+       "level": 8,
+       "verified": 4,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+knight-hop:2+twin:4",
+       "est": {
+        "wins": 14,
+        "n": 16,
+        "pct": 87.5,
+        "lo": 64,
+        "hi": 96.5
+       },
+       "lines": {
+        "knight-hop>decoy@far>twin@pen | cap:ally/step": 1,
+        "twin@far>decoy@line>knight-hop>twin@pen | cap:ally/step": 1,
+        "decoy@far>knight-hop>twin@pen | cap:ally/step": 1,
+        "decoy@line>knight-hop>twin@pen | cap:ally/step": 6,
+        "decoy@line>twin@far>knight-hop>twin@pen | cap:ally/step": 3,
+        "knight-hop>twin@pen | cap:ally/step": 1,
+        "twin@line>knight-hop>twin@pen | cap:ally/step": 1
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop:2+twin:5",
+      "signature": "knight-hop>twin@line | cap:ally/orth",
+      "replay": {
+       "level": 9,
+       "verified": 2,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+knight-hop:2+twin:5",
+       "est": {
+        "wins": 13,
+        "n": 16,
+        "pct": 81.3,
+        "lo": 57,
+        "hi": 93.4
+       },
+       "lines": {
+        "twin@line>decoy@line>knight-hop>twin@line | cap:ally/orth": 1,
+        "decoy@line>knight-hop>twin@pen | cap:ally/step": 1,
+        "twin@far>decoy@line>knight-hop>twin@line | cap:ally/orth": 1,
+        "twin@far>knight-hop | cap:knight/L": 1,
+        "knight-hop>decoy@line>twin@pen | cap:ally/step": 1,
+        "knight-hop>twin@pen | cap:ally/step": 2,
+        "decoy@far>twin@far>knight-hop | cap:knight/L": 1,
+        "twin@far>knight-hop>decoy@line>twin@pen | cap:ally/step": 1,
+        "knight-hop>twin@far | cap:knight/L": 1,
+        "decoy@far>knight-hop>twin@line | cap:ally/orth": 1,
+        "twin@far>knight-hop>twin@pen | cap:ally/step": 1,
+        "decoy@line>knight-hop>twin@far>twin@pen | cap:ally/step": 1
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 2,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "decoy+knight-hop:2+twin:5",
+      "signature": null,
+      "replay": {
+       "level": 10,
+       "verified": 7,
+       "tylerActions": 11,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "d49eb28d",
+    "createdAt": "2026-09-23T02:24:17.815129+00:00",
+    "runId": "revenge-23",
+    "rung": 4,
+    "name": "The Parapet",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 7,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 83,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "knight-hop",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 1,
+       "tylerActions": 1,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "knight-hop+twin",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "decoy@near>knight-hop>twin@line | cap:ally/orth",
+      "replay": {
+       "level": 4,
+       "verified": 4,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:2",
+      "signature": "twin@far | cap:ally/orth",
+      "replay": {
+       "level": 5,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+knight-hop+twin:3",
+      "signature": "knight-hop | cap:knight/L",
+      "replay": {
+       "level": 6,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "decoy+knight-hop:2+twin:3",
+      "signature": null,
+      "replay": {
+       "level": 7,
+       "verified": 1,
+       "tylerActions": 1,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "05eb2009",
+    "createdAt": "2026-09-23T10:58:51.100157+00:00",
+    "runId": "revenge-22",
+    "rung": 9,
+    "name": "The Millstone",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 37,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess",
+      "signature": "no-cast | cap:rook/step",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess:2+magnet",
+      "signature": "duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 3,
+       "verified": 4,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess:2+magnet",
+      "signature": "magnet@pen>magnet@adj | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 0,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+duchess:2+magnet",
+      "signature": "dragon@diag | cap:ally/diag",
+      "replay": {
+       "level": 5,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:3+duchess:2+magnet",
+      "signature": "dragon@near | cap:ally/L",
+      "replay": {
+       "level": 6,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:3+duchess:2+magnet",
+      "signature": "duchess@far>dragon@far | cap:ally/step",
+      "replay": {
+       "level": 7,
+       "verified": 0,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:3+duchess:2+magnet",
+       "est": {
+        "wins": 14,
+        "n": 16,
+        "pct": 87.5,
+        "lo": 64,
+        "hi": 96.5
+       },
+       "lines": {
+        "dragon@far>duchess@far>magnet@diag | cap:ally/diag": 2,
+        "duchess@far>magnet@diag>dragon@diag | cap:ally/diag": 2,
+        "duchess@far>dragon@far>magnet@diag | cap:ally/diag": 2,
+        "dragon@diag>magnet@diag | cap:ally/diag": 2,
+        "dragon@far>duchess@diag>magnet@diag | cap:ally/diag": 2,
+        "duchess@far>dragon@diag>magnet@diag | cap:ally/diag": 1,
+        "magnet@diag>dragon@diag | cap:ally/diag": 1,
+        "duchess@diag>magnet@diag | cap:ally/diag": 2
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:3+duchess:2+magnet",
+      "signature": "duchess@diag>dragon@diag | cap:ally/step",
+      "replay": {
+       "level": 8,
+       "verified": 0,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:3+duchess:2+magnet",
+       "est": {
+        "wins": 15,
+        "n": 16,
+        "pct": 93.8,
+        "lo": 71.7,
+        "hi": 98.9
+       },
+       "lines": {
+        "duchess@far>dragon@diag | cap:ally/diag": 4,
+        "dragon@far>duchess@diag | cap:ally/diag": 11
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:4+duchess:2+magnet:2",
+      "signature": "duchess@adj>dragon@adj | cap:ally/step",
+      "replay": {
+       "level": 9,
+       "verified": 0,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:4+duchess:2+magnet:2",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "duchess@line>dragon@near | cap:ally/L": 3,
+        "dragon@far | cap:ally/L": 9,
+        "dragon@far>duchess@far | cap:ally/L": 1,
+        "duchess@far>dragon@near | cap:ally/L": 2,
+        "dragon@diag>duchess@diag | cap:ally/L": 1
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:4+duchess:2+magnet:2",
+      "signature": "duchess@far>magnet@pen>dragon@far | cap:ally/step",
+      "replay": {
+       "level": 10,
+       "verified": 0,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:4+duchess:2+magnet:2",
+       "est": {
+        "wins": 15,
+        "n": 16,
+        "pct": 93.8,
+        "lo": 71.7,
+        "hi": 98.9
+       },
+       "lines": {
+        "dragon@diag>duchess@far | cap:ally/L": 2,
+        "dragon@diag | cap:ally/step": 6,
+        "dragon@far>duchess@far | cap:ally/L": 5,
+        "dragon@far | cap:ally/step": 2
+       }
+      }
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "f66e06ef",
+    "createdAt": "2026-09-23T19:23:39.727391+00:00",
+    "runId": "revenge-22",
+    "rung": 9,
+    "name": "The Millstone",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 7,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 47,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 1,
+       "verified": 1,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess",
+      "signature": "dragon@diag | cap:ally/diag",
+      "replay": {
+       "level": 2,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess+magnet",
+      "signature": "duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 3,
+       "verified": 3,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess+magnet",
+      "signature": "magnet@adj>magnet@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 2,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+duchess:2+magnet",
+      "signature": "duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 5,
+       "verified": 1,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+duchess:2+magnet",
+      "signature": "dragon@near | cap:ally/L",
+      "replay": {
+       "level": 6,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 2,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "dragon:3+duchess:2+magnet",
+      "signature": null,
+      "replay": {
+       "level": 7,
+       "verified": 3,
+       "tylerActions": 15,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "cb61d4a6",
+    "createdAt": "2026-09-23T21:04:56.65184+00:00",
+    "runId": "revenge-22",
+    "rung": 9,
+    "name": "The Millstone",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 2,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 100,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "dragon+duchess",
+      "signature": null,
+      "replay": {
+       "level": 2,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "f35bedac",
+    "createdAt": "2026-09-24T12:18:29.620666+00:00",
+    "runId": "revenge-24",
+    "rung": 6,
+    "name": "The Lattice",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 27,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "duchess",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 2,
+       "tylerActions": 2,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess",
+      "signature": "no-cast | cap:rook/step",
+      "replay": {
+       "level": 2,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:2+magnet",
+      "signature": "magnet@adj>magnet@line | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 1,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:2+magnet",
+      "signature": "magnet@adj>magnet@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 1,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:3+magnet",
+      "signature": "decoy@adj | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 1,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:4+magnet",
+      "signature": "decoy@adj>duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 6,
+       "verified": 0,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:4+magnet",
+      "signature": "magnet@diag>decoy@diag>duchess@far | cap:ally/diag",
+      "replay": {
+       "level": 7,
+       "verified": 0,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+duchess:4+magnet",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "decoy@adj>duchess@far | cap:ally/diag": 3,
+        "decoy@adj>duchess@diag | cap:ally/step": 2,
+        "decoy@adj>duchess@far | cap:ally/step": 4,
+        "decoy@diag>duchess@far | cap:ally/diag": 2,
+        "duchess@far>decoy@adj | cap:ally/diag": 1,
+        "duchess@far | cap:ally/diag": 1,
+        "duchess@far>decoy@diag | cap:ally/diag": 1,
+        "decoy@diag>duchess@far>duchess@adj | cap:ally/step": 1,
+        "decoy@adj>duchess@line | cap:ally/step": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:4+magnet",
+      "signature": "decoy@line>duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 8,
+       "verified": 0,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+duchess:4+magnet",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "decoy@adj>duchess@diag | cap:ally/diag": 4,
+        "decoy@line>duchess@diag | cap:ally/step": 2,
+        "decoy@line>magnet@far>duchess@diag | cap:ally/step": 1,
+        "duchess@diag>decoy@adj | cap:ally/diag": 1,
+        "decoy@line>duchess@diag | cap:ally/diag": 7,
+        "decoy@adj>duchess@diag | cap:ally/step": 1
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:5+magnet",
+      "signature": "decoy@adj>duchess@far | cap:ally/diag",
+      "replay": {
+       "level": 9,
+       "verified": 1,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+duchess:5+magnet",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "duchess@far>decoy@far | cap:ally/step": 1,
+        "decoy@far>duchess@far | cap:ally/step": 1,
+        "duchess@far>decoy@adj | cap:ally/diag": 4,
+        "decoy@adj>duchess@far | cap:ally/diag": 10
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "decoy+duchess:5+magnet",
+      "signature": "decoy@adj>duchess@diag | cap:ally/diag",
+      "replay": {
+       "level": 10,
+       "verified": 2,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "decoy+duchess:5+magnet",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "decoy@adj>duchess@diag | cap:ally/diag": 3,
+        "decoy@diag>duchess@far | cap:ally/diag": 7,
+        "decoy@adj>duchess@diag | cap:ally/step": 2,
+        "duchess@far>decoy@diag | cap:ally/diag": 3,
+        "decoy@diag>duchess@line | cap:ally/diag": 1
+       }
+      }
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "9d211c36",
+    "createdAt": "2026-09-25T12:31:59.271145+00:00",
+    "runId": "revenge-25",
+    "rung": 7,
+    "name": "The Alcove",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 19,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king",
+      "signature": "boulder@pen | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 2,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder",
+      "signature": "boulder@pen | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 2,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder:2+magnet",
+      "signature": "boulder@pen>magnet@adj>magnet@line | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 1,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder:2+magnet",
+      "signature": "boulder@pen>magnet@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 0,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder:3+magnet",
+      "signature": "boulder@pen>magnet@adj>magnet@line | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 0,
+       "tylerActions": 4,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder:4+magnet",
+      "signature": "boulder@pen>become-king | cap:rook/step",
+      "replay": {
+       "level": 6,
+       "verified": 2,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder:5+magnet",
+      "signature": "boulder@pen>become-king | cap:rook/step",
+      "replay": {
+       "level": 7,
+       "verified": 0,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "become-king+boulder:5+magnet",
+       "est": {
+        "wins": 11,
+        "n": 16,
+        "pct": 68.8,
+        "lo": 44.4,
+        "hi": 85.8
+       },
+       "lines": {
+        "boulder@pen>become-king | cap:rook/step": 2,
+        "boulder@far>boulder@line>boulder@pen>become-king | cap:rook/step": 2,
+        "boulder@line>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@far>become-king | cap:rook/step": 5,
+        "boulder@far>boulder@line>boulder@far>become-king | cap:rook/step": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king+boulder:5+magnet",
+      "signature": "boulder@pen>become-king | cap:rook/orth",
+      "replay": {
+       "level": 8,
+       "verified": 2,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "become-king+boulder:5+magnet",
+       "est": {
+        "wins": 13,
+        "n": 16,
+        "pct": 81.3,
+        "lo": 57,
+        "hi": 93.4
+       },
+       "lines": {
+        "boulder@diag>boulder@far>boulder@diag>boulder@adj>boulder@far>boulder@line>boulder@pen>boulder@far>boulder@diag>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@diag>boulder@far>boulder@pen>boulder@far>boulder@adj>become-king | cap:rook/orth": 1,
+        "boulder@diag>boulder@far>boulder@line>boulder@far>boulder@pen>boulder@far>boulder@diag>become-king | cap:rook/orth": 1,
+        "boulder@line>boulder@far>boulder@pen>boulder@diag>boulder@adj>boulder@far>boulder@diag>boulder@far>boulder@line>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@adj>boulder@far>become-king>boulder@far>boulder@pen | cap:rook/orth": 1,
+        "boulder@far>boulder@adj>boulder@pen>boulder@far>boulder@line>boulder@far>boulder@diag>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@pen>boulder@far>boulder@diag>boulder@far>boulder@line>boulder@far>boulder@line>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@line>boulder@pen>boulder@far>boulder@diag>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@line>boulder@diag>boulder@adj>boulder@far>boulder@pen>boulder@far>boulder@line>boulder@far>boulder@diag>boulder@far>boulder@line>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@diag>boulder@far>boulder@pen>boulder@far>boulder@line>boulder@diag>boulder@far>boulder@adj>boulder@line>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@line>boulder@pen>boulder@diag>boulder@adj>boulder@far>boulder@diag>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@line>boulder@far>boulder@pen>boulder@far>boulder@adj>boulder@line>boulder@far>boulder@diag>boulder@far>become-king | cap:rook/orth": 1,
+        "boulder@far>boulder@pen>boulder@far>boulder@line>boulder@far>boulder@line>boulder@far>boulder@diag>boulder@far>boulder@adj>boulder@far>boulder@diag>boulder@far>become-king | cap:rook/orth": 1
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king:2+boulder:5+magnet",
+      "signature": "boulder@pen>boulder@far>become-king | cap:rook/step",
+      "replay": {
+       "level": 9,
+       "verified": 1,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "become-king:2+boulder:5+magnet",
+       "est": {
+        "wins": 16,
+        "n": 16,
+        "pct": 100,
+        "lo": 80.6,
+        "hi": 100
+       },
+       "lines": {
+        "boulder@pen>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@far>boulder@line>boulder@diag>become-king | cap:rook/step": 1,
+        "boulder@pen>become-king | cap:rook/step": 3,
+        "boulder@far>boulder@pen>become-king | cap:rook/step": 2,
+        "boulder@far>boulder@pen>boulder@far>become-king | cap:rook/step": 4,
+        "boulder@diag>boulder@far>boulder@line>boulder@diag>boulder@line>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@far>boulder@line>boulder@pen>boulder@far>boulder@line>boulder@far>boulder@adj>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@pen>boulder@diag>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@far>become-king | cap:rook/step": 1,
+        "boulder@pen>boulder@far>boulder@diag>boulder@far>become-king | cap:rook/step": 1
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "become-king:2+boulder:5+magnet",
+      "signature": "boulder@pen>become-king | cap:rook/step",
+      "replay": {
+       "level": 10,
+       "verified": 0,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "become-king:2+boulder:5+magnet",
+       "est": {
+        "wins": 14,
+        "n": 16,
+        "pct": 87.5,
+        "lo": 64,
+        "hi": 96.5
+       },
+       "lines": {
+        "boulder@far>boulder@line>boulder@far>boulder@line>boulder@diag>become-king | cap:rook/step": 1,
+        "boulder@pen>boulder@far>boulder@pen>boulder@diag>boulder@far>boulder@adj>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@far>boulder@pen>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@pen>boulder@far>become-king | cap:rook/step": 2,
+        "boulder@far>boulder@adj>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@pen>become-king | cap:rook/step": 1,
+        "boulder@pen>boulder@far>boulder@pen>boulder@diag>become-king | cap:rook/step": 1,
+        "boulder@far>boulder@pen>become-king | cap:rook/step": 2,
+        "boulder@far>boulder@diag>boulder@far>boulder@adj>become-king | cap:rook/step": 1,
+        "boulder@far>boulder@line>boulder@far>boulder@line>boulder@far>boulder@pen>become-king | cap:rook/step": 1,
+        "boulder@far>boulder@pen>boulder@far>boulder@adj>boulder@line>boulder@diag>boulder@far>become-king | cap:rook/step": 1,
+        "boulder@far>become-king | cap:rook/step": 1
+       }
+      }
+     }
+    ],
+    "repeats": [
+     [
+      7,
+      10,
+      "boulder@pen>become-king | cap:rook/step"
+     ]
+    ]
+   }
+  ],
+  "flags": {},
+  "caveats": [
+   "63 trace rows -> 15 runs after dedupe (retry double-posts collapsed, difficulty normal)."
+  ]
+ }
+}
