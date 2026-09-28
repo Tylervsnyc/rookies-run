@@ -1,9 +1,10 @@
 # Combo-gated levels — `bishop-squire+queen-pulse`
 
-3 levels where, inside at least one kit, no single card wins and this pair does.
+4 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| checker-L7-v13-s271 | L7 | 0% | **63%** | [aegis queen-pulse bishop-squire sacrifice] | — (unique answer) | knight-hop 40%, become-king 100% | no | 2026-09-28 |
 | checker-L7-v7-s265 | L7 | 0% | **67%** | [queen-pulse smoke bishop-squire twin] | bishop-squire+twin | become-king 100% | no | 2026-09-22 |
 | moat-L8-v2-s261 | L8 | 0% | **63%** | [smoke vanguard bishop-squire queen-pulse] | poison-dart+queen-pulse, queen-pulse+vanguard | knight-hop 80%, become-king 100% | no | 2026-09-18 |
 | checker-L9-v3-s258 | L9 | 0% | **63%** | [page queen-pulse bishop-squire dragon]<br>[queen-pulse summon-knight bishop-squire duchess]<br>[queen-pulse vanguard bishop-squire twin] | poison-dart+queen-pulse | become-king 70% | no | 2026-09-15 |
