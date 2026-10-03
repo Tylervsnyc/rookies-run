@@ -1,9 +1,10 @@
 # Combo-gated levels — `freeze-ray+queen-pulse`
 
-2 levels where, inside at least one kit, no single card wins and this pair does.
+3 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| checker-L8-v4-s276 | L8 | 0% | **67%** | [queen-pulse sacrifice boulder freeze-ray] | — (unique answer) | become-king 70% | no | 2026-10-03 |
 | checker-L9-v10-s266 | L9 | 0% | **73%** | [queen-pulse twin convert freeze-ray]<br>[freeze-ray queen-pulse convert rewind] | queen-pulse+smoke | become-king 60% | no | 2026-09-23 |
 | checker-L10-v8-s256 | L10 | 0% | **80%** | [duchess queen-pulse convert freeze-ray] | convert+page | become-king 90% | no | 2026-09-13 |
 
