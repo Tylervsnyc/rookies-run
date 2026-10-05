@@ -6,7 +6,7 @@ TEAM_ID  = "4L856PWBZN"
 # signs every app). This used to be /tmp/rookiesrun.keychain-db: macOS cleans
 # /tmp, the private key vanished, and `cert` then tried to mint a new
 # certificate against an account already at Apple's cap (2026-09-18).
-KC_PATH  = File.expand_path("~/Library/Keychains/chessbox-signing.keychain-db")
+KC_PATH  = File.expand_path("~/Library/Keychains/lts-signing.keychain-db")
 # The password is NOT written here: this repo is public. It is read off this
 # Mac from Chess Boxing's Fastfile (private repo), or from REVENGE_KC_PASS.
 KC_PASS  = ENV["REVENGE_KC_PASS"] || begin
@@ -49,17 +49,8 @@ platform :ios do
     # 2. Distribution certificate into a dedicated unlocked keychain.
     # Never recreated in practice — it lives in ~/Library/Keychains. If it is
     # ever missing, stop and restore it rather than letting `cert` mint a new one.
-    unless File.exist?(KC_PATH)
-      create_keychain(
-        path: KC_PATH,
-        password: KC_PASS,
-        default_keychain: false,
-        unlock: true,
-        timeout: 3600,
-        add_to_search_list: true
-      )
-    end
-    unlock_keychain(path: KC_PATH, password: KC_PASS)
+    UI.user_error!("Signing keychain missing: #{KC_PATH}. Restore it — do NOT mint a new cert (Apple caps at 3).") unless File.exist?(KC_PATH)
+    unlock_keychain(path: KC_PATH, password: KC_PASS, add_to_search_list: true, set_default: false)
     cert(
       api_key: api_key,
       keychain_path: KC_PATH,
@@ -80,7 +71,7 @@ platform :ios do
       use_automatic_signing: false,
       path: "App.xcodeproj",
       team_id: TEAM_ID,
-      code_sign_identity: "Apple Distribution",
+      code_sign_identity: "Apple Distribution", # only one dist identity is on the search list
       bundle_identifier: APP_ID,
       profile_name: lane_context[SharedValues::SIGH_NAME],
       targets: ["App"]
