@@ -31,7 +31,8 @@ import { AbilityUnlockModal } from '@/components/run/AbilityUnlockModal';
 import { TrophyRoom } from '@/components/run/TrophyRoom';
 import { useProgress } from '@/hooks/useProgress';
 import { readProfile, recordBest, recordBestStars, recordLadderResult, setDifficulty as persistDifficulty } from '@/lib/run/profile';
-import { isLadderRunId } from '@/lib/run/ladder';
+import { LADDER_BONUS_RUNG_IDS, LADDER_RUNG_IDS, isLadderRunId, ladderRungIndex } from '@/lib/run/ladder';
+import { usePro } from '@/hooks/usePro';
 import { DIFFICULTIES, isDifficultyId, isDifficultyLocked, type DifficultyId } from '@/lib/run/difficulty';
 import { computeScore, computeTimedScore, starRuleLine, starsForRun, tempoMaxFor, type LevelSplit } from '@/lib/run/scoring';
 import { trackEvent } from '@/lib/analytics/posthog';
@@ -730,6 +731,9 @@ export default function RookiesRunPage() {
   const [endlessNewBest, setEndlessNewBest] = useState(false);
   useEffect(() => { if (meta.endless) setEndlessBest(readEndlessBest()); }, [meta.endless]);
   const progress = useProgress(state);
+  // Rookie Pro gates (inert unless PRO_ACTIVE): Pro ladder rungs, and the
+  // free tier's one Endless run per day.
+  const pro = usePro();
 
   // ─────────────────────────────────────────────────────────────────────────
   // Recorder — captures every Rookie / ally / drone / enemy event so we can
@@ -1719,6 +1723,19 @@ export default function RookiesRunPage() {
     setShowIntro(false);
   }, [resetRunFrom]);
 
+  /**
+   * Every player-initiated Endless start (home strip, "Roll five again") goes
+   * through here: a free player who already used today's run gets the Rookie
+   * Pro sheet instead; otherwise the start is counted, then launched. Inert
+   * (always launches, counts nothing) unless PRO_ACTIVE.
+   */
+  const requestEndless = useCallback(() => {
+    if (!pro.requireEndless()) return;
+    const seed = newEndlessSeed();
+    pro.recordEndless(seed);
+    startEndless(seed);
+  }, [pro, startEndless]);
+
   // Which ArenaHome tab the player should land on when they leave a run —
   // captured from `meta` BEFORE goHome wipes the URL (a ladder rung goes back
   // to the Ladder tab; daily and Endless go back to Revenge).
@@ -2170,10 +2187,15 @@ export default function RookiesRunPage() {
           <ArenaHome
             onStart={dismissIntro}
             onLadderStart={(id, d) => {
+              // Defence in depth: the Ladder tab already draws Pro rungs as
+              // gold locks that open the sheet instead of the chooser.
+              const bonusIdx = LADDER_BONUS_RUNG_IDS.indexOf(id);
+              const num = bonusIdx >= 0 ? LADDER_RUNG_IDS.length + bonusIdx + 1 : ladderRungIndex(id) + 1;
+              if (num > 0 && !pro.requireRung(num, bonusIdx >= 0)) return;
               const mode = d ? `&difficulty=${encodeURIComponent(d)}` : '';
               launchRunUrl(`/?run=${encodeURIComponent(id)}&ladder=1${mode}`);
             }}
-            onEndless={() => startEndless()}
+            onEndless={requestEndless}
             initialTab={homeTab}
             iso={meta.iso}
             runId={meta.runId}
@@ -2634,7 +2656,7 @@ export default function RookiesRunPage() {
           timeMs={scorePair?.timeMs ?? Math.round(activeMsRef.current)}
           stars={scorePair?.stars}
           starLine={scorePair?.starLine}
-          onReplay={endless ? () => startEndless() : resetRun}
+          onReplay={endless ? requestEndless : resetRun}
           nextRunName={endless || nextRunId === meta.runId ? undefined : getRunById(nextRunId).name}
           onNextRun={endless || nextRunId === meta.runId ? undefined : goToNextRun}
           onClose={goHome}

@@ -6,6 +6,7 @@ import {
   isBetterResult, isMissingScoreColumn, isMissingStatsColumn, NO_STATS, parseRunScore, parseRunStats,
   statsColumnsForWrite, STATS_COLUMNS, type RunStats,
 } from '@/lib/run/score-rules';
+import { PRO_ACTIVE, hasProEntitlement, type ProProfileFields } from '@/lib/pro/rules';
 
 /**
  * POST /api/run/score
@@ -98,6 +99,7 @@ export async function POST(request: NextRequest) {
       // Still let a handle rename through.
       await supabase.from('run_scores').update({ handle, updated_at: new Date().toISOString() })
         .eq('player_id', playerId).eq('run_date', runDate).eq('run_id', runId);
+      await stampPro(supabase, playerId, runDate, runId);
       return NextResponse.json({ recorded: true, improved: false });
     }
   }
@@ -132,5 +134,41 @@ export async function POST(request: NextRequest) {
     console.error('run_scores upsert failed', error.message);
     return NextResponse.json({ recorded: false, reason: 'write-failed' });
   }
+  await stampPro(supabase, playerId, runDate, runId);
   return NextResponse.json({ recorded: true, improved: true, scored: 'score' in row, withStats: 'moves' in row });
+}
+
+/**
+ * Rookie Pro (PRO_ACTIVE only): gold name + Pro badge on Ranks. The score row
+ * is keyed by the anonymous player id, so the badge is stamped HERE, from the
+ * request's own session (cookie on the web, bearer in the iOS app): a signed-in
+ * player with a live entitlement (or admin) gets `is_pro = true`, anyone else
+ * `false` — so a lapsed subscription loses the gold on the next submit. Never
+ * trusted from the request body. Best-effort: the `is_pro` column
+ * (docs/rookie-pro-sql.sql) missing, no session, or any error = no badge, and
+ * the score itself is already saved.
+ */
+async function stampPro(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  playerId: string,
+  runDate: string,
+  runId: string,
+): Promise<void> {
+  if (!PRO_ACTIVE) return;
+  try {
+    const { data: auth } = await supabase.auth.getUser();
+    let isPro = false;
+    if (auth.user) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('subscription_status, subscription_expires_at, is_admin')
+        .eq('id', auth.user.id)
+        .maybeSingle();
+      isPro = hasProEntitlement(data as ProProfileFields | null);
+    }
+    await supabase.from('run_scores').update({ is_pro: isPro })
+      .eq('player_id', playerId).eq('run_date', runDate).eq('run_id', runId);
+  } catch {
+    /* badge only — never fails the score */
+  }
 }

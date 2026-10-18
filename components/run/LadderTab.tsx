@@ -23,6 +23,8 @@ import {
   visibleBonusRungs,
 } from '@/lib/run/ladder';
 import type { RunStars } from '@/lib/run/scoring';
+import { usePro } from '@/hooks/usePro';
+import { GoldLock } from '@/components/pro/RookieProSheet';
 
 /**
  * The Ladder tab (ArenaHome → Ladder). Ten rungs, 2 columns × 5 rows, sized
@@ -53,6 +55,9 @@ const LOCKED_FACE = '#22305e';
 const LOCKED_SHADOW = '#0a1230';
 /** Bottom-edge fade on the scrolling rung grid: "there is more below". */
 const FADE = 'linear-gradient(to bottom, #000 calc(100% - 30px), transparent 100%)';
+/** Rookie Pro tile (rungs 5+ and bonus rungs for free players): dark gold, never "broken". */
+const PRO_FACE = 'linear-gradient(180deg,#6B4700 0%,#4A3000 100%)';
+const PRO_SHADOW = '#2a1b00';
 
 /** Face + hard-shadow colour per difficulty (Chess Path flat-face button pattern). */
 const DIFF_COLORS: Record<DifficultyId, { face: string; shadow: string }> = {
@@ -158,6 +163,8 @@ function DifficultyChooser({ rungIndex, bonus, runId, runName, profile, onPick, 
 // ── The tab ──────────────────────────────────────────────────────────────────
 export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
   const [choosing, setChoosing] = useState<number | null>(null);
+  // Rookie Pro gate. Inert (never locks) unless PRO_ACTIVE.
+  const pro = usePro();
   // Dev-only `?bonusPreview=1` is read after mount so server and client markup agree.
   const [preview, setPreview] = useState(false);
   useEffect(() => { setPreview(bonusPreviewActive()); }, []);
@@ -226,6 +233,8 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
       <div className={`grid grid-cols-2 gap-x-2 gap-y-[7px] ${scrolls ? 'ladder-rows pt-px pb-2 px-px' : 'h-full grid-rows-5 pb-3'}`}>
         {rungs.map((r) => {
           const i = r.num - 1;
+          // Pro-locked: always tappable (opens the Rookie Pro sheet), drawn gold.
+          const proLocked = !r.comingSoon && pro.rungLocked(r.num, r.bonus);
           const playable = !r.comingSoon && r.state !== 'locked' && !!onLadderStart;
           const st = r.state === 'cleared' ? 'done' : r.state === 'open' && !r.comingSoon ? 'next' : 'locked';
           const face = st === 'done' ? (r.best ? DIFF_COLORS[r.best].face : '#58CC02') : st === 'next' ? REVENGE_RED : LOCKED_FACE;
@@ -239,6 +248,35 @@ export function LadderTab({ profile, onLadderStart }: LadderTabProps) {
                 ? (r.bonus ? 'Open to all' : 'Open · pick a mode')
                 : `Clear rung ${i}`;
           const tagNew = r.bonus && st !== 'done';
+          if (proLocked) {
+            return (
+              <button
+                key={r.id}
+                type="button"
+                onClick={withClick(() => { pro.requireRung(r.num, r.bonus); })}
+                data-rung={i + 1}
+                data-run-id={r.id}
+                data-pro-locked="1"
+                aria-label={`${r.run?.name ?? `Rung ${i + 1}`} - Rookie Pro`}
+                className="arena-press rounded-xl min-h-0 h-full px-2 flex items-center gap-2 text-left"
+                style={{ background: PRO_FACE, boxShadow: `0 4px 0 ${PRO_SHADOW}, inset 0 0 0 1.5px rgba(255,214,90,0.55)`, ['--depth' as string]: '4px' }}
+              >
+                <span
+                  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: 'rgba(0,0,0,0.32)', boxShadow: 'inset 0 -2px 0 rgba(0,0,0,0.25)' }}
+                >
+                  <GoldLock size={15} />
+                </span>
+                <span className="flex-1 min-w-0 flex flex-col justify-center leading-none">
+                  <span className="text-[11.5px] font-black truncate" style={OUTLINE}>{r.run?.name ?? `Rung ${i + 1}`}</span>
+                  <span className="mt-[3px] flex items-center gap-1.5">
+                    {tagNew && <span data-new-tag className="shrink-0 text-[8px] font-black uppercase tracking-wider px-1.5 py-[2px] rounded-md" style={{ background: 'rgba(0,0,0,0.3)', ...GOLD_TEXT }}>New</span>}
+                    <span className="text-[8.5px] font-black uppercase tracking-wider truncate" style={GOLD_TEXT}>Rookie Pro &middot; {r.num}</span>
+                  </span>
+                </span>
+              </button>
+            );
+          }
           return (
             <button
               key={r.id}

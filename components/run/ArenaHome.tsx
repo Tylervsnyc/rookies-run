@@ -19,6 +19,9 @@ import { FamilyStrip } from './FamilyStrip';
 import { DailyRankRow, RankRowStyles } from './RankRunCard';
 import { autoplayMusicOnHome } from '@/lib/music';
 import { ENDLESS_ENABLED, readEndlessBest, ENDLESS_RUN_ID } from '@/lib/run/endless';
+import { usePro } from '@/hooks/usePro';
+import { GoldLock } from '@/components/pro/RookieProSheet';
+import { ProName } from '@/components/pro/ProName';
 
 /**
  * Rookie's Revenge home — "the Arena" (Tyler, 2026-09-02, replaces HomeLanding).
@@ -378,6 +381,10 @@ function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void 
  * button, where a player who opens the app cannot miss it.
  */
 function EndlessStrip({ best, onPlay }: { best: number; onPlay: () => void }) {
+  // Rookie Pro: a free player who used today's run sees a gold lock; the tap
+  // opens the Pro sheet (app/page.tsx requestEndless). Inert unless PRO_ACTIVE.
+  const pro = usePro();
+  const locked = pro.endlessLocked;
   return (
     <button
       type="button"
@@ -396,9 +403,20 @@ function EndlessStrip({ best, onPlay }: { best: number; onPlay: () => void }) {
           5 random powers &middot; how deep can you get?
         </span>
       </span>
-      <span className="ml-auto text-[11px] font-black shrink-0 tabular-nums" style={GOLD_TEXT}>
-        {best > 0 ? `BEST ${best}` : 'NEW'}
-      </span>
+      {locked ? (
+        <span className="ml-auto shrink-0 flex flex-col items-end gap-1 leading-none" data-testid="home-endless-pro">
+          <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider" style={GOLD_TEXT}>
+            <GoldLock size={13} /> Rookie Pro
+          </span>
+          <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            {best > 0 ? `Best ${best} \u00b7 ` : ''}Free run used
+          </span>
+        </span>
+      ) : (
+        <span className="ml-auto text-[11px] font-black shrink-0 tabular-nums" style={GOLD_TEXT}>
+          {best > 0 ? `BEST ${best}` : 'NEW'}
+        </span>
+      )}
     </button>
   );
 }
@@ -556,7 +574,7 @@ function RanksTab({ handle, board, loading, iso }: {
                   : { borderBottom: '1px solid rgba(255,255,255,0.07)' }}
               >
                 <Medal rank={r.rank} />
-                <span className="flex-1 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</span>
+                <ProName pro={r.pro} className="flex-1 min-w-0 font-bold truncate">{r.handle}{r.me ? ' (you)' : ''}</ProName>
                 <span className="tabular-nums font-black" style={GOLD_TEXT}>{r.levels}<span className="text-[9px] opacity-80"> {unit}</span></span>
               </li>
             ) : (
@@ -567,7 +585,7 @@ function RanksTab({ handle, board, loading, iso }: {
             showEndless ? (
               <li className="flex items-center gap-2.5 py-[5px] mt-1 text-[12px] font-black rounded-lg px-2 -mx-2" style={{ background: 'rgba(229,57,53,0.28)', border: '1.5px solid rgba(229,57,53,0.6)' }}>
                 <Medal rank={meBelow.rank} />
-                <span className="flex-1 truncate">{handle} (you)</span>
+                <ProName pro={meBelow.pro} className="flex-1 min-w-0 truncate">{handle} (you)</ProName>
                 <span className="tabular-nums" style={GOLD_TEXT}>{meBelow.levels}<span className="text-[9px] opacity-80"> {unit}</span></span>
               </li>
             ) : (

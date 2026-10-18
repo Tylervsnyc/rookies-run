@@ -19,12 +19,13 @@ import {
   SuccessBanner,
   safeRedirect,
 } from '@/components/auth/AuthShell';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
 
 /**
- * Email + password sign-in. Ported from Chess Path's /auth/login with the
- * Google / Apple buttons removed — the same Supabase project, so an account
- * made on chesspath.app signs in here (email accounts; OAuth-only accounts
- * are told to use a password reset to set one).
+ * Sign-in, ported from Chess Path's /auth/login — the same Supabase project,
+ * so an account made on chesspath.app signs in here. Google / Apple (with
+ * ACCOUNTS on) via components/auth/OAuthButtons, hidden in the iOS app and in
+ * social webviews where OAuth can't complete; email + password everywhere.
  */
 function LoginContent() {
   const router = useRouter();
@@ -34,7 +35,10 @@ function LoginContent() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  // /auth/callback sends a failed Google/Apple round trip back here.
+  const [error, setError] = useState<string | null>(
+    searchParams.get('oauth') === 'failed' ? 'That sign-in did not finish. Try again, or use email below.' : null,
+  );
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showResetBanner, setShowResetBanner] = useState(resetSuccess);
@@ -94,6 +98,8 @@ function LoginContent() {
     >
       {showResetBanner && <SuccessBanner>Password updated. Sign in with your new password.</SuccessBanner>}
       {error && <ErrorBanner>{error}</ErrorBanner>}
+
+      <OAuthButtons redirectTo={redirectTo} onError={setError} />
 
       <form onSubmit={handleLogin} className="space-y-3">
         <Field id="email" label="Email">

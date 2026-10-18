@@ -104,6 +104,17 @@ function pruneApp() {
   // `output: 'export'` cannot tolerate a single route handler anywhere.
   fs.rmSync(path.join(appDir, 'api'), { recursive: true, force: true });
   for (const f of ['robots.ts', 'sitemap.ts']) fs.rmSync(path.join(appDir, f), { force: true });
+  // Route handlers OUTSIDE app/api too (app/auth/callback/route.ts — the web
+  // OAuth return leg; the app never uses OAuth). A kept route like auth/login
+  // shares the auth/ dir, so the page pruning below would not remove it.
+  const dropHandlers = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) dropHandlers(full);
+      else if (/^route\.(ts|tsx|js|mjs)$/.test(entry.name)) fs.rmSync(full, { force: true });
+    }
+  };
+  dropHandlers(appDir);
 
   const allowed = new Set(ROUTES);
   let dropped = 0;

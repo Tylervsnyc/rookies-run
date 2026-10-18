@@ -19,6 +19,7 @@ import type { LeaderboardRow } from '@/lib/run/leaderboard-client';
 import { DIFFICULTIES, type DifficultyId } from '@/lib/run/difficulty';
 import { withClick } from '@/lib/sounds';
 import { STAR_PATH } from './StampCard';
+import { ProName } from '@/components/pro/ProName';
 
 // Same kit as ArenaHome's Ranks tab.
 const GOLD = '#FFC800';
@@ -167,7 +168,7 @@ export function DailyRankRow({ row, handle, open, onToggle, className = '' }: {
   const head = (
     <>
       <Medal rank={row.rank} />
-      <span className={`flex-1 min-w-0 truncate text-left ${row.me ? 'font-black' : 'font-bold'}`}>{name}</span>
+      <ProName pro={row.pro} className={`flex-1 min-w-0 truncate text-left ${row.me ? 'font-black' : 'font-bold'}`}>{name}</ProName>
       {card ? (
         <>
           <MiniStars stars={row.stars ?? 0} />

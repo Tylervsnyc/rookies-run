@@ -8,6 +8,7 @@ import { NativeSplash } from '@/components/run/NativeSplash';
 import { StatusBarSync } from '@/components/run/StatusBarSync';
 import { ProfileSync } from '@/components/run/ProfileSync';
 import { OfflineBridge } from '@/components/providers/OfflineBridge';
+import { ProProvider } from '@/components/pro/ProProvider';
 
 const TITLE = "Rookie's Revenge";
 const DESCRIPTION =
@@ -87,7 +88,10 @@ export default function RootLayout({
             {/* No nav chrome and no max-width wrapper — the game owns the
                 whole viewport. Chess Path's NavHeader/BoxTabBar/main wrapper
                 deliberately do not come across. */}
-            <RookieErrorBoundary>{children}</RookieErrorBoundary>
+            {/* Rookie Pro — an inert context unless PRO_ACTIVE (lib/pro/rules.ts). */}
+            <ProProvider>
+              <RookieErrorBoundary>{children}</RookieErrorBoundary>
+            </ProProvider>
             <StatusBarSync />
             {/* Cloud copy of the local profile — inert unless CLOUD_PROFILE. */}
             <ProfileSync />

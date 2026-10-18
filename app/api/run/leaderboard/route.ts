@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { isValidDate } from '@/lib/run/daily';
 import { ENDLESS_RUN_ID } from '@/lib/run/endless';
 import { isMissingScoreColumn, isMissingStatsColumn } from '@/lib/run/score-rules';
+import { PRO_ACTIVE } from '@/lib/pro/rules';
 
 /**
  * GET /api/run/leaderboard?date=YYYY-MM-DD&run=revenge-1&player=<id>
@@ -44,6 +45,8 @@ export interface LeaderboardRow {
   difficulty: string | null;
   completed: boolean;
   me?: boolean;
+  /** Rookie Pro: gold name + badge on Ranks. Only ever true when PRO_ACTIVE. */
+  pro?: boolean;
 }
 export interface LeaderboardResponse {
   rows: LeaderboardRow[];
@@ -111,6 +114,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(EMPTY);
   }
 
+  // Rookie Pro badges: a separate, best-effort read so a missing `is_pro`
+  // column (docs/rookie-pro-sql.sql) can never break the board itself.
+  const proIds = new Set<string>();
+  if (PRO_ACTIVE) {
+    const { data: pros } = await supabase
+      .from('run_scores')
+      .select('player_id')
+      .eq('run_date', date)
+      .eq('run_id', runId)
+      .eq('is_pro', true)
+      .limit(500)
+      .returns<{ player_id: string }[]>();
+    for (const p of pros ?? []) proIds.add(p.player_id);
+  }
+
   const all = (data ?? []).map((r, i) => ({
     rank: i + 1,
     handle: String(r.handle),
@@ -125,6 +143,7 @@ export async function GET(request: NextRequest) {
     difficulty: r.difficulty == null ? null : String(r.difficulty),
     completed: Boolean(r.completed),
     me: !!player && r.player_id === player,
+    ...(proIds.has(r.player_id) ? { pro: true } : {}),
   }));
   const me = all.find((r) => r.me) ?? null;
   const body: LeaderboardResponse = {

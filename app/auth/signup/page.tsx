@@ -17,6 +17,7 @@ import {
   PrimaryButton,
   safeRedirect,
 } from '@/components/auth/AuthShell';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
 
 /**
  * Email + password signup. Ported from Chess Path's /auth/signup with the
@@ -114,6 +115,8 @@ function SignupContent() {
           )}
         </ErrorBanner>
       )}
+
+      <OAuthButtons redirectTo={redirectTo} onError={setError} />
 
       <form onSubmit={handleSignup} className="space-y-3">
         <input

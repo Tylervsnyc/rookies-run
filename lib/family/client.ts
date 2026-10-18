@@ -111,9 +111,11 @@ export function useFamilyStats(userId: string | null | undefined): FamilyStats |
  * Open a family app's store page outside the current page: a new tab on the
  * web, the system browser inside the Capacitor shell (so the App Store page
  * shows "Open" when the app is installed — no installed-app detection).
+ * `where: 'web'` opens the sibling's website instead (the Rookie Pro sheet on
+ * the web, where an App Store page is the wrong door).
  */
-export function openFamilyApp(app: FamilyAppId): void {
-  const url = FAMILY_APPS[app].storeUrl;
+export function openFamilyApp(app: FamilyAppId, where: 'store' | 'web' = 'store'): void {
+  const url = where === 'web' ? FAMILY_APPS[app].webUrl : FAMILY_APPS[app].storeUrl;
   const w = window as Window & { Capacitor?: { isNativePlatform?: () => boolean } };
   const target = w.Capacitor?.isNativePlatform?.() === true ? '_system' : '_blank';
   window.open(url, target, 'noopener,noreferrer');

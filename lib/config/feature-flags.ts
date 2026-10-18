@@ -44,6 +44,28 @@ export const FEATURE_FLAGS = {
    * OFF = cookieOptions omitted, byte-identical to today.
    */
   SHARED_AUTH_COOKIE: false,
+  /**
+   * Rookie Pro (2026-10-18) — ONE subscription across Chess Path, Chess Boxing
+   * and Rookie's Revenge. Entitlement = the shared `profiles.subscription_status`
+   * row written by the RevenueCat + Stripe webhooks in chess-learning-tree
+   * (Revenge never writes it). When ON, free players get the daily run, ladder
+   * rungs 1-4, one Endless run per local day and the Ranks; Pro (or admin)
+   * unlocks rungs 5-10 + bonus rungs, unlimited Endless and a gold name on
+   * Ranks. iOS buys through RevenueCat/StoreKit only; the web links out to
+   * chesspath.app/pricing.
+   *
+   * REQUIRES `ACCOUNTS: true`. A purchase must belong to a Supabase user (the
+   * RevenueCat app user id IS the Supabase uid) or it can't unlock the other
+   * two apps, so with ACCOUNTS off there is nowhere to sign in and the gates
+   * would be a dead end. `PRO_ACTIVE` in lib/pro/rules.ts is the effective
+   * switch (PRO && ACCOUNTS) — every gate reads that, never this flag alone.
+   * CLOUD_PROFILE should be on too, so a guest's local progress follows the
+   * account to other devices (local progress is never lost either way).
+   *
+   * OFF = no gate, no paywall, no RevenueCat call — the app behaves exactly as
+   * before this flag existed.
+   */
+  PRO: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

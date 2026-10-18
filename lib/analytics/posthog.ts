@@ -243,4 +243,29 @@ export const ShareEvents = {
 };
 
 // Default export for direct posthog access (lazy — may be null before init)
+// Rookie Pro (FEATURE_FLAGS.PRO) — mirrors chess-learning-tree's ProEvents:
+// the SAME pro_* event names, so one PostHog funnel reads all three apps.
+// Every event carries `app: 'revenge'` (CLT sends 'chesspath' / 'chessboxing'
+// / 'web') plus `platform` where it matters.
+export type ProPlan = 'monthly' | 'yearly';
+export type ProPlatform = 'ios' | 'web';
+const revengeProTrack = (event: string, props?: Record<string, unknown>) =>
+  trackEvent(event, { app: 'revenge', ...props });
+export const ProEvents = {
+  /** A free player hit a daily limit (Endless). */
+  limitHit: (kind: 'endless') => revengeProTrack('pro_limit_hit', { kind }),
+  /** A free player tapped Pro-only content (a Pro rung). */
+  gateHit: (feature: string) => revengeProTrack('pro_gate_hit', { feature }),
+  paywallShown: (trigger: string, platform: ProPlatform) => revengeProTrack('pro_paywall_shown', { trigger, platform }),
+  paywallDismissed: (trigger: string) => revengeProTrack('pro_paywall_dismissed', { trigger }),
+  purchaseStarted: (plan: ProPlan, platform: ProPlatform, trigger?: string) =>
+    revengeProTrack('pro_purchase_started', { plan, platform, trigger }),
+  purchaseCompleted: (plan: ProPlan, platform: ProPlatform) =>
+    revengeProTrack('pro_purchase_completed', { plan, platform }),
+  purchaseFailed: (platform: ProPlatform, reason: string) =>
+    revengeProTrack('pro_purchase_failed', { platform, reason }),
+  restoreTapped: (platform: ProPlatform) => revengeProTrack('pro_restore_tapped', { platform }),
+  restoreResult: (platform: ProPlatform, ok: boolean) => revengeProTrack('pro_restore_result', { platform, ok }),
+};
+
 export { getPostHog };
