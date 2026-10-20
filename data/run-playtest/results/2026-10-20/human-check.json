@@ -1,0 +1,417 @@
+{
+ "schema": 1,
+ "experiment": "human-check",
+ "date": "2026-10-20",
+ "at": "2026-10-20T12:53:25.591Z",
+ "engine": {
+  "sha": "b790a8a",
+  "dirty": false,
+  "libHash": "0c9826fe953a"
+ },
+ "budget": {
+  "trials": 16,
+  "jobs": 4,
+  "seed": "matrix per (run,level,human loadout,trial)"
+ },
+ "conclusion": "3 human ladder runs (1 won); 3 first-try clears vs bot at 16 trials; BOT-BLIND none; human REPEAT revenge-17 L8=L9",
+ "body": {
+  "date": "2026-10-20",
+  "since": "2026-10-13",
+  "handle": null,
+  "trials": 16,
+  "runs": [
+   {
+    "traceId": "bc41673e",
+    "createdAt": "2026-10-18T17:02:22.189878+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "won",
+    "endLevel": 10,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 66,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+sacrifice",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice:2",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice:2",
+      "signature": "poison-dart@adj>dragon@line>sacrifice@line | cap:rook/orth",
+      "replay": {
+       "level": 4,
+       "verified": 5,
+       "tylerActions": 7,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon+poison-dart+sacrifice:3",
+      "signature": "dragon@line>sacrifice@line | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 3,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+poison-dart+sacrifice:3",
+      "signature": "dragon@near | cap:ally/L",
+      "replay": {
+       "level": 6,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+poison-dart+sacrifice:3",
+      "signature": "dragon@diag>sacrifice@diag | cap:rook/orth",
+      "replay": {
+       "level": 7,
+       "verified": 4,
+       "tylerActions": 8,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:2+poison-dart+sacrifice:3",
+       "est": {
+        "wins": 14,
+        "n": 16,
+        "pct": 87.5,
+        "lo": 64,
+        "hi": 96.5
+       },
+       "lines": {
+        "poison-dart@line>dragon@line>sacrifice@line | cap:rook/step": 1,
+        "poison-dart@near>dragon@far>sacrifice@far | cap:rook/step": 2,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/step": 2,
+        "dragon@diag>poison-dart@adj>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@line>dragon@far>sacrifice@far | cap:rook/step": 2,
+        "poison-dart@far>dragon@line | cap:rook/orth": 1,
+        "poison-dart@diag>dragon@far>sacrifice@far | cap:rook/step": 1,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@adj>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@near>dragon@line>sacrifice@line | cap:rook/step": 1,
+        "poison-dart@near>dragon@far>sacrifice@far | cap:rook/orth": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+poison-dart+sacrifice:4",
+      "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+      "replay": {
+       "level": 8,
+       "verified": 6,
+       "tylerActions": 9,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:2+poison-dart+sacrifice:4",
+       "est": {
+        "wins": 14,
+        "n": 16,
+        "pct": 87.5,
+        "lo": 64,
+        "hi": 96.5
+       },
+       "lines": {
+        "poison-dart@line>dragon@far>sacrifice@far | cap:rook/orth": 2,
+        "poison-dart@far>dragon@diag>sacrifice@diag | cap:rook/orth": 1,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/orth": 4,
+        "poison-dart@near>dragon@diag | cap:ally/L": 1,
+        "poison-dart@near>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "dragon@far>sacrifice@far | cap:rook/orth": 4,
+        "poison-dart@near>dragon@diag>sacrifice@diag | cap:rook/orth": 1
+       }
+      }
+     },
+     {
+      "level": 9,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:3+poison-dart+sacrifice:5",
+      "signature": "dragon@far>sacrifice@far | cap:rook/orth",
+      "replay": {
+       "level": 9,
+       "verified": 3,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "dragon:3+poison-dart+sacrifice:5",
+       "est": {
+        "wins": 14,
+        "n": 16,
+        "pct": 87.5,
+        "lo": 64,
+        "hi": 96.5
+       },
+       "lines": {
+        "dragon@far>sacrifice@far | cap:rook/orth": 4,
+        "poison-dart@far>dragon@far>sacrifice@far | cap:rook/orth": 2,
+        "dragon@far>poison-dart@far>sacrifice@far | cap:rook/orth": 2,
+        "poison-dart@diag>dragon@far>sacrifice@far | cap:rook/orth": 1,
+        "poison-dart@far>dragon@diag>sacrifice@diag | cap:rook/orth": 2,
+        "poison-dart@far>dragon@far | cap:rook/orth": 1,
+        "poison-dart@diag>dragon@far | cap:rook/orth": 1,
+        "poison-dart@line>dragon@far | cap:rook/orth": 1
+       }
+      }
+     },
+     {
+      "level": 10,
+      "deaths": 1,
+      "cleared": true,
+      "firstTry": false,
+      "arrival": "dragon:4+poison-dart+sacrifice:5",
+      "signature": "dragon@line>sacrifice@line>poison-dart@far | cap:rook/step",
+      "replay": {
+       "level": 10,
+       "verified": 6,
+       "tylerActions": 14,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": [
+     [
+      8,
+      9,
+      "dragon@far>sacrifice@far | cap:rook/orth"
+     ]
+    ]
+   },
+   {
+    "traceId": "cbc9ca54",
+    "createdAt": "2026-10-18T17:25:14.1918+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 3,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 0,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 0,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "dragon:2+rabies-dart",
+      "signature": "no-cast | cap:rook/step",
+      "replay": {
+       "level": 2,
+       "verified": 0,
+       "tylerActions": 5,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "convert+dragon:2+rabies-dart",
+      "signature": null,
+      "replay": {
+       "level": 3,
+       "verified": 0,
+       "tylerActions": 9,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "12dd9306",
+    "createdAt": "2026-10-18T17:32:09.845847+00:00",
+    "runId": "revenge-17",
+    "rung": 10,
+    "name": "The Briar",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 3,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 4,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "boulder",
+      "signature": "twin@far | cap:ally/orth",
+      "replay": {
+       "level": 1,
+       "verified": 1,
+       "tylerActions": 11,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "boulder+twin",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 2,
+       "verified": 0,
+       "tylerActions": 10,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "boulder+twin+vanguard:2",
+      "signature": null,
+      "replay": {
+       "level": 3,
+       "verified": 0,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   }
+  ],
+  "flags": {},
+  "caveats": [
+   "18 trace rows -> 3 runs after dedupe (retry double-posts collapsed, difficulty normal)."
+  ]
+ }
+}
