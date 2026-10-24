@@ -1,10 +1,11 @@
 # Combo-gated levels — `dragon+vanguard`
 
-5 levels where, inside at least one kit, no single card wins and this pair does.
+6 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
 | moat-L7-v1-s288 | L7 | 0% | **63%** | [dragon twin page vanguard] | convert+freeze-ray, dragon+duchess | become-king 40% | no | 2026-10-15 |
+| moat-L7-v12-s297 | L7 | 0% | **67%** | [decoy vanguard dragon freeze-ray] | duchess+vanguard | become-king 40% | no | 2026-10-24 |
 | checker-L8-v2-s266 | L8 | 0% | **63%** | [duchess vanguard aegis dragon] | — (unique answer) | become-king 40% | no | 2026-09-23 |
 | checker-L8-v8-s272 | L8 | 0% | **67%** | [rewind vanguard convert dragon] | — (unique answer) | become-king 40% | no | 2026-09-29 |
 | moat-L9-v10-s256 | L9 | 0% | **77%** | [rewind vanguard boulder dragon] | — (unique answer) | become-king 90% | no | 2026-09-13 |

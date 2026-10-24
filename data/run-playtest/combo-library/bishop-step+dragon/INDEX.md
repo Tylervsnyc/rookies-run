@@ -1,12 +1,13 @@
 # Combo-gated levels — `bishop-step+dragon`
 
-7 levels where, inside at least one kit, no single card wins and this pair does.
+8 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
 | checker-L7-v16-s249 | L7 | 0% | **100%** | [dragon twin bishop-step smoke] | bishop-step+smoke, bishop-step+twin, bishop-step+decoy, smoke+twin, dragon+freeze-ray, page+rewind, rewind+twin, boulder+dragon, dragon+smoke | become-king 100% | no | 2026-09-06 |
 | checker-L7-v3-s276 | L7 | 0% | **70%** | [dragon smoke bishop-step duchess] | dragon+smoke | become-king 20% | no | 2026-10-03 |
 | moat-L7-v6-s272 | L7 | 0% | **70%** | [bishop-step boulder dragon page] | become-king+freeze-ray | none | no | 2026-09-29 |
+| moat-L8-v6-s297 | L8 | 0% | **73%** | [bishop-step rabies-dart bishop-squire dragon] | bishop-step+rabies-dart | none | no | 2026-10-24 |
 | checker-L9-v2-s260 | L9 | 0% | **80%** | [dragon summon-knight bishop-step sacrifice] | aegis+dragon, convert+dragon | become-king 80% | no | 2026-09-17 |
 | checker-L9-v6-s277 | L9 | 0% | **80%** | [dragon sacrifice aegis bishop-step] | — (unique answer) | knight-hop 90% | no | 2026-10-04 |
 | moat-L9-v12-s249 | L9 | 0% | **100%** | [bishop-step magnet dragon rewind] | dragon+rewind, duchess+freeze-ray, dragon+freeze-ray, dragon+duchess, duchess+vanguard, dragon+twin | become-king 90% | no | 2026-09-07 |

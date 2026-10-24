@@ -1,9 +1,10 @@
 # Combo-gated levels — `duchess+vanguard`
 
-3 levels where, inside at least one kit, no single card wins and this pair does.
+4 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| moat-L7-v12-s297 | L7 | 0% | **77%** | [duchess rabies-dart magnet vanguard] | dragon+vanguard | become-king 40% | no | 2026-10-24 |
 | checker-L8-v14-s255 | L8 | 0% | **60%** | [duchess rabies-dart magnet vanguard] | duchess+rabies-dart | bishop-step 90%, knight-hop 70%, become-king 100% | no | 2026-09-12 |
 | checker-L8-v16-s253 | L8 | 0% | **70%** | [decoy vanguard boulder duchess] | — (unique answer) | bishop-step 60%, knight-hop 20%, become-king 100% | no | 2026-09-10 |
 | moat-L9-v12-s249 | L9 | 0% | **83%** | [boulder duchess decoy vanguard] | bishop-step+dragon, dragon+rewind, duchess+freeze-ray, dragon+freeze-ray, dragon+duchess, dragon+twin | become-king 90% | no | 2026-09-07 |

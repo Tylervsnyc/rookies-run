@@ -1,6 +1,6 @@
 # Combo-gated levels — `decoy+dragon`
 
-4 levels where, inside at least one kit, no single card wins and this pair does.
+5 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
@@ -8,5 +8,6 @@
 | checker-L8-v18-s275 | L8 | 0% | **63%** | [decoy dragon duchess poison-dart]<br>[decoy vanguard dragon freeze-ray] | — (unique answer) | become-king 50% | no | 2026-10-02 |
 | checker-L8-v4-s251 | L8 | 0% | **80%** | [decoy vanguard dragon freeze-ray] | — (unique answer) | become-king 100% | no | 2026-09-08 |
 | moat-L8-v10-s252 | L8 | 0% | **60%** | [decoy dragon duchess poison-dart] | — (unique answer) | knight-hop 20%, become-king 30% | no | 2026-09-09 |
+| checker-L10-v1-s297 | L10 | 0% | **77%** | [decoy dragon duchess poison-dart] | decoy+duchess, dragon+rabies-dart, dragon+freeze-ray | bishop-step 23%, become-king 60% | no | 2026-10-24 |
 
 Each `<id>.json` holds the level definition, a paste-ready runs.ts snippet, every gating kit, and the full measured matrix row.
