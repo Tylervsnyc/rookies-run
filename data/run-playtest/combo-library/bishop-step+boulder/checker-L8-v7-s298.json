@@ -1,0 +1,413 @@
+{
+ "id": "checker-L8-v7-s298",
+ "date": "2026-10-25",
+ "slot": 8,
+ "source": {
+  "kind": "terrain",
+  "archetype": "checker",
+  "genSeed": 298
+ },
+ "title": "THE COLONNADE",
+ "gatedUnder": [
+  {
+   "kit": [
+    "bishop-step",
+    "boulder",
+    "convert",
+    "freeze-ray"
+   ],
+   "anchors": [
+    "bishop-step+boulder",
+    "convert+freeze-ray"
+   ],
+   "reason": "new geometry plus a way to open it | two removals — chains a defended key",
+   "winningPairs": [
+    {
+     "pair": "bishop-step+boulder",
+     "winPct": 63
+    }
+   ]
+  }
+ ],
+ "kitsGating": 1,
+ "kitsTested": 8,
+ "winningPairs": [
+  {
+   "pair": "bishop-step+boulder",
+   "winPct": 63
+  }
+ ],
+ "solventsSolving": [
+  {
+   "ability": "knight-hop",
+   "winPct": 20
+  },
+  {
+   "ability": "become-king",
+   "winPct": 100
+  }
+ ],
+ "pure": false,
+ "matrix": {
+  "none": {
+   "winPct": 0,
+   "trials": 30,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 30,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-step": {
+   "winPct": 3,
+   "trials": 30,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 29,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "knight-hop": {
+   "winPct": 20,
+   "trials": 10,
+   "wins": 2,
+   "captured": 0,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.5
+  },
+  "become-king": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.6
+  },
+  "dragon": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 3.8
+  },
+  "duchess": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 3.3
+  },
+  "vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "convert": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "queen-pulse": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.3
+  },
+  "decoy": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "page": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 9,
+   "avgMoves": 3.9
+  },
+  "poison-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "summon-knight": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "boulder": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "twin": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 4.6
+  },
+  "rabies-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "freeze-ray": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "bishop-step+boulder": {
+   "winPct": 63,
+   "trials": 30,
+   "wins": 19,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 11,
+   "avgMoves": 5.4
+  },
+  "bishop-step+convert": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 5,
+   "stall": 0,
+   "deadEnd": 4,
+   "avgMoves": 7.5
+  },
+  "bishop-step+freeze-ray": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 5.1
+  },
+  "boulder+convert": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 6,
+   "stall": 0,
+   "deadEnd": 4,
+   "avgMoves": 6.3
+  },
+  "boulder+freeze-ray": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  },
+  "convert+freeze-ray": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9
+  }
+ },
+ "thresholds": {
+  "noneMax": 8,
+  "singleMax": 8,
+  "pairMin": 60,
+  "pairMax": 80,
+  "screenTrials": 10,
+  "pairTrials": 10,
+  "confirmTrials": 30,
+  "tier": "T5",
+  "realistic": true
+ },
+ "pool": {
+  "abilities": [
+   "freeze-ray",
+   "knight-hop",
+   "bishop-step",
+   "queen-pulse",
+   "aegis",
+   "convert",
+   "poison-dart",
+   "decoy",
+   "rabies-dart",
+   "become-king",
+   "boulder",
+   "smoke",
+   "rewind",
+   "magnet",
+   "summon-knight",
+   "bishop-squire",
+   "page",
+   "twin",
+   "duchess",
+   "dragon",
+   "vanguard",
+   "swap",
+   "sacrifice"
+  ],
+  "excluded": []
+ },
+ "puzzle": {
+  "level": 8,
+  "rookieStart": {
+   "file": 4,
+   "rank": 1
+  },
+  "pieces": [
+   {
+    "type": "king",
+    "color": "black",
+    "file": 5,
+    "rank": 8
+   },
+   {
+    "type": "bishop",
+    "color": "black",
+    "file": 3,
+    "rank": 3
+   },
+   {
+    "type": "knight",
+    "color": "black",
+    "file": 8,
+    "rank": 2
+   }
+  ],
+  "hazards": [
+   {
+    "file": 1,
+    "rank": 4
+   },
+   {
+    "file": 2,
+    "rank": 5
+   },
+   {
+    "file": 3,
+    "rank": 4
+   },
+   {
+    "file": 4,
+    "rank": 5
+   },
+   {
+    "file": 5,
+    "rank": 4
+   },
+   {
+    "file": 6,
+    "rank": 5
+   },
+   {
+    "file": 7,
+    "rank": 4
+   },
+   {
+    "file": 8,
+    "rank": 5
+   },
+   {
+    "file": 7,
+    "rank": 8
+   },
+   {
+    "file": 6,
+    "rank": 6
+   },
+   {
+    "file": 7,
+    "rank": 7
+   },
+   {
+    "file": 4,
+    "rank": 6
+   },
+   {
+    "file": 3,
+    "rank": 7
+   }
+  ],
+  "moveLimit": 9,
+  "winCondition": "king",
+  "kingBehavior": "flee",
+  "kingPen": [
+   "e7",
+   "f7",
+   "e8",
+   "f8"
+  ]
+ },
+ "snippet": "    // L8 — THE COLONNADE. Staggered stones. No file, no rank — only the diagonals between them.\n    make(\n      8,\n      [\n        king(5, 8), bishop(3, 3), knight(8, 2),\n      ],\n      {\n        ...FLEE,\n        moveLimit: 9,\n        hazards: [X(1, 4), X(2, 5), X(3, 4), X(4, 5), X(5, 4), X(6, 5), X(7, 4), X(8, 5), X(7, 8), X(6, 6), X(7, 7), X(4, 6), X(3, 7)],\n        kingPen: ['e7', 'f7', 'e8', 'f8'],\n      },\n    ),"
+}

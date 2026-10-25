@@ -1,0 +1,677 @@
+{
+ "id": "checker-L9-v18-s298",
+ "date": "2026-10-25",
+ "slot": 9,
+ "source": {
+  "kind": "terrain",
+  "archetype": "checker",
+  "genSeed": 298
+ },
+ "title": "THE COLONNADE",
+ "gatedUnder": [
+  {
+   "kit": [
+    "queen-pulse",
+    "sacrifice",
+    "rabies-dart",
+    "smoke"
+   ],
+   "anchors": [
+    "queen-pulse+sacrifice",
+    "rabies-dart+smoke"
+   ],
+   "reason": "form + support | A rabid piece picks the nearest target and Smoke deletes Rookie from its target list entirely (rabidAction returns no Rookie target while smoked), so the maddened piece can only eat its own side while nothing hunts Rookie and the king does not flee.",
+   "winningPairs": [
+    {
+     "pair": "queen-pulse+smoke",
+     "winPct": 77
+    }
+   ]
+  }
+ ],
+ "kitsGating": 1,
+ "kitsTested": 8,
+ "winningPairs": [
+  {
+   "pair": "queen-pulse+smoke",
+   "winPct": 77
+  }
+ ],
+ "solventsSolving": [
+  {
+   "ability": "become-king",
+   "winPct": 90
+  }
+ ],
+ "pure": false,
+ "matrix": {
+  "none": {
+   "winPct": 0,
+   "trials": 30,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 30,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-step": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "knight-hop": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "become-king": {
+   "winPct": 90,
+   "trials": 10,
+   "wins": 9,
+   "captured": 0,
+   "moveLimit": 1,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 9.7
+  },
+  "vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "convert": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "queen-pulse": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "rabies-dart": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "smoke": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "duchess": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "dragon": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 12.4
+  },
+  "magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "aegis": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-squire": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "queen-pulse+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "queen-pulse+rabies-dart": {
+   "winPct": 20,
+   "trials": 10,
+   "wins": 2,
+   "captured": 0,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 12.1
+  },
+  "queen-pulse+smoke": {
+   "winPct": 77,
+   "trials": 30,
+   "wins": 23,
+   "captured": 0,
+   "moveLimit": 7,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 8.9
+  },
+  "rabies-dart+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "sacrifice+smoke": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "rabies-dart+smoke": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "sacrifice+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "duchess+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "duchess+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "smoke+vanguard": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "duchess+smoke": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "dragon+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-step+dragon": {
+   "winPct": 30,
+   "trials": 10,
+   "wins": 3,
+   "captured": 0,
+   "moveLimit": 7,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 11.3
+  },
+  "dragon+smoke": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 12.4
+  },
+  "bishop-step+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-step+smoke": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-step+magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-step+rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "dragon+magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "magnet+rewind": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "dragon+rewind": {
+   "winPct": 20,
+   "trials": 10,
+   "wins": 2,
+   "captured": 0,
+   "moveLimit": 8,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 11.5
+  },
+  "aegis+bishop-step": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "aegis+bishop-squire": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "aegis+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-squire+bishop-step": {
+   "winPct": 10,
+   "trials": 10,
+   "wins": 1,
+   "captured": 0,
+   "moveLimit": 9,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 12.7
+  },
+  "bishop-squire+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "aegis+queen-pulse": {
+   "winPct": 100,
+   "trials": 10,
+   "wins": 10,
+   "captured": 0,
+   "moveLimit": 0,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 6.8
+  },
+  "aegis+convert": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "convert+queen-pulse": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "convert+sacrifice": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "aegis+magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-squire+magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "convert+magnet": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  },
+  "bishop-squire+convert": {
+   "winPct": 0,
+   "trials": 10,
+   "wins": 0,
+   "captured": 0,
+   "moveLimit": 10,
+   "stall": 0,
+   "deadEnd": 0,
+   "avgMoves": 13
+  }
+ },
+ "thresholds": {
+  "noneMax": 8,
+  "singleMax": 8,
+  "pairMin": 60,
+  "pairMax": 80,
+  "screenTrials": 10,
+  "pairTrials": 10,
+  "confirmTrials": 30,
+  "tier": "T5",
+  "realistic": true
+ },
+ "pool": {
+  "abilities": [
+   "freeze-ray",
+   "knight-hop",
+   "bishop-step",
+   "queen-pulse",
+   "aegis",
+   "convert",
+   "poison-dart",
+   "decoy",
+   "rabies-dart",
+   "become-king",
+   "boulder",
+   "smoke",
+   "rewind",
+   "magnet",
+   "summon-knight",
+   "bishop-squire",
+   "page",
+   "twin",
+   "duchess",
+   "dragon",
+   "vanguard",
+   "swap",
+   "sacrifice"
+  ],
+  "excluded": []
+ },
+ "puzzle": {
+  "level": 9,
+  "rookieStart": {
+   "file": 4,
+   "rank": 1
+  },
+  "pieces": [
+   {
+    "type": "king",
+    "color": "black",
+    "file": 6,
+    "rank": 8
+   },
+   {
+    "type": "bishop",
+    "color": "black",
+    "file": 1,
+    "rank": 4
+   }
+  ],
+  "hazards": [
+   {
+    "file": 1,
+    "rank": 5
+   },
+   {
+    "file": 2,
+    "rank": 6
+   },
+   {
+    "file": 3,
+    "rank": 5
+   },
+   {
+    "file": 4,
+    "rank": 6
+   },
+   {
+    "file": 5,
+    "rank": 5
+   },
+   {
+    "file": 6,
+    "rank": 6
+   },
+   {
+    "file": 7,
+    "rank": 5
+   },
+   {
+    "file": 8,
+    "rank": 6
+   },
+   {
+    "file": 5,
+    "rank": 8
+   },
+   {
+    "file": 8,
+    "rank": 8
+   },
+   {
+    "file": 8,
+    "rank": 7
+   },
+   {
+    "file": 4,
+    "rank": 7
+   },
+   {
+    "file": 5,
+    "rank": 6
+   },
+   {
+    "file": 7,
+    "rank": 6
+   }
+  ],
+  "moveLimit": 13,
+  "winCondition": "king",
+  "kingBehavior": "flee",
+  "kingPen": [
+   "f7",
+   "g7",
+   "f8",
+   "g8"
+  ]
+ },
+ "snippet": "    // L9 — THE COLONNADE. Staggered stones. No file, no rank — only the diagonals between them.\n    make(\n      9,\n      [\n        king(6, 8), bishop(1, 4),\n      ],\n      {\n        ...FLEE,\n        moveLimit: 13,\n        hazards: [X(1, 5), X(2, 6), X(3, 5), X(4, 6), X(5, 5), X(6, 6), X(7, 5), X(8, 6), X(5, 8), X(8, 8), X(8, 7), X(4, 7), X(5, 6), X(7, 6)],\n        kingPen: ['f7', 'g7', 'f8', 'g8'],\n      },\n    ),"
+}
