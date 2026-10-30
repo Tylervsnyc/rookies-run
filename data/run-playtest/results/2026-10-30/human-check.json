@@ -1,0 +1,246 @@
+{
+ "schema": 1,
+ "experiment": "human-check",
+ "date": "2026-10-30",
+ "at": "2026-10-30T14:05:21.611Z",
+ "engine": {
+  "sha": "1f88da7",
+  "dirty": false,
+  "libHash": "f6ad6bd5925c"
+ },
+ "budget": {
+  "trials": 16,
+  "jobs": 4,
+  "seed": "matrix per (run,level,human loadout,trial)"
+ },
+ "conclusion": "2 human ladder runs (0 won); 1 first-try clears vs bot at 16 trials; BOT-BLIND none; human REPEAT none",
+ "body": {
+  "date": "2026-10-30",
+  "since": "2026-10-23",
+  "handle": null,
+  "trials": 16,
+  "runs": [
+   {
+    "traceId": "1a8db2e4",
+    "createdAt": "2026-10-28T17:53:36.93606+00:00",
+    "runId": "revenge-18",
+    "rung": 2,
+    "name": "The Glasshouse",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 8,
+    "posts": 2,
+    "exactReplay": true,
+    "replayedPct": 50,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray",
+      "signature": "freeze-ray@far | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 4,
+       "tylerActions": 4,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray+vanguard",
+      "signature": "freeze-ray@adj | cap:rook/step",
+      "replay": {
+       "level": 2,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 3,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray:2+poison-dart+vanguard",
+      "signature": "freeze-ray@king | cap:rook/orth",
+      "replay": {
+       "level": 3,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 4,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray:2+poison-dart+vanguard",
+      "signature": "freeze-ray@pen | cap:rook/step",
+      "replay": {
+       "level": 4,
+       "verified": 5,
+       "tylerActions": 5,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 5,
+      "deaths": 1,
+      "cleared": true,
+      "firstTry": false,
+      "arrival": "freeze-ray:2+poison-dart+vanguard:2",
+      "signature": "freeze-ray@king | cap:rook/orth",
+      "replay": {
+       "level": 5,
+       "verified": 2,
+       "tylerActions": 12,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 6,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray:3+poison-dart+vanguard:2",
+      "signature": "poison-dart@far>vanguard@near | cap:ally/L",
+      "replay": {
+       "level": 6,
+       "verified": 3,
+       "tylerActions": 6,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     },
+     {
+      "level": 7,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "freeze-ray:3+poison-dart+vanguard:2",
+      "signature": "vanguard@near | cap:ally/L",
+      "replay": {
+       "level": 7,
+       "verified": 1,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false,
+      "bot": {
+       "loadout": "freeze-ray:3+poison-dart+vanguard:2",
+       "est": {
+        "wins": 15,
+        "n": 16,
+        "pct": 93.8,
+        "lo": 71.7,
+        "hi": 98.9
+       },
+       "lines": {
+        "vanguard@far>freeze-ray@king | cap:ally/L": 7,
+        "vanguard@near | cap:ally/L": 7,
+        "vanguard@line>freeze-ray@king | cap:ally/L": 1
+       }
+      }
+     },
+     {
+      "level": 8,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "freeze-ray:3+poison-dart+vanguard:2",
+      "signature": null,
+      "replay": {
+       "level": 8,
+       "verified": 1,
+       "tylerActions": 10,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   },
+   {
+    "traceId": "d5f67fbe",
+    "createdAt": "2026-10-28T17:54:52.966754+00:00",
+    "runId": "revenge-21",
+    "rung": 1,
+    "name": "The Slash",
+    "difficulty": "normal",
+    "outcome": "lost",
+    "endLevel": 2,
+    "posts": 1,
+    "exactReplay": true,
+    "replayedPct": 100,
+    "levels": [
+     {
+      "level": 1,
+      "deaths": 0,
+      "cleared": true,
+      "firstTry": true,
+      "arrival": "boulder",
+      "signature": "no-cast | cap:rook/orth",
+      "replay": {
+       "level": 1,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": true,
+       "exact": true,
+       "engineWon": true
+      },
+      "botBlind": false
+     },
+     {
+      "level": 2,
+      "deaths": 1,
+      "cleared": false,
+      "firstTry": false,
+      "arrival": "boulder+knight-hop",
+      "signature": null,
+      "replay": {
+       "level": 2,
+       "verified": 3,
+       "tylerActions": 3,
+       "clean": false,
+       "exact": true,
+       "engineWon": false
+      },
+      "botBlind": false
+     }
+    ],
+    "repeats": []
+   }
+  ],
+  "flags": {},
+  "caveats": [
+   "7 trace rows -> 2 runs after dedupe (retry double-posts collapsed, difficulty normal)."
+  ]
+ }
+}
