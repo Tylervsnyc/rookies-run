@@ -1,6 +1,6 @@
 # Combo-gated levels — `aegis+page`
 
-6 levels where, inside at least one kit, no single card wins and this pair does.
+7 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
@@ -8,6 +8,7 @@
 | checker-L8-v11-s283 | L8 | 0% | **70%** | [aegis bishop-step decoy page] | aegis+bishop-step | become-king 100% | no | 2026-10-10 |
 | checker-L8-v15-s269 | L8 | 0% | **80%** | [magnet poison-dart aegis page] | — (unique answer) | bishop-step 100%, knight-hop 100%, become-king 90% | no | 2026-09-26 |
 | checker-L8-v15-s301 | L8 | 0% | **73%** | [bishop-squire twin aegis page] | — (unique answer) | bishop-step 100%, knight-hop 100%, become-king 90% | no | 2026-10-28 |
+| checker-L9-v1-s303 | L9 | 0% | **77%** | [aegis page boulder freeze-ray] | duchess+freeze-ray, aegis+duchess | become-king 10% | no | 2026-10-30 |
 | checker-L9-v5-s281 | L9 | 0% | **70%** | [duchess page aegis convert] | aegis+duchess | become-king 10% | no | 2026-10-08 |
 | checker-L10-v16-s290 | L10 | 0% | **60%** | [aegis magnet decoy page] | — (unique answer) | bishop-step 100%, knight-hop 90%, become-king 100% | no | 2026-10-17 |
 
