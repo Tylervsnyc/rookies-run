@@ -1,9 +1,10 @@
 # Combo-gated levels — `freeze-ray+page`
 
-4 levels where, inside at least one kit, no single card wins and this pair does.
+5 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| checker-L7-v8-s305 | L7 | 0% | **67%** | [aegis page boulder freeze-ray] | — (unique answer) | bishop-step 100%, knight-hop 90%, become-king 100% | no | 2026-11-01 |
 | checker-L8-v19-s303 | L8 | 0% | **60%** | [page queen-pulse convert freeze-ray] | — (unique answer) | none | no | 2026-10-30 |
 | checker-L8-v7-s281 | L8 | 0% | **80%** | [bishop-step page become-king freeze-ray] | bishop-step+rabies-dart, become-king+decoy | none | no | 2026-10-08 |
 | checker-L9-v3-s289 | L9 | 0% | **80%** | [aegis page boulder freeze-ray] | boulder+page | bishop-step 100%, knight-hop 100%, become-king 100% | no | 2026-10-16 |
