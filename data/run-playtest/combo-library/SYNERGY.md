@@ -1,6 +1,6 @@
 # Rookie's Revenge — pair synergy report
 
-Generated 2026-11-01 by `scripts/run-playtest/combo-discover.ts`.
+Generated 2026-11-02 by `scripts/run-playtest/combo-discover.ts`.
 
 ## Combo-gating is KIT-relative (the finding that reshaped this search)
 
@@ -16,7 +16,7 @@ A level gated under MANY kits is more valuable (it can ship in several runs); wi
 
 Card pool searched: **23 abilities** → 253 possible pairs. All 23 built abilities → 253 pairs.
 
-Subjects screened: **4583** · combo-gated: **169** · solvable with no ability: 80 · every kit disqualified by one of its own cards: 3229 · a kit survived but no pair cleared: 898 · failed the high-trial confirm: 207
+Subjects screened: **4637** · combo-gated: **171** · solvable with no ability: 80 · every kit disqualified by one of its own cards: 3266 · a kit survived but no pair cleared: 911 · failed the high-trial confirm: 209
 
 ## Pairs that produced combo-gated levels
 
@@ -38,13 +38,13 @@ Subjects screened: **4583** · combo-gated: **169** · solvable with no ability:
 | `decoy+dragon` | 5 | L7 L8 L10 | 80% | 3 | 0 |
 | `dragon+smoke` | 5 | L7 L8 | 80% | 1 | 0 |
 | `freeze-ray+page` | 5 | L7 L8 L9 L10 | 80% | 3 | 0 |
+| `freeze-ray+queen-pulse` | 5 | L8 L9 L10 | 80% | 3 | 0 |
+| `page+smoke` | 5 | L7 L8 L9 | 77% | 5 | 0 |
 | `bishop-step+decoy` | 4 | L7 L8 L9 | 93% | 1 | 0 |
 | `bishop-step+duchess` | 4 | L7 | 73% | 2 | 0 |
 | `bishop-step+freeze-ray` | 4 | L7 L8 | 100% | 1 | 0 |
 | `dragon+freeze-ray` | 4 | L7 L9 L10 | 97% | 0 | 0 |
 | `duchess+vanguard` | 4 | L7 L8 L9 | 83% | 1 | 0 |
-| `freeze-ray+queen-pulse` | 4 | L8 L9 L10 | 80% | 2 | 0 |
-| `page+smoke` | 4 | L7 L9 | 77% | 4 | 0 |
 | `poison-dart+queen-pulse` | 4 | L8 L9 | 83% | 2 | 0 |
 | `queen-pulse+smoke` | 4 | L7 L9 | 77% | 3 | 0 |
 | `queen-pulse+vanguard` | 4 | L7 L8 | 97% | 2 | 0 |
@@ -124,12 +124,12 @@ The card that appears in the most winning pairs is the one to build future runs 
 |---|---|---|---|
 | `bishop-step` | 17 | 47 | `aegis+bishop-step`, `become-king+bishop-step`, `bishop-squire+bishop-step`, `bishop-step+boulder`, `bishop-step+convert`, `bishop-step+decoy`, `bishop-step+dragon`, `bishop-step+duchess`, `bishop-step+freeze-ray`, `bishop-step+page`, `bishop-step+poison-dart`, `bishop-step+rabies-dart`, `bishop-step+rewind`, `bishop-step+smoke`, `bishop-step+summon-knight`, `bishop-step+twin`, `bishop-step+vanguard` |
 | `dragon` | 16 | 46 | `aegis+dragon`, `become-king+dragon`, `bishop-step+dragon`, `boulder+dragon`, `convert+dragon`, `decoy+dragon`, `dragon+duchess`, `dragon+freeze-ray`, `dragon+poison-dart`, `dragon+queen-pulse`, `dragon+rabies-dart`, `dragon+rewind`, `dragon+smoke`, `dragon+summon-knight`, `dragon+twin`, `dragon+vanguard` |
-| `queen-pulse` | 15 | 33 | `aegis+queen-pulse`, `become-king+queen-pulse`, `bishop-squire+queen-pulse`, `boulder+queen-pulse`, `convert+queen-pulse`, `decoy+queen-pulse`, `dragon+queen-pulse`, `duchess+queen-pulse`, `freeze-ray+queen-pulse`, `page+queen-pulse`, `poison-dart+queen-pulse`, `queen-pulse+rabies-dart`, `queen-pulse+smoke`, `queen-pulse+summon-knight`, `queen-pulse+vanguard` |
+| `queen-pulse` | 15 | 34 | `aegis+queen-pulse`, `become-king+queen-pulse`, `bishop-squire+queen-pulse`, `boulder+queen-pulse`, `convert+queen-pulse`, `decoy+queen-pulse`, `dragon+queen-pulse`, `duchess+queen-pulse`, `freeze-ray+queen-pulse`, `page+queen-pulse`, `poison-dart+queen-pulse`, `queen-pulse+rabies-dart`, `queen-pulse+smoke`, `queen-pulse+summon-knight`, `queen-pulse+vanguard` |
 | `duchess` | 13 | 29 | `aegis+duchess`, `bishop-squire+duchess`, `bishop-step+duchess`, `decoy+duchess`, `dragon+duchess`, `duchess+freeze-ray`, `duchess+page`, `duchess+queen-pulse`, `duchess+rabies-dart`, `duchess+rewind`, `duchess+smoke`, `duchess+swap`, `duchess+vanguard` |
-| `page` | 11 | 30 | `aegis+page`, `bishop-step+page`, `boulder+page`, `convert+page`, `decoy+page`, `duchess+page`, `freeze-ray+page`, `page+queen-pulse`, `page+rewind`, `page+smoke`, `page+summon-knight` |
+| `page` | 11 | 31 | `aegis+page`, `bishop-step+page`, `boulder+page`, `convert+page`, `decoy+page`, `duchess+page`, `freeze-ray+page`, `page+queen-pulse`, `page+rewind`, `page+smoke`, `page+summon-knight` |
 | `summon-knight` | 11 | 14 | `bishop-step+summon-knight`, `boulder+summon-knight`, `convert+summon-knight`, `decoy+summon-knight`, `dragon+summon-knight`, `freeze-ray+summon-knight`, `page+summon-knight`, `queen-pulse+summon-knight`, `rewind+summon-knight`, `smoke+summon-knight`, `summon-knight+swap` |
-| `freeze-ray` | 10 | 27 | `become-king+freeze-ray`, `bishop-step+freeze-ray`, `convert+freeze-ray`, `dragon+freeze-ray`, `duchess+freeze-ray`, `freeze-ray+knight-hop`, `freeze-ray+page`, `freeze-ray+queen-pulse`, `freeze-ray+summon-knight`, `freeze-ray+twin` |
-| `smoke` | 9 | 26 | `bishop-step+smoke`, `convert+smoke`, `dragon+smoke`, `duchess+smoke`, `knight-hop+smoke`, `page+smoke`, `queen-pulse+smoke`, `smoke+summon-knight`, `smoke+twin` |
+| `freeze-ray` | 10 | 28 | `become-king+freeze-ray`, `bishop-step+freeze-ray`, `convert+freeze-ray`, `dragon+freeze-ray`, `duchess+freeze-ray`, `freeze-ray+knight-hop`, `freeze-ray+page`, `freeze-ray+queen-pulse`, `freeze-ray+summon-knight`, `freeze-ray+twin` |
+| `smoke` | 9 | 27 | `bishop-step+smoke`, `convert+smoke`, `dragon+smoke`, `duchess+smoke`, `knight-hop+smoke`, `page+smoke`, `queen-pulse+smoke`, `smoke+summon-knight`, `smoke+twin` |
 | `convert` | 9 | 14 | `bishop-step+convert`, `convert+decoy`, `convert+dragon`, `convert+freeze-ray`, `convert+page`, `convert+queen-pulse`, `convert+rewind`, `convert+smoke`, `convert+summon-knight` |
 | `rewind` | 8 | 21 | `become-king+rewind`, `bishop-step+rewind`, `convert+rewind`, `dragon+rewind`, `duchess+rewind`, `page+rewind`, `rewind+summon-knight`, `rewind+twin` |
 | `decoy` | 8 | 17 | `become-king+decoy`, `bishop-step+decoy`, `convert+decoy`, `decoy+dragon`, `decoy+duchess`, `decoy+page`, `decoy+queen-pulse`, `decoy+summon-knight` |
@@ -151,120 +151,120 @@ Real signal: a pair that has been played on several surviving levels and never g
 
 | pair | levels it was played on |
 |---|---|
-| `aegis+sacrifice` | 265 |
-| `boulder+rewind` | 149 |
-| `sacrifice+smoke` | 143 |
-| `aegis+twin` | 136 |
-| `boulder+convert` | 136 |
-| `magnet+rewind` | 135 |
-| `bishop-squire+page` | 133 |
-| `aegis+decoy` | 122 |
-| `rabies-dart+twin` | 122 |
-| `rewind+smoke` | 118 |
+| `aegis+sacrifice` | 268 |
+| `boulder+rewind` | 150 |
+| `sacrifice+smoke` | 145 |
+| `boulder+convert` | 138 |
+| `aegis+twin` | 137 |
+| `magnet+rewind` | 137 |
+| `bishop-squire+page` | 135 |
+| `aegis+decoy` | 123 |
+| `rabies-dart+twin` | 123 |
+| `rewind+smoke` | 121 |
 | `become-king+duchess` | 116 |
-| `duchess+sacrifice` | 111 |
-| `freeze-ray+rabies-dart` | 108 |
-| `poison-dart+summon-knight` | 108 |
-| `become-king+page` | 106 |
-| `become-king+vanguard` | 105 |
-| `magnet+sacrifice` | 104 |
-| `bishop-squire+smoke` | 103 |
-| `bishop-squire+summon-knight` | 103 |
-| `bishop-squire+magnet` | 102 |
-| `aegis+bishop-squire` | 101 |
-| `convert+vanguard` | 100 |
-| `poison-dart+rabies-dart` | 100 |
-| `boulder+duchess` | 98 |
-| `queen-pulse+rewind` | 98 |
-| `rabies-dart+sacrifice` | 97 |
-| `aegis+summon-knight` | 96 |
-| `decoy+poison-dart` | 96 |
-| `freeze-ray+sacrifice` | 96 |
-| `poison-dart+rewind` | 96 |
+| `duchess+sacrifice` | 112 |
+| `freeze-ray+rabies-dart` | 110 |
+| `poison-dart+summon-knight` | 109 |
+| `become-king+page` | 108 |
+| `become-king+vanguard` | 108 |
+| `magnet+sacrifice` | 105 |
+| `bishop-squire+smoke` | 104 |
+| `bishop-squire+summon-knight` | 104 |
+| `bishop-squire+magnet` | 103 |
+| `aegis+bishop-squire` | 102 |
+| `poison-dart+rabies-dart` | 102 |
+| `convert+vanguard` | 101 |
+| `boulder+duchess` | 99 |
+| `queen-pulse+rewind` | 99 |
+| `aegis+summon-knight` | 98 |
+| `decoy+poison-dart` | 98 |
+| `rabies-dart+sacrifice` | 98 |
+| `freeze-ray+sacrifice` | 97 |
+| `poison-dart+rewind` | 97 |
+| `rabies-dart+vanguard` | 97 |
+| `bishop-squire+dragon` | 95 |
 | `convert+twin` | 95 |
-| `bishop-squire+dragon` | 94 |
-| `duchess+magnet` | 94 |
-| `rabies-dart+vanguard` | 94 |
+| `duchess+magnet` | 95 |
+| `magnet+rabies-dart` | 95 |
+| `decoy+magnet` | 94 |
+| `page+twin` | 94 |
+| `aegis+boulder` | 93 |
+| `become-king+summon-knight` | 93 |
+| `bishop-squire+freeze-ray` | 93 |
 | `bishop-squire+poison-dart` | 93 |
+| `boulder+rabies-dart` | 93 |
 | `decoy+twin` | 93 |
-| `magnet+rabies-dart` | 93 |
-| `page+twin` | 93 |
-| `aegis+boulder` | 92 |
-| `become-king+summon-knight` | 92 |
-| `bishop-squire+freeze-ray` | 92 |
+| `freeze-ray+vanguard` | 93 |
+| `magnet+page` | 93 |
+| `sacrifice+vanguard` | 93 |
+| `aegis+magnet` | 92 |
+| `become-king+boulder` | 92 |
+| `bishop-squire+convert` | 92 |
+| `bishop-squire+decoy` | 92 |
+| `bishop-squire+rabies-dart` | 92 |
+| `bishop-squire+rewind` | 92 |
+| `bishop-squire+sacrifice` | 92 |
+| `bishop-step+magnet` | 92 |
+| `bishop-step+sacrifice` | 92 |
+| `boulder+decoy` | 92 |
 | `boulder+freeze-ray` | 92 |
+| `boulder+magnet` | 92 |
+| `boulder+sacrifice` | 92 |
+| `boulder+smoke` | 92 |
 | `boulder+vanguard` | 92 |
+| `decoy+freeze-ray` | 92 |
+| `decoy+vanguard` | 92 |
+| `dragon+magnet` | 92 |
+| `dragon+sacrifice` | 92 |
+| `freeze-ray+magnet` | 92 |
+| `magnet+queen-pulse` | 92 |
+| `magnet+smoke` | 92 |
+| `magnet+summon-knight` | 92 |
+| `magnet+twin` | 92 |
 | `page+poison-dart` | 92 |
+| `page+rabies-dart` | 92 |
+| `poison-dart+smoke` | 92 |
+| `poison-dart+twin` | 92 |
+| `queen-pulse+sacrifice` | 92 |
 | `rabies-dart+smoke` | 92 |
-| `sacrifice+vanguard` | 92 |
+| `rewind+vanguard` | 92 |
+| `sacrifice+summon-knight` | 92 |
 | `aegis+convert` | 91 |
 | `aegis+freeze-ray` | 91 |
-| `aegis+magnet` | 91 |
 | `aegis+poison-dart` | 91 |
+| `aegis+rabies-dart` | 91 |
 | `aegis+vanguard` | 91 |
 | `become-king+bishop-squire` | 91 |
-| `become-king+boulder` | 91 |
+| `become-king+magnet` | 91 |
+| `become-king+rabies-dart` | 91 |
+| `become-king+sacrifice` | 91 |
 | `become-king+twin` | 91 |
-| `bishop-squire+decoy` | 91 |
-| `bishop-squire+rabies-dart` | 91 |
-| `bishop-squire+rewind` | 91 |
-| `bishop-squire+sacrifice` | 91 |
-| `bishop-step+sacrifice` | 91 |
-| `boulder+magnet` | 91 |
-| `boulder+rabies-dart` | 91 |
-| `boulder+smoke` | 91 |
+| `boulder+poison-dart` | 91 |
+| `convert+duchess` | 91 |
 | `convert+magnet` | 91 |
+| `convert+rabies-dart` | 91 |
 | `convert+sacrifice` | 91 |
-| `decoy+freeze-ray` | 91 |
-| `decoy+magnet` | 91 |
-| `dragon+magnet` | 91 |
+| `decoy+rewind` | 91 |
+| `decoy+sacrifice` | 91 |
+| `decoy+smoke` | 91 |
 | `dragon+page` | 91 |
-| `dragon+sacrifice` | 91 |
-| `freeze-ray+vanguard` | 91 |
-| `magnet+page` | 91 |
-| `magnet+queen-pulse` | 91 |
-| `magnet+smoke` | 91 |
-| `magnet+summon-knight` | 91 |
-| `magnet+twin` | 91 |
-| `page+rabies-dart` | 91 |
+| `duchess+poison-dart` | 91 |
+| `duchess+summon-knight` | 91 |
+| `freeze-ray+poison-dart` | 91 |
+| `freeze-ray+rewind` | 91 |
+| `magnet+poison-dart` | 91 |
+| `magnet+vanguard` | 91 |
+| `page+vanguard` | 91 |
 | `poison-dart+sacrifice` | 91 |
-| `poison-dart+smoke` | 91 |
-| `poison-dart+twin` | 91 |
-| `queen-pulse+sacrifice` | 91 |
+| `poison-dart+vanguard` | 91 |
 | `queen-pulse+twin` | 91 |
-| `rewind+vanguard` | 91 |
-| `sacrifice+summon-knight` | 91 |
-| `aegis+rabies-dart` | 90 |
-| `become-king+magnet` | 90 |
-| `become-king+sacrifice` | 90 |
-| `bishop-squire+convert` | 90 |
-| `bishop-step+magnet` | 90 |
-| `boulder+decoy` | 90 |
-| `boulder+poison-dart` | 90 |
-| `boulder+sacrifice` | 90 |
-| `convert+duchess` | 90 |
-| `convert+rabies-dart` | 90 |
-| `decoy+rewind` | 90 |
-| `decoy+sacrifice` | 90 |
-| `decoy+smoke` | 90 |
-| `decoy+vanguard` | 90 |
-| `duchess+poison-dart` | 90 |
-| `duchess+summon-knight` | 90 |
-| `freeze-ray+magnet` | 90 |
-| `freeze-ray+poison-dart` | 90 |
-| `freeze-ray+rewind` | 90 |
-| `magnet+poison-dart` | 90 |
-| `magnet+vanguard` | 90 |
-| `page+vanguard` | 90 |
-| `poison-dart+vanguard` | 90 |
-| `rabies-dart+rewind` | 90 |
-| `rewind+sacrifice` | 90 |
-| `smoke+vanguard` | 90 |
-| `summon-knight+twin` | 90 |
-| `summon-knight+vanguard` | 90 |
-| `twin+vanguard` | 90 |
-| `become-king+convert` | 89 |
-| `become-king+rabies-dart` | 89 |
+| `rabies-dart+rewind` | 91 |
+| `rewind+sacrifice` | 91 |
+| `smoke+vanguard` | 91 |
+| `summon-knight+twin` | 91 |
+| `summon-knight+vanguard` | 91 |
+| `twin+vanguard` | 91 |
+| `become-king+convert` | 90 |
 | `boulder+swap` | 2 |
 | `freeze-ray+swap` | 2 |
 | `knight-hop+swap` | 2 |
