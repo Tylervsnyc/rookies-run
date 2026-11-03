@@ -29,7 +29,9 @@ async function loadAndInitPostHog(): Promise<PostHog | null> {
   const isNativeApp =
     (window as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor
       ?.isNativePlatform?.() === true;
-  posthog.register({ in_native_app: isNativeApp });
+  // `app` splits the shared PostHog project per product (Chess Path sends
+  // 'chesspath' / 'chessboxing' / 'web').
+  posthog.register({ in_native_app: isNativeApp, app: 'revenge' });
 
   return posthog;
 }
