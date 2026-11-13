@@ -1,0 +1,26 @@
+{
+ "schema": 1,
+ "experiment": "human-check",
+ "date": "2026-11-13",
+ "at": "2026-11-13T15:38:55.082Z",
+ "engine": {
+  "sha": "bd40936",
+  "dirty": false,
+  "libHash": "a361a563761b"
+ },
+ "budget": {
+  "trials": 16,
+  "jobs": 4,
+  "seed": "matrix per (run,level,human loadout,trial)"
+ },
+ "conclusion": "0 human ladder runs (0 won); 0 first-try clears vs bot at 16 trials; BOT-BLIND none; human REPEAT none",
+ "body": {
+  "date": "2026-11-13",
+  "since": "2026-11-06",
+  "handle": null,
+  "trials": 16,
+  "runs": [],
+  "flags": {},
+  "caveats": []
+ }
+}
