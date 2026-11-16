@@ -1,9 +1,10 @@
 # Combo-gated levels — `poison-dart+queen-pulse`
 
-4 levels where, inside at least one kit, no single card wins and this pair does.
+5 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| moat-L7-v13-s320 | L7 | 0% | **67%** | [duchess queen-pulse boulder poison-dart] | dragon+duchess | knight-hop 80%, become-king 40% | no | 2026-11-16 |
 | checker-L8-v16-s255 | L8 | 0% | **63%** | [page queen-pulse boulder poison-dart] | — (unique answer) | become-king 17% | no | 2026-09-12 |
 | moat-L8-v2-s261 | L8 | 0% | **80%** | [dragon queen-pulse boulder poison-dart] | queen-pulse+vanguard, bishop-squire+queen-pulse | knight-hop 80%, become-king 100% | no | 2026-09-18 |
 | checker-L9-v3-s258 | L9 | 0% | **60%** | [dragon queen-pulse freeze-ray poison-dart] | bishop-squire+queen-pulse | become-king 70% | no | 2026-09-15 |
