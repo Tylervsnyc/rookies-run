@@ -1,10 +1,11 @@
 # Combo-gated levels — `bishop-step+poison-dart`
 
-2 levels where, inside at least one kit, no single card wins and this pair does.
+3 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
 | moat-L7-v4-s255 | L7 | 0% | **70%** | [bishop-step summon-knight become-king poison-dart] | become-king+bishop-step, bishop-step+rabies-dart, convert+rewind | none | no | 2026-09-12 |
 | moat-L7-v6-s314 | L7 | 0% | **80%** | [bishop-step poison-dart decoy magnet] | — (unique answer) | become-king 13% | no | 2026-11-10 |
+| checker-L8-v13-s322 | L8 | 0% | **80%** | [bishop-step poison-dart boulder rabies-dart] | — (unique answer) | knight-hop 10%, become-king 100% | no | 2026-11-18 |
 
 Each `<id>.json` holds the level definition, a paste-ready runs.ts snippet, every gating kit, and the full measured matrix row.
