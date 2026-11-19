@@ -1,10 +1,11 @@
 # Combo-gated levels — `aegis+dragon`
 
-7 levels where, inside at least one kit, no single card wins and this pair does.
+8 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
 | moat-L7-v16-s273 | L7 | 0% | **63%** | [dragon twin aegis rabies-dart] | — (unique answer) | knight-hop 10%, become-king 60% | no | 2026-09-30 |
+| moat-L7-v20-s323 | L7 | 0% | **80%** | [duchess summon-knight aegis dragon] | dragon+summon-knight, dragon+duchess, dragon+queen-pulse | bishop-step 20% | no | 2026-11-19 |
 | checker-L8-v12-s275 | L8 | 0% | **63%** | [dragon twin aegis bishop-step]<br>[dragon sacrifice aegis queen-pulse] | — (unique answer) | become-king 30% | no | 2026-10-02 |
 | checker-L8-v13-s255 | L8 | 0% | **60%** | [aegis dragon decoy sacrifice] | — (unique answer) | none | no | 2026-09-12 |
 | checker-L8-v6-s296 | L8 | 0% | **77%** | [dragon twin aegis poison-dart]<br>[twin vanguard aegis dragon] | duchess+queen-pulse | become-king 30% | no | 2026-10-23 |

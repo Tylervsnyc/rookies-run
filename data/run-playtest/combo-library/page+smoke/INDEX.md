@@ -1,6 +1,6 @@
 # Combo-gated levels — `page+smoke`
 
-5 levels where, inside at least one kit, no single card wins and this pair does.
+6 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
@@ -9,5 +9,6 @@
 | checker-L8-v18-s306 | L8 | 0% | **73%** | [page rewind smoke summon-knight] | — (unique answer) | bishop-step 60%, become-king 100% | no | 2026-11-02 |
 | checker-L9-v14-s252 | L9 | 0% | **77%** | [page smoke bishop-squire decoy] | — (unique answer) | bishop-step 100%, knight-hop 90%, become-king 100% | no | 2026-09-09 |
 | checker-L9-v8-s274 | L9 | 0% | **67%** | [page smoke bishop-squire rabies-dart] | — (unique answer) | become-king 17% | no | 2026-10-01 |
+| checker-L10-v8-s323 | L10 | 0% | **67%** | [boulder smoke convert page] | dragon+freeze-ray, convert+page | knight-hop 10%, become-king 100% | no | 2026-11-19 |
 
 Each `<id>.json` holds the level definition, a paste-ready runs.ts snippet, every gating kit, and the full measured matrix row.
