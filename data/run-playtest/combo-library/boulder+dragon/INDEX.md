@@ -1,10 +1,11 @@
 # Combo-gated levels — `boulder+dragon`
 
-7 levels where, inside at least one kit, no single card wins and this pair does.
+8 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
 | checker-L7-v16-s249 | L7 | 0% | **63%** | [aegis dragon boulder sacrifice] | bishop-step+dragon, bishop-step+smoke, bishop-step+twin, bishop-step+decoy, smoke+twin, dragon+freeze-ray, page+rewind, rewind+twin, dragon+smoke | become-king 100% | no | 2026-09-06 |
+| checker-L7-v17-s325 | L7 | 0% | **77%** | [become-king boulder convert dragon] | — (unique answer) | none | no | 2026-11-21 |
 | checker-L7-v5-s275 | L7 | 0% | **63%** | [boulder dragon convert duchess] | — (unique answer) | none | no | 2026-10-02 |
 | checker-L7-v5-s286 | L7 | 0% | **67%** | [boulder vanguard convert dragon] | — (unique answer) | become-king 70% | no | 2026-10-13 |
 | checker-L8-v13-s289 | L8 | 0% | **67%** | [dragon rewind become-king boulder] | — (unique answer) | none | no | 2026-10-16 |
