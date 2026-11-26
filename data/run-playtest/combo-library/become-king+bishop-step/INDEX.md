@@ -1,9 +1,10 @@
 # Combo-gated levels — `become-king+bishop-step`
 
-7 levels where, inside at least one kit, no single card wins and this pair does.
+8 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| moat-L7-v11-s330 | L7 | 0% | **73%** | [bishop-step summon-knight become-king decoy] | page+queen-pulse, become-king+queen-pulse | none | no | 2026-11-26 |
 | moat-L7-v12-s321 | L7 | 0% | **70%** | [become-king bishop-squire bishop-step page] | — (unique answer) | none | no | 2026-11-17 |
 | moat-L7-v16-s284 | L7 | 0% | **80%** | [bishop-step duchess become-king decoy]<br>[bishop-step page become-king freeze-ray]<br>[bishop-step summon-knight become-king poison-dart] | bishop-step+decoy, bishop-step+freeze-ray | none | no | 2026-10-11 |
 | moat-L7-v20-s255 | L7 | 0% | **73%** | [bishop-step summon-knight become-king convert] | bishop-step+convert | none | no | 2026-09-13 |

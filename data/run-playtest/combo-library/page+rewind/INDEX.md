@@ -1,6 +1,6 @@
 # Combo-gated levels — `page+rewind`
 
-7 levels where, inside at least one kit, no single card wins and this pair does.
+8 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
@@ -8,6 +8,7 @@
 | checker-L7-v5-s259 | L7 | 0% | **70%** | [boulder summon-knight page rewind] | — (unique answer) | become-king 30% | no | 2026-09-16 |
 | checker-L7-v5-s310 | L7 | 0% | **67%** | [page rewind poison-dart twin] | — (unique answer) | bishop-step 100%, become-king 70% | no | 2026-11-06 |
 | moat-L7-v17-s250 | L7 | 0% | **63%** | [bishop-squire rewind convert page] | convert+queen-pulse | become-king 100% | no | 2026-09-08 |
+| checker-L8-v11-s330 | L8 | 0% | **70%** | [page rewind boulder poison-dart] | — (unique answer) | bishop-step 100%, knight-hop 100%, become-king 100% | no | 2026-11-26 |
 | checker-L8-v14-s250 | L8 | 0% | **77%** | [bishop-squire rewind freeze-ray page] | — (unique answer) | bishop-step 100%, knight-hop 100%, become-king 100% | no | 2026-09-07 |
 | checker-L8-v2-s279 | L8 | 0% | **63%** | [rewind twin page smoke] | queen-pulse+vanguard | none | no | 2026-10-06 |
 | checker-L9-v8-s303 | L9 | 0% | **60%** | [page poison-dart rewind summon-knight] | — (unique answer) | bishop-step 90%, knight-hop 100%, become-king 100% | no | 2026-10-30 |

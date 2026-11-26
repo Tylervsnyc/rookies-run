@@ -1,9 +1,10 @@
 # Combo-gated levels — `queen-pulse+vanguard`
 
-4 levels where, inside at least one kit, no single card wins and this pair does.
+5 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
+| moat-L7-v13-s330 | L7 | 0% | **63%** | [queen-pulse vanguard boulder poison-dart] | queen-pulse+twin | none | no | 2026-11-26 |
 | moat-L7-v5-s250 | L7 | 0% | **97%** | [aegis vanguard queen-pulse sacrifice] | — (unique answer) | become-king 80% | no | 2026-09-08 |
 | checker-L8-v2-s279 | L8 | 0% | **60%** | [queen-pulse vanguard convert freeze-ray] | page+rewind | none | no | 2026-10-06 |
 | moat-L8-v12-s283 | L8 | 0% | **60%** | [queen-pulse vanguard decoy rewind] | — (unique answer) | become-king 20% | no | 2026-10-10 |

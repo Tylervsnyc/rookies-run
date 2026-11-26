@@ -1,6 +1,6 @@
 # Combo-gated levels — `dragon+duchess`
 
-12 levels where, inside at least one kit, no single card wins and this pair does.
+13 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
@@ -14,6 +14,7 @@
 | moat-L7-v6-s261 | L7 | 0% | **67%** | [bishop-squire dragon duchess summon-knight]<br>[bishop-squire duchess dragon page]<br>[duchess vanguard aegis dragon] | — (unique answer) | knight-hop 10% | no | 2026-09-18 |
 | checker-L8-v17-s268 | L8 | 0% | **77%** | [duchess vanguard aegis dragon]<br>[dragon sacrifice duchess smoke] | dragon+smoke | bishop-step 30%, knight-hop 60%, become-king 100% | no | 2026-09-25 |
 | moat-L8-v15-s288 | L8 | 0% | **73%** | [duchess summon-knight aegis dragon]<br>[dragon sacrifice duchess smoke] | — (unique answer) | bishop-step 100%, knight-hop 100%, become-king 40% | no | 2026-10-15 |
+| moat-L8-v5-s330 | L8 | 0% | **63%** | [duchess summon-knight dragon page] | — (unique answer) | bishop-step 10%, knight-hop 10%, become-king 100% | no | 2026-11-26 |
 | moat-L8-v8-s251 | L8 | 0% | **60%** | [aegis duchess dragon sacrifice] | — (unique answer) | knight-hop 100%, become-king 100% | no | 2026-09-09 |
 | moat-L9-v12-s249 | L9 | 0% | **93%** | [convert duchess dragon freeze-ray] | bishop-step+dragon, dragon+rewind, duchess+freeze-ray, dragon+freeze-ray, duchess+vanguard, dragon+twin | become-king 90% | no | 2026-09-07 |
 
