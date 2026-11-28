@@ -1,11 +1,12 @@
 # Combo-gated levels — `queen-pulse+smoke`
 
-5 levels where, inside at least one kit, no single card wins and this pair does.
+6 levels where, inside at least one kit, no single card wins and this pair does.
 
 | id | slot | none | this pair | kits it is gated under | other pairs in those kits | solvents that crack it | pure | date |
 |---|---|---|---|---|---|---|---|---|
 | checker-L7-v11-s275 | L7 | 0% | **67%** | [page queen-pulse convert smoke] | — (unique answer) | become-king 80% | no | 2026-10-02 |
 | moat-L7-v4-s321 | L7 | 0% | **60%** | [queen-pulse smoke convert magnet] | — (unique answer) | become-king 30% | no | 2026-11-17 |
+| checker-L8-v10-s332 | L8 | 0% | **70%** | [queen-pulse smoke convert rewind] | — (unique answer) | become-king 60% | no | 2026-11-28 |
 | checker-L9-v10-s266 | L9 | 0% | **67%** | [queen-pulse smoke magnet poison-dart] | freeze-ray+queen-pulse | become-king 60% | no | 2026-09-23 |
 | checker-L9-v18-s298 | L9 | 0% | **77%** | [queen-pulse sacrifice rabies-dart smoke] | — (unique answer) | become-king 90% | no | 2026-10-25 |
 | checker-L9-v19-s249 | L9 | 0% | **70%** | [queen-pulse smoke dragon page]<br>[queen-pulse sacrifice duchess smoke] | — (unique answer) | become-king 50% | no | 2026-09-06 |
